@@ -1,4 +1,4 @@
-rootProject.name = "keyple-demo-ticketing-reloading-interop-app"
+rootProject.name = "kdt-reloading-interop-app"
 
 include(":composeApp")
 

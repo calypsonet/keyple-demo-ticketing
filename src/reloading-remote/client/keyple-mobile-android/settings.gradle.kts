@@ -1,4 +1,4 @@
-rootProject.name = "keyple-demo-ticketing-reloading-android-app"
+rootProject.name = "kdt-reloading-android-app"
 include (":app")
 
 include(":common")

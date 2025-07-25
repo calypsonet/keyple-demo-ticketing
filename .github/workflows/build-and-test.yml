@@ -65,4 +65,4 @@ jobs:
     with:
       component-name: "Reloading .NET Client"
       working-directory: "./src/reloading-remote/client/pc-dotnet/"
-      archive-name-prefix: "keyple-demo-ticketing-reloading-pc-dotnet-app"
+      archive-name-prefix: "kdt-reloading-pc-dotnet-app"

@@ -1,4 +1,4 @@
-rootProject.name = "common"
+rootProject.name = "kdt-common-lib"
 
 pluginManagement {
   repositories {

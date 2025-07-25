@@ -1,4 +1,4 @@
-rootProject.name = "keyple-demo-ticketing-control-app"
+rootProject.name = "kdt-control-app"
 include (":app")
 
 include(":common")

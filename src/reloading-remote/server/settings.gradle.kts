@@ -1,4 +1,4 @@
-rootProject.name = "keyple-demo-ticketing-reloading-server"
+rootProject.name = "kdt-reloading-server"
 
 include(":app")
 
