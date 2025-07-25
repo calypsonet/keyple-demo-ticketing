@@ -43,6 +43,11 @@ jobs:
         working-directory: .
         run: chmod +x ${{ inputs.working-directory }}/gradlew ./.github/scripts/*.sh
 
+      - name: Check version
+        if: ${{ github.event_name != 'release' }}
+        working-directory: .
+        run: ./.github/scripts/check_version.sh ${{ inputs.working-directory }}
+
       - name: Prepare libraries for ${{ inputs.component-name }}
         if: ${{ inputs.prepare-script-path != '' }}
         working-directory: ${{ inputs.working-directory }}
@@ -68,12 +73,14 @@ jobs:
           ./gradlew build
 
       - name: Collect ${{ inputs.component-name }} artifacts
+        if: ${{ github.event_name == 'release' }}
         working-directory: ${{ inputs.working-directory }}
         run: |
           mkdir -p release-artifacts
           cp build/*-full.jar release-artifacts/ || true
 
       - name: Upload ${{ inputs.component-name }} artifacts to GitHub release
+        if: ${{ github.event_name == 'release' }}
         uses: softprops/action-gh-release@v2
         with:
           files: ${{ inputs.working-directory }}/release-artifacts/*

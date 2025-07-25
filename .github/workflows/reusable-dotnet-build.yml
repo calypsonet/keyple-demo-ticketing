@@ -28,11 +28,17 @@ jobs:
         with:
           dotnet-version: 7.0.x
 
-      - name: Update permissions for ${{ inputs.component-name }}
-        working-directory: .
-        run: chmod +x ./.github/scripts/*.sh
+      - name: Check code format, build and test ${{ inputs.component-name }}
+        if: ${{ github.event_name != 'release' }}
+        working-directory: ./src/reloading-remote/client/pc-dotnet
+        run: |
+          dotnet restore
+          dotnet format --verify-no-changes App.sln
+          dotnet build --no-restore
+          dotnet test --no-build --verbosity normal
 
-      - name: Build, test, and publish ${{ inputs.component-name }}
+      - name: Check code format, test and build release ${{ inputs.component-name }}
+        if: ${{ github.event_name == 'release' }}
         working-directory: ${{ inputs.working-directory }}
         run: |
           dotnet restore
@@ -41,11 +47,13 @@ jobs:
           dotnet publish -c Release -r win-x64 --no-restore -o ./publish
 
       - name: Archive ${{ inputs.component-name }} application
+        if: ${{ github.event_name == 'release' }}
         working-directory: ${{ inputs.working-directory }}/publish
         run: |
           zip -j -r "../${{ inputs.archive-name-prefix }}-${{ github.ref_name }}.zip" ./*
 
       - name: Upload ${{ inputs.component-name }} artifacts to GitHub release
+        if: ${{ github.event_name == 'release' }}
         uses: softprops/action-gh-release@v2
         with:
           files: ${{ inputs.working-directory }}/${{ inputs.archive-name-prefix }}-${{ github.ref_name }}.zip

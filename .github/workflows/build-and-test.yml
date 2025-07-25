@@ -10,150 +10,59 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-test-control:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v4
+  # ========================================
+  # ANDROID APPLICATIONS
+  # ========================================
 
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
+  build-ticketing-control-app:
+    name: "Ticketing Control App (Android)"
+    uses: ./.github/workflows/reusable-android-gradle-build.yml
+    with:
+      component-name: "Ticketing Control App"
+      working-directory: "./src/control/"
 
-      - name: Update permissions
-        working-directory: .
-        run: chmod +x ./src/control/gradlew ./.github/scripts/*.sh
+  build-reloading-multiplatform-client-android-macos:
+    name: "Reloading Multiplatform Client (Android on macOS)"
+    uses: ./.github/workflows/reusable-android-gradle-build.yml
+    with:
+      component-name: "Reloading Multiplatform Client"
+      working-directory: "./src/reloading-remote/client/interop-mobile-multiplatform/"
+      target-os: "macos-latest"
 
-      - name: Check version
-        working-directory: .
-        run: ./.github/scripts/check_version.sh "./src/control"
+  build-reloading-keyple-client-android:
+    name: "Reloading Keyple Client (Android)"
+    uses: ./.github/workflows/reusable-android-gradle-build.yml
+    with:
+      component-name: "Reloading Keyple Client"
+      working-directory: "./src/reloading-remote/client/keyple-mobile-android/"
 
-      - name: Build and Test
-        working-directory: ./src/control/
-        run: ./gradlew build
+  build-validation-app:
+    name: "Validation App (Android)"
+    uses: ./.github/workflows/reusable-android-gradle-build.yml
+    with:
+      component-name: "Validation App"
+      working-directory: "./src/validation/"
 
-  build-and-test-reloading-server:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v4
+  # ========================================
+  # SERVER APPLICATION
+  # ========================================
 
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
+  build-reloading-server:
+    name: "Reloading Server (Java + Node.js)"
+    uses: ./.github/workflows/reusable-java-node-hybrid-build.yml
+    with:
+      component-name: "Reloading Server"
+      working-directory: "./src/reloading-remote/server/"
+      node-directory: "./dashboard-app"
 
-      - name: Set up Node JS
-        uses: actions/setup-node@v4
-        with:
-          node-version: 16
+  # ========================================
+  # .NET APPLICATIONS
+  # ========================================
 
-      - name: Update permissions
-        working-directory: .
-        run: chmod +x ./src/reloading-remote/server/gradlew ./.github/scripts/*.sh
-
-      - name: Check version
-        working-directory: .
-        run: ./.github/scripts/check_version.sh "./src/reloading-remote/server"
-
-      - name: Build and Test
-        working-directory: ./src/reloading-remote/server/
-        run: |
-          cd ./dashboard-app
-          npm install
-          cd ..
-          ./gradlew build
-
-  build-and-test-reloading-client-interop-mobile-multiplatform:
-    runs-on: macos-latest
-    steps:
-      - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Update permissions
-        working-directory: .
-        run: chmod +x ./src/reloading-remote/client/interop-mobile-multiplatform/gradlew ./.github/scripts/*.sh
-
-      - name: Check version
-        working-directory: .
-        run: ./.github/scripts/check_version.sh "./src/reloading-remote/client/interop-mobile-multiplatform"
-
-      - name: Build and Test
-        working-directory: ./src/reloading-remote/client/interop-mobile-multiplatform/
-        run: ./gradlew build
-
-  build-and-test-reloading-client-keyple-mobile-android:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Update permissions
-        working-directory: .
-        run: chmod +x ./src/reloading-remote/client/keyple-mobile-android/gradlew ./.github/scripts/*.sh
-
-      - name: Check version
-        working-directory: .
-        run: ./.github/scripts/check_version.sh "./src/reloading-remote/client/keyple-mobile-android"
-
-      - name: Build and Test
-        working-directory: ./src/reloading-remote/client/keyple-mobile-android/
-        run: ./gradlew build
-
-  build-and-test-reloading-client-pc-dotnet:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v4
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 7.0.x
-
-      - name: Check code format, build and test client .NET
-        working-directory: ./src/reloading-remote/client/pc-dotnet
-        run: |
-          dotnet restore
-          dotnet format --verify-no-changes App.sln
-          dotnet build --no-restore
-          dotnet test --no-build --verbosity normal
-
-  build-and-test-validation:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Update permissions
-        working-directory: .
-        run: chmod +x ./src/validation/gradlew ./.github/scripts/*.sh
-
-      - name: Check version
-        working-directory: .
-        run: ./.github/scripts/check_version.sh "./src/validation"
-
-      - name: Build and Test
-        working-directory: ./src/validation/
-        run: ./gradlew build
+  build-reloading-dotnet-client:
+    name: "Reloading .NET Client (Windows)"
+    uses: ./.github/workflows/reusable-dotnet-build.yml
+    with:
+      component-name: "Reloading .NET Client"
+      working-directory: "./src/reloading-remote/client/pc-dotnet/"
+      archive-name-prefix: "keyple-demo-ticketing-reloading-pc-dotnet-app"

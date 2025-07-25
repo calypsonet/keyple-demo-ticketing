@@ -11,6 +11,11 @@ on:
         description: 'Working directory for the build'
         required: true
         type: string
+      target-os:
+        description: 'Target OS (ubuntu-latest, macos-latest, windows-latest)'
+        required: false
+        type: string
+        default: 'ubuntu-latest'
       apk-output-path:
         description: 'Path to APK outputs relative to working directory'
         required: false
@@ -24,7 +29,7 @@ on:
 
 jobs:
   build-android-gradle:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.target-os }}
     steps:
       - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
         uses: actions/checkout@v4
@@ -38,6 +43,11 @@ jobs:
       - name: Update permissions for ${{ inputs.component-name }}
         working-directory: .
         run: chmod +x ${{ inputs.working-directory }}/gradlew ./.github/scripts/*.sh
+
+      - name: Check version
+        if: ${{ github.event_name != 'release' }}
+        working-directory: .
+        run: ./.github/scripts/check_version.sh ${{ inputs.working-directory }}
 
       - name: Prepare libraries for ${{ inputs.component-name }}
         if: ${{ inputs.prepare-script-path != '' }}
@@ -60,12 +70,14 @@ jobs:
         run: ./gradlew build
 
       - name: Collect ${{ inputs.component-name }} artifacts
+        if: ${{ github.event_name == 'release' }}
         working-directory: ${{ inputs.working-directory }}
         run: |
           mkdir -p release-artifacts
           cp ${{ inputs.apk-output-path }} release-artifacts/ || true
 
       - name: Upload ${{ inputs.component-name }} artifacts to GitHub release
+        if: ${{ github.event_name == 'release' }}
         uses: softprops/action-gh-release@v2
         with:
           files: ${{ inputs.working-directory }}/release-artifacts/*
