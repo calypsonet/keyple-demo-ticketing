@@ -122,11 +122,11 @@ android {
       val outputImpl = this as com.android.build.gradle.internal.api.ApkVariantOutputImpl
       val variantName = name
       val versionName = project.version.toString()
-      val newName = "${rootProject.name}-$versionName-$variantName.apk"
+      val newName = "${rootProject.name}-android-$versionName-$variantName.apk"
       outputImpl.outputFileName = newName
     }
   }
-  publishing { singleVariant("release") {} }
+  publishing { singleVariant("debug") {} }
   lint { abortOnError = false }
 }
 

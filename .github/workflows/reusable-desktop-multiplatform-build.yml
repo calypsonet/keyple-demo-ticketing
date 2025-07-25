@@ -1,0 +1,61 @@
+name: Reusable Desktop Multiplatform Build
+
+on:
+  workflow_call:
+    inputs:
+      component-name:
+        description: 'Name of the component being built'
+        required: true
+        type: string
+      target-os:
+        description: 'Target OS (ubuntu-latest, macos-latest, windows-latest)'
+        required: true
+        type: string
+      platform-name:
+        description: 'Platform display name (Linux, macOS, Windows)'
+        required: true
+        type: string
+      working-directory:
+        description: 'Working directory for the build'
+        required: true
+        type: string
+      platform-artifact-pattern:
+        description: 'Artifact pattern specific to the platform'
+        required: true
+        type: string
+
+jobs:
+  build-desktop-multiplatform:
+    runs-on: ${{ inputs.target-os }}
+    steps:
+      - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Update permissions for ${{ inputs.component-name }} (${{ inputs.platform-name }})
+        working-directory: .
+        run: chmod +x ${{ inputs.working-directory }}/gradlew ./.github/scripts/*.sh
+
+      - name: Build ${{ inputs.component-name }} artifacts for ${{ inputs.platform-name }}
+        env:
+          ORG_GRADLE_PROJECT_releaseTag: ${{ github.event.release.tag_name }}
+        working-directory: ${{ inputs.working-directory }}
+        run: ./gradlew packageDistributionForCurrentOS packageUberJarForCurrentOS
+
+      - name: Collect ${{ inputs.component-name }} artifacts for ${{ inputs.platform-name }}
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+          mkdir -p release-artifacts
+          cp ${{ inputs.platform-artifact-pattern }} release-artifacts/ || true
+          cp composeApp/build/compose/jars/*.jar release-artifacts/ || true
+
+      - name: Upload ${{ inputs.component-name }} artifacts for ${{ inputs.platform-name }} to GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ inputs.working-directory }}/release-artifacts/*
+          token: ${{ secrets.GITHUB_TOKEN }}

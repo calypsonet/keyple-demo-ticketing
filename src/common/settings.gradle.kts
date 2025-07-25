@@ -1,4 +1,4 @@
-rootProject.name = "keyple-demo-ticketing-common-lib"
+rootProject.name = "common"
 
 pluginManagement {
   repositories {

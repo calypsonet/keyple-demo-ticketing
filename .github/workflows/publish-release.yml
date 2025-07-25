@@ -1,4 +1,4 @@
-name: Build and Test
+name: Build and Publish Release
 
 on:
   release:
@@ -7,317 +7,93 @@ on:
   workflow_dispatch:
 
 jobs:
-  publish-release-control:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v4
+  # ========================================
+  # ANDROID APPLICATIONS
+  # ========================================
 
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
+  build-ticketing-control-app:
+    name: "Ticketing Control App (Android)"
+    uses: ./.github/workflows/reusable-android-gradle-build.yml
+    with:
+      component-name: "Ticketing Control App"
+      working-directory: "./src/control/"
 
-      - name: Update permissions
-        working-directory: .
-        run: chmod +x ./src/control/gradlew ./.github/scripts/*.sh
+  build-reloading-multiplatform-client-android:
+    name: "Reloading Multiplatform Client (Android)"
+    uses: ./.github/workflows/reusable-android-gradle-build.yml
+    with:
+      component-name: "Reloading Multiplatform Client"
+      working-directory: "./src/reloading-remote/client/interop-mobile-multiplatform/"
+      apk-output-path: "composeApp/build/outputs/apk/debug/*.apk"
 
-      - name: Build artifacts
-        env:
-          ORG_GRADLE_PROJECT_releaseTag: ${{ github.event.release.tag_name }}
-        working-directory: ./src/control/
-        run: ./gradlew build
+  build-reloading-keyple-client-android:
+    name: "Reloading Keyple Client (Android)"
+    uses: ./.github/workflows/reusable-android-gradle-build.yml
+    with:
+      component-name: "Reloading Keyple Client"
+      working-directory: "./src/reloading-remote/client/keyple-mobile-android/"
 
-      - name: Collect artifacts
-        working-directory: ./src/control/
-        run: |
-          mkdir -p release-artifacts
-          cp app/build/outputs/apk/debug/*.apk release-artifacts/ || true
+  build-validation-app:
+    name: "Validation App (Android)"
+    uses: ./.github/workflows/reusable-android-gradle-build.yml
+    with:
+      component-name: "Validation App"
+      working-directory: "./src/validation/"
 
-      - name: Upload artifacts to GitHub release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: ./src/control/release-artifacts/*
-          token: ${{ secrets.GITHUB_TOKEN }}
-          
-  publish-release-reloading-server:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v4
+  # ========================================
+  # SERVER APPLICATION
+  # ========================================
 
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
+  build-reloading-server:
+    name: "Reloading Server (Java + Node.js)"
+    uses: ./.github/workflows/reusable-java-node-hybrid-build.yml
+    with:
+      component-name: "Reloading Server"
+      working-directory: "./src/reloading-remote/server/"
+      node-directory: "./dashboard-app"
 
-      - name: Set up Node JS
-        uses: actions/setup-node@v4
-        with:
-          node-version: 16
+  # ========================================
+  # DESKTOP APPLICATIONS - MULTIPLATFORM
+  # ========================================
 
-      - name: Update permissions
-        working-directory: .
-        run: chmod +x ./src/reloading-remote/server/gradlew ./.github/scripts/*.sh
+  build-reloading-multiplatform-client-macos:
+    name: "Reloading Multiplatform Client (macOS)"
+    uses: ./.github/workflows/reusable-desktop-multiplatform-build.yml
+    with:
+      component-name: "Reloading Multiplatform Client"
+      target-os: "macos-latest"
+      platform-name: "macOS"
+      working-directory: "./src/reloading-remote/client/interop-mobile-multiplatform/"
+      platform-artifact-pattern: "composeApp/build/compose/binaries/main/dmg/*.dmg"
 
-      - name: Build artifacts
-        env:
-          ORG_GRADLE_PROJECT_releaseTag: ${{ github.event.release.tag_name }}
-        working-directory: ./src/reloading-remote/server/
-        run: |
-          cd ./dashboard-app
-          npm install
-          cd ..
-          ./gradlew build
+  build-reloading-multiplatform-client-linux:
+    name: "Reloading Multiplatform Client (Linux)"
+    uses: ./.github/workflows/reusable-desktop-multiplatform-build.yml
+    with:
+      component-name: "Reloading Multiplatform Client"
+      target-os: "ubuntu-latest"
+      platform-name: "Linux"
+      working-directory: "./src/reloading-remote/client/interop-mobile-multiplatform/"
+      platform-artifact-pattern: "composeApp/build/compose/binaries/main/deb/*.deb"
 
-      - name: Collect artifacts
-        working-directory: ./src/reloading-remote/server/
-        run: |
-          mkdir -p release-artifacts
-          cp build/*-full.jar release-artifacts/ || true
+  build-reloading-multiplatform-client-windows:
+    name: "Reloading Multiplatform Client (Windows)"
+    uses: ./.github/workflows/reusable-desktop-multiplatform-build.yml
+    with:
+      component-name: "Reloading Multiplatform Client"
+      target-os: "windows-latest"
+      platform-name: "Windows"
+      working-directory: "./src/reloading-remote/client/interop-mobile-multiplatform/"
+      platform-artifact-pattern: "composeApp/build/compose/binaries/main/msi/*.msi"
 
-      - name: Upload artifacts to GitHub release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: ./src/reloading-remote/server/release-artifacts/*
-          token: ${{ secrets.GITHUB_TOKEN }}
+  # ========================================
+  # .NET APPLICATIONS
+  # ========================================
 
-  publish-release-reloading-client-interop-mobile-multiplatform-android:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Update permissions
-        working-directory: .
-        run: chmod +x ./src/reloading-remote/client/interop-mobile-multiplatform/gradlew ./.github/scripts/*.sh
-
-      - name: Build artifacts
-        env:
-          ORG_GRADLE_PROJECT_releaseTag: ${{ github.event.release.tag_name }}
-        working-directory: ./src/reloading-remote/client/interop-mobile-multiplatform/
-        run: ./gradlew build
-
-      - name: Collect artifacts
-        working-directory: ./src/reloading-remote/client/interop-mobile-multiplatform/
-        run: |
-          mkdir -p release-artifacts
-          cp composeApp/build/outputs/apk/debug/*.apk release-artifacts/ || true
-
-      - name: Upload artifacts to GitHub release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: ./src/reloading-remote/client/interop-mobile-multiplatform/release-artifacts/*
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-  publish-release-reloading-client-interop-mobile-multiplatform-desktop-macos:
-    runs-on: macos-latest
-    steps:
-      - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Update permissions
-        working-directory: .
-        run: chmod +x ./src/reloading-remote/client/interop-mobile-multiplatform/gradlew ./.github/scripts/*.sh
-
-      - name: Build artifacts
-        env:
-          ORG_GRADLE_PROJECT_releaseTag: ${{ github.event.release.tag_name }}
-        working-directory: ./src/reloading-remote/client/interop-mobile-multiplatform/
-        run: ./gradlew packageDistributionForCurrentOS packageUberJarForCurrentOS
-
-      - name: Collect artifacts
-        working-directory: ./src/reloading-remote/client/interop-mobile-multiplatform/
-        run: |
-          mkdir -p release-artifacts
-          cp composeApp/build/compose/binaries/main/dmg/*.dmg release-artifacts/ || true
-          cp composeApp/build/compose/jars/*.jar release-artifacts/ || true
-
-      - name: Upload artifacts to GitHub release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: ./src/reloading-remote/client/interop-mobile-multiplatform/release-artifacts/*
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-  publish-release-reloading-client-interop-mobile-multiplatform-desktop-linux:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Update permissions
-        working-directory: .
-        run: chmod +x ./src/reloading-remote/client/interop-mobile-multiplatform/gradlew ./.github/scripts/*.sh
-
-      - name: Build artifacts
-        env:
-          ORG_GRADLE_PROJECT_releaseTag: ${{ github.event.release.tag_name }}
-        working-directory: ./src/reloading-remote/client/interop-mobile-multiplatform/
-        run: ./gradlew packageDistributionForCurrentOS packageUberJarForCurrentOS
-
-      - name: Collect artifacts
-        working-directory: ./src/reloading-remote/client/interop-mobile-multiplatform/
-        run: |
-          mkdir -p release-artifacts
-          cp composeApp/build/compose/binaries/main/deb/*.deb release-artifacts/ || true
-          cp composeApp/build/compose/jars/*.jar release-artifacts/ || true
-
-      - name: Upload artifacts to GitHub release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: ./src/reloading-remote/client/interop-mobile-multiplatform/release-artifacts/*
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-  publish-release-reloading-client-interop-mobile-multiplatform-desktop-windows:
-    runs-on: windows-latest
-    steps:
-      - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Update permissions
-        working-directory: .
-        run: chmod +x ./src/reloading-remote/client/interop-mobile-multiplatform/gradlew ./.github/scripts/*.sh
-
-      - name: Build artifacts
-        env:
-          ORG_GRADLE_PROJECT_releaseTag: ${{ github.event.release.tag_name }}
-        working-directory: ./src/reloading-remote/client/interop-mobile-multiplatform/
-        run: ./gradlew packageDistributionForCurrentOS packageUberJarForCurrentOS
-
-      - name: Collect artifacts
-        working-directory: ./src/reloading-remote/client/interop-mobile-multiplatform/
-        run: |
-          mkdir -p release-artifacts
-          cp composeApp/build/compose/binaries/main/msi/*.msi release-artifacts/ || true
-          cp composeApp/build/compose/jars/*.jar release-artifacts/ || true
-
-      - name: Upload artifacts to GitHub release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: ./src/reloading-remote/client/interop-mobile-multiplatform/release-artifacts/*
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-  publish-release-reloading-client-keyple-mobile-android:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Update permissions
-        working-directory: .
-        run: chmod +x ./src/reloading-remote/client/keyple-mobile-android/gradlew ./.github/scripts/*.sh
-
-      - name: Build artifacts
-        env:
-          ORG_GRADLE_PROJECT_releaseTag: ${{ github.event.release.tag_name }}
-        working-directory: ./src/reloading-remote/client/keyple-mobile-android/
-        run: ./gradlew build
-
-      - name: Collect artifacts
-        working-directory: ./src/reloading-remote/client/keyple-mobile-android/
-        run: |
-          mkdir -p release-artifacts
-          cp app/build/outputs/apk/debug/*.apk release-artifacts/ || true
-
-      - name: Upload artifacts to GitHub release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: ./src/reloading-remote/client/keyple-mobile-android/release-artifacts/*
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-  publish-release-reloading-client-pc-dotnet:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v4
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 7.0.x
-
-      - name: Check code format, build, test, and publish client .NET
-        working-directory: ./src/reloading-remote/client/pc-dotnet/
-        run: |
-          dotnet restore
-          dotnet format --verify-no-changes App.sln
-          dotnet test --no-build --verbosity normal
-          dotnet publish -c Release -r win-x64 --no-restore -o ./publish
-
-      - name: Archive the published application
-        working-directory: ./src/reloading-remote/client/pc-dotnet/publish/
-        run: |
-          zip -j -r "../keyple-demo-ticketing-reloading-pc-dotnet-app-${{ github.ref_name }}.zip" ./*
-
-      - name: Upload artifacts to GitHub release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: ./src/reloading-remote/client/pc-dotnet/keyple-demo-ticketing-reloading-pc-dotnet-app-${{ github.ref_name }}.zip
-          token: ${{ secrets.GITHUB_TOKEN }}
-          
-  publish-release-validation:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Update permissions
-        working-directory: .
-        run: chmod +x ./src/validation/gradlew ./.github/scripts/*.sh
-
-      - name: Build artifacts
-        env:
-          ORG_GRADLE_PROJECT_releaseTag: ${{ github.event.release.tag_name }}
-        working-directory: ./src/validation/
-        run: ./gradlew build
-
-      - name: Collect artifacts
-        working-directory: ./src/validation/
-        run: |
-          mkdir -p release-artifacts
-          cp app/build/outputs/apk/debug/*.apk release-artifacts/ || true
-
-      - name: Upload artifacts to GitHub release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: ./src/validation/release-artifacts/*
-          token: ${{ secrets.GITHUB_TOKEN }}
-          
+  build-reloading-dotnet-client:
+    name: "Reloading .NET Client (Windows)"
+    uses: ./.github/workflows/reusable-dotnet-build.yml
+    with:
+      component-name: "Reloading .NET Client"
+      working-directory: "./src/reloading-remote/client/pc-dotnet/"
+      archive-name-prefix: "keyple-demo-ticketing-reloading-pc-dotnet-app"

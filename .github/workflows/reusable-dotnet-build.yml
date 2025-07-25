@@ -1,0 +1,52 @@
+name: Reusable .NET Build
+
+on:
+  workflow_call:
+    inputs:
+      component-name:
+        description: 'Name of the component being built'
+        required: true
+        type: string
+      working-directory:
+        description: 'Working directory for the build'
+        required: true
+        type: string
+      archive-name-prefix:
+        description: 'Prefix for the archive name'
+        required: true
+        type: string
+
+jobs:
+  build-dotnet:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 7.0.x
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 7.0.x
+
+      - name: Update permissions for ${{ inputs.component-name }}
+        working-directory: .
+        run: chmod +x ./.github/scripts/*.sh
+
+      - name: Build, test, and publish ${{ inputs.component-name }}
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+          dotnet restore
+          dotnet format --verify-no-changes App.sln
+          dotnet test --no-build --verbosity normal
+          dotnet publish -c Release -r win-x64 --no-restore -o ./publish
+
+      - name: Archive ${{ inputs.component-name }} application
+        working-directory: ${{ inputs.working-directory }}/publish
+        run: |
+          zip -j -r "../${{ inputs.archive-name-prefix }}-${{ github.ref_name }}.zip" ./*
+
+      - name: Upload ${{ inputs.component-name }} artifacts to GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ inputs.working-directory }}/${{ inputs.archive-name-prefix }}-${{ github.ref_name }}.zip
+          token: ${{ secrets.GITHUB_TOKEN }}
