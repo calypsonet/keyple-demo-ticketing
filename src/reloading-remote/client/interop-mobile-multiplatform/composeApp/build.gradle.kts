@@ -10,7 +10,7 @@ plugins {
   alias(libs.plugins.kotlinMultiplatform)
   alias(libs.plugins.androidApplication)
   alias(libs.plugins.jetbrainsCompose)
-  alias(libs.plugins.compose.compiler)
+  alias(libs.plugins.composeCompiler)
   alias(libs.plugins.kotlinSerialization)
   alias(libs.plugins.spotless)
 }
@@ -41,11 +41,11 @@ kotlin {
   sourceSets {
     val desktopMain by getting
     commonMain.dependencies {
-      implementation(libs.keyple.interop.jsonapi.client.kmp.lib)
-      implementation(libs.keyple.interop.localreader.nfcmobile.kmp.lib)
-      implementation(libs.kotlinx.serialization)
-      implementation(libs.ktor.serialization.kotlinx.json)
-      implementation(project.dependencies.platform(libs.compose.bom))
+      implementation(libs.keypleInteropJsonapiClientKmpLib)
+      implementation(libs.keypleInteropLocalreaderNfcmobileKmpLib)
+      implementation(libs.kotlinxSerializationCore)
+      implementation(libs.ktorSerializationKotlinxJson)
+      implementation(project.dependencies.platform(libs.composeBom))
       implementation(compose.runtime)
       implementation(compose.foundation)
       implementation(compose.material)
@@ -54,30 +54,30 @@ kotlin {
       implementation(compose.ui)
       implementation(compose.components.resources)
       implementation(compose.components.uiToolingPreview)
-      implementation(libs.koin.core)
-      implementation(libs.koin.compose)
-      implementation(libs.navigation.compose)
-      implementation(libs.datastore.preferences)
+      implementation(libs.koinCore)
+      implementation(libs.koinCompose)
+      implementation(libs.androidxNavigationCompose)
+      implementation(libs.androidxDatastorePreferences)
       implementation(libs.compottie)
-      implementation(libs.ktor.client.core)
-      implementation(libs.ktor.client.content.negotiation)
-      implementation(libs.ktor.client.logging)
-      implementation(libs.ktor.client.auth)
-      implementation(libs.ktor.client.content.negotiation)
-      implementation(libs.ktor.serialization.kotlinx.json)
+      implementation(libs.ktorClientCore)
+      implementation(libs.ktorClientContentNegotiation)
+      implementation(libs.ktorClientLogging)
+      implementation(libs.ktorClientAuth)
+      implementation(libs.ktorClientContentNegotiation)
+      implementation(libs.ktorSerializationKotlinxJson)
       implementation(libs.napier)
     }
-    iosMain.dependencies { implementation(libs.ktor.client.darwin) }
+    iosMain.dependencies { implementation(libs.ktorClientDarwin) }
     androidMain.dependencies {
-      implementation(libs.activity.compose)
-      implementation(libs.koin.android)
-      implementation(libs.koin.androidx.compose)
-      implementation(libs.ktor.client.okhttp)
+      implementation(libs.androidxActivityCompose)
+      implementation(libs.koinAndroid)
+      implementation(libs.koinAndroidxCompose)
+      implementation(libs.ktorClientOkhttp)
     }
     desktopMain.dependencies {
       implementation(compose.desktop.currentOs)
-      implementation(libs.kotlinx.coroutines.swing)
-      implementation(libs.ktor.client.cio)
+      implementation(libs.kotlinxCoroutinesSwing)
+      implementation(libs.ktorClientCio)
     }
   }
 }
