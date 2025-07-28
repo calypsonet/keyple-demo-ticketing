@@ -3,48 +3,59 @@ agp = "8.9.2"
 androidxActivityCompose = "1.10.1"
 androidxDatastorePreferences = "1.1.3"
 androidxNavigationCompose = "2.8.0-alpha12"
+assertj = "3.15.0"
+bitLib4j = "1.4.5"
+compottie = "2.0.0-beta02"
 composeBom = "2025.02.00"
 composePlugin = "1.7.3"
 coroutines = "1.9.0"
+keypleInteropJsonapiClientKmpLib = "0.1.6"
+keypleInteropLocalreaderNfcmobileKmpLib = "0.1.6"
+keypleUtilJavaLib = "2.4.0"
 koin = "4.0.0"
 kotlin = "2.0.21"
 kotlinxSerializationCore = "1.7.3"
 ktor = "3.0.+"
 napier = "2.7.1"
-compottie = "2.0.0-beta02"
 spotless = "7.0.4"
-keypleInteropJsonapiClientKmpLib = "0.1.6"
-keypleInteropLocalreaderNfcmobileKmpLib = "0.1.6"
 
 [libraries]
 androidxActivityCompose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivityCompose" }
 androidxDatastorePreferences = { module = "androidx.datastore:datastore-preferences", version.ref = "androidxDatastorePreferences" }
 androidxNavigationCompose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "androidxNavigationCompose" }
+assertjCore = { module = "org.assertj:assertj-core", version.ref = "assertj" }
+bitLib4j = { module = "com.github.devnied:bit-lib4j", version.ref = "bitLib4j" }
+compottie = { module = "io.github.alexzhirkevich:compottie", version.ref = "compottie" }
 composeBom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
-koinCore = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+keypleInteropJsonapiClientKmpLib = { module = "org.eclipse.keyple:keyple-interop-jsonapi-client-kmp-lib", version.ref = "keypleInteropJsonapiClientKmpLib" }
+keypleInteropLocalreaderNfcmobileKmpLib = { module = "org.eclipse.keyple:keyple-interop-localreader-nfcmobile-kmp-lib", version.ref = "keypleInteropLocalreaderNfcmobileKmpLib" }
+keypleUtilJavaLib = { module = "org.eclipse.keyple:keyple-util-java-lib", version.ref = "keypleUtilJavaLib" }
 koinAndroid = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koinAndroidxCompose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 koinCompose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
-kotlinxSerializationCore = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerializationCore" }
+koinCore = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+kotlinTest = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlinxCoroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
-ktorClientCore = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
-ktorClientOkhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
-ktorClientDarwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+kotlinxSerializationCore = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerializationCore" }
+ktorClientAuth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 ktorClientCio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktorClientContentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
-ktorClientAuth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
+ktorClientCore = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktorClientDarwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 ktorClientLogging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+ktorClientOkhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktorSerializationKotlinxJson = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
-compottie = { module = "io.github.alexzhirkevich:compottie", version.ref = "compottie" }
-keypleInteropJsonapiClientKmpLib = { module = "org.eclipse.keyple:keyple-interop-jsonapi-client-kmp-lib", version.ref = "keypleInteropJsonapiClientKmpLib" }
-keypleInteropLocalreaderNfcmobileKmpLib = { module = "org.eclipse.keyple:keyple-interop-localreader-nfcmobile-kmp-lib", version.ref = "keypleInteropLocalreaderNfcmobileKmpLib" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
-jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "composePlugin" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "composePlugin" }
+kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlinKapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinParcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
