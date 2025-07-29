@@ -1,5 +1,6 @@
 rootProject.name = "kdt-validation-app"
-include (":app")
+
+include(":app")
 
 include(":common")
 

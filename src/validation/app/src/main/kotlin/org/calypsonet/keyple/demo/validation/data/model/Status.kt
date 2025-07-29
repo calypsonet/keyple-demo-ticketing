@@ -29,7 +29,7 @@ enum class Status(private val status: String) {
     @JvmStatic
     fun getStatus(name: String): Status {
       return try {
-        valueOf(name.toUpperCase(Locale.ENGLISH))
+        valueOf(name.uppercase(Locale.ENGLISH))
       } catch (e: Exception) {
         // If the given state does not exist, return the default value.
         ERROR
