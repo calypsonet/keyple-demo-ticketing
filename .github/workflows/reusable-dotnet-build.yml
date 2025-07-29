@@ -28,6 +28,17 @@ jobs:
         with:
           dotnet-version: 7.0.x
 
+      - name: Set version in .csproj to ${{ github.ref_name }}
+        if: ${{ github.event_name == 'release' }}
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+          version="${{ github.ref_name }}"
+          csproj_file=$(find . -maxdepth 1 -name "*.csproj" | head -n 1)
+          echo "Updating $csproj_file to version $version"
+          sed -i -E "s|<AssemblyVersion>.*</AssemblyVersion>|<AssemblyVersion>$version</AssemblyVersion>|" "$csproj_file"
+          sed -i -E "s|<FileVersion>.*</FileVersion>|<FileVersion>$version</FileVersion>|" "$csproj_file"
+          sed -i -E "s|<Version>.*</Version>|<Version>$version</Version>|" "$csproj_file"
+
       - name: Check code format, build and test ${{ inputs.component-name }}
         if: ${{ github.event_name != 'release' }}
         working-directory: ./src/reloading-remote/client/pc-dotnet

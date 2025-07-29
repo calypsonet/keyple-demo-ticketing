@@ -1,8 +1,10 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+import org.apache.tools.ant.taskdefs.condition.Os
+
 ///////////////////////////////////////////////////////////////////////////////
 //  GRADLE CONFIGURATION
 ///////////////////////////////////////////////////////////////////////////////
-
-import org.apache.tools.ant.taskdefs.condition.Os
 
 plugins {
   java
@@ -51,8 +53,26 @@ dependencies {
   implementation(libs.slf4jSimple)
 }
 
+val syncPackageVersion by
+    tasks.registering {
+      group = "versioning"
+      description = "Synchronize version in package.json with Gradle project version"
+      val packageJsonFile = file("dashboard-app/package.json")
+      inputs.file(packageJsonFile)
+      outputs.file(packageJsonFile)
+      doLast {
+        val jsonText = packageJsonFile.readText()
+        @Suppress("UNCHECKED_CAST")
+        val json = JsonSlurper().parseText(jsonText) as MutableMap<String, Any>
+        json["version"] = project.version
+        val updatedJsonText = JsonOutput.prettyPrint(JsonOutput.toJson(json))
+        packageJsonFile.writeText(updatedJsonText)
+        println("Updated package.json version to ${project.version}")
+      }
+    }
 val buildDashboard by
     tasks.creating(Exec::class) {
+      dependsOn.add("syncPackageVersion")
       workingDir = File("dashboard-app")
       var npm = "npm"
       if (Os.isFamily(Os.FAMILY_WINDOWS)) {
@@ -79,13 +99,14 @@ tasks {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-//  STANDARD CONFIGURATION FOR JAVA PROJECTS
+//  STANDARD CONFIGURATION FOR JAVA APP-TYPE PROJECTS
 ///////////////////////////////////////////////////////////////////////////////
 
 if (project.hasProperty("releaseTag")) {
   project.version = project.property("releaseTag") as String
   println("Release mode: version set to ${project.version}")
 } else {
+  project.version = libs.versions.project.get()
   println("Development mode: version is ${project.version}")
 }
 
@@ -110,9 +131,5 @@ tasks {
       target("**/*.kts")
       ktfmt()
     }
-  }
-  test {
-    useJUnitPlatform()
-    testLogging { events("passed", "skipped", "failed") }
   }
 }

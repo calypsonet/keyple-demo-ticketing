@@ -1,4 +1,7 @@
 [versions]
+# Project version
+project = "9999.99.99"
+# Libs versions
 agp = "8.9.2"
 androidxActivity = "1.8.1"
 androidxActivityCompose = "1.10.1"
@@ -39,7 +42,7 @@ keypleUtilJavaLib = "2.4.0"
 keypopCalypsoCardApi = "2.1.2"
 keypopCalypsoCryptoLegacysamApi = "0.7.0"
 keypopReaderApi = "2.0.1"
-keypopStoragecardApi = "0.2.0"
+keypopStoragecardApi = "0.3.0"
 koin = "4.0.0"
 kotlin = "2.0.21"
 kotlinStdlibJdk7 = "1.7.20"
