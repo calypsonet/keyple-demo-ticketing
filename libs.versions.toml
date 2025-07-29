@@ -16,18 +16,25 @@ composeBom = "2025.02.00"
 composePlugin = "1.7.3"
 coroutines = "1.9.0"
 dagger = "2.19"
+eventbus = "3.2.0"
 glassfish = "10.0-b28"
 gson = "2.10.1"
 keypleCardCalypsoCryptoLegacysamLib = "0.9.0"
 keypleCardCalypsoLib = "3.1.8"
 keypleCommonApi = "2.0.2"
+keypleDistributedLocalLib = "2.5.2"
+keypleDistributedNetworkLib = "2.5.1"
+keypleDistributedRemoteLib = "2.5.1"
 keypleInteropJsonapiClientKmpLib = "0.1.6"
 keypleInteropLocalreaderNfcmobileKmpLib = "0.1.6"
 keyplePluginAndroidNfcLib = "3.1.0"
+keyplePluginAndroidOmapiLib = "2.1.0"
 keyplePluginCnaCoppernicCone2Lib = "2.0.2"
 keyplePluginCnaFamocoSeCommunicationLib = "2.0.2"
+keyplePluginPcscLib = "2.5.2"
 keyplePluginStoragecardApi = "1.0.0"
 keypleServiceLib = "3.3.5"
+keypleServiceResourceLib = "3.1.0"
 keypleUtilJavaLib = "2.4.0"
 keypopCalypsoCardApi = "2.1.2"
 keypopCalypsoCryptoLegacysamApi = "0.7.0"
@@ -41,6 +48,12 @@ ktor = "3.0.+"
 lottie = "3.4.4"
 material = "1.10.0"
 napier = "2.7.1"
+okhttpLogging = "3.9.1"
+quarkus = "1.8.1.Final"
+retrofit = "2.9.0"
+retrofitCompat = "2.4.0"
+rxandroid = "2.0.2"
+rxjava = "2.1.13"
 slf4jAndroid = "1.7.32-0"
 slf4j = "1.7.32"
 spotless = "7.0.4"
@@ -65,18 +78,25 @@ daggerAndroid = { module = "com.google.dagger:dagger-android", version.ref = "da
 daggerAndroidProcessor = { module = "com.google.dagger:dagger-android-processor", version.ref = "dagger" }
 daggerAndroidSupport = { module = "com.google.dagger:dagger-android-support", version.ref = "dagger" }
 daggerCompiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
+eventbus = { module = "org.greenrobot:eventbus", version.ref = "eventbus" }
 glassfishAnnotations = { module = "org.glassfish:javax.annotation", version.ref = "glassfish" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 keypleCardCalypsoCryptoLegacysamLib = { module = "org.eclipse.keyple:keyple-card-calypso-crypto-legacysam-java-lib", version.ref = "keypleCardCalypsoCryptoLegacysamLib" }
 keypleCardCalypsoLib = { module = "org.eclipse.keyple:keyple-card-calypso-java-lib", version.ref = "keypleCardCalypsoLib" }
 keypleCommonApi = { module = "org.eclipse.keyple:keyple-common-java-api", version.ref = "keypleCommonApi" }
+keypleDistributedLocalLib = { module = "org.eclipse.keyple:keyple-distributed-local-java-lib", version.ref = "keypleDistributedLocalLib" }
+keypleDistributedNetworkLib = { module = "org.eclipse.keyple:keyple-distributed-network-java-lib", version.ref = "keypleDistributedNetworkLib" }
+keypleDistributedRemoteLib = { module = "org.eclipse.keyple:keyple-distributed-remote-java-lib", version.ref = "keypleDistributedRemoteLib" }
 keypleInteropJsonapiClientKmpLib = { module = "org.eclipse.keyple:keyple-interop-jsonapi-client-kmp-lib", version.ref = "keypleInteropJsonapiClientKmpLib" }
 keypleInteropLocalreaderNfcmobileKmpLib = { module = "org.eclipse.keyple:keyple-interop-localreader-nfcmobile-kmp-lib", version.ref = "keypleInteropLocalreaderNfcmobileKmpLib" }
 keyplePluginAndroidNfcLib = { module = "org.eclipse.keyple:keyple-plugin-android-nfc-java-lib", version.ref = "keyplePluginAndroidNfcLib" }
+keyplePluginAndroidOmapiLib = { module = "org.eclipse.keyple:keyple-plugin-android-omapi-java-lib", version.ref = "keyplePluginAndroidOmapiLib" }
 keyplePluginCnaCoppernicCone2Lib = { module = "org.calypsonet.keyple:keyple-plugin-cna-coppernic-cone2-java-lib", version.ref = "keyplePluginCnaCoppernicCone2Lib" }
 keyplePluginCnaFamocoSeCommunicationLib = { module = "org.calypsonet.keyple:keyple-plugin-cna-famoco-se-communication-java-lib", version.ref = "keyplePluginCnaFamocoSeCommunicationLib" }
+keyplePluginPcscLib = { module = "org.eclipse.keyple:keyple-plugin-pcsc-java-lib", version.ref = "keyplePluginPcscLib" }
 keyplePluginStoragecardApi = { module = "org.eclipse.keyple:keyple-plugin-storagecard-java-api", version.ref = "keyplePluginStoragecardApi" }
 keypleServiceLib = { module = "org.eclipse.keyple:keyple-service-java-lib", version.ref = "keypleServiceLib" }
+keypleServiceResourceLib = { module = "org.eclipse.keyple:keyple-service-resource-java-lib", version.ref = "keypleServiceResourceLib" }
 keypleUtilJavaLib = { module = "org.eclipse.keyple:keyple-util-java-lib", version.ref = "keypleUtilJavaLib" }
 keypopCalypsoCardApi = { module = "org.eclipse.keypop:keypop-calypso-card-java-api", version.ref = "keypopCalypsoCardApi" }
 keypopCalypsoCryptoLegacysamApi = { module = "org.eclipse.keypop:keypop-calypso-crypto-legacysam-java-api", version.ref = "keypopCalypsoCryptoLegacysamApi" }
@@ -103,8 +123,19 @@ ktorSerializationKotlinxJson = { module = "io.ktor:ktor-serialization-kotlinx-js
 lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
+okhttpLoggingInterceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttpLogging" }
+quarkusBom = { module = "io.quarkus:quarkus-universe-bom", version.ref = "quarkus" }
+quarkusResteasy = { module = "io.quarkus:quarkus-resteasy" }
+quarkusResteasyJsonb = { module = "io.quarkus:quarkus-resteasy-jsonb" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+retrofitAdapterRxjava2 = { module = "com.squareup.retrofit2:adapter-rxjava2", version.ref = "retrofitCompat" }
+retrofitConverterGson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofitCompat" }
+retrofitConverterScalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "retrofitCompat" }
+rxandroid = { module = "io.reactivex.rxjava2:rxandroid", version.ref = "rxandroid" }
+rxjava = { module = "io.reactivex.rxjava2:rxjava", version.ref = "rxjava" }
 slf4jAndroid = { module = "uk.uuid.slf4j:slf4j-android", version.ref = "slf4jAndroid" }
 slf4jApi = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+slf4jSimple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 [plugins]
@@ -118,4 +149,5 @@ kotlinKapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinParcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+quarkus = { id = "io.quarkus", version.ref = "quarkus" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }

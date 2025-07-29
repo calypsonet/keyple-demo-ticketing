@@ -1,5 +1,6 @@
 rootProject.name = "kdt-reloading-android-app"
-include (":app")
+
+include(":app")
 
 include(":common")
 
