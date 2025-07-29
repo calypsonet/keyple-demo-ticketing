@@ -1,5 +1,5 @@
 [versions]
-# Project version
+# The Project version represents the snapshot version and must never be modified, as it is the release tag that indicates the release version.
 project = "9999.99.99"
 # Libs versions
 agp = "8.9.2"

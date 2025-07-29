@@ -44,11 +44,6 @@ jobs:
         working-directory: .
         run: chmod +x ${{ inputs.working-directory }}/gradlew ./.github/scripts/*.sh
 
-      - name: Check version
-        if: ${{ github.event_name != 'release' }}
-        working-directory: .
-        run: ./.github/scripts/check_version.sh ${{ inputs.working-directory }}
-
       - name: Prepare libraries for ${{ inputs.component-name }}
         if: ${{ inputs.prepare-script-path != '' }}
         working-directory: ${{ inputs.working-directory }}
