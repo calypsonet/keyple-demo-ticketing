@@ -13,7 +13,7 @@
 package org.calypsonet.keyple.demo.validation.data.model
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Location(val id: Int, val name: String) : Parcelable {

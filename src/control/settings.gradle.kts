@@ -1,5 +1,6 @@
 rootProject.name = "kdt-control-app"
-include (":app")
+
+include(":app")
 
 include(":common")
 

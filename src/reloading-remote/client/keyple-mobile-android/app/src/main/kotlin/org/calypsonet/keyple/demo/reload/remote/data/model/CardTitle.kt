@@ -13,7 +13,7 @@
 package org.calypsonet.keyple.demo.reload.remote.data.model
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class CardTitle(val name: String, val description: String, val valid: Boolean) : Parcelable

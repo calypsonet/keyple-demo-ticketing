@@ -1,7 +1,13 @@
 [versions]
 agp = "8.9.2"
+androidxActivity = "1.8.1"
 androidxActivityCompose = "1.10.1"
+androidxAppcompat = "1.6.1"
+androidxConstraintLayout = "2.1.4"
+androidxCore = "1.12.0"
 androidxDatastorePreferences = "1.1.3"
+androidxFragment = "1.6.2"
+androidxMultidex = "2.0.1"
 androidxNavigationCompose = "2.8.0-alpha12"
 assertj = "3.15.0"
 bitLib4j = "1.4.5"
@@ -9,32 +15,81 @@ compottie = "2.0.0-beta02"
 composeBom = "2025.02.00"
 composePlugin = "1.7.3"
 coroutines = "1.9.0"
+dagger = "2.19"
+glassfish = "10.0-b28"
+gson = "2.10.1"
+keypleCardCalypsoCryptoLegacysamLib = "0.9.0"
+keypleCardCalypsoLib = "3.1.8"
+keypleCommonApi = "2.0.2"
 keypleInteropJsonapiClientKmpLib = "0.1.6"
 keypleInteropLocalreaderNfcmobileKmpLib = "0.1.6"
+keyplePluginAndroidNfcLib = "3.1.0"
+keyplePluginCnaCoppernicCone2Lib = "2.0.2"
+keyplePluginCnaFamocoSeCommunicationLib = "2.0.2"
+keyplePluginStoragecardApi = "1.0.0"
+keypleServiceLib = "3.3.5"
 keypleUtilJavaLib = "2.4.0"
+keypopCalypsoCardApi = "2.1.2"
+keypopCalypsoCryptoLegacysamApi = "0.7.0"
+keypopReaderApi = "2.0.1"
+keypopStoragecardApi = "0.2.0"
 koin = "4.0.0"
 kotlin = "2.0.21"
+kotlinStdlibJdk7 = "1.7.20"
 kotlinxSerializationCore = "1.7.3"
 ktor = "3.0.+"
+lottie = "3.4.4"
+material = "1.10.0"
 napier = "2.7.1"
+slf4jAndroid = "1.7.32-0"
+slf4j = "1.7.32"
 spotless = "7.0.4"
+timber = "5.0.1"
 
 [libraries]
+androidxActivity = { module = "androidx.activity:activity-ktx", version.ref = "androidxActivity" }
 androidxActivityCompose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivityCompose" }
+androidxAppcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidxAppcompat" }
+androidxConstraintLayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "androidxConstraintLayout" }
+androidxCore = { module = "androidx.core:core-ktx", version.ref = "androidxCore" }
 androidxDatastorePreferences = { module = "androidx.datastore:datastore-preferences", version.ref = "androidxDatastorePreferences" }
+androidxFragment = { module = "androidx.fragment:fragment-ktx", version.ref = "androidxFragment" }
+androidxMultidex = { module = "androidx.multidex:multidex", version.ref = "androidxMultidex" }
 androidxNavigationCompose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "androidxNavigationCompose" }
 assertjCore = { module = "org.assertj:assertj-core", version.ref = "assertj" }
 bitLib4j = { module = "com.github.devnied:bit-lib4j", version.ref = "bitLib4j" }
 compottie = { module = "io.github.alexzhirkevich:compottie", version.ref = "compottie" }
 composeBom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
+dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
+daggerAndroid = { module = "com.google.dagger:dagger-android", version.ref = "dagger" }
+daggerAndroidProcessor = { module = "com.google.dagger:dagger-android-processor", version.ref = "dagger" }
+daggerAndroidSupport = { module = "com.google.dagger:dagger-android-support", version.ref = "dagger" }
+daggerCompiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
+glassfishAnnotations = { module = "org.glassfish:javax.annotation", version.ref = "glassfish" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+keypleCardCalypsoCryptoLegacysamLib = { module = "org.eclipse.keyple:keyple-card-calypso-crypto-legacysam-java-lib", version.ref = "keypleCardCalypsoCryptoLegacysamLib" }
+keypleCardCalypsoLib = { module = "org.eclipse.keyple:keyple-card-calypso-java-lib", version.ref = "keypleCardCalypsoLib" }
+keypleCommonApi = { module = "org.eclipse.keyple:keyple-common-java-api", version.ref = "keypleCommonApi" }
 keypleInteropJsonapiClientKmpLib = { module = "org.eclipse.keyple:keyple-interop-jsonapi-client-kmp-lib", version.ref = "keypleInteropJsonapiClientKmpLib" }
 keypleInteropLocalreaderNfcmobileKmpLib = { module = "org.eclipse.keyple:keyple-interop-localreader-nfcmobile-kmp-lib", version.ref = "keypleInteropLocalreaderNfcmobileKmpLib" }
+keyplePluginAndroidNfcLib = { module = "org.eclipse.keyple:keyple-plugin-android-nfc-java-lib", version.ref = "keyplePluginAndroidNfcLib" }
+keyplePluginCnaCoppernicCone2Lib = { module = "org.calypsonet.keyple:keyple-plugin-cna-coppernic-cone2-java-lib", version.ref = "keyplePluginCnaCoppernicCone2Lib" }
+keyplePluginCnaFamocoSeCommunicationLib = { module = "org.calypsonet.keyple:keyple-plugin-cna-famoco-se-communication-java-lib", version.ref = "keyplePluginCnaFamocoSeCommunicationLib" }
+keyplePluginStoragecardApi = { module = "org.eclipse.keyple:keyple-plugin-storagecard-java-api", version.ref = "keyplePluginStoragecardApi" }
+keypleServiceLib = { module = "org.eclipse.keyple:keyple-service-java-lib", version.ref = "keypleServiceLib" }
 keypleUtilJavaLib = { module = "org.eclipse.keyple:keyple-util-java-lib", version.ref = "keypleUtilJavaLib" }
+keypopCalypsoCardApi = { module = "org.eclipse.keypop:keypop-calypso-card-java-api", version.ref = "keypopCalypsoCardApi" }
+keypopCalypsoCryptoLegacysamApi = { module = "org.eclipse.keypop:keypop-calypso-crypto-legacysam-java-api", version.ref = "keypopCalypsoCryptoLegacysamApi" }
+keypopReaderApi = { module = "org.eclipse.keypop:keypop-reader-java-api", version.ref = "keypopReaderApi" }
+keypopStoragecardApi = { module = "org.eclipse.keypop:keypop-storagecard-java-api", version.ref = "keypopStoragecardApi" }
 koinAndroid = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koinAndroidxCompose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 koinCompose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koinCore = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+kotlinStdlibJdk7 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk7", version.ref = "kotlinStdlibJdk7" }
 kotlinTest = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kotlinxCoroutinesAndroid = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+kotlinxCoroutinesCore = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinxCoroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
 kotlinxSerializationCore = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerializationCore" }
 ktorClientAuth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
@@ -45,7 +100,12 @@ ktorClientDarwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor"
 ktorClientLogging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 ktorClientOkhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktorSerializationKotlinxJson = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
+material = { module = "com.google.android.material:material", version.ref = "material" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
+slf4jAndroid = { module = "uk.uuid.slf4j:slf4j-android", version.ref = "slf4jAndroid" }
+slf4jApi = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

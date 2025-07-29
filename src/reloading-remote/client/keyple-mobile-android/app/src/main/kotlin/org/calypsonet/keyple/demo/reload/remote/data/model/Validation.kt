@@ -14,7 +14,7 @@ package org.calypsonet.keyple.demo.reload.remote.data.model
 
 import android.os.Parcelable
 import java.util.Date
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Validation(val name: String, val location: String, val date: Date) : Parcelable

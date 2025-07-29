@@ -2,8 +2,8 @@
 //  GRADLE CONFIGURATION
 ///////////////////////////////////////////////////////////////////////////////
 plugins {
-  kotlin("jvm") version "1.7.0"
-  id("com.diffplug.spotless") version "7.0.4"
+  alias(libs.plugins.kotlinJvm)
+  alias(libs.plugins.spotless)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -11,11 +11,11 @@ plugins {
 ///////////////////////////////////////////////////////////////////////////////
 
 dependencies {
-  implementation("com.github.devnied:bit-lib4j:1.4.5") { exclude(group = "org.slf4j") }
-  implementation("org.eclipse.keyple:keyple-util-java-lib:2.4.0")
-  testImplementation(kotlin("test"))
-  testImplementation("org.assertj:assertj-core:3.15.0")
-  testImplementation("com.github.devnied:bit-lib4j:1.4.5")
+  implementation(libs.bitLib4j) { exclude(group = "org.slf4j") }
+  implementation(libs.keypleUtilJavaLib)
+  testImplementation(libs.kotlinTest)
+  testImplementation(libs.assertjCore)
+  testImplementation(libs.bitLib4j)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -29,13 +29,15 @@ if (project.hasProperty("releaseTag")) {
   println("Development mode: version is ${project.version}")
 }
 
+val jvmToolchainVersion: String by project
 val javaSourceLevel: String by project
 val javaTargetLevel: String by project
+
+kotlin { jvmToolchain(jvmToolchainVersion.toInt()) }
 
 java {
   sourceCompatibility = JavaVersion.toVersion(javaSourceLevel)
   targetCompatibility = JavaVersion.toVersion(javaTargetLevel)
-  println("Compiling Java $sourceCompatibility to Java $targetCompatibility.")
 }
 
 tasks {
