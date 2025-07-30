@@ -6,6 +6,14 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 // GRADLE CONFIGURATION
 ///////////////////////////////////////////////////////////////////////////////
 
+if (project.hasProperty("releaseTag")) {
+  project.version = project.property("releaseTag") as String
+  println("Release mode: version set to ${project.version}")
+} else {
+  project.version = libs.versions.project.get()
+  println("Development mode: version is ${project.version}")
+}
+
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
   alias(libs.plugins.androidApplication)
@@ -67,7 +75,9 @@ kotlin {
       implementation(libs.ktorSerializationKotlinxJson)
       implementation(libs.napier)
     }
-    iosMain.dependencies { implementation(libs.ktorClientDarwin) }
+    if (System.getProperty("os.name").lowercase().contains("mac")) {
+      iosMain.dependencies { implementation(libs.ktorClientDarwin) }
+    }
     androidMain.dependencies {
       implementation(libs.androidxActivityCompose)
       implementation(libs.koinAndroid)
@@ -85,14 +95,6 @@ kotlin {
 ///////////////////////////////////////////////////////////////////////////////
 // STANDARD CONFIGURATION FOR KOTLIN MULTIPLATFORM APP-TYPE PROJECTS
 ///////////////////////////////////////////////////////////////////////////////
-
-if (project.hasProperty("releaseTag")) {
-  project.version = project.property("releaseTag") as String
-  println("Release mode: version set to ${project.version}")
-} else {
-  project.version = libs.versions.project.get()
-  println("Development mode: version is ${project.version}")
-}
 
 android {
   namespace = project.findProperty("androidAppNamespace") as String
@@ -116,7 +118,6 @@ android {
   }
   sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
   sourceSets["main"].res.srcDirs("src/androidMain/res")
-  sourceSets["main"].resources.srcDirs("src/commonMain/resources")
   packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
   applicationVariants.all {
     outputs.all {

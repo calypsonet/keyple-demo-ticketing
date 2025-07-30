@@ -12,9 +12,6 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.control.di.scope
 
-import java.lang.annotation.Documented
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
 import javax.inject.Scope
 
 /**
@@ -22,4 +19,4 @@ import javax.inject.Scope
  * scoped component @AppScoped, we create a custom scope to be used by all fragment components.
  * Additionally, a component with a specific scope cannot have a sub component with the same scope.
  */
-@Documented @Scope @Retention(RetentionPolicy.RUNTIME) annotation class ActivityScoped
+@MustBeDocumented @Scope @Retention(AnnotationRetention.RUNTIME) annotation class ActivityScoped

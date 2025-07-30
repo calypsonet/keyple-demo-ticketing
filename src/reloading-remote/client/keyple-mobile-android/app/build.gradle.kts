@@ -2,6 +2,14 @@
 // GRADLE CONFIGURATION
 ///////////////////////////////////////////////////////////////////////////////
 
+if (project.hasProperty("releaseTag")) {
+  project.version = project.property("releaseTag") as String
+  println("Release mode: version set to ${project.version}")
+} else {
+  project.version = libs.versions.project.get()
+  println("Development mode: version is ${project.version}")
+}
+
 plugins {
   alias(libs.plugins.androidApplication)
   alias(libs.plugins.kotlinAndroid)
@@ -100,14 +108,6 @@ dependencies {
 ///////////////////////////////////////////////////////////////////////////////
 // STANDARD CONFIGURATION FOR ANDROID KOTLIN-BASED APP-TYPE PROJECTS
 ///////////////////////////////////////////////////////////////////////////////
-
-if (project.hasProperty("releaseTag")) {
-  project.version = project.property("releaseTag") as String
-  println("Release mode: version set to ${project.version}")
-} else {
-  project.version = libs.versions.project.get()
-  println("Development mode: version is ${project.version}")
-}
 
 val javaSourceLevel: String by project
 val javaTargetLevel: String by project
