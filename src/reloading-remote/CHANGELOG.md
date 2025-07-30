@@ -1,4 +1,9 @@
 # Changelog
+
+> ⚠️ Note: This changelog reflects changes made prior to the repository merge.
+> It is no longer maintained and has been preserved for historical reference only.
+> Future changes are tracked in the unified repository's [CHANGELOG.md](../../CHANGELOG.md) file.
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
