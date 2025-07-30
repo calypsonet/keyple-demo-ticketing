@@ -41,7 +41,7 @@ jobs:
 
       - name: Update permissions for ${{ inputs.component-name }}
         working-directory: .
-        run: chmod +x ${{ inputs.working-directory }}/gradlew ./.github/scripts/*.sh
+        run: chmod +x ${{ inputs.working-directory }}/gradlew
 
       - name: Prepare libraries for ${{ inputs.component-name }}
         if: ${{ inputs.prepare-script-path != '' }}

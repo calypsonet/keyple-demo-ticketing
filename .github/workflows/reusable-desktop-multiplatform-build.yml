@@ -39,7 +39,7 @@ jobs:
 
       - name: Update permissions for ${{ inputs.component-name }} (${{ inputs.platform-name }})
         working-directory: .
-        run: chmod +x ${{ inputs.working-directory }}/gradlew ./.github/scripts/*.sh
+        run: chmod +x ${{ inputs.working-directory }}/gradlew
 
       - name: Build ${{ inputs.component-name }} artifacts for ${{ inputs.platform-name }}
         env:
