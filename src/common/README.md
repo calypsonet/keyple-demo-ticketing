@@ -1,9 +1,9 @@
 # Keyple Demo Common Library
 
-[![Maven Central](https://img.shields.io/maven-central/v/org.calypsonet/keyple-demo-common-lib.svg)](https://search.maven.org/artifact/org.calypsonet/keyple-demo-common-lib)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../LICENSE)
 
-The shared foundation for all Keyple Demo applications, providing standardized data structures, constants, and utilities for building interoperable ticketing applications.
+The shared foundation for all Keyple Demo applications, providing standardized data structures, constants, and utilities
+for building interoperable ticketing applications.
 
 ## Overview
 
@@ -16,25 +16,13 @@ This library defines the common elements used across the Keyple Demo ecosystem:
 
 ## Used By
 
-- [Keyple Reload Demo](https://github.com/calypsonet/keyple-demo-ticketing/tree/main/reloading-remote)
-- [Keyple Validation Demo](https://github.com/calypsonet/keyple-demo-ticketing/tree/main/validation)
-- [Keyple Control Demo](https://github.com/calypsonet/keyple-demo-ticketing/tree/main/control)
+- [Keyple Reload Demo](https://github.com/calypsonet/keyple-demo-ticketing/tree/main/src/reloading-remote)
+- [Keyple Validation Demo](https://github.com/calypsonet/keyple-demo-ticketing/tree/main/src/validation)
+- [Keyple Control Demo](https://github.com/calypsonet/keyple-demo-ticketing/tree/main/src/control)
 
 ## Installation
 
-### Maven
-```xml
-<dependency>
-    <groupId>org.calypsonet</groupId>
-    <artifactId>keyple-demo-common-lib</artifactId>
-    <version>X.Y.Z</version>
-</dependency>
-```
-
-### Gradle
-```kotlin
-implementation("org.calypsonet:keyple-demo-common-lib:X.Y.Z")
-```
+This library is automatically referenced by the various demos.
 
 ## Data Structures
 
@@ -165,6 +153,7 @@ Loads new transportation titles or extends existing contracts:
 ## Usage Examples
 
 ### Environment Structure Creation
+
 ```java
 Environment env = new Environment();
 env.setEnvVersionNumber(VersionNumber.CURRENT_VERSION);
@@ -174,6 +163,7 @@ env.setEnvEndDate(DateUtils.toDateCompact(LocalDate.now().plusYears(6)));
 ```
 
 ### Contract Validation
+
 ```java
 Contract contract = parseContractFromCard(cardData);
 if (contract.getContractVersionNumber() != VersionNumber.CURRENT_VERSION) {
@@ -186,6 +176,7 @@ if (DateUtils.fromDateCompact(contract.getContractValidityEndDate()).isBefore(Lo
 ```
 
 ### Event Creation
+
 ```java
 Event event = new Event();
 event.setEventVersionNumber(VersionNumber.CURRENT_VERSION);
@@ -198,26 +189,29 @@ event.setEventContractUsed(selectedContractIndex);
 ## Utility Classes
 
 ### DateUtils
+
 - `toDateCompact(LocalDate)` - Convert to compact date format
 - `fromDateCompact(int)` - Convert from compact date format
 - Date arithmetic and validation methods
 
 ### TimeUtils
+
 - `toTimeCompact(LocalTime)` - Convert to compact time format
 - `fromTimeCompact(int)` - Convert from compact time format
 
 ### IntercodeParsers
+
 - Binary data packing and unpacking
 - Structure serialization utilities
 - Error handling and validation
 
 ## Version Compatibility
 
-| Library Version | Demo Applications | Keyple SDK | Notes                    |
-|:----------------|:------------------|:-----------|:-------------------------|
-| 1.0.x           | 1.0.x             | 2.x        | Initial release          |
-| 1.1.x           | 1.1.x             | 2.x        | Enhanced Storage Card    |
-| 2.0.x           | 2.0.x             | 3.x        | Breaking changes         |
+| Library Version | Demo Applications | Keyple Middleware | Notes                    |
+|:----------------|:------------------|:------------------|:-------------------------|
+| 1.0.x           | 1.0.x             | 2.x               | Initial release          |
+| 1.1.x           | 1.1.x             | 2.x               | Enhanced Storage Card    |
+| 2.0.x           | 2.0.x             | 3.x               | Breaking changes         |
 
 ## Contributing
 
@@ -229,4 +223,4 @@ When contributing to this library, ensure:
 
 ## License
 
-This library is part of the Keyple Demo project and is licensed under the MIT License.
+This library is part of the Keyple Demo project and is licensed under the BSD 3-Clause License.

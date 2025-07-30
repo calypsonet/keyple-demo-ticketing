@@ -1,10 +1,10 @@
 # Keyple Demo Ticketing Ecosystem
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](LICENSE)
 [![Java](https://img.shields.io/badge/java-8%2B-orange.svg)](https://openjdk.java.net/)
 [![Android](https://img.shields.io/badge/android-7.0%2B-green.svg)](https://developer.android.com/)
 
-A comprehensive open source ticketing ecosystem demonstrating the [Eclipse Keyple SDK](https://keyple.org) in real-world use cases. This project is provided by the [Calypso Networks Association](https://calypsonet.org) and serves as a foundation for building contactless card and NFC smartphone-based ticketing systems.
+A comprehensive open source ticketing ecosystem demonstrating the [Eclipse Keyple middleware](https://keyple.org) in real-world use cases. This project is provided by the [Calypso Networks Association](https://calypsonet.org) and serves as a foundation for building contactless card and NFC smartphone-based ticketing systems.
 
 ## Overview
 
@@ -77,7 +77,7 @@ Simple storage cards featuring:
 wget https://github.com/calypsonet/keyple-demo-ticketing/releases/latest
 
 # Start server (requires PC/SC reader with SAM)
-java -jar keyple-demo-ticketing-reloading-server-X.Y.Z-full.jar
+java -jar kdt-reloading-server-X.Y.Z-full.jar
 
 # Access dashboard at http://localhost:8080
 ```
@@ -173,7 +173,7 @@ Test cards available in the [CNA Test Kit](https://calypsonet.org/technical-supp
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICENSE) file for details.
 
 ## Support
 
@@ -184,6 +184,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Related Projects
 
-- [Eclipse Keyple SDK](https://keyple.org) - Core SDK and plugins
+- [Eclipse Keyple middleware](https://keyple.org) - Core SDK and plugins
 - [Calypso Card Specification](https://calypsonet.org/technical-specifications/)
 - [Keyple Distributed JSON API](https://keyple.org/learn/user-guide/distributed-json-api-1-0/)

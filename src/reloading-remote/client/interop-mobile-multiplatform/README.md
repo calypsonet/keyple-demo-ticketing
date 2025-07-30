@@ -2,9 +2,10 @@
 
 [![Kotlin](https://img.shields.io/badge/kotlin-1.9+-blue.svg)](https://kotlinlang.org/)
 [![KMP](https://img.shields.io/badge/multiplatform-android%20%7C%20ios%20%7C%20desktop-green.svg)](https://www.jetbrains.com/kotlin-multiplatform/)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../../../LICENSE)
 
-A Kotlin Multiplatform application demonstrating distributed remote client communications across Android, iOS, and desktop platforms using Keyple Distributed Client KMP libraries for seamless cross-platform card operations.
+A Kotlin Multiplatform application demonstrating distributed remote client communications across Android, iOS, and
+desktop platforms using Keyple Distributed Client KMP libraries for seamless cross-platform card operations.
 
 [⬅️ Back to Main Project](../../../../README.md)
 
@@ -22,7 +23,7 @@ This innovative client showcases the power of Kotlin Multiplatform by providing 
 ### Development Environment
 - **Android Studio** with Kotlin Multiplatform plugin
 - **Xcode** (for iOS development on macOS)
-- **JDK 17+** for desktop targets
+- **JDK 11+** for desktop targets
 - **Kotlin 1.9+** with multiplatform support
 
 ### Platform-Specific Requirements
@@ -46,36 +47,22 @@ This innovative client showcases the power of Kotlin Multiplatform by providing 
   - **Linux**: `pcscd` daemon and `libpcsclite-dev`
 
 ### Server Requirements
-- Running [Keyple Demo Server](../server/README.md) with SAM integration
+- Running [Keyple Demo Server](../../server/README.md) with SAM integration
 - Network connectivity from all target platforms
 
 ## Installation
-
-### Development Dependencies
-
-First, ensure the Keyple KMP dependencies are available in your local Maven repository:
-
-```bash
-# Clone and publish keyple-interop dependencies
-git clone https://github.com/eclipse-keyple/keyple-interop-jsonapi-client-kmp-lib
-cd keyple-interop-jsonapi-client-kmp-lib
-./gradlew publishToMavenLocal
-
-git clone https://github.com/eclipse-keyple/keyple-interop-localreader-nfcmobile-kmp-lib  
-cd keyple-interop-localreader-nfcmobile-kmp-lib
-./gradlew publishToMavenLocal
-```
 
 ### Building the Project
 
 ```bash
 git clone https://github.com/calypsonet/keyple-demo-ticketing.git
-cd keyple-demo-ticketing/reloading-remote/client/interop-mobile-multiplatform
+cd keyple-demo-ticketing/src/reloading-remote/client/interop-mobile-multiplatform
 ```
 
 #### Android App
 ```bash
 ./gradlew :composeApp:assembleDebug
+
 # Install on connected device
 ./gradlew :composeApp:installDebug
 ```
@@ -225,7 +212,7 @@ The application uses Compose Multiplatform for consistent UI across all platform
 ### Multiplatform Structure
 
 ```
-composeApp/
+composeApp/src/
 ├── commonMain/                    # Shared business logic
 │   ├── kotlin/
 │   │   ├── domain/               # Domain models and interfaces
@@ -365,9 +352,6 @@ val desktopModule = module {
 # Debug build
 ./gradlew :composeApp:assembleDebug
 
-# Release build with signing
-./gradlew :composeApp:assembleRelease
-
 # Run on connected device
 ./gradlew :composeApp:installDebug
 ```
@@ -401,40 +385,6 @@ val desktopModule = module {
 
 # Package as executable
 ./gradlew :composeApp:packageDistributionForCurrentOS
-```
-
-### Testing Strategy
-
-#### Unit Tests (`commonTest`)
-```kotlin
-class CardValidatorTest {
-    @Test
-    fun testValidCardData() {
-        val validator = CardValidator()
-        val cardData = createTestCardData()
-        
-        assertTrue(validator.isValid(cardData))
-    }
-}
-```
-
-#### Platform Tests
-```kotlin
-// androidUnitTest
-class AndroidNfcTest {
-    @Test
-    fun testNfcReaderInitialization() {
-        // Android-specific NFC tests
-    }
-}
-
-// iosTest  
-class IosNfcTest {
-    @Test
-    fun testCoreNfcSession() {
-        // iOS-specific Core NFC tests
-    }
-}
 ```
 
 ### Adding New Platforms
@@ -564,10 +514,11 @@ When contributing to this KMP client:
 
 - [Kotlin Multiplatform Documentation](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)
 - [Compose Multiplatform](https://www.jetbrains.com/lp/compose-multiplatform/)
-- [Keyple Distributed Client KMP Libraries](https://github.com/eclipse-keyple/keyple-interop-jsonapi-client-kmp-lib)
+- [Keyple Interop JSON API Client KMP Library](https://github.com/eclipse-keyple/keyple-interop-jsonapi-client-kmp-lib)
+- [Keyple Interop Local Reader NFC Mobile KMP Library](https://github.com/eclipse-keyple/keyple-interop-localreader-nfcmobile-kmp-lib)
 - [Main Project Overview](../../../../README.md)
 - [Server Documentation](../../server/README.md)
 
 ## License
 
-This Kotlin Multiplatform client is part of the Keyple Demo project and is licensed under the MIT License.
+This Kotlin Multiplatform client is part of the Keyple Demo project and is licensed under the BSD 3-Clause License.

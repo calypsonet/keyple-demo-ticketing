@@ -2,11 +2,12 @@
 
 [![Java](https://img.shields.io/badge/java-8%2B-orange.svg)](https://openjdk.java.net/)
 [![Quarkus](https://img.shields.io/badge/quarkus-2.x-blue.svg)](https://quarkus.io/)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../../LICENSE)
 
-The server component of the Keyple Reload Demo, providing distributed ticketing services with web-based monitoring and SAM integration for secure Calypso card operations.
+The server component of the Keyple Reload Demo, providing distributed ticketing services with web-based monitoring and
+SAM integration for secure Calypso card operations.
 
-[⬅️ Back to Main Project](../README.md)
+[⬅️ Back to Main Project](../../../README.md)
 
 ## Overview
 
@@ -58,12 +59,12 @@ This Java server implements the business logic for the Keyple Demo ecosystem, ma
 
 1. **Download** the latest release:
 ```bash
-wget https://github.com/calypsonet/keyple-demo-ticketing/releases/latest/keyple-demo-ticketing-reloading-server-X.Y.Z-full.jar
+wget https://github.com/calypsonet/keyple-demo-ticketing/releases/latest/kdt-reloading-server-X.Y.Z-full.jar
 ```
 
 2. **Start** the server:
 ```bash
-java -jar keyple-demo-ticketing-reloading-server-X.Y.Z-full.jar
+java -jar kdt-reloading-server-X.Y.Z-full.jar
 ```
 
 3. **Access** the web dashboard at `http://localhost:8080`
@@ -74,17 +75,17 @@ If your PC/SC reader name doesn't match the default filter, specify a custom pat
 
 **Windows Command Prompt:**
 ```cmd
-java "-Dsam.pcsc.reader.filter=Identive CLOUD 2700 R Smart Card Reader.*" -jar keyple-demo-ticketing-reloading-server-X.Y.Z-full.jar
+java "-Dsam.pcsc.reader.filter=Identive CLOUD 2700 R Smart Card Reader.*" -jar kdt-reloading-server-X.Y.Z-full.jar
 ```
 
 **Windows PowerShell:**
 ```powershell
-java '-Dsam.pcsc.reader.filter=Identive CLOUD 2700 R Smart Card Reader.*' -jar .\keyple-demo-ticketing-reloading-server-X.Y.Z-full.jar
+java '-Dsam.pcsc.reader.filter=Identive CLOUD 2700 R Smart Card Reader.*' -jar .\kdt-reloading-server-X.Y.Z-full.jar
 ```
 
 **Linux/macOS:**
 ```bash
-java -Dsam.pcsc.reader.filter=".*ACS.*" -jar keyple-demo-ticketing-reloading-server-X.Y.Z-full.jar
+java -Dsam.pcsc.reader.filter=".*ACS.*" -jar kdt-reloading-server-X.Y.Z-full.jar
 ```
 
 ## Configuration
@@ -141,7 +142,7 @@ quarkus.http.ssl.certificate.key-store-password=your-password
 1. **Clone** the repository:
 ```bash
 git clone https://github.com/calypsonet/keyple-demo-ticketing.git
-cd keyple-demo-ticketing/reloading-remote/server
+cd keyple-demo-ticketing/src/reloading-remote/server
 ```
 
 2. **Install** dashboard dependencies:
@@ -295,7 +296,7 @@ curl http://localhost:8080/q/health/live
 
 ```dockerfile
 FROM openjdk:11-jre-slim
-COPY keyple-demo-ticketing-reloading-server-X.Y.Z-full.jar /app/server.jar
+COPY kdt-reloading-server-X.Y.Z-full.jar /app/server.jar
 EXPOSE 8080
 CMD ["java", "-jar", "/app/server.jar"]
 ```
@@ -348,4 +349,4 @@ quarkus.datasource.jdbc.min-size=5
 
 ## License
 
-This server application is part of the Keyple Demo project and is licensed under the MIT License.
+This server application is part of the Keyple Demo project and is licensed under the BSD 3-Clause License.

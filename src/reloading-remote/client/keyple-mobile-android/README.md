@@ -1,10 +1,11 @@
 # Keyple Reload Demo - Android Client
 
 [![Android](https://img.shields.io/badge/android-7.0%2B-green.svg)](https://developer.android.com/)
-[![Release](https://img.shields.io/github/v/release/calypsonet/keyple-demo-ticketing-reloading-remote)](https://github.com/calypsonet/keyple-demo-ticketing-reloading-remote/releases)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/calypsonet/keyple-demo-ticketing)](https://github.com/calypsonet/keyple-demo-ticketing/releases)
+[![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../../../LICENSE)
 
-Native Android client for the Keyple Reload Demo, enabling secure contract loading onto Calypso cards through a distributed architecture with remote server management.
+Native Android client for the Keyple Reload Demo, enabling secure contract loading onto Calypso cards through a
+distributed architecture with remote server management.
 
 [⬅️ Back to Main Project](../../../../README.md)
 
@@ -31,14 +32,14 @@ This Android application demonstrates distributed ticketing where all card opera
 
 ### Download APK
 1. Visit [Releases page](https://github.com/calypsonet/keyple-demo-ticketing/releases)
-2. Download latest `keyple-reload-android-X.Y.Z.apk`
+2. Download latest `kdt-reloading-android-app-X.Y.Z-debug.apk`
 3. Enable "Install from unknown sources" in Android settings
 4. Install the APK file
 
 ### Build from Source
 ```bash
 git clone https://github.com/calypsonet/keyple-demo-ticketing.git
-cd keyple-demo-ticketing/reloading-remote/client/keyple-mobile-android
+cd keyple-demo-ticketing/src/reloading-remote/client/keyple-mobile-android
 ./gradlew assembleDebug
 ```
 
@@ -147,7 +148,7 @@ Main Screen → Card Reader → Card Summary → Select Tickets → Checkout →
 - Provides consistent API for different reader types
 
 **CardReaderObserver**
-- Implements `CardReaderObserverSpi` from Keyple SDK
+- Implements `CardReaderObserverSpi` from Keyple middleware
 - Responds to card insertion/removal events
 - Triggers appropriate business logic for card processing
 
@@ -185,12 +186,6 @@ The application supports multiple reader plugins:
 
 # Build debug version
 ./gradlew assembleDebug
-
-# Build release version  
-./gradlew assembleRelease
-
-# Run tests
-./gradlew test
 ```
 
 ### Development Configuration
@@ -275,10 +270,10 @@ When contributing to this Android client:
 ## Related Documentation
 
 - [Main Project Overview](../../../../README.md)
-- [Common Library](../../../../common/README.md) - Data structures and types
+- [Common Library](../../../common/README.md) - Data structures and types
 - [Server Documentation](../../server/README.md) - Server setup and API
-- [Validation App](../../../../validation/README.md) - Next step in workflow
+- [Validation App](../../../validation/README.md) - Next step in workflow
 
 ## License
 
-This Android application is part of the Keyple Demo project and is licensed under the MIT License.
+This Android application is part of the Keyple Demo project and is licensed under the BSD 3-Clause License.

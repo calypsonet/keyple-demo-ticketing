@@ -15,29 +15,30 @@ and/or Multi-trip ticket) on a Calypso contactless card using the
 plugin.
 
 Alternatively, there's also a client (written in C#) that shows how an application can interact with the server without 
-using the Keyple SDK.
+using the Keyple middleware.
 
 ## Keyple Demos
 
 This demo is part of a set of three demos:
-* [Keyple Reload Demo](https://github.com/calypsonet/keyple-demo-ticketing-reloading-remote)
-* [Keyple Validation Demo](https://github.com/calypsonet/keyple-demo-ticketing-validation-app)
-* [Keyple Control Demo](https://github.com/calypsonet/keyple-demo-ticketing-control-app)
+* [Keyple Reload Demo](../reloading-remote)
+* [Keyple Validation Demo](../validation)
+* [Keyple Control Demo](../control)
 
 These demos are all based on a common library that defines elements such as constants and data structures implemented
 for the logic of the ticketing application: 
-[Keyple Demo Common Library](https://github.com/calypsonet/keyple-demo-ticketing-common-lib).
+[Keyple Demo Common Library](../common).
 
-Please refer to the [README](https://github.com/calypsonet/keyple-demo-ticketing-common-lib/blob/main/README.md)
+Please refer to the [README](../common/README.md)
 file of this library to discover these data structures.
 
 ## Code organization
 
-This repository is organized in 3 source code folders:
+This repository is organized in four source code folders:
 
 - **server**: source code of the server part of the demo. The sever should run on a computer with a JVM and have a card reader with a SAM connected.
-- **client/android**: source code of the client part of the demo as an Android project.
-- **client/dotnet**: source code of the client part of the demo not using the Keyple SDK as Microsoft Visual Studio project.
+- **client/interop-mobile-multiplatform**: source code of interop client part of the demo as a Kotlin Multiplatform project.
+- **client/keyple-mobile-android**: source code of the client part of the demo as an Android project.
+- **client/pc-dotnet**: source code of the client part of the demo not using the Keyple middleware as Microsoft Visual Studio project.
 
 ## Project's details
 

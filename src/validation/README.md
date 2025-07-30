@@ -1,10 +1,12 @@
 # Keyple Validation Demo
 
 [![Android](https://img.shields.io/badge/android-7.0%2B-green.svg)](https://developer.android.com/)
-[![Release](https://img.shields.io/github/v/release/calypsonet/keyple-demo-ticketing-validation-app)](https://github.com/calypsonet/keyple-demo-ticketing-validation-app/releases)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/calypsonet/keyple-demo-ticketing)](https://github.com/calypsonet/keyple-demo-ticketing/releases)
+[![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../LICENSE)
 
-Android validation terminal application for checking transportation access authorization and creating validation events. This application represents the entry point to controlled transportation networks where passengers present their cards for validation.
+Android validation terminal application for checking transportation access authorization and creating validation events.
+This application represents the entry point to controlled transportation networks where passengers present their cards
+for validation.
 
 [⬅️ Back to Main Project](../../README.md)
 
@@ -25,27 +27,27 @@ This Android application simulates validation terminals found at transportation 
 - Compatible terminal hardware (see [tested terminals](#tested-terminals))
 
 ### Software Requirements
-- Cards personalized using the [Reload Demo](../client/)
+- Cards personalized using the [Reload Demo](../reloading-remote/)
 - Proper SAM configuration matching card security keys
 - Network connectivity (optional, for centralized logging)
 
 ### Card Requirements
 - Calypso cards with valid contracts loaded
 - Storage cards with compatible contract structures
-- Supported AIDs (see [Common Library](../common-lib/README.md#supported-card-applications))
+- Supported AIDs (see [Common Library](../common/README.md#supported-card-applications))
 
 ## Installation
 
 ### Download APK
 1. Visit [Releases page](https://github.com/calypsonet/keyple-demo-ticketing/releases)
-2. Download latest `keyple-validation-android-X.Y.Z.apk`
+2. Download latest `kdt-validation-app-X.Y.Z-debug.apk`
 3. Enable "Install from unknown sources" in Android settings
 4. Install the APK file
 
 ### Build from Source
 ```bash
 git clone https://github.com/calypsonet/keyple-demo-ticketing.git
-cd keyple-demo-ticketing/validation
+cd keyple-demo-ticketing/src/validation
 ./gradlew assembleDebug
 ```
 
@@ -225,7 +227,7 @@ Device Selection → Settings → Reader Activity → Validation Result
   - Status monitoring and reporting
 
 **CardReaderObserver**
-- **Purpose**: Handles card reader events from Keyple SDK
+- **Purpose**: Handles card reader events from Keyple middleware
 - **Events Processed**:
   - `CARD_INSERTED`: Physical card detection
   - `CARD_MATCHED`: Successful AID selection
@@ -252,12 +254,12 @@ Device Selection → Settings → Reader Activity → Validation Result
 
 The validation procedure processes contracts in priority order:
 
-| Priority | Contract Type | Validation Logic |
-|:---------|:--------------|:-----------------|
-| 1        | Season Pass   | Check validity date only |
-| 2        | Multi-trip    | Check counter > 0, decrement |
+| Priority | Contract Type | Validation Logic                   |
+|:---------|:--------------|:-----------------------------------|
+| 1        | Season Pass   | Check validity date only           |
+| 2        | Multi-trip    | Check counter > 0, decrement       |
 | 3        | Stored Value  | Check balance >= amount, decrement |
-| 31       | Expired       | Skip (automatic marking) |
+| 31       | Expired       | Skip (automatic marking)           |
 
 #### Best Contract Search Algorithm
 
@@ -330,7 +332,7 @@ val cardSelectionManager = CardSelectionManagerBuilder()
 ### Project Structure
 
 ```
-validation-app/
+validation/app/
 ├── src/main/
 │   ├── java/org/calypsonet/keyple/demo/validation/
 │   │   ├── activities/          # Android activities
@@ -346,25 +348,6 @@ validation-app/
 └── proguard-rules.pro         # Code obfuscation rules
 ```
 
-### Key Dependencies
-
-```gradle
-dependencies {
-    // Keyple core libraries
-    implementation 'org.eclipse.keyple:keyple-java-service:+'
-    implementation 'org.eclipse.keyple:keyple-java-card-calypso:+'
-    
-    // Platform plugins
-    implementation 'org.eclipse.keyple:keyple-android-plugin-nfc:+'
-    implementation 'org.calypsonet:keyple-demo-common-lib:+'
-    
-    // Android libraries
-    implementation 'androidx.appcompat:appcompat:+'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel:+'
-    implementation 'com.google.android.material:material:+'
-}
-```
-
 ### Building and Testing
 
 ```bash
@@ -373,15 +356,6 @@ dependencies {
 
 # Debug build
 ./gradlew assembleDebug
-
-# Release build (requires signing configuration)
-./gradlew assembleRelease
-
-# Run unit tests
-./gradlew test
-
-# Run instrumentation tests (requires connected device)
-./gradlew connectedAndroidTest
 ```
 
 ### Custom Terminal Integration
@@ -443,11 +417,7 @@ KeyplePluginRegistry.registerPlugin(CustomTerminalPluginFactory())
 Enable comprehensive logging:
 
 1. **Settings** → **Enable Debug Mode**
-2. **View logs** via Android Studio logcat:
-```bash
-adb logcat -s "KeypleValidation"
-```
-
+2. **View logs** via Android Studio logcat
 3. **Key log categories**:
 - `CardReader`: Hardware communication
 - `TicketingService`: Business logic flow
@@ -475,9 +445,9 @@ adb logcat -s "KeypleValidation"
 By default, proprietary plugins are deactivated. To enable:
 
 1. **Request Access**: Contact [CNA](https://calypsonet.org/contact-us/) for desired plugin
-2. **Install Plugin**: Copy provided `.aar` file to `/app/libs/` directory
-3. **Remove Mock**: Delete corresponding `-mock.aar` file from `/app/libs/`
-4. **Build Project**: Execute `./gradlew build` to compile with new plugin
+2. **Install Plugin**: Copy provided `.aar` file to `/libs/` directory
+3. **Remove Mock**: Delete corresponding `-mock.aar` file from `/libs/`
+4. **Build Project**: Execute `./gradlew assembleDebug` to compile with new plugin
 5. **Deploy**: Install updated APK on target device
 
 ### Available Proprietary Plugins
@@ -526,4 +496,4 @@ When contributing to this validation application:
 
 ## License
 
-This validation application is part of the Keyple Demo project and is licensed under the MIT License.
+This validation application is part of the Keyple Demo project and is licensed under the BSD 3-Clause License.

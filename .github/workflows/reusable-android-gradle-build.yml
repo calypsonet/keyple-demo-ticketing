@@ -62,7 +62,7 @@ jobs:
         env:
           ORG_GRADLE_PROJECT_releaseTag: ${{ github.event.release.tag_name }}
         working-directory: ${{ inputs.working-directory }}
-        run: ./gradlew build
+        run: ./gradlew spotlessCheck testDebugUnitTest assembleDebug
 
       - name: Collect ${{ inputs.component-name }} artifacts
         if: ${{ github.event_name == 'release' }}

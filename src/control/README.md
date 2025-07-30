@@ -1,8 +1,8 @@
 # Keyple Control Demo
 
 [![Android](https://img.shields.io/badge/android-7.0%2B-green.svg)](https://developer.android.com/)
-[![Release](https://img.shields.io/github/v/release/calypsonet/keyple-demo-ticketing-control-app)](https://github.com/calypsonet/keyple-demo-ticketing-control-app/releases)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/calypsonet/keyple-demo-ticketing)](https://github.com/calypsonet/keyple-demo-ticketing/releases)
+[![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../LICENSE)
 
 Android control terminal application for post-validation inspection of transportation cards. This application represents the final verification step in the ticketing workflow, allowing inspectors to verify the validity of validation events and contract usage.
 
@@ -25,9 +25,9 @@ This Android application simulates inspection terminals used by transportation a
 - Compatible terminal hardware (see [tested terminals](#tested-terminals))
 
 ### Software Requirements
-- Cards with validation events from [Validation Demo](../validation-app/)
-- Contracts loaded using [Reload Demo](../client/)
-- Inspector training on control procedures and results interpretation
+- Cards with validation events from [Validation Demo](../validation/)
+- Contracts loaded using [Reload Demo](../reloading-remote/)
+- Inspector training on control procedures and result interpretation
 
 ### Card Requirements
 - Previously validated cards with event history
@@ -38,14 +38,14 @@ This Android application simulates inspection terminals used by transportation a
 
 ### Download APK
 1. Visit [Releases page](https://github.com/calypsonet/keyple-demo-ticketing/releases)
-2. Download latest `keyple-control-android-X.Y.Z.apk`
+2. Download latest `kdt-control-app-X.Y.Z-debug.apk`
 3. Enable "Install from unknown sources" in Android settings
 4. Install the APK file
 
 ### Build from Source
 ```bash
 git clone https://github.com/calypsonet/keyple-demo-ticketing.git
-cd keyple-demo-ticketing/control  
+cd keyple-demo-ticketing/src/control  
 ./gradlew assembleDebug
 ```
 
@@ -220,7 +220,7 @@ Device Selection → Settings → Home → Reader Activity → Control Results
   - Status monitoring for operational reliability
 
 **CardReaderObserver**
-- **Purpose**: Handles card reader events from Keyple SDK
+- **Purpose**: Handles card reader events from Keyple middleware
 - **Event Processing**:
   - `CARD_INSERTED`: Initiates control procedure
   - `CARD_MATCHED`: Confirms supported card type
@@ -277,14 +277,14 @@ Device Selection → Settings → Home → Reader Activity → Control Results
 
 #### Contract Status Classification
 
-| Status | Description | Control Action |
-|:-------|:------------|:---------------|
-| **Validated** | Used in recent valid validation | ✅ Accept |
-| **Valid Unused** | Available for use but not recently validated | ℹ️ Informational |
-| **Expired** | Past validity date | ❌ Cannot be used |
-| **Insufficient** | Multi-trip (0 trips) or Stored Value (low balance) | ❌ Requires reload |
-| **Unknown** | Unrecognized contract type | ⚠️ Manual review |
-| **Blank** | Empty contract slot | ℹ️ Available for loading |
+| Status           | Description                                        | Control Action           |
+|:-----------------|:---------------------------------------------------|:-------------------------|
+| **Validated**    | Used in recent valid validation                    | ✅ Accept                 |
+| **Valid Unused** | Available for use but not recently validated       | ℹ️ Informational         |
+| **Expired**      | Past validity date                                 | ❌ Cannot be used         |
+| **Insufficient** | Multi-trip (0 trips) or Stored Value (low balance) | ❌ Requires reload        |
+| **Unknown**      | Unrecognized contract type                         | ⚠️ Manual review         |
+| **Blank**        | Empty contract slot                                | ℹ️ Available for loading |
 
 ## Hardware Integration
 
@@ -352,7 +352,7 @@ logger.info("NFC-only mode - basic operations enabled")
 ### Project Architecture
 
 ```
-control-app/
+control/app/
 ├── src/main/
 │   ├── java/org/calypsonet/keyple/demo/control/
 │   │   ├── activities/          # Android UI activities
@@ -382,35 +382,6 @@ control-app/
 └── proguard-rules.pro         # Code obfuscation rules for release
 ```
 
-### Key Dependencies
-
-```gradle
-dependencies {
-    // Keyple core libraries
-    implementation 'org.eclipse.keyple:keyple-java-service:2.+'
-    implementation 'org.eclipse.keyple:keyple-java-card-calypso:2.+'
-    
-    // Common demo library
-    implementation 'org.calypsonet:keyple-demo-common-lib:+'
-    
-    // Platform-specific plugins
-    implementation 'org.eclipse.keyple:keyple-android-plugin-nfc:+'
-    implementation 'org.calypsonet:keyple-famoco:+' // Optional
-    implementation 'org.calypsonet:keyple-android-plugin-coppernic:+' // Optional
-    
-    // Android UI and architecture
-    implementation 'androidx.appcompat:appcompat:1.6.+'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.6.+'
-    implementation 'androidx.recyclerview:recyclerview:1.3.+'
-    implementation 'com.google.android.material:material:1.9.+'
-    
-    // Testing
-    testImplementation 'junit:junit:4.13.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.+'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.+'
-}
-```
-
 ### Building and Testing
 
 ```bash
@@ -419,19 +390,6 @@ dependencies {
 
 # Build debug version
 ./gradlew assembleDebug
-
-# Build release version (requires signing setup)
-./gradlew assembleRelease
-
-# Run unit tests
-./gradlew test
-
-# Run Android instrumentation tests
-./gradlew connectedAndroidTest
-
-# Generate APK for distribution
-./gradlew assembleRelease
-# Output: app/build/outputs/apk/release/
 ```
 
 ### Testing Strategy
@@ -629,9 +587,9 @@ By default, proprietary plugins are deactivated to maintain open-source compatib
 1. **Request Plugin**: Contact [CNA](https://calypsonet.org/contact-us/) for desired proprietary plugin
 2. **Obtain License**: Complete any required licensing agreements
 3. **Install Plugin**:
-  - Copy provided `.aar` file to `/app/libs/` directory
-  - Remove corresponding `-mock.aar` file from `/app/libs/`
-4. **Rebuild Application**: Execute `./gradlew build` command
+  - Copy provided `.aar` file to `/libs/` directory
+  - Remove corresponding `-mock.aar` file from `/libs/`
+4. **Rebuild Application**: Execute `./gradlew assembleDebug` command
 5. **Deploy Updated APK**: Install on target terminals
 
 **Available Proprietary Plugins**:
@@ -678,4 +636,4 @@ When contributing to this control application:
 
 ## License
 
-This control application is part of the Keyple Demo project and is licensed under the MIT License.
+This control application is part of the Keyple Demo project and is licensed under the BSD 3-Clause License.

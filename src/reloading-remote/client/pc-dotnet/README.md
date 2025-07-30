@@ -1,19 +1,24 @@
 # Keyple Reload Demo - .NET Desktop Client
 
 [![.NET](https://img.shields.io/badge/.NET-7.0-purple.svg)](https://dotnet.microsoft.com/)
-[![Build Status](https://github.com/jeanpierrefortune/demo-keyple-less/actions/workflows/dotnet.yml/badge.svg)](https://github.com/jeanpierrefortune/demo-keyple-less/actions/workflows/dotnet.yml)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/calypsonet/keyple-demo-ticketing)](https://github.com/calypsonet/keyple-demo-ticketing/releases)
+[![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../../../LICENSE)
 
-A .NET desktop client demonstrating how to integrate with the Keyple server ecosystem **without using the Keyple SDK**, implementing only the [Keyple Distributed JSON API](https://keyple.org/learn/user-guide/distributed-json-api-1-0/) for server communication.
+A .NET desktop client demonstrating how to integrate with the Keyple server ecosystem **without using the Keyple
+middleware**, implementing only
+the [Keyple Server JSON API](https://keyple.org/user-guides/non-keyple-client/server-json-api/) for server
+communication.
 
 [⬅️ Back to Main Project](../../../../README.md)
 
 ## Overview
 
-This C# application targets the .NET environment on Windows and serves as a reference implementation for developing applications that interact with Keyple-based servers using standard JSON APIs instead of the full Keyple SDK. It demonstrates the minimal integration approach while maintaining full functionality.
+This C# application targets the .NET environment on Windows and serves as a reference implementation for developing
+applications that interact with Keyple-based servers using standard JSON APIs instead of the full Keyple middleware. It
+demonstrates the minimal integration approach while maintaining full functionality.
 
 **Key Benefits**:
-- **Lightweight**: No Keyple SDK dependencies
+- **Lightweight**: No Keyple middleware dependencies
 - **Cross-platform potential**: Adaptable to any language/OS supporting JSON APIs
 - **Educational**: Clear demonstration of the underlying communication protocols
 - **Flexible**: Easy to integrate into existing .NET applications
@@ -37,14 +42,14 @@ This C# application targets the .NET environment on Windows and serves as a refe
 ## Installation
 
 ### Option 1: Pre-built Release
-1. Download latest `keyple-dotnet-client-X.Y.Z.zip` from [releases](https://github.com/calypsonet/keyple-demo-ticketing/releases)
+1. Download latest `kdt-reloading-pc-dotnet-app-X.Y.Z.zip` from [releases](https://github.com/calypsonet/keyple-demo-ticketing/releases)
 2. Extract to desired directory
 3. Run `App.exe`
 
 ### Option 2: Build from Source
 ```bash
 git clone https://github.com/calypsonet/keyple-demo-ticketing.git
-cd keyple-demo-ticketing/reloading-remote/client/pc-dotnet
+cd keyple-demo-ticketing/src/reloading-remote/client/pc-dotnet
 dotnet build --configuration Release
 dotnet run
 ```
@@ -276,7 +281,7 @@ catch (InvalidCardDataException ex)
 ### Project Structure
 
 ```
-keyple-dotnet-client/
+pc-dotnet/
 ├── App.csproj                          # Project file
 ├── appsettings.json                    # Configuration
 ├── Program.cs                          # Entry point
@@ -431,11 +436,11 @@ When contributing to this .NET client:
 
 ## Related Documentation
 
-- [Keyple Distributed JSON API](https://keyple.org/learn/user-guide/distributed-json-api-1-0/)
+- [Keyple Server JSON API](https://keyple.org/user-guides/non-keyple-client/server-json-api/)
 - [Main Project Overview](../../../../README.md)
 - [Server Documentation](../../server/README.md)
-- [Common Library](../../../../common/README.md)
+- [Common Library](../../../common/README.md)
 
 ## License
 
-This .NET client is part of the Keyple Demo project and is licensed under the MIT License.
+This .NET client is part of the Keyple Demo project and is licensed under the BSD 3-Clause License.
