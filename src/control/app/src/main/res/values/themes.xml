@@ -1,0 +1,22 @@
+<!--
+  ~ Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+  ~
+  ~ See the NOTICE file(s) distributed with this work for additional information
+  ~ regarding copyright ownership.
+  ~
+  ~ This program and the accompanying materials are made available under the terms of the
+  ~ BSD 3-Clause License which is available at https://opensource.org/licenses/BSD-3-Clause
+  ~
+  ~ SPDX-License-Identifier: BSD-3-Clause
+  -->
+
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.AppCompat.NoActionBar.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.KeypleControl.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.KeypleControl.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+</resources>

@@ -1,0 +1,72 @@
+name: Reusable Android Gradle Release
+
+on:
+  workflow_call:
+    inputs:
+      component-name:
+        description: 'Name of the component being built'
+        required: true
+        type: string
+      working-directory:
+        description: 'Working directory for the build'
+        required: true
+        type: string
+      apk-output-path:
+        description: 'Path to APK outputs relative to working directory'
+        required: false
+        type: string
+        default: 'app/build/outputs/apk/debug/*.apk'
+      prepare-script-path:
+        description: 'Path to library preparation script (relative to repo root). Leave empty to skip preparation.'
+        required: false
+        type: string
+        default: ''
+
+jobs:
+  release-android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Update permissions for ${{ inputs.component-name }}
+        working-directory: .
+        run: chmod +x ${{ inputs.working-directory }}/gradlew
+
+      - name: Prepare libraries for ${{ inputs.component-name }}
+        if: ${{ inputs.prepare-script-path != '' }}
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+          SCRIPT_PATH="../${{ inputs.prepare-script-path }}"
+          if [ -f "$SCRIPT_PATH" ]; then
+            echo "🔧 Executing library preparation script: ${{ inputs.prepare-script-path }}"
+            chmod +x "$SCRIPT_PATH"
+            bash "$SCRIPT_PATH" "${{ inputs.component-name }}" "$(pwd)"
+          else
+            echo "⚠️  Library preparation script not found: ${{ inputs.prepare-script-path }}"
+            echo "Proceeding with standard build..."
+          fi
+
+      - name: Build ${{ inputs.component-name }} artifacts
+        env:
+          ORG_GRADLE_PROJECT_releaseTag: ${{ github.event.release.tag_name }}
+        working-directory: ${{ inputs.working-directory }}
+        run: ./gradlew spotlessCheck testDebugUnitTest assembleDebug
+
+      - name: Collect ${{ inputs.component-name }} artifacts
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+          mkdir -p release-artifacts
+          cp ${{ inputs.apk-output-path }} release-artifacts/ || true
+
+      - name: Upload ${{ inputs.component-name }} artifacts to GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ inputs.working-directory }}/release-artifacts/*
+          token: ${{ secrets.GITHUB_TOKEN }}

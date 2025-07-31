@@ -1,0 +1,84 @@
+<!--
+  ~ Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+  ~
+  ~ See the NOTICE file(s) distributed with this work for additional information
+  ~ regarding copyright ownership.
+  ~
+  ~ This program and the accompanying materials are made available under the terms of the
+  ~ BSD 3-Clause License which is available at https://opensource.org/licenses/BSD-3-Clause
+  ~
+  ~ SPDX-License-Identifier: BSD-3-Clause
+  -->
+
+<resources>
+    <string name="app_name">Keyple Demo - Control</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="please_wait">Please wait</string>
+    <string name="error_title">Error</string>
+    <string name="quit">Quitter</string>
+    <string name="version">version %s</string>
+
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="title_activity_card_reader">ReaderActivity</string>
+    <string name="title_activity_network_invalid">NetworkInvalidActivity</string>
+    <string name="title_activity_card_content">CardContentActivity</string>
+
+    <!-- Settings screen -->
+    <string name="location_label">Set location</string>
+    <string name="location_hint">E.g. Paris, Venise</string>
+    <string name="validation_period_label">Validation period (min)</string>
+    <string name="validation_period_hint">E.g. 10 min</string>
+    <string name="time_label">Set time and date</string>
+    <string name="start_label">Start</string>
+    <string name="start_control_label">Start Control</string>
+    <string name="control_info">Control information</string>
+    <string name="msg_location_period_empty">Please fill in validation period</string>
+
+    <!-- Device selector screen -->
+    <string name="device_title">What type of terminal is it?</string>
+    <string name="device_nfc_terminal">NFC TERMINAL</string>
+    <string name="device_bluebird">BLUEBIRD</string>
+    <string name="device_coppernic">COPPERNIC</string>
+    <string name="device_famoco">FAMOCO</string>
+    <string name="device_flowbird">FLOWBIRD</string>
+
+    <!-- Home screen -->
+    <string name="home_description">Open source API for Smart Ticketing</string>
+    <string name="start_validation_label">Start control</string>
+    <string name="calypso">Calypso Networks Association</string>
+
+    <!-- Present screen -->
+    <string name="present_support_label">Please present a contactless support to be controlled</string>
+    <string name="valid">Valid</string>
+    <string name="invalid">Invalid</string>
+
+    <!-- CardContent screen -->
+    <string name="secure_session_mode_enabled">Calypso Secure Session enabled</string>
+    <string name="secure_session_mode_disabled">Calypso Secure Session disabled</string>
+    <string name="content_title">Content</string>
+    <string name="last_validation_title">Last validation</string>
+    <string name="new_control">New control</string>
+    <string name="empty_contract_list">No contract available</string>
+    <string name="card_content_description_season_pass">From %1$s\n to %2$s</string>
+    <string name="card_content_description_multi_trip_zero">no trip left</string>
+    <string name="card_content_description_multi_trip_single">%d trip left</string>
+    <string name="card_content_description_multi_trip_multiple">%d trips left</string>
+    <string name="status_unspecified">An error occurred during card reading, please try again.</string>
+
+    <!-- NetworkInvalid screen -->
+    <string name="card_invalid_title">Not valid on this network</string>
+    <string name="card_invalid_aid">Selection error: AID not found.</string>
+    <string name="card_invalid_structure">Selection error: Unknown structure.</string>
+    <string name="card_invalid_default">Invalid card</string>
+
+    <!--    Dialog-->
+    <string name="permission_denied_message">You must accept the requested permissions to continue. Please relaunch the app.</string>
+    <string name="nfc_not_enabled">The NFC feature of the device does not seem to be available. Please activate the NFC function before continuing.</string>
+
+    <!-- Test values-->
+    <string name="card_content_validation_title_placeholder">Multi Trip - Place de la Bastille</string>
+    <string name="card_content_title_placeholder">Multi Trip</string>
+    <string name="card_content_validation_date_placeholder">JJ Month YYYY, HH:MM:SS</string>
+</resources>

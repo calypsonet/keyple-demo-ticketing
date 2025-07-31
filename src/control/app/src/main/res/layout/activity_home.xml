@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+  ~
+  ~ See the NOTICE file(s) distributed with this work for additional information
+  ~ regarding copyright ownership.
+  ~
+  ~ This program and the accompanying materials are made available under the terms of the
+  ~ BSD 3-Clause License which is available at https://opensource.org/licenses/BSD-3-Clause
+  ~
+  ~ SPDX-License-Identifier: BSD-3-Clause
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.calypsonet.keyple.demo.control.ui.HomeActivity"
+    android:background="@drawable/ic_bg">
+
+    <include
+        layout="@layout/logo_toolbar"
+        android:id="@+id/appBarLayout" />
+
+    <TextView
+        android:id="@+id/homeDescription"
+        style="@style/bigRegularBlue"
+        android:layout_width="@dimen/home_text_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:gravity="center"
+        android:text="@string/home_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
+
+    <TextView
+        android:id="@+id/start_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/start_control_label"
+        android:layout_marginBottom="@dimen/home_element_margin"
+        style="@style/bigBoldBlue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/startBtn" />
+
+    <ImageButton
+        android:id="@+id/startBtn"
+        android:layout_width="@dimen/home_start_btn_width"
+        android:layout_height="@dimen/home_start_btn_width"
+        android:src="@drawable/ic_start"
+        android:scaleType="fitXY"
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:contentDescription="@string/start_validation_label"
+        />
+
+    <TextView
+        android:id="@+id/controlInformation"
+        android:layout_width="@dimen/home_control_width"
+        android:layout_height="wrap_content"
+        android:text="@string/control_info"
+        style="@style/mediumRegularBlue"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/locationSelected" />
+
+    <TextView
+        android:id="@+id/locationSelected"
+        android:layout_width="@dimen/home_control_width"
+        android:layout_height="wrap_content"
+        android:text="@string/control_info"
+        style="@style/mediumBoldBlue"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/eclipse_logo"
+        android:layout_marginBottom="@dimen/home_element_margin" />
+
+    <ImageView
+        android:id="@+id/eclipse_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_logo_calypso"
+        android:scaleType="center"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/calypso"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="@dimen/home_element_margin"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
