@@ -1,4 +1,4 @@
-name: Reusable Multiplatform Desktop Release
+name: Reusable KMP Desktop Release
 
 on:
   workflow_call:

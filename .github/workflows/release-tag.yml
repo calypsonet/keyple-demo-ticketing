@@ -11,33 +11,33 @@ jobs:
   # ANDROID APPLICATIONS
   # ========================================
 
-  release-control-app:
+  release-control:
     name: "Control (Android)"
     uses: ./.github/workflows/reusable-android-release.yml
     with:
-      component-name: "Control App"
+      component-name: "Control"
       working-directory: "./src/control/"
 
-  release-reloading-multiplatform-client-android:
+  release-reloading-kmp-android:
     name: "Reloading Client KMP (Android)"
     uses: ./.github/workflows/reusable-android-release.yml
     with:
-      component-name: "Reloading Multiplatform Client"
+      component-name: "Reloading Client Interop Mobile Multiplatform"
       working-directory: "./src/reloading-remote/client/interop-mobile-multiplatform/"
       apk-output-path: "composeApp/build/outputs/apk/debug/*.apk"
 
-  release-reloading-keyple-client-android:
+  release-reloading-android:
     name: "Reloading Client (Android)"
     uses: ./.github/workflows/reusable-android-release.yml
     with:
-      component-name: "Reloading Keyple Client"
+      component-name: "Reloading Client Keyple Mobile Android"
       working-directory: "./src/reloading-remote/client/keyple-mobile-android/"
 
-  release-validation-app:
+  release-validation:
     name: "Validation (Android)"
     uses: ./.github/workflows/reusable-android-release.yml
     with:
-      component-name: "Validation App"
+      component-name: "Validation"
       working-directory: "./src/validation/"
 
   # ========================================
@@ -56,31 +56,31 @@ jobs:
   # DESKTOP APPLICATIONS - MULTIPLATFORM
   # ========================================
 
-  release-reloading-multiplatform-client-macos:
+  release-reloading-kmp-macos:
     name: "Reloading Client KMP (macOS)"
-    uses: ./.github/workflows/reusable-multiplatform-desktop-release.yml
+    uses: ./.github/workflows/reusable-kmp-desktop-release.yml
     with:
-      component-name: "Reloading Multiplatform Client"
+      component-name: "Reloading Client Interop Mobile Multiplatform"
       target-os: "macos-latest"
       platform-name: "macOS"
       working-directory: "./src/reloading-remote/client/interop-mobile-multiplatform/"
       platform-artifact-pattern: "composeApp/build/compose/binaries/main/dmg/*.dmg"
 
-  release-reloading-multiplatform-client-linux:
+  release-reloading-kmp-linux:
     name: "Reloading Client KMP (Linux)"
-    uses: ./.github/workflows/reusable-multiplatform-desktop-release.yml
+    uses: ./.github/workflows/reusable-kmp-desktop-release.yml
     with:
-      component-name: "Reloading Multiplatform Client"
+      component-name: "Reloading Client Interop Mobile Multiplatform"
       target-os: "ubuntu-latest"
       platform-name: "Linux"
       working-directory: "./src/reloading-remote/client/interop-mobile-multiplatform/"
       platform-artifact-pattern: "composeApp/build/compose/binaries/main/deb/*.deb"
 
-  release-reloading-multiplatform-client-windows:
+  release-reloading-kmp-windows:
     name: "Reloading Client KMP (Windows)"
-    uses: ./.github/workflows/reusable-multiplatform-desktop-release.yml
+    uses: ./.github/workflows/reusable-kmp-desktop-release.yml
     with:
-      component-name: "Reloading Multiplatform Client"
+      component-name: "Reloading Client Interop Mobile Multiplatform"
       target-os: "windows-latest"
       platform-name: "Windows"
       working-directory: "./src/reloading-remote/client/interop-mobile-multiplatform/"
@@ -90,10 +90,10 @@ jobs:
   # .NET APPLICATIONS
   # ========================================
 
-  release-reloading-dotnet-client:
+  release-reloading-dotnet:
     name: "Reloading Client (.NET/Windows)"
     uses: ./.github/workflows/reusable-dotnet-release.yml
     with:
-      component-name: "Reloading .NET Client"
+      component-name: "Reloading Client PC .NET"
       working-directory: "./src/reloading-remote/client/pc-dotnet/"
       archive-name-prefix: "kdt-reloading-pc-dotnet-app"

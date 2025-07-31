@@ -1,4 +1,4 @@
-name: Reusable Android Gradle CI
+name: Reusable KMP Android + iOS CI
 
 on:
   workflow_call:
@@ -13,8 +13,8 @@ on:
         type: string
 
 jobs:
-  ci-android:
-    runs-on: ubuntu-latest
+  ci-kmp-android-ios:
+    runs-on: macos-latest
     steps:
       - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
         uses: actions/checkout@v4
@@ -31,4 +31,4 @@ jobs:
 
       - name: Build ${{ inputs.component-name }} artifacts
         working-directory: ${{ inputs.working-directory }}
-        run: ./gradlew spotlessCheck testDebugUnitTest assembleDebug
+        run: ./gradlew spotlessCheck testDebugUnitTest assembleDebug linkDebugFrameworkIosArm64 linkDebugFrameworkIosX64 linkDebugFrameworkIosSimulatorArm64
