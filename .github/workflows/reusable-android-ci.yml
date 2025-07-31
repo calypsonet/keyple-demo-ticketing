@@ -11,10 +11,15 @@ on:
         description: 'Working directory for the build'
         required: true
         type: string
+      target-os:
+        description: 'Target OS (ubuntu-latest, macos-latest, windows-latest)'
+        required: false
+        type: string
+        default: 'ubuntu-latest'
 
 jobs:
   ci-android:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.target-os }}
     steps:
       - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
         uses: actions/checkout@v4

@@ -1,4 +1,4 @@
-name: Reusable KMP Android + iOS CI
+name: Reusable KMP iOS CI
 
 on:
   workflow_call:
@@ -9,6 +9,10 @@ on:
         type: string
       working-directory:
         description: 'Working directory for the build'
+        required: true
+        type: string
+      gradle-task:
+        description: 'Name of the gradle task to be executed'
         required: true
         type: string
 
@@ -31,4 +35,4 @@ jobs:
 
       - name: Build ${{ inputs.component-name }} artifacts
         working-directory: ${{ inputs.working-directory }}
-        run: ./gradlew spotlessCheck testDebugUnitTest assembleDebug linkDebugFrameworkIosArm64 linkDebugFrameworkIosX64 linkDebugFrameworkIosSimulatorArm64
+        run: ./gradlew ${{ inputs.gradle-task }}

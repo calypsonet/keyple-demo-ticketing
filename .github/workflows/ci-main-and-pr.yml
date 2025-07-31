@@ -22,11 +22,12 @@ jobs:
       working-directory: "./src/control/"
 
   ci-reloading-kmp-android-macos:
-    name: "Reload KMP (Android+iOS)"
-    uses: ./.github/workflows/reusable-kmp-android-ios-ci.yml
+    name: "Reload KMP (Android/macOS)"
+    uses: ./.github/workflows/reusable-android-ci.yml
     with:
       component-name: "Reloading Client Interop Mobile Multiplatform"
       working-directory: "./src/reloading-remote/client/interop-mobile-multiplatform/"
+      target-os: "macos-latest"
 
   ci-reloading-android:
     name: "Reload (Android)"
@@ -53,6 +54,34 @@ jobs:
       component-name: "Reloading Server"
       working-directory: "./src/reloading-remote/server/"
       node-directory: "./dashboard-app"
+
+  # ========================================
+  # iOS FRAMEWORKS - MULTIPLATFORM
+  # ========================================
+
+  ci-reloading-kmp-ios-arm64:
+    name: "Reload KMP (iOS-Arm64/macOS)"
+    uses: ./.github/workflows/reusable-kmp-ios-ci.yml
+    with:
+      component-name: "Reloading Client Interop Mobile Multiplatform"
+      working-directory: "./src/reloading-remote/client/interop-mobile-multiplatform/"
+      gradle-task: "linkDebugFrameworkIosArm64"
+
+  ci-reloading-kmp-ios-x64:
+    name: "Reload KMP (iOS-X64/macOS)"
+    uses: ./.github/workflows/reusable-kmp-ios-ci.yml
+    with:
+      component-name: "Reloading Client Interop Mobile Multiplatform"
+      working-directory: "./src/reloading-remote/client/interop-mobile-multiplatform/"
+      gradle-task: "linkDebugFrameworkIosX64"
+
+  ci-reloading-kmp-ios-simulator-arm64:
+    name: "Reload KMP (iOS-SimulatorArm64/macOS)"
+    uses: ./.github/workflows/reusable-kmp-ios-ci.yml
+    with:
+      component-name: "Reloading Client Interop Mobile Multiplatform"
+      working-directory: "./src/reloading-remote/client/interop-mobile-multiplatform/"
+      gradle-task: "linkDebugFrameworkIosSimulatorArm64"
 
   # ========================================
   # .NET APPLICATIONS
