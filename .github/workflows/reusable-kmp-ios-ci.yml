@@ -17,7 +17,7 @@ on:
         type: string
 
 jobs:
-  ci-kmp-android-ios:
+  ci-kmp-ios:
     runs-on: macos-latest
     steps:
       - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
