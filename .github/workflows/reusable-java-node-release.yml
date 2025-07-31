@@ -1,4 +1,4 @@
-name: Reusable Java + Node.js Hybrid Build
+name: Reusable Java + Node.js Release
 
 on:
   workflow_call:
@@ -22,7 +22,7 @@ on:
         default: ''
 
 jobs:
-  build-java-node-hybrid:
+  release-java-node:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
@@ -68,14 +68,12 @@ jobs:
           ./gradlew build
 
       - name: Collect ${{ inputs.component-name }} artifacts
-        if: ${{ github.event_name == 'release' }}
         working-directory: ${{ inputs.working-directory }}
         run: |
           mkdir -p release-artifacts
           cp build/*-full.jar release-artifacts/ || true
 
       - name: Upload ${{ inputs.component-name }} artifacts to GitHub release
-        if: ${{ github.event_name == 'release' }}
         uses: softprops/action-gh-release@v2
         with:
           files: ${{ inputs.working-directory }}/release-artifacts/*

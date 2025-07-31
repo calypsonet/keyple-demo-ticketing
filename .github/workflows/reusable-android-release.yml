@@ -1,4 +1,4 @@
-name: Reusable Android Gradle Build
+name: Reusable Android Gradle Release
 
 on:
   workflow_call:
@@ -28,7 +28,7 @@ on:
         default: ''
 
 jobs:
-  build-android-gradle:
+  release-android:
     runs-on: ${{ inputs.target-os }}
     steps:
       - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
@@ -65,14 +65,12 @@ jobs:
         run: ./gradlew spotlessCheck testDebugUnitTest assembleDebug
 
       - name: Collect ${{ inputs.component-name }} artifacts
-        if: ${{ github.event_name == 'release' }}
         working-directory: ${{ inputs.working-directory }}
         run: |
           mkdir -p release-artifacts
           cp ${{ inputs.apk-output-path }} release-artifacts/ || true
 
       - name: Upload ${{ inputs.component-name }} artifacts to GitHub release
-        if: ${{ github.event_name == 'release' }}
         uses: softprops/action-gh-release@v2
         with:
           files: ${{ inputs.working-directory }}/release-artifacts/*

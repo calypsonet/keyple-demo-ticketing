@@ -1,4 +1,4 @@
-name: Build and Test
+name: CI on main and PR
 
 on:
   pull_request:
@@ -14,31 +14,31 @@ jobs:
   # ANDROID APPLICATIONS
   # ========================================
 
-  build-ticketing-control-app:
-    name: "Ticketing Control App (Android)"
-    uses: ./.github/workflows/reusable-android-gradle-build.yml
+  ci-control-app:
+    name: "Control (Android)"
+    uses: ./.github/workflows/reusable-android-ci.yml
     with:
-      component-name: "Ticketing Control App"
+      component-name: "Control App"
       working-directory: "./src/control/"
 
-  build-reloading-multiplatform-client-android-macos:
-    name: "Reloading Multiplatform Client (Android on macOS)"
-    uses: ./.github/workflows/reusable-android-gradle-build.yml
+  ci-reloading-multiplatform-client-android-macos:
+    name: "Reloading Client KMP (Android/macOS)"
+    uses: ./.github/workflows/reusable-android-ci.yml
     with:
       component-name: "Reloading Multiplatform Client"
       working-directory: "./src/reloading-remote/client/interop-mobile-multiplatform/"
       target-os: "macos-latest"
 
-  build-reloading-keyple-client-android:
-    name: "Reloading Keyple Client (Android)"
-    uses: ./.github/workflows/reusable-android-gradle-build.yml
+  ci-reloading-keyple-client-android:
+    name: "Reloading Client (Android)"
+    uses: ./.github/workflows/reusable-android-ci.yml
     with:
       component-name: "Reloading Keyple Client"
       working-directory: "./src/reloading-remote/client/keyple-mobile-android/"
 
-  build-validation-app:
-    name: "Validation App (Android)"
-    uses: ./.github/workflows/reusable-android-gradle-build.yml
+  ci-validation-app:
+    name: "Validation (Android)"
+    uses: ./.github/workflows/reusable-android-ci.yml
     with:
       component-name: "Validation App"
       working-directory: "./src/validation/"
@@ -47,9 +47,9 @@ jobs:
   # SERVER APPLICATION
   # ========================================
 
-  build-reloading-server:
-    name: "Reloading Server (Java + Node.js)"
-    uses: ./.github/workflows/reusable-java-node-hybrid-build.yml
+  ci-reloading-server:
+    name: "Reloading Server (Java+Node)"
+    uses: ./.github/workflows/reusable-java-node-ci.yml
     with:
       component-name: "Reloading Server"
       working-directory: "./src/reloading-remote/server/"
@@ -59,10 +59,9 @@ jobs:
   # .NET APPLICATIONS
   # ========================================
 
-  build-reloading-dotnet-client:
-    name: "Reloading .NET Client (Windows)"
-    uses: ./.github/workflows/reusable-dotnet-build.yml
+  ci-reloading-dotnet-client:
+    name: "Reloading Client (.NET/Windows)"
+    uses: ./.github/workflows/reusable-dotnet-ci.yml
     with:
       component-name: "Reloading .NET Client"
       working-directory: "./src/reloading-remote/client/pc-dotnet/"
-      archive-name-prefix: "kdt-reloading-pc-dotnet-app"

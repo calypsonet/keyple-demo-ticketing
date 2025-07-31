@@ -1,4 +1,4 @@
-name: Reusable .NET Build
+name: Reusable .NET Release
 
 on:
   workflow_call:
@@ -17,7 +17,7 @@ on:
         type: string
 
 jobs:
-  build-dotnet:
+  release-dotnet:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
@@ -29,7 +29,6 @@ jobs:
           dotnet-version: 7.0.x
 
       - name: Set version in .csproj to ${{ github.ref_name }}
-        if: ${{ github.event_name == 'release' }}
         working-directory: ${{ inputs.working-directory }}
         run: |
           version="${{ github.ref_name }}"
@@ -39,17 +38,7 @@ jobs:
           sed -i -E "s|<FileVersion>.*</FileVersion>|<FileVersion>$version</FileVersion>|" "$csproj_file"
           sed -i -E "s|<Version>.*</Version>|<Version>$version</Version>|" "$csproj_file"
 
-      - name: Check code format, build and test ${{ inputs.component-name }}
-        if: ${{ github.event_name != 'release' }}
-        working-directory: ./src/reloading-remote/client/pc-dotnet
-        run: |
-          dotnet restore
-          dotnet format --verify-no-changes App.sln
-          dotnet build --no-restore
-          dotnet test --no-build --verbosity normal
-
       - name: Check code format, test and build release ${{ inputs.component-name }}
-        if: ${{ github.event_name == 'release' }}
         working-directory: ${{ inputs.working-directory }}
         run: |
           dotnet restore
@@ -58,13 +47,11 @@ jobs:
           dotnet publish -c Release -r win-x64 --no-restore -o ./publish
 
       - name: Archive ${{ inputs.component-name }} application
-        if: ${{ github.event_name == 'release' }}
         working-directory: ${{ inputs.working-directory }}/publish
         run: |
           zip -j -r "../${{ inputs.archive-name-prefix }}-${{ github.ref_name }}.zip" ./*
 
       - name: Upload ${{ inputs.component-name }} artifacts to GitHub release
-        if: ${{ github.event_name == 'release' }}
         uses: softprops/action-gh-release@v2
         with:
           files: ${{ inputs.working-directory }}/${{ inputs.archive-name-prefix }}-${{ github.ref_name }}.zip

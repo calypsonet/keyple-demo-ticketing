@@ -1,4 +1,4 @@
-name: Build and Publish Release
+name: Release tag
 
 on:
   release:
@@ -11,31 +11,31 @@ jobs:
   # ANDROID APPLICATIONS
   # ========================================
 
-  build-ticketing-control-app:
-    name: "Ticketing Control App (Android)"
-    uses: ./.github/workflows/reusable-android-gradle-build.yml
+  release-control-app:
+    name: "Control (Android)"
+    uses: ./.github/workflows/reusable-android-release.yml
     with:
-      component-name: "Ticketing Control App"
+      component-name: "Control App"
       working-directory: "./src/control/"
 
-  build-reloading-multiplatform-client-android:
-    name: "Reloading Multiplatform Client (Android)"
-    uses: ./.github/workflows/reusable-android-gradle-build.yml
+  release-reloading-multiplatform-client-android:
+    name: "Reloading Client KMP (Android)"
+    uses: ./.github/workflows/reusable-android-release.yml
     with:
       component-name: "Reloading Multiplatform Client"
       working-directory: "./src/reloading-remote/client/interop-mobile-multiplatform/"
       apk-output-path: "composeApp/build/outputs/apk/debug/*.apk"
 
-  build-reloading-keyple-client-android:
-    name: "Reloading Keyple Client (Android)"
-    uses: ./.github/workflows/reusable-android-gradle-build.yml
+  release-reloading-keyple-client-android:
+    name: "Reloading Client (Android)"
+    uses: ./.github/workflows/reusable-android-release.yml
     with:
       component-name: "Reloading Keyple Client"
       working-directory: "./src/reloading-remote/client/keyple-mobile-android/"
 
-  build-validation-app:
-    name: "Validation App (Android)"
-    uses: ./.github/workflows/reusable-android-gradle-build.yml
+  release-validation-app:
+    name: "Validation (Android)"
+    uses: ./.github/workflows/reusable-android-release.yml
     with:
       component-name: "Validation App"
       working-directory: "./src/validation/"
@@ -44,9 +44,9 @@ jobs:
   # SERVER APPLICATION
   # ========================================
 
-  build-reloading-server:
-    name: "Reloading Server (Java + Node.js)"
-    uses: ./.github/workflows/reusable-java-node-hybrid-build.yml
+  release-reloading-server:
+    name: "Reloading Server (Java+Node)"
+    uses: ./.github/workflows/reusable-java-node-release.yml
     with:
       component-name: "Reloading Server"
       working-directory: "./src/reloading-remote/server/"
@@ -56,9 +56,9 @@ jobs:
   # DESKTOP APPLICATIONS - MULTIPLATFORM
   # ========================================
 
-  build-reloading-multiplatform-client-macos:
-    name: "Reloading Multiplatform Client (macOS)"
-    uses: ./.github/workflows/reusable-desktop-multiplatform-build.yml
+  release-reloading-multiplatform-client-macos:
+    name: "Reloading Client KMP (macOS)"
+    uses: ./.github/workflows/reusable-multiplatform-desktop-release.yml
     with:
       component-name: "Reloading Multiplatform Client"
       target-os: "macos-latest"
@@ -66,9 +66,9 @@ jobs:
       working-directory: "./src/reloading-remote/client/interop-mobile-multiplatform/"
       platform-artifact-pattern: "composeApp/build/compose/binaries/main/dmg/*.dmg"
 
-  build-reloading-multiplatform-client-linux:
-    name: "Reloading Multiplatform Client (Linux)"
-    uses: ./.github/workflows/reusable-desktop-multiplatform-build.yml
+  release-reloading-multiplatform-client-linux:
+    name: "Reloading Client KMP (Linux)"
+    uses: ./.github/workflows/reusable-multiplatform-desktop-release.yml
     with:
       component-name: "Reloading Multiplatform Client"
       target-os: "ubuntu-latest"
@@ -76,9 +76,9 @@ jobs:
       working-directory: "./src/reloading-remote/client/interop-mobile-multiplatform/"
       platform-artifact-pattern: "composeApp/build/compose/binaries/main/deb/*.deb"
 
-  build-reloading-multiplatform-client-windows:
-    name: "Reloading Multiplatform Client (Windows)"
-    uses: ./.github/workflows/reusable-desktop-multiplatform-build.yml
+  release-reloading-multiplatform-client-windows:
+    name: "Reloading Client KMP (Windows)"
+    uses: ./.github/workflows/reusable-multiplatform-desktop-release.yml
     with:
       component-name: "Reloading Multiplatform Client"
       target-os: "windows-latest"
@@ -90,9 +90,9 @@ jobs:
   # .NET APPLICATIONS
   # ========================================
 
-  build-reloading-dotnet-client:
-    name: "Reloading .NET Client (Windows)"
-    uses: ./.github/workflows/reusable-dotnet-build.yml
+  release-reloading-dotnet-client:
+    name: "Reloading Client (.NET/Windows)"
+    uses: ./.github/workflows/reusable-dotnet-release.yml
     with:
       component-name: "Reloading .NET Client"
       working-directory: "./src/reloading-remote/client/pc-dotnet/"
