@@ -19,7 +19,7 @@ jobs:
       working-directory: "./src/control/"
 
   release-reloading-kmp-android:
-    name: "Reloading Client KMP (Android)"
+    name: "Reload KMP (Android)"
     uses: ./.github/workflows/reusable-android-release.yml
     with:
       component-name: "Reloading Client Interop Mobile Multiplatform"
@@ -27,7 +27,7 @@ jobs:
       apk-output-path: "composeApp/build/outputs/apk/debug/*.apk"
 
   release-reloading-android:
-    name: "Reloading Client (Android)"
+    name: "Reload (Android)"
     uses: ./.github/workflows/reusable-android-release.yml
     with:
       component-name: "Reloading Client Keyple Mobile Android"
@@ -45,7 +45,7 @@ jobs:
   # ========================================
 
   release-reloading-server:
-    name: "Reloading Server (Java+Node)"
+    name: "Reload Server (Java+Node)"
     uses: ./.github/workflows/reusable-java-node-release.yml
     with:
       component-name: "Reloading Server"
@@ -57,7 +57,7 @@ jobs:
   # ========================================
 
   release-reloading-kmp-macos:
-    name: "Reloading Client KMP (macOS)"
+    name: "Reload KMP (macOS)"
     uses: ./.github/workflows/reusable-kmp-desktop-release.yml
     with:
       component-name: "Reloading Client Interop Mobile Multiplatform"
@@ -67,7 +67,7 @@ jobs:
       platform-artifact-pattern: "composeApp/build/compose/binaries/main/dmg/*.dmg"
 
   release-reloading-kmp-linux:
-    name: "Reloading Client KMP (Linux)"
+    name: "Reload KMP (Linux)"
     uses: ./.github/workflows/reusable-kmp-desktop-release.yml
     with:
       component-name: "Reloading Client Interop Mobile Multiplatform"
@@ -77,7 +77,7 @@ jobs:
       platform-artifact-pattern: "composeApp/build/compose/binaries/main/deb/*.deb"
 
   release-reloading-kmp-windows:
-    name: "Reloading Client KMP (Windows)"
+    name: "Reload KMP (Windows)"
     uses: ./.github/workflows/reusable-kmp-desktop-release.yml
     with:
       component-name: "Reloading Client Interop Mobile Multiplatform"
@@ -91,7 +91,7 @@ jobs:
   # ========================================
 
   release-reloading-dotnet:
-    name: "Reloading Client (.NET/Windows)"
+    name: "Reload (.NET/Windows)"
     uses: ./.github/workflows/reusable-dotnet-release.yml
     with:
       component-name: "Reloading Client PC .NET"

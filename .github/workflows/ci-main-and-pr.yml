@@ -22,14 +22,14 @@ jobs:
       working-directory: "./src/control/"
 
   ci-reloading-kmp-android-macos:
-    name: "Reloading Client KMP (Android/macOS)"
+    name: "Reload KMP (Android+iOS)"
     uses: ./.github/workflows/reusable-kmp-android-ios-ci.yml
     with:
       component-name: "Reloading Client Interop Mobile Multiplatform"
       working-directory: "./src/reloading-remote/client/interop-mobile-multiplatform/"
 
   ci-reloading-android:
-    name: "Reloading Client (Android)"
+    name: "Reload (Android)"
     uses: ./.github/workflows/reusable-android-ci.yml
     with:
       component-name: "Reloading Client Keyple Mobile Android"
@@ -47,7 +47,7 @@ jobs:
   # ========================================
 
   ci-reloading-server:
-    name: "Reloading Server (Java+Node)"
+    name: "Reload Server (Java+Node)"
     uses: ./.github/workflows/reusable-java-node-ci.yml
     with:
       component-name: "Reloading Server"
@@ -59,7 +59,7 @@ jobs:
   # ========================================
 
   ci-reloading-dotnet:
-    name: "Reloading Client (.NET/Windows)"
+    name: "Reload (.NET/Windows)"
     uses: ./.github/workflows/reusable-dotnet-ci.yml
     with:
       component-name: "Reloading Client PC .NET"
