@@ -60,7 +60,7 @@ dependencies {
 
   // Kotlin
   implementation(libs.androidxCore)
-  implementation(libs.kotlinStdlibJdk7)
+  implementation(libs.kotlinStdlibJdk8)
 
   // Coroutines
   implementation(libs.kotlinxCoroutinesCore)
