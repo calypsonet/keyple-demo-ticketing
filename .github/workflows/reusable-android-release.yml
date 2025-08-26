@@ -16,11 +16,6 @@ on:
         required: false
         type: string
         default: 'app/build/outputs/apk/debug/*.apk'
-      prepare-script-path:
-        description: 'Path to library preparation script (relative to repo root). Leave empty to skip preparation.'
-        required: false
-        type: string
-        default: ''
 
 jobs:
   release-android:
@@ -38,20 +33,6 @@ jobs:
       - name: Update permissions for ${{ inputs.component-name }}
         working-directory: .
         run: chmod +x ${{ inputs.working-directory }}/gradlew
-
-      - name: Prepare libraries for ${{ inputs.component-name }}
-        if: ${{ inputs.prepare-script-path != '' }}
-        working-directory: ${{ inputs.working-directory }}
-        run: |
-          SCRIPT_PATH="../${{ inputs.prepare-script-path }}"
-          if [ -f "$SCRIPT_PATH" ]; then
-            echo "🔧 Executing library preparation script: ${{ inputs.prepare-script-path }}"
-            chmod +x "$SCRIPT_PATH"
-            bash "$SCRIPT_PATH" "${{ inputs.component-name }}" "$(pwd)"
-          else
-            echo "⚠️  Library preparation script not found: ${{ inputs.prepare-script-path }}"
-            echo "Proceeding with standard build..."
-          fi
 
       - name: Build ${{ inputs.component-name }} artifacts
         env:
