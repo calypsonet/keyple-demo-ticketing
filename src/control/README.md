@@ -56,7 +56,7 @@ cd keyple-demo-ticketing/src/control
 2. Select device type from **Device Selection** screen:
   - **Famoco FX205**: Enterprise terminal with SAM reader
   - **Coppernic C-One 2**: Rugged Android terminal
-  - **Standard NFC**: Consumer Android device (Storage Cards only)
+  - **Standard NFC**: Consumer Android device (No card authentication)
   - Proprietary terminals (grayed out by default)
 
 ### Control Settings
