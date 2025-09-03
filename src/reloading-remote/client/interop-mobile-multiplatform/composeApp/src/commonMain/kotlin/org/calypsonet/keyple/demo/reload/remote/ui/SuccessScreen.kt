@@ -17,7 +17,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Scaffold
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -76,7 +76,7 @@ internal fun DisplaySuccess(details: ErrorDetails, modifier: Modifier = Modifier
           composition,
       )
 
-  ScreenAnimByPlatform(details.message, white, composition, progress)
+  ScreenAnimByPlatform(details.message, white, composition, progress, infinite = false)
 }
 
 @Composable
@@ -84,5 +84,6 @@ expect fun ScreenAnimByPlatform(
     message: String,
     textColor: Color,
     composition: LottieComposition?,
-    progress: Float
+    progress: Float,
+    infinite: Boolean = true
 )

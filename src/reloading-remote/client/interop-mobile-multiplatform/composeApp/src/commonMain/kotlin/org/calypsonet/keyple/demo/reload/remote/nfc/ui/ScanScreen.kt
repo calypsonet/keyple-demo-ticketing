@@ -105,8 +105,7 @@ internal fun PresentCardAnimation() {
   val composition by rememberLottieComposition {
     LottieCompositionSpec.JsonString(Res.readBytes("files/anim_card_scan.json").decodeToString())
   }
-  val progress by
-      animateLottieCompositionAsState(composition, iterations = Compottie.IterateForever)
+  val progress by animateLottieCompositionAsState(composition)
 
   ScreenAnimByPlatform("Please present a contactless support", blue, composition, progress)
 }
@@ -134,5 +133,5 @@ internal fun ReadingError(errorMessage: String) {
           composition,
       )
 
-  ScreenAnimByPlatform(errorMessage, red, composition, progress)
+  ScreenAnimByPlatform(errorMessage, red, composition, progress, infinite = false)
 }

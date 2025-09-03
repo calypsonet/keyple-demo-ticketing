@@ -26,13 +26,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.alexzhirkevich.compottie.LottieComposition
 import io.github.alexzhirkevich.compottie.rememberLottiePainter
+import io.github.alexzhirkevich.compottie.Compottie
 
 @Composable
 actual fun ScreenAnimByPlatform(
     message: String,
     textColor: Color,
     composition: LottieComposition?,
-    progress: Float
+    progress: Float,
+    infinite: Boolean
 ) {
   Text(
       text = message,
@@ -42,12 +44,9 @@ actual fun ScreenAnimByPlatform(
       textAlign = TextAlign.Center,
   )
   Spacer(modifier = Modifier.height(130.dp))
+  val iterations = if (infinite) Compottie.IterateForever else 1
   Image(
-      painter =
-          rememberLottiePainter(
-              composition = composition,
-              progress = { progress },
-          ),
+      painter = rememberLottiePainter(composition = composition, iterations = iterations),
       modifier = Modifier.size(200.dp),
       contentDescription = "animation",
   )
