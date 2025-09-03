@@ -2,7 +2,7 @@
 # The Project version represents the snapshot version and must never be modified, as it is the release tag that indicates the release version.
 project = "9999.99.99"
 # Dependencies versions
-agp = "8.12.2"
+agp = "8.10.1"
 androidxActivity = "1.10.1"
 androidxActivityCompose = "1.10.1"
 androidxAppcompat = "1.7.1"
@@ -12,6 +12,7 @@ androidxDatastorePreferences = "1.1.7"
 androidxFragment = "1.8.8"
 androidxMultidex = "2.0.1"
 androidxNavigationCompose = "2.9.0-rc01"
+androidxLifecycleViewmodel = "2.9.2"
 assertj = "3.25.3"
 bitLib4j = "1.4.5"
 compottie = "2.0.0"
@@ -72,9 +73,12 @@ androidxDatastorePreferences = { module = "androidx.datastore:datastore-preferen
 androidxFragment = { module = "androidx.fragment:fragment-ktx", version.ref = "androidxFragment" }
 androidxMultidex = { module = "androidx.multidex:multidex", version.ref = "androidxMultidex" }
 androidxNavigationCompose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "androidxNavigationCompose" }
+androidxLifecycleViewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidxLifecycleViewmodel" }
+
 assertjCore = { module = "org.assertj:assertj-core", version.ref = "assertj" }
 bitLib4j = { module = "com.github.devnied:bit-lib4j", version.ref = "bitLib4j" }
-compottie = { module = "io.github.alexzhirkevich:compottie", version.ref = "compottie" }
+compottieLite = { module = "io.github.alexzhirkevich:compottie-lite", version.ref = "compottie" }
+compottieRes = { module = "io.github.alexzhirkevich:compottie-resources", version.ref = "compottie" }
 composeBom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 daggerAndroid = { module = "com.google.dagger:dagger-android", version.ref = "dagger" }

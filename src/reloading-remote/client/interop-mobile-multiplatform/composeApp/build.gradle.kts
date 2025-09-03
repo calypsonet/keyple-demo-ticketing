@@ -66,8 +66,11 @@ kotlin {
       implementation(libs.koinCore)
       implementation(libs.koinCompose)
       implementation(libs.androidxNavigationCompose)
+      implementation(libs.androidxLifecycleViewmodel)
       implementation(libs.androidxDatastorePreferences)
-      implementation(libs.compottie)
+
+      implementation(libs.compottieRes)
+      implementation(libs.compottieLite)
       implementation(libs.ktorClientCore)
       implementation(libs.ktorClientContentNegotiation)
       implementation(libs.ktorClientLogging)
