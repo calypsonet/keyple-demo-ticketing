@@ -1,6 +1,6 @@
 import UIKit
 import SwiftUI
-import KeypleDemo
+import kdt_reloading_multiplatform_app
 
 struct ComposeView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
