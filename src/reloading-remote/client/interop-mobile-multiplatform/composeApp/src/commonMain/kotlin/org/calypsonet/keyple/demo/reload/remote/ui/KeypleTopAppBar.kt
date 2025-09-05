@@ -128,7 +128,7 @@ fun PulsingDot(state: AppState, modifier: Modifier = Modifier) {
       waves.first().startAnimation()
       // Remove the wave after the animation.
       delay(Wave.ANIMATION_DURATION)
-      waves.removeFirst()
+      waves.removeAt(0)
     }
   }
 
