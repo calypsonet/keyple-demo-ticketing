@@ -1,6 +1,7 @@
 [versions]
-# The Project version represents the snapshot version and must never be modified, as it is the release tag that indicates the release version.
-project = "9999.99.99"
+# The Project version represents the snapshot version and must never be modified,
+# as it is the release tag that indicates the release version.
+project = "99.99.99"
 # Dependencies versions
 agp = "8.10.1"
 androidxActivity = "1.10.1"
@@ -10,9 +11,9 @@ androidxConstraintLayout = "2.2.1"
 androidxCore = "1.16.0"
 androidxDatastorePreferences = "1.1.7"
 androidxFragment = "1.8.8"
+androidxLifecycleViewmodel = "2.9.2"
 androidxMultidex = "2.0.1"
 androidxNavigationCompose = "2.9.0-rc01"
-androidxLifecycleViewmodel = "2.9.2"
 assertj = "3.25.3"
 bitLib4j = "1.4.5"
 compottie = "2.0.0"
@@ -58,8 +59,8 @@ retrofit = "2.11.0"
 retrofitCompat = "2.11.0"
 rxandroid = "2.1.1"
 rxjava = "2.2.21"
-slf4jAndroid = "1.7.32-0"
 slf4j = "1.7.32"
+slf4jAndroid = "1.7.32-0"
 spotless = "7.0.4"
 timber = "5.0.1"
 
@@ -71,10 +72,9 @@ androidxConstraintLayout = { module = "androidx.constraintlayout:constraintlayou
 androidxCore = { module = "androidx.core:core-ktx", version.ref = "androidxCore" }
 androidxDatastorePreferences = { module = "androidx.datastore:datastore-preferences", version.ref = "androidxDatastorePreferences" }
 androidxFragment = { module = "androidx.fragment:fragment-ktx", version.ref = "androidxFragment" }
+androidxLifecycleViewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidxLifecycleViewmodel" }
 androidxMultidex = { module = "androidx.multidex:multidex", version.ref = "androidxMultidex" }
 androidxNavigationCompose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "androidxNavigationCompose" }
-androidxLifecycleViewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidxLifecycleViewmodel" }
-
 assertjCore = { module = "org.assertj:assertj-core", version.ref = "assertj" }
 bitLib4j = { module = "com.github.devnied:bit-lib4j", version.ref = "bitLib4j" }
 compottieLite = { module = "io.github.alexzhirkevich:compottie-lite", version.ref = "compottie" }

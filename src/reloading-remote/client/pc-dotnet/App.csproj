@@ -9,9 +9,9 @@
     <Title>Dotnet Keyple Client Demo</Title>
     <Company>Calypso Networks Association</Company>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <AssemblyVersion>9999.99.99</AssemblyVersion>
-    <FileVersion>9999.99.99</FileVersion>
-    <Version>9999.99.99</Version>
+    <AssemblyVersion>99.99.99</AssemblyVersion>
+    <FileVersion>99.99.99</FileVersion>
+    <Version>99.99.99</Version>
     <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
