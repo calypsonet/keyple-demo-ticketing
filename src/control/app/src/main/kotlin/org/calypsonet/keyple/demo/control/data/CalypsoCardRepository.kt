@@ -25,12 +25,15 @@ import org.calypsonet.keyple.demo.control.data.model.Contract
 import org.calypsonet.keyple.demo.control.data.model.Location
 import org.calypsonet.keyple.demo.control.data.model.Status
 import org.calypsonet.keyple.demo.control.data.model.Validation
+import org.calypsonet.keyple.demo.control.data.model.VerificationMode
 import org.calypsonet.keyple.demo.control.data.model.mapper.ContractMapper
 import org.calypsonet.keyple.demo.control.data.model.mapper.ValidationMapper
 import org.eclipse.keyple.card.calypso.CalypsoExtensionService
 import org.eclipse.keypop.calypso.card.WriteAccessLevel
 import org.eclipse.keypop.calypso.card.card.CalypsoCard
+import org.eclipse.keypop.calypso.card.transaction.AsymmetricCryptoSecuritySetting
 import org.eclipse.keypop.calypso.card.transaction.ChannelControl
+import org.eclipse.keypop.calypso.card.transaction.SecurePkiModeTransactionManager
 import org.eclipse.keypop.calypso.card.transaction.SecureRegularModeTransactionManager
 import org.eclipse.keypop.calypso.card.transaction.SymmetricCryptoSecuritySetting
 import org.eclipse.keypop.calypso.card.transaction.TransactionManager
@@ -43,7 +46,8 @@ class CalypsoCardRepository {
       controlDateTime: LocalDateTime,
       cardReader: CardReader,
       calypsoCard: CalypsoCard,
-      cardSecuritySettings: SymmetricCryptoSecuritySetting?,
+      symmetricCryptoSecuritySetting: SymmetricCryptoSecuritySetting?,
+      asymmetricCryptoSecuritySetting: AsymmetricCryptoSecuritySetting?,
       locations: List<Location>
   ): CardReaderResponse {
 
@@ -51,31 +55,42 @@ class CalypsoCardRepository {
     val errorTitle: String? = null
     var validation: Validation? = null
     var status: Status = Status.ERROR
-    val isSecureSessionMode = cardSecuritySettings != null
+    val isSecureSessionMode = symmetricCryptoSecuritySetting != null
     val calypsoCardApiFactory = CalypsoExtensionService.getInstance().calypsoCardApiFactory
+    lateinit var cardTransaction: TransactionManager<*>
+    lateinit var verificationMode: VerificationMode
 
     try {
-      val cardTransaction: TransactionManager<*> =
-          try {
-            if (isSecureSessionMode) {
-              // Step 1.1
-              // The transaction will be certified by the SAM in a secure session.
+      try {
+        if (isSecureSessionMode) {
+          cardTransaction =
               calypsoCardApiFactory.createSecureRegularModeTransactionManager(
-                  cardReader, calypsoCard, cardSecuritySettings)
-            } else {
-              // Step 1.2
-              // The transaction will take place without being certified by a SAM
-              calypsoCardApiFactory.createFreeTransactionManager(cardReader, calypsoCard)
-            }
-          } catch (e: Exception) {
-            // TODO check which condition could lead here
-            Timber.w(e)
-            calypsoCardApiFactory.createFreeTransactionManager(cardReader, calypsoCard)
+                  cardReader, calypsoCard, symmetricCryptoSecuritySetting)
+          verificationMode = VerificationMode.SAM
+        } else {
+          if (calypsoCard.isPkiModeSupported) {
+            cardTransaction =
+                calypsoCardApiFactory.createSecurePkiModeTransactionManager(
+                    cardReader, calypsoCard, asymmetricCryptoSecuritySetting)
+            verificationMode = VerificationMode.PKI
+          } else {
+            cardTransaction =
+                calypsoCardApiFactory.createFreeTransactionManager(cardReader, calypsoCard)
+            verificationMode = VerificationMode.NO_VERIFICATION
           }
+        }
+      } catch (e: Exception) {
+        Timber.w(e)
+        cardTransaction =
+            calypsoCardApiFactory.createFreeTransactionManager(cardReader, calypsoCard)
+        verificationMode = VerificationMode.NO_VERIFICATION
+      }
 
       if (cardTransaction is SecureRegularModeTransactionManager) {
         // Open a transaction to read/write the Calypso Card and read the Environment file
         cardTransaction.prepareOpenSecureSession(WriteAccessLevel.DEBIT)
+      } else if (cardTransaction is SecurePkiModeTransactionManager) {
+        cardTransaction.prepareOpenSecureSession()
       }
 
       // Step 2 - Read and unpack environment structure from the binary present in the environment
@@ -95,7 +110,8 @@ class CalypsoCardRepository {
       // the current version) reject the card.
       // <Abort Secure Session if any>
       if (env.envVersionNumber != VersionNumber.CURRENT_VERSION) {
-        if (cardTransaction is SecureRegularModeTransactionManager) {
+        if (cardTransaction is SecureRegularModeTransactionManager ||
+            cardTransaction is SecurePkiModeTransactionManager) {
           cardTransaction.prepareCancelSecureSession().processCommands(ChannelControl.CLOSE_AFTER)
         }
         throw EnvironmentException("wrong version number")
@@ -104,7 +120,8 @@ class CalypsoCardRepository {
       // Step 4 - If EnvEndDate points to a date in the past reject the card.
       // <Abort Secure Session if any>
       if (env.envEndDate.getDate().isBefore(controlDateTime.toLocalDate())) {
-        if (cardTransaction is SecureRegularModeTransactionManager) {
+        if (cardTransaction is SecureRegularModeTransactionManager ||
+            cardTransaction is SecurePkiModeTransactionManager) {
           cardTransaction.prepareCancelSecureSession().processCommands(ChannelControl.CLOSE_AFTER)
         }
         throw EnvironmentException("End date expired")
@@ -124,7 +141,8 @@ class CalypsoCardRepository {
       // <Abort Secure Session if any>
       val eventVersionNumber = event.eventVersionNumber
       if (eventVersionNumber != VersionNumber.CURRENT_VERSION) {
-        if (cardTransaction is SecureRegularModeTransactionManager) {
+        if (cardTransaction is SecureRegularModeTransactionManager ||
+            cardTransaction is SecurePkiModeTransactionManager) {
           cardTransaction.prepareCancelSecureSession().processCommands(ChannelControl.CLOSE_AFTER)
         }
         if (eventVersionNumber == VersionNumber.UNDEFINED) {
@@ -269,7 +287,8 @@ class CalypsoCardRepository {
       status = Status.TICKETS_FOUND
 
       // Step 20 - If isSecureSessionMode is true, Close the session
-      if (cardTransaction is SecureRegularModeTransactionManager) {
+      if (cardTransaction is SecureRegularModeTransactionManager ||
+          cardTransaction is SecurePkiModeTransactionManager) {
         cardTransaction.prepareCloseSecureSession().processCommands(ChannelControl.CLOSE_AFTER)
       }
 
@@ -280,7 +299,10 @@ class CalypsoCardRepository {
 
       // Step 21 - Return the status of the operation to the upper layer. <Exit process>
       return CardReaderResponse(
-          status = status, lastValidationsList = validationList, titlesList = displayedContract)
+          status = status,
+          verificationMode = verificationMode,
+          lastValidationsList = validationList,
+          titlesList = displayedContract)
     } catch (e: Exception) {
       errorMessage = e.message
       Timber.e(e)
@@ -302,6 +324,7 @@ class CalypsoCardRepository {
 
     return CardReaderResponse(
         status = status,
+        verificationMode = verificationMode,
         titlesList = arrayListOf(),
         errorTitle = errorTitle,
         errorMessage = errorMessage)

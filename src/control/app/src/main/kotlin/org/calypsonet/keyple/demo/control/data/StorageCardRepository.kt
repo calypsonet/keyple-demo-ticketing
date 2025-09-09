@@ -27,6 +27,7 @@ import org.calypsonet.keyple.demo.control.data.model.Contract
 import org.calypsonet.keyple.demo.control.data.model.Location
 import org.calypsonet.keyple.demo.control.data.model.Status
 import org.calypsonet.keyple.demo.control.data.model.Validation
+import org.calypsonet.keyple.demo.control.data.model.VerificationMode
 import org.calypsonet.keyple.demo.control.data.model.mapper.ContractMapper
 import org.calypsonet.keyple.demo.control.data.model.mapper.ValidationMapper
 import org.eclipse.keypop.reader.CardReader
@@ -208,7 +209,10 @@ class StorageCardRepository {
 
       // Step 21 - Return the status of the operation to the upper layer. <Exit process>
       return CardReaderResponse(
-          status = status, lastValidationsList = validationList, titlesList = displayedContract)
+          status = status,
+          verificationMode = VerificationMode.NO_VERIFICATION,
+          lastValidationsList = validationList,
+          titlesList = displayedContract)
     } catch (e: Exception) {
       errorMessage = e.message
       Timber.e(e)
@@ -230,6 +234,7 @@ class StorageCardRepository {
 
     return CardReaderResponse(
         status = status,
+        verificationMode = VerificationMode.NO_VERIFICATION,
         titlesList = arrayListOf(),
         errorTitle = errorTitle,
         errorMessage = errorMessage)

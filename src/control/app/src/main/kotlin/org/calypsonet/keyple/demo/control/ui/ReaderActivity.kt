@@ -25,6 +25,7 @@ import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.data.model.AppSettings
 import org.calypsonet.keyple.demo.control.data.model.CardReaderResponse
 import org.calypsonet.keyple.demo.control.data.model.Status
+import org.calypsonet.keyple.demo.control.data.model.VerificationMode
 import org.calypsonet.keyple.demo.control.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
 import org.calypsonet.keyple.demo.control.di.scope.ActivityScoped
@@ -75,8 +76,8 @@ class ReaderActivity : BaseActivity() {
             ticketingService.init(cardReaderObserver, this@ReaderActivity, AppSettings.readerType)
             showToast(
                 getString(
-                    if (ticketingService.isSecureSessionMode) R.string.secure_session_mode_enabled
-                    else R.string.secure_session_mode_disabled))
+                    if (ticketingService.isSecureSessionMode) R.string.sam_available
+                    else R.string.sam_not_available))
             handleAppEvents(AppState.WAIT_CARD, null)
             ticketingService.startNfcDetection()
           } catch (e: Exception) {
@@ -134,7 +135,10 @@ class ReaderActivity : BaseActivity() {
           Timber.e("Card not selected: %s", error)
           displayResult(
               CardReaderResponse(
-                  status = Status.INVALID_CARD, titlesList = arrayListOf(), errorMessage = error))
+                  status = Status.INVALID_CARD,
+                  verificationMode = VerificationMode.NO_VERIFICATION,
+                  titlesList = arrayListOf(),
+                  errorMessage = error))
           return
         }
         Timber.i("A Calypso Card selection succeeded.")
@@ -170,6 +174,12 @@ class ReaderActivity : BaseActivity() {
                       cardReaderResponse.status == Status.ERROR) {
                     ticketingService.displayResultFailed()
                   } else {
+                    when (cardReaderResponse.verificationMode) {
+                      VerificationMode.SAM -> showToast(getString(R.string.secure_session_mode_sam))
+                      VerificationMode.PKI -> showToast(getString(R.string.secure_session_mode_pki))
+                      VerificationMode.NO_VERIFICATION ->
+                          showToast(getString(R.string.secure_session_mode_no_verification))
+                    }
                     ticketingService.displayResultSuccess()
                   }
                   progress.dismiss()
@@ -178,7 +188,11 @@ class ReaderActivity : BaseActivity() {
               } catch (e: IllegalStateException) {
                 Timber.e(e)
                 Timber.e("Load ERROR page after exception = ${e.message}")
-                displayResult(CardReaderResponse(status = Status.ERROR, titlesList = arrayListOf()))
+                displayResult(
+                    CardReaderResponse(
+                        status = Status.ERROR,
+                        verificationMode = VerificationMode.NO_VERIFICATION,
+                        titlesList = arrayListOf()))
               }
             }
           }

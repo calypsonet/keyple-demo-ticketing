@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2025 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -12,15 +12,8 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.control.data.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
-
-@Parcelize
-data class CardReaderResponse(
-    val status: Status,
-    val verificationMode: VerificationMode,
-    val lastValidationsList: ArrayList<Validation>? = null,
-    val titlesList: ArrayList<Contract>,
-    val errorTitle: String? = null,
-    val errorMessage: String? = null
-) : Parcelable
+enum class VerificationMode {
+  SAM,
+  PKI,
+  NO_VERIFICATION
+}

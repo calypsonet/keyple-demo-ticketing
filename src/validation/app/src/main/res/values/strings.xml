@@ -53,7 +53,7 @@
 
     <!-- Error screen -->
     <string name="card_invalid_title">Card not valid</string>
-    <string name="card_invalid_aid">Selection error: AID not found.</string>
+    <string name="card_invalid_aid">Selection error: card not recognized.</string>
     <string name="card_invalid_default">Invalid card</string>
     <string name="card_invalid_main_desc">Invalid on this network</string>
     <string name="card_invalid_structure">Selection error: Unknown structure.</string>

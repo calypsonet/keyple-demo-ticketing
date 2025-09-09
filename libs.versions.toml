@@ -25,7 +25,8 @@ eventbus = "3.3.1"
 glassfish = "10.0-b28"
 gson = "2.11.0"
 keypleCardCalypsoCryptoLegacysamLib = "0.9.0"
-keypleCardCalypsoLib = "3.1.8"
+keypleCardCalypsoCryptoPkiLib = "0.2.3-SNAPSHOT"
+keypleCardCalypsoLib = "3.1.9-SNAPSHOT"
 keypleCommonApi = "2.0.2"
 keypleDistributedLocalLib = "2.5.2"
 keypleDistributedNetworkLib = "2.5.1"
@@ -89,6 +90,7 @@ eventbus = { module = "org.greenrobot:eventbus", version.ref = "eventbus" }
 glassfishAnnotations = { module = "org.glassfish:javax.annotation", version.ref = "glassfish" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 keypleCardCalypsoCryptoLegacysamLib = { module = "org.eclipse.keyple:keyple-card-calypso-crypto-legacysam-java-lib", version.ref = "keypleCardCalypsoCryptoLegacysamLib" }
+keypleCardCalypsoCryptoPkiLib = { module = "org.eclipse.keyple:keyple-card-calypso-crypto-pki-java-lib", version.ref = "keypleCardCalypsoCryptoPkiLib" }
 keypleCardCalypsoLib = { module = "org.eclipse.keyple:keyple-card-calypso-java-lib", version.ref = "keypleCardCalypsoLib" }
 keypleCommonApi = { module = "org.eclipse.keyple:keyple-common-java-api", version.ref = "keypleCommonApi" }
 keypleDistributedLocalLib = { module = "org.eclipse.keyple:keyple-distributed-local-java-lib", version.ref = "keypleDistributedLocalLib" }
