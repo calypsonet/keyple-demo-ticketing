@@ -12,8 +12,8 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.control.data.model
 
-enum class VerificationMode {
+enum class AuthenticationMode {
   SAM,
   PKI,
-  NO_VERIFICATION
+  NO_AUTHENTICATION
 }

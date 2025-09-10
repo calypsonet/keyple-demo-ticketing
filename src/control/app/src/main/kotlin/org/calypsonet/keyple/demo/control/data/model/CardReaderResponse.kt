@@ -18,7 +18,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class CardReaderResponse(
     val status: Status,
-    val verificationMode: VerificationMode,
+    val authenticationMode: AuthenticationMode,
     val lastValidationsList: ArrayList<Validation>? = null,
     val titlesList: ArrayList<Contract>,
     val errorTitle: String? = null,

@@ -20,12 +20,12 @@ import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 import org.calypsonet.keyple.demo.common.parser.*
 import org.calypsonet.keyple.demo.control.data.model.AppSettings
+import org.calypsonet.keyple.demo.control.data.model.AuthenticationMode
 import org.calypsonet.keyple.demo.control.data.model.CardReaderResponse
 import org.calypsonet.keyple.demo.control.data.model.Contract
 import org.calypsonet.keyple.demo.control.data.model.Location
 import org.calypsonet.keyple.demo.control.data.model.Status
 import org.calypsonet.keyple.demo.control.data.model.Validation
-import org.calypsonet.keyple.demo.control.data.model.VerificationMode
 import org.calypsonet.keyple.demo.control.data.model.mapper.ContractMapper
 import org.calypsonet.keyple.demo.control.data.model.mapper.ValidationMapper
 import org.eclipse.keyple.card.calypso.CalypsoExtensionService
@@ -58,7 +58,7 @@ class CalypsoCardRepository {
     val isSecureSessionMode = symmetricCryptoSecuritySetting != null
     val calypsoCardApiFactory = CalypsoExtensionService.getInstance().calypsoCardApiFactory
     lateinit var cardTransaction: TransactionManager<*>
-    lateinit var verificationMode: VerificationMode
+    lateinit var authenticationMode: AuthenticationMode
 
     try {
       try {
@@ -66,24 +66,24 @@ class CalypsoCardRepository {
           cardTransaction =
               calypsoCardApiFactory.createSecureRegularModeTransactionManager(
                   cardReader, calypsoCard, symmetricCryptoSecuritySetting)
-          verificationMode = VerificationMode.SAM
+          authenticationMode = AuthenticationMode.SAM
         } else {
           if (calypsoCard.isPkiModeSupported) {
             cardTransaction =
                 calypsoCardApiFactory.createSecurePkiModeTransactionManager(
                     cardReader, calypsoCard, asymmetricCryptoSecuritySetting)
-            verificationMode = VerificationMode.PKI
+            authenticationMode = AuthenticationMode.PKI
           } else {
             cardTransaction =
                 calypsoCardApiFactory.createFreeTransactionManager(cardReader, calypsoCard)
-            verificationMode = VerificationMode.NO_VERIFICATION
+            authenticationMode = AuthenticationMode.NO_AUTHENTICATION
           }
         }
       } catch (e: Exception) {
         Timber.w(e)
         cardTransaction =
             calypsoCardApiFactory.createFreeTransactionManager(cardReader, calypsoCard)
-        verificationMode = VerificationMode.NO_VERIFICATION
+        authenticationMode = AuthenticationMode.NO_AUTHENTICATION
       }
 
       if (cardTransaction is SecureRegularModeTransactionManager) {
@@ -300,7 +300,7 @@ class CalypsoCardRepository {
       // Step 21 - Return the status of the operation to the upper layer. <Exit process>
       return CardReaderResponse(
           status = status,
-          verificationMode = verificationMode,
+          authenticationMode = authenticationMode,
           lastValidationsList = validationList,
           titlesList = displayedContract)
     } catch (e: Exception) {
@@ -324,7 +324,7 @@ class CalypsoCardRepository {
 
     return CardReaderResponse(
         status = status,
-        verificationMode = verificationMode,
+        authenticationMode = authenticationMode,
         titlesList = arrayListOf(),
         errorTitle = errorTitle,
         errorMessage = errorMessage)

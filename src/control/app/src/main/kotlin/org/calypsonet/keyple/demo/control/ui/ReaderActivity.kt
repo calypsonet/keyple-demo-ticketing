@@ -23,9 +23,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.data.model.AppSettings
+import org.calypsonet.keyple.demo.control.data.model.AuthenticationMode
 import org.calypsonet.keyple.demo.control.data.model.CardReaderResponse
 import org.calypsonet.keyple.demo.control.data.model.Status
-import org.calypsonet.keyple.demo.control.data.model.VerificationMode
 import org.calypsonet.keyple.demo.control.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
 import org.calypsonet.keyple.demo.control.di.scope.ActivityScoped
@@ -136,7 +136,7 @@ class ReaderActivity : BaseActivity() {
           displayResult(
               CardReaderResponse(
                   status = Status.INVALID_CARD,
-                  verificationMode = VerificationMode.NO_VERIFICATION,
+                  authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
                   titlesList = arrayListOf(),
                   errorMessage = error))
           return
@@ -174,11 +174,13 @@ class ReaderActivity : BaseActivity() {
                       cardReaderResponse.status == Status.ERROR) {
                     ticketingService.displayResultFailed()
                   } else {
-                    when (cardReaderResponse.verificationMode) {
-                      VerificationMode.SAM -> showToast(getString(R.string.secure_session_mode_sam))
-                      VerificationMode.PKI -> showToast(getString(R.string.secure_session_mode_pki))
-                      VerificationMode.NO_VERIFICATION ->
-                          showToast(getString(R.string.secure_session_mode_no_verification))
+                    when (cardReaderResponse.authenticationMode) {
+                      AuthenticationMode.SAM ->
+                          showToast(getString(R.string.secure_session_mode_sam))
+                      AuthenticationMode.PKI ->
+                          showToast(getString(R.string.secure_session_mode_pki))
+                      AuthenticationMode.NO_AUTHENTICATION ->
+                          showToast(getString(R.string.secure_session_mode_no_authentication))
                     }
                     ticketingService.displayResultSuccess()
                   }
@@ -191,7 +193,7 @@ class ReaderActivity : BaseActivity() {
                 displayResult(
                     CardReaderResponse(
                         status = Status.ERROR,
-                        verificationMode = VerificationMode.NO_VERIFICATION,
+                        authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
                         titlesList = arrayListOf()))
               }
             }
