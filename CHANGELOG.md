@@ -4,9 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+
+## [25.09.10]
 ### Changed
 - `androidMinSdk` moved from `24` to `26` for all Android apps.
-### Control
+### Upgraded
+- Keyple components
+    - `keyple-card-calypso-java-lib` `3.1.8` -> `3.1.9`
+    - `keyple-card-calypso-crypto-pki-java-lib` `0.2.3` (new)
+### Control app
 #### Added
 - Added PKI card authentication mode when no SAM is available and when the card is PKI compliant.
 
@@ -22,5 +28,6 @@ It brings together previously independent projects into a unified codebase to si
   - [Validation App](https://github.com/calypsonet/keyple-demo-ticketing-validation-app)
   - [Control App](https://github.com/calypsonet/keyple-demo-ticketing-control-app)
 
-[Unreleased]: https://github.com/calypsonet/keyple-demo-ticketing/compare/2025.08.27...HEAD
+[Unreleased]: https://github.com/calypsonet/keyple-demo-ticketing/compare/25.09.10...HEAD
+[25.09.10]: https://github.com/calypsonet/keyple-demo-ticketing/compare/2025.08.27...25.09.10
 [2025.08.27]: https://github.com/calypsonet/keyple-demo-ticketing/releases/tag/2025.08.27
