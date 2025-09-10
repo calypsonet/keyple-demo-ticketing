@@ -56,26 +56,23 @@ class CalypsoCardRepository {
     var validation: Validation? = null
     var status: Status = Status.ERROR
     val calypsoCardApiFactory = CalypsoExtensionService.getInstance().calypsoCardApiFactory
+
     val authenticationMode: AuthenticationMode =
         if (symmetricCryptoSecuritySetting != null) AuthenticationMode.SAM
         else if (calypsoCard.isPkiModeSupported) AuthenticationMode.PKI
         else AuthenticationMode.NO_AUTHENTICATION
-    lateinit var cardTransaction: TransactionManager<*>
 
     try {
-      when (authenticationMode) {
-        AuthenticationMode.SAM ->
-            cardTransaction =
+      val cardTransaction: TransactionManager<*> =
+          when (authenticationMode) {
+            AuthenticationMode.SAM ->
                 calypsoCardApiFactory.createSecureRegularModeTransactionManager(
                     cardReader, calypsoCard, symmetricCryptoSecuritySetting)
-        AuthenticationMode.PKI ->
-            cardTransaction =
+            AuthenticationMode.PKI ->
                 calypsoCardApiFactory.createSecurePkiModeTransactionManager(
                     cardReader, calypsoCard, asymmetricCryptoSecuritySetting)
-        else ->
-            cardTransaction =
-                calypsoCardApiFactory.createFreeTransactionManager(cardReader, calypsoCard)
-      }
+            else -> calypsoCardApiFactory.createFreeTransactionManager(cardReader, calypsoCard)
+          }
 
       if (cardTransaction is SecureRegularModeTransactionManager) {
         // Open a transaction to read/write the Calypso Card and read the Environment file
