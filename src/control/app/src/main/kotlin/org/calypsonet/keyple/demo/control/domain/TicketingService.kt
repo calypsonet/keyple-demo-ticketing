@@ -63,8 +63,9 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
       CalypsoExtensionService.getInstance()
   private val calypsoCardApiFactory: CalypsoCardApiFactory =
       calypsoExtensionService.calypsoCardApiFactory
+  private val asymmetricCryptoSecuritySettings: AsymmetricCryptoSecuritySetting =
+      buildAsymmetricCryptoSecuritySetting()
   private var symmetricCryptoSecuritySetting: SymmetricCryptoSecuritySetting? = null
-  private lateinit var asymmetricCryptoSecuritySettings: AsymmetricCryptoSecuritySetting
 
   /** Get the Storage card extension service */
   private val storageCardExtension = StorageCardExtensionService.getInstance()
@@ -121,7 +122,6 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
     }
     symmetricCryptoSecuritySetting =
         if (isSamAvailable) buildSymmetricCryptoSecuritySetting() else null
-    asymmetricCryptoSecuritySettings = buildAsymmetricCryptoSecuritySetting()
     readersInitialized = true
   }
 
