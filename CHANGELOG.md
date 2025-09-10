@@ -4,8 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
-#### Changed
+### Changed
 - `androidMinSdk` moved from `24` to `26` for all Android apps.
+### Control
+#### Added
+- Added PKI card authentication mode when no SAM is available and when the card is PKI compliant.
 
 ## [2025.08.27]
 
