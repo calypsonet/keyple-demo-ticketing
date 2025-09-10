@@ -176,11 +176,11 @@ class ReaderActivity : BaseActivity() {
                   } else {
                     when (cardReaderResponse.authenticationMode) {
                       AuthenticationMode.SAM ->
-                          showToast(getString(R.string.secure_session_mode_sam))
+                          showToast(getString(R.string.authentication_mode_sam))
                       AuthenticationMode.PKI ->
-                          showToast(getString(R.string.secure_session_mode_pki))
+                          showToast(getString(R.string.authentication_mode_pki))
                       AuthenticationMode.NO_AUTHENTICATION ->
-                          showToast(getString(R.string.secure_session_mode_no_authentication))
+                          showToast(getString(R.string.authentication_mode_no_authentication))
                     }
                     ticketingService.displayResultSuccess()
                   }

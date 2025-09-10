@@ -57,9 +57,9 @@
     <!-- CardContent screen -->
     <string name="sam_available">SAM available and enabled</string>
     <string name="sam_not_available">SAM not available</string>
-    <string name="secure_session_mode_sam">Card authentified by the SAM</string>
-    <string name="secure_session_mode_pki">Card authentified by PKI</string>
-    <string name="secure_session_mode_no_authentication">Card not authentified</string>
+    <string name="authentication_mode_sam">Card authentified by the SAM</string>
+    <string name="authentication_mode_pki">Card authentified by PKI</string>
+    <string name="authentication_mode_no_authentication">Card not authentified</string>
     <string name="content_title">Content</string>
     <string name="last_validation_title">Last validation</string>
     <string name="new_control">New control</string>
