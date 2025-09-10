@@ -47,7 +47,7 @@ class CalypsoCardRepository {
       cardReader: CardReader,
       calypsoCard: CalypsoCard,
       symmetricCryptoSecuritySetting: SymmetricCryptoSecuritySetting?,
-      asymmetricCryptoSecuritySetting: AsymmetricCryptoSecuritySetting?,
+      asymmetricCryptoSecuritySetting: AsymmetricCryptoSecuritySetting,
       locations: List<Location>
   ): CardReaderResponse {
 

@@ -30,7 +30,7 @@ This innovative client showcases the power of Kotlin Multiplatform by providing 
 
 #### Android
 - Device with NFC capability
-- Android 7.0+ (API level 24+)
+- Android 8.0+ (API level 26+)
 - NFC enabled in system settings
 
 #### iOS

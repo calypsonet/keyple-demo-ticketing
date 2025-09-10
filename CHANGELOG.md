@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+#### Changed
+- `androidMinSdk` moved from `24` to `26` for all Android apps.
 
 ## [2025.08.27]
 

@@ -21,7 +21,7 @@ This Android application simulates validation terminals found at transportation 
 ## Prerequisites
 
 ### Hardware Requirements
-- Android device with Android 7.0+ (API level 24+)
+- Android device with Android 8.0+ (API level 26+)
 - NFC capability for contactless card reading
 - **SAM (Security Access Module)** for Calypso card operations
 - Compatible terminal hardware (see [tested terminals](#tested-terminals))
