@@ -22,6 +22,7 @@ import org.calypsonet.keyple.demo.common.parser.SCContractStructureParser
 import org.calypsonet.keyple.demo.common.parser.SCEnvironmentHolderStructureParser
 import org.calypsonet.keyple.demo.common.parser.SCEventStructureParser
 import org.calypsonet.keyple.demo.control.data.model.AppSettings
+import org.calypsonet.keyple.demo.control.data.model.AuthenticationMode
 import org.calypsonet.keyple.demo.control.data.model.CardReaderResponse
 import org.calypsonet.keyple.demo.control.data.model.Contract
 import org.calypsonet.keyple.demo.control.data.model.Location
@@ -208,7 +209,10 @@ class StorageCardRepository {
 
       // Step 21 - Return the status of the operation to the upper layer. <Exit process>
       return CardReaderResponse(
-          status = status, lastValidationsList = validationList, titlesList = displayedContract)
+          status = status,
+          authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
+          lastValidationsList = validationList,
+          titlesList = displayedContract)
     } catch (e: Exception) {
       errorMessage = e.message
       Timber.e(e)
@@ -230,6 +234,7 @@ class StorageCardRepository {
 
     return CardReaderResponse(
         status = status,
+        authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
         titlesList = arrayListOf(),
         errorTitle = errorTitle,
         errorMessage = errorMessage)

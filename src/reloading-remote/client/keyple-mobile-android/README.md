@@ -18,7 +18,7 @@ This Android application demonstrates distributed ticketing where all card opera
 ## Prerequisites
 
 ### Hardware Requirements
-- Android device with Android 7.0+ (API level 24+)
+- Android device with Android 8.0+ (API level 26+)
 - NFC capability for contactless card reading
 - Internet connectivity for server communication
 - Compatible Calypso cards (see [supported AIDs](../common-lib/README.md#supported-card-applications))

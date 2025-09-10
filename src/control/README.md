@@ -19,7 +19,7 @@ This Android application simulates inspection terminals used by transportation a
 ## Prerequisites
 
 ### Hardware Requirements
-- Android device with Android 7.0+ (API level 24+)
+- Android device with Android 8.0+ (API level 26+)
 - NFC capability for contactless card reading
 - **SAM (Security Access Module)** for secure Calypso operations (optional)
 - Compatible terminal hardware (see [tested terminals](#tested-terminals))

@@ -55,8 +55,11 @@
     <string name="invalid">Invalid</string>
 
     <!-- CardContent screen -->
-    <string name="secure_session_mode_enabled">Calypso Secure Session enabled</string>
-    <string name="secure_session_mode_disabled">Calypso Secure Session disabled</string>
+    <string name="sam_available">SAM available and enabled</string>
+    <string name="sam_not_available">SAM not available</string>
+    <string name="authentication_mode_sam">Card authenticated by the SAM</string>
+    <string name="authentication_mode_pki">Card authenticated by PKI</string>
+    <string name="authentication_mode_no_authentication">Card not authenticated</string>
     <string name="content_title">Content</string>
     <string name="last_validation_title">Last validation</string>
     <string name="new_control">New control</string>
@@ -69,7 +72,7 @@
 
     <!-- NetworkInvalid screen -->
     <string name="card_invalid_title">Not valid on this network</string>
-    <string name="card_invalid_aid">Selection error: AID not found.</string>
+    <string name="card_invalid_aid">Selection error: card not recognized.</string>
     <string name="card_invalid_structure">Selection error: Unknown structure.</string>
     <string name="card_invalid_default">Invalid card</string>
 

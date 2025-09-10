@@ -13,6 +13,8 @@
 package org.calypsonet.keyple.demo.control.domain
 
 import android.app.Activity
+import android.os.Build
+import androidx.annotation.RequiresApi
 import java.time.LocalDateTime
 import javax.inject.Inject
 import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService
@@ -28,13 +30,17 @@ import org.calypsonet.keyple.demo.control.di.scope.AppScoped
 import org.eclipse.keyple.card.calypso.CalypsoExtensionService
 import org.eclipse.keyple.card.calypso.crypto.legacysam.LegacySamExtensionService
 import org.eclipse.keyple.card.calypso.crypto.legacysam.LegacySamUtil
+import org.eclipse.keyple.card.calypso.crypto.pki.CertificateType
+import org.eclipse.keyple.card.calypso.crypto.pki.PkiExtensionService
 import org.eclipse.keyple.core.service.KeyplePluginException
 import org.eclipse.keyple.core.service.SmartCardServiceProvider
 import org.eclipse.keyple.core.util.HexUtil
 import org.eclipse.keypop.calypso.card.CalypsoCardApiFactory
 import org.eclipse.keypop.calypso.card.WriteAccessLevel
 import org.eclipse.keypop.calypso.card.card.CalypsoCard
+import org.eclipse.keypop.calypso.card.transaction.AsymmetricCryptoSecuritySetting
 import org.eclipse.keypop.calypso.card.transaction.SymmetricCryptoSecuritySetting
+import org.eclipse.keypop.calypso.card.transaction.spi.AsymmetricCryptoCardTransactionManagerFactory
 import org.eclipse.keypop.calypso.crypto.legacysam.sam.LegacySam
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ObservableCardReader
@@ -57,6 +63,9 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
       CalypsoExtensionService.getInstance()
   private val calypsoCardApiFactory: CalypsoCardApiFactory =
       calypsoExtensionService.calypsoCardApiFactory
+  private val asymmetricCryptoSecuritySettings: AsymmetricCryptoSecuritySetting =
+      buildAsymmetricCryptoSecuritySetting()
+  private var symmetricCryptoSecuritySetting: SymmetricCryptoSecuritySetting? = null
 
   /** Get the Storage card extension service */
   private val storageCardExtension = StorageCardExtensionService.getInstance()
@@ -67,7 +76,7 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
   var readersInitialized = false
     private set
 
-  var isSecureSessionMode: Boolean = false
+  var isSamAvailable: Boolean = false
     private set
 
   private var indexOfKeypleGenericCardSelection = 0
@@ -107,10 +116,12 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
     // Register a card event observer and init the ticketing session
     cardReader?.let { reader ->
       (reader as ObservableCardReader).addObserver(observer)
-      // attempts to select a SAM if any, sets the isSecureSessionMode flag accordingly
+      // attempts to select a SAM if any, sets the isSamAvailable flag accordingly
       val samReader = readerRepository.getSamReader()
-      isSecureSessionMode = samReader != null && selectSam(samReader)
+      isSamAvailable = samReader != null && selectSam(samReader)
     }
+    symmetricCryptoSecuritySetting =
+        if (isSamAvailable) buildSymmetricCryptoSecuritySetting() else null
     readersInitialized = true
   }
 
@@ -222,7 +233,7 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
     val cardSelectionResult: CardSelectionResult =
         cardSelectionManager.parseScheduledCardSelectionsResponse(scheduledCardSelectionsResponse)
     if (cardSelectionResult.activeSelectionIndex == -1) {
-      return "Selection error: AID not found"
+      return "Selection error: card not recognized."
     }
     smartCard = cardSelectionResult.activeSmartCard
     when (smartCard) {
@@ -259,6 +270,7 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
     return null
   }
 
+  @RequiresApi(Build.VERSION_CODES.O)
   fun executeControlProcedure(locations: List<Location>): CardReaderResponse {
     return when (smartCard) {
       is CalypsoCard -> {
@@ -266,7 +278,8 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
             .executeControlProcedure(
                 cardReader = readerRepository.getCardReader()!!,
                 calypsoCard = smartCard as CalypsoCard,
-                cardSecuritySettings = if (isSecureSessionMode) getSecuritySettings() else null,
+                symmetricCryptoSecuritySetting = symmetricCryptoSecuritySetting,
+                asymmetricCryptoSecuritySetting = asymmetricCryptoSecuritySettings,
                 locations = locations,
                 controlDateTime = LocalDateTime.now())
       }
@@ -284,7 +297,7 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
     }
   }
 
-  private fun getSecuritySettings(): SymmetricCryptoSecuritySetting? {
+  private fun buildSymmetricCryptoSecuritySetting(): SymmetricCryptoSecuritySetting {
     return calypsoCardApiFactory
         .createSymmetricCryptoSecuritySetting(
             LegacySamExtensionService.getInstance()
@@ -296,6 +309,25 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
         .assignDefaultKif(WriteAccessLevel.LOAD, CardConstant.DEFAULT_KIF_LOAD)
         .assignDefaultKif(WriteAccessLevel.DEBIT, CardConstant.DEFAULT_KIF_DEBIT)
         .enableMultipleSession()
+  }
+
+  private fun buildAsymmetricCryptoSecuritySetting(): AsymmetricCryptoSecuritySetting {
+    val pkiExtensionService: PkiExtensionService = PkiExtensionService.getInstance()
+    pkiExtensionService.setTestMode()
+    val transactionManagerFactory: AsymmetricCryptoCardTransactionManagerFactory? =
+        pkiExtensionService.createAsymmetricCryptoCardTransactionManagerFactory()
+    val asymmetricCryptoSecuritySetting =
+        calypsoCardApiFactory.createAsymmetricCryptoSecuritySetting(transactionManagerFactory)
+    asymmetricCryptoSecuritySetting
+        .addPcaCertificate(
+            pkiExtensionService.createPcaCertificate(
+                CardConstant.PCA_PUBLIC_KEY_REFERENCE, CardConstant.PCA_PUBLIC_KEY))
+        .addCaCertificate(pkiExtensionService.createCaCertificate(CardConstant.CA_CERTIFICATE))
+        .addCaCertificateParser(
+            pkiExtensionService.createCaCertificateParser(CertificateType.CALYPSO_LEGACY))
+        .addCardCertificateParser(
+            pkiExtensionService.createCardCertificateParser(CertificateType.CALYPSO_LEGACY))
+    return asymmetricCryptoSecuritySetting
   }
 
   private fun selectSam(samReader: CardReader): Boolean {

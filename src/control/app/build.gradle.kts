@@ -44,6 +44,7 @@ dependencies {
   implementation(libs.keypleServiceLib)
   implementation(libs.keypleCardCalypsoLib)
   implementation(libs.keypleCardCalypsoCryptoLegacysamLib)
+  implementation(libs.keypleCardCalypsoCryptoPkiLib)
   implementation(libs.keyplePluginAndroidNfcLib)
 
   // Other Keyple plugins
@@ -127,10 +128,11 @@ android {
     getByName("main").java.srcDirs("src/main/kotlin")
     getByName("debug").java.srcDirs("src/debug/kotlin")
   }
-  packagingOptions {
-    // Exclude 'META-INF/NOTICE.md' to resolve the conflict that occurs when multiple dependencies
-    // include this file
-    resources.excludes.add("META-INF/NOTICE.md")
+  packaging {
+    resources {
+      excludes.add("META-INF/versions/9/OSGI-INF/MANIFEST.MF")
+      excludes.add("META-INF/NOTICE.md")
+    }
   }
   applicationVariants.all {
     outputs.all {
