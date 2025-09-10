@@ -75,7 +75,7 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
   var readersInitialized = false
     private set
 
-  var isSecureSessionMode: Boolean = false
+  var isSamAvailable: Boolean = false
     private set
 
   private var indexOfKeypleGenericCardSelection = 0
@@ -115,12 +115,12 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
     // Register a card event observer and init the ticketing session
     cardReader?.let { reader ->
       (reader as ObservableCardReader).addObserver(observer)
-      // attempts to select a SAM if any, sets the isSecureSessionMode flag accordingly
+      // attempts to select a SAM if any, sets the isSamAvailable flag accordingly
       val samReader = readerRepository.getSamReader()
-      isSecureSessionMode = samReader != null && selectSam(samReader)
+      isSamAvailable = samReader != null && selectSam(samReader)
     }
     symmetricCryptoSecuritySetting =
-        if (isSecureSessionMode) buildSymmetricCryptoSecuritySetting() else null
+        if (isSamAvailable) buildSymmetricCryptoSecuritySetting() else null
     asymmetricCryptoSecuritySettings = buildAsymmetricCryptoSecuritySetting()
     readersInitialized = true
   }

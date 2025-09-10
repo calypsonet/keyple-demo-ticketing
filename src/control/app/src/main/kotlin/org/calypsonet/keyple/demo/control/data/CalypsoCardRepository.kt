@@ -55,35 +55,26 @@ class CalypsoCardRepository {
     val errorTitle: String? = null
     var validation: Validation? = null
     var status: Status = Status.ERROR
-    val isSecureSessionMode = symmetricCryptoSecuritySetting != null
     val calypsoCardApiFactory = CalypsoExtensionService.getInstance().calypsoCardApiFactory
+    val authenticationMode: AuthenticationMode =
+        if (symmetricCryptoSecuritySetting != null) AuthenticationMode.SAM
+        else if (calypsoCard.isPkiModeSupported) AuthenticationMode.PKI
+        else AuthenticationMode.NO_AUTHENTICATION
     lateinit var cardTransaction: TransactionManager<*>
-    lateinit var authenticationMode: AuthenticationMode
 
     try {
-      try {
-        if (isSecureSessionMode) {
-          cardTransaction =
-              calypsoCardApiFactory.createSecureRegularModeTransactionManager(
-                  cardReader, calypsoCard, symmetricCryptoSecuritySetting)
-          authenticationMode = AuthenticationMode.SAM
-        } else {
-          if (calypsoCard.isPkiModeSupported) {
+      when (authenticationMode) {
+        AuthenticationMode.SAM ->
+            cardTransaction =
+                calypsoCardApiFactory.createSecureRegularModeTransactionManager(
+                    cardReader, calypsoCard, symmetricCryptoSecuritySetting)
+        AuthenticationMode.PKI ->
             cardTransaction =
                 calypsoCardApiFactory.createSecurePkiModeTransactionManager(
                     cardReader, calypsoCard, asymmetricCryptoSecuritySetting)
-            authenticationMode = AuthenticationMode.PKI
-          } else {
+        else ->
             cardTransaction =
                 calypsoCardApiFactory.createFreeTransactionManager(cardReader, calypsoCard)
-            authenticationMode = AuthenticationMode.NO_AUTHENTICATION
-          }
-        }
-      } catch (e: Exception) {
-        Timber.w(e)
-        cardTransaction =
-            calypsoCardApiFactory.createFreeTransactionManager(cardReader, calypsoCard)
-        authenticationMode = AuthenticationMode.NO_AUTHENTICATION
       }
 
       if (cardTransaction is SecureRegularModeTransactionManager) {
@@ -286,7 +277,7 @@ class CalypsoCardRepository {
       Timber.i("Control procedure result: STATUS_OK")
       status = Status.TICKETS_FOUND
 
-      // Step 20 - If isSecureSessionMode is true, Close the session
+      // Step 20 - If a session is open, Close the session
       if (cardTransaction is SecureRegularModeTransactionManager ||
           cardTransaction is SecurePkiModeTransactionManager) {
         cardTransaction.prepareCloseSecureSession().processCommands(ChannelControl.CLOSE_AFTER)

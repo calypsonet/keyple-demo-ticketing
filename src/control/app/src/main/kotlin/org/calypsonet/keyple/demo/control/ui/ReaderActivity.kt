@@ -76,7 +76,7 @@ class ReaderActivity : BaseActivity() {
             ticketingService.init(cardReaderObserver, this@ReaderActivity, AppSettings.readerType)
             showToast(
                 getString(
-                    if (ticketingService.isSecureSessionMode) R.string.sam_available
+                    if (ticketingService.isSamAvailable) R.string.sam_available
                     else R.string.sam_not_available))
             handleAppEvents(AppState.WAIT_CARD, null)
             ticketingService.startNfcDetection()
