@@ -24,28 +24,9 @@ dagger = "2.25"
 eventbus = "3.3.1"
 glassfish = "10.0-b28"
 gson = "2.11.0"
-keypleCardCalypsoCryptoLegacysamLib = "0.9.0"
-keypleCardCalypsoCryptoPkiLib = "0.2.3"
-keypleCardCalypsoLib = "3.1.9"
-keypleCommonApi = "2.0.2"
-keypleDistributedLocalLib = "2.5.2"
-keypleDistributedNetworkLib = "2.5.1"
-keypleDistributedRemoteLib = "2.5.1"
-keypleInteropJsonapiClientKmpLib = "0.1.6"
-keypleInteropLocalreaderNfcmobileKmpLib = "0.1.6"
-keyplePluginAndroidNfcLib = "3.1.0"
-keyplePluginAndroidOmapiLib = "2.1.0"
+keypleJavaBom = "2025.09.12"
 keyplePluginCnaCoppernicCone2Lib = "2.0.2"
 keyplePluginCnaFamocoSeCommunicationLib = "2.0.2"
-keyplePluginPcscLib = "2.5.2"
-keyplePluginStoragecardApi = "1.0.0"
-keypleServiceLib = "3.3.5"
-keypleServiceResourceLib = "3.1.0"
-keypleUtilJavaLib = "2.4.0"
-keypopCalypsoCardApi = "2.1.2"
-keypopCalypsoCryptoLegacysamApi = "0.7.0"
-keypopReaderApi = "2.0.1"
-keypopStoragecardApi = "0.3.0"
 koin = "4.1.0"
 kotlin = "2.2.10"
 kotlinStdlibJdk8 = "1.7.22"
@@ -89,28 +70,29 @@ daggerCompiler = { module = "com.google.dagger:dagger-compiler", version.ref = "
 eventbus = { module = "org.greenrobot:eventbus", version.ref = "eventbus" }
 glassfishAnnotations = { module = "org.glassfish:javax.annotation", version.ref = "glassfish" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
-keypleCardCalypsoCryptoLegacysamLib = { module = "org.eclipse.keyple:keyple-card-calypso-crypto-legacysam-java-lib", version.ref = "keypleCardCalypsoCryptoLegacysamLib" }
-keypleCardCalypsoCryptoPkiLib = { module = "org.eclipse.keyple:keyple-card-calypso-crypto-pki-java-lib", version.ref = "keypleCardCalypsoCryptoPkiLib" }
-keypleCardCalypsoLib = { module = "org.eclipse.keyple:keyple-card-calypso-java-lib", version.ref = "keypleCardCalypsoLib" }
-keypleCommonApi = { module = "org.eclipse.keyple:keyple-common-java-api", version.ref = "keypleCommonApi" }
-keypleDistributedLocalLib = { module = "org.eclipse.keyple:keyple-distributed-local-java-lib", version.ref = "keypleDistributedLocalLib" }
-keypleDistributedNetworkLib = { module = "org.eclipse.keyple:keyple-distributed-network-java-lib", version.ref = "keypleDistributedNetworkLib" }
-keypleDistributedRemoteLib = { module = "org.eclipse.keyple:keyple-distributed-remote-java-lib", version.ref = "keypleDistributedRemoteLib" }
-keypleInteropJsonapiClientKmpLib = { module = "org.eclipse.keyple:keyple-interop-jsonapi-client-kmp-lib", version.ref = "keypleInteropJsonapiClientKmpLib" }
-keypleInteropLocalreaderNfcmobileKmpLib = { module = "org.eclipse.keyple:keyple-interop-localreader-nfcmobile-kmp-lib", version.ref = "keypleInteropLocalreaderNfcmobileKmpLib" }
-keyplePluginAndroidNfcLib = { module = "org.eclipse.keyple:keyple-plugin-android-nfc-java-lib", version.ref = "keyplePluginAndroidNfcLib" }
-keyplePluginAndroidOmapiLib = { module = "org.eclipse.keyple:keyple-plugin-android-omapi-java-lib", version.ref = "keyplePluginAndroidOmapiLib" }
+keypleJavaBom = { module = "org.eclipse.keyple:keyple-java-bom", version.ref = "keypleJavaBom" }
+keypleCardCalypsoCryptoLegacysamLib = { module = "org.eclipse.keyple:keyple-card-calypso-crypto-legacysam-java-lib" }
+keypleCardCalypsoCryptoPkiLib = { module = "org.eclipse.keyple:keyple-card-calypso-crypto-pki-java-lib" }
+keypleCardCalypsoLib = { module = "org.eclipse.keyple:keyple-card-calypso-java-lib" }
+keypleCommonApi = { module = "org.eclipse.keyple:keyple-common-java-api" }
+keypleDistributedLocalLib = { module = "org.eclipse.keyple:keyple-distributed-local-java-lib" }
+keypleDistributedNetworkLib = { module = "org.eclipse.keyple:keyple-distributed-network-java-lib" }
+keypleDistributedRemoteLib = { module = "org.eclipse.keyple:keyple-distributed-remote-java-lib" }
+keypleInteropJsonapiClientKmpLib = { module = "org.eclipse.keyple:keyple-interop-jsonapi-client-kmp-lib" }
+keypleInteropLocalreaderNfcmobileKmpLib = { module = "org.eclipse.keyple:keyple-interop-localreader-nfcmobile-kmp-lib" }
+keyplePluginAndroidNfcLib = { module = "org.eclipse.keyple:keyple-plugin-android-nfc-java-lib" }
+keyplePluginAndroidOmapiLib = { module = "org.eclipse.keyple:keyple-plugin-android-omapi-java-lib" }
 keyplePluginCnaCoppernicCone2Lib = { module = "org.calypsonet.keyple:keyple-plugin-cna-coppernic-cone2-java-lib", version.ref = "keyplePluginCnaCoppernicCone2Lib" }
 keyplePluginCnaFamocoSeCommunicationLib = { module = "org.calypsonet.keyple:keyple-plugin-cna-famoco-se-communication-java-lib", version.ref = "keyplePluginCnaFamocoSeCommunicationLib" }
-keyplePluginPcscLib = { module = "org.eclipse.keyple:keyple-plugin-pcsc-java-lib", version.ref = "keyplePluginPcscLib" }
-keyplePluginStoragecardApi = { module = "org.eclipse.keyple:keyple-plugin-storagecard-java-api", version.ref = "keyplePluginStoragecardApi" }
-keypleServiceLib = { module = "org.eclipse.keyple:keyple-service-java-lib", version.ref = "keypleServiceLib" }
-keypleServiceResourceLib = { module = "org.eclipse.keyple:keyple-service-resource-java-lib", version.ref = "keypleServiceResourceLib" }
-keypleUtilJavaLib = { module = "org.eclipse.keyple:keyple-util-java-lib", version.ref = "keypleUtilJavaLib" }
-keypopCalypsoCardApi = { module = "org.eclipse.keypop:keypop-calypso-card-java-api", version.ref = "keypopCalypsoCardApi" }
-keypopCalypsoCryptoLegacysamApi = { module = "org.eclipse.keypop:keypop-calypso-crypto-legacysam-java-api", version.ref = "keypopCalypsoCryptoLegacysamApi" }
-keypopReaderApi = { module = "org.eclipse.keypop:keypop-reader-java-api", version.ref = "keypopReaderApi" }
-keypopStoragecardApi = { module = "org.eclipse.keypop:keypop-storagecard-java-api", version.ref = "keypopStoragecardApi" }
+keyplePluginPcscLib = { module = "org.eclipse.keyple:keyple-plugin-pcsc-java-lib" }
+keyplePluginStoragecardApi = { module = "org.eclipse.keyple:keyple-plugin-storagecard-java-api" }
+keypleServiceLib = { module = "org.eclipse.keyple:keyple-service-java-lib" }
+keypleServiceResourceLib = { module = "org.eclipse.keyple:keyple-service-resource-java-lib" }
+keypleUtilJavaLib = { module = "org.eclipse.keyple:keyple-util-java-lib" }
+keypopCalypsoCardApi = { module = "org.eclipse.keypop:keypop-calypso-card-java-api" }
+keypopCalypsoCryptoLegacysamApi = { module = "org.eclipse.keypop:keypop-calypso-crypto-legacysam-java-api" }
+keypopReaderApi = { module = "org.eclipse.keypop:keypop-reader-java-api" }
+keypopStoragecardApi = { module = "org.eclipse.keypop:keypop-storagecard-java-api" }
 koinAndroid = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koinAndroidxCompose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 koinCompose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }

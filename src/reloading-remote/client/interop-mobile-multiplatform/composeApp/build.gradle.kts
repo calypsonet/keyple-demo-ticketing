@@ -49,8 +49,11 @@ kotlin {
   sourceSets {
     val desktopMain by getting
     commonMain.dependencies {
+      // Keyple BOM
+      implementation(project.dependencies.platform(libs.keypleJavaBom))
       implementation(libs.keypleInteropJsonapiClientKmpLib)
       implementation(libs.keypleInteropLocalreaderNfcmobileKmpLib)
+
       implementation(libs.kotlinxSerializationCore)
       implementation(libs.ktorSerializationKotlinxJson)
       implementation(project.dependencies.platform(libs.composeBom))

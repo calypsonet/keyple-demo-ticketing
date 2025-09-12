@@ -32,6 +32,9 @@ dependencies {
   implementation(
       fileTree(mapOf("dir" to "../../../../../libs", "include" to listOf("*.jar", "*.aar"))))
 
+  // Keyple BOM
+  implementation(platform(libs.keypleJavaBom))
+
   // Keypop (API)
   implementation(libs.keypopReaderApi)
   implementation(libs.keypopCalypsoCardApi)

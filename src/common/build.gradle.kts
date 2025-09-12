@@ -20,8 +20,12 @@ plugins {
 ///////////////////////////////////////////////////////////////////////////////
 
 dependencies {
-  implementation(libs.bitLib4j) { exclude(group = "org.slf4j") }
+  // Keyple BOM
+  implementation(platform(libs.keypleJavaBom))
   implementation(libs.keypleUtilJavaLib)
+
+  implementation(libs.bitLib4j) { exclude(group = "org.slf4j") }
+
   testImplementation(libs.kotlinTest)
   testImplementation(libs.assertjCore)
   testImplementation(libs.bitLib4j)
