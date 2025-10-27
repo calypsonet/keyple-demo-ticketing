@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Switched to [Keyple Java BOM](https://github.com/eclipse-keyple/keyple-java-bom) `2025.09.12` for dependency
   management, replacing individual Keyple component definitions.
+### Validation app
+#### Added
+- Added ratification feature with anti-passback management & communication failure recovery
 
 ## [25.09.10]
 ### Changed
