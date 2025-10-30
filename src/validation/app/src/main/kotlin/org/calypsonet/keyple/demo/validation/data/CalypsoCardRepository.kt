@@ -136,7 +136,7 @@ class CalypsoCardRepository {
         if (Duration.between(event.eventDatetime, validationDateTime).toMinutes() < 1) {
           if (calypsoCard.isDfRatified) {
             status = Status.INVALID_CARD
-            throw RuntimeException("Passback detected")
+            throw RuntimeException("Card already tapped.\nPlease wait before retrying.")
           } else {
             status = Status.SUCCESS
             throw RuntimeException("Recover previous broken valid session")
