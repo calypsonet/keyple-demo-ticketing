@@ -13,6 +13,7 @@
 package org.calypsonet.keyple.demo.validation.data
 
 import android.content.Context
+import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 import org.calypsonet.keyple.demo.common.constant.CardConstant
@@ -128,6 +129,17 @@ class CalypsoCardRepository {
           } else {
             status = Status.INVALID_CARD
             throw RuntimeException("Event error: wrong version number")
+          }
+        }
+
+        // Step 6.2 - anti-passback management & communication failure recovery
+        if (Duration.between(event.eventDatetime, validationDateTime).toMinutes() < 1) {
+          if (calypsoCard.isDfRatified) {
+            status = Status.INVALID_CARD
+            throw RuntimeException("Card already tapped.\nPlease wait before retrying.")
+          } else {
+            status = Status.SUCCESS
+            throw RuntimeException("Recover previous broken valid session")
           }
         }
 
