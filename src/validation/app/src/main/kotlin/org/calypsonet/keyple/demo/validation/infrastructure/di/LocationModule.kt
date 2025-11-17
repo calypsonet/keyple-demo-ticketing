@@ -10,13 +10,13 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.di
+package org.calypsonet.keyple.demo.validation.infrastructure.di
 
 import android.content.Context
 import dagger.Module
 import dagger.Provides
 import org.calypsonet.keyple.demo.validation.data.LocationRepository
-import org.calypsonet.keyple.demo.validation.di.scope.AppScoped
+import org.calypsonet.keyple.demo.validation.infrastructure.di.scope.AppScoped
 
 @Suppress("unused")
 @Module

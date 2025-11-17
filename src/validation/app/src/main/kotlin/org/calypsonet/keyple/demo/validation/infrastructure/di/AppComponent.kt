@@ -10,20 +10,22 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.di
+package org.calypsonet.keyple.demo.validation.infrastructure.di
 
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjector
 import dagger.android.support.AndroidSupportInjectionModule
 import org.calypsonet.keyple.demo.validation.Application
-import org.calypsonet.keyple.demo.validation.di.scope.AppScoped
+import org.calypsonet.keyple.demo.validation.infrastructure.di.scope.AppScoped
 
 @AppScoped
 @Component(
     modules =
         [
             AppModule::class,
+            DomainModule::class,
+            AdapterModule::class,
             UIModule::class,
             AndroidSupportInjectionModule::class,
             ReaderModule::class,

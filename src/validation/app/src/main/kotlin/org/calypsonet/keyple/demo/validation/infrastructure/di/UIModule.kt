@@ -1,0 +1,31 @@
+/* ******************************************************************************
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
+ *
+ * See the NOTICE file(s) distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the BSD 3-Clause License which is available at
+ * https://opensource.org/licenses/BSD-3-Clause.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ ****************************************************************************** */
+package org.calypsonet.keyple.demo.validation.infrastructure.di
+
+import dagger.Module
+import dagger.android.ContributesAndroidInjector
+import org.calypsonet.keyple.demo.validation.infrastructure.di.scope.ActivityScoped
+
+@Suppress("unused")
+@Module
+abstract class UIModule {
+
+  // TODO: Re-enable activities after migrating them to hexagonal architecture
+  // Activities need to be migrated to adapter/primary/ui package first
+  // @ActivityScoped @ContributesAndroidInjector abstract fun mainActivity(): MainActivity
+  // @ActivityScoped @ContributesAndroidInjector abstract fun settingsActivity(): SettingsActivity
+  // @ActivityScoped @ContributesAndroidInjector abstract fun deviceSelectionActivity(): DeviceSelectionActivity
+  // @ActivityScoped @ContributesAndroidInjector abstract fun homeActivity(): HomeActivity
+  // @ActivityScoped @ContributesAndroidInjector abstract fun readerActivity(): ReaderActivity
+  // @ActivityScoped @ContributesAndroidInjector abstract fun cardSummaryActivity(): CardSummaryActivity
+}

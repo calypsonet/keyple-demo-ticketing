@@ -10,12 +10,12 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.di
+package org.calypsonet.keyple.demo.validation.infrastructure.di
 
 import dagger.Module
 import dagger.Provides
 import org.calypsonet.keyple.demo.validation.data.ReaderRepository
-import org.calypsonet.keyple.demo.validation.di.scope.AppScoped
+import org.calypsonet.keyple.demo.validation.infrastructure.di.scope.AppScoped
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 import timber.log.Timber
 

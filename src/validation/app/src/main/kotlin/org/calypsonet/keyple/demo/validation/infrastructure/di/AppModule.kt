@@ -10,13 +10,16 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.di.scope
+package org.calypsonet.keyple.demo.validation.infrastructure.di
 
-import javax.inject.Scope
+import android.content.Context
+import dagger.Binds
+import dagger.Module
+import org.calypsonet.keyple.demo.validation.Application
 
-/**
- * In Dagger, an unscoped component cannot depend on a scoped component. As [AppComponent] is a
- * scoped component @AppScoped, we create a custom scope to be used by all fragment components.
- * Additionally, a component with a specific scope cannot have a sub component with the same scope.
- */
-@MustBeDocumented @Scope @Retention(AnnotationRetention.RUNTIME) annotation class ActivityScoped
+@Suppress("unused")
+@Module
+abstract class AppModule {
+  // expose Application as an injectable context
+  @Binds abstract fun bindContext(application: Application): Context
+}

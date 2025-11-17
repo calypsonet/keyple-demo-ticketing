@@ -10,8 +10,16 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.di.scope
+package org.calypsonet.keyple.demo.validation.infrastructure.di.scope
 
 import javax.inject.Scope
 
-@MustBeDocumented @Scope @Retention(AnnotationRetention.RUNTIME) annotation class AppScoped
+@Scope
+@Retention(AnnotationRetention.RUNTIME)
+@Target(
+    AnnotationTarget.ANNOTATION_CLASS,
+    AnnotationTarget.CLASS,
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY_GETTER,
+    AnnotationTarget.PROPERTY_SETTER)
+annotation class FragmentScoped
