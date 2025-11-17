@@ -13,10 +13,8 @@
 package org.calypsonet.keyple.demo.validation.data.model
 
 /** Constants for validation messages and strings. */
-object Constants {
+object Messages {
   // User error messages
-  const val ERROR_EXPIRED_TITLE = "Expired title"
-  const val ERROR_NO_TRIPS_LEFT = "No trips left"
   const val ERROR_NO_VALID_TITLE_DETECTED = "No valid title detected"
 
   // Exception messages
@@ -26,7 +24,7 @@ object Constants {
   const val EXCEPTION_CONTRACT_VERSION_ERROR = "Contract Version Number error (!= CURRENT_VERSION)"
   const val EXCEPTION_CARD_ALREADY_TAPPED = "Card already tapped.\nPlease wait before retrying."
   const val EXCEPTION_RECOVER_BROKEN_SESSION = "Recover previous broken valid session"
-  const val EXCEPTION_CONTRACT_EXPIRED = "Contract expired"
+  const val EXCEPTION_EXPIRED_TITLE = "Expired title"
   const val EXCEPTION_NO_TRIPS_LEFT = "No trips left"
   const val EXCEPTION_INSUFFICIENT_STORED_VALUE = "Insufficient stored value"
   const val EXCEPTION_CONTRACT_FORBIDDEN_OR_EXPIRED = "Contract is forbidden or expired"

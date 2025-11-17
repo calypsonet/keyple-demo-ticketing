@@ -12,7 +12,6 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.validation.data
 
-import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 import org.calypsonet.keyple.demo.common.constant.CardConstant
@@ -26,11 +25,13 @@ import org.calypsonet.keyple.demo.common.parser.EnvironmentHolderStructureParser
 import org.calypsonet.keyple.demo.common.parser.EventStructureParser
 import org.calypsonet.keyple.demo.validation.data.model.AppSettings
 import org.calypsonet.keyple.demo.validation.data.model.CardReaderResponse
-import org.calypsonet.keyple.demo.validation.data.model.Constants
 import org.calypsonet.keyple.demo.validation.data.model.Location
+import org.calypsonet.keyple.demo.validation.data.model.Messages
 import org.calypsonet.keyple.demo.validation.data.model.Status
 import org.calypsonet.keyple.demo.validation.data.model.Validation
 import org.calypsonet.keyple.demo.validation.data.model.mapper.ValidationMapper
+import org.calypsonet.keyple.demo.validation.domain.ValidationException
+import org.calypsonet.keyple.demo.validation.domain.ValidationRules
 import org.eclipse.keyple.card.calypso.CalypsoExtensionService
 import org.eclipse.keyple.core.util.HexUtil
 import org.eclipse.keypop.calypso.card.WriteAccessLevel
@@ -94,17 +95,12 @@ class CalypsoCardRepository {
 
         // Step 3 - If EnvVersionNumber of the Environment structure is not the expected one (==1
         // for the current version) reject the card. <Abort Secure Session>
-        if (environment.envVersionNumber != VersionNumber.CURRENT_VERSION) {
-          status = Status.INVALID_CARD
-          throw RuntimeException(Constants.EXCEPTION_ENVIRONMENT_WRONG_VERSION)
-        }
+        ValidationRules.validateEnvironmentVersionOrThrow(environment.envVersionNumber)
 
         // Step 4 - If EnvEndDate points to a date in the past reject the card. <Abort Secure
         // Session>
-        if (environment.envEndDate.getDate().isBefore(validationDateTime.toLocalDate())) {
-          status = Status.INVALID_CARD
-          throw RuntimeException(Constants.EXCEPTION_ENVIRONMENT_END_DATE_EXPIRED)
-        }
+        ValidationRules.validateEnvironmentDateOrThrow(
+            environment.envEndDate.getDate(), validationDateTime.toLocalDate())
 
         // Step 5 - Read and unpack the last event record.
         cardTransaction
@@ -118,57 +114,25 @@ class CalypsoCardRepository {
 
         // Step 6 - If EventVersionNumber is not the expected one (==1 for the current version)
         // reject the card. <Abort Secure Session>
-        val eventVersionNumber = event.eventVersionNumber
-
-        if (eventVersionNumber != VersionNumber.CURRENT_VERSION) {
-          if (eventVersionNumber == VersionNumber.UNDEFINED) {
-            status = Status.EMPTY_CARD
-            throw RuntimeException(Constants.ERROR_NO_VALID_TITLE_DETECTED)
-          } else {
-            status = Status.INVALID_CARD
-            throw RuntimeException(Constants.EXCEPTION_EVENT_WRONG_VERSION)
-          }
-        }
+        ValidationRules.validateEventVersionOrThrow(event.eventVersionNumber)
 
         // Step 6.2 - anti-passback management & communication failure recovery
-        if (Duration.between(event.eventDatetime, validationDateTime).toMinutes() < 1) {
-          if (calypsoCard.isDfRatified) {
-            status = Status.INVALID_CARD
-            throw RuntimeException(Constants.EXCEPTION_CARD_ALREADY_TAPPED)
-          } else {
-            status = Status.SUCCESS
-            throw RuntimeException(Constants.EXCEPTION_RECOVER_BROKEN_SESSION)
-          }
-        }
-
-        // Step 7 - Store the PriorityCode fields in a persistent object.
-        val contractPriorities = mutableListOf<Pair<Int, PriorityCode>>()
+        ValidationRules.validateAntiPassbackOrThrow(
+            event.eventDatetime, validationDateTime, calypsoCard.isDfRatified)
 
         // ***************** Best Contract Search
         // Step 7 - Create a list of PriorityCode fields that are different from FORBIDDEN and
         // EXPIRED.
-        if (event.contractPriority1 != PriorityCode.FORBIDDEN &&
-            event.contractPriority1 != PriorityCode.EXPIRED) {
-          contractPriorities.add(Pair(1, event.contractPriority1))
-        }
-        if (event.contractPriority2 != PriorityCode.FORBIDDEN &&
-            event.contractPriority2 != PriorityCode.EXPIRED) {
-          contractPriorities.add(Pair(2, event.contractPriority2))
-        }
-        if (event.contractPriority3 != PriorityCode.FORBIDDEN &&
-            event.contractPriority3 != PriorityCode.EXPIRED) {
-          contractPriorities.add(Pair(3, event.contractPriority3))
-        }
-        if (event.contractPriority4 != PriorityCode.FORBIDDEN &&
-            event.contractPriority4 != PriorityCode.EXPIRED) {
-          contractPriorities.add(Pair(4, event.contractPriority4))
-        }
+        val allPriorities =
+            listOf(
+                Pair(1, event.contractPriority1),
+                Pair(2, event.contractPriority2),
+                Pair(3, event.contractPriority3),
+                Pair(4, event.contractPriority4))
 
-        if (contractPriorities.isEmpty()) {
-          // Step 9 - If the list is empty go to END.
-          status = Status.EMPTY_CARD
-          throw RuntimeException(Constants.ERROR_NO_VALID_TITLE_DETECTED)
-        }
+        // Step 9 - If the list is empty go to END.
+        ValidationRules.validateHasValidContractsOrThrow(allPriorities)
+        val filteredPriorities = ValidationRules.filterValidContractPriorities(allPriorities)
 
         var priority1 = event.contractPriority1
         var priority2 = event.contractPriority2
@@ -178,7 +142,7 @@ class CalypsoCardRepository {
         var writeEvent = false
 
         // Step 10 - For each element in the list:
-        val sortedPriorities = contractPriorities.toList().sortedBy { it.second.key }
+        val sortedPriorities = ValidationRules.sortContractPrioritiesByPriority(filteredPriorities)
 
         // Step 11 - For each element in the list:
         for (it in sortedPriorities) {
@@ -200,10 +164,7 @@ class CalypsoCardRepository {
 
           // Step 11.2 - If ContractVersionNumber is not the expected one (==1 for the current
           // version) reject the card. <Abort Secure Session>
-          if (contract.contractVersionNumber != VersionNumber.CURRENT_VERSION) {
-            status = Status.INVALID_CARD
-            throw RuntimeException(Constants.EXCEPTION_CONTRACT_VERSION_ERROR)
-          }
+          ValidationRules.validateContractVersionOrThrow(contract.contractVersionNumber)
 
           // Step 11.3 - '  If ContractAuthenticator is not 0 perform the verification of the value
           // by using the PSO Verify Signature command of the SAM.
@@ -218,24 +179,24 @@ class CalypsoCardRepository {
           // Step 11.4 - If ContractValidityEndDate points to a date in the past update the
           // associated ContractPriorty field present in the persistent object to 31 and move to the
           // next element in the list
-          if (contract.contractValidityEndDate
-              .getDate()
-              .isBefore(validationDateTime.toLocalDate())) {
+          try {
+            ValidationRules.validateContractDateOrThrow(
+                contract.contractValidityEndDate.getDate(), validationDateTime.toLocalDate())
+          } catch (e: ValidationException) {
             when (record) {
               1 -> priority1 = PriorityCode.EXPIRED
               2 -> priority2 = PriorityCode.EXPIRED
               3 -> priority3 = PriorityCode.EXPIRED
               4 -> priority4 = PriorityCode.EXPIRED
             }
-            status = Status.EMPTY_CARD
-            errorMessage = Constants.ERROR_EXPIRED_TITLE
+            status = e.status
+            errorMessage = e.message
             writeEvent = true
             continue
           }
 
           // Step 11.5 - If the ContractTariff value for the contract read is 2 or 3:
-          if (contractPriority == PriorityCode.MULTI_TRIP ||
-              contractPriority == PriorityCode.STORED_VALUE) {
+          if (ValidationRules.isCounterBasedContract(contractPriority)) {
 
             val nbContractRecords =
                 when (calypsoCard.productType) {
@@ -255,37 +216,38 @@ class CalypsoCardRepository {
 
             // Step 11.5.2 - If the counter value is 0 update the associated ContractPriorty field
             // present in the persistent object to 31 and move to the next element in the list
-            if (counterValue == 0) {
+            try {
+              ValidationRules.validateTripsAvailableOrThrow(counterValue)
+            } catch (e: ValidationException) {
               when (record) {
                 1 -> priority1 = PriorityCode.EXPIRED
                 2 -> priority2 = PriorityCode.EXPIRED
                 3 -> priority3 = PriorityCode.EXPIRED
                 4 -> priority4 = PriorityCode.EXPIRED
               }
-              status = Status.EMPTY_CARD
-              errorMessage = Constants.ERROR_NO_TRIPS_LEFT
+              status = e.status
+              errorMessage = e.message
               writeEvent = true
               continue
             }
+
             // Step 11.5.3 - If the counter value is > 0 && ContractTariff == 3 && CounterValue <
             // ValidationAmount move to the next element in the list
-            else if (counterValue > 0 &&
-                contractPriority == PriorityCode.STORED_VALUE &&
-                counterValue < validationAmount) {
-              status = Status.EMPTY_CARD
-              errorMessage = Constants.ERROR_NO_TRIPS_LEFT
-              continue
+            if (contractPriority == PriorityCode.STORED_VALUE) {
+              try {
+                ValidationRules.validateSufficientStoredValueOrThrow(counterValue, validationAmount)
+              } catch (e: ValidationException) {
+                status = e.status
+                errorMessage = e.message
+                continue
+              }
             }
             // Step 11.5.4 - UPDATE COUNTER Decrement the counter value by the appropriate amount (1
             // if ContractTariff is 2, and the configured value for the trip if ContractTariff is
             // 3).
             else {
               val decrement =
-                  when (contractPriority) {
-                    PriorityCode.MULTI_TRIP -> SINGLE_VALIDATION_AMOUNT
-                    PriorityCode.STORED_VALUE -> validationAmount
-                    else -> 0
-                  }
+                  ValidationRules.calculateDecrementAmount(contractPriority, validationAmount)
               if (decrement > 0) {
                 cardTransaction
                     .prepareDecreaseCounter(CardConstant.SFI_COUNTERS, record, decrement)
@@ -321,7 +283,7 @@ class CalypsoCardRepository {
                     contractPriority4 = priority4)
             validation = ValidationMapper.map(eventToWrite, locations)
 
-            Timber.i(Constants.LOG_VALIDATION_SUCCESS)
+            Timber.i(Messages.LOG_VALIDATION_SUCCESS)
             status = Status.SUCCESS
             errorMessage = null
           } else {
@@ -345,13 +307,18 @@ class CalypsoCardRepository {
               .prepareUpdateRecord(CardConstant.SFI_EVENTS_LOG, 1, eventBytesToWrite)
               .processCommands(ChannelControl.KEEP_OPEN)
         } else {
-          Timber.i(Constants.LOG_VALIDATION_FAILED_NO_CONTRACT)
+          Timber.i(Messages.LOG_VALIDATION_FAILED_NO_CONTRACT)
           if (errorMessage.isNullOrEmpty()) {
-            errorMessage = Constants.ERROR_NO_VALID_TITLE_DETECTED
+            errorMessage = Messages.ERROR_NO_VALID_TITLE_DETECTED
           }
         }
+      } catch (e: ValidationException) {
+        Timber.e(e)
+        status = e.status
+        errorMessage = e.message
       } catch (e: Exception) {
         Timber.e(e)
+        status = Status.ERROR
         errorMessage = e.message
       } finally {
         // Step 14 - END: Close the session
@@ -374,16 +341,12 @@ class CalypsoCardRepository {
 
     return CardReaderResponse(
         status = status,
-        cardType = Constants.CARD_TYPE_CALYPSO_PREFIX + HexUtil.toHex(calypsoCard.dfName),
+        cardType = Messages.CARD_TYPE_CALYPSO_PREFIX + HexUtil.toHex(calypsoCard.dfName),
         nbTicketsLeft = nbTicketsLeft,
-        contract = Constants.EMPTY_CONTRACT,
+        contract = Messages.EMPTY_CONTRACT,
         validation = validation,
         errorMessage = errorMessage,
         passValidityEndDate = passValidityEndDate,
         eventDateTime = validationDateTime)
-  }
-
-  companion object {
-    const val SINGLE_VALIDATION_AMOUNT = 1
   }
 }
