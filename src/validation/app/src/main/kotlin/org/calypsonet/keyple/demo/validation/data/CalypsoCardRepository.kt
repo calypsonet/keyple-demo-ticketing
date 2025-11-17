@@ -12,7 +12,6 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.validation.data
 
-import android.content.Context
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -46,7 +45,6 @@ class CalypsoCardRepository {
 
   fun executeValidationProcedure(
       validationDateTime: LocalDateTime,
-      context: Context,
       validationAmount: Int,
       cardReader: CardReader,
       calypsoCard: CalypsoCard,
@@ -230,7 +228,7 @@ class CalypsoCardRepository {
               4 -> priority4 = PriorityCode.EXPIRED
             }
             status = Status.EMPTY_CARD
-            errorMessage = context.getString(R.string.expired_title)
+            errorMessage = "Expired title"
             writeEvent = true
             continue
           }
@@ -265,7 +263,7 @@ class CalypsoCardRepository {
                 4 -> priority4 = PriorityCode.EXPIRED
               }
               status = Status.EMPTY_CARD
-              errorMessage = context.getString(R.string.no_trips_left)
+              errorMessage = "No trips left"
               writeEvent = true
               continue
             }
@@ -275,7 +273,7 @@ class CalypsoCardRepository {
                 contractPriority == PriorityCode.STORED_VALUE &&
                 counterValue < validationAmount) {
               status = Status.EMPTY_CARD
-              errorMessage = context.getString(R.string.no_trips_left)
+              errorMessage = "No trips left"
               continue
             }
             // Step 11.5.4 - UPDATE COUNTER Decrement the counter value by the appropriate amount (1
@@ -349,7 +347,7 @@ class CalypsoCardRepository {
         } else {
           Timber.i("Validation procedure result: Failed - No valid contract found")
           if (errorMessage.isNullOrEmpty()) {
-            errorMessage = context.getString(R.string.no_valid_title_detected)
+            errorMessage = "No valid title detected"
           }
         }
       } catch (e: Exception) {

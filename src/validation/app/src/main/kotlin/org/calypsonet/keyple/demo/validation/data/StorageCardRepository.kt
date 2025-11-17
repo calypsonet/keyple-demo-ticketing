@@ -12,7 +12,6 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.validation.data
 
-import android.content.Context
 import java.time.LocalDate
 import java.time.LocalDateTime
 import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService
@@ -41,7 +40,6 @@ class StorageCardRepository {
 
   fun executeValidationProcedure(
       validationDateTime: LocalDateTime,
-      context: Context,
       validationAmount: Int,
       cardReader: CardReader,
       storageCard: StorageCard,
@@ -131,7 +129,7 @@ class StorageCardRepository {
         // Check contract validity
         if (contract.contractValidityEndDate.getDate().isBefore(validationDateTime.toLocalDate())) {
           status = Status.EMPTY_CARD
-          errorMessage = context.getString(R.string.expired_title)
+          errorMessage = "Expired title"
           throw RuntimeException("Contract expired")
         }
 
@@ -147,7 +145,7 @@ class StorageCardRepository {
             val counterValue = contract.counterValue ?: 0
             if (counterValue == 0) {
               status = Status.EMPTY_CARD
-              errorMessage = context.getString(R.string.no_trips_left)
+              errorMessage = "No trips left"
               throw RuntimeException("No trips left")
             }
 
@@ -169,7 +167,7 @@ class StorageCardRepository {
             val counterValue = contract.counterValue ?: 0
             if (counterValue < validationAmount) {
               status = Status.EMPTY_CARD
-              errorMessage = context.getString(R.string.no_trips_left)
+              errorMessage = "No trips left"
               throw RuntimeException("Insufficient stored value")
             }
 
@@ -194,7 +192,7 @@ class StorageCardRepository {
           PriorityCode.EXPIRED,
           PriorityCode.UNKNOWN -> {
             status = Status.EMPTY_CARD
-            errorMessage = context.getString(R.string.no_valid_title_detected)
+            errorMessage = "No valid title detected"
             throw RuntimeException("Contract is forbidden or expired")
           }
         }
@@ -226,7 +224,7 @@ class StorageCardRepository {
           errorMessage = null
         } else {
           Timber.i("Validation procedure result: Failed - No valid contract found")
-          errorMessage = context.getString(R.string.no_valid_title_detected)
+          errorMessage = "No valid title detected"
         }
       } catch (e: Exception) {
         Timber.e(e)
