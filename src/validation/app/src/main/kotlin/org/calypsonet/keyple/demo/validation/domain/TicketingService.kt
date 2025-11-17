@@ -265,7 +265,6 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
         CalypsoCardRepository()
             .executeValidationProcedure(
                 validationDateTime = LocalDateTime.now(),
-                context = context,
                 validationAmount = 1,
                 cardReader = readerRepository.getCardReader()!!,
                 calypsoCard = smartCard as CalypsoCard,
@@ -276,7 +275,6 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
         StorageCardRepository()
             .executeValidationProcedure(
                 validationDateTime = LocalDateTime.now(),
-                context = context,
                 validationAmount = 1,
                 cardReader = readerRepository.getCardReader()!!,
                 storageCard = smartCard as StorageCard,
