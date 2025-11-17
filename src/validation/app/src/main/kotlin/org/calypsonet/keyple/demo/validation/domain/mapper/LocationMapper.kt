@@ -10,17 +10,13 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.util
+package org.calypsonet.keyple.demo.validation.domain.mapper
 
-import kotlin.coroutines.Continuation
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withTimeoutOrNull
+import org.calypsonet.keyple.demo.common.model.EventStructure
+import org.calypsonet.keyple.demo.validation.domain.model.Location
 
-suspend inline fun <T> suspendCoroutineWithTimeout(
-    timeout: Long,
-    crossinline block: (Continuation<T>) -> Unit
-): T? {
-  var finalValue: T? = null
-  withTimeoutOrNull(timeout) { finalValue = suspendCancellableCoroutine(block = block) }
-  return finalValue
+object LocationMapper {
+  fun map(locations: List<Location>, event: EventStructure): Location {
+    return locations.filter { event.eventLocation == it.id }[0]
+  }
 }

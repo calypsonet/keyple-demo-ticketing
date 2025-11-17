@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.data.model
+package org.calypsonet.keyple.demo.validation.domain
 
 /** Constants for validation messages and strings. */
 object Messages {

@@ -27,12 +27,12 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.validation.R
-import org.calypsonet.keyple.demo.validation.data.model.AppSettings
-import org.calypsonet.keyple.demo.validation.data.model.CardReaderResponse
-import org.calypsonet.keyple.demo.validation.data.model.ReaderType
-import org.calypsonet.keyple.demo.validation.data.model.Status
 import org.calypsonet.keyple.demo.validation.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.validation.di.scope.ActivityScoped
+import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
+import org.calypsonet.keyple.demo.validation.domain.model.CardReaderResponse
+import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
+import org.calypsonet.keyple.demo.validation.domain.model.Status
 import org.eclipse.keypop.reader.CardReaderEvent
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 import timber.log.Timber

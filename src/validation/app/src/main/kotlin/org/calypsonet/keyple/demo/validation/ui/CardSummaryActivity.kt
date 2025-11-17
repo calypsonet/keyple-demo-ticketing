@@ -18,11 +18,11 @@ import androidx.core.content.ContextCompat
 import java.time.format.DateTimeFormatter
 import java.util.*
 import org.calypsonet.keyple.demo.validation.R
-import org.calypsonet.keyple.demo.validation.data.model.AppSettings
-import org.calypsonet.keyple.demo.validation.data.model.CardReaderResponse
-import org.calypsonet.keyple.demo.validation.data.model.ReaderType
-import org.calypsonet.keyple.demo.validation.data.model.Status
 import org.calypsonet.keyple.demo.validation.databinding.ActivityCardSummaryBinding
+import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
+import org.calypsonet.keyple.demo.validation.domain.model.CardReaderResponse
+import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
+import org.calypsonet.keyple.demo.validation.domain.model.Status
 import timber.log.Timber
 
 class CardSummaryActivity : BaseActivity() {

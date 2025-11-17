@@ -10,11 +10,19 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.data.model
+package org.calypsonet.keyple.demo.validation.domain.mapper
 
-enum class CardProtocolEnum {
-  ISO_7816_LOGICAL_PROTOCOL,
-  ISO_14443_4_LOGICAL_PROTOCOL,
-  MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL,
-  ST25_SRT512_LOGICAL_PROTOCOL
+import org.calypsonet.keyple.demo.common.model.EventStructure
+import org.calypsonet.keyple.demo.validation.domain.model.Location
+import org.calypsonet.keyple.demo.validation.domain.model.Validation
+
+object ValidationMapper {
+  fun map(event: EventStructure, locations: List<Location>): Validation {
+    return Validation(
+        name = "Event name",
+        dateTime = event.eventDatetime,
+        location = LocationMapper.map(locations, event),
+        destination = null,
+        provider = null)
+  }
 }

@@ -20,9 +20,9 @@ import android.graphics.Color
 import android.os.Bundle
 import org.calypsonet.keyple.demo.validation.BuildConfig
 import org.calypsonet.keyple.demo.validation.R
-import org.calypsonet.keyple.demo.validation.data.model.AppSettings
-import org.calypsonet.keyple.demo.validation.data.model.ReaderType
 import org.calypsonet.keyple.demo.validation.databinding.ActivityDeviceSelectionBinding
+import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
+import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.calypsonet.keyple.demo.validation.ui.BaseActivity
 import org.calypsonet.keyple.demo.validation.ui.SettingsActivity
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants

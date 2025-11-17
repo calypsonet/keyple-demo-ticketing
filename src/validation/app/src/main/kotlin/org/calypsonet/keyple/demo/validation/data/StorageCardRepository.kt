@@ -24,15 +24,15 @@ import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 import org.calypsonet.keyple.demo.common.parser.SCContractStructureParser
 import org.calypsonet.keyple.demo.common.parser.SCEnvironmentHolderStructureParser
 import org.calypsonet.keyple.demo.common.parser.SCEventStructureParser
-import org.calypsonet.keyple.demo.validation.data.model.AppSettings
-import org.calypsonet.keyple.demo.validation.data.model.CardReaderResponse
-import org.calypsonet.keyple.demo.validation.data.model.Location
-import org.calypsonet.keyple.demo.validation.data.model.Messages
-import org.calypsonet.keyple.demo.validation.data.model.Status
-import org.calypsonet.keyple.demo.validation.data.model.Validation
-import org.calypsonet.keyple.demo.validation.data.model.mapper.ValidationMapper
+import org.calypsonet.keyple.demo.validation.domain.Messages
 import org.calypsonet.keyple.demo.validation.domain.ValidationException
 import org.calypsonet.keyple.demo.validation.domain.ValidationRules
+import org.calypsonet.keyple.demo.validation.domain.mapper.ValidationMapper
+import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
+import org.calypsonet.keyple.demo.validation.domain.model.CardReaderResponse
+import org.calypsonet.keyple.demo.validation.domain.model.Location
+import org.calypsonet.keyple.demo.validation.domain.model.Status
+import org.calypsonet.keyple.demo.validation.domain.model.Validation
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.storagecard.card.StorageCard
 import org.eclipse.keypop.storagecard.transaction.ChannelControl
@@ -134,7 +134,9 @@ class StorageCardRepository {
             ValidationRules.validateTripsAvailableOrThrow(counterValue)
 
             // Decrement counter
-            val newCounterValue = counterValue - ValidationRules.SINGLE_VALIDATION_AMOUNT
+            val newCounterValue =
+                counterValue -
+                    ValidationRules.calculateDecrementAmount(contractPriority, validationAmount)
             contract.counterValue = newCounterValue
             nbTicketsLeft = newCounterValue
 

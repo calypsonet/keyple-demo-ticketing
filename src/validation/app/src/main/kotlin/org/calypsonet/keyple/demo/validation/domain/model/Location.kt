@@ -10,30 +10,15 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.data.model
+package org.calypsonet.keyple.demo.validation.domain.model
 
-import java.util.Locale
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-enum class Status(private val status: String) {
-  LOADING("loading"),
-  SUCCESS("Success"),
-  INVALID_CARD("Invalid card"),
-  EMPTY_CARD("Empty card"),
-  ERROR("error");
+@Parcelize
+data class Location(val id: Int, val name: String) : Parcelable {
 
   override fun toString(): String {
-    return status
-  }
-
-  companion object {
-    @JvmStatic
-    fun getStatus(name: String): Status {
-      return try {
-        valueOf(name.uppercase(Locale.ENGLISH))
-      } catch (e: Exception) {
-        // If the given state does not exist, return the default value.
-        ERROR
-      }
-    }
+    return "$id - $name"
   }
 }

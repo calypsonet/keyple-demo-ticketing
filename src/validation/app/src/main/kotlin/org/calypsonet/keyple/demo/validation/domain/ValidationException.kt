@@ -12,12 +12,13 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.validation.domain
 
-import org.calypsonet.keyple.demo.validation.data.model.Status
+import org.calypsonet.keyple.demo.validation.domain.model.Status
 
 /**
  * Exception for validation business rule violations.
  *
- * Carries the appropriate [Status] to set when the exception is caught in the repository layer.
+ * Carries the appropriate [org.calypsonet.keyple.demo.validation.domain.model.Status] to set when
+ * the exception is caught in the repository layer.
  *
  * @param message The error message describing the validation failure
  * @param status The status to set when this validation exception is caught

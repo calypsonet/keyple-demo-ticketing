@@ -13,7 +13,7 @@
 package org.calypsonet.keyple.demo.validation.data
 
 import javax.inject.Inject
-import org.calypsonet.keyple.demo.validation.data.model.Location
+import org.calypsonet.keyple.demo.validation.domain.model.Location
 
 class LocationRepository @Inject constructor() {
 

@@ -20,11 +20,11 @@ import org.calypsonet.keyple.demo.common.constant.CardConstant
 import org.calypsonet.keyple.demo.validation.data.CalypsoCardRepository
 import org.calypsonet.keyple.demo.validation.data.ReaderRepository
 import org.calypsonet.keyple.demo.validation.data.StorageCardRepository
-import org.calypsonet.keyple.demo.validation.data.model.CardProtocolEnum
-import org.calypsonet.keyple.demo.validation.data.model.CardReaderResponse
-import org.calypsonet.keyple.demo.validation.data.model.Location
-import org.calypsonet.keyple.demo.validation.data.model.ReaderType
 import org.calypsonet.keyple.demo.validation.di.scope.AppScoped
+import org.calypsonet.keyple.demo.validation.domain.model.CardProtocolEnum
+import org.calypsonet.keyple.demo.validation.domain.model.CardReaderResponse
+import org.calypsonet.keyple.demo.validation.domain.model.Location
+import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.eclipse.keyple.card.calypso.CalypsoExtensionService
 import org.eclipse.keyple.card.calypso.crypto.legacysam.LegacySamExtensionService
 import org.eclipse.keyple.card.calypso.crypto.legacysam.LegacySamUtil

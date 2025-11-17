@@ -18,10 +18,10 @@ import android.provider.Settings
 import android.widget.ArrayAdapter
 import org.calypsonet.keyple.demo.validation.BuildConfig
 import org.calypsonet.keyple.demo.validation.R
-import org.calypsonet.keyple.demo.validation.data.model.AppSettings
-import org.calypsonet.keyple.demo.validation.data.model.Location
 import org.calypsonet.keyple.demo.validation.databinding.ActivitySettingsBinding
 import org.calypsonet.keyple.demo.validation.databinding.LogoToolbarBinding
+import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
+import org.calypsonet.keyple.demo.validation.domain.model.Location
 
 class SettingsActivity : BaseActivity() {
 

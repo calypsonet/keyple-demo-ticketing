@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2022 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -10,11 +10,10 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.data.model
+package org.calypsonet.keyple.demo.validation.domain.model
 
-enum class ReaderType {
-  BLUEBIRD,
-  COPPERNIC,
-  FAMOCO,
-  FLOWBIRD
+object AppSettings {
+  lateinit var readerType: ReaderType
+  lateinit var location: Location
+  var batteryPowered: Boolean = true
 }

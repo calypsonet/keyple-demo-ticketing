@@ -17,8 +17,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
-import org.calypsonet.keyple.demo.validation.data.model.Messages
-import org.calypsonet.keyple.demo.validation.data.model.Status
+import org.calypsonet.keyple.demo.validation.domain.model.Status
 
 /** Business rules for card validation. */
 object ValidationRules {
