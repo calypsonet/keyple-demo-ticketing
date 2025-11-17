@@ -12,57 +12,27 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.validation.data
 
-import android.content.Context
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStream
-import java.io.InputStreamReader
 import javax.inject.Inject
 import org.calypsonet.keyple.demo.validation.data.model.Location
 
-class LocationRepository @Inject constructor(context: Context) {
+class LocationRepository @Inject constructor() {
 
-  private val locationList: List<Location>
-
-  init {
-    locationList =
-        getGson()
-            .fromJson(getFileFromResources(context = context), Array<Location>::class.java)
-            .toList()
-  }
+  private val locationList: List<Location> =
+      listOf(
+          Location(0, "Bruxelles"),
+          Location(1, "Konstanz"),
+          Location(2, "Lisboa"),
+          Location(3, "Milan"),
+          Location(4, "Munich"),
+          Location(5, "Paris"),
+          Location(6, "Riga"),
+          Location(7, "Roma"),
+          Location(8, "Strasbourg"),
+          Location(9, "Torino"),
+          Location(10, "Venice"),
+          Location(11, "Barcelona"))
 
   fun getLocations(): List<Location> {
     return locationList
-  }
-
-  /** Get file from raw embedded directory */
-  private fun getFileFromResources(context: Context): String {
-    val resId = context.resources.getIdentifier("locations", "raw", context.packageName)
-    val inputStream = context.resources.openRawResource(resId)
-    return parseFile(inputStream)
-  }
-
-  private fun parseFile(inputStream: InputStream): String {
-    val sb = StringBuilder()
-    var strLine: String?
-    try {
-      BufferedReader(InputStreamReader(inputStream, "UTF-8")).use { reader ->
-        while (reader.readLine().also { strLine = it } != null) {
-          sb.append(strLine)
-        }
-      }
-    } catch (ignore: IOException) { // ignore
-    }
-    return sb.toString()
-  }
-
-  private fun getGson(): Gson {
-    val gsonBuilder = GsonBuilder()
-    gsonBuilder.disableHtmlEscaping()
-    gsonBuilder.setPrettyPrinting()
-    gsonBuilder.setLenient()
-    return gsonBuilder.create()
   }
 }

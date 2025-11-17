@@ -12,7 +12,6 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.validation.di
 
-import android.content.Context
 import dagger.Module
 import dagger.Provides
 import org.calypsonet.keyple.demo.validation.data.LocationRepository
@@ -22,7 +21,5 @@ import org.calypsonet.keyple.demo.validation.di.scope.AppScoped
 @Module
 class LocationModule {
 
-  @Provides
-  @AppScoped
-  fun providesLocationRepository(context: Context): LocationRepository = LocationRepository(context)
+  @Provides @AppScoped fun providesLocationRepository(): LocationRepository = LocationRepository()
 }

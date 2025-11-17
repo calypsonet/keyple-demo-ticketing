@@ -187,8 +187,7 @@ class ReaderActivity : BaseActivity() {
                 withContext(Dispatchers.Main) { progress.show() }
                 val validationResult =
                     withContext(Dispatchers.IO) {
-                      ticketingService.executeValidationProcedure(
-                          this@ReaderActivity, locationRepository.getLocations())
+                      ticketingService.executeValidationProcedure(locationRepository.getLocations())
                     }
                 withContext(Dispatchers.Main) {
                   progress.dismiss()
