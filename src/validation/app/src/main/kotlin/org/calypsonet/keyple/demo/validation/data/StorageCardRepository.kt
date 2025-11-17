@@ -24,9 +24,9 @@ import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 import org.calypsonet.keyple.demo.common.parser.SCContractStructureParser
 import org.calypsonet.keyple.demo.common.parser.SCEnvironmentHolderStructureParser
 import org.calypsonet.keyple.demo.common.parser.SCEventStructureParser
-import org.calypsonet.keyple.demo.validation.R
 import org.calypsonet.keyple.demo.validation.data.model.AppSettings
 import org.calypsonet.keyple.demo.validation.data.model.CardReaderResponse
+import org.calypsonet.keyple.demo.validation.data.model.Constants
 import org.calypsonet.keyple.demo.validation.data.model.Location
 import org.calypsonet.keyple.demo.validation.data.model.Status
 import org.calypsonet.keyple.demo.validation.data.model.Validation
@@ -87,13 +87,13 @@ class StorageCardRepository {
         // Step 3 - Validate environment version
         if (environment.envVersionNumber != VersionNumber.CURRENT_VERSION) {
           status = Status.INVALID_CARD
-          throw RuntimeException("Environment error: wrong version number")
+          throw RuntimeException(Constants.EXCEPTION_ENVIRONMENT_WRONG_VERSION)
         }
 
         // Step 4 - Validate environment end date
         if (environment.envEndDate.getDate().isBefore(validationDateTime.toLocalDate())) {
           status = Status.INVALID_CARD
-          throw RuntimeException("Environment error: end date expired")
+          throw RuntimeException(Constants.EXCEPTION_ENVIRONMENT_END_DATE_EXPIRED)
         }
 
         // Step 5 - Read and unpack the event record
@@ -107,10 +107,10 @@ class StorageCardRepository {
         if (eventVersionNumber != VersionNumber.CURRENT_VERSION) {
           if (eventVersionNumber == VersionNumber.UNDEFINED) {
             status = Status.EMPTY_CARD
-            throw RuntimeException("No valid title detected")
+            throw RuntimeException(Constants.ERROR_NO_VALID_TITLE_DETECTED)
           } else {
             status = Status.INVALID_CARD
-            throw RuntimeException("Event error: wrong version number")
+            throw RuntimeException(Constants.EXCEPTION_EVENT_WRONG_VERSION)
           }
         }
 
@@ -123,14 +123,14 @@ class StorageCardRepository {
         // Validate contract version
         if (contract.contractVersionNumber != VersionNumber.CURRENT_VERSION) {
           status = Status.INVALID_CARD
-          throw RuntimeException("Contract Version Number error (!= CURRENT_VERSION)")
+          throw RuntimeException(Constants.EXCEPTION_CONTRACT_VERSION_ERROR)
         }
 
         // Check contract validity
         if (contract.contractValidityEndDate.getDate().isBefore(validationDateTime.toLocalDate())) {
           status = Status.EMPTY_CARD
-          errorMessage = "Expired title"
-          throw RuntimeException("Contract expired")
+          errorMessage = Constants.ERROR_EXPIRED_TITLE
+          throw RuntimeException(Constants.EXCEPTION_CONTRACT_EXPIRED)
         }
 
         // Determine contract priority from contract tariff
@@ -145,8 +145,8 @@ class StorageCardRepository {
             val counterValue = contract.counterValue ?: 0
             if (counterValue == 0) {
               status = Status.EMPTY_CARD
-              errorMessage = "No trips left"
-              throw RuntimeException("No trips left")
+              errorMessage = Constants.ERROR_NO_TRIPS_LEFT
+              throw RuntimeException(Constants.EXCEPTION_NO_TRIPS_LEFT)
             }
 
             // Decrement counter
@@ -167,8 +167,8 @@ class StorageCardRepository {
             val counterValue = contract.counterValue ?: 0
             if (counterValue < validationAmount) {
               status = Status.EMPTY_CARD
-              errorMessage = "No trips left"
-              throw RuntimeException("Insufficient stored value")
+              errorMessage = Constants.ERROR_NO_TRIPS_LEFT
+              throw RuntimeException(Constants.EXCEPTION_INSUFFICIENT_STORED_VALUE)
             }
 
             // Decrement counter by validation amount
@@ -192,8 +192,8 @@ class StorageCardRepository {
           PriorityCode.EXPIRED,
           PriorityCode.UNKNOWN -> {
             status = Status.EMPTY_CARD
-            errorMessage = "No valid title detected"
-            throw RuntimeException("Contract is forbidden or expired")
+            errorMessage = Constants.ERROR_NO_VALID_TITLE_DETECTED
+            throw RuntimeException(Constants.EXCEPTION_CONTRACT_FORBIDDEN_OR_EXPIRED)
           }
         }
 
@@ -219,12 +219,12 @@ class StorageCardRepository {
               .prepareWriteBlocks(CardConstant.SC_EVENT_FIRST_BLOCK, eventBytesToWrite)
               .processCommands(ChannelControl.KEEP_OPEN)
 
-          Timber.i("Validation procedure result: SUCCESS")
+          Timber.i(Constants.LOG_VALIDATION_SUCCESS)
           status = Status.SUCCESS
           errorMessage = null
         } else {
-          Timber.i("Validation procedure result: Failed - No valid contract found")
-          errorMessage = "No valid title detected"
+          Timber.i(Constants.LOG_VALIDATION_FAILED_NO_CONTRACT)
+          errorMessage = Constants.ERROR_NO_VALID_TITLE_DETECTED
         }
       } catch (e: Exception) {
         Timber.e(e)
@@ -252,7 +252,7 @@ class StorageCardRepository {
         status = status,
         cardType = storageCard.productType.name,
         nbTicketsLeft = nbTicketsLeft,
-        contract = "",
+        contract = Constants.EMPTY_CONTRACT,
         validation = validation,
         errorMessage = errorMessage,
         passValidityEndDate = passValidityEndDate,

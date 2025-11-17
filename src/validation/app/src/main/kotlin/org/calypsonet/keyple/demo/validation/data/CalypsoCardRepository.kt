@@ -24,9 +24,9 @@ import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 import org.calypsonet.keyple.demo.common.parser.ContractStructureParser
 import org.calypsonet.keyple.demo.common.parser.EnvironmentHolderStructureParser
 import org.calypsonet.keyple.demo.common.parser.EventStructureParser
-import org.calypsonet.keyple.demo.validation.R
 import org.calypsonet.keyple.demo.validation.data.model.AppSettings
 import org.calypsonet.keyple.demo.validation.data.model.CardReaderResponse
+import org.calypsonet.keyple.demo.validation.data.model.Constants
 import org.calypsonet.keyple.demo.validation.data.model.Location
 import org.calypsonet.keyple.demo.validation.data.model.Status
 import org.calypsonet.keyple.demo.validation.data.model.Validation
@@ -96,14 +96,14 @@ class CalypsoCardRepository {
         // for the current version) reject the card. <Abort Secure Session>
         if (environment.envVersionNumber != VersionNumber.CURRENT_VERSION) {
           status = Status.INVALID_CARD
-          throw RuntimeException("Environment error: wrong version number")
+          throw RuntimeException(Constants.EXCEPTION_ENVIRONMENT_WRONG_VERSION)
         }
 
         // Step 4 - If EnvEndDate points to a date in the past reject the card. <Abort Secure
         // Session>
         if (environment.envEndDate.getDate().isBefore(validationDateTime.toLocalDate())) {
           status = Status.INVALID_CARD
-          throw RuntimeException("Environment error: end date expired")
+          throw RuntimeException(Constants.EXCEPTION_ENVIRONMENT_END_DATE_EXPIRED)
         }
 
         // Step 5 - Read and unpack the last event record.
@@ -123,10 +123,10 @@ class CalypsoCardRepository {
         if (eventVersionNumber != VersionNumber.CURRENT_VERSION) {
           if (eventVersionNumber == VersionNumber.UNDEFINED) {
             status = Status.EMPTY_CARD
-            throw RuntimeException("No valid title detected")
+            throw RuntimeException(Constants.ERROR_NO_VALID_TITLE_DETECTED)
           } else {
             status = Status.INVALID_CARD
-            throw RuntimeException("Event error: wrong version number")
+            throw RuntimeException(Constants.EXCEPTION_EVENT_WRONG_VERSION)
           }
         }
 
@@ -134,10 +134,10 @@ class CalypsoCardRepository {
         if (Duration.between(event.eventDatetime, validationDateTime).toMinutes() < 1) {
           if (calypsoCard.isDfRatified) {
             status = Status.INVALID_CARD
-            throw RuntimeException("Card already tapped.\nPlease wait before retrying.")
+            throw RuntimeException(Constants.EXCEPTION_CARD_ALREADY_TAPPED)
           } else {
             status = Status.SUCCESS
-            throw RuntimeException("Recover previous broken valid session")
+            throw RuntimeException(Constants.EXCEPTION_RECOVER_BROKEN_SESSION)
           }
         }
 
@@ -167,7 +167,7 @@ class CalypsoCardRepository {
         if (contractPriorities.isEmpty()) {
           // Step 9 - If the list is empty go to END.
           status = Status.EMPTY_CARD
-          throw RuntimeException("No valid title detected")
+          throw RuntimeException(Constants.ERROR_NO_VALID_TITLE_DETECTED)
         }
 
         var priority1 = event.contractPriority1
@@ -202,7 +202,7 @@ class CalypsoCardRepository {
           // version) reject the card. <Abort Secure Session>
           if (contract.contractVersionNumber != VersionNumber.CURRENT_VERSION) {
             status = Status.INVALID_CARD
-            throw RuntimeException("Contract Version Number error (!= CURRENT_VERSION)")
+            throw RuntimeException(Constants.EXCEPTION_CONTRACT_VERSION_ERROR)
           }
 
           // Step 11.3 - '  If ContractAuthenticator is not 0 perform the verification of the value
@@ -228,7 +228,7 @@ class CalypsoCardRepository {
               4 -> priority4 = PriorityCode.EXPIRED
             }
             status = Status.EMPTY_CARD
-            errorMessage = "Expired title"
+            errorMessage = Constants.ERROR_EXPIRED_TITLE
             writeEvent = true
             continue
           }
@@ -263,7 +263,7 @@ class CalypsoCardRepository {
                 4 -> priority4 = PriorityCode.EXPIRED
               }
               status = Status.EMPTY_CARD
-              errorMessage = "No trips left"
+              errorMessage = Constants.ERROR_NO_TRIPS_LEFT
               writeEvent = true
               continue
             }
@@ -273,7 +273,7 @@ class CalypsoCardRepository {
                 contractPriority == PriorityCode.STORED_VALUE &&
                 counterValue < validationAmount) {
               status = Status.EMPTY_CARD
-              errorMessage = "No trips left"
+              errorMessage = Constants.ERROR_NO_TRIPS_LEFT
               continue
             }
             // Step 11.5.4 - UPDATE COUNTER Decrement the counter value by the appropriate amount (1
@@ -321,7 +321,7 @@ class CalypsoCardRepository {
                     contractPriority4 = priority4)
             validation = ValidationMapper.map(eventToWrite, locations)
 
-            Timber.i("Validation procedure result: SUCCESS")
+            Timber.i(Constants.LOG_VALIDATION_SUCCESS)
             status = Status.SUCCESS
             errorMessage = null
           } else {
@@ -345,9 +345,9 @@ class CalypsoCardRepository {
               .prepareUpdateRecord(CardConstant.SFI_EVENTS_LOG, 1, eventBytesToWrite)
               .processCommands(ChannelControl.KEEP_OPEN)
         } else {
-          Timber.i("Validation procedure result: Failed - No valid contract found")
+          Timber.i(Constants.LOG_VALIDATION_FAILED_NO_CONTRACT)
           if (errorMessage.isNullOrEmpty()) {
-            errorMessage = "No valid title detected"
+            errorMessage = Constants.ERROR_NO_VALID_TITLE_DETECTED
           }
         }
       } catch (e: Exception) {
@@ -374,9 +374,9 @@ class CalypsoCardRepository {
 
     return CardReaderResponse(
         status = status,
-        cardType = "CALYPSO: DF name " + HexUtil.toHex(calypsoCard.dfName),
+        cardType = Constants.CARD_TYPE_CALYPSO_PREFIX + HexUtil.toHex(calypsoCard.dfName),
         nbTicketsLeft = nbTicketsLeft,
-        contract = "",
+        contract = Constants.EMPTY_CONTRACT,
         validation = validation,
         errorMessage = errorMessage,
         passValidityEndDate = passValidityEndDate,
