@@ -21,5 +21,5 @@ import org.calypsonet.keyple.demo.validation.di.scope.AppScoped
 @Module
 class LocationModule {
 
-  @Provides @AppScoped fun providesLocationRepository(): LocationRepository = LocationRepository()
+  @Provides @AppScoped fun provideLocationRepository(): LocationRepository = LocationRepository()
 }

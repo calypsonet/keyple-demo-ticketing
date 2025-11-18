@@ -30,9 +30,9 @@ import org.calypsonet.keyple.demo.validation.R
 import org.calypsonet.keyple.demo.validation.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.validation.di.scope.ActivityScoped
 import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
-import org.calypsonet.keyple.demo.validation.domain.model.CardReaderResponse
 import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.calypsonet.keyple.demo.validation.domain.model.Status
+import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
 import org.eclipse.keypop.reader.CardReaderEvent
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 import timber.log.Timber
@@ -154,11 +154,11 @@ class ReaderActivity : BaseActivity() {
           Timber.e("Card not selected: %s", error)
           ticketingService.displayResultFailed()
           changeDisplay(
-              CardReaderResponse(
+              ValidationResult(
                   status = Status.INVALID_CARD,
                   cardType = "Unknown card type",
                   contract = null,
-                  validation = null,
+                  validationData = null,
                   errorMessage = error))
           return
         }
@@ -186,9 +186,7 @@ class ReaderActivity : BaseActivity() {
               try {
                 withContext(Dispatchers.Main) { progress.show() }
                 val validationResult =
-                    withContext(Dispatchers.IO) {
-                      ticketingService.executeValidationProcedure(locationRepository.getLocations())
-                    }
+                    withContext(Dispatchers.IO) { ticketingService.executeValidationProcedure() }
                 withContext(Dispatchers.Main) {
                   progress.dismiss()
                   changeDisplay(validationResult)
@@ -197,12 +195,12 @@ class ReaderActivity : BaseActivity() {
                 Timber.e(e)
                 Timber.e("Load ERROR page after exception = ${e.message}")
                 changeDisplay(
-                    CardReaderResponse(
+                    ValidationResult(
                         status = Status.ERROR,
                         cardType = "Unknown card type",
                         nbTicketsLeft = 0,
                         contract = "",
-                        validation = null,
+                        validationData = null,
                         errorMessage = e.message))
               }
             }
@@ -216,9 +214,9 @@ class ReaderActivity : BaseActivity() {
     Timber.i("New state = $currentAppState")
   }
 
-  private fun changeDisplay(cardReaderResponse: CardReaderResponse?) {
-    if (cardReaderResponse != null) {
-      if (cardReaderResponse.status === Status.LOADING) {
+  private fun changeDisplay(validationResult: ValidationResult?) {
+    if (validationResult != null) {
+      if (validationResult.status === Status.LOADING) {
         activityCardReaderBinding.presentCardTv.visibility = View.GONE
         activityCardReaderBinding.mainView.setBackgroundColor(
             ContextCompat.getColor(this, R.color.turquoise))
@@ -233,7 +231,7 @@ class ReaderActivity : BaseActivity() {
         runOnUiThread { activityCardReaderBinding.animation.cancelAnimation() }
         val intent = Intent(this, CardSummaryActivity::class.java)
         val bundle = Bundle()
-        bundle.putParcelable(CardReaderResponse::class.simpleName, cardReaderResponse)
+        bundle.putParcelable(ValidationResult::class.simpleName, validationResult)
         intent.putExtra(Bundle::class.java.simpleName, bundle)
         startActivity(intent)
       }

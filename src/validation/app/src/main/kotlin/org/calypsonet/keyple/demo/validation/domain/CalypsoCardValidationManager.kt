@@ -23,13 +23,13 @@ import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 import org.calypsonet.keyple.demo.common.parser.ContractStructureParser
 import org.calypsonet.keyple.demo.common.parser.EnvironmentHolderStructureParser
 import org.calypsonet.keyple.demo.common.parser.EventStructureParser
-import org.calypsonet.keyple.demo.validation.domain.mapper.ValidationMapper
+import org.calypsonet.keyple.demo.validation.data.KeypopApiProvider
+import org.calypsonet.keyple.demo.validation.domain.mapper.ValidationDataMapper
 import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
-import org.calypsonet.keyple.demo.validation.domain.model.CardReaderResponse
 import org.calypsonet.keyple.demo.validation.domain.model.Location
 import org.calypsonet.keyple.demo.validation.domain.model.Status
-import org.calypsonet.keyple.demo.validation.domain.model.Validation
-import org.eclipse.keyple.card.calypso.CalypsoExtensionService
+import org.calypsonet.keyple.demo.validation.domain.model.ValidationData
+import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
 import org.eclipse.keyple.core.util.HexUtil
 import org.eclipse.keypop.calypso.card.WriteAccessLevel
 import org.eclipse.keypop.calypso.card.card.CalypsoCard
@@ -39,7 +39,7 @@ import org.eclipse.keypop.calypso.card.transaction.SymmetricCryptoSecuritySettin
 import org.eclipse.keypop.reader.CardReader
 import timber.log.Timber
 
-class CalypsoCardValidationService {
+class CalypsoCardValidationManager : BaseValidationManager() {
 
   fun executeValidationProcedure(
       validationDateTime: LocalDateTime,
@@ -47,17 +47,18 @@ class CalypsoCardValidationService {
       cardReader: CardReader,
       calypsoCard: CalypsoCard,
       cardSecuritySettings: SymmetricCryptoSecuritySetting,
-      locations: List<Location>
-  ): CardReaderResponse {
+      locations: List<Location>,
+      keypopApiProvider: KeypopApiProvider
+  ): ValidationResult {
 
     var status: Status = Status.LOADING
     var errorMessage: String? = null
     val cardTransaction: SecureRegularModeTransactionManager?
     var passValidityEndDate: LocalDate? = null
     var nbTicketsLeft: Int? = null
-    var validation: Validation? = null
+    var validationData: ValidationData? = null
 
-    val calypsoCardApiFactory = CalypsoExtensionService.getInstance().calypsoCardApiFactory
+    val calypsoCardApiFactory = keypopApiProvider.getCalypsoCardApiFactory()
 
     // Create a card transaction for validation.
     cardTransaction =
@@ -93,11 +94,11 @@ class CalypsoCardValidationService {
 
         // Step 3 - If EnvVersionNumber of the Environment structure is not the expected one (==1
         // for the current version) reject the card. <Abort Secure Session>
-        ValidationRules.validateEnvironmentVersionOrThrow(environment.envVersionNumber)
+        validateEnvironmentVersionOrThrow(environment.envVersionNumber)
 
         // Step 4 - If EnvEndDate points to a date in the past reject the card. <Abort Secure
         // Session>
-        ValidationRules.validateEnvironmentDateOrThrow(
+        validateEnvironmentDateOrThrow(
             environment.envEndDate.getDate(), validationDateTime.toLocalDate())
 
         // Step 5 - Read and unpack the last event record.
@@ -115,10 +116,10 @@ class CalypsoCardValidationService {
 
         // Step 6 - If EventVersionNumber is not the expected one (==1 for the current version)
         // reject the card. <Abort Secure Session>
-        ValidationRules.validateEventVersionOrThrow(event.eventVersionNumber)
+        validateEventVersionOrThrow(event.eventVersionNumber)
 
         // Step 6.2 - anti-passback management & communication failure recovery
-        ValidationRules.validateAntiPassbackOrThrow(
+        validateAntiPassbackOrThrow(
             event.eventDatetime, validationDateTime, calypsoCard.isDfRatified)
 
         // ***************** Best Contract Search
@@ -132,8 +133,8 @@ class CalypsoCardValidationService {
                 Pair(4, event.contractPriority4))
 
         // Step 9 - If the list is empty go to END.
-        ValidationRules.validateHasValidContractsOrThrow(allPriorities)
-        val filteredPriorities = ValidationRules.filterValidContractPriorities(allPriorities)
+        validateHasValidContractsOrThrow(allPriorities)
+        val filteredPriorities = filterValidContractPriorities(allPriorities)
 
         var priority1 = event.contractPriority1
         var priority2 = event.contractPriority2
@@ -143,7 +144,7 @@ class CalypsoCardValidationService {
         var writeEvent = false
 
         // Step 10 - For each element in the list:
-        val sortedPriorities = ValidationRules.sortContractPrioritiesByPriority(filteredPriorities)
+        val sortedPriorities = sortContractPrioritiesByPriority(filteredPriorities)
 
         // Step 11 - For each element in the list:
         for (it in sortedPriorities) {
@@ -165,7 +166,7 @@ class CalypsoCardValidationService {
 
           // Step 11.2 - If ContractVersionNumber is not the expected one (==1 for the current
           // version) reject the card. <Abort Secure Session>
-          ValidationRules.validateContractVersionOrThrow(contract.contractVersionNumber)
+          validateContractVersionOrThrow(contract.contractVersionNumber)
 
           // Step 11.3 - '  If ContractAuthenticator is not 0 perform the verification of the value
           // by using the PSO Verify Signature command of the SAM.
@@ -181,7 +182,7 @@ class CalypsoCardValidationService {
           // associated ContractPriorty field present in the persistent object to 31 and move to the
           // next element in the list
           try {
-            ValidationRules.validateContractDateOrThrow(
+            validateContractDateOrThrow(
                 contract.contractValidityEndDate.getDate(), validationDateTime.toLocalDate())
           } catch (e: ValidationException) {
             when (record) {
@@ -197,7 +198,7 @@ class CalypsoCardValidationService {
           }
 
           // Step 11.5 - If the ContractTariff value for the contract read is 2 or 3:
-          if (ValidationRules.isCounterBasedContract(contractPriority)) {
+          if (isCounterBasedContract(contractPriority)) {
 
             val nbContractRecords =
                 when (calypsoCard.productType) {
@@ -218,7 +219,7 @@ class CalypsoCardValidationService {
             // Step 11.5.2 - If the counter value is 0 update the associated ContractPriorty field
             // present in the persistent object to 31 and move to the next element in the list
             try {
-              ValidationRules.validateTripsAvailableOrThrow(counterValue)
+              validateTripsAvailableOrThrow(counterValue)
             } catch (e: ValidationException) {
               when (record) {
                 1 -> priority1 = PriorityCode.EXPIRED
@@ -236,7 +237,7 @@ class CalypsoCardValidationService {
             // ValidationAmount move to the next element in the list
             if (contractPriority == PriorityCode.STORED_VALUE) {
               try {
-                ValidationRules.validateSufficientStoredValueOrThrow(counterValue, validationAmount)
+                validateSufficientStoredValueOrThrow(counterValue, validationAmount)
               } catch (e: ValidationException) {
                 status = e.status
                 errorMessage = e.message
@@ -247,8 +248,7 @@ class CalypsoCardValidationService {
             // if ContractTariff is 2, and the configured value for the trip if ContractTariff is
             // 3).
             else {
-              val decrement =
-                  ValidationRules.calculateDecrementAmount(contractPriority, validationAmount)
+              val decrement = calculateDecrementAmount(contractPriority, validationAmount)
               if (decrement > 0) {
                 cardTransaction
                     .prepareDecreaseCounter(CardConstant.Companion.SFI_COUNTERS, record, decrement)
@@ -282,9 +282,9 @@ class CalypsoCardValidationService {
                     contractPriority2 = priority2,
                     contractPriority3 = priority3,
                     contractPriority4 = priority4)
-            validation = ValidationMapper.map(eventToWrite, locations)
+            validationData = ValidationDataMapper.map(eventToWrite, locations)
 
-            Timber.Forest.i(Messages.LOG_VALIDATION_SUCCESS)
+            Timber.Forest.i(LOG_VALIDATION_SUCCESS)
             status = Status.SUCCESS
             errorMessage = null
           } else {
@@ -308,9 +308,9 @@ class CalypsoCardValidationService {
               .prepareUpdateRecord(CardConstant.Companion.SFI_EVENTS_LOG, 1, eventBytesToWrite)
               .processCommands(ChannelControl.KEEP_OPEN)
         } else {
-          Timber.Forest.i(Messages.LOG_VALIDATION_FAILED_NO_CONTRACT)
+          Timber.Forest.i(LOG_VALIDATION_FAILED_NO_CONTRACT)
           if (errorMessage.isNullOrEmpty()) {
-            errorMessage = Messages.ERROR_NO_VALID_TITLE_DETECTED
+            errorMessage = ERROR_NO_VALID_TITLE_DETECTED
           }
         }
       } catch (e: ValidationException) {
@@ -340,12 +340,12 @@ class CalypsoCardValidationService {
       }
     }
 
-    return CardReaderResponse(
+    return ValidationResult(
         status = status,
-        cardType = Messages.CARD_TYPE_CALYPSO_PREFIX + HexUtil.toHex(calypsoCard.dfName),
+        cardType = CARD_TYPE_CALYPSO_PREFIX + HexUtil.toHex(calypsoCard.dfName),
         nbTicketsLeft = nbTicketsLeft,
-        contract = Messages.EMPTY_CONTRACT,
-        validation = validation,
+        contract = EMPTY_CONTRACT,
+        validationData = validationData,
         errorMessage = errorMessage,
         passValidityEndDate = passValidityEndDate,
         eventDateTime = validationDateTime)

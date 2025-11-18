@@ -35,7 +35,7 @@ class SettingsActivity : BaseActivity() {
     setContentView(activitySettingsBinding.root)
     setSupportActionBar(logoToolbarBinding.toolbar)
     // Init location spinner
-    val locations = locationRepository.getLocations()
+    val locations = ticketingService.getLocations()
     val locationsAdapter =
         ArrayAdapter(this, R.layout.spinner_item_location, R.id.spinner_item_text, locations)
     activitySettingsBinding.spinnerLocationList.adapter = locationsAdapter

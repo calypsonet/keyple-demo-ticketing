@@ -20,9 +20,9 @@ import java.util.*
 import org.calypsonet.keyple.demo.validation.R
 import org.calypsonet.keyple.demo.validation.databinding.ActivityCardSummaryBinding
 import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
-import org.calypsonet.keyple.demo.validation.domain.model.CardReaderResponse
 import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.calypsonet.keyple.demo.validation.domain.model.Status
+import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
 import timber.log.Timber
 
 class CardSummaryActivity : BaseActivity() {
@@ -36,18 +36,18 @@ class CardSummaryActivity : BaseActivity() {
     activityCardSummaryBinding = ActivityCardSummaryBinding.inflate(layoutInflater)
     setContentView(activityCardSummaryBinding.root)
     val bundle = intent.getBundleExtra(Bundle::class.java.simpleName)!!
-    val cardReaderResponse =
-        bundle.getParcelable<CardReaderResponse>(CardReaderResponse::class.simpleName)
+    val validationResult =
+        bundle.getParcelable<ValidationResult>(ValidationResult::class.simpleName)
 
-    if (cardReaderResponse != null && !cardReaderResponse.cardType.isNullOrBlank()) {
+    if (validationResult != null && !validationResult.cardType.isNullOrBlank()) {
       activityCardSummaryBinding.cardTypeLabel?.visibility = View.VISIBLE
       activityCardSummaryBinding.cardTypeLabel?.text =
-          getString(R.string.card_type, cardReaderResponse.cardType)
+          getString(R.string.card_type, validationResult.cardType)
     } else {
       activityCardSummaryBinding.cardTypeLabel?.visibility = View.GONE
     }
 
-    when (cardReaderResponse?.status) {
+    when (validationResult?.status) {
       Status.SUCCESS -> {
         ticketingService.displayResultSuccess()
         activityCardSummaryBinding.animation.setAnimation("tick_white.json")
@@ -55,14 +55,14 @@ class CardSummaryActivity : BaseActivity() {
             ContextCompat.getColor(this, R.color.green))
         activityCardSummaryBinding.bigText.setText(R.string.valid_main_desc)
         val eventDate =
-            cardReaderResponse.eventDateTime!!.format(
+            validationResult.eventDateTime!!.format(
                 DateTimeFormatter.ofPattern("dd MMMM yyyy, HH:mm", Locale.ENGLISH))
         activityCardSummaryBinding.locationTime.text =
             getString(
                 R.string.valid_location_time,
-                cardReaderResponse.validation?.location?.name,
+                validationResult.validationData?.location?.name,
                 eventDate)
-        val nbTickets = cardReaderResponse.nbTicketsLeft
+        val nbTickets = validationResult.nbTicketsLeft
         if (nbTickets != null) {
           activityCardSummaryBinding.smallDesc.text =
               when (nbTickets) {
@@ -72,7 +72,7 @@ class CardSummaryActivity : BaseActivity() {
               }
         } else {
           val validityEndDate =
-              cardReaderResponse.passValidityEndDate!!.format(
+              validationResult.passValidityEndDate!!.format(
                   DateTimeFormatter.ofPattern("dd/MM/yyyy"))
           activityCardSummaryBinding.smallDesc.text =
               getString(R.string.valid_season_ticket, validityEndDate)
@@ -85,7 +85,7 @@ class CardSummaryActivity : BaseActivity() {
         activityCardSummaryBinding.mainView.setBackgroundColor(
             ContextCompat.getColor(this, R.color.orange))
         activityCardSummaryBinding.bigText.setText(R.string.card_invalid_main_desc)
-        activityCardSummaryBinding.locationTime.text = cardReaderResponse.errorMessage
+        activityCardSummaryBinding.locationTime.text = validationResult.errorMessage
         activityCardSummaryBinding.mediumText.visibility = View.INVISIBLE
         activityCardSummaryBinding.smallDesc.visibility = View.INVISIBLE
       }
@@ -94,7 +94,7 @@ class CardSummaryActivity : BaseActivity() {
         activityCardSummaryBinding.mainView.setBackgroundColor(
             ContextCompat.getColor(this, R.color.red))
         activityCardSummaryBinding.animation.setAnimation("error_white.json")
-        activityCardSummaryBinding.bigText.text = cardReaderResponse.errorMessage
+        activityCardSummaryBinding.bigText.text = validationResult.errorMessage
         activityCardSummaryBinding.locationTime.setText(R.string.no_tickets_small_desc)
         activityCardSummaryBinding.mediumText.visibility = View.INVISIBLE
         activityCardSummaryBinding.smallDesc.visibility = View.INVISIBLE
@@ -106,7 +106,7 @@ class CardSummaryActivity : BaseActivity() {
         activityCardSummaryBinding.animation.setAnimation("error_white.json")
         activityCardSummaryBinding.bigText.setText(R.string.error_main_desc)
         activityCardSummaryBinding.locationTime.text =
-            cardReaderResponse?.errorMessage ?: getString(R.string.error_small_desc)
+            validationResult?.errorMessage ?: getString(R.string.error_small_desc)
         activityCardSummaryBinding.mediumText.visibility = View.INVISIBLE
         activityCardSummaryBinding.smallDesc.visibility = View.INVISIBLE
       }

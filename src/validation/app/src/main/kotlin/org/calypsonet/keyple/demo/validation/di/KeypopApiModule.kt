@@ -14,13 +14,12 @@ package org.calypsonet.keyple.demo.validation.di
 
 import dagger.Module
 import dagger.Provides
-import org.calypsonet.keyple.demo.validation.data.KeypopApiProviderImpl
+import org.calypsonet.keyple.demo.validation.data.KeypopApiProvider
 import org.calypsonet.keyple.demo.validation.di.scope.AppScoped
-import org.calypsonet.keyple.demo.validation.domain.spi.KeypopApiProvider
 
 @Suppress("unused")
 @Module
 class KeypopApiModule {
 
-  @Provides @AppScoped fun provideKeypopApiProvider(): KeypopApiProvider = KeypopApiProviderImpl()
+  @Provides @AppScoped fun provideKeypopApiProvider(): KeypopApiProvider = KeypopApiProvider()
 }

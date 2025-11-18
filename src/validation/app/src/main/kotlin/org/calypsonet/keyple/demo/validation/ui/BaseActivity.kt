@@ -15,13 +15,11 @@ package org.calypsonet.keyple.demo.validation.ui
 import android.widget.Toast
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
-import org.calypsonet.keyple.demo.validation.data.LocationRepository
 import org.calypsonet.keyple.demo.validation.domain.TicketingService
 
 abstract class BaseActivity : DaggerAppCompatActivity() {
 
   @Inject lateinit var ticketingService: TicketingService
-  @Inject lateinit var locationRepository: LocationRepository
 
   fun showToast(message: String) {
     runOnUiThread { Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show() }

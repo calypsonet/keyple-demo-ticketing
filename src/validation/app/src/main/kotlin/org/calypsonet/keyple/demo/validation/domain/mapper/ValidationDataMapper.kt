@@ -10,17 +10,19 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.domain.model
+package org.calypsonet.keyple.demo.validation.domain.mapper
 
-import android.os.Parcelable
-import java.time.LocalDateTime
-import kotlinx.parcelize.Parcelize
+import org.calypsonet.keyple.demo.common.model.EventStructure
+import org.calypsonet.keyple.demo.validation.domain.model.Location
+import org.calypsonet.keyple.demo.validation.domain.model.ValidationData
 
-@Parcelize
-data class Validation(
-    val name: String,
-    val location: Location,
-    val destination: String?,
-    val dateTime: LocalDateTime,
-    val provider: Int? = null
-) : Parcelable
+object ValidationDataMapper {
+  fun map(event: EventStructure, locations: List<Location>): ValidationData {
+    return ValidationData(
+        name = "Event name",
+        dateTime = event.eventDatetime,
+        location = LocationMapper.map(locations, event),
+        destination = null,
+        provider = null)
+  }
+}

@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2025 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -10,16 +10,17 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.domain.spi
+package org.calypsonet.keyple.demo.validation.domain.model
 
-import org.eclipse.keypop.calypso.card.CalypsoCardApiFactory
-import org.eclipse.keypop.reader.ReaderApiFactory
-import org.eclipse.keypop.storagecard.StorageCardApiFactory
+import android.os.Parcelable
+import java.time.LocalDateTime
+import kotlinx.parcelize.Parcelize
 
-interface KeypopApiProvider {
-  fun getReaderApiFactory(): ReaderApiFactory
-
-  fun getCalypsoCardApiFactory(): CalypsoCardApiFactory
-
-  fun getStorageCardApiFactory(): StorageCardApiFactory
-}
+@Parcelize
+data class ValidationData(
+    val name: String,
+    val location: Location,
+    val destination: String?,
+    val dateTime: LocalDateTime,
+    val provider: Int? = null
+) : Parcelable

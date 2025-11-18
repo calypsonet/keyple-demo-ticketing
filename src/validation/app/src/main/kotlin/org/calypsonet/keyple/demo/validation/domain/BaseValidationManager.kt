@@ -19,11 +19,42 @@ import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 import org.calypsonet.keyple.demo.validation.domain.model.Status
 
-/** Business rules for card validation. */
-object ValidationRules {
+/** Base class for card validation managers. */
+abstract class BaseValidationManager {
 
-  private const val SINGLE_VALIDATION_AMOUNT = 1
-  private const val ANTI_PASSBACK_DELAY_MINUTES = 1L
+  companion object {
+
+    // User error messages
+    const val ERROR_NO_VALID_TITLE_DETECTED = "No valid title detected"
+
+    // Exception messages
+    const val EXCEPTION_ENVIRONMENT_WRONG_VERSION = "Environment error: wrong version number"
+    const val EXCEPTION_ENVIRONMENT_END_DATE_EXPIRED = "Environment error: end date expired"
+    const val EXCEPTION_EVENT_WRONG_VERSION = "Event error: wrong version number"
+    const val EXCEPTION_CONTRACT_VERSION_ERROR =
+        "Contract Version Number error (!= CURRENT_VERSION)"
+    const val EXCEPTION_CARD_ALREADY_TAPPED = "Card already tapped.\nPlease wait before retrying."
+    const val EXCEPTION_RECOVER_BROKEN_SESSION = "Recover previous broken valid session"
+    const val EXCEPTION_EXPIRED_TITLE = "Expired title"
+    const val EXCEPTION_NO_TRIPS_LEFT = "No trips left"
+    const val EXCEPTION_INSUFFICIENT_STORED_VALUE = "Insufficient stored value"
+    const val EXCEPTION_CONTRACT_FORBIDDEN_OR_EXPIRED = "Contract is forbidden or expired"
+
+    // Log messages
+    const val LOG_VALIDATION_SUCCESS = "Validation procedure result: SUCCESS"
+    const val LOG_VALIDATION_FAILED_NO_CONTRACT =
+        "Validation procedure result: Failed - No valid contract found"
+
+    // Card type prefix
+    const val CARD_TYPE_CALYPSO_PREFIX = "CALYPSO: DF name "
+
+    // Empty contract value
+    const val EMPTY_CONTRACT = ""
+
+    // Internal constants
+    private const val SINGLE_VALIDATION_AMOUNT = 1
+    private const val ANTI_PASSBACK_DELAY_MINUTES = 1L
+  }
 
   /**
    * Calculates the amount to decrement from the counter based on contract type.
@@ -95,9 +126,9 @@ object ValidationRules {
     if (Duration.between(lastEventDateTime, validationDateTime).toMinutes() <
         ANTI_PASSBACK_DELAY_MINUTES) {
       if (isDfRatified) {
-        throw ValidationException(Messages.EXCEPTION_CARD_ALREADY_TAPPED, Status.INVALID_CARD)
+        throw ValidationException(EXCEPTION_CARD_ALREADY_TAPPED, Status.INVALID_CARD)
       } else {
-        throw ValidationException(Messages.EXCEPTION_RECOVER_BROKEN_SESSION, Status.SUCCESS)
+        throw ValidationException(EXCEPTION_RECOVER_BROKEN_SESSION, Status.SUCCESS)
       }
     }
   }
@@ -110,7 +141,7 @@ object ValidationRules {
    */
   fun validateEnvironmentVersionOrThrow(envVersionNumber: VersionNumber) {
     if (envVersionNumber != VersionNumber.CURRENT_VERSION) {
-      throw ValidationException(Messages.EXCEPTION_ENVIRONMENT_WRONG_VERSION, Status.INVALID_CARD)
+      throw ValidationException(EXCEPTION_ENVIRONMENT_WRONG_VERSION, Status.INVALID_CARD)
     }
   }
 
@@ -123,8 +154,7 @@ object ValidationRules {
    */
   fun validateEnvironmentDateOrThrow(envEndDate: LocalDate, validationDate: LocalDate) {
     if (envEndDate.isBefore(validationDate)) {
-      throw ValidationException(
-          Messages.EXCEPTION_ENVIRONMENT_END_DATE_EXPIRED, Status.INVALID_CARD)
+      throw ValidationException(EXCEPTION_ENVIRONMENT_END_DATE_EXPIRED, Status.INVALID_CARD)
     }
   }
 
@@ -140,10 +170,10 @@ object ValidationRules {
         // Valid, do nothing
       }
       eventVersionNumber == VersionNumber.UNDEFINED -> {
-        throw ValidationException(Messages.ERROR_NO_VALID_TITLE_DETECTED, Status.EMPTY_CARD)
+        throw ValidationException(ERROR_NO_VALID_TITLE_DETECTED, Status.EMPTY_CARD)
       }
       else -> {
-        throw ValidationException(Messages.EXCEPTION_EVENT_WRONG_VERSION, Status.INVALID_CARD)
+        throw ValidationException(EXCEPTION_EVENT_WRONG_VERSION, Status.INVALID_CARD)
       }
     }
   }
@@ -156,7 +186,7 @@ object ValidationRules {
    */
   fun validateContractVersionOrThrow(contractVersionNumber: VersionNumber) {
     if (contractVersionNumber != VersionNumber.CURRENT_VERSION) {
-      throw ValidationException(Messages.EXCEPTION_CONTRACT_VERSION_ERROR, Status.INVALID_CARD)
+      throw ValidationException(EXCEPTION_CONTRACT_VERSION_ERROR, Status.INVALID_CARD)
     }
   }
 
@@ -169,7 +199,7 @@ object ValidationRules {
    */
   fun validateContractDateOrThrow(contractValidityEndDate: LocalDate, validationDate: LocalDate) {
     if (contractValidityEndDate.isBefore(validationDate)) {
-      throw ValidationException(Messages.EXCEPTION_EXPIRED_TITLE, Status.EMPTY_CARD)
+      throw ValidationException(EXCEPTION_EXPIRED_TITLE, Status.EMPTY_CARD)
     }
   }
 
@@ -181,7 +211,7 @@ object ValidationRules {
    */
   fun validateTripsAvailableOrThrow(counterValue: Int) {
     if (counterValue <= 0) {
-      throw ValidationException(Messages.EXCEPTION_NO_TRIPS_LEFT, Status.EMPTY_CARD)
+      throw ValidationException(EXCEPTION_NO_TRIPS_LEFT, Status.EMPTY_CARD)
     }
   }
 
@@ -194,7 +224,7 @@ object ValidationRules {
    */
   fun validateSufficientStoredValueOrThrow(counterValue: Int, validationAmount: Int) {
     if (counterValue < validationAmount) {
-      throw ValidationException(Messages.EXCEPTION_INSUFFICIENT_STORED_VALUE, Status.EMPTY_CARD)
+      throw ValidationException(EXCEPTION_INSUFFICIENT_STORED_VALUE, Status.EMPTY_CARD)
     }
   }
 
@@ -207,7 +237,17 @@ object ValidationRules {
   fun validateHasValidContractsOrThrow(priorities: List<Pair<Int, PriorityCode>>) {
     val validPriorities = filterValidContractPriorities(priorities)
     if (validPriorities.isEmpty()) {
-      throw ValidationException(Messages.ERROR_NO_VALID_TITLE_DETECTED, Status.EMPTY_CARD)
+      throw ValidationException(ERROR_NO_VALID_TITLE_DETECTED, Status.EMPTY_CARD)
     }
   }
+
+  /**
+   * Exception for validation business rule violations.
+   *
+   * Carries the appropriate [Status] to set when the exception is caught in the repository layer.
+   *
+   * @param message The error message describing the validation failure
+   * @param status The status to set when this validation exception is caught
+   */
+  class ValidationException(message: String, val status: Status) : RuntimeException(message)
 }

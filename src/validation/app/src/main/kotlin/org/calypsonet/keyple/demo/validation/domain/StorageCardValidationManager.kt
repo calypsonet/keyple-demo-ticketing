@@ -14,7 +14,6 @@ package org.calypsonet.keyple.demo.validation.domain
 
 import java.time.LocalDate
 import java.time.LocalDateTime
-import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService
 import org.calypsonet.keyple.demo.common.constant.CardConstant
 import org.calypsonet.keyple.demo.common.model.EventStructure
 import org.calypsonet.keyple.demo.common.model.type.DateCompact
@@ -24,33 +23,35 @@ import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 import org.calypsonet.keyple.demo.common.parser.SCContractStructureParser
 import org.calypsonet.keyple.demo.common.parser.SCEnvironmentHolderStructureParser
 import org.calypsonet.keyple.demo.common.parser.SCEventStructureParser
-import org.calypsonet.keyple.demo.validation.domain.mapper.ValidationMapper
+import org.calypsonet.keyple.demo.validation.data.KeypopApiProvider
+import org.calypsonet.keyple.demo.validation.domain.mapper.ValidationDataMapper
 import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
-import org.calypsonet.keyple.demo.validation.domain.model.CardReaderResponse
 import org.calypsonet.keyple.demo.validation.domain.model.Location
 import org.calypsonet.keyple.demo.validation.domain.model.Status
-import org.calypsonet.keyple.demo.validation.domain.model.Validation
+import org.calypsonet.keyple.demo.validation.domain.model.ValidationData
+import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.storagecard.card.StorageCard
 import org.eclipse.keypop.storagecard.transaction.ChannelControl
 import timber.log.Timber
 
-class StorageCardValidationService {
+class StorageCardValidationManager : BaseValidationManager() {
 
   fun executeValidationProcedure(
       validationDateTime: LocalDateTime,
       validationAmount: Int,
       cardReader: CardReader,
       storageCard: StorageCard,
-      locations: List<Location>
-  ): CardReaderResponse {
+      locations: List<Location>,
+      keypopApiProvider: KeypopApiProvider
+  ): ValidationResult {
     var status: Status = Status.LOADING
     var errorMessage: String? = null
     var passValidityEndDate: LocalDate? = null
     var nbTicketsLeft: Int? = null
-    var validation: Validation? = null
+    var validationData: ValidationData? = null
 
-    val storageCardApiFactory = StorageCardExtensionService.getInstance().getStorageCardApiFactory()
+    val storageCardApiFactory = keypopApiProvider.getStorageCardApiFactory()
 
     // Create a card transaction for validation
     val cardTransaction =
@@ -87,10 +88,10 @@ class StorageCardValidationService {
         val environment = SCEnvironmentHolderStructureParser().parse(environmentContent)
 
         // Step 3 - Validate environment version
-        ValidationRules.validateEnvironmentVersionOrThrow(environment.envVersionNumber)
+        validateEnvironmentVersionOrThrow(environment.envVersionNumber)
 
         // Step 4 - Validate environment end date
-        ValidationRules.validateEnvironmentDateOrThrow(
+        validateEnvironmentDateOrThrow(
             environment.envEndDate.getDate(), validationDateTime.toLocalDate())
 
         // Step 5 - Read and unpack the event record
@@ -101,7 +102,7 @@ class StorageCardValidationService {
         val event = SCEventStructureParser().parse(eventContent)
 
         // Step 6 - Validate event version
-        ValidationRules.validateEventVersionOrThrow(event.eventVersionNumber)
+        validateEventVersionOrThrow(event.eventVersionNumber)
 
         // Step 7 - Read and unpack the contract record
         val contractContent =
@@ -111,11 +112,11 @@ class StorageCardValidationService {
         val contract = SCContractStructureParser().parse(contractContent)
 
         // Validate contract version
-        ValidationRules.validateContractVersionOrThrow(contract.contractVersionNumber)
+        validateContractVersionOrThrow(contract.contractVersionNumber)
 
         // Check contract validity
         try {
-          ValidationRules.validateContractDateOrThrow(
+          validateContractDateOrThrow(
               contract.contractValidityEndDate.getDate(), validationDateTime.toLocalDate())
         } catch (e: ValidationException) {
           status = e.status
@@ -133,12 +134,11 @@ class StorageCardValidationService {
           PriorityCode.MULTI_TRIP -> {
             // Check if there are trips left
             val counterValue = contract.counterValue ?: 0
-            ValidationRules.validateTripsAvailableOrThrow(counterValue)
+            validateTripsAvailableOrThrow(counterValue)
 
             // Decrement counter
             val newCounterValue =
-                counterValue -
-                    ValidationRules.calculateDecrementAmount(contractPriority, validationAmount)
+                counterValue - calculateDecrementAmount(contractPriority, validationAmount)
             contract.counterValue = newCounterValue
             nbTicketsLeft = newCounterValue
 
@@ -154,7 +154,7 @@ class StorageCardValidationService {
           PriorityCode.STORED_VALUE -> {
             // Check if there's enough value
             val counterValue = contract.counterValue ?: 0
-            ValidationRules.validateSufficientStoredValueOrThrow(counterValue, validationAmount)
+            validateSufficientStoredValueOrThrow(counterValue, validationAmount)
 
             // Decrement counter by validation amount
             val newCounterValue = counterValue - validationAmount
@@ -177,8 +177,7 @@ class StorageCardValidationService {
           PriorityCode.FORBIDDEN,
           PriorityCode.EXPIRED,
           PriorityCode.UNKNOWN -> {
-            throw ValidationException(
-                Messages.EXCEPTION_CONTRACT_FORBIDDEN_OR_EXPIRED, Status.EMPTY_CARD)
+            throw ValidationException(EXCEPTION_CONTRACT_FORBIDDEN_OR_EXPIRED, Status.EMPTY_CARD)
           }
         }
 
@@ -196,7 +195,7 @@ class StorageCardValidationService {
                   contractPriority3 = PriorityCode.FORBIDDEN,
                   contractPriority4 = PriorityCode.FORBIDDEN)
 
-          validation = ValidationMapper.map(eventToWrite, locations)
+          validationData = ValidationDataMapper.map(eventToWrite, locations)
 
           // Write the event
           val eventBytesToWrite = SCEventStructureParser().generate(eventToWrite)
@@ -204,12 +203,12 @@ class StorageCardValidationService {
               .prepareWriteBlocks(CardConstant.Companion.SC_EVENT_FIRST_BLOCK, eventBytesToWrite)
               .processCommands(ChannelControl.KEEP_OPEN)
 
-          Timber.Forest.i(Messages.LOG_VALIDATION_SUCCESS)
+          Timber.Forest.i(LOG_VALIDATION_SUCCESS)
           status = Status.SUCCESS
           errorMessage = null
         } else {
-          Timber.Forest.i(Messages.LOG_VALIDATION_FAILED_NO_CONTRACT)
-          errorMessage = Messages.ERROR_NO_VALID_TITLE_DETECTED
+          Timber.Forest.i(LOG_VALIDATION_FAILED_NO_CONTRACT)
+          errorMessage = ERROR_NO_VALID_TITLE_DETECTED
         }
       } catch (e: ValidationException) {
         Timber.Forest.e(e)
@@ -238,12 +237,12 @@ class StorageCardValidationService {
       }
     }
 
-    return CardReaderResponse(
+    return ValidationResult(
         status = status,
         cardType = storageCard.productType.name,
         nbTicketsLeft = nbTicketsLeft,
-        contract = Messages.EMPTY_CONTRACT,
-        validation = validation,
+        contract = EMPTY_CONTRACT,
+        validationData = validationData,
         errorMessage = errorMessage,
         passValidityEndDate = passValidityEndDate,
         eventDateTime = validationDateTime)

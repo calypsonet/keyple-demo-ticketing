@@ -18,12 +18,12 @@ import java.time.LocalDateTime
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class CardReaderResponse(
+data class ValidationResult(
     val status: Status,
     val cardType: String,
     val nbTicketsLeft: Int? = null,
     val contract: String?,
-    val validation: Validation?,
+    val validationData: ValidationData?,
     val eventDateTime: LocalDateTime? = null,
     val passValidityEndDate: LocalDate? = null,
     val errorMessage: String? = null
