@@ -12,28 +12,15 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.validation.di
 
-import dagger.BindsInstance
-import dagger.Component
-import dagger.android.AndroidInjector
-import dagger.android.support.AndroidSupportInjectionModule
-import org.calypsonet.keyple.demo.validation.Application
+import dagger.Module
+import dagger.Provides
+import org.calypsonet.keyple.demo.validation.data.KeypopApiProviderImpl
 import org.calypsonet.keyple.demo.validation.di.scope.AppScoped
+import org.calypsonet.keyple.demo.validation.domain.spi.KeypopApiProvider
 
-@AppScoped
-@Component(
-    modules =
-        [
-            AppModule::class,
-            UIModule::class,
-            AndroidSupportInjectionModule::class,
-            ReaderModule::class,
-            LocationModule::class,
-            KeypopApiModule::class])
-interface AppComponent : AndroidInjector<Application?> {
-  @Component.Builder
-  interface Builder {
-    @BindsInstance fun application(application: Application): Builder
+@Suppress("unused")
+@Module
+class KeypopApiModule {
 
-    fun build(): AppComponent
-  }
+  @Provides @AppScoped fun provideKeypopApiProvider(): KeypopApiProvider = KeypopApiProviderImpl()
 }

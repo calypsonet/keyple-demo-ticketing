@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2025 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.data
+package org.calypsonet.keyple.demo.validation.domain
 
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -24,9 +24,6 @@ import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 import org.calypsonet.keyple.demo.common.parser.SCContractStructureParser
 import org.calypsonet.keyple.demo.common.parser.SCEnvironmentHolderStructureParser
 import org.calypsonet.keyple.demo.common.parser.SCEventStructureParser
-import org.calypsonet.keyple.demo.validation.domain.Messages
-import org.calypsonet.keyple.demo.validation.domain.ValidationException
-import org.calypsonet.keyple.demo.validation.domain.ValidationRules
 import org.calypsonet.keyple.demo.validation.domain.mapper.ValidationMapper
 import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
 import org.calypsonet.keyple.demo.validation.domain.model.CardReaderResponse
@@ -38,7 +35,7 @@ import org.eclipse.keypop.storagecard.card.StorageCard
 import org.eclipse.keypop.storagecard.transaction.ChannelControl
 import timber.log.Timber
 
-class StorageCardRepository {
+class StorageCardValidationService {
 
   fun executeValidationProcedure(
       validationDateTime: LocalDateTime,
@@ -53,14 +50,14 @@ class StorageCardRepository {
     var nbTicketsLeft: Int? = null
     var validation: Validation? = null
 
-    val storageCardExtension = StorageCardExtensionService.getInstance()
+    val storageCardApiFactory = StorageCardExtensionService.getInstance().getStorageCardApiFactory()
 
     // Create a card transaction for validation
     val cardTransaction =
         try {
-          storageCardExtension.createStorageCardTransactionManager(cardReader, storageCard)
+          storageCardApiFactory.createStorageCardTransactionManager(cardReader, storageCard)
         } catch (e: Exception) {
-          Timber.w(e)
+          Timber.Forest.w(e)
           status = Status.ERROR
           errorMessage = e.message
           null
@@ -72,18 +69,21 @@ class StorageCardRepository {
         // Step 1 - Read the environment and event data
         cardTransaction
             .prepareReadBlocks(
-                CardConstant.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
-                CardConstant.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK)
-            .prepareReadBlocks(CardConstant.SC_EVENT_FIRST_BLOCK, CardConstant.SC_EVENT_LAST_BLOCK)
+                CardConstant.Companion.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
+                CardConstant.Companion.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK)
             .prepareReadBlocks(
-                CardConstant.SC_CONTRACT_FIRST_BLOCK, CardConstant.SC_COUNTER_LAST_BLOCK)
+                CardConstant.Companion.SC_EVENT_FIRST_BLOCK,
+                CardConstant.Companion.SC_EVENT_LAST_BLOCK)
+            .prepareReadBlocks(
+                CardConstant.Companion.SC_CONTRACT_FIRST_BLOCK,
+                CardConstant.Companion.SC_COUNTER_LAST_BLOCK)
             .processCommands(ChannelControl.KEEP_OPEN)
 
         // Step 2 - Unpack environment structure
         val environmentContent =
             storageCard.getBlocks(
-                CardConstant.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
-                CardConstant.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK)
+                CardConstant.Companion.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
+                CardConstant.Companion.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK)
         val environment = SCEnvironmentHolderStructureParser().parse(environmentContent)
 
         // Step 3 - Validate environment version
@@ -96,7 +96,8 @@ class StorageCardRepository {
         // Step 5 - Read and unpack the event record
         val eventContent =
             storageCard.getBlocks(
-                CardConstant.SC_EVENT_FIRST_BLOCK, CardConstant.SC_EVENT_LAST_BLOCK)
+                CardConstant.Companion.SC_EVENT_FIRST_BLOCK,
+                CardConstant.Companion.SC_EVENT_LAST_BLOCK)
         val event = SCEventStructureParser().parse(eventContent)
 
         // Step 6 - Validate event version
@@ -105,7 +106,8 @@ class StorageCardRepository {
         // Step 7 - Read and unpack the contract record
         val contractContent =
             storageCard.getBlocks(
-                CardConstant.SC_CONTRACT_FIRST_BLOCK, CardConstant.SC_COUNTER_LAST_BLOCK)
+                CardConstant.Companion.SC_CONTRACT_FIRST_BLOCK,
+                CardConstant.Companion.SC_COUNTER_LAST_BLOCK)
         val contract = SCContractStructureParser().parse(contractContent)
 
         // Validate contract version
@@ -143,7 +145,8 @@ class StorageCardRepository {
             // Update contract data
             val updatedContractContent = SCContractStructureParser().generate(contract)
             cardTransaction
-                .prepareWriteBlocks(CardConstant.SC_CONTRACT_FIRST_BLOCK, updatedContractContent)
+                .prepareWriteBlocks(
+                    CardConstant.Companion.SC_CONTRACT_FIRST_BLOCK, updatedContractContent)
                 .processCommands(ChannelControl.KEEP_OPEN)
 
             writeEvent = true
@@ -161,7 +164,8 @@ class StorageCardRepository {
             // Update contract data
             val updatedContractContent = SCContractStructureParser().generate(contract)
             cardTransaction
-                .prepareWriteBlocks(CardConstant.SC_CONTRACT_FIRST_BLOCK, updatedContractContent)
+                .prepareWriteBlocks(
+                    CardConstant.Companion.SC_CONTRACT_FIRST_BLOCK, updatedContractContent)
                 .processCommands(ChannelControl.KEEP_OPEN)
 
             writeEvent = true
@@ -197,25 +201,25 @@ class StorageCardRepository {
           // Write the event
           val eventBytesToWrite = SCEventStructureParser().generate(eventToWrite)
           cardTransaction
-              .prepareWriteBlocks(CardConstant.SC_EVENT_FIRST_BLOCK, eventBytesToWrite)
+              .prepareWriteBlocks(CardConstant.Companion.SC_EVENT_FIRST_BLOCK, eventBytesToWrite)
               .processCommands(ChannelControl.KEEP_OPEN)
 
-          Timber.i(Messages.LOG_VALIDATION_SUCCESS)
+          Timber.Forest.i(Messages.LOG_VALIDATION_SUCCESS)
           status = Status.SUCCESS
           errorMessage = null
         } else {
-          Timber.i(Messages.LOG_VALIDATION_FAILED_NO_CONTRACT)
+          Timber.Forest.i(Messages.LOG_VALIDATION_FAILED_NO_CONTRACT)
           errorMessage = Messages.ERROR_NO_VALID_TITLE_DETECTED
         }
       } catch (e: ValidationException) {
-        Timber.e(e)
+        Timber.Forest.e(e)
         status = e.status
         errorMessage = e.message
         if (status == Status.LOADING) {
           status = Status.ERROR
         }
       } catch (e: Exception) {
-        Timber.e(e)
+        Timber.Forest.e(e)
         status = Status.ERROR
         errorMessage = e.message
       } finally {
@@ -223,7 +227,7 @@ class StorageCardRepository {
         try {
           cardTransaction.processCommands(ChannelControl.CLOSE_AFTER)
         } catch (e: Exception) {
-          Timber.e(e)
+          Timber.Forest.e(e)
           if (status == Status.LOADING) {
             status = Status.ERROR
           }

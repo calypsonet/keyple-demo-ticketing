@@ -17,15 +17,13 @@ import java.time.LocalDateTime
 import javax.inject.Inject
 import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService
 import org.calypsonet.keyple.demo.common.constant.CardConstant
-import org.calypsonet.keyple.demo.validation.data.CalypsoCardRepository
 import org.calypsonet.keyple.demo.validation.data.ReaderRepository
-import org.calypsonet.keyple.demo.validation.data.StorageCardRepository
 import org.calypsonet.keyple.demo.validation.di.scope.AppScoped
 import org.calypsonet.keyple.demo.validation.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.validation.domain.model.CardReaderResponse
 import org.calypsonet.keyple.demo.validation.domain.model.Location
 import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
-import org.eclipse.keyple.card.calypso.CalypsoExtensionService
+import org.calypsonet.keyple.demo.validation.domain.spi.KeypopApiProvider
 import org.eclipse.keyple.card.calypso.crypto.legacysam.LegacySamExtensionService
 import org.eclipse.keyple.card.calypso.crypto.legacysam.LegacySamUtil
 import org.eclipse.keyple.core.service.KeyplePluginException
@@ -50,17 +48,19 @@ import org.eclipse.keypop.storagecard.card.StorageCard
 import timber.log.Timber
 
 @AppScoped
-class TicketingService @Inject constructor(private var readerRepository: ReaderRepository) {
+class TicketingService
+@Inject
+constructor(
+    private var keypopApiProvider: KeypopApiProvider,
+    private var readerRepository: ReaderRepository
+) {
 
-  private val readerApiFactory: ReaderApiFactory =
-      SmartCardServiceProvider.getService().readerApiFactory
-  private val calypsoExtensionService: CalypsoExtensionService =
-      CalypsoExtensionService.getInstance()
+  private val readerApiFactory: ReaderApiFactory = keypopApiProvider.getReaderApiFactory()
   private val calypsoCardApiFactory: CalypsoCardApiFactory =
-      calypsoExtensionService.calypsoCardApiFactory
+      keypopApiProvider.getCalypsoCardApiFactory()
 
-  /** Get the Storage card extension service */
-  private val storageCardExtension = StorageCardExtensionService.getInstance()
+  /** Get the Storage card API factory */
+  private val storageCardApiFactory = StorageCardExtensionService.getInstance().getStorageCardApiFactory()
 
   private lateinit var calypsoSam: LegacySam
   private lateinit var smartCard: SmartCard
@@ -152,7 +152,7 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
     val smartCardService = SmartCardServiceProvider.getService()
 
     // Check the Calypso card extension
-    smartCardService.checkCardExtension(calypsoExtensionService)
+    // smartCardService.checkCardExtension(calypsoExtensionService)
 
     // Get a new card selection manager
     cardSelectionManager = smartCardService.getReaderApiFactory().createCardSelectionManager()
@@ -199,13 +199,13 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
               readerApiFactory
                   .createBasicCardSelector()
                   .filterByCardProtocol(CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name),
-              storageCardExtension.createStorageCardSelectionExtension(MIFARE_ULTRALIGHT))
+              storageCardApiFactory.createStorageCardSelectionExtension(MIFARE_ULTRALIGHT))
       indexOfST25CardSelection =
           cardSelectionManager.prepareSelection(
               readerApiFactory
                   .createBasicCardSelector()
                   .filterByCardProtocol(CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name),
-              storageCardExtension.createStorageCardSelectionExtension(ST25_SRT512))
+              storageCardApiFactory.createStorageCardSelectionExtension(ST25_SRT512))
     }
 
     // Schedule the execution of the prepared card selection scenario as soon as a card is presented
@@ -261,7 +261,7 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
   fun executeValidationProcedure(locations: List<Location>): CardReaderResponse {
     return when (smartCard) {
       is CalypsoCard -> {
-        CalypsoCardRepository()
+        CalypsoCardValidationService()
             .executeValidationProcedure(
                 validationDateTime = LocalDateTime.now(),
                 validationAmount = 1,
@@ -271,7 +271,7 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
                 locations = locations)
       }
       is StorageCard -> {
-        StorageCardRepository()
+        StorageCardValidationService()
             .executeValidationProcedure(
                 validationDateTime = LocalDateTime.now(),
                 validationAmount = 1,
