@@ -12,15 +12,12 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.validation.domain.model
 
-import android.os.Parcelable
 import java.time.LocalDateTime
-import kotlinx.parcelize.Parcelize
 
-@Parcelize
 data class ValidationData(
     val name: String,
     val location: Location,
     val destination: String?,
     val dateTime: LocalDateTime,
     val provider: Int? = null
-) : Parcelable
+)

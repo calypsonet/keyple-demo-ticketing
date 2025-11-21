@@ -12,13 +12,4 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.validation.domain.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
-
-@Parcelize
-data class Location(val id: Int, val name: String) : Parcelable {
-
-  override fun toString(): String {
-    return "$id - $name"
-  }
-}
+data class Location(val id: Int, val name: String)

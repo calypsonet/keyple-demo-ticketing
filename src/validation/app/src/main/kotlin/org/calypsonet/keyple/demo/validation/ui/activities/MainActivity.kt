@@ -10,14 +10,14 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.ui
+package org.calypsonet.keyple.demo.validation.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
 import java.util.Timer
 import java.util.TimerTask
 import org.calypsonet.keyple.demo.validation.databinding.ActivityMainBinding
-import org.calypsonet.keyple.demo.validation.ui.deviceselection.DeviceSelectionActivity
+import org.calypsonet.keyple.demo.validation.ui.activities.deviceselection.DeviceSelectionActivity
 
 class MainActivity : BaseActivity() {
 

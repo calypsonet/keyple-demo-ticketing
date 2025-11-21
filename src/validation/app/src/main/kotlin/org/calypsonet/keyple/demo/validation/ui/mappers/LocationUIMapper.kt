@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2025 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -10,18 +10,11 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.domain.model
+package org.calypsonet.keyple.demo.validation.ui.mappers
 
-import java.time.LocalDate
-import java.time.LocalDateTime
+import org.calypsonet.keyple.demo.validation.domain.model.Location
+import org.calypsonet.keyple.demo.validation.ui.model.UILocation
 
-data class ValidationResult(
-    val status: Status,
-    val cardType: String,
-    val nbTicketsLeft: Int? = null,
-    val contract: String?,
-    val validationData: ValidationData?,
-    val eventDateTime: LocalDateTime? = null,
-    val passValidityEndDate: LocalDate? = null,
-    val errorMessage: String? = null
-)
+    fun Location.toUi(): UILocation = UILocation(id = id, name = name)
+
+    fun UILocation.toDomain(): Location = Location(id = id, name = name)

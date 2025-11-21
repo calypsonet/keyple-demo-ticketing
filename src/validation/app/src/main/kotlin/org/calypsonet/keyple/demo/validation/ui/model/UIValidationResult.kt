@@ -10,18 +10,21 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.ui
+package org.calypsonet.keyple.demo.validation.ui.model
 
-import android.widget.Toast
-import dagger.android.support.DaggerAppCompatActivity
-import javax.inject.Inject
-import org.calypsonet.keyple.demo.validation.domain.TicketingService
+import android.os.Parcelable
+import java.time.LocalDate
+import java.time.LocalDateTime
+import kotlinx.parcelize.Parcelize
 
-abstract class BaseActivity : DaggerAppCompatActivity() {
-
-  @Inject lateinit var ticketingService: TicketingService
-
-  fun showToast(message: String) {
-    runOnUiThread { Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show() }
-  }
-}
+@Parcelize
+data class UIValidationResult(
+    val status: Status,
+    val cardType: String,
+    val nbTicketsLeft: Int? = null,
+    val contract: String?,
+    val validationData: UIValidationData?,
+    val eventDateTime: LocalDateTime? = null,
+    val passValidityEndDate: LocalDate? = null,
+    val errorMessage: String? = null
+) : Parcelable
