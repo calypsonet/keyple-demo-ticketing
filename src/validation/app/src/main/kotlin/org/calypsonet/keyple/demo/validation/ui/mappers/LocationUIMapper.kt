@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2025 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -10,16 +10,11 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.di
+package org.calypsonet.keyple.demo.validation.ui.mappers
 
-import dagger.Module
-import dagger.Provides
-import org.calypsonet.keyple.demo.validation.data.LocationRepository
-import org.calypsonet.keyple.demo.validation.di.scope.AppScoped
+import org.calypsonet.keyple.demo.validation.domain.model.Location
+import org.calypsonet.keyple.demo.validation.ui.model.UILocation
 
-@Suppress("unused")
-@Module
-class LocationModule {
+    fun Location.toUi(): UILocation = UILocation(id = id, name = name)
 
-  @Provides @AppScoped fun provideLocationRepository(): LocationRepository = LocationRepository()
-}
+    fun UILocation.toDomain(): Location = Location(id = id, name = name)

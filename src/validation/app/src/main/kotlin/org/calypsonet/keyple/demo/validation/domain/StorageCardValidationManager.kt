@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2025 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -10,12 +10,10 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.data
+package org.calypsonet.keyple.demo.validation.domain
 
-import android.content.Context
 import java.time.LocalDate
 import java.time.LocalDateTime
-import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService
 import org.calypsonet.keyple.demo.common.constant.CardConstant
 import org.calypsonet.keyple.demo.common.model.EventStructure
 import org.calypsonet.keyple.demo.common.model.type.DateCompact
@@ -25,42 +23,42 @@ import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 import org.calypsonet.keyple.demo.common.parser.SCContractStructureParser
 import org.calypsonet.keyple.demo.common.parser.SCEnvironmentHolderStructureParser
 import org.calypsonet.keyple.demo.common.parser.SCEventStructureParser
-import org.calypsonet.keyple.demo.validation.R
-import org.calypsonet.keyple.demo.validation.data.model.AppSettings
-import org.calypsonet.keyple.demo.validation.data.model.CardReaderResponse
-import org.calypsonet.keyple.demo.validation.data.model.Location
-import org.calypsonet.keyple.demo.validation.data.model.Status
-import org.calypsonet.keyple.demo.validation.data.model.Validation
-import org.calypsonet.keyple.demo.validation.data.model.mapper.ValidationMapper
+import org.calypsonet.keyple.demo.validation.data.KeypopApiProvider
+import org.calypsonet.keyple.demo.validation.domain.mapper.ValidationDataMapper
+import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
+import org.calypsonet.keyple.demo.validation.domain.model.Location
+import org.calypsonet.keyple.demo.validation.domain.model.Status
+import org.calypsonet.keyple.demo.validation.domain.model.ValidationData
+import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.storagecard.card.StorageCard
 import org.eclipse.keypop.storagecard.transaction.ChannelControl
 import timber.log.Timber
 
-class StorageCardRepository {
+class StorageCardValidationManager : BaseValidationManager() {
 
   fun executeValidationProcedure(
       validationDateTime: LocalDateTime,
-      context: Context,
       validationAmount: Int,
       cardReader: CardReader,
       storageCard: StorageCard,
-      locations: List<Location>
-  ): CardReaderResponse {
+      locations: List<Location>,
+      keypopApiProvider: KeypopApiProvider
+  ): ValidationResult {
     var status: Status = Status.LOADING
     var errorMessage: String? = null
     var passValidityEndDate: LocalDate? = null
     var nbTicketsLeft: Int? = null
-    var validation: Validation? = null
+    var validationData: ValidationData? = null
 
-    val storageCardExtension = StorageCardExtensionService.getInstance()
+    val storageCardApiFactory = keypopApiProvider.getStorageCardApiFactory()
 
     // Create a card transaction for validation
     val cardTransaction =
         try {
-          storageCardExtension.createStorageCardTransactionManager(cardReader, storageCard)
+          storageCardApiFactory.createStorageCardTransactionManager(cardReader, storageCard)
         } catch (e: Exception) {
-          Timber.w(e)
+          Timber.Forest.w(e)
           status = Status.ERROR
           errorMessage = e.message
           null
@@ -72,67 +70,58 @@ class StorageCardRepository {
         // Step 1 - Read the environment and event data
         cardTransaction
             .prepareReadBlocks(
-                CardConstant.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
-                CardConstant.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK)
-            .prepareReadBlocks(CardConstant.SC_EVENT_FIRST_BLOCK, CardConstant.SC_EVENT_LAST_BLOCK)
+                CardConstant.Companion.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
+                CardConstant.Companion.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK)
             .prepareReadBlocks(
-                CardConstant.SC_CONTRACT_FIRST_BLOCK, CardConstant.SC_COUNTER_LAST_BLOCK)
+                CardConstant.Companion.SC_EVENT_FIRST_BLOCK,
+                CardConstant.Companion.SC_EVENT_LAST_BLOCK)
+            .prepareReadBlocks(
+                CardConstant.Companion.SC_CONTRACT_FIRST_BLOCK,
+                CardConstant.Companion.SC_COUNTER_LAST_BLOCK)
             .processCommands(ChannelControl.KEEP_OPEN)
 
         // Step 2 - Unpack environment structure
         val environmentContent =
             storageCard.getBlocks(
-                CardConstant.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
-                CardConstant.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK)
+                CardConstant.Companion.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
+                CardConstant.Companion.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK)
         val environment = SCEnvironmentHolderStructureParser().parse(environmentContent)
 
         // Step 3 - Validate environment version
-        if (environment.envVersionNumber != VersionNumber.CURRENT_VERSION) {
-          status = Status.INVALID_CARD
-          throw RuntimeException("Environment error: wrong version number")
-        }
+        validateEnvironmentVersionOrThrow(environment.envVersionNumber)
 
         // Step 4 - Validate environment end date
-        if (environment.envEndDate.getDate().isBefore(validationDateTime.toLocalDate())) {
-          status = Status.INVALID_CARD
-          throw RuntimeException("Environment error: end date expired")
-        }
+        validateEnvironmentDateOrThrow(
+            environment.envEndDate.getDate(), validationDateTime.toLocalDate())
 
         // Step 5 - Read and unpack the event record
         val eventContent =
             storageCard.getBlocks(
-                CardConstant.SC_EVENT_FIRST_BLOCK, CardConstant.SC_EVENT_LAST_BLOCK)
+                CardConstant.Companion.SC_EVENT_FIRST_BLOCK,
+                CardConstant.Companion.SC_EVENT_LAST_BLOCK)
         val event = SCEventStructureParser().parse(eventContent)
 
         // Step 6 - Validate event version
-        val eventVersionNumber = event.eventVersionNumber
-        if (eventVersionNumber != VersionNumber.CURRENT_VERSION) {
-          if (eventVersionNumber == VersionNumber.UNDEFINED) {
-            status = Status.EMPTY_CARD
-            throw RuntimeException("No valid title detected")
-          } else {
-            status = Status.INVALID_CARD
-            throw RuntimeException("Event error: wrong version number")
-          }
-        }
+        validateEventVersionOrThrow(event.eventVersionNumber)
 
         // Step 7 - Read and unpack the contract record
         val contractContent =
             storageCard.getBlocks(
-                CardConstant.SC_CONTRACT_FIRST_BLOCK, CardConstant.SC_COUNTER_LAST_BLOCK)
+                CardConstant.Companion.SC_CONTRACT_FIRST_BLOCK,
+                CardConstant.Companion.SC_COUNTER_LAST_BLOCK)
         val contract = SCContractStructureParser().parse(contractContent)
 
         // Validate contract version
-        if (contract.contractVersionNumber != VersionNumber.CURRENT_VERSION) {
-          status = Status.INVALID_CARD
-          throw RuntimeException("Contract Version Number error (!= CURRENT_VERSION)")
-        }
+        validateContractVersionOrThrow(contract.contractVersionNumber)
 
         // Check contract validity
-        if (contract.contractValidityEndDate.getDate().isBefore(validationDateTime.toLocalDate())) {
-          status = Status.EMPTY_CARD
-          errorMessage = context.getString(R.string.expired_title)
-          throw RuntimeException("Contract expired")
+        try {
+          validateContractDateOrThrow(
+              contract.contractValidityEndDate.getDate(), validationDateTime.toLocalDate())
+        } catch (e: ValidationException) {
+          status = e.status
+          errorMessage = e.message
+          throw e
         }
 
         // Determine contract priority from contract tariff
@@ -145,21 +134,19 @@ class StorageCardRepository {
           PriorityCode.MULTI_TRIP -> {
             // Check if there are trips left
             val counterValue = contract.counterValue ?: 0
-            if (counterValue == 0) {
-              status = Status.EMPTY_CARD
-              errorMessage = context.getString(R.string.no_trips_left)
-              throw RuntimeException("No trips left")
-            }
+            validateTripsAvailableOrThrow(counterValue)
 
             // Decrement counter
-            val newCounterValue = counterValue - SINGLE_VALIDATION_AMOUNT
+            val newCounterValue =
+                counterValue - calculateDecrementAmount(contractPriority, validationAmount)
             contract.counterValue = newCounterValue
             nbTicketsLeft = newCounterValue
 
             // Update contract data
             val updatedContractContent = SCContractStructureParser().generate(contract)
             cardTransaction
-                .prepareWriteBlocks(CardConstant.SC_CONTRACT_FIRST_BLOCK, updatedContractContent)
+                .prepareWriteBlocks(
+                    CardConstant.Companion.SC_CONTRACT_FIRST_BLOCK, updatedContractContent)
                 .processCommands(ChannelControl.KEEP_OPEN)
 
             writeEvent = true
@@ -167,11 +154,7 @@ class StorageCardRepository {
           PriorityCode.STORED_VALUE -> {
             // Check if there's enough value
             val counterValue = contract.counterValue ?: 0
-            if (counterValue < validationAmount) {
-              status = Status.EMPTY_CARD
-              errorMessage = context.getString(R.string.no_trips_left)
-              throw RuntimeException("Insufficient stored value")
-            }
+            validateSufficientStoredValueOrThrow(counterValue, validationAmount)
 
             // Decrement counter by validation amount
             val newCounterValue = counterValue - validationAmount
@@ -181,7 +164,8 @@ class StorageCardRepository {
             // Update contract data
             val updatedContractContent = SCContractStructureParser().generate(contract)
             cardTransaction
-                .prepareWriteBlocks(CardConstant.SC_CONTRACT_FIRST_BLOCK, updatedContractContent)
+                .prepareWriteBlocks(
+                    CardConstant.Companion.SC_CONTRACT_FIRST_BLOCK, updatedContractContent)
                 .processCommands(ChannelControl.KEEP_OPEN)
 
             writeEvent = true
@@ -193,9 +177,7 @@ class StorageCardRepository {
           PriorityCode.FORBIDDEN,
           PriorityCode.EXPIRED,
           PriorityCode.UNKNOWN -> {
-            status = Status.EMPTY_CARD
-            errorMessage = context.getString(R.string.no_valid_title_detected)
-            throw RuntimeException("Contract is forbidden or expired")
+            throw ValidationException(EXCEPTION_CONTRACT_FORBIDDEN_OR_EXPIRED, Status.EMPTY_CARD)
           }
         }
 
@@ -213,33 +195,38 @@ class StorageCardRepository {
                   contractPriority3 = PriorityCode.FORBIDDEN,
                   contractPriority4 = PriorityCode.FORBIDDEN)
 
-          validation = ValidationMapper.map(eventToWrite, locations)
+          validationData = ValidationDataMapper.map(eventToWrite, locations)
 
           // Write the event
           val eventBytesToWrite = SCEventStructureParser().generate(eventToWrite)
           cardTransaction
-              .prepareWriteBlocks(CardConstant.SC_EVENT_FIRST_BLOCK, eventBytesToWrite)
+              .prepareWriteBlocks(CardConstant.Companion.SC_EVENT_FIRST_BLOCK, eventBytesToWrite)
               .processCommands(ChannelControl.KEEP_OPEN)
 
-          Timber.i("Validation procedure result: SUCCESS")
+          Timber.Forest.i(LOG_VALIDATION_SUCCESS)
           status = Status.SUCCESS
           errorMessage = null
         } else {
-          Timber.i("Validation procedure result: Failed - No valid contract found")
-          errorMessage = context.getString(R.string.no_valid_title_detected)
+          Timber.Forest.i(LOG_VALIDATION_FAILED_NO_CONTRACT)
+          errorMessage = ERROR_NO_VALID_TITLE_DETECTED
         }
-      } catch (e: Exception) {
-        Timber.e(e)
+      } catch (e: ValidationException) {
+        Timber.Forest.e(e)
+        status = e.status
         errorMessage = e.message
         if (status == Status.LOADING) {
           status = Status.ERROR
         }
+      } catch (e: Exception) {
+        Timber.Forest.e(e)
+        status = Status.ERROR
+        errorMessage = e.message
       } finally {
         // Close the transaction
         try {
           cardTransaction.processCommands(ChannelControl.CLOSE_AFTER)
         } catch (e: Exception) {
-          Timber.e(e)
+          Timber.Forest.e(e)
           if (status == Status.LOADING) {
             status = Status.ERROR
           }
@@ -250,18 +237,14 @@ class StorageCardRepository {
       }
     }
 
-    return CardReaderResponse(
+    return ValidationResult(
         status = status,
         cardType = storageCard.productType.name,
         nbTicketsLeft = nbTicketsLeft,
-        contract = "",
-        validation = validation,
+        contract = EMPTY_CONTRACT,
+        validationData = validationData,
         errorMessage = errorMessage,
         passValidityEndDate = passValidityEndDate,
         eventDateTime = validationDateTime)
-  }
-
-  companion object {
-    const val SINGLE_VALIDATION_AMOUNT = 1
   }
 }

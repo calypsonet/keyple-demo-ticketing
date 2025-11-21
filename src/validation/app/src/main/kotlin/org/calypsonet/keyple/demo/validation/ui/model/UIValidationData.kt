@@ -10,16 +10,17 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.di
+package org.calypsonet.keyple.demo.validation.ui.model
 
-import dagger.Module
-import dagger.Provides
-import org.calypsonet.keyple.demo.validation.data.LocationRepository
-import org.calypsonet.keyple.demo.validation.di.scope.AppScoped
+import android.os.Parcelable
+import java.time.LocalDateTime
+import kotlinx.parcelize.Parcelize
 
-@Suppress("unused")
-@Module
-class LocationModule {
-
-  @Provides @AppScoped fun provideLocationRepository(): LocationRepository = LocationRepository()
-}
+@Parcelize
+data class UIValidationData(
+    val name: String,
+    val location: UILocation,
+    val destination: String?,
+    val dateTime: LocalDateTime,
+    val provider: Int? = null
+) : Parcelable

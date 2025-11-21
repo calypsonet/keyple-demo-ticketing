@@ -82,9 +82,6 @@ dependencies {
   // Lottie
   implementation(libs.lottie)
 
-  // Google GSON
-  implementation(libs.gson)
-
   // Devnied - Byte Utils
   implementation(libs.bitLib4j) { exclude(group = "org.slf4j") }
 

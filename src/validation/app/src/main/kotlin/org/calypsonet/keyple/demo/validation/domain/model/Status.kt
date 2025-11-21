@@ -10,19 +10,30 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.data.model.mapper
+package org.calypsonet.keyple.demo.validation.domain.model
 
-import org.calypsonet.keyple.demo.common.model.EventStructure
-import org.calypsonet.keyple.demo.validation.data.model.Location
-import org.calypsonet.keyple.demo.validation.data.model.Validation
+import java.util.Locale
 
-object ValidationMapper {
-  fun map(event: EventStructure, locations: List<Location>): Validation {
-    return Validation(
-        name = "Event name",
-        dateTime = event.eventDatetime,
-        location = LocationMapper.map(locations, event),
-        destination = null,
-        provider = null)
+enum class Status(private val status: String) {
+  LOADING("loading"),
+  SUCCESS("Success"),
+  INVALID_CARD("Invalid card"),
+  EMPTY_CARD("Empty card"),
+  ERROR("error");
+
+  override fun toString(): String {
+    return status
+  }
+
+  companion object {
+    @JvmStatic
+    fun getStatus(name: String): Status {
+      return try {
+        valueOf(name.uppercase(Locale.ENGLISH))
+      } catch (e: Exception) {
+        // If the given state does not exist, return the default value.
+        ERROR
+      }
+    }
   }
 }

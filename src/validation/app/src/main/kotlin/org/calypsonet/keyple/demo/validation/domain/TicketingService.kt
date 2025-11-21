@@ -13,24 +13,18 @@
 package org.calypsonet.keyple.demo.validation.domain
 
 import android.app.Activity
-import android.content.Context
 import java.time.LocalDateTime
 import javax.inject.Inject
 import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService
 import org.calypsonet.keyple.demo.common.constant.CardConstant
-import org.calypsonet.keyple.demo.validation.data.CalypsoCardRepository
+import org.calypsonet.keyple.demo.validation.data.KeypopApiProvider
+import org.calypsonet.keyple.demo.validation.data.LocationRepository
 import org.calypsonet.keyple.demo.validation.data.ReaderRepository
-import org.calypsonet.keyple.demo.validation.data.StorageCardRepository
-import org.calypsonet.keyple.demo.validation.data.model.CardProtocolEnum
-import org.calypsonet.keyple.demo.validation.data.model.CardReaderResponse
-import org.calypsonet.keyple.demo.validation.data.model.Location
-import org.calypsonet.keyple.demo.validation.data.model.ReaderType
 import org.calypsonet.keyple.demo.validation.di.scope.AppScoped
-import org.eclipse.keyple.card.calypso.CalypsoExtensionService
-import org.eclipse.keyple.card.calypso.crypto.legacysam.LegacySamExtensionService
-import org.eclipse.keyple.card.calypso.crypto.legacysam.LegacySamUtil
-import org.eclipse.keyple.core.service.KeyplePluginException
-import org.eclipse.keyple.core.service.SmartCardServiceProvider
+import org.calypsonet.keyple.demo.validation.domain.model.CardProtocolEnum
+import org.calypsonet.keyple.demo.validation.domain.model.Location
+import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
+import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
 import org.eclipse.keyple.core.util.HexUtil
 import org.eclipse.keypop.calypso.card.CalypsoCardApiFactory
 import org.eclipse.keypop.calypso.card.WriteAccessLevel
@@ -51,17 +45,21 @@ import org.eclipse.keypop.storagecard.card.StorageCard
 import timber.log.Timber
 
 @AppScoped
-class TicketingService @Inject constructor(private var readerRepository: ReaderRepository) {
+class TicketingService
+@Inject
+constructor(
+    private var keypopApiProvider: KeypopApiProvider,
+    private var readerRepository: ReaderRepository,
+    private var locationRepository: LocationRepository
+) {
 
-  private val readerApiFactory: ReaderApiFactory =
-      SmartCardServiceProvider.getService().readerApiFactory
-  private val calypsoExtensionService: CalypsoExtensionService =
-      CalypsoExtensionService.getInstance()
+  private val readerApiFactory: ReaderApiFactory = keypopApiProvider.getReaderApiFactory()
   private val calypsoCardApiFactory: CalypsoCardApiFactory =
-      calypsoExtensionService.calypsoCardApiFactory
+      keypopApiProvider.getCalypsoCardApiFactory()
 
-  /** Get the Storage card extension service */
-  private val storageCardExtension = StorageCardExtensionService.getInstance()
+  /** Get the Storage card API factory */
+  private val storageCardApiFactory =
+      StorageCardExtensionService.getInstance().getStorageCardApiFactory()
 
   private lateinit var calypsoSam: LegacySam
   private lateinit var smartCard: SmartCard
@@ -76,7 +74,7 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
   private var indexOfMifareCardSelection = 0
   private var indexOfST25CardSelection = 0
 
-  @Throws(KeyplePluginException::class, IllegalStateException::class, Exception::class)
+  @Throws(IllegalStateException::class, Exception::class)
   fun init(observer: CardReaderObserverSpi?, activity: Activity, readerType: ReaderType) {
     // Register plugin
     try {
@@ -126,8 +124,6 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
     try {
       // notify reader that se detection has been switched off
       (readerRepository.getCardReader() as ObservableCardReader).stopCardDetection()
-    } catch (e: KeyplePluginException) {
-      Timber.e(e, "NFC Plugin not found")
     } catch (e: Exception) {
       Timber.e(e)
     }
@@ -135,28 +131,18 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
 
   fun onDestroy(observer: CardReaderObserverSpi?) {
     readersInitialized = false
-    readerRepository.clear()
-    if (observer != null && readerRepository.getCardReader() != null) {
-      (readerRepository.getCardReader() as ObservableCardReader).removeObserver(observer)
-    }
-    val smartCardService = SmartCardServiceProvider.getService()
-    smartCardService.plugins.forEach { smartCardService.unregisterPlugin(it.name) }
+    readerRepository.onDestroy(observer)
   }
 
   fun displayResultSuccess(): Boolean = readerRepository.displayResultSuccess()
 
   fun displayResultFailed(): Boolean = readerRepository.displayResultFailed()
 
+  fun getLocations(): List<Location> = locationRepository.getLocations()
+
   fun prepareAndScheduleCardSelectionScenario() {
-
-    // Get the Keyple main service
-    val smartCardService = SmartCardServiceProvider.getService()
-
-    // Check the Calypso card extension
-    smartCardService.checkCardExtension(calypsoExtensionService)
-
     // Get a new card selection manager
-    cardSelectionManager = smartCardService.getReaderApiFactory().createCardSelectionManager()
+    cardSelectionManager = keypopApiProvider.getReaderApiFactory().createCardSelectionManager()
 
     // Prepare card selection case #1: Keyple generic
     indexOfKeypleGenericCardSelection =
@@ -200,13 +186,13 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
               readerApiFactory
                   .createBasicCardSelector()
                   .filterByCardProtocol(CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name),
-              storageCardExtension.createStorageCardSelectionExtension(MIFARE_ULTRALIGHT))
+              storageCardApiFactory.createStorageCardSelectionExtension(MIFARE_ULTRALIGHT))
       indexOfST25CardSelection =
           cardSelectionManager.prepareSelection(
               readerApiFactory
                   .createBasicCardSelector()
                   .filterByCardProtocol(CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name),
-              storageCardExtension.createStorageCardSelectionExtension(ST25_SRT512))
+              storageCardApiFactory.createStorageCardSelectionExtension(ST25_SRT512))
     }
 
     // Schedule the execution of the prepared card selection scenario as soon as a card is presented
@@ -259,28 +245,28 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
     return null
   }
 
-  fun executeValidationProcedure(context: Context, locations: List<Location>): CardReaderResponse {
+  fun executeValidationProcedure(): ValidationResult {
     return when (smartCard) {
       is CalypsoCard -> {
-        CalypsoCardRepository()
+        CalypsoCardValidationManager()
             .executeValidationProcedure(
                 validationDateTime = LocalDateTime.now(),
-                context = context,
                 validationAmount = 1,
                 cardReader = readerRepository.getCardReader()!!,
                 calypsoCard = smartCard as CalypsoCard,
                 cardSecuritySettings = getSecuritySettings()!!,
-                locations = locations)
+                locations = locationRepository.getLocations(),
+                keypopApiProvider = keypopApiProvider)
       }
       is StorageCard -> {
-        StorageCardRepository()
+        StorageCardValidationManager()
             .executeValidationProcedure(
                 validationDateTime = LocalDateTime.now(),
-                context = context,
                 validationAmount = 1,
                 cardReader = readerRepository.getCardReader()!!,
                 storageCard = smartCard as StorageCard,
-                locations = locations)
+                locations = locationRepository.getLocations(),
+                keypopApiProvider = keypopApiProvider)
       }
       else -> {
         error("Unsupported card type")
@@ -291,8 +277,8 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
   private fun getSecuritySettings(): SymmetricCryptoSecuritySetting? {
     return calypsoCardApiFactory
         .createSymmetricCryptoSecuritySetting(
-            LegacySamExtensionService.getInstance()
-                .legacySamApiFactory
+            keypopApiProvider
+                .getLegacySamApiFactory()
                 .createSymmetricCryptoCardTransactionManagerFactory(
                     readerRepository.getSamReader(), calypsoSam))
         .assignDefaultKif(
@@ -304,22 +290,14 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
   }
 
   private fun selectSam(samReader: CardReader): Boolean {
-    // Get the Keyple main service
-    val smartCardService = SmartCardServiceProvider.getService()
-
     // Create a SAM selection manager.
     val samSelectionManager: CardSelectionManager =
-        smartCardService.getReaderApiFactory().createCardSelectionManager()
+        keypopApiProvider.getReaderApiFactory().createCardSelectionManager()
 
     // Create a SAM selection using the Calypso card extension.
     samSelectionManager.prepareSelection(
-        readerApiFactory
-            .createBasicCardSelector()
-            .filterByPowerOnData(
-                LegacySamUtil.buildPowerOnDataFilter(LegacySam.ProductType.SAM_C1, null)),
-        LegacySamExtensionService.getInstance()
-            .legacySamApiFactory
-            .createLegacySamSelectionExtension())
+        readerApiFactory.createBasicCardSelector(),
+        keypopApiProvider.getLegacySamApiFactory().createLegacySamSelectionExtension())
     try {
       // SAM communication: run the selection scenario.
       val samSelectionResult = samSelectionManager.processCardSelectionScenario(samReader)

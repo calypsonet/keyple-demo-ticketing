@@ -19,8 +19,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.validation.R
-import org.calypsonet.keyple.demo.validation.data.model.CardProtocolEnum
-import org.calypsonet.keyple.demo.validation.data.model.ReaderType
+import org.calypsonet.keyple.demo.validation.domain.model.CardProtocolEnum
+import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
 import org.calypsonet.keyple.plugin.bluebird.BluebirdContactlessProtocols
 import org.calypsonet.keyple.plugin.bluebird.BluebirdPluginFactoryProvider
@@ -48,6 +48,7 @@ import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ConfigurableCardReader
 import org.eclipse.keypop.reader.ObservableCardReader
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
+import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 
 class ReaderRepository
 @Inject
@@ -267,6 +268,15 @@ constructor(
       errorMedia.stop()
       errorMedia.release()
     }
+  }
+
+  fun onDestroy(observer: CardReaderObserverSpi?) {
+    clear()
+    if (observer != null && cardReader != null) {
+      (cardReader as ObservableCardReader).removeObserver(observer)
+    }
+    val smartCardService = SmartCardServiceProvider.getService()
+    smartCardService.plugins.forEach { smartCardService.unregisterPlugin(it.name) }
   }
 
   fun displayResultSuccess(): Boolean {

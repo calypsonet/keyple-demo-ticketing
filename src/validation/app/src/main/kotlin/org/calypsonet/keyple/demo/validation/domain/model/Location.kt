@@ -10,16 +10,6 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.di
+package org.calypsonet.keyple.demo.validation.domain.model
 
-import dagger.Module
-import dagger.Provides
-import org.calypsonet.keyple.demo.validation.data.LocationRepository
-import org.calypsonet.keyple.demo.validation.di.scope.AppScoped
-
-@Suppress("unused")
-@Module
-class LocationModule {
-
-  @Provides @AppScoped fun provideLocationRepository(): LocationRepository = LocationRepository()
-}
+data class Location(val id: Int, val name: String)

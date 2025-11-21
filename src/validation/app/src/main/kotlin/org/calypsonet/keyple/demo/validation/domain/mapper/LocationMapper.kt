@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2022 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -10,11 +10,13 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.data.model
+package org.calypsonet.keyple.demo.validation.domain.mapper
 
-enum class ReaderType {
-  BLUEBIRD,
-  COPPERNIC,
-  FAMOCO,
-  FLOWBIRD
+import org.calypsonet.keyple.demo.common.model.EventStructure
+import org.calypsonet.keyple.demo.validation.domain.model.Location
+
+object LocationMapper {
+  fun map(locations: List<Location>, event: EventStructure): Location {
+    return locations.filter { event.eventLocation == it.id }[0]
+  }
 }

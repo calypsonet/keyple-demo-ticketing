@@ -10,15 +10,11 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.data.model
+package org.calypsonet.keyple.demo.validation.domain.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
-
-@Parcelize
-data class Location(val id: Int, val name: String) : Parcelable {
-
-  override fun toString(): String {
-    return "$id - $name"
-  }
+enum class CardProtocolEnum {
+  ISO_7816_LOGICAL_PROTOCOL,
+  ISO_14443_4_LOGICAL_PROTOCOL,
+  MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL,
+  ST25_SRT512_LOGICAL_PROTOCOL
 }

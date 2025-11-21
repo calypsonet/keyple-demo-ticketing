@@ -10,17 +10,16 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.data.model
+package org.calypsonet.keyple.demo.validation.di
 
-import android.os.Parcelable
-import java.time.LocalDateTime
-import kotlinx.parcelize.Parcelize
+import dagger.Module
+import dagger.Provides
+import org.calypsonet.keyple.demo.validation.data.KeypopApiProvider
+import org.calypsonet.keyple.demo.validation.di.scope.AppScoped
 
-@Parcelize
-data class Validation(
-    val name: String,
-    val location: Location,
-    val destination: String?,
-    val dateTime: LocalDateTime,
-    val provider: Int? = null
-) : Parcelable
+@Suppress("unused")
+@Module
+class KeypopApiModule {
+
+  @Provides @AppScoped fun provideKeypopApiProvider(): KeypopApiProvider = KeypopApiProvider()
+}

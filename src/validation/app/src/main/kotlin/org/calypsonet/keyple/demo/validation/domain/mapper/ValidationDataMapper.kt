@@ -10,21 +10,19 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.data.model
+package org.calypsonet.keyple.demo.validation.domain.mapper
 
-import android.os.Parcelable
-import java.time.LocalDate
-import java.time.LocalDateTime
-import kotlinx.parcelize.Parcelize
+import org.calypsonet.keyple.demo.common.model.EventStructure
+import org.calypsonet.keyple.demo.validation.domain.model.Location
+import org.calypsonet.keyple.demo.validation.domain.model.ValidationData
 
-@Parcelize
-data class CardReaderResponse(
-    val status: Status,
-    val cardType: String,
-    val nbTicketsLeft: Int? = null,
-    val contract: String?,
-    val validation: Validation?,
-    val eventDateTime: LocalDateTime? = null,
-    val passValidityEndDate: LocalDate? = null,
-    val errorMessage: String? = null
-) : Parcelable
+object ValidationDataMapper {
+  fun map(event: EventStructure, locations: List<Location>): ValidationData {
+    return ValidationData(
+        name = "Event name",
+        dateTime = event.eventDatetime,
+        location = LocationMapper.map(locations, event),
+        destination = null,
+        provider = null)
+  }
+}

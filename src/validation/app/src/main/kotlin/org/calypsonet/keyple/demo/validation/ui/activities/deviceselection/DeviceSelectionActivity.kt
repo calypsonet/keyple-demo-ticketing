@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.ui.deviceselection
+package org.calypsonet.keyple.demo.validation.ui.activities.deviceselection
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -20,11 +20,11 @@ import android.graphics.Color
 import android.os.Bundle
 import org.calypsonet.keyple.demo.validation.BuildConfig
 import org.calypsonet.keyple.demo.validation.R
-import org.calypsonet.keyple.demo.validation.data.model.AppSettings
-import org.calypsonet.keyple.demo.validation.data.model.ReaderType
 import org.calypsonet.keyple.demo.validation.databinding.ActivityDeviceSelectionBinding
-import org.calypsonet.keyple.demo.validation.ui.BaseActivity
-import org.calypsonet.keyple.demo.validation.ui.SettingsActivity
+import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
+import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
+import org.calypsonet.keyple.demo.validation.ui.activities.BaseActivity
+import org.calypsonet.keyple.demo.validation.ui.activities.SettingsActivity
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
 import org.calypsonet.keyple.plugin.flowbird.FlowbirdPlugin
 

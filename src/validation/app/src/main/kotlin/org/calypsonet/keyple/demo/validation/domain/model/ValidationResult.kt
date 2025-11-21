@@ -10,17 +10,18 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.util
+package org.calypsonet.keyple.demo.validation.domain.model
 
-import kotlin.coroutines.Continuation
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withTimeoutOrNull
+import java.time.LocalDate
+import java.time.LocalDateTime
 
-suspend inline fun <T> suspendCoroutineWithTimeout(
-    timeout: Long,
-    crossinline block: (Continuation<T>) -> Unit
-): T? {
-  var finalValue: T? = null
-  withTimeoutOrNull(timeout) { finalValue = suspendCancellableCoroutine(block = block) }
-  return finalValue
-}
+data class ValidationResult(
+    val status: Status,
+    val cardType: String,
+    val nbTicketsLeft: Int? = null,
+    val contract: String?,
+    val validationData: ValidationData?,
+    val eventDateTime: LocalDateTime? = null,
+    val passValidityEndDate: LocalDate? = null,
+    val errorMessage: String? = null
+)
