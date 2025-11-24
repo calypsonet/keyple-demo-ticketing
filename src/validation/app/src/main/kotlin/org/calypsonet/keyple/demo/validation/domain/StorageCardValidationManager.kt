@@ -24,12 +24,12 @@ import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 import org.calypsonet.keyple.demo.common.parser.SCContractStructureParser
 import org.calypsonet.keyple.demo.common.parser.SCEnvironmentHolderStructureParser
 import org.calypsonet.keyple.demo.common.parser.SCEventStructureParser
-import org.calypsonet.keyple.demo.validation.data.KeypopApiProvider
 import org.calypsonet.keyple.demo.validation.domain.mappers.ValidationDataMapper
 import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
 import org.calypsonet.keyple.demo.validation.domain.model.Status
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationData
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
+import org.calypsonet.keyple.demo.validation.domain.spi.KeypopApiProvider
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.storagecard.card.StorageCard
 import org.eclipse.keypop.storagecard.transaction.ChannelControl

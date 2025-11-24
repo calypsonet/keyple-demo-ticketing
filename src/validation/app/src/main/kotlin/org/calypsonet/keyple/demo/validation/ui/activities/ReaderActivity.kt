@@ -80,7 +80,7 @@ class ReaderActivity : BaseActivity() {
     }
     activityCardReaderBinding.animation.playAnimation()
 
-    if (!ticketingService.readersInitialized) {
+    if (!ticketingService.areReadersInitialized) {
       GlobalScope.launch {
         withContext(Dispatchers.Main) { showProgress() }
         withContext(Dispatchers.IO) {
@@ -97,7 +97,7 @@ class ReaderActivity : BaseActivity() {
             }
           }
         }
-        if (ticketingService.readersInitialized) {
+        if (ticketingService.areReadersInitialized) {
           withContext(Dispatchers.Main) { dismissProgress() }
         }
       }
@@ -120,7 +120,7 @@ class ReaderActivity : BaseActivity() {
     super.onPause()
     activityCardReaderBinding.animation.cancelAnimation()
     timer.cancel()
-    if (ticketingService.readersInitialized) {
+    if (ticketingService.areReadersInitialized) {
       ticketingService.stopNfcDetection()
       Timber.d("stopNfcDetection")
     }

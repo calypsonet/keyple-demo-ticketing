@@ -21,6 +21,7 @@ import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.validation.R
 import org.calypsonet.keyple.demo.validation.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
+import org.calypsonet.keyple.demo.validation.domain.spi.ReaderRepository
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
 import org.calypsonet.keyple.plugin.bluebird.BluebirdContactlessProtocols
 import org.calypsonet.keyple.plugin.bluebird.BluebirdPluginFactoryProvider
@@ -38,7 +39,6 @@ import org.calypsonet.keyple.plugin.flowbird.contactless.FlowbirdContactlessRead
 import org.calypsonet.keyple.plugin.flowbird.contactless.FlowbirdSupportContactlessProtocols
 import org.calypsonet.keyple.plugin.storagecard.ApduInterpreterFactoryProvider
 import org.eclipse.keyple.core.service.KeyplePluginException
-import org.eclipse.keyple.core.service.Plugin
 import org.eclipse.keyple.core.service.SmartCardServiceProvider
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcConfig
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcConstants
@@ -50,11 +50,11 @@ import org.eclipse.keypop.reader.ObservableCardReader
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 
-class ReaderRepository
+class ReaderRepositoryImpl
 @Inject
 constructor(
     private val readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi
-) {
+) : ReaderRepository {
 
   private lateinit var readerType: ReaderType
   // Card
@@ -151,7 +151,7 @@ constructor(
   }
 
   @Throws(KeyplePluginException::class)
-  fun registerPlugin(activity: Activity, readerType: ReaderType) {
+  override fun registerPlugin(activity: Activity, readerType: ReaderType) {
     initReaderType(readerType)
     if (readerType != ReaderType.FLOWBIRD) {
       successMedia = MediaPlayer.create(activity, R.raw.success)
@@ -192,7 +192,7 @@ constructor(
   }
 
   @Throws(KeyplePluginException::class)
-  fun initCardReader(): CardReader? {
+  override fun initCardReader(): CardReader? {
     cardReader =
         SmartCardServiceProvider.getService().getPlugin(cardPluginName)?.getReader(cardReaderName)
     cardReader?.let {
@@ -205,12 +205,12 @@ constructor(
     return cardReader
   }
 
-  fun getCardReader(): CardReader? {
+  override fun getCardReader(): CardReader? {
     return cardReader
   }
 
   @Throws(KeyplePluginException::class)
-  fun initSamReaders(): List<CardReader> {
+  override fun initSamReaders(): List<CardReader> {
     if (readerType == ReaderType.FAMOCO) {
       samReaders =
           SmartCardServiceProvider.getService()
@@ -234,9 +234,7 @@ constructor(
     return samReaders
   }
 
-  fun getSamPlugin(): Plugin = SmartCardServiceProvider.getService().getPlugin(samPluginName)
-
-  fun getSamReader(): CardReader? {
+  override fun getSamReader(): CardReader? {
     return if (samReaders.isNotEmpty()) {
       val filteredByName = samReaders.filter { it.name == samReaderName }
       return if (filteredByName.isEmpty()) {
@@ -249,11 +247,11 @@ constructor(
     }
   }
 
-  fun isStorageCardSupported(): Boolean {
+  override fun isStorageCardSupported(): Boolean {
     return isStorageCardSupported
   }
 
-  fun clear() {
+  private fun clear() {
     cardReaderProtocols.forEach { entry ->
       (cardReader as ConfigurableCardReader).deactivateProtocol(entry.key)
     }
@@ -270,7 +268,7 @@ constructor(
     }
   }
 
-  fun onDestroy(observer: CardReaderObserverSpi?) {
+  override fun onDestroy(observer: CardReaderObserverSpi?) {
     clear()
     if (observer != null && cardReader != null) {
       (cardReader as ObservableCardReader).removeObserver(observer)
@@ -279,7 +277,7 @@ constructor(
     smartCardService.plugins.forEach { smartCardService.unregisterPlugin(it.name) }
   }
 
-  fun displayResultSuccess(): Boolean {
+  override fun displayResultSuccess(): Boolean {
     if (readerType == ReaderType.FLOWBIRD) {
       FlowbirdUiManager.displayResultSuccess()
     } else {
@@ -288,7 +286,7 @@ constructor(
     return true
   }
 
-  fun displayResultFailed(): Boolean {
+  override fun displayResultFailed(): Boolean {
     if (readerType == ReaderType.FLOWBIRD) {
       FlowbirdUiManager.displayResultFailed()
     } else {

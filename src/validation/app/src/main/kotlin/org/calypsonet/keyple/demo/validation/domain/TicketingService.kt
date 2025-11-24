@@ -15,16 +15,15 @@ package org.calypsonet.keyple.demo.validation.domain
 import android.app.Activity
 import java.time.LocalDateTime
 import javax.inject.Inject
-import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService
 import org.calypsonet.keyple.demo.common.constant.CardConstant
 import org.calypsonet.keyple.demo.common.data.LocationRepository
 import org.calypsonet.keyple.demo.common.model.Location
-import org.calypsonet.keyple.demo.validation.data.KeypopApiProvider
-import org.calypsonet.keyple.demo.validation.data.ReaderRepository
 import org.calypsonet.keyple.demo.validation.di.scope.AppScoped
 import org.calypsonet.keyple.demo.validation.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
+import org.calypsonet.keyple.demo.validation.domain.spi.KeypopApiProvider
+import org.calypsonet.keyple.demo.validation.domain.spi.ReaderRepository
 import org.eclipse.keyple.core.util.HexUtil
 import org.eclipse.keypop.calypso.card.CalypsoCardApiFactory
 import org.eclipse.keypop.calypso.card.WriteAccessLevel
@@ -55,15 +54,12 @@ constructor(
   private val readerApiFactory: ReaderApiFactory = keypopApiProvider.getReaderApiFactory()
   private val calypsoCardApiFactory: CalypsoCardApiFactory =
       keypopApiProvider.getCalypsoCardApiFactory()
-
-  /** Get the Storage card API factory */
-  private val storageCardApiFactory =
-      StorageCardExtensionService.getInstance().getStorageCardApiFactory()
+  private val storageCardApiFactory = keypopApiProvider.getStorageCardApiFactory()
 
   private lateinit var calypsoSam: LegacySam
   private lateinit var smartCard: SmartCard
   private lateinit var cardSelectionManager: CardSelectionManager
-  var readersInitialized = false
+  var areReadersInitialized = false
     private set
 
   private var indexOfKeypleGenericCardSelection = 0
@@ -73,7 +69,6 @@ constructor(
   private var indexOfMifareCardSelection = 0
   private var indexOfST25CardSelection = 0
 
-  @Throws(IllegalStateException::class, Exception::class)
   fun init(observer: CardReaderObserverSpi?, activity: Activity, readerType: ReaderType) {
     // Register plugin
     try {
@@ -109,7 +104,7 @@ constructor(
         throw IllegalStateException("SAM reader or SAM not available")
       }
     }
-    readersInitialized = true
+    areReadersInitialized = true
   }
 
   fun startNfcDetection() {
@@ -129,7 +124,7 @@ constructor(
   }
 
   fun onDestroy(observer: CardReaderObserverSpi?) {
-    readersInitialized = false
+    areReadersInitialized = false
     readerRepository.onDestroy(observer)
   }
 
@@ -139,9 +134,9 @@ constructor(
 
   fun getLocations(): List<Location> = LocationRepository.getLocations()
 
-  fun prepareAndScheduleCardSelectionScenario() {
+  private fun prepareAndScheduleCardSelectionScenario() {
     // Get a new card selection manager
-    cardSelectionManager = keypopApiProvider.getReaderApiFactory().createCardSelectionManager()
+    cardSelectionManager = readerApiFactory.createCardSelectionManager()
 
     // Prepare card selection case #1: Keyple generic
     indexOfKeypleGenericCardSelection =
@@ -290,8 +285,7 @@ constructor(
 
   private fun selectSam(samReader: CardReader): Boolean {
     // Create a SAM selection manager.
-    val samSelectionManager: CardSelectionManager =
-        keypopApiProvider.getReaderApiFactory().createCardSelectionManager()
+    val samSelectionManager: CardSelectionManager = readerApiFactory.createCardSelectionManager()
 
     // Create a SAM selection using the Calypso card extension.
     samSelectionManager.prepareSelection(
