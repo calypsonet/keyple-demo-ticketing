@@ -16,6 +16,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import org.calypsonet.keyple.demo.common.constant.CardConstant
 import org.calypsonet.keyple.demo.common.model.EventStructure
+import org.calypsonet.keyple.demo.common.model.Location
 import org.calypsonet.keyple.demo.common.model.type.DateCompact
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.TimeCompact
@@ -24,9 +25,8 @@ import org.calypsonet.keyple.demo.common.parser.ContractStructureParser
 import org.calypsonet.keyple.demo.common.parser.EnvironmentHolderStructureParser
 import org.calypsonet.keyple.demo.common.parser.EventStructureParser
 import org.calypsonet.keyple.demo.validation.data.KeypopApiProvider
-import org.calypsonet.keyple.demo.validation.domain.mapper.ValidationDataMapper
+import org.calypsonet.keyple.demo.validation.domain.mappers.ValidationDataMapper
 import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
-import org.calypsonet.keyple.demo.validation.domain.model.Location
 import org.calypsonet.keyple.demo.validation.domain.model.Status
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationData
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult

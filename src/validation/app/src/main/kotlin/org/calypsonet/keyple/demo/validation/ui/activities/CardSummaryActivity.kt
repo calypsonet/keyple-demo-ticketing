@@ -22,7 +22,7 @@ import org.calypsonet.keyple.demo.validation.databinding.ActivityCardSummaryBind
 import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
 import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.calypsonet.keyple.demo.validation.domain.model.Status
-import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
+import org.calypsonet.keyple.demo.validation.ui.model.UIValidationResult
 import timber.log.Timber
 
 class CardSummaryActivity : BaseActivity() {
@@ -37,7 +37,7 @@ class CardSummaryActivity : BaseActivity() {
     setContentView(activityCardSummaryBinding.root)
     val bundle = intent.getBundleExtra(Bundle::class.java.simpleName)!!
     val validationResult =
-        bundle.getParcelable<ValidationResult>(ValidationResult::class.simpleName)
+        bundle.getParcelable<UIValidationResult>(UIValidationResult::class.simpleName)
 
     if (validationResult != null && !validationResult.cardType.isNullOrBlank()) {
       activityCardSummaryBinding.cardTypeLabel?.visibility = View.VISIBLE

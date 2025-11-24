@@ -17,12 +17,12 @@ import java.time.LocalDateTime
 import javax.inject.Inject
 import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService
 import org.calypsonet.keyple.demo.common.constant.CardConstant
+import org.calypsonet.keyple.demo.common.data.LocationRepository
+import org.calypsonet.keyple.demo.common.model.Location
 import org.calypsonet.keyple.demo.validation.data.KeypopApiProvider
-import org.calypsonet.keyple.demo.validation.data.LocationRepository
 import org.calypsonet.keyple.demo.validation.data.ReaderRepository
 import org.calypsonet.keyple.demo.validation.di.scope.AppScoped
 import org.calypsonet.keyple.demo.validation.domain.model.CardProtocolEnum
-import org.calypsonet.keyple.demo.validation.domain.model.Location
 import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
 import org.eclipse.keyple.core.util.HexUtil
@@ -49,8 +49,7 @@ class TicketingService
 @Inject
 constructor(
     private var keypopApiProvider: KeypopApiProvider,
-    private var readerRepository: ReaderRepository,
-    private var locationRepository: LocationRepository
+    private var readerRepository: ReaderRepository
 ) {
 
   private val readerApiFactory: ReaderApiFactory = keypopApiProvider.getReaderApiFactory()
@@ -138,7 +137,7 @@ constructor(
 
   fun displayResultFailed(): Boolean = readerRepository.displayResultFailed()
 
-  fun getLocations(): List<Location> = locationRepository.getLocations()
+  fun getLocations(): List<Location> = LocationRepository.getLocations()
 
   fun prepareAndScheduleCardSelectionScenario() {
     // Get a new card selection manager
@@ -255,7 +254,7 @@ constructor(
                 cardReader = readerRepository.getCardReader()!!,
                 calypsoCard = smartCard as CalypsoCard,
                 cardSecuritySettings = getSecuritySettings()!!,
-                locations = locationRepository.getLocations(),
+                locations = LocationRepository.getLocations(),
                 keypopApiProvider = keypopApiProvider)
       }
       is StorageCard -> {
@@ -265,7 +264,7 @@ constructor(
                 validationAmount = 1,
                 cardReader = readerRepository.getCardReader()!!,
                 storageCard = smartCard as StorageCard,
-                locations = locationRepository.getLocations(),
+                locations = LocationRepository.getLocations(),
                 keypopApiProvider = keypopApiProvider)
       }
       else -> {

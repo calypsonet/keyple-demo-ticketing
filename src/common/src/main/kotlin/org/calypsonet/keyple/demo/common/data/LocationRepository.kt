@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2025 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -10,12 +10,11 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.data
+package org.calypsonet.keyple.demo.common.data
 
-import javax.inject.Inject
-import org.calypsonet.keyple.demo.validation.domain.model.Location
+import org.calypsonet.keyple.demo.common.model.Location
 
-class LocationRepository @Inject constructor() {
+object LocationRepository {
 
   private val locationList: List<Location> =
       listOf(

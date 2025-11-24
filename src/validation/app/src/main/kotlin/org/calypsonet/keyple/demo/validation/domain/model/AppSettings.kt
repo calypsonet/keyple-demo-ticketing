@@ -12,6 +12,8 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.validation.domain.model
 
+import org.calypsonet.keyple.demo.common.model.Location
+
 object AppSettings {
   lateinit var readerType: ReaderType
   lateinit var location: Location

@@ -10,13 +10,20 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.domain.mapper
+package org.calypsonet.keyple.demo.validation.domain.mappers
 
+import org.calypsonet.keyple.demo.common.mappers.LocationMapper
 import org.calypsonet.keyple.demo.common.model.EventStructure
-import org.calypsonet.keyple.demo.validation.domain.model.Location
+import org.calypsonet.keyple.demo.common.model.Location
+import org.calypsonet.keyple.demo.validation.domain.model.ValidationData
 
-object LocationMapper {
-  fun map(locations: List<Location>, event: EventStructure): Location {
-    return locations.filter { event.eventLocation == it.id }[0]
+object ValidationDataMapper {
+  fun map(event: EventStructure, locations: List<Location>): ValidationData {
+    return ValidationData(
+        name = "Event name",
+        dateTime = event.eventDatetime,
+        location = LocationMapper.map(locations, event),
+        destination = null,
+        provider = null)
   }
 }

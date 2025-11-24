@@ -12,9 +12,9 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.validation.ui.mappers
 
-import org.calypsonet.keyple.demo.validation.domain.model.Location
+import org.calypsonet.keyple.demo.common.model.Location
 import org.calypsonet.keyple.demo.validation.ui.model.UILocation
 
-    fun Location.toUi(): UILocation = UILocation(id = id, name = name)
+fun Location.toUi(): UILocation = UILocation(id = id, name = name)
 
-    fun UILocation.toDomain(): Location = Location(id = id, name = name)
+fun UILocation.toDomain(): Location = Location(id = id, name = name)
