@@ -12,7 +12,6 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.validation.domain
 
-import android.app.Activity
 import java.time.LocalDateTime
 import javax.inject.Inject
 import org.calypsonet.keyple.demo.common.constant.CardConstant
@@ -23,7 +22,8 @@ import org.calypsonet.keyple.demo.validation.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
 import org.calypsonet.keyple.demo.validation.domain.spi.KeypopApiProvider
-import org.calypsonet.keyple.demo.validation.domain.spi.ReaderRepository
+import org.calypsonet.keyple.demo.validation.domain.spi.ReaderManager
+import org.calypsonet.keyple.demo.validation.domain.spi.UiContext
 import org.eclipse.keyple.core.util.HexUtil
 import org.eclipse.keypop.calypso.card.CalypsoCardApiFactory
 import org.eclipse.keypop.calypso.card.WriteAccessLevel
@@ -48,7 +48,7 @@ class TicketingService
 @Inject
 constructor(
     private var keypopApiProvider: KeypopApiProvider,
-    private var readerRepository: ReaderRepository
+    private var readerManager: ReaderManager
 ) {
 
   private val readerApiFactory: ReaderApiFactory = keypopApiProvider.getReaderApiFactory()
@@ -69,22 +69,22 @@ constructor(
   private var indexOfMifareCardSelection = 0
   private var indexOfST25CardSelection = 0
 
-  fun init(observer: CardReaderObserverSpi?, activity: Activity, readerType: ReaderType) {
+  fun init(observer: CardReaderObserverSpi?, readerType: ReaderType, uiContext: UiContext) {
     // Register plugin
-    readerRepository.registerPlugin(activity, readerType)
+    readerManager.registerPlugin(readerType, uiContext)
 
     // Init card reader
-    val cardReader: CardReader? = readerRepository.initCardReader()
+    val cardReader: CardReader? = readerManager.initCardReader()
 
     // Init SAM reader
-    val samReaders = readerRepository.initSamReaders()
+    val samReaders = readerManager.initSamReaders()
     check(samReaders.isNotEmpty()) { "No SAM reader available" }
 
     // Register a card event observer and init the ticketing session
     cardReader?.let { reader ->
       (reader as ObservableCardReader).addObserver(observer)
       // attempts to select a SAM, if any, sets the isSecureSessionMode flag accordingly
-      val samReader = readerRepository.getSamReader()
+      val samReader = readerManager.getSamReader()
       if (samReader == null || !selectSam(samReader)) {
         throw IllegalStateException("SAM reader or SAM not available")
       }
@@ -95,14 +95,14 @@ constructor(
   fun startNfcDetection() {
     // Provide the CardReader with the selection operation to be processed when a Card is inserted.
     prepareAndScheduleCardSelectionScenario()
-    (readerRepository.getCardReader() as ObservableCardReader).startCardDetection(
+    (readerManager.getCardReader() as ObservableCardReader).startCardDetection(
         ObservableCardReader.DetectionMode.REPEATING)
   }
 
   fun stopNfcDetection() {
     try {
       // notify reader that se detection has been switched off
-      (readerRepository.getCardReader() as ObservableCardReader).stopCardDetection()
+      (readerManager.getCardReader() as ObservableCardReader).stopCardDetection()
     } catch (e: Exception) {
       Timber.e(e)
     }
@@ -110,12 +110,12 @@ constructor(
 
   fun onDestroy(observer: CardReaderObserverSpi?) {
     areReadersInitialized = false
-    readerRepository.onDestroy(observer)
+    readerManager.onDestroy(observer)
   }
 
-  fun displayResultSuccess(): Boolean = readerRepository.displayResultSuccess()
+  fun displayResultSuccess(): Boolean = readerManager.displayResultSuccess()
 
-  fun displayResultFailed(): Boolean = readerRepository.displayResultFailed()
+  fun displayResultFailed(): Boolean = readerManager.displayResultFailed()
 
   fun getLocations(): List<Location> = LocationRepository.getLocations()
 
@@ -159,7 +159,7 @@ constructor(
                 .filterByCardProtocol(CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
-    if (readerRepository.isStorageCardSupported()) {
+    if (readerManager.isStorageCardSupported()) {
       indexOfMifareCardSelection =
           cardSelectionManager.prepareSelection(
               readerApiFactory
@@ -176,7 +176,7 @@ constructor(
 
     // Schedule the execution of the prepared card selection scenario as soon as a card is presented
     cardSelectionManager.scheduleCardSelectionScenario(
-        readerRepository.getCardReader() as ObservableCardReader,
+        readerManager.getCardReader() as ObservableCardReader,
         ObservableCardReader.NotificationMode.ALWAYS)
   }
 
@@ -231,7 +231,7 @@ constructor(
             .executeValidationProcedure(
                 validationDateTime = LocalDateTime.now(),
                 validationAmount = 1,
-                cardReader = readerRepository.getCardReader()!!,
+                cardReader = readerManager.getCardReader()!!,
                 calypsoCard = smartCard as CalypsoCard,
                 cardSecuritySettings = getSecuritySettings()!!,
                 locations = LocationRepository.getLocations(),
@@ -242,7 +242,7 @@ constructor(
             .executeValidationProcedure(
                 validationDateTime = LocalDateTime.now(),
                 validationAmount = 1,
-                cardReader = readerRepository.getCardReader()!!,
+                cardReader = readerManager.getCardReader()!!,
                 storageCard = smartCard as StorageCard,
                 locations = LocationRepository.getLocations(),
                 keypopApiProvider = keypopApiProvider)
@@ -259,7 +259,7 @@ constructor(
             keypopApiProvider
                 .getLegacySamApiFactory()
                 .createSymmetricCryptoCardTransactionManagerFactory(
-                    readerRepository.getSamReader(), calypsoSam))
+                    readerManager.getSamReader(), calypsoSam))
         .assignDefaultKif(
             WriteAccessLevel.PERSONALIZATION, CardConstant.DEFAULT_KIF_PERSONALIZATION)
         .assignDefaultKif(WriteAccessLevel.LOAD, CardConstant.DEFAULT_KIF_LOAD)

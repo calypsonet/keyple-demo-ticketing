@@ -21,7 +21,8 @@ import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.validation.R
 import org.calypsonet.keyple.demo.validation.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
-import org.calypsonet.keyple.demo.validation.domain.spi.ReaderRepository
+import org.calypsonet.keyple.demo.validation.domain.spi.ReaderManager
+import org.calypsonet.keyple.demo.validation.domain.spi.UiContext
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
 import org.calypsonet.keyple.plugin.bluebird.BluebirdContactlessProtocols
 import org.calypsonet.keyple.plugin.bluebird.BluebirdPluginFactoryProvider
@@ -50,11 +51,11 @@ import org.eclipse.keypop.reader.ObservableCardReader
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 
-class ReaderRepositoryImpl
+class ReaderManagerImpl
 @Inject
 constructor(
     private val readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi
-) : ReaderRepository {
+) : ReaderManager {
 
   private lateinit var readerType: ReaderType
   // Card
@@ -151,8 +152,9 @@ constructor(
   }
 
   @Throws(KeyplePluginException::class)
-  override fun registerPlugin(activity: Activity, readerType: ReaderType) {
+  override fun registerPlugin(readerType: ReaderType, uiContext: UiContext) {
     initReaderType(readerType)
+    val activity = uiContext.adaptTo(Activity::class.java)
     if (readerType != ReaderType.FLOWBIRD) {
       successMedia = MediaPlayer.create(activity, R.raw.success)
       errorMedia = MediaPlayer.create(activity, R.raw.error)

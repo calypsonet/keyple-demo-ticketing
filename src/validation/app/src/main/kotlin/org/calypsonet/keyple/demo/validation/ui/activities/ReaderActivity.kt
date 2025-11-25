@@ -32,6 +32,7 @@ import org.calypsonet.keyple.demo.validation.di.scope.ActivityScoped
 import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
 import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.calypsonet.keyple.demo.validation.domain.model.Status
+import org.calypsonet.keyple.demo.validation.ui.adapters.UiContextImpl
 import org.calypsonet.keyple.demo.validation.ui.mappers.toUi
 import org.calypsonet.keyple.demo.validation.ui.model.UiValidationResult
 import org.eclipse.keypop.reader.CardReaderEvent
@@ -86,7 +87,8 @@ class ReaderActivity : BaseActivity() {
         withContext(Dispatchers.IO) {
           try {
             cardReaderObserver = CardReaderObserver()
-            ticketingService.init(cardReaderObserver, this@ReaderActivity, AppSettings.readerType)
+            ticketingService.init(
+                cardReaderObserver, AppSettings.readerType, UiContextImpl(this@ReaderActivity))
             handleAppEvents(AppState.WAIT_CARD, null)
             ticketingService.startNfcDetection()
           } catch (e: Exception) {

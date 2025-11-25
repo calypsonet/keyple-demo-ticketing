@@ -12,14 +12,13 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.validation.domain.spi
 
-import android.app.Activity
 import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 
-interface ReaderRepository {
+interface ReaderManager {
 
-  fun registerPlugin(activity: Activity, readerType: ReaderType)
+  fun registerPlugin(readerType: ReaderType, uiContext: UiContext)
 
   fun initCardReader(): CardReader?
 
