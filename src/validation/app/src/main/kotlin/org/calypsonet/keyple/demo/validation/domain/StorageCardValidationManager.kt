@@ -24,7 +24,7 @@ import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 import org.calypsonet.keyple.demo.common.parser.SCContractStructureParser
 import org.calypsonet.keyple.demo.common.parser.SCEnvironmentHolderStructureParser
 import org.calypsonet.keyple.demo.common.parser.SCEventStructureParser
-import org.calypsonet.keyple.demo.validation.domain.mappers.ValidationDataMapper
+import org.calypsonet.keyple.demo.validation.domain.builders.ValidationDataBuilder
 import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
 import org.calypsonet.keyple.demo.validation.domain.model.Status
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationData
@@ -193,7 +193,7 @@ class StorageCardValidationManager : BaseValidationManager() {
                   contractPriority3 = PriorityCode.FORBIDDEN,
                   contractPriority4 = PriorityCode.FORBIDDEN)
 
-          validationData = ValidationDataMapper.map(eventToWrite, locations)
+          validationData = ValidationDataBuilder.buildFrom(eventToWrite, locations)
 
           // Write the event
           val eventBytesToWrite = SCEventStructureParser().generate(eventToWrite)

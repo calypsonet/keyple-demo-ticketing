@@ -12,6 +12,7 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.validation.ui.activities
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -37,9 +38,13 @@ class CardSummaryActivity : BaseActivity() {
     setContentView(activityCardSummaryBinding.root)
     val bundle = intent.getBundleExtra(Bundle::class.java.simpleName)!!
     val validationResult =
-        bundle.getParcelable<UiValidationResult>(UiValidationResult::class.simpleName)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+          bundle.getParcelable(UiValidationResult::class.simpleName, UiValidationResult::class.java)
+        } else {
+          @Suppress("DEPRECATION") bundle.getParcelable(UiValidationResult::class.simpleName)
+        }
 
-    if (validationResult != null && !validationResult.cardType.isNullOrBlank()) {
+    if (validationResult != null && validationResult.cardType.isNotBlank()) {
       activityCardSummaryBinding.cardTypeLabel?.visibility = View.VISIBLE
       activityCardSummaryBinding.cardTypeLabel?.text =
           getString(R.string.card_type, validationResult.cardType)

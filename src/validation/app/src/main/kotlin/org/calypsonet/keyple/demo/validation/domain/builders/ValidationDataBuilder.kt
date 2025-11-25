@@ -10,19 +10,24 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.domain.mappers
+package org.calypsonet.keyple.demo.validation.domain.builders
 
-import org.calypsonet.keyple.demo.common.mappers.LocationMapper
 import org.calypsonet.keyple.demo.common.model.EventStructure
 import org.calypsonet.keyple.demo.common.model.Location
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationData
 
-object ValidationDataMapper {
-  fun map(event: EventStructure, locations: List<Location>): ValidationData {
+object ValidationDataBuilder {
+
+  fun buildFrom(event: EventStructure, locations: List<Location>): ValidationData {
+
+    val location =
+        locations.firstOrNull { it.id == event.eventLocation }
+            ?: throw IllegalArgumentException("No location found for id=${event.eventLocation}")
+
     return ValidationData(
         name = "Event name",
         dateTime = event.eventDatetime,
-        location = LocationMapper.map(locations, event),
+        location = location,
         destination = null,
         provider = null)
   }

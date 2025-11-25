@@ -24,7 +24,7 @@ import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 import org.calypsonet.keyple.demo.common.parser.ContractStructureParser
 import org.calypsonet.keyple.demo.common.parser.EnvironmentHolderStructureParser
 import org.calypsonet.keyple.demo.common.parser.EventStructureParser
-import org.calypsonet.keyple.demo.validation.domain.mappers.ValidationDataMapper
+import org.calypsonet.keyple.demo.validation.domain.builders.ValidationDataBuilder
 import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
 import org.calypsonet.keyple.demo.validation.domain.model.Status
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationData
@@ -280,7 +280,7 @@ class CalypsoCardValidationManager : BaseValidationManager() {
                     contractPriority2 = priority2,
                     contractPriority3 = priority3,
                     contractPriority4 = priority4)
-            validationData = ValidationDataMapper.map(eventToWrite, locations)
+            validationData = ValidationDataBuilder.buildFrom(eventToWrite, locations)
 
             status = Status.SUCCESS
             errorMessage = null
