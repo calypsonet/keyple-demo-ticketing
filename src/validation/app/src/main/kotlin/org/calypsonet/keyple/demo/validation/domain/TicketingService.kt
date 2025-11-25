@@ -71,34 +71,19 @@ constructor(
 
   fun init(observer: CardReaderObserverSpi?, activity: Activity, readerType: ReaderType) {
     // Register plugin
-    try {
-      readerRepository.registerPlugin(activity, readerType)
-    } catch (e: Exception) {
-      Timber.e(e)
-      throw IllegalStateException(e.message)
-    }
+    readerRepository.registerPlugin(activity, readerType)
+
     // Init card reader
-    val cardReader: CardReader?
-    try {
-      cardReader = readerRepository.initCardReader()
-    } catch (e: Exception) {
-      Timber.e(e)
-      throw IllegalStateException(e.message)
-    }
+    val cardReader: CardReader? = readerRepository.initCardReader()
+
     // Init SAM reader
-    var samReaders: List<CardReader>? = null
-    try {
-      samReaders = readerRepository.initSamReaders()
-    } catch (e: Exception) {
-      Timber.e(e)
-    }
-    if (samReaders.isNullOrEmpty()) {
-      throw IllegalStateException("No SAM reader available")
-    }
+    val samReaders = readerRepository.initSamReaders()
+    check(samReaders.isNotEmpty()) { "No SAM reader available" }
+
     // Register a card event observer and init the ticketing session
     cardReader?.let { reader ->
       (reader as ObservableCardReader).addObserver(observer)
-      // attempts to select a SAM if any, sets the isSecureSessionMode flag accordingly
+      // attempts to select a SAM, if any, sets the isSecureSessionMode flag accordingly
       val samReader = readerRepository.getSamReader()
       if (samReader == null || !selectSam(samReader)) {
         throw IllegalStateException("SAM reader or SAM not available")

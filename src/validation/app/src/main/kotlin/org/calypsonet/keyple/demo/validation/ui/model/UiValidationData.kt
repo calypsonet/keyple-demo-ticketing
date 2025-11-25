@@ -17,9 +17,9 @@ import java.time.LocalDateTime
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class UIValidationData(
+data class UiValidationData(
     val name: String,
-    val location: UILocation,
+    val location: UiLocation,
     val destination: String?,
     val dateTime: LocalDateTime,
     val provider: Int? = null

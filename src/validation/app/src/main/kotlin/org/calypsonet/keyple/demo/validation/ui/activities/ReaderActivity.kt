@@ -33,7 +33,7 @@ import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
 import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.calypsonet.keyple.demo.validation.domain.model.Status
 import org.calypsonet.keyple.demo.validation.ui.mappers.toUi
-import org.calypsonet.keyple.demo.validation.ui.model.UIValidationResult
+import org.calypsonet.keyple.demo.validation.ui.model.UiValidationResult
 import org.eclipse.keypop.reader.CardReaderEvent
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 import timber.log.Timber
@@ -155,7 +155,7 @@ class ReaderActivity : BaseActivity() {
           Timber.e("Card not selected: %s", error)
           ticketingService.displayResultFailed()
           changeDisplay(
-              UIValidationResult(
+              UiValidationResult(
                   status = Status.INVALID_CARD,
                   cardType = "Unknown card type",
                   contract = null,
@@ -196,7 +196,7 @@ class ReaderActivity : BaseActivity() {
                 Timber.e(e)
                 Timber.e("Load ERROR page after exception = ${e.message}")
                 changeDisplay(
-                    UIValidationResult(
+                    UiValidationResult(
                         status = Status.ERROR,
                         cardType = "Unknown card type",
                         nbTicketsLeft = 0,
@@ -215,7 +215,7 @@ class ReaderActivity : BaseActivity() {
     Timber.i("New state = $currentAppState")
   }
 
-  private fun changeDisplay(validationResult: UIValidationResult?) {
+  private fun changeDisplay(validationResult: UiValidationResult?) {
     if (validationResult != null) {
       if (validationResult.status === Status.LOADING) {
         activityCardReaderBinding.presentCardTv.visibility = View.GONE
@@ -232,7 +232,7 @@ class ReaderActivity : BaseActivity() {
         runOnUiThread { activityCardReaderBinding.animation.cancelAnimation() }
         val intent = Intent(this, CardSummaryActivity::class.java)
         val bundle = Bundle()
-        bundle.putParcelable(UIValidationResult::class.simpleName, validationResult)
+        bundle.putParcelable(UiValidationResult::class.simpleName, validationResult)
         intent.putExtra(Bundle::class.java.simpleName, bundle)
         startActivity(intent)
       }

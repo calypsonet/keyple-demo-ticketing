@@ -13,17 +13,17 @@
 package org.calypsonet.keyple.demo.validation.ui.mappers
 
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationData
-import org.calypsonet.keyple.demo.validation.ui.model.UIValidationData
+import org.calypsonet.keyple.demo.validation.ui.model.UiValidationData
 
-fun ValidationData.toUi(): UIValidationData =
-    UIValidationData(
+fun ValidationData.toUi(): UiValidationData =
+    UiValidationData(
         name = name,
         location = location.toUi(),
         destination = destination,
         dateTime = dateTime,
         provider = provider)
 
-fun UIValidationData.toDomain(): ValidationData =
+fun UiValidationData.toDomain(): ValidationData =
     ValidationData(
         name = name,
         location = location.toDomain(),

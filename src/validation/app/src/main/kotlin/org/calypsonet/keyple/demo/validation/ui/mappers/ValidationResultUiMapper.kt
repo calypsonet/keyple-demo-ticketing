@@ -13,10 +13,10 @@
 package org.calypsonet.keyple.demo.validation.ui.mappers
 
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
-import org.calypsonet.keyple.demo.validation.ui.model.UIValidationResult
+import org.calypsonet.keyple.demo.validation.ui.model.UiValidationResult
 
-fun ValidationResult.toUi(): UIValidationResult =
-    UIValidationResult(
+fun ValidationResult.toUi(): UiValidationResult =
+    UiValidationResult(
         status = status,
         cardType = cardType,
         nbTicketsLeft = nbTicketsLeft,
@@ -26,7 +26,7 @@ fun ValidationResult.toUi(): UIValidationResult =
         passValidityEndDate = passValidityEndDate,
         errorMessage = errorMessage)
 
-fun UIValidationResult.toDomain(): ValidationResult =
+fun UiValidationResult.toDomain(): ValidationResult =
     ValidationResult(
         status = status,
         cardType = cardType,

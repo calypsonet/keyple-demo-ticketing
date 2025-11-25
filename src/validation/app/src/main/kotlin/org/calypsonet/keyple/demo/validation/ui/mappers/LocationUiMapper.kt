@@ -10,22 +10,11 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.ui.model
+package org.calypsonet.keyple.demo.validation.ui.mappers
 
-import android.os.Parcelable
-import java.time.LocalDate
-import java.time.LocalDateTime
-import kotlinx.parcelize.Parcelize
-import org.calypsonet.keyple.demo.validation.domain.model.Status
+import org.calypsonet.keyple.demo.common.model.Location
+import org.calypsonet.keyple.demo.validation.ui.model.UiLocation
 
-@Parcelize
-data class UIValidationResult(
-    val status: Status,
-    val cardType: String,
-    val nbTicketsLeft: Int? = null,
-    val contract: String?,
-    val validationData: UIValidationData?,
-    val eventDateTime: LocalDateTime? = null,
-    val passValidityEndDate: LocalDate? = null,
-    val errorMessage: String? = null
-) : Parcelable
+fun Location.toUi(): UiLocation = UiLocation(id = id, name = name)
+
+fun UiLocation.toDomain(): Location = Location(id = id, name = name)
