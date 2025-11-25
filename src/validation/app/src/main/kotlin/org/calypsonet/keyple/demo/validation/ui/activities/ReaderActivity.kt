@@ -151,6 +151,7 @@ class ReaderActivity : BaseActivity() {
           return
         }
         Timber.i("Process the selection result...")
+        Timber.i("selectionResponse = ${readerEvent.scheduledCardSelectionsResponse}")
         val error =
             ticketingService.analyseSelectionResult(readerEvent.scheduledCardSelectionsResponse)
         if (error != null) {

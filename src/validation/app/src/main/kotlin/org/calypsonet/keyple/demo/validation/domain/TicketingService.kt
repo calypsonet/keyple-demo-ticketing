@@ -22,6 +22,7 @@ import org.calypsonet.keyple.demo.validation.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
 import org.calypsonet.keyple.demo.validation.domain.spi.KeypopApiProvider
+import org.calypsonet.keyple.demo.validation.domain.spi.Logger
 import org.calypsonet.keyple.demo.validation.domain.spi.ReaderManager
 import org.calypsonet.keyple.demo.validation.domain.spi.UiContext
 import org.eclipse.keyple.core.util.HexUtil
@@ -41,14 +42,14 @@ import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 import org.eclipse.keypop.storagecard.card.ProductType.MIFARE_ULTRALIGHT
 import org.eclipse.keypop.storagecard.card.ProductType.ST25_SRT512
 import org.eclipse.keypop.storagecard.card.StorageCard
-import timber.log.Timber
 
 @AppScoped
 class TicketingService
 @Inject
 constructor(
     private var keypopApiProvider: KeypopApiProvider,
-    private var readerManager: ReaderManager
+    private var readerManager: ReaderManager,
+    private var logger: Logger
 ) {
 
   private val readerApiFactory: ReaderApiFactory = keypopApiProvider.getReaderApiFactory()
@@ -104,7 +105,7 @@ constructor(
       // notify reader that se detection has been switched off
       (readerManager.getCardReader() as ObservableCardReader).stopCardDetection()
     } catch (e: Exception) {
-      Timber.e(e)
+      // NOP
     }
   }
 
@@ -183,7 +184,6 @@ constructor(
   fun analyseSelectionResult(
       scheduledCardSelectionsResponse: ScheduledCardSelectionsResponse
   ): String? {
-    Timber.i("selectionResponse = $scheduledCardSelectionsResponse")
     val cardSelectionResult: CardSelectionResult =
         cardSelectionManager.parseScheduledCardSelectionsResponse(scheduledCardSelectionsResponse)
     if (cardSelectionResult.activeSelectionIndex == -1) {
@@ -212,13 +212,11 @@ constructor(
               HexUtil.toHex((smartCard as CalypsoCard).applicationSubtype) +
               "h not supported"
         }
-        Timber.i("Card DF Name = %s", HexUtil.toHex((smartCard as CalypsoCard).dfName))
+        logger.i("Card DF Name = ${HexUtil.toHex((smartCard as CalypsoCard).dfName)}")
       }
       is StorageCard -> {
-        Timber.i(
-            "%s Card UID = %s",
-            (smartCard as StorageCard).productType.name,
-            HexUtil.toHex((smartCard as StorageCard).uid))
+        logger.i(
+            "${(smartCard as StorageCard).productType.name} Card UID = ${HexUtil.toHex((smartCard as StorageCard).uid)}")
       }
     }
     return null
@@ -284,8 +282,7 @@ constructor(
       calypsoSam = samSelectionResult.activeSmartCard!! as LegacySam
       return true
     } catch (e: Exception) {
-      Timber.e(e)
-      Timber.e("An exception occurred while selecting the SAM.  ${e.message}")
+      logger.e("An exception occurred while selecting the SAM. ${e.message}", e)
     }
     return false
   }

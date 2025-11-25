@@ -33,7 +33,6 @@ import org.calypsonet.keyple.demo.validation.domain.spi.KeypopApiProvider
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.storagecard.card.StorageCard
 import org.eclipse.keypop.storagecard.transaction.ChannelControl
-import timber.log.Timber
 
 class StorageCardValidationManager : BaseValidationManager() {
 
@@ -58,7 +57,6 @@ class StorageCardValidationManager : BaseValidationManager() {
         try {
           storageCardApiFactory.createStorageCardTransactionManager(cardReader, storageCard)
         } catch (e: Exception) {
-          Timber.Forest.w(e)
           status = Status.ERROR
           errorMessage = e.message
           null
@@ -203,22 +201,18 @@ class StorageCardValidationManager : BaseValidationManager() {
               .prepareWriteBlocks(CardConstant.Companion.SC_EVENT_FIRST_BLOCK, eventBytesToWrite)
               .processCommands(ChannelControl.KEEP_OPEN)
 
-          Timber.Forest.i(LOG_VALIDATION_SUCCESS)
           status = Status.SUCCESS
           errorMessage = null
         } else {
-          Timber.Forest.i(LOG_VALIDATION_FAILED_NO_CONTRACT)
           errorMessage = ERROR_NO_VALID_TITLE_DETECTED
         }
       } catch (e: ValidationException) {
-        Timber.Forest.e(e)
         status = e.status
         errorMessage = e.message
         if (status == Status.LOADING) {
           status = Status.ERROR
         }
       } catch (e: Exception) {
-        Timber.Forest.e(e)
         status = Status.ERROR
         errorMessage = e.message
       } finally {
@@ -226,7 +220,6 @@ class StorageCardValidationManager : BaseValidationManager() {
         try {
           cardTransaction.processCommands(ChannelControl.CLOSE_AFTER)
         } catch (e: Exception) {
-          Timber.Forest.e(e)
           if (status == Status.LOADING) {
             status = Status.ERROR
           }

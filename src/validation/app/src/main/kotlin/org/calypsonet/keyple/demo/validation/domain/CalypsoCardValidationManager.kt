@@ -37,7 +37,6 @@ import org.eclipse.keypop.calypso.card.transaction.ChannelControl
 import org.eclipse.keypop.calypso.card.transaction.SecureRegularModeTransactionManager
 import org.eclipse.keypop.calypso.card.transaction.SymmetricCryptoSecuritySetting
 import org.eclipse.keypop.reader.CardReader
-import timber.log.Timber
 
 class CalypsoCardValidationManager : BaseValidationManager() {
 
@@ -66,7 +65,6 @@ class CalypsoCardValidationManager : BaseValidationManager() {
           calypsoCardApiFactory.createSecureRegularModeTransactionManager(
               cardReader, calypsoCard, cardSecuritySettings)
         } catch (e: Exception) {
-          Timber.Forest.w(e)
           status = Status.ERROR
           errorMessage = e.message
           null
@@ -284,7 +282,6 @@ class CalypsoCardValidationManager : BaseValidationManager() {
                     contractPriority4 = priority4)
             validationData = ValidationDataMapper.map(eventToWrite, locations)
 
-            Timber.Forest.i(LOG_VALIDATION_SUCCESS)
             status = Status.SUCCESS
             errorMessage = null
           } else {
@@ -308,17 +305,14 @@ class CalypsoCardValidationManager : BaseValidationManager() {
               .prepareUpdateRecord(CardConstant.Companion.SFI_EVENTS_LOG, 1, eventBytesToWrite)
               .processCommands(ChannelControl.KEEP_OPEN)
         } else {
-          Timber.Forest.i(LOG_VALIDATION_FAILED_NO_CONTRACT)
           if (errorMessage.isNullOrEmpty()) {
             errorMessage = ERROR_NO_VALID_TITLE_DETECTED
           }
         }
       } catch (e: ValidationException) {
-        Timber.Forest.e(e)
         status = e.status
         errorMessage = e.message
       } catch (e: Exception) {
-        Timber.Forest.e(e)
         status = Status.ERROR
         errorMessage = e.message
       } finally {
@@ -333,7 +327,6 @@ class CalypsoCardValidationManager : BaseValidationManager() {
             status = Status.ERROR
           }
         } catch (e: Exception) {
-          Timber.Forest.e(e)
           errorMessage = e.message
           status = Status.ERROR
         }
