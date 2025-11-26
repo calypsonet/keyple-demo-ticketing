@@ -13,12 +13,12 @@
 package org.calypsonet.keyple.demo.control.data
 
 import java.time.LocalDateTime
-import org.calypsonet.keyple.demo.common.constant.CardConstant
+import org.calypsonet.keyple.demo.common.constants.CardConstants
 import org.calypsonet.keyple.demo.common.model.ContractStructure
 import org.calypsonet.keyple.demo.common.model.EventStructure
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
-import org.calypsonet.keyple.demo.common.parser.*
+import org.calypsonet.keyple.demo.common.parsers.*
 import org.calypsonet.keyple.demo.control.data.model.AppSettings
 import org.calypsonet.keyple.demo.control.data.model.AuthenticationMode
 import org.calypsonet.keyple.demo.control.data.model.CardReaderResponse
@@ -26,18 +26,18 @@ import org.calypsonet.keyple.demo.control.data.model.Contract
 import org.calypsonet.keyple.demo.control.data.model.Location
 import org.calypsonet.keyple.demo.control.data.model.Status
 import org.calypsonet.keyple.demo.control.data.model.Validation
-import org.calypsonet.keyple.demo.control.data.model.mapper.ContractMapper
-import org.calypsonet.keyple.demo.control.data.model.mapper.ValidationMapper
+import org.calypsonet.keyple.demo.control.data.model.mappers.ContractMapper
+import org.calypsonet.keyple.demo.control.data.model.mappers.ValidationMapper
 import org.eclipse.keyple.card.calypso.CalypsoExtensionService
 import org.eclipse.keypop.calypso.card.WriteAccessLevel
 import org.eclipse.keypop.calypso.card.card.CalypsoCard
 import org.eclipse.keypop.calypso.card.transaction.AsymmetricCryptoSecuritySetting
-import org.eclipse.keypop.calypso.card.transaction.ChannelControl
 import org.eclipse.keypop.calypso.card.transaction.SecurePkiModeTransactionManager
 import org.eclipse.keypop.calypso.card.transaction.SecureRegularModeTransactionManager
 import org.eclipse.keypop.calypso.card.transaction.SymmetricCryptoSecuritySetting
 import org.eclipse.keypop.calypso.card.transaction.TransactionManager
 import org.eclipse.keypop.reader.CardReader
+import org.eclipse.keypop.reader.ChannelControl
 import timber.log.Timber
 
 class CalypsoCardRepository {
@@ -85,17 +85,17 @@ class CalypsoCardRepository {
       // record.
       cardTransaction
           .prepareReadRecords(
-              CardConstant.SFI_ENVIRONMENT_AND_HOLDER,
+              CardConstants.SFI_ENVIRONMENT_AND_HOLDER,
               1,
               1,
-              CardConstant.ENVIRONMENT_HOLDER_RECORD_SIZE_BYTES)
+              CardConstants.ENVIRONMENT_HOLDER_RECORD_SIZE_BYTES)
           .processCommands(ChannelControl.KEEP_OPEN)
 
-      val efEnvironmentHolder = calypsoCard.getFileBySfi(CardConstant.SFI_ENVIRONMENT_AND_HOLDER)
+      val efEnvironmentHolder = calypsoCard.getFileBySfi(CardConstants.SFI_ENVIRONMENT_AND_HOLDER)
       val env = EnvironmentHolderStructureParser().parse(efEnvironmentHolder.data.content)
 
       // Step 3 - If EnvVersionNumber of the Environment structure is not the expected one (==1 for
-      // the current version) reject the card.
+      // the current version), reject the card.
       // <Abort Secure Session if any>
       if (env.envVersionNumber != VersionNumber.CURRENT_VERSION) {
         if (cardTransaction is SecureRegularModeTransactionManager ||
@@ -105,7 +105,7 @@ class CalypsoCardRepository {
         throw EnvironmentException("wrong version number")
       }
 
-      // Step 4 - If EnvEndDate points to a date in the past reject the card.
+      // Step 4 - If EnvEndDate points to a date in the past, reject the card.
       // <Abort Secure Session if any>
       if (env.envEndDate.getDate().isBefore(controlDateTime.toLocalDate())) {
         if (cardTransaction is SecureRegularModeTransactionManager ||
@@ -118,13 +118,14 @@ class CalypsoCardRepository {
       // Step 5 - Read and unpack the last event record.
       cardTransaction
           .prepareReadRecords(
-              CardConstant.SFI_EVENTS_LOG, 1, 1, CardConstant.EVENT_RECORD_SIZE_BYTES)
+              CardConstants.SFI_EVENTS_LOG, 1, 1, CardConstants.EVENT_RECORD_SIZE_BYTES)
           .processCommands(ChannelControl.KEEP_OPEN)
 
-      val efEventLog = calypsoCard.getFileBySfi(CardConstant.SFI_EVENTS_LOG)
+      val efEventLog = calypsoCard.getFileBySfi(CardConstants.SFI_EVENTS_LOG)
       val event = EventStructureParser().parse(efEventLog.data.content)
 
-      // Step 6 - If EventVersionNumber is not the expected one (==1 for the current version) reject
+      // Step 6 - If EventVersionNumber is not the expected one (==1 for the current version),
+      // reject
       // the card (if ==0 return error status indicating clean card).
       // <Abort Secure Session if any>
       val eventVersionNumber = event.eventVersionNumber
@@ -146,13 +147,13 @@ class CalypsoCardRepository {
       val eventValidityEndDate =
           event.eventDatetime.plusMinutes(AppSettings.validationPeriod.toLong())
 
-      // Step 7 - If EventLocation != value configured in the control terminal set the validated
-      // contract valid flag as false and go to point CNT_READ.
+      // Step 7 - If EventLocation != value configured in the control terminal, set the validated
+      // contract validity flag as false and go to the point CNT_READ.
       if (AppSettings.location.id != event.eventLocation) {
         contractEventValid = false
       }
       // Step 8 - Else If EventDateStamp points to a date in the past
-      // -> set the validated contract valid flag as false and go to point CNT_READ.
+      // -> set the validated contract validity flag as false and go to point CNT_READ.
       else if (event.eventDatetime.isBefore(controlDateTime.toLocalDate().atStartOfDay())) {
         contractEventValid = false
       }
@@ -171,19 +172,19 @@ class CalypsoCardRepository {
             else -> 4
           }
 
-      // Step 10 - CNT_READ: Read all contracts and the counter file
+      // Step 10 - CNT_READ: Read all contracts and the counter-file
       cardTransaction
           .prepareReadRecords(
-              CardConstant.SFI_CONTRACTS,
+              CardConstants.SFI_CONTRACTS,
               1,
               nbContractRecords,
-              CardConstant.CONTRACT_RECORD_SIZE_BYTES)
-          .prepareReadCounter(CardConstant.SFI_COUNTERS, nbContractRecords)
+              CardConstants.CONTRACT_RECORD_SIZE_BYTES)
+          .prepareReadCounter(CardConstants.SFI_COUNTERS, nbContractRecords)
           .processCommands(ChannelControl.KEEP_OPEN)
 
-      val efCounters = calypsoCard.getFileBySfi(CardConstant.SFI_COUNTERS)
+      val efCounters = calypsoCard.getFileBySfi(CardConstants.SFI_COUNTERS)
 
-      val efContracts = calypsoCard.getFileBySfi(CardConstant.SFI_CONTRACTS)
+      val efContracts = calypsoCard.getFileBySfi(CardConstants.SFI_CONTRACTS)
       val contracts = mutableMapOf<Int, ContractStructure>()
 
       // Step 11 - For each contract:
@@ -192,7 +193,7 @@ class CalypsoCardRepository {
         contracts[it.key] = ContractStructureParser().parse(it.value)
       }
 
-      // Retrieve contract used for last event
+      // Retrieve contract used for the last event
       val eventContract =
           contracts.toList().filter { it.first == event.eventContractUsed }.map { it.second }
 
@@ -214,14 +215,14 @@ class CalypsoCardRepository {
         var contractValidated = false
 
         if (contract.contractVersionNumber == VersionNumber.UNDEFINED) {
-          // Step 13 - If the ContractVersionNumber == 0 then the contract is blank, move on to the
+          // Step 13 - If the ContractVersionNumber == 0, then the contract is blank, move on to the
           // next contract.
         } else if (contract.contractVersionNumber != VersionNumber.CURRENT_VERSION) {
           // Step 14 - If ContractVersionNumber is not the expected one (==1 for the current
-          // version) reject the card.
+          // version), reject the card.
           // <Abort Secure Session if any>
         } else {
-          // Step 15 - If SAM available and ContractAuthenticator is not 0 perform the verification
+          // Step 15 - If SAM available and ContractAuthenticator is not 0, perform the verification
           // of the value
           // by using the PSO Verify Signature command of the SAM.
           @Suppress("ControlFlowWithEmptyBody")
@@ -240,7 +241,7 @@ class CalypsoCardRepository {
           }
 
           // Step 17 - If EventContractUsed points to the current contract index
-          // & not valid flag is false then mark it as Validated.
+          // and not the validity flag is false, then mark it as Validated.
           if (contractUsed == record && contractEventValid) {
             contractValidated = true
           }
@@ -250,8 +251,8 @@ class CalypsoCardRepository {
             validationDateTime = event.eventDatetime
           }
 
-          // Step 18 -   If the ContractTariff value for the contract is 2 or 3, unpack the counter
-          // associated to the contract to extract the counter value.
+          // Step 18 - If the ContractTariff value for the contract is 2 or 3, unpack the counter
+          // associated with the contract to extract the counter-value.
           val nbTicketsLeft =
               if (contract.contractTariff == PriorityCode.MULTI_TRIP) {
                 efCounters.data.getContentAsCounterValue(record)

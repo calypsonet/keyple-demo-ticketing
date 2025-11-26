@@ -26,7 +26,7 @@ enum class DeviceEnum(val textId: Int) {
     fun getDeviceEnum(name: String): DeviceEnum {
       return try {
         valueOf(name.uppercase(Locale.ROOT))
-      } catch (e: Exception) {
+      } catch (_: Exception) {
         // If the given state does not exist, return the default value.
         CONTACTLESS_CARD
       }

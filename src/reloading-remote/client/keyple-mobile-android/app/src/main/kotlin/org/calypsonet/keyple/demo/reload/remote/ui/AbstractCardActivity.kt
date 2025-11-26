@@ -16,7 +16,7 @@ import android.os.Build
 import android.os.Bundle
 import javax.inject.Inject
 import kotlin.jvm.Throws
-import org.calypsonet.keyple.demo.common.constant.CardConstant
+import org.calypsonet.keyple.demo.common.constants.CardConstants
 import org.calypsonet.keyple.demo.reload.remote.data.ReaderRepository
 import org.calypsonet.keyple.demo.reload.remote.data.model.AppSettings
 import org.calypsonet.keyple.demo.reload.remote.data.model.CardProtocolEnum
@@ -62,30 +62,30 @@ abstract class AbstractCardActivity :
           DeviceEnum.CONTACTLESS_CARD -> {
             pluginType = if (isBluebirdDevice) "Bluebird" else "Android Nfc"
             AppSettings.aidEnums.clear()
-            AppSettings.aidEnums.add(CardConstant.AID_KEYPLE_GENERIC)
-            AppSettings.aidEnums.add(CardConstant.AID_CD_LIGHT_GTML)
-            AppSettings.aidEnums.add(CardConstant.AID_CALYPSO_LIGHT)
-            AppSettings.aidEnums.add(CardConstant.AID_NORMALIZED_IDF)
+            AppSettings.aidEnums.add(CardConstants.AID_KEYPLE_GENERIC)
+            AppSettings.aidEnums.add(CardConstants.AID_CD_LIGHT_GTML)
+            AppSettings.aidEnums.add(CardConstants.AID_CALYPSO_LIGHT)
+            AppSettings.aidEnums.add(CardConstants.AID_NORMALIZED_IDF)
             if (isBluebirdDevice) BluebirdConstants.CARD_READER_NAME
             else AndroidNfcConstants.READER_NAME
           }
           DeviceEnum.SIM -> {
             pluginType = "Android OMAPI"
             AppSettings.aidEnums.clear()
-            AppSettings.aidEnums.add(CardConstant.AID_CD_LIGHT_GTML)
-            AppSettings.aidEnums.add(CardConstant.AID_NORMALIZED_IDF)
+            AppSettings.aidEnums.add(CardConstants.AID_CD_LIGHT_GTML)
+            AppSettings.aidEnums.add(CardConstants.AID_NORMALIZED_IDF)
             AndroidOmapiReader.READER_NAME_SIM_1
           }
           DeviceEnum.WEARABLE -> {
             pluginType = "Android WEARABLE"
             AppSettings.aidEnums.clear()
-            AppSettings.aidEnums.add(CardConstant.AID_CD_LIGHT_GTML)
+            AppSettings.aidEnums.add(CardConstants.AID_CD_LIGHT_GTML)
             "WEARABLE"
           }
           DeviceEnum.EMBEDDED -> {
             pluginType = "Android EMBEDDED"
             AppSettings.aidEnums.clear()
-            AppSettings.aidEnums.add(CardConstant.AID_CD_LIGHT_GTML)
+            AppSettings.aidEnums.add(CardConstants.AID_CD_LIGHT_GTML)
             "EMBEDDED"
           }
         }

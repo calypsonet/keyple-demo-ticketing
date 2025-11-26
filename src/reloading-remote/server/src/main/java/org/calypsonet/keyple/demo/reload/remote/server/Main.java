@@ -45,7 +45,7 @@ public class Main {
     public int run(String... args) throws Exception {
       // Start the SAM & Calypso Card configuration
       cardConfigurator.init();
-      // Open the dashboard on the default browser
+      // Open the dashboard in the default browser
       URI webappUri = new URI("http://localhost:" + assignedPort + "/");
       Desktop.getDesktop().browse(webappUri);
       logger.info("Keyple Demo Reload Server started at port {}", assignedPort);

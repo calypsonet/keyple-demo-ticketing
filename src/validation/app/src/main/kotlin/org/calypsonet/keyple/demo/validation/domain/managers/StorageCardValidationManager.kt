@@ -10,20 +10,20 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.domain
+package org.calypsonet.keyple.demo.validation.domain.managers
 
 import java.time.LocalDate
 import java.time.LocalDateTime
-import org.calypsonet.keyple.demo.common.constant.CardConstant
+import org.calypsonet.keyple.demo.common.constants.CardConstants
 import org.calypsonet.keyple.demo.common.model.EventStructure
 import org.calypsonet.keyple.demo.common.model.Location
 import org.calypsonet.keyple.demo.common.model.type.DateCompact
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.TimeCompact
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
-import org.calypsonet.keyple.demo.common.parser.SCContractStructureParser
-import org.calypsonet.keyple.demo.common.parser.SCEnvironmentHolderStructureParser
-import org.calypsonet.keyple.demo.common.parser.SCEventStructureParser
+import org.calypsonet.keyple.demo.common.parsers.ScContractStructureParser
+import org.calypsonet.keyple.demo.common.parsers.ScEnvironmentHolderStructureParser
+import org.calypsonet.keyple.demo.common.parsers.ScEventStructureParser
 import org.calypsonet.keyple.demo.validation.domain.builders.ValidationDataBuilder
 import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
 import org.calypsonet.keyple.demo.validation.domain.model.Status
@@ -31,8 +31,8 @@ import org.calypsonet.keyple.demo.validation.domain.model.ValidationData
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
 import org.calypsonet.keyple.demo.validation.domain.spi.KeypopApiProvider
 import org.eclipse.keypop.reader.CardReader
+import org.eclipse.keypop.reader.ChannelControl
 import org.eclipse.keypop.storagecard.card.StorageCard
-import org.eclipse.keypop.storagecard.transaction.ChannelControl
 
 class StorageCardValidationManager : BaseValidationManager() {
 
@@ -68,22 +68,20 @@ class StorageCardValidationManager : BaseValidationManager() {
         // Step 1 - Read the environment and event data
         cardTransaction
             .prepareReadBlocks(
-                CardConstant.Companion.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
-                CardConstant.Companion.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK)
+                CardConstants.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
+                CardConstants.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK)
             .prepareReadBlocks(
-                CardConstant.Companion.SC_EVENT_FIRST_BLOCK,
-                CardConstant.Companion.SC_EVENT_LAST_BLOCK)
+                CardConstants.SC_EVENT_FIRST_BLOCK, CardConstants.SC_EVENT_LAST_BLOCK)
             .prepareReadBlocks(
-                CardConstant.Companion.SC_CONTRACT_FIRST_BLOCK,
-                CardConstant.Companion.SC_COUNTER_LAST_BLOCK)
+                CardConstants.SC_CONTRACT_FIRST_BLOCK, CardConstants.SC_COUNTER_LAST_BLOCK)
             .processCommands(ChannelControl.KEEP_OPEN)
 
         // Step 2 - Unpack environment structure
         val environmentContent =
             storageCard.getBlocks(
-                CardConstant.Companion.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
-                CardConstant.Companion.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK)
-        val environment = SCEnvironmentHolderStructureParser().parse(environmentContent)
+                CardConstants.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
+                CardConstants.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK)
+        val environment = ScEnvironmentHolderStructureParser().parse(environmentContent)
 
         // Step 3 - Validate environment version
         validateEnvironmentVersionOrThrow(environment.envVersionNumber)
@@ -95,19 +93,17 @@ class StorageCardValidationManager : BaseValidationManager() {
         // Step 5 - Read and unpack the event record
         val eventContent =
             storageCard.getBlocks(
-                CardConstant.Companion.SC_EVENT_FIRST_BLOCK,
-                CardConstant.Companion.SC_EVENT_LAST_BLOCK)
-        val event = SCEventStructureParser().parse(eventContent)
+                CardConstants.SC_EVENT_FIRST_BLOCK, CardConstants.SC_EVENT_LAST_BLOCK)
+        val event = ScEventStructureParser().parse(eventContent)
 
-        // Step 6 - Validate event version
+        // Step 6 - Validate the event version
         validateEventVersionOrThrow(event.eventVersionNumber)
 
         // Step 7 - Read and unpack the contract record
         val contractContent =
             storageCard.getBlocks(
-                CardConstant.Companion.SC_CONTRACT_FIRST_BLOCK,
-                CardConstant.Companion.SC_COUNTER_LAST_BLOCK)
-        val contract = SCContractStructureParser().parse(contractContent)
+                CardConstants.SC_CONTRACT_FIRST_BLOCK, CardConstants.SC_COUNTER_LAST_BLOCK)
+        val contract = ScContractStructureParser().parse(contractContent)
 
         // Validate contract version
         validateContractVersionOrThrow(contract.contractVersionNumber)
@@ -141,10 +137,9 @@ class StorageCardValidationManager : BaseValidationManager() {
             nbTicketsLeft = newCounterValue
 
             // Update contract data
-            val updatedContractContent = SCContractStructureParser().generate(contract)
+            val updatedContractContent = ScContractStructureParser().generate(contract)
             cardTransaction
-                .prepareWriteBlocks(
-                    CardConstant.Companion.SC_CONTRACT_FIRST_BLOCK, updatedContractContent)
+                .prepareWriteBlocks(CardConstants.SC_CONTRACT_FIRST_BLOCK, updatedContractContent)
                 .processCommands(ChannelControl.KEEP_OPEN)
 
             writeEvent = true
@@ -160,10 +155,9 @@ class StorageCardValidationManager : BaseValidationManager() {
             nbTicketsLeft = newCounterValue
 
             // Update contract data
-            val updatedContractContent = SCContractStructureParser().generate(contract)
+            val updatedContractContent = ScContractStructureParser().generate(contract)
             cardTransaction
-                .prepareWriteBlocks(
-                    CardConstant.Companion.SC_CONTRACT_FIRST_BLOCK, updatedContractContent)
+                .prepareWriteBlocks(CardConstants.SC_CONTRACT_FIRST_BLOCK, updatedContractContent)
                 .processCommands(ChannelControl.KEEP_OPEN)
 
             writeEvent = true
@@ -196,9 +190,9 @@ class StorageCardValidationManager : BaseValidationManager() {
           validationData = ValidationDataBuilder.buildFrom(eventToWrite, locations)
 
           // Write the event
-          val eventBytesToWrite = SCEventStructureParser().generate(eventToWrite)
+          val eventBytesToWrite = ScEventStructureParser().generate(eventToWrite)
           cardTransaction
-              .prepareWriteBlocks(CardConstant.Companion.SC_EVENT_FIRST_BLOCK, eventBytesToWrite)
+              .prepareWriteBlocks(CardConstants.SC_EVENT_FIRST_BLOCK, eventBytesToWrite)
               .processCommands(ChannelControl.KEEP_OPEN)
 
           status = Status.SUCCESS

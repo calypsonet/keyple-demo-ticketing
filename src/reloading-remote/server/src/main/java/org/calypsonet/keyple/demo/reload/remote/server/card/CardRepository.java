@@ -19,14 +19,14 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService;
-import org.calypsonet.keyple.demo.common.constant.CardConstant;
+import org.calypsonet.keyple.demo.common.constants.CardConstants;
 import org.calypsonet.keyple.demo.common.model.ContractStructure;
 import org.calypsonet.keyple.demo.common.model.EnvironmentHolderStructure;
 import org.calypsonet.keyple.demo.common.model.EventStructure;
 import org.calypsonet.keyple.demo.common.model.type.DateCompact;
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode;
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber;
-import org.calypsonet.keyple.demo.common.parser.*;
+import org.calypsonet.keyple.demo.common.parsers.*;
 import org.eclipse.keyple.card.calypso.CalypsoExtensionService;
 import org.eclipse.keyple.card.calypso.crypto.legacysam.LegacySamExtensionService;
 import org.eclipse.keyple.core.service.SmartCardServiceProvider;
@@ -35,11 +35,11 @@ import org.eclipse.keypop.calypso.card.CalypsoCardApiFactory;
 import org.eclipse.keypop.calypso.card.WriteAccessLevel;
 import org.eclipse.keypop.calypso.card.card.CalypsoCard;
 import org.eclipse.keypop.calypso.card.card.FileData;
-import org.eclipse.keypop.calypso.card.transaction.ChannelControl;
 import org.eclipse.keypop.calypso.card.transaction.SecureRegularModeTransactionManager;
 import org.eclipse.keypop.calypso.card.transaction.SymmetricCryptoSecuritySetting;
 import org.eclipse.keypop.calypso.crypto.legacysam.sam.LegacySam;
 import org.eclipse.keypop.reader.CardReader;
+import org.eclipse.keypop.reader.ChannelControl;
 import org.eclipse.keypop.reader.ReaderApiFactory;
 import org.eclipse.keypop.reader.selection.CardSelectionManager;
 import org.eclipse.keypop.reader.selection.CardSelectionResult;
@@ -65,25 +65,25 @@ public class CardRepository {
     cardSelectionManager.prepareSelection(
         readerApiFactory
             .createIsoCardSelector()
-            .filterByDfName(CardConstant.Companion.getAID_KEYPLE_GENERIC()),
+            .filterByDfName(CardConstants.Companion.getAID_KEYPLE_GENERIC()),
         calypsoCardApiFactory.createCalypsoCardSelectionExtension().acceptInvalidatedCard());
 
     cardSelectionManager.prepareSelection(
         readerApiFactory
             .createIsoCardSelector()
-            .filterByDfName(CardConstant.Companion.getAID_CALYPSO_LIGHT()),
+            .filterByDfName(CardConstants.Companion.getAID_CALYPSO_LIGHT()),
         calypsoCardApiFactory.createCalypsoCardSelectionExtension().acceptInvalidatedCard());
 
     cardSelectionManager.prepareSelection(
         readerApiFactory
             .createIsoCardSelector()
-            .filterByDfName(CardConstant.Companion.getAID_CD_LIGHT_GTML()),
+            .filterByDfName(CardConstants.Companion.getAID_CD_LIGHT_GTML()),
         calypsoCardApiFactory.createCalypsoCardSelectionExtension().acceptInvalidatedCard());
 
     cardSelectionManager.prepareSelection(
         readerApiFactory
             .createIsoCardSelector()
-            .filterByDfName(CardConstant.Companion.getAID_NORMALIZED_IDF()),
+            .filterByDfName(CardConstants.Companion.getAID_NORMALIZED_IDF()),
         calypsoCardApiFactory.createCalypsoCardSelectionExtension().acceptInvalidatedCard());
     return cardSelectionManager;
   }
@@ -139,14 +139,15 @@ public class CardRepository {
     cardTransactionManager
         .prepareOpenSecureSession(WriteAccessLevel.LOAD)
         .prepareReadRecords(
-            CardConstant.SFI_ENVIRONMENT_AND_HOLDER,
+            CardConstants.SFI_ENVIRONMENT_AND_HOLDER,
             1,
             1,
-            CardConstant.ENVIRONMENT_HOLDER_RECORD_SIZE_BYTES)
-        .prepareReadRecords(CardConstant.SFI_EVENTS_LOG, 1, 1, CardConstant.EVENT_RECORD_SIZE_BYTES)
+            CardConstants.ENVIRONMENT_HOLDER_RECORD_SIZE_BYTES)
         .prepareReadRecords(
-            CardConstant.SFI_CONTRACTS, 1, contractCount, CardConstant.CONTRACT_RECORD_SIZE_BYTES)
-        .prepareReadCounter(CardConstant.SFI_COUNTERS, contractCount)
+            CardConstants.SFI_EVENTS_LOG, 1, 1, CardConstants.EVENT_RECORD_SIZE_BYTES)
+        .prepareReadRecords(
+            CardConstants.SFI_CONTRACTS, 1, contractCount, CardConstants.CONTRACT_RECORD_SIZE_BYTES)
+        .prepareReadCounter(CardConstants.SFI_COUNTERS, contractCount)
         .prepareCloseSecureSession()
         .processCommands(ChannelControl.KEEP_OPEN);
     logger.info(CALYPSO_SESSION_CLOSED);
@@ -157,10 +158,12 @@ public class CardRepository {
   Card readCard(CardReader cardReader, StorageCard storageCard, CardResource samResource) {
     StorageCardExtensionService storageCardExtension = StorageCardExtensionService.getInstance();
     StorageCardTransactionManager cardTransactionManager =
-        storageCardExtension.createStorageCardTransactionManager(cardReader, storageCard);
+        storageCardExtension
+            .getStorageCardApiFactory()
+            .createStorageCardTransactionManager(cardReader, storageCard);
     cardTransactionManager
         .prepareReadBlocks(0, storageCard.getProductType().getBlockCount() - 1)
-        .processCommands(org.eclipse.keypop.storagecard.transaction.ChannelControl.KEEP_OPEN);
+        .processCommands(ChannelControl.KEEP_OPEN);
     return parse(storageCard);
   }
 
@@ -182,13 +185,13 @@ public class CardRepository {
         if (card.getUpdatedContracts().contains(contract)) {
           // update contract
           cardTransactionManager.prepareUpdateRecord(
-              CardConstant.SFI_CONTRACTS,
+              CardConstants.SFI_CONTRACTS,
               contractNumber,
               new ContractStructureParser().generate(contract));
           // update counter
           if (contract.getCounterValue() != null) {
             cardTransactionManager.prepareSetCounter(
-                CardConstant.SFI_COUNTERS, contractNumber, contract.getCounterValue());
+                CardConstants.SFI_COUNTERS, contractNumber, contract.getCounterValue());
           }
         }
       }
@@ -196,7 +199,7 @@ public class CardRepository {
     /* Update event */
     if (Boolean.TRUE.equals(card.isEventUpdated())) {
       cardTransactionManager.prepareUpdateRecord(
-          CardConstant.SFI_EVENTS_LOG,
+          CardConstants.SFI_EVENTS_LOG,
           1,
           new EventStructureParser().generate(buildEvent(card.getEvent(), card.getContracts())));
     }
@@ -211,7 +214,9 @@ public class CardRepository {
       CardReader cardReader, StorageCard storageCard, CardResource samResource, Card card) {
     StorageCardExtensionService storageCardExtension = StorageCardExtensionService.getInstance();
     StorageCardTransactionManager cardTransactionManager =
-        storageCardExtension.createStorageCardTransactionManager(cardReader, storageCard);
+        storageCardExtension
+            .getStorageCardApiFactory()
+            .createStorageCardTransactionManager(cardReader, storageCard);
     /* Update contract records */
     // TODO simplify
     if (!card.getUpdatedContracts().isEmpty()) {
@@ -221,20 +226,19 @@ public class CardRepository {
         if (card.getUpdatedContracts().contains(contract)) {
           // update contract
           cardTransactionManager.prepareWriteBlocks(
-              CardConstant.SC_CONTRACT_FIRST_BLOCK,
-              new SCContractStructureParser().generate(contract));
+              CardConstants.SC_CONTRACT_FIRST_BLOCK,
+              new ScContractStructureParser().generate(contract));
         }
       }
     }
     /* Update event */
     if (Boolean.TRUE.equals(card.isEventUpdated())) {
       cardTransactionManager.prepareWriteBlocks(
-          CardConstant.SC_EVENT_FIRST_BLOCK,
-          new SCEventStructureParser().generate(buildEvent(card.getEvent(), card.getContracts())));
+          CardConstants.SC_EVENT_FIRST_BLOCK,
+          new ScEventStructureParser().generate(buildEvent(card.getEvent(), card.getContracts())));
     }
 
-    cardTransactionManager.processCommands(
-        org.eclipse.keypop.storagecard.transaction.ChannelControl.KEEP_OPEN);
+    cardTransactionManager.processCommands(ChannelControl.KEEP_OPEN);
     return 0;
   }
 
@@ -248,24 +252,24 @@ public class CardRepository {
 
     // Fill the environment structure with predefined values
     cardTransactionManager.prepareUpdateRecord(
-        CardConstant.SFI_ENVIRONMENT_AND_HOLDER,
+        CardConstants.SFI_ENVIRONMENT_AND_HOLDER,
         1,
         new EnvironmentHolderStructureParser().generate(buildEnvironmentHolderStructure()));
 
-    // Clear the first event (update with a byte array filled with 0s).
+    // Clear the first event (update with a byte array filled with 0 s).
     cardTransactionManager.prepareUpdateRecord(
-        CardConstant.SFI_EVENTS_LOG, 1, new byte[CardConstant.EVENT_RECORD_SIZE_BYTES]);
+        CardConstants.SFI_EVENTS_LOG, 1, new byte[CardConstants.EVENT_RECORD_SIZE_BYTES]);
 
-    // Clear all contracts (update with a byte array filled with 0s).
+    // Clear all contracts (update with a byte array filled with 0 s).
     int contractCount = getContractCount(calypsoCard);
     for (int i = 1; i <= contractCount; i++) {
       cardTransactionManager.prepareUpdateRecord(
-          CardConstant.SFI_CONTRACTS, i, new byte[CardConstant.CONTRACT_RECORD_SIZE_BYTES]);
+          CardConstants.SFI_CONTRACTS, i, new byte[CardConstants.CONTRACT_RECORD_SIZE_BYTES]);
     }
 
-    // Clear the counter file (update with a byte array filled with 0s).
+    // Clear the counter-file (update with a byte array filled with 0 s).
     cardTransactionManager.prepareUpdateRecord(
-        CardConstant.SFI_COUNTERS, 1, new byte[contractCount * 3]);
+        CardConstants.SFI_COUNTERS, 1, new byte[contractCount * 3]);
 
     cardTransactionManager.prepareCloseSecureSession().processCommands(ChannelControl.KEEP_OPEN);
     logger.info(CALYPSO_SESSION_CLOSED);
@@ -275,23 +279,25 @@ public class CardRepository {
 
     StorageCardExtensionService storageCardExtension = StorageCardExtensionService.getInstance();
     StorageCardTransactionManager cardTransactionManager =
-        storageCardExtension.createStorageCardTransactionManager(cardReader, storageCard);
+        storageCardExtension
+            .getStorageCardApiFactory()
+            .createStorageCardTransactionManager(cardReader, storageCard);
 
     // Fill the environment structure with predefined values
     cardTransactionManager.prepareWriteBlocks(
-        CardConstant.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
-        new SCEnvironmentHolderStructureParser().generate(buildEnvironmentHolderStructure()));
+        CardConstants.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
+        new ScEnvironmentHolderStructureParser().generate(buildEnvironmentHolderStructure()));
 
-    // Clear the first event (update with a byte array filled with 0s).
+    // Clear the first event (update with a byte array filled with 0 s).
     cardTransactionManager.prepareWriteBlocks(
-        CardConstant.SC_EVENT_FIRST_BLOCK, new byte[CardConstant.SC_EVENT_RECORD_SIZE_BYTES]);
+        CardConstants.SC_EVENT_FIRST_BLOCK, new byte[CardConstants.SC_EVENT_RECORD_SIZE_BYTES]);
 
-    // Clear all contracts (update with a byte array filled with 0s).
+    // Clear all contracts (update with a byte array filled with 0 s).
     cardTransactionManager.prepareWriteBlocks(
-        CardConstant.SC_CONTRACT_FIRST_BLOCK, new byte[CardConstant.SC_CONTRACT_RECORD_SIZE_BYTES]);
+        CardConstants.SC_CONTRACT_FIRST_BLOCK,
+        new byte[CardConstants.SC_CONTRACT_RECORD_SIZE_BYTES]);
 
-    cardTransactionManager.processCommands(
-        org.eclipse.keypop.storagecard.transaction.ChannelControl.KEEP_OPEN);
+    cardTransactionManager.processCommands(ChannelControl.KEEP_OPEN);
   }
 
   @NotNull
@@ -308,9 +314,9 @@ public class CardRepository {
                         samResource.getReader(), (LegacySam) samResource.getSmartCard()))
             .enableMultipleSession()
             .assignDefaultKif(
-                WriteAccessLevel.PERSONALIZATION, CardConstant.DEFAULT_KIF_PERSONALIZATION)
-            .assignDefaultKif(WriteAccessLevel.LOAD, CardConstant.DEFAULT_KIF_LOAD)
-            .assignDefaultKif(WriteAccessLevel.DEBIT, CardConstant.DEFAULT_KIF_DEBIT);
+                WriteAccessLevel.PERSONALIZATION, CardConstants.DEFAULT_KIF_PERSONALIZATION)
+            .assignDefaultKif(WriteAccessLevel.LOAD, CardConstants.DEFAULT_KIF_LOAD)
+            .assignDefaultKif(WriteAccessLevel.DEBIT, CardConstants.DEFAULT_KIF_DEBIT);
 
     return calypsoCardApiFactory.createSecureRegularModeTransactionManager(
         cardReader, calypsoCard, cardSecuritySetting);
@@ -351,12 +357,12 @@ public class CardRepository {
         new EnvironmentHolderStructureParser()
             .parse(
                 calypsoCard
-                    .getFileBySfi(CardConstant.SFI_ENVIRONMENT_AND_HOLDER)
+                    .getFileBySfi(CardConstants.SFI_ENVIRONMENT_AND_HOLDER)
                     .getData()
                     .getContent());
     // parse contracts
     List<ContractStructure> contracts = new ArrayList<>();
-    FileData fileData = calypsoCard.getFileBySfi(CardConstant.SFI_CONTRACTS).getData();
+    FileData fileData = calypsoCard.getFileBySfi(CardConstants.SFI_CONTRACTS).getData();
     if (fileData != null) {
       int contractCount = getContractCount(calypsoCard);
       for (int i = 1; i < contractCount + 1; i++) {
@@ -365,7 +371,7 @@ public class CardRepository {
         // update counter tied to contract
         int counterValue =
             calypsoCard
-                .getFileBySfi(CardConstant.SFI_COUNTERS)
+                .getFileBySfi(CardConstants.SFI_COUNTERS)
                 .getData()
                 .getContentAsCounterValue(i);
         contract.setCounterValue(counterValue);
@@ -374,7 +380,7 @@ public class CardRepository {
     // parse event
     EventStructure event =
         new EventStructureParser()
-            .parse(calypsoCard.getFileBySfi(CardConstant.SFI_EVENTS_LOG).getData().getContent());
+            .parse(calypsoCard.getFileBySfi(CardConstants.SFI_EVENTS_LOG).getData().getContent());
     return new Card(environment, contracts, event);
   }
 
@@ -390,24 +396,24 @@ public class CardRepository {
   private Card parse(StorageCard storageCard) {
     // Parse environment
     EnvironmentHolderStructure environment =
-        new SCEnvironmentHolderStructureParser()
+        new ScEnvironmentHolderStructureParser()
             .parse(
                 storageCard.getBlocks(
-                    CardConstant.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
-                    CardConstant.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK));
+                    CardConstants.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
+                    CardConstants.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK));
     // parse contracts
     List<ContractStructure> contracts = new ArrayList<>();
     contracts.add(
-        new SCContractStructureParser()
+        new ScContractStructureParser()
             .parse(
                 storageCard.getBlocks(
-                    CardConstant.SC_CONTRACT_FIRST_BLOCK, CardConstant.SC_COUNTER_LAST_BLOCK)));
+                    CardConstants.SC_CONTRACT_FIRST_BLOCK, CardConstants.SC_COUNTER_LAST_BLOCK)));
     // parse event
     EventStructure event =
-        new SCEventStructureParser()
+        new ScEventStructureParser()
             .parse(
                 storageCard.getBlocks(
-                    CardConstant.SC_EVENT_FIRST_BLOCK, CardConstant.SC_EVENT_LAST_BLOCK));
+                    CardConstants.SC_EVENT_FIRST_BLOCK, CardConstants.SC_EVENT_LAST_BLOCK));
     return new Card(environment, contracts, event);
   }
 }

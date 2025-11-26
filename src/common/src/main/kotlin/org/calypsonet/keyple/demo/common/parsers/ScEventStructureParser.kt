@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.common.parser
+package org.calypsonet.keyple.demo.common.parsers
 
 import fr.devnied.bitlib.BitUtils
 import java.math.BigInteger
@@ -20,7 +20,7 @@ import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.TimeCompact
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 
-class SCEventStructureParser : Parser<EventStructure> {
+class ScEventStructureParser : Parser<EventStructure> {
 
   override fun parse(content: ByteArray): EventStructure {
     val bitUtils = BitUtils(content)

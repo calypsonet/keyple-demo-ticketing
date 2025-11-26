@@ -10,11 +10,21 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.common.parser
+package org.calypsonet.keyple.demo.common.constants
 
-interface Parser<T> {
+enum class RemoteServiceId {
 
-  fun parse(content: ByteArray): T
+  // Suitable for C# Keyple-less clients
+  SELECT_APP_AND_READ_CONTRACTS,
+  SELECT_APP_AND_INCREASE_CONTRACT_COUNTER,
 
-  fun generate(content: T): ByteArray
+  // Suitable for Android Keyple clients
+  READ_CARD_AND_ANALYZE_CONTRACTS,
+  READ_CARD_AND_WRITE_CONTRACT,
+  PERSONALIZE_CARD,
+
+  // Suitable for Kotlin Multiplaform Keyple-less client
+  SELECT_APP_AND_ANALYZE_CONTRACTS,
+  SELECT_APP_AND_LOAD_CONTRACT,
+  SELECT_APP_AND_PERSONALIZE_CARD
 }

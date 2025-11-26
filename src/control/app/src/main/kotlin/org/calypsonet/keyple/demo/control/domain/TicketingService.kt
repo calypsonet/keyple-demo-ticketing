@@ -18,7 +18,7 @@ import androidx.annotation.RequiresApi
 import java.time.LocalDateTime
 import javax.inject.Inject
 import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService
-import org.calypsonet.keyple.demo.common.constant.CardConstant
+import org.calypsonet.keyple.demo.common.constants.CardConstants
 import org.calypsonet.keyple.demo.control.data.CalypsoCardRepository
 import org.calypsonet.keyple.demo.control.data.ReaderRepository
 import org.calypsonet.keyple.demo.control.data.StorageCardRepository
@@ -134,7 +134,7 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
 
   fun stopNfcDetection() {
     try {
-      // notify reader that se detection has been switched off
+      // notify the reader that se detection has been switched off
       (readerRepository.getCardReader() as ObservableCardReader).stopCardDetection()
     } catch (e: KeyplePluginException) {
       Timber.e(e, "NFC Plugin not found")
@@ -173,7 +173,7 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
         cardSelectionManager.prepareSelection(
             readerApiFactory
                 .createIsoCardSelector()
-                .filterByDfName(CardConstant.AID_KEYPLE_GENERIC)
+                .filterByDfName(CardConstants.AID_KEYPLE_GENERIC)
                 .filterByCardProtocol(CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
@@ -182,7 +182,7 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
         cardSelectionManager.prepareSelection(
             readerApiFactory
                 .createIsoCardSelector()
-                .filterByDfName(CardConstant.AID_CD_LIGHT_GTML)
+                .filterByDfName(CardConstants.AID_CD_LIGHT_GTML)
                 .filterByCardProtocol(CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
@@ -191,7 +191,7 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
         cardSelectionManager.prepareSelection(
             readerApiFactory
                 .createIsoCardSelector()
-                .filterByDfName(CardConstant.AID_CALYPSO_LIGHT)
+                .filterByDfName(CardConstants.AID_CALYPSO_LIGHT)
                 .filterByCardProtocol(CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
@@ -200,7 +200,7 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
         cardSelectionManager.prepareSelection(
             readerApiFactory
                 .createIsoCardSelector()
-                .filterByDfName(CardConstant.AID_NORMALIZED_IDF)
+                .filterByDfName(CardConstants.AID_NORMALIZED_IDF)
                 .filterByCardProtocol(CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
@@ -210,14 +210,15 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
               readerApiFactory
                   .createBasicCardSelector()
                   .filterByCardProtocol(CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name),
-              storageCardExtension.createStorageCardSelectionExtension(
+              storageCardExtension.storageCardApiFactory.createStorageCardSelectionExtension(
                   ProductType.MIFARE_ULTRALIGHT))
       indexOfST25CardSelection =
           cardSelectionManager.prepareSelection(
               readerApiFactory
                   .createBasicCardSelector()
                   .filterByCardProtocol(CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name),
-              storageCardExtension.createStorageCardSelectionExtension(ProductType.ST25_SRT512))
+              storageCardExtension.storageCardApiFactory.createStorageCardSelectionExtension(
+                  ProductType.ST25_SRT512))
     }
 
     // Schedule the execution of the prepared card selection scenario as soon as a card is presented
@@ -239,21 +240,21 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
     when (smartCard) {
       is CalypsoCard -> { // check is the DF name is the expected one (Req. TL-SEL-AIDMATCH.1)
         if ((cardSelectionResult.activeSelectionIndex == indexOfKeypleGenericCardSelection &&
-            !CardConstant.aidMatch(
-                CardConstant.AID_KEYPLE_GENERIC, (smartCard as CalypsoCard).dfName)) ||
+            !CardConstants.aidMatch(
+                CardConstants.AID_KEYPLE_GENERIC, (smartCard as CalypsoCard).dfName)) ||
             (cardSelectionResult.activeSelectionIndex == indexOfCdLightGtmlCardSelection &&
-                !CardConstant.aidMatch(
-                    CardConstant.AID_CD_LIGHT_GTML, (smartCard as CalypsoCard).dfName)) ||
+                !CardConstants.aidMatch(
+                    CardConstants.AID_CD_LIGHT_GTML, (smartCard as CalypsoCard).dfName)) ||
             (cardSelectionResult.activeSelectionIndex == indexOfCalypsoLightCardSelection &&
-                !CardConstant.aidMatch(
-                    CardConstant.AID_CALYPSO_LIGHT, (smartCard as CalypsoCard).dfName)) ||
+                !CardConstants.aidMatch(
+                    CardConstants.AID_CALYPSO_LIGHT, (smartCard as CalypsoCard).dfName)) ||
             (cardSelectionResult.activeSelectionIndex == indexOfNavigoIdfCardSelection &&
-                !CardConstant.aidMatch(
-                    CardConstant.AID_NORMALIZED_IDF, (smartCard as CalypsoCard).dfName))) {
+                !CardConstants.aidMatch(
+                    CardConstants.AID_NORMALIZED_IDF, (smartCard as CalypsoCard).dfName))) {
           return "Unexpected DF name"
         }
         if ((smartCard as CalypsoCard).applicationSubtype !in
-            CardConstant.ALLOWED_FILE_STRUCTURES) {
+            CardConstants.ALLOWED_FILE_STRUCTURES) {
           return "Invalid card\nFile structure " +
               HexUtil.toHex((smartCard as CalypsoCard).applicationSubtype) +
               "h not supported"
@@ -301,13 +302,13 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
     return calypsoCardApiFactory
         .createSymmetricCryptoSecuritySetting(
             LegacySamExtensionService.getInstance()
-                .getLegacySamApiFactory()
+                .legacySamApiFactory
                 .createSymmetricCryptoCardTransactionManagerFactory(
                     readerRepository.getSamReader(), legacySam))
         .assignDefaultKif(
-            WriteAccessLevel.PERSONALIZATION, CardConstant.DEFAULT_KIF_PERSONALIZATION)
-        .assignDefaultKif(WriteAccessLevel.LOAD, CardConstant.DEFAULT_KIF_LOAD)
-        .assignDefaultKif(WriteAccessLevel.DEBIT, CardConstant.DEFAULT_KIF_DEBIT)
+            WriteAccessLevel.PERSONALIZATION, CardConstants.DEFAULT_KIF_PERSONALIZATION)
+        .assignDefaultKif(WriteAccessLevel.LOAD, CardConstants.DEFAULT_KIF_LOAD)
+        .assignDefaultKif(WriteAccessLevel.DEBIT, CardConstants.DEFAULT_KIF_DEBIT)
         .enableMultipleSession()
   }
 
@@ -321,8 +322,8 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
     asymmetricCryptoSecuritySetting
         .addPcaCertificate(
             pkiExtensionService.createPcaCertificate(
-                CardConstant.PCA_PUBLIC_KEY_REFERENCE, CardConstant.PCA_PUBLIC_KEY))
-        .addCaCertificate(pkiExtensionService.createCaCertificate(CardConstant.CA_CERTIFICATE))
+                CardConstants.PCA_PUBLIC_KEY_REFERENCE, CardConstants.PCA_PUBLIC_KEY))
+        .addCaCertificate(pkiExtensionService.createCaCertificate(CardConstants.CA_CERTIFICATE))
         .addCaCertificateParser(
             pkiExtensionService.createCaCertificateParser(CertificateType.CALYPSO_LEGACY))
         .addCardCertificateParser(

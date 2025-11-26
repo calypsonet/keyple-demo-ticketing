@@ -54,7 +54,7 @@ public class CardController {
   @Consumes(MediaType.APPLICATION_JSON)
   public List<MessageDto> processMessage(MessageDto message) {
 
-    // Retrieves the node associated to the remote plugin.
+    // Retrieves the node associated with the remote plugin.
     SyncNodeServer node =
         SmartCardServiceProvider.getService()
             .getPlugin(CardConfigurator.REMOTE_PLUGIN_NAME)

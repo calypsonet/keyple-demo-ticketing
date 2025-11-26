@@ -88,18 +88,14 @@ constructor(
     readerType = ReaderType.BLUEBIRD
     cardPluginName = BluebirdConstants.PLUGIN_NAME
     cardReaderName = BluebirdConstants.CARD_READER_NAME
-    cardReaderProtocols.put(
-        BluebirdContactlessProtocols.ISO_14443_4_A.name,
-        CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name)
-    cardReaderProtocols.put(
-        BluebirdContactlessProtocols.ISO_14443_4_B.name,
-        CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name)
-    cardReaderProtocols.put(
-        BluebirdContactlessProtocols.MIFARE_ULTRALIGHT.name,
-        CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name)
-    cardReaderProtocols.put(
-        BluebirdContactlessProtocols.ST25_SRT512.name,
-        CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name)
+    cardReaderProtocols[BluebirdContactlessProtocols.ISO_14443_4_A.name] =
+        CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name
+    cardReaderProtocols[BluebirdContactlessProtocols.ISO_14443_4_B.name] =
+        CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name
+    cardReaderProtocols[BluebirdContactlessProtocols.MIFARE_ULTRALIGHT.name] =
+        CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name
+    cardReaderProtocols[BluebirdContactlessProtocols.ST25_SRT512.name] =
+        CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name
     samPluginName = BluebirdConstants.PLUGIN_NAME
     samReaderNameRegex = ".*ContactReader"
     samReaderName = BluebirdConstants.SAM_READER_NAME
@@ -112,9 +108,8 @@ constructor(
     readerType = ReaderType.COPPERNIC
     cardPluginName = Cone2Plugin.PLUGIN_NAME
     cardReaderName = Cone2ContactlessReader.READER_NAME
-    cardReaderProtocols.put(
-        ParagonSupportedContactlessProtocols.ISO_14443.name,
-        CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name)
+    cardReaderProtocols[ParagonSupportedContactlessProtocols.ISO_14443.name] =
+        CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name
     samPluginName = Cone2Plugin.PLUGIN_NAME
     samReaderNameRegex = ".*ContactReader_1"
     samReaderName = "${Cone2ContactReader.READER_NAME}_1"
@@ -127,9 +122,8 @@ constructor(
     readerType = ReaderType.FAMOCO
     cardPluginName = AndroidNfcConstants.PLUGIN_NAME
     cardReaderName = AndroidNfcConstants.READER_NAME
-    cardReaderProtocols.put(
-        AndroidNfcSupportedProtocols.ISO_14443_4.name,
-        CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name)
+    cardReaderProtocols[AndroidNfcSupportedProtocols.ISO_14443_4.name] =
+        CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name
     samPluginName = AndroidFamocoPlugin.PLUGIN_NAME
     samReaderNameRegex = ".*FamocoReader"
     samReaderName = AndroidFamocoReader.READER_NAME
@@ -141,9 +135,8 @@ constructor(
     readerType = ReaderType.FLOWBIRD
     cardPluginName = FlowbirdPlugin.PLUGIN_NAME
     cardReaderName = FlowbirdContactlessReader.READER_NAME
-    cardReaderProtocols.put(
-        FlowbirdSupportContactlessProtocols.ALL.key,
-        CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name)
+    cardReaderProtocols[FlowbirdSupportContactlessProtocols.ALL.key] =
+        CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name
     samPluginName = FlowbirdPlugin.PLUGIN_NAME
     samReaderNameRegex = ".*ContactReader_0"
     samReaderName = "${FlowbirdContactReader.READER_NAME}_${(SamSlot.ONE.slotId)}"
@@ -170,7 +163,7 @@ constructor(
               ReaderType.COPPERNIC -> Cone2PluginFactoryProvider.getFactory(activity)
               ReaderType.FAMOCO ->
                   AndroidNfcPluginFactoryProvider.provideFactory(AndroidNfcConfig(activity))
-              ReaderType.FLOWBIRD -> { // Init files used to sounds and colors from assets
+              ReaderType.FLOWBIRD -> { // Init files used for sounds and colors from assets
                 val mediaFiles: List<String> =
                     listOf("1_default_en.xml", "success.mp3", "error.mp3")
                 val situationFiles: List<String> = listOf("1_default_en.xml")
@@ -213,21 +206,20 @@ constructor(
 
   @Throws(KeyplePluginException::class)
   override fun initSamReaders(): List<CardReader> {
-    if (readerType == ReaderType.FAMOCO) {
-      samReaders =
+    samReaders =
+        if (readerType == ReaderType.FAMOCO) {
           SmartCardServiceProvider.getService()
               .getPlugin(samPluginName)
               ?.readers
               ?.filter { it.name == samReaderName }
               ?.toMutableList() ?: mutableListOf()
-    } else {
-      samReaders =
+        } else {
           SmartCardServiceProvider.getService()
               .getPlugin(samPluginName)
               ?.readers
               ?.filter { !it.isContactless }
               ?.toMutableList() ?: mutableListOf()
-    }
+        }
     samReaders.forEach {
       if (it is ConfigurableCardReader) {
         it.activateProtocol(samReaderProtocolPhysicalName, samReaderProtocolLogicalName)

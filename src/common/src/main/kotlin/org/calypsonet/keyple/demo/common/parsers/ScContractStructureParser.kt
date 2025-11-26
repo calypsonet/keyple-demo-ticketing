@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.common.parser
+package org.calypsonet.keyple.demo.common.parsers
 
 import fr.devnied.bitlib.BitUtils
 import java.math.BigInteger
@@ -19,7 +19,7 @@ import org.calypsonet.keyple.demo.common.model.type.DateCompact
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 
-class SCContractStructureParser : Parser<ContractStructure> {
+class ScContractStructureParser : Parser<ContractStructure> {
 
   override fun parse(content: ByteArray): ContractStructure {
     val bitUtils = BitUtils(content)

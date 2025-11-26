@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.data.model.mapper
+package org.calypsonet.keyple.demo.control.data.model.mappers
 
 import java.time.LocalDateTime
 import org.calypsonet.keyple.demo.common.model.ContractStructure

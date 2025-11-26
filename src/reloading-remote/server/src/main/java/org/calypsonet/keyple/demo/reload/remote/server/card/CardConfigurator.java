@@ -15,7 +15,7 @@ package org.calypsonet.keyple.demo.reload.remote.server.card;
 import java.util.Properties;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import org.calypsonet.keyple.demo.common.constant.RemoteServiceId;
+import org.calypsonet.keyple.demo.common.constants.RemoteServiceId;
 import org.calypsonet.keyple.demo.common.dto.*;
 import org.eclipse.keyple.card.calypso.crypto.legacysam.LegacySamExtensionService;
 import org.eclipse.keyple.card.calypso.crypto.legacysam.LegacySamUtil;
@@ -166,7 +166,7 @@ public class CardConfigurator {
     @Override
     public void onPluginEvent(PluginEvent pluginEvent) {
 
-      // For a RemotePluginServer, the events can only be of type READER_CONNECTED.
+      // For a RemotePluginServer, the events can only be of the type READER_CONNECTED.
       // So there is no need to analyze the event type.
       logger.info(
           "Event received {} {} {}",
@@ -174,7 +174,7 @@ public class CardConfigurator {
           pluginEvent.getPluginName(),
           pluginEvent.getReaderNames().first());
 
-      // Retrieves the remote plugin using the plugin name contains in the event.
+      // Retrieves the remote plugin using the plugin name contained in the event.
       ObservablePlugin plugin =
           (ObservablePlugin)
               SmartCardServiceProvider.getService().getPlugin(pluginEvent.getPluginName());
@@ -189,7 +189,7 @@ public class CardConfigurator {
       RemoteReaderServer readerExtension =
           plugin.getReaderExtension(RemoteReaderServer.class, reader.getName());
       // Analyses the Service ID contains in the reader to find which business service to execute.
-      // The Service ID was specified by the client when executing the remote service.
+      // The client specifies the Service ID when executing the remote service.
       Object outputData;
       String serviceId = readerExtension.getServiceId();
 

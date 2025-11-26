@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import org.calypsonet.keyple.demo.common.constant.CardConstant;
+import org.calypsonet.keyple.demo.common.constants.CardConstants;
 import org.calypsonet.keyple.demo.common.dto.*;
 import org.calypsonet.keyple.demo.common.model.ContractStructure;
 import org.calypsonet.keyple.demo.common.model.EnvironmentHolderStructure;
@@ -33,7 +33,7 @@ import org.eclipse.keyple.core.service.resource.CardResource;
 import org.eclipse.keyple.core.service.resource.CardResourceServiceProvider;
 import org.eclipse.keyple.core.util.HexUtil;
 import org.eclipse.keypop.calypso.card.card.CalypsoCard;
-import org.eclipse.keypop.calypso.card.transaction.CardIOException;
+import org.eclipse.keypop.reader.CardCommunicationException;
 import org.eclipse.keypop.reader.CardReader;
 import org.eclipse.keypop.reader.selection.spi.SmartCard;
 import org.eclipse.keypop.storagecard.card.StorageCard;
@@ -267,7 +267,7 @@ public class CardService {
     String pluginType = inputData.getPluginType();
     String appSerialNumber = HexUtil.toHex(calypsoCard.getApplicationSerialNumber());
 
-    if (!CardConstant.Companion.getALLOWED_FILE_STRUCTURES()
+    if (!CardConstants.Companion.getALLOWED_FILE_STRUCTURES()
         .contains(calypsoCard.getApplicationSubtype())) {
       return new AnalyzeContractsOutputDto(Collections.emptyList(), 3);
     }
@@ -304,7 +304,7 @@ public class CardService {
               .setType(SECURED_READ)
               .setCardSerialNumber(appSerialNumber));
       return new AnalyzeContractsOutputDto(Collections.emptyList(), 5);
-    } catch (CardIOException e) {
+    } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
       activityService.push(
           new Activity()
@@ -365,7 +365,7 @@ public class CardService {
               .setType(READ)
               .setCardSerialNumber(cardUID));
       return new AnalyzeContractsOutputDto(Collections.emptyList(), 5);
-    } catch (CardIOException e) {
+    } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
       activityService.push(
           new Activity()
@@ -403,7 +403,7 @@ public class CardService {
     String pluginType = inputData.getPluginType();
     String appSerialNumber = HexUtil.toHex(calypsoCard.getApplicationSerialNumber());
 
-    if (!CardConstant.Companion.getALLOWED_FILE_STRUCTURES()
+    if (!CardConstants.Companion.getALLOWED_FILE_STRUCTURES()
         .contains(calypsoCard.getApplicationSubtype())) {
       return new WriteContractOutputDto(3);
     }
@@ -416,7 +416,7 @@ public class CardService {
     try {
       Card card = cardRepository.readCard(cardReader, calypsoCard, samResource);
       if (card == null) {
-        // If card has not been read previously, throw error
+        // If the card has not been read previously, throw error
         return new WriteContractOutputDto(4);
       }
       // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
@@ -434,7 +434,7 @@ public class CardService {
                           ? ": " + inputData.getTicketToLoad()
                           : "")));
       return new WriteContractOutputDto(statusCode);
-    } catch (CardIOException e) {
+    } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT, e.getMessage(), e);
       activityService.push(
           new Activity()
@@ -471,7 +471,7 @@ public class CardService {
     try {
       Card card = cardRepository.readCard(cardReader, storageCard, samResource);
       if (card == null) {
-        // If card has not been read previously, throw error
+        // If the card has not been read previously, throw error
         return new WriteContractOutputDto(4);
       }
       // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
@@ -489,7 +489,7 @@ public class CardService {
                           ? ": " + inputData.getTicketToLoad()
                           : "")));
       return new WriteContractOutputDto(statusCode);
-    } catch (CardIOException e) {
+    } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT, e.getMessage(), e);
       activityService.push(
           new Activity()
@@ -529,7 +529,7 @@ public class CardService {
     String pluginType = inputData.getPluginType();
     String appSerialNumber = HexUtil.toHex(calypsoCard.getApplicationSerialNumber());
 
-    if (!CardConstant.Companion.getALLOWED_FILE_STRUCTURES()
+    if (!CardConstants.Companion.getALLOWED_FILE_STRUCTURES()
         .contains(calypsoCard.getApplicationSubtype())) {
       return new CardIssuanceOutputDto(3);
     }
@@ -546,7 +546,7 @@ public class CardService {
               .setType(ISSUANCE)
               .setCardSerialNumber(appSerialNumber));
       return new CardIssuanceOutputDto(0);
-    } catch (CardIOException e) {
+    } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_INITIALIZING_THE_CARD, e.getMessage(), e);
       activityService.push(
           new Activity()
@@ -587,7 +587,7 @@ public class CardService {
               .setType(ISSUANCE)
               .setCardSerialNumber(cardUID));
       return new CardIssuanceOutputDto(0);
-    } catch (CardIOException e) {
+    } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_INITIALIZING_THE_CARD, e.getMessage(), e);
       activityService.push(
           new Activity()
@@ -631,7 +631,7 @@ public class CardService {
       } else {
         calypsoCard = cardRepository.selectCard(cardReader);
       }
-    } catch (CardIOException e) {
+    } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
       activityService.push(
           new Activity()
@@ -778,7 +778,7 @@ public class CardService {
       } else {
         calypsoCard = cardRepository.selectCard(cardReader);
       }
-    } catch (CardIOException e) {
+    } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT, e.getMessage(), e);
       activityService.push(
           new Activity()
@@ -803,7 +803,7 @@ public class CardService {
     String expectedApplicationSerialNumber = inputData.getApplicationSerialNumber();
     if (!selectedApplicationSerialNumber.equals(expectedApplicationSerialNumber)) {
       // Ticket would have been bought for the Card read at step one.
-      // To avoid swapping we check thant loading is done on the same card
+      // To avoid swapping, we check that loading is done on the same card
       return new SelectAppAndLoadContractOutputDto(2, "Not the same card");
     }
 
@@ -858,7 +858,7 @@ public class CardService {
       } else {
         calypsoCard = cardRepository.selectCard(cardReader);
       }
-    } catch (CardIOException e) {
+    } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_INITIALIZING_THE_CARD, e.getMessage(), e);
       activityService.push(
           new Activity()
@@ -937,7 +937,7 @@ public class CardService {
           contract.getContractTariff(),
           contract.getContractSaleDate().getValue());
       if (contract.getContractVersionNumber() == VersionNumber.UNDEFINED) {
-        // If ContractVersionNumber is 0 ensure that the associated ContractPriority field value is
+        // If ContractVersionNumber is 0, ensure that the associated ContractPriority field value is
         // 0 and move on to the next contract.
         if (contract.getContractTariff() != PriorityCode.FORBIDDEN) {
           logger.warn(CONTRACT_TARIFF_IS_NOT_VALID_FOR_THIS_CONTRACT);

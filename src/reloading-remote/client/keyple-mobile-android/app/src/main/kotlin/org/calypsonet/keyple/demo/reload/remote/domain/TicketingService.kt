@@ -29,7 +29,7 @@ import org.eclipse.keypop.storagecard.card.ProductType.ST25_SRT512
 @AppScoped
 class TicketingService @Inject constructor(private var readerRepository: ReaderRepository) {
 
-  /** Select card and retrieve the active card */
+  /** Select the card and retrieve the active card */
   @Throws(IllegalStateException::class, Exception::class)
   fun getSmartCard(readerName: String, aidEnums: ArrayList<ByteArray>): SmartCard {
     with(ReaderRepository.getReader(readerName)) {
@@ -52,8 +52,8 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
 
       aidEnums.forEach {
         /**
-         * Generic selection: configures a CardSelector with all the desired attributes to make the
-         * selection and read additional information afterwards
+         * Generic selection: configures a CardSelector with all the desired attributes to perform
+         * the selection and read additional information afterward
          */
         val calypsoCardSelector =
             readerApiFactory
@@ -69,12 +69,14 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
             readerApiFactory
                 .createBasicCardSelector()
                 .filterByCardProtocol(CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name),
-            storageCardExtension.createStorageCardSelectionExtension(MIFARE_ULTRALIGHT))
+            storageCardExtension.storageCardApiFactory.createStorageCardSelectionExtension(
+                MIFARE_ULTRALIGHT))
         cardSelectionManager.prepareSelection(
             readerApiFactory
                 .createBasicCardSelector()
                 .filterByCardProtocol(CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name),
-            storageCardExtension.createStorageCardSelectionExtension(ST25_SRT512))
+            storageCardExtension.storageCardApiFactory.createStorageCardSelectionExtension(
+                ST25_SRT512))
       }
 
       val selectionResult = cardSelectionManager.processCardSelectionScenario(reader)
@@ -83,7 +85,7 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
         // TODO move this code to the calling method
         //          val calypsoCard = selectionResult.activeSmartCard as CalypsoCard
         //          // check is the DF name is the expected one (Req. TL-SEL-AIDMATCH.1)
-        //          if (!CardConstant.aidMatch(
+        //          if (!CardConstants.aidMatch(
         //              aidEnums[selectionResult.activeSelectionIndex], calypsoCard.dfName)) {
         //            throw IllegalStateException("Unexpected DF name")
         //          }

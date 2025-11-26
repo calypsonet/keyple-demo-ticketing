@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2022 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -10,13 +10,11 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.data.model.mapper
+package org.calypsonet.keyple.demo.common.parsers
 
-import org.calypsonet.keyple.demo.common.model.EventStructure
-import org.calypsonet.keyple.demo.control.data.model.Location
+interface Parser<T> {
 
-object LocationMapper {
-  fun map(locations: List<Location>, event: EventStructure): Location {
-    return locations.filter { event.eventLocation == it.id }[0]
-  }
+  fun parse(content: ByteArray): T
+
+  fun generate(content: T): ByteArray
 }

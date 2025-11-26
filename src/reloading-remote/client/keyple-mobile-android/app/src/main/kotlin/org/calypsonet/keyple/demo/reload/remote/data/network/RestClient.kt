@@ -20,7 +20,7 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 
 /**
- * Cannot extends directly SyncEndpointClient because retrofit allows API interfaces to extend
+ * Cannot directly extend SyncEndpointClient because retrofit allows API interfaces to extend
  * interfaces.
  */
 interface RestClient {

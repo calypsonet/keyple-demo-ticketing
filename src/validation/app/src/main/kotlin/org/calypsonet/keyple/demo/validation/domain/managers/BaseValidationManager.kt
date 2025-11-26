@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.domain
+package org.calypsonet.keyple.demo.validation.domain.managers
 
 import java.time.Duration
 import java.time.LocalDate
@@ -40,11 +40,6 @@ abstract class BaseValidationManager {
     const val EXCEPTION_INSUFFICIENT_STORED_VALUE = "Insufficient stored value"
     const val EXCEPTION_CONTRACT_FORBIDDEN_OR_EXPIRED = "Contract is forbidden or expired"
 
-    // Log messages
-    const val LOG_VALIDATION_SUCCESS = "Validation procedure result: SUCCESS"
-    const val LOG_VALIDATION_FAILED_NO_CONTRACT =
-        "Validation procedure result: Failed - No valid contract found"
-
     // Card type prefix
     const val CARD_TYPE_CALYPSO_PREFIX = "CALYPSO: DF name "
 
@@ -57,7 +52,7 @@ abstract class BaseValidationManager {
   }
 
   /**
-   * Calculates the amount to decrement from the counter based on contract type.
+   * Calculates the amount to decrement from the counter based on the contract type.
    *
    * @param contractPriority The contract priority/type
    * @param validationAmount The validation amount for stored-value contracts
@@ -115,8 +110,8 @@ abstract class BaseValidationManager {
    * @param lastEventDateTime The date/time of the last event
    * @param validationDateTime The current validation date/time
    * @param isDfRatified Whether the card's DF is ratified
-   * @throws ValidationException with Status.INVALID_CARD if card already tapped and ratified,
-   *   Status.SUCCESS if recovering from broken session
+   * @throws ValidationException with `Status.INVALID_CARD` if card already tapped and ratified,
+   *   `Status.SUCCESS` if recovering from broken session
    */
   fun validateAntiPassbackOrThrow(
       lastEventDateTime: LocalDateTime,
@@ -134,10 +129,10 @@ abstract class BaseValidationManager {
   }
 
   /**
-   * Validates environment version and throws if invalid.
+   * Validates the environment version and throws if invalid.
    *
    * @param envVersionNumber The environment version number to validate
-   * @throws ValidationException with Status.INVALID_CARD if version is invalid
+   * @throws ValidationException with `Status.INVALID_CARD` if the version is invalid
    */
   fun validateEnvironmentVersionOrThrow(envVersionNumber: VersionNumber) {
     if (envVersionNumber != VersionNumber.CURRENT_VERSION) {
@@ -150,7 +145,7 @@ abstract class BaseValidationManager {
    *
    * @param envEndDate The environment end date
    * @param validationDate The current validation date
-   * @throws ValidationException with Status.INVALID_CARD if environment date is expired
+   * @throws ValidationException with `Status.INVALID_CARD` if environment date is expired
    */
   fun validateEnvironmentDateOrThrow(envEndDate: LocalDate, validationDate: LocalDate) {
     if (envEndDate.isBefore(validationDate)) {
@@ -159,17 +154,18 @@ abstract class BaseValidationManager {
   }
 
   /**
-   * Validates event version and throws if invalid or undefined.
+   * Validates the event version and throws if invalid or undefined.
    *
    * @param eventVersionNumber The event version number to validate
-   * @throws ValidationException with Status.EMPTY_CARD if undefined, Status.INVALID_CARD if invalid
+   * @throws ValidationException with `Status.EMPTY_CARD` if undefined, `Status.INVALID_CARD` if
+   *   invalid
    */
   fun validateEventVersionOrThrow(eventVersionNumber: VersionNumber) {
-    when {
-      eventVersionNumber == VersionNumber.CURRENT_VERSION -> {
+    when (eventVersionNumber) {
+      VersionNumber.CURRENT_VERSION -> {
         // Valid, do nothing
       }
-      eventVersionNumber == VersionNumber.UNDEFINED -> {
+      VersionNumber.UNDEFINED -> {
         throw ValidationException(ERROR_NO_VALID_TITLE_DETECTED, Status.EMPTY_CARD)
       }
       else -> {
@@ -179,10 +175,10 @@ abstract class BaseValidationManager {
   }
 
   /**
-   * Validates contract version and throws if invalid.
+   * Validates the contract version and throws if invalid.
    *
    * @param contractVersionNumber The contract version number to validate
-   * @throws ValidationException with Status.INVALID_CARD if version is invalid
+   * @throws ValidationException with `Status.INVALID_CARD` if the version is invalid
    */
   fun validateContractVersionOrThrow(contractVersionNumber: VersionNumber) {
     if (contractVersionNumber != VersionNumber.CURRENT_VERSION) {
@@ -195,7 +191,7 @@ abstract class BaseValidationManager {
    *
    * @param contractValidityEndDate The contract validity end date
    * @param validationDate The current validation date
-   * @throws ValidationException with Status.EMPTY_CARD if contract date is expired
+   * @throws ValidationException with `Status.EMPTY_CARD` if the contract date is expired
    */
   fun validateContractDateOrThrow(contractValidityEndDate: LocalDate, validationDate: LocalDate) {
     if (contractValidityEndDate.isBefore(validationDate)) {
@@ -206,8 +202,8 @@ abstract class BaseValidationManager {
   /**
    * Validates that trips are available and throws if not.
    *
-   * @param counterValue The current counter value
-   * @throws ValidationException with Status.EMPTY_CARD if no trips available
+   * @param counterValue The current counter-value
+   * @throws ValidationException with `Status.EMPTY_CARD` if no trips available
    */
   fun validateTripsAvailableOrThrow(counterValue: Int) {
     if (counterValue <= 0) {
@@ -218,9 +214,9 @@ abstract class BaseValidationManager {
   /**
    * Validates that sufficient stored value is available and throws if not.
    *
-   * @param counterValue The current counter value
+   * @param counterValue The current counter-value
    * @param validationAmount The amount required for validation
-   * @throws ValidationException with Status.EMPTY_CARD if insufficient stored value
+   * @throws ValidationException with `Status.EMPTY_CARD` if insufficient stored value
    */
   fun validateSufficientStoredValueOrThrow(counterValue: Int, validationAmount: Int) {
     if (counterValue < validationAmount) {
@@ -232,7 +228,7 @@ abstract class BaseValidationManager {
    * Validates that valid contracts exist and throws if none found.
    *
    * @param priorities List of contract priorities
-   * @throws ValidationException with Status.EMPTY_CARD if no valid contracts
+   * @throws ValidationException with `Status.EMPTY_CARD` if no valid contracts
    */
   fun validateHasValidContractsOrThrow(priorities: List<Pair<Int, PriorityCode>>) {
     val validPriorities = filterValidContractPriorities(priorities)

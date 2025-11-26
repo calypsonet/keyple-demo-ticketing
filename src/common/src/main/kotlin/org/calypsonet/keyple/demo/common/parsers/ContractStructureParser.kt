@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.common.parser
+package org.calypsonet.keyple.demo.common.parsers
 
 import fr.devnied.bitlib.BitUtils
 import java.math.BigInteger

@@ -10,11 +10,11 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.common.constant
+package org.calypsonet.keyple.demo.common.constants
 
 import org.eclipse.keyple.core.util.HexUtil
 
-class CardConstant {
+class CardConstants {
   companion object {
 
     // AIDs used for selection (could be truncated)
