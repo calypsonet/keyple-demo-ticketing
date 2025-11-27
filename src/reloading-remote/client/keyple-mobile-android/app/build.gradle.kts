@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 ///////////////////////////////////////////////////////////////////////////////
 // GRADLE CONFIGURATION
 ///////////////////////////////////////////////////////////////////////////////
@@ -139,7 +141,7 @@ android {
     sourceCompatibility = JavaVersion.toVersion(javaSourceLevel)
     targetCompatibility = JavaVersion.toVersion(javaTargetLevel)
   }
-  kotlinOptions { jvmTarget = javaTargetLevel }
+  kotlin { compilerOptions { jvmTarget.set(JvmTarget.fromTarget(javaTargetLevel)) } }
   sourceSets {
     getByName("main").java.srcDirs("src/main/kotlin")
     getByName("debug").java.srcDirs("src/debug/kotlin")

@@ -121,6 +121,8 @@ java {
   targetCompatibility = JavaVersion.toVersion(javaTargetLevel)
 }
 
+tasks.withType<JavaCompile> { options.compilerArgs.add("-Xlint:deprecation") }
+
 tasks {
   spotless {
     java {
