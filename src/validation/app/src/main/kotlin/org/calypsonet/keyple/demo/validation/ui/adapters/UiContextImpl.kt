@@ -1,0 +1,27 @@
+/* ******************************************************************************
+ * Copyright (c) 2025 Calypso Networks Association https://calypsonet.org/
+ *
+ * See the NOTICE file(s) distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the BSD 3-Clause License which is available at
+ * https://opensource.org/licenses/BSD-3-Clause.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ ****************************************************************************** */
+package org.calypsonet.keyple.demo.validation.ui.adapters
+
+import android.app.Activity
+import org.calypsonet.keyple.demo.validation.domain.spi.UiContext
+
+class UiContextImpl(private val activity: Activity) : UiContext {
+
+  override fun <T> adaptTo(adapter: Class<T>): T {
+    if (adapter.isAssignableFrom(Activity::class.java)) {
+      @Suppress("UNCHECKED_CAST")
+      return activity as T
+    }
+    throw IllegalArgumentException("Unsupported adapter type: $adapter")
+  }
+}

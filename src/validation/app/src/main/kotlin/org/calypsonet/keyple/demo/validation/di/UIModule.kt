@@ -15,8 +15,12 @@ package org.calypsonet.keyple.demo.validation.di
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import org.calypsonet.keyple.demo.validation.di.scope.ActivityScoped
-import org.calypsonet.keyple.demo.validation.ui.*
-import org.calypsonet.keyple.demo.validation.ui.deviceselection.DeviceSelectionActivity
+import org.calypsonet.keyple.demo.validation.ui.activities.CardSummaryActivity
+import org.calypsonet.keyple.demo.validation.ui.activities.HomeActivity
+import org.calypsonet.keyple.demo.validation.ui.activities.MainActivity
+import org.calypsonet.keyple.demo.validation.ui.activities.ReaderActivity
+import org.calypsonet.keyple.demo.validation.ui.activities.SettingsActivity
+import org.calypsonet.keyple.demo.validation.ui.activities.deviceselection.DeviceSelectionActivity
 
 @Suppress("unused")
 @Module

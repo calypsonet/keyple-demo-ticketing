@@ -25,7 +25,8 @@ class SharedPrefDataRepository @Inject constructor(private var prefs: SharedPref
   fun saveServerIP(serverIp: String?) {
     val editor = prefs.edit()
     editor.putString(SERVER_IP_KEY, serverIp)
-    editor.commit() // We need to use commit instead of apply because the app is restart just after
+    editor
+        .commit() // We need to use commit instead of applying because the app is restart just after
     // the change of this pref
   }
 
@@ -37,7 +38,8 @@ class SharedPrefDataRepository @Inject constructor(private var prefs: SharedPref
   fun saveServerPort(serverPort: Int?) {
     val editor = prefs.edit()
     editor.putInt(SERVER_PORT_KEY, serverPort!!)
-    editor.commit() // We need to use commit instead of apply because the app is restart just after
+    editor
+        .commit() // We need to use commit instead of applying because the app is restart just after
     // the change of this pref
   }
 
@@ -49,7 +51,8 @@ class SharedPrefDataRepository @Inject constructor(private var prefs: SharedPref
   fun saveServerProtocol(serverProtocol: String?) {
     val editor = prefs.edit()
     editor.putString(SERVER_PROTOCOL_KEY, serverProtocol)
-    editor.commit() // We need to use commit instead of apply because the app is restart just after
+    editor
+        .commit() // We need to use commit instead of applying because the app is restart just after
     // the change of this pref
   }
 
@@ -141,7 +144,7 @@ class SharedPrefDataRepository @Inject constructor(private var prefs: SharedPref
     private const val SETTING_EMBEDDED_VISIBILITY = "setting_embedded_visibility"
     private const val SETTING_SERVER_LAST_STATUS_UP = "setting_server_last_status_up"
 
-    enum class Visibility constructor(val text: String) {
+    enum class Visibility(val text: String) {
       ENABLE("enable"),
       DISABLE("disable"),
       HIDE("hide")

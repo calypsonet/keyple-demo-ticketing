@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 ### Added
-- Added parsers `SCEnvironmentHolderStructureParser`, `SCContractStructureParser` and `SCEventStructureParser` for 
+- Added parsers `ScEnvironmentHolderStructureParser`, `ScContractStructureParser` and `ScEventStructureParser` for 
   environment, contract, and event structures dedicated to storage cards.
 
 ## [2.0.2] - 2024-10-15

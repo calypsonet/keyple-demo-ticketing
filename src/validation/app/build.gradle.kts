@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 ///////////////////////////////////////////////////////////////////////////////
 // GRADLE CONFIGURATION
 ///////////////////////////////////////////////////////////////////////////////
@@ -82,9 +84,6 @@ dependencies {
   // Lottie
   implementation(libs.lottie)
 
-  // Google GSON
-  implementation(libs.gson)
-
   // Devnied - Byte Utils
   implementation(libs.bitLib4j) { exclude(group = "org.slf4j") }
 
@@ -125,7 +124,7 @@ android {
     sourceCompatibility = JavaVersion.toVersion(javaSourceLevel)
     targetCompatibility = JavaVersion.toVersion(javaTargetLevel)
   }
-  kotlinOptions { jvmTarget = javaTargetLevel }
+  kotlin { compilerOptions { jvmTarget.set(JvmTarget.fromTarget(javaTargetLevel)) } }
   sourceSets {
     getByName("main").java.srcDirs("src/main/kotlin")
     getByName("debug").java.srcDirs("src/debug/kotlin")

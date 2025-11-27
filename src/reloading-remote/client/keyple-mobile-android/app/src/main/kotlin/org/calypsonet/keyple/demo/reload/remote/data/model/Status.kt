@@ -30,7 +30,7 @@ enum class Status(private val status: String) {
     fun getStatus(name: String?): Status {
       return try {
         valueOf(name!!.uppercase(Locale.ROOT))
-      } catch (e: Exception) {
+      } catch (_: Exception) {
         // If the given state does not exist, return the default value.
         ERROR
       }

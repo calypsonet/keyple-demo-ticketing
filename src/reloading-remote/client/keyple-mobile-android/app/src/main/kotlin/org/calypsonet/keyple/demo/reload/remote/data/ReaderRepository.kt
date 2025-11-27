@@ -22,7 +22,7 @@ import org.eclipse.keypop.reader.ReaderCommunicationException
 import timber.log.Timber
 
 /**
- * Manager provided to encapsulate slight differences between readers provide methods to improve
+ * Manager provided to encapsulate slight differences between readers provides methods to improve
  * code readability.
  */
 object ReaderRepository {
@@ -31,7 +31,7 @@ object ReaderRepository {
   fun registerPlugin(factory: KeyplePluginExtensionFactory): Plugin? {
     return try {
       SmartCardServiceProvider.getService().registerPlugin(factory)
-    } catch (e: Exception) {
+    } catch (_: Exception) {
       null
     }
   }
@@ -57,6 +57,6 @@ object ReaderRepository {
   @Throws(Exception::class)
   fun getObservableReader(readerName: String): ObservableCardReader {
     val reader = getReader(readerName)
-    return if (reader is ObservableCardReader) reader else throw Exception("$readerName not found")
+    return reader as? ObservableCardReader ?: throw Exception("$readerName not found")
   }
 }

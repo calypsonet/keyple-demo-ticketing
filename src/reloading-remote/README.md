@@ -129,7 +129,7 @@ This procedure's main steps are as follows:
   - For each contract:
     - Read and unpack the contract record for the index being iterated.
       - If `ContractVersionNumber` is 0 ensure that the associated `ContractPriority` field value is 0 and move on to the next contract.
-      - If `ContractValidityEndDate` points to a date in the past update the associated `ContractPriorty` field present in the persistent object to 31 and set the change flag to true.
+      - If `ContractValidityEndDate` points to a date in the past update the associated `ContractPriority` field present in the persistent object to 31 and set the change flag to true.
     - Add contract to the list of possible contracts to be reloaded.
     - Return the list with the contract information. <Exit process>
 
@@ -151,7 +151,7 @@ This procedure's main steps are as follows:
   - `ContractPriority` Analysis: 
     - If `ContractPriority` Value == `ContractTariff` skip the next points and go to CNT_UPD. (can be expired)
     - Else, Set `ContractPriority` Value = `ContractTariff`, set the flag to `true`.
-  - If the operation is a new contract write (indicated by the layer above or when `ContractPriorty` Value != `ContractTariff`):
+  - If the operation is a new contract write (indicated by the layer above or when `ContractPriority` Value != `ContractTariff`):
     - If there is one, or more, `ContractPriority` Field at 0 then the one with the lowest index will be the position of the contract to load. Set `ContractPriority` Value = `ContractTariff`, set the flag to true and go to CNT_UPD.
     - Else, if there is no `ContractPriority` Field at 0 then search for the first `ContractPriority` field at 31 and set that index as the one to load. Set `ContractPriority` Value = `ContractTariff`, set the flag to true and go to CNT_UPD.
     - Else (there are no expired nor empty positions) reject the card. <Abort Transaction and exit process>.
