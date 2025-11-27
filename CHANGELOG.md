@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+
+## [25.11.27]
 ### Changed
 - Standardization of naming conventions and package structure to harmonize all modules.
 ### Upgraded
@@ -45,7 +47,8 @@ It brings together previously independent projects into a unified codebase to si
   - [Validation App](https://github.com/calypsonet/keyple-demo-ticketing-validation-app)
   - [Control App](https://github.com/calypsonet/keyple-demo-ticketing-control-app)
 
-[Unreleased]: https://github.com/calypsonet/keyple-demo-ticketing/compare/25.10.30...HEAD
+[Unreleased]: https://github.com/calypsonet/keyple-demo-ticketing/compare/25.11.27...HEAD
+[25.11.27]: https://github.com/calypsonet/keyple-demo-ticketing/compare/25.10.30...25.11.27
 [25.10.30]: https://github.com/calypsonet/keyple-demo-ticketing/compare/25.09.10...25.10.30
 [25.09.10]: https://github.com/calypsonet/keyple-demo-ticketing/compare/2025.08.27...25.09.10
 [2025.08.27]: https://github.com/calypsonet/keyple-demo-ticketing/releases/tag/2025.08.27
