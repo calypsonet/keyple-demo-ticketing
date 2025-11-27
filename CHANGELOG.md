@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Changed
+- Standardization of naming conventions and package structure to harmonize all modules.
+### Upgraded
+- `keyple-java-bom`: `2025.10.24` -> `2025.11.21`
+- `keyple-card-cna-storagecard-java-lib` (mock): `1.1.0` -> `2.1.0`
+### Validation app
+#### Changed
+- Major architectural refactoring to apply **Clean Architecture** principles, isolating business logic (Domain) from
+  Android and UI implementations.
 
 ## [25.10.30]
 ### Changed
@@ -18,8 +27,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `androidMinSdk` moved from `24` to `26` for all Android apps.
 ### Upgraded
 - Keyple components
-    - `keyple-card-calypso-java-lib` `3.1.8` -> `3.1.9`
-    - `keyple-card-calypso-crypto-pki-java-lib` `0.2.3` (new)
+    - `keyple-card-calypso-java-lib`: `3.1.8` -> `3.1.9`
+    - `keyple-card-calypso-crypto-pki-java-lib`: `0.2.3` (new)
 ### Control app
 #### Added
 - Added PKI card authentication mode when no SAM is available and when the card is PKI compliant.
