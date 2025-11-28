@@ -1,6 +1,6 @@
 # Keyple Reload Demo - Android Client
 
-[![Android](https://img.shields.io/badge/android-7.0%2B-green.svg)](https://developer.android.com/)
+[![Android](https://img.shields.io/badge/android-8.0%2B-green.svg)](https://developer.android.com/)
 [![Release](https://img.shields.io/github/v/release/calypsonet/keyple-demo-ticketing)](https://github.com/calypsonet/keyple-demo-ticketing/releases)
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../../../LICENSE)
 

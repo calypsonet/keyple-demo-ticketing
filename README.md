@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](LICENSE)
 [![Java](https://img.shields.io/badge/java-8%2B-orange.svg)](https://openjdk.java.net/)
-[![Android](https://img.shields.io/badge/android-7.0%2B-green.svg)](https://developer.android.com/)
+[![Android](https://img.shields.io/badge/android-8.0%2B-green.svg)](https://developer.android.com/)
 
 A comprehensive open source ticketing ecosystem demonstrating the [Eclipse Keyple middleware](https://keyple.org) in real-world use cases. This project is provided by the [Calypso Networks Association](https://calypsonet.org) and serves as a foundation for building contactless card and NFC smartphone-based ticketing systems.
 
@@ -59,7 +59,7 @@ Simple storage cards featuring:
 ### Supported Platforms
 
 **Client Applications:**
-- Android 7.0+ (Native and KMP)
+- Android 8.0+ (Native and KMP)
 - iOS 14+ (KMP)
 - Windows Desktop (.NET 7.0)
 - JVM Desktop (Kotlin Multiplatform)

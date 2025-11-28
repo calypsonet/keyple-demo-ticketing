@@ -1,6 +1,6 @@
 # Keyple Control Demo
 
-[![Android](https://img.shields.io/badge/android-7.0%2B-green.svg)](https://developer.android.com/)
+[![Android](https://img.shields.io/badge/android-8.0%2B-green.svg)](https://developer.android.com/)
 [![Release](https://img.shields.io/github/v/release/calypsonet/keyple-demo-ticketing)](https://github.com/calypsonet/keyple-demo-ticketing/releases)
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../LICENSE)
 
@@ -390,65 +390,6 @@ control/app/
 
 # Build debug version
 ./gradlew assembleDebug
-```
-
-### Testing Strategy
-
-#### Unit Tests
-```java
-@Test
-public void testContractValidation() {
-    // Test contract validity checking logic
-    Contract contract = createTestContract();
-    boolean isValid = contractValidator.isValid(contract, LocalDate.now());
-    assertTrue("Contract should be valid", isValid);
-}
-
-@Test  
-public void testEventAnalysis() {
-    // Test validation event analysis
-    Event event = createTestEvent();
-    EventAnalysisResult result = eventAnalyzer.analyze(event, controlSettings);
-    assertEquals("Event should be valid", EventStatus.VALID, result.getStatus());
-}
-```
-
-#### Integration Tests
-```java
-@Test
-public void testControlProcedureFlow() {
-    // Test complete control procedure with mock card
-    MockCard card = createMockCardWithValidation();
-    ControlResult result = controlProcedure.executeControl(card);
-    
-    assertNotNull("Control result should not be null", result);
-    assertTrue("Control should pass for valid card", result.isValid());
-}
-```
-
-### Custom Inspector Workflows
-
-To customize the control procedure for specific inspector requirements:
-
-```java
-public class CustomControlProcedure extends BaseControlProcedure {
-    
-    @Override
-    protected ControlResult analyzeCompliance(CardData cardData, ControlSettings settings) {
-        // Custom compliance logic
-        if (requiresSpecialHandling(cardData)) {
-            return performEnhancedControl(cardData, settings);
-        }
-        return super.analyzeCompliance(cardData, settings);
-    }
-    
-    private boolean requiresSpecialHandling(CardData cardData) {
-        // Define custom criteria for enhanced control
-        return cardData.hasHighValueContract() || 
-               cardData.hasRecentDisputes() ||
-               cardData.isFromHighRiskLocation();
-    }
-}
 ```
 
 ## Troubleshooting
