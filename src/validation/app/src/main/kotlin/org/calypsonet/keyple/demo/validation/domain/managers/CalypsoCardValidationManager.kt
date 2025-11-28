@@ -247,9 +247,8 @@ class CalypsoCardValidationManager : BaseValidationManager() {
             else {
               val decrement = calculateDecrementAmount(contractPriority, validationAmount)
               if (decrement > 0) {
-                cardTransaction
-                    .prepareDecreaseCounter(CardConstants.SFI_COUNTERS, record, decrement)
-                    .processCommands(ChannelControl.KEEP_OPEN)
+                cardTransaction.prepareDecreaseCounter(
+                    CardConstants.SFI_COUNTERS, record, decrement)
                 nbTicketsLeft = counterValue - decrement
               }
             }
@@ -300,9 +299,7 @@ class CalypsoCardValidationManager : BaseValidationManager() {
 
           // Step 13 - Pack the Event structure and append it to the event file
           val eventBytesToWrite = EventStructureParser().generate(eventToWrite)
-          cardTransaction
-              .prepareUpdateRecord(CardConstants.SFI_EVENTS_LOG, 1, eventBytesToWrite)
-              .processCommands(ChannelControl.KEEP_OPEN)
+          cardTransaction.prepareUpdateRecord(CardConstants.SFI_EVENTS_LOG, 1, eventBytesToWrite)
         } else {
           if (errorMessage.isNullOrEmpty()) {
             errorMessage = ERROR_NO_VALID_TITLE_DETECTED
