@@ -95,24 +95,20 @@ java -Dsam.pcsc.reader.filter=".*ACS.*" -jar kdt-reloading-server-X.Y.Z-full.jar
 The server uses the following default configuration in `application.properties`:
 
 ```properties
-# Server Configuration
-quarkus.http.port=8080
-quarkus.http.host=0.0.0.0
+# CORS Configuration (for web clients)
+quarkus.http.cors=true
 
-# PC/SC Reader Filter (regex format)
-sam.pcsc.reader.filter=.*(Cherry TC|SCM Microsystems|Identive|HID|Generic).*
-
-# Database Configuration  
-quarkus.datasource.db-kind=h2
-quarkus.datasource.jdbc.url=jdbc:h2:mem:demo;DB_CLOSE_DELAY=-1
+# Package Configuration
+quarkus.package.type=uber-jar
+quarkus.package.runner-suffix=-full
 
 # Logging Configuration
 quarkus.log.level=INFO
-quarkus.log.category."org.calypsonet".level=DEBUG
+quarkus.log.category."org.calypsonet.keyple".level=INFO
+quarkus.log.category."org.eclipse.keyple".level=INFO
 
-# CORS Configuration (for web clients)
-quarkus.http.cors=true
-quarkus.http.cors.origins=*
+# PC/SC Reader Filter (regex format)
+sam.pcsc.reader.filter=.*(Cherry TC|SCM Microsystems|Identive|HID|Generic).*
 ```
 
 ### Environment Variables
@@ -121,18 +117,7 @@ Override configuration using environment variables:
 
 ```bash
 export SAM_PCSC_READER_FILTER=".*Your Reader Name.*"
-export QUARKUS_HTTP_PORT=9090
 export QUARKUS_LOG_LEVEL=DEBUG
-```
-
-### SSL/TLS Configuration (Production)
-
-For production deployments, enable HTTPS:
-
-```properties
-quarkus.http.ssl-port=8443
-quarkus.http.ssl.certificate.key-store-file=server-keystore.jks
-quarkus.http.ssl.certificate.key-store-password=your-password
 ```
 
 ## Development Setup
@@ -213,27 +198,16 @@ The React-based dashboard provides:
 ### Card Operations
 
 ```http
-POST /api/cards/personalize
-POST /api/cards/load-contract
-GET  /api/cards/{cardId}/status
-GET  /api/cards/{cardId}/contracts
+GET  /card/export-card-selection-scenario
+POST /card/remote-plugin
+GET  /card/sam-status
 ```
 
-### System Management
+### Activity Monitoring
 
 ```http
-GET  /api/system/status
-GET  /api/system/readers
-POST /api/system/readers/reset
-GET  /api/system/health
-```
-
-### Monitoring
-
-```http
-GET  /api/monitoring/transactions
-GET  /api/monitoring/statistics
-GET  /api/monitoring/logs
+GET  /activity/events
+GET  /activity/events/wait
 ```
 
 ## Troubleshooting
@@ -251,8 +225,7 @@ GET  /api/monitoring/logs
 - Check SAM status in dashboard
 
 **"Port already in use"**
-- Change port with `-Dquarkus.http.port=9090`
-- Kill existing process: `lsof -ti:8080 | xargs kill -9`
+- Kill existing process: `lsof -ti:8080 | xargs kill -9` (Linux/macOS) or check Task Manager (Windows)
 
 **Web dashboard not loading**
 - Verify Node.js dependencies: `cd dashboard-app && npm install`
@@ -284,13 +257,11 @@ curl http://localhost:8080/q/health/live
 
 ### Production Checklist
 
-- [ ] Configure proper SSL certificates
-- [ ] Set production database (PostgreSQL/MySQL)
 - [ ] Configure logging to external system
 - [ ] Set up monitoring and alerting
-- [ ] Secure API endpoints with authentication
 - [ ] Configure firewall rules
-- [ ] Set up backup procedures
+- [ ] Secure physical access to SAM reader
+- [ ] Test PC/SC reader connectivity
 
 ### Docker Deployment
 
@@ -330,13 +301,6 @@ WantedBy=multi-user.target
 
 ```bash
 java -Xms512m -Xmx2g -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -jar server.jar
-```
-
-### Connection Pooling
-
-```properties
-quarkus.datasource.jdbc.max-size=20
-quarkus.datasource.jdbc.min-size=5
 ```
 
 ## Security Considerations

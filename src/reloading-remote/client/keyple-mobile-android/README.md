@@ -21,7 +21,7 @@ This Android application demonstrates distributed ticketing where all card opera
 - Android device with Android 8.0+ (API level 26+)
 - NFC capability for contactless card reading
 - Internet connectivity for server communication
-- Compatible Calypso cards (see [supported AIDs](../common-lib/README.md#supported-card-applications))
+- Compatible Calypso cards (see [supported AIDs](../../../common/README.md#supported-card-applications))
 
 ### Server Requirements
 - Running Keyple Demo Server with SAM integration
@@ -90,7 +90,7 @@ The app supports multiple NFC reader types:
 ### Screen Flow
 
 ```
-Main Screen → Card Reader → Card Summary → Select Tickets → Checkout → Payment → Charge → Result
+Main Screen → Card Reader → Card Summary → Select Tickets → Checkout → Payment → Reload → Result
 ```
 
 ### Detailed Screen Guide
@@ -129,8 +129,8 @@ Main Screen → Card Reader → Card Summary → Select Tickets → Checkout →
 - **Payment Validated (`PaymentValidatedActivity`)**: Confirms payment success
 
 **Contract Loading**
-- **Charge (`ChargeActivity`)**: Loads selected contract onto card
-- **Charge Result (`ChargeResultActivity`)**: Shows success/failure status
+- **Reload (`ReloadActivity`)**: Loads selected contract onto card
+- **Reload Result (`ReloadResultActivity`)**: Shows success/failure status
 
 ## Technical Architecture
 
@@ -147,7 +147,8 @@ Main Screen → Card Reader → Card Summary → Select Tickets → Checkout →
 - Abstracts reader-specific operations
 - Provides consistent API for different reader types
 
-**CardReaderObserver**
+**AbstractCardActivity**
+- Base class for card-related activities
 - Implements `CardReaderObserverSpi` from Keyple middleware
 - Responds to card insertion/removal events
 - Triggers appropriate business logic for card processing
@@ -191,9 +192,8 @@ The application supports multiple reader plugins:
 ### Development Configuration
 
 **Debug Settings**:
-- Enable debug logging in `application.properties`
 - Use test server URL for development
-- Mock server responses for offline development
+- Enable verbose logging for debugging
 
 **Testing**:
 - Unit tests for business logic components
@@ -245,10 +245,7 @@ Enable detailed logging:
 Test server connection:
 ```bash
 # From development machine
-curl http://your-server:8080/api/system/status
-
-# Expected response
-{"status": "UP", "readers": [...]}
+curl http://your-server:8080/card/sam-status
 ```
 
 ## Known Limitations

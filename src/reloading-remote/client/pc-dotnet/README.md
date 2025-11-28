@@ -60,105 +60,27 @@ dotnet run
 
 ```json
 {
-  "Server": {
-    "BaseUrl": "http://localhost:8080",
-    "Timeout": 30000,
-    "RetryAttempts": 3
+  "server": {
+    "host": "http://localhost",
+    "port": 8080,
+    "endpoint": "card/remote-plugin"
   },
-  "PcscReader": {
-    "ReaderNameFilter": ".*",
-    "ConnectionTimeout": 5000,
-    "ReconnectAttempts": 2
-  },
-  "CardOperations": {
-    "DefaultValidationAmount": 1,
-    "MaxContractSlots": 4,
-    "SupportedAids": [
-      "A000000291FF9101",
-      "315449432E49434131",
-      "315449432E49434133",
-      "A0000004040125090101"
-    ]
-  },
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "System": "Warning",
-      "Microsoft": "Warning"
-    }
+  "reader": {
+    "name": "SpringCard Puck Contactless 0"
   }
 }
 ```
 
-### PC/SC Reader Configuration
-
-The application auto-detects available PC/SC readers. To specify a particular reader:
-
-```json
-{
-  "PcscReader": {
-    "ReaderNameFilter": "ACS ACR122U",
-    "PreferredReader": "ACS ACR122U PICC Interface"
-  }
-}
-```
+Configure the server connection and specify your PC/SC reader name.
 
 ## Usage
 
-### Command Line Interface
-
-The application provides a simple command-line interface:
-
-```
-Keyple .NET Demo Client
-======================
-
-1. List available readers
-2. Read card content
-3. Load contract
-4. Personalize card
-5. Exit
-
-Select option:
-```
-
-### Typical Workflow
+### Workflow
 
 1. **Start Application**: Launch `App.exe`
-2. **Reader Detection**: Application automatically detects PC/SC readers
-3. **Present Card**: Place card on reader when prompted
-4. **View Contracts**: Existing contracts are displayed with status
-5. **Add Units**: Enter number of units to add to multi-trip contract
-6. **Present Card Again**: Card is updated with new contract data
-7. **Confirmation**: Success/failure message is displayed
-
-### Example Session
-
-```
-Starting Keyple .NET Client...
-✓ Server connection established
-✓ Found PC/SC reader: ACS ACR122U PICC Interface
-
-Please present your card...
-
-Card detected: A000000291FF9101
-Environment: Valid until 2030-12-31
-
-Existing contracts:
-  Contract 1: Multi-trip ticket (15 trips remaining)
-  Contract 2: Empty
-  Contract 3: Empty
-  Contract 4: Empty
-
-Enter number of units to add to multi-trip contract: 10
-
-Please present the card again to update...
-
-✓ Contract updated successfully!
-New balance: 25 trips
-
-Operation completed. Press any key to continue...
-```
+2. **Wait for Card**: Application waits for a card to be presented
+3. **Card Processing**: Card is read and processed through server
+4. **Result Display**: Success or error message is displayed
 
 ## Technical Architecture
 
@@ -192,38 +114,35 @@ The project follows a clean hexagonal architecture pattern:
 ### Key Components
 
 #### Application Layer (`/application`)
-- **App.cs**: Main application entry point and CLI handling
-- **Program.cs**: Application bootstrapping and dependency injection
-- **CommandHandler.cs**: Command processing and user interaction
+- **Application.cs**: Main application logic and card processing workflow
+- **Program.cs**: Application bootstrapping and service configuration
 
 #### Domain Layer (`/domain`)
 
 **API Interfaces** (`/domain/api`):
-- `ICardService`: Core business operations
-- `ITicketingService`: High-level ticketing workflows
-- `IContractManager`: Contract manipulation logic
+- `MainServiceApi`: Main service interface for card operations
+- `MainServiceApiAdapter`: Service adapter implementation
+- `MainServiceApiProvider`: Service provider
 
 **SPI Interfaces** (`/domain/spi`):
-- `ICardReader`: Card reader abstraction
-- `IServerConnector`: Server communication interface
-- `IConfigurationProvider`: Configuration management
+- `ReaderSpi`: Card reader abstraction
+- `ServerSpi`: Server communication interface
 
 **Data Models** (`/domain/data`):
-- `CardData`: Card information and status
-- `ContractInfo`: Contract details and metadata
-- `ServerRequest/Response`: Communication DTOs
+- `MessageDto`: Message data transfer object
+- `CardRequest/CardResponse`: Card operation DTOs
+- `CardSelectionRequest/CardSelectionResponse`: Card selection DTOs
+- `ApduRequest/ApduResponse`: APDU command/response DTOs
 
 #### Infrastructure Layer (`/infrastructure`)
 
 **Reader Implementation**:
-- **PcscCardReader**: Direct PC/SC API integration
-- **CardConnectionManager**: Connection lifecycle management
-- **ApduCommandBuilder**: Low-level card command construction
+- **PcscReaderSpiAdapter**: PC/SC reader adapter
+- **PcscReaderSpiProvider**: PC/SC reader provider
 
 **Server Implementation**:
-- **HttpServerConnector**: RESTful API client using HttpClient
-- **JsonApiClient**: Keyple Distributed JSON API implementation
-- **AuthenticationHandler**: Server authentication (if required)
+- **ServerSpiAdapter**: Server communication adapter
+- **ServerSpiProvider**: Server communication provider
 
 ### Keyple Distributed JSON API Integration
 
@@ -254,27 +173,13 @@ The client implements the Keyple Distributed JSON API without the full SDK:
 
 ### Error Handling
 
-Comprehensive error handling across all layers:
+The application handles various exceptions:
 
-```csharp
-try
-{
-    var result = await cardService.LoadContractAsync(contractData);
-    Console.WriteLine($"Success: {result.Message}");
-}
-catch (CardReaderException ex)
-{
-    Console.WriteLine($"Reader error: {ex.Message}");
-}
-catch (ServerCommunicationException ex)
-{
-    Console.WriteLine($"Server error: {ex.Message}");
-}
-catch (InvalidCardDataException ex)
-{
-    Console.WriteLine($"Card data error: {ex.Message}");
-}
-```
+- `ReaderIOException`: Reader communication errors
+- `CardIOException`: Card communication errors
+- `ServerIOException`: Server communication errors
+- `ReaderNotFoundException`: Reader not found
+- `UnexpectedStatusWordException`: Unexpected card response
 
 ## Development
 
@@ -286,17 +191,15 @@ pc-dotnet/
 ├── appsettings.json                    # Configuration
 ├── Program.cs                          # Entry point
 ├── application/
-│   ├── App.cs                         # Main application logic
-│   └── CommandHandlers/               # CLI command handlers
+│   └── Application.cs                 # Main application logic
 ├── domain/
-│   ├── api/                          # Business interfaces
-│   ├── spi/                          # Infrastructure interfaces
+│   ├── api/                          # API interfaces and implementations
+│   ├── spi/                          # SPI interfaces
 │   ├── data/                         # Data models and DTOs
-│   └── utils/                        # Domain utilities
+│   └── utils/                        # Utilities (HexUtil, JsonConverters)
 └── infrastructure/
-    ├── reader/                       # PC/SC reader implementation
-    ├── server/                       # HTTP server client
-    └── config/                       # Configuration providers
+    ├── pcscreader/                   # PC/SC reader implementation
+    └── server/                       # Server communication implementation
 ```
 
 ### Building and Testing
@@ -315,34 +218,6 @@ dotnet test
 dotnet publish -c Release -r win-x64 --self-contained
 ```
 
-### Adding New Features
-
-To extend the client with additional functionality:
-
-1. **Define Domain Interface**: Add interface in `/domain/api`
-2. **Implement Infrastructure**: Create implementation in `/infrastructure`
-3. **Update Application**: Modify CLI handlers in `/application`
-4. **Configure DI**: Register services in `Program.cs`
-
-### Custom Reader Integration
-
-To support additional card readers:
-
-```csharp
-public class CustomCardReader : ICardReader
-{
-    public async Task<CardData> ReadCardAsync(CancellationToken cancellationToken)
-    {
-        // Custom reader implementation
-        // Return standardized CardData object
-    }
-
-    public async Task WriteCardAsync(CardData cardData, CancellationToken cancellationToken)
-    {
-        // Custom write implementation
-    }
-}
-```
 
 ## Troubleshooting
 
@@ -371,36 +246,6 @@ public class CustomCardReader : ICardReader
 - Try different cards to isolate issue
 - Enable debug logging to see APDU exchanges
 
-### Debug Configuration
-
-Enable detailed logging:
-
-```json
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Debug",
-      "Infrastructure.Reader": "Trace",
-      "Infrastructure.Server": "Debug"
-    }
-  }
-}
-```
-
-### Testing Without Hardware
-
-Mock implementations for testing:
-
-```csharp
-// Program.cs
-#if DEBUG
-services.AddSingleton<ICardReader, MockCardReader>();
-services.AddSingleton<IServerConnector, MockServerConnector>();
-#else
-services.AddSingleton<ICardReader, PcscCardReader>();
-services.AddSingleton<IServerConnector, HttpServerConnector>();
-#endif
-```
 
 ## Performance Considerations
 

@@ -4,11 +4,13 @@
 [![Java](https://img.shields.io/badge/java-8%2B-orange.svg)](https://openjdk.java.net/)
 [![Android](https://img.shields.io/badge/android-8.0%2B-green.svg)](https://developer.android.com/)
 
-A comprehensive open source ticketing ecosystem demonstrating the [Eclipse Keyple middleware](https://keyple.org) in real-world use cases. This project is provided by the [Calypso Networks Association](https://calypsonet.org) and serves as a foundation for building contactless card and NFC smartphone-based ticketing systems.
+A comprehensive open source ticketing ecosystem demonstrating the [Eclipse Keyple middleware](https://keyple.org) in
+real-world use cases. This project is provided by the [Calypso Networks Association](https://calypsonet.org) and serves
+as a foundation for building contactless card and NFC smartphone-based ticketing systems.
 
 ## Overview
-
-The Keyple Demo Ecosystem consists of three interconnected applications that simulate a complete public transportation ticketing workflow:
+The Keyple Demo Ecosystem consists of three interconnected applications that simulate a complete public transportation
+ticketing workflow:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -28,24 +30,31 @@ The Keyple Demo Ecosystem consists of three interconnected applications that sim
 ## Supported Card Technologies
 
 ### Calypso Cards
+
 Standard Calypso contactless cards supporting:
+
 - Secure sessions with SAM authentication
 - Multiple contracts (1-4 depending on product type)
 - Cryptographic security operations
 - Full transaction traceability
 
 ### Storage Cards
+
 Simple storage cards featuring:
+
 - Basic read/write operations without SAM requirements
 - Single contract storage
 - Simplified validation procedures
 - **Note**: This demo implementation is intentionally basic for demonstration purposes
 
-**Security Consideration**: Storage Card implementations in this demo lack production-level security mechanisms. Production deployments should implement appropriate cryptographic protections, signature verification, and secure key management.
+**Security Consideration**: Storage Card implementations in this demo lack production-level security mechanisms.
+Production deployments should implement appropriate cryptographic protections, signature verification, and secure key
+management.
 
 ## Architecture
 
 ### Distributed Client/Server Model
+
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
 │   Mobile/Web    │     │   Java Server   │     │      SAM        │
@@ -59,12 +68,14 @@ Simple storage cards featuring:
 ### Supported Platforms
 
 **Client Applications:**
+
 - Android 8.0+ (Native and KMP)
 - iOS 14+ (KMP)
 - Windows Desktop (.NET 7.0)
 - JVM Desktop (Kotlin Multiplatform)
 
 **Server Requirements:**
+
 - Java 8+ with PC/SC reader
 - SAM (Security Access Module) for Calypso cards
 - Web dashboard for monitoring
@@ -72,6 +83,7 @@ Simple storage cards featuring:
 ## Quick Start
 
 ### 1. Server Setup
+
 ```bash
 # Download latest server release
 wget https://github.com/calypsonet/keyple-demo-ticketing/releases/latest
@@ -83,12 +95,15 @@ java -jar kdt-reloading-server-X.Y.Z-full.jar
 ```
 
 ### 2. Card Personalization
+
 Use any client application's personalization feature to initialize cards with:
+
 - Environment data (validity dates, application number)
 - Clean contract slots
 - Reset event logs and counters
 
 ### 3. Workflow Execution
+
 1. **Load Contracts**: Use Reload Demo to add Season Pass or Multi-trip tickets
 2. **Validate Entry**: Present card to Validation Demo terminal
 3. **Control Check**: Verify card status using Control Demo
@@ -96,12 +111,14 @@ Use any client application's personalization feature to initialize cards with:
 ## Supported Hardware
 
 ### Tested Terminals
+
 - **Famoco FX205** - Enterprise NFC terminal
 - **Coppernic C-One 2** - Rugged Android terminal
 - **Standard NFC Smartphones** - Consumer devices
 - **PC/SC Readers** - Desktop integration
 
 ### Proprietary Plugins (Available on Request)
+
 - Bluebird EF501
 - Flowbird Axio 2
 
@@ -121,12 +138,14 @@ See [Common Library Documentation](src/common/README.md) for detailed specificat
 ## Development
 
 ### Prerequisites
+
 - JDK 8+ for server components
 - Android Studio for mobile development
 - Node.js for web dashboard
 - PC/SC compatible readers for testing
 
 ### Project Structure
+
 ```
 keyple-demo-ticketing/
 ├── README.md                               # This file
@@ -142,20 +161,15 @@ keyple-demo-ticketing/
 ```
 
 ### Building from Source
-```bash
-# Build all components
-./gradlew build
 
-# Run tests
-./gradlew test
-
-# Start development server
-./gradlew startServer
-```
+Each module (e.g., `src/common`, `src/reloading-remote/server`, `src/validation`, `src/control`) is an independent
+project and should be built using the tools and instructions provided within its own directory. For Gradle-based
+projects, navigate to the module's directory and use its `./gradlew` wrapper.
 
 ## Card Application Identifiers
 
 Compatible Calypso card AIDs:
+
 - `A000000291FF9101` - Keyple Generic test card
 - `315449432E49434131` - CD Light/GTML Compatibility
 - `315449432E49434133` - Calypso Light

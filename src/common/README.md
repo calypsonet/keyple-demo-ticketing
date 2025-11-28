@@ -8,10 +8,10 @@ for building interoperable ticketing applications.
 ## Overview
 
 This library defines the common elements used across the Keyple Demo ecosystem:
-- Data model structures (Environment, Event, Contract, Counter)
-- Intercode parser and generator utilities
+- Data model structures (EnvironmentHolderStructure, EventStructure, ContractStructure)
+- Structure parser utilities
 - Priority codes and enumeration types
-- Date/time formatting utilities
+- Date/time compact format types
 - Card application identifiers
 
 ## Used By
@@ -73,13 +73,13 @@ Defines transportation titles and their properties.
 | ContractAuthenticator   |   24 | Security authenticator               | Authenticator (Int) | Optional  | 
 | ContractPadding         |   96 | Padding (bits to 0)                  |       Binary        | Optional  | 
 
-### Counter Structure
+### Counter Field
 
-Tracks usage for multi-trip and stored value contracts.
+The `ContractStructure` includes a `counterValue` field for tracking usage:
 
-| Field Name   | Bits | Description     | Type |  Status   |
-|:-------------|-----:|:----------------|:----:|:---------:|
-| CounterValue |   24 | Number of trips | Int  | Mandatory | 
+| Field Name   | Bits | Description     | Type |  Status  |
+|:-------------|-----:|:----------------|:----:|:---------|
+| counterValue |   24 | Number of trips | Int  | Optional | 
 
 ## Data Types
 
@@ -154,56 +154,67 @@ Loads new transportation titles or extends existing contracts:
 
 ### Environment Structure Creation
 
-```java
-Environment env = new Environment();
-env.setEnvVersionNumber(VersionNumber.CURRENT_VERSION);
-env.setEnvApplicationNumber(generateUniqueNumber());
-env.setEnvIssuingDate(DateUtils.toDateCompact(LocalDate.now()));
-env.setEnvEndDate(DateUtils.toDateCompact(LocalDate.now().plusYears(6)));
-```
-
-### Contract Validation
-
-```java
-Contract contract = parseContractFromCard(cardData);
-if (contract.getContractVersionNumber() != VersionNumber.CURRENT_VERSION) {
-    throw new InvalidCardException("Unsupported contract version");
-}
-
-if (DateUtils.fromDateCompact(contract.getContractValidityEndDate()).isBefore(LocalDate.now())) {
-    contract.setPriority(PriorityCode.EXPIRED);
-}
+```kotlin
+val env = EnvironmentHolderStructure(
+    envVersionNumber = VersionNumber.CURRENT_VERSION,
+    envApplicationNumber = generateUniqueNumber(),
+    envIssuingDate = DateCompact(LocalDate.now()),
+    envEndDate = DateCompact(LocalDate.now().plusYears(6)),
+    holderCompany = null,
+    holderIdNumber = null
+)
 ```
 
 ### Event Creation
 
-```java
-Event event = new Event();
-event.setEventVersionNumber(VersionNumber.CURRENT_VERSION);
-event.setEventDateStamp(DateUtils.toDateCompact(LocalDate.now()));
-event.setEventTimeStamp(TimeUtils.toTimeCompact(LocalTime.now()));
-event.setEventLocation(validatorLocationId);
-event.setEventContractUsed(selectedContractIndex);
+```kotlin
+val event = EventStructure(
+    eventVersionNumber = VersionNumber.CURRENT_VERSION,
+    eventDateStamp = DateCompact(LocalDate.now()),
+    eventTimeStamp = TimeCompact(LocalDateTime.now()),
+    eventLocation = validatorLocationId,
+    eventContractUsed = selectedContractIndex,
+    contractPriority1 = PriorityCode.FORBIDDEN,
+    contractPriority2 = PriorityCode.FORBIDDEN,
+    contractPriority3 = PriorityCode.FORBIDDEN,
+    contractPriority4 = PriorityCode.FORBIDDEN
+)
 ```
 
-## Utility Classes
+### Working with Compact Date/Time
 
-### DateUtils
+```kotlin
+// Create compact date from LocalDate
+val dateCompact = DateCompact(LocalDate.now())
+val dateValue: Int = dateCompact.value
 
-- `toDateCompact(LocalDate)` - Convert to compact date format
-- `fromDateCompact(int)` - Convert from compact date format
-- Date arithmetic and validation methods
+// Convert back to LocalDate
+val localDate: LocalDate = dateCompact.getDate()
 
-### TimeUtils
+// Create compact time from LocalDateTime
+val timeCompact = TimeCompact(LocalDateTime.now())
+val timeValue: Int = timeCompact.value
+```
 
-- `toTimeCompact(LocalTime)` - Convert to compact time format
-- `fromTimeCompact(int)` - Convert from compact time format
+## Structure Parsers
 
-### IntercodeParsers
+### EnvironmentHolderStructureParser
 
-- Binary data packing and unpacking
-- Structure serialization utilities
-- Error handling and validation
+- Parses binary data to `EnvironmentHolderStructure`
+- Generates binary data from structure
+- Implements `Parser<EnvironmentHolderStructure>` interface
+
+### EventStructureParser
+
+- Parses binary data to `EventStructure`
+- Generates binary data from structure
+- Implements `Parser<EventStructure>` interface
+
+### ContractStructureParser
+
+- Parses binary data to `ContractStructure`
+- Generates binary data from structure
+- Implements `Parser<ContractStructure>` interface
 
 ## Version Compatibility
 

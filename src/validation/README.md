@@ -12,7 +12,7 @@ for validation.
 
 ## Overview
 
-This Android application simulates validation terminals found at transportation network entry points (metro gates, bus boarding, etc.). It validates contracts loaded by the [Reload Demo](../client/) and creates validation events that can be later verified by the [Control Demo](../control-app/).
+This Android application simulates validation terminals found at transportation network entry points (metro gates, bus boarding, etc.). It validates contracts loaded by the [Reload Demo](../reloading-remote/) and creates validation events that can be later verified by the [Control Demo](../control/).
 
 **Role in Ecosystem**: Second step in the ticketing workflow - validates loaded contracts and grants/denies access to transportation networks.
 
@@ -294,22 +294,6 @@ The validation procedure processes contracts in priority order:
 - **Features**: Transportation-specific design, multiple payment methods
 - **Access**: Contact [CNA](https://calypsonet.org/contact-us/) for plugin
 
-### Plugin Configuration
-
-Each plugin requires specific initialization:
-
-```kotlin
-// Example: Famoco plugin initialization
-val famocoPlugin = KeyplePluginExtensionFactory.createPlugin(FamocoPluginFactory())
-val samReader = famocoPlugin.getReader("SAM_READER_NAME")
-val nfcReader = famocoPlugin.getReader("NFC_READER_NAME")
-
-// Configure card selection
-val cardSelectionManager = CardSelectionManagerBuilder()
-    .setMultipleSelectionMode()
-    .build()
-```
-
 ## Development
 
 ### Project Structure
@@ -373,18 +357,6 @@ validation/app/
 - Check hardware drivers are installed
 - Verify device compatibility with selected plugin
 - Review device selection matches actual hardware
-
-### Debug Mode
-
-Enable comprehensive logging:
-
-1. **Settings** → **Enable Debug Mode**
-2. **View logs** via Android Studio logcat
-3. **Key log categories**:
-- `CardReader`: Hardware communication
-- `TicketingService`: Business logic flow
-- `ValidationProcedure`: Card processing steps
-- `SAMManager`: Security module operations
 
 ### Performance Optimization
 
