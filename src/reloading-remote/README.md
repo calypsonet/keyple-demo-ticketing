@@ -20,7 +20,7 @@ using the Keyple middleware.
 ## Keyple Demos
 
 This demo is part of a set of three demos:
-* [Keyple Reload Demo](../reloading-remote)
+* Keyple Reload Demo (this project)
 * [Keyple Validation Demo](../validation)
 * [Keyple Control Demo](../control)
 

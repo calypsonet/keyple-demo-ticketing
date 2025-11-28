@@ -85,62 +85,12 @@ cd keyple-demo-ticketing/src/reloading-remote/client/interop-mobile-multiplatfor
 
 ## Configuration
 
-### Cross-Platform Settings
+### Application Configuration
 
-The application uses shared configuration across platforms:
-
-```kotlin
-// commonMain/kotlin/Config.kt
-object AppConfig {
-    const val SERVER_BASE_URL = "http://192.168.1.100:8080"
-    const val CONNECTION_TIMEOUT = 30_000L
-    const val READ_TIMEOUT = 60_000L
-    
-    val SUPPORTED_AIDS = listOf(
-        "A000000291FF9101",        // Keyple Generic
-        "315449432E49434131",      // CD Light GTML
-        "315449432E49434133",      // Calypso Light
-        "A0000004040125090101"     // Navigo IDF
-    )
-}
-```
-
-### Platform-Specific Configuration
-
-#### Android (`androidMain`)
-```kotlin
-// NFC configuration
-object AndroidNfcConfig {
-    const val DISCOVERY_TIMEOUT = 10_000L
-    const val PRESENCE_CHECK_DELAY = 500L
-    val SUPPORTED_TECHNOLOGIES = arrayOf(
-        NfcA::class.java.name,
-        IsoDep::class.java.name
-    )
-}
-```
-
-#### iOS (`iosMain`)
-```kotlin
-// Core NFC configuration
-object IosNfcConfig {
-    const val SESSION_TIMEOUT = 60.0
-    const val READER_SESSION_INVALIDATION_ERROR_MESSAGE = "Session ended"
-    val ISO14443_POLL_REQUEST_OPTIONS = mapOf(
-        "ISO14443PollingRequestCodeSystemCode" to false
-    )
-}
-```
-
-#### Desktop (`jvmMain`)
-```kotlin  
-// PC/SC configuration
-object DesktopPcscConfig {
-    const val READER_CONNECTION_TIMEOUT = 5_000L
-    const val CARD_DETECTION_POLLING_INTERVAL = 500L
-    val DEFAULT_READER_FILTER = ".*"
-}
-```
+The application configuration is managed through:
+- Server settings UI for configuring server URL
+- Platform-specific datastore for persisting settings
+- Shared network client for server communication
 
 ## Usage
 
@@ -214,134 +164,39 @@ The application uses Compose Multiplatform for consistent UI across all platform
 ```
 composeApp/src/
 ├── commonMain/                    # Shared business logic
-│   ├── kotlin/
-│   │   ├── domain/               # Domain models and interfaces
-│   │   ├── data/                 # Data layer implementation
-│   │   ├── ui/                   # Compose UI components
-│   │   └── utils/                # Common utilities
-│   └── resources/                # Shared resources
+│   └── kotlin/
+│       ├── card/                 # Card content screens
+│       ├── nfc/                  # NFC operation screens
+│       ├── network/              # Server communication
+│       ├── settings/             # Settings screens
+│       └── ui/                   # Common UI components
 ├── androidMain/                  # Android-specific code
-│   └── kotlin/
-│       ├── platform/             # Android NFC implementation
-│       └── di/                   # Android dependency injection
-├── iosMain/                      # iOS-specific code  
-│   └── kotlin/
-│       ├── platform/             # Core NFC implementation
-│       └── di/                   # iOS dependency injection
-├── jvmMain/                      # Desktop-specific code
-│   └── kotlin/
-│       ├── platform/             # PC/SC implementation
-│       └── di/                   # Desktop dependency injection
-└── nativeMain/                   # Native shared code (if any)
+├── iosMain/                      # iOS-specific code
+└── desktopMain/                  # Desktop-specific code
 ```
 
 ### Key Components
 
 #### Shared Business Logic (`commonMain`)
 
-**Domain Layer**:
-```kotlin
-interface CardRepository {
-    suspend fun readCard(): CardData
-    suspend fun writeContract(contract: ContractData): Result<Unit>
-}
+**Data Models**:
+- `CardRepository` - Manages card data (serial number, contracts)
+- `ContractInfo` - Contract information with title, description, and validity
+- `KeypleService` - Handles Keyple Interop API communication
+- `SimpleHttpNetworkClient` - HTTP client for server communication
 
-interface ServerService {
-    suspend fun getAvailableContracts(cardId: String): List<ContractOption>
-    suspend fun processContractLoading(request: LoadingRequest): LoadingResult
-}
-```
-
-**Data Layer**:
-```kotlin
-@Serializable
-data class CardData(
-    val serialNumber: String,
-    val applicationId: String,
-    val contracts: List<Contract>,
-    val environment: Environment
-)
-
-@Serializable
-data class Contract(
-    val index: Int,
-    val type: ContractType,
-    val validityEnd: LocalDate,
-    val remainingValue: Int?
-)
-```
+**UI Components**:
+- `ReadCardScreen` - Screen for reading card content
+- `WriteCardScreen` - Screen for loading contracts
+- `PersonalizeCardScreen` - Screen for card initialization
+- `ServerConfigScreen` - Server configuration UI
 
 #### Platform-Specific Implementations
 
-**Android NFC** (`androidMain`):
-```kotlin
-class AndroidNfcCardRepository : CardRepository {
-    private val nfcAdapter: NfcAdapter = NfcAdapter.getDefaultAdapter(context)
-    
-    override suspend fun readCard(): CardData {
-        return withContext(Dispatchers.IO) {
-            // Android NFC implementation using Keyple Android NFC plugin
-            nfcManager.processCardDetection()
-        }
-    }
-}
-```
-
-**iOS Core NFC** (`iosMain`):
-```kotlin
-class IosNfcCardRepository : CardRepository {
-    override suspend fun readCard(): CardData {
-        return suspendCoroutine { continuation ->
-            // Core NFC implementation using Keyple iOS NFC plugin
-            nfcManager.startSession { result ->
-                continuation.resume(result)
-            }
-        }
-    }
-}
-```
-
-**Desktop PC/SC** (`jvmMain`):
-```kotlin
-class DesktopPcscCardRepository(private val readerFilter: String) : CardRepository {
-    private val pcscPlugin = PcscPluginFactory.createPlugin()
-    
-    override suspend fun readCard(): CardData {
-        return withContext(Dispatchers.IO) {
-            // PC/SC implementation using Keyple PC/SC plugin
-            pcscManager.connectToCard(readerFilter)
-        }
-    }
-}
-```
-
-### Dependency Injection
-
-Using Koin for multiplatform dependency injection:
-
-```kotlin
-// commonMain
-val commonModule = module {
-    single<ServerService> { ServerServiceImpl(get()) }
-    single<CardValidator> { CardValidatorImpl() }
-}
-
-// Platform-specific modules
-val androidModule = module {
-    single<CardRepository> { AndroidNfcCardRepository(androidContext()) }
-    single<NetworkManager> { AndroidNetworkManager(get()) }
-}
-
-val iosModule = module {
-    single<CardRepository> { IosNfcCardRepository() }
-    single<NetworkManager> { IosNetworkManager() }
-}
-
-val desktopModule = module {
-    single<CardRepository> { DesktopPcscCardRepository(getProperty("readerFilter")) }
-    single<NetworkManager> { DesktopNetworkManager() }
-}
-```
+Each platform provides:
+- NFC/PC/SC reader integration through Keyple libraries
+- Datastore implementation for settings persistence
+- Platform-specific UI adaptations
 
 ## Development
 
@@ -387,35 +242,6 @@ val desktopModule = module {
 ./gradlew :composeApp:packageDistributionForCurrentOS
 ```
 
-### Adding New Platforms
-
-To extend support to additional platforms:
-
-1. **Create platform source set**:
-   ```kotlin
-   // build.gradle.kts
-   kotlin {
-       tvos() // Example: Apple TV
-       watchos() // Example: Apple Watch
-   }
-   ```
-
-2. **Implement platform interfaces**:
-   ```kotlin
-   // tvosMain/kotlin/platform/TvosPlatformService.kt
-   class TvosPlatformService : PlatformService {
-       override fun getCardReader(): CardRepository {
-           // Platform-specific implementation
-       }
-   }
-   ```
-
-3. **Configure platform module**:
-   ```kotlin
-   val tvosModule = module {
-       single<CardRepository> { TvosCardRepository() }
-   }
-   ```
 
 ## Troubleshooting
 
@@ -447,23 +273,6 @@ To extend support to additional platforms:
 - **PC/SC service not available**: Start PC/SC daemon (`pcscd` on Linux)
 - **Reader not detected**: Check USB connection and driver installation
 - **Permission denied**: Run with appropriate user permissions
-
-### Debug Configuration
-
-Enable platform-specific logging:
-
-```kotlin
-// commonMain
-object Logger {
-    fun debug(tag: String, message: String) {
-        when (Platform.current) {
-            is Platform.Android -> android.util.Log.d(tag, message)
-            is Platform.Ios -> NSLog("$tag: $message")
-            is Platform.Desktop -> println("[$tag] $message")
-        }
-    }
-}
-```
 
 ## Performance Optimization
 

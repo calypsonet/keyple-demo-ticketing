@@ -1,6 +1,6 @@
 # Keyple Control Demo
 
-[![Android](https://img.shields.io/badge/android-7.0%2B-green.svg)](https://developer.android.com/)
+[![Android](https://img.shields.io/badge/android-8.0%2B-green.svg)](https://developer.android.com/)
 [![Release](https://img.shields.io/github/v/release/calypsonet/keyple-demo-ticketing)](https://github.com/calypsonet/keyple-demo-ticketing/releases)
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../LICENSE)
 
@@ -10,7 +10,7 @@ Android control terminal application for post-validation inspection of transport
 
 ## Overview
 
-This Android application simulates inspection terminals used by transportation authority personnel to verify that passengers have properly validated their travel. It analyzes validation events created by the [Validation Demo](../validation-app/) and provides comprehensive contract status information for compliance checking.
+This Android application simulates inspection terminals used by transportation authority personnel to verify that passengers have properly validated their travel. It analyzes validation events created by the [Validation Demo](../validation/) and provides comprehensive contract status information for compliance checking.
 
 **Role in Ecosystem**: Final step in the ticketing workflow - inspects cards after validation to verify proper usage and contract compliance.
 
@@ -219,14 +219,6 @@ Device Selection → Settings → Home → Reader Activity → Control Results
   - Error handling and recovery procedures
   - Status monitoring for operational reliability
 
-**CardReaderObserver**
-- **Purpose**: Handles card reader events from Keyple middleware
-- **Event Processing**:
-  - `CARD_INSERTED`: Initiates control procedure
-  - `CARD_MATCHED`: Confirms supported card type
-  - `CARD_REMOVED`: Cleans up resources
-  - `READER_FAILURE`: Handles hardware errors gracefully
-
 **Card Repository Implementations**
 
 **CalypsoCardRepository**
@@ -324,29 +316,6 @@ Without SAM:
 - **Wider Compatibility**: Works with any NFC-enabled Android device
 - **Cost Effective**: No specialized hardware requirements
 
-### Plugin Configuration Examples
-
-```kotlin
-// Famoco with SAM configuration
-val famocoPlugin = KeyplePluginExtensionFactory.createPlugin(FamocoPluginFactory())
-val samReader = famocoPlugin.getReader("Famoco SAM Reader")
-val nfcReader = famocoPlugin.getReader("Famoco NFC Reader")
-
-// Configure for secure operations
-if (samReader.isCardPresent()) {
-    ticketingService.setSecureSessionMode(true)
-    logger.info("SAM detected - secure operations enabled")
-}
-
-// Standard NFC configuration  
-val nfcPlugin = KeyplePluginExtensionFactory.createPlugin(AndroidNfcPluginFactory())
-val reader = nfcPlugin.getReader("Android NFC Reader")
-
-// Configure for basic operations
-ticketingService.setSecureSessionMode(false)
-logger.info("NFC-only mode - basic operations enabled")
-```
-
 ## Development
 
 ### Project Architecture
@@ -354,32 +323,20 @@ logger.info("NFC-only mode - basic operations enabled")
 ```
 control/app/
 ├── src/main/
-│   ├── java/org/calypsonet/keyple/demo/control/
-│   │   ├── activities/          # Android UI activities
-│   │   │   ├── CardContentActivity.java     # Valid card display
-│   │   │   ├── DeviceSelectionActivity.java # Hardware selection
-│   │   │   ├── HomeActivity.java            # Inspector dashboard
-│   │   │   ├── NetworkInvalidActivity.java  # Invalid card display
-│   │   │   ├── ReaderActivity.java          # Card reading interface
-│   │   │   └── SettingsActivity.java        # Configuration
-│   │   ├── data/               # Data models and persistence
-│   │   │   ├── model/          # Data transfer objects
-│   │   │   └── repository/     # Data access implementations
-│   │   ├── domain/             # Business logic interfaces
-│   │   │   ├── model/          # Domain entities
-│   │   │   └── repository/     # Repository contracts
-│   │   ├── reader/             # Card reader management
-│   │   │   ├── CalypsoCardRepository.java   # Calypso card operations
-│   │   │   ├── StorageCardRepository.java   # Storage card operations
-│   │   │   └── ReaderRepository.java        # Reader abstraction
-│   │   ├── ticketing/          # Core business logic
-│   │   │   ├── TicketingService.java        # Main orchestrator
-│   │   │   └── procedure/      # Control procedures
-│   │   └── ui/                 # UI utilities and components
-│   ├── res/                    # Android resources (layouts, strings, etc.)
-│   └── AndroidManifest.xml     # Application configuration
-├── build.gradle                # Build configuration and dependencies
-└── proguard-rules.pro         # Code obfuscation rules for release
+│   ├── kotlin/org/calypsonet/keyple/demo/control/
+│   │   ├── data/                            # Data layer
+│   │   │   └── model/                       # Data models
+│   │   │       └── mappers/                 # Data mappers
+│   │   ├── di/                              # Dependency injection
+│   │   │   └── scope/                       # DI scopes
+│   │   ├── domain/                          # Business logic
+│   │   └── ui/                              # UI layer
+│   │       ├── cardcontent/                 # Card display components
+│   │       └── deviceselection/             # Device selectionon
+│   ├── res/                                 # Android resources
+│   └── AndroidManifest.xml                  # Application configuration
+├── build.gradle                             # Build configuration
+└── proguard-rules.pro                      # Code obfuscation rules
 ```
 
 ### Building and Testing
@@ -390,65 +347,6 @@ control/app/
 
 # Build debug version
 ./gradlew assembleDebug
-```
-
-### Testing Strategy
-
-#### Unit Tests
-```java
-@Test
-public void testContractValidation() {
-    // Test contract validity checking logic
-    Contract contract = createTestContract();
-    boolean isValid = contractValidator.isValid(contract, LocalDate.now());
-    assertTrue("Contract should be valid", isValid);
-}
-
-@Test  
-public void testEventAnalysis() {
-    // Test validation event analysis
-    Event event = createTestEvent();
-    EventAnalysisResult result = eventAnalyzer.analyze(event, controlSettings);
-    assertEquals("Event should be valid", EventStatus.VALID, result.getStatus());
-}
-```
-
-#### Integration Tests
-```java
-@Test
-public void testControlProcedureFlow() {
-    // Test complete control procedure with mock card
-    MockCard card = createMockCardWithValidation();
-    ControlResult result = controlProcedure.executeControl(card);
-    
-    assertNotNull("Control result should not be null", result);
-    assertTrue("Control should pass for valid card", result.isValid());
-}
-```
-
-### Custom Inspector Workflows
-
-To customize the control procedure for specific inspector requirements:
-
-```java
-public class CustomControlProcedure extends BaseControlProcedure {
-    
-    @Override
-    protected ControlResult analyzeCompliance(CardData cardData, ControlSettings settings) {
-        // Custom compliance logic
-        if (requiresSpecialHandling(cardData)) {
-            return performEnhancedControl(cardData, settings);
-        }
-        return super.analyzeCompliance(cardData, settings);
-    }
-    
-    private boolean requiresSpecialHandling(CardData cardData) {
-        // Define custom criteria for enhanced control
-        return cardData.hasHighValueContract() || 
-               cardData.hasRecentDisputes() ||
-               cardData.isFromHighRiskLocation();
-    }
-}
 ```
 
 ## Troubleshooting
@@ -494,44 +392,6 @@ public class CustomControlProcedure extends BaseControlProcedure {
 - Check plugin libraries are properly installed
 - Verify hardware drivers are up to date
 - Restart terminal if persistent issues occur
-
-### Debug and Diagnostics
-
-#### Enable Debug Logging
-```java
-// In SettingsActivity
-public void enableDebugMode(boolean enabled) {
-    SharedPreferences prefs = getSharedPreferences("control_settings", MODE_PRIVATE);
-    prefs.edit().putBoolean("debug_mode", enabled).apply();
-    
-    if (enabled) {
-        Logger.setLogLevel(Logger.DEBUG);
-        Logger.d("Control", "Debug mode enabled");
-    }
-}
-```
-
-#### Performance Monitoring
-```java
-// Track control operation timing
-public class ControlPerformanceMonitor {
-    
-    public void measureControlTime(Runnable controlOperation) {
-        long startTime = System.currentTimeMillis();
-        
-        try {
-            controlOperation.run();
-        } finally {
-            long duration = System.currentTimeMillis() - startTime;
-            Logger.i("Performance", "Control completed in " + duration + "ms");
-            
-            if (duration > MAX_ACCEPTABLE_TIME) {
-                Logger.w("Performance", "Control operation exceeded expected time");
-            }
-        }
-    }
-}
-```
 
 ## Inspector Training and Best Practices
 

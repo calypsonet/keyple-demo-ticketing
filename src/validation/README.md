@@ -1,6 +1,6 @@
 # Keyple Validation Demo
 
-[![Android](https://img.shields.io/badge/android-7.0%2B-green.svg)](https://developer.android.com/)
+[![Android](https://img.shields.io/badge/android-8.0%2B-green.svg)](https://developer.android.com/)
 [![Release](https://img.shields.io/github/v/release/calypsonet/keyple-demo-ticketing)](https://github.com/calypsonet/keyple-demo-ticketing/releases)
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../LICENSE)
 
@@ -12,7 +12,7 @@ for validation.
 
 ## Overview
 
-This Android application simulates validation terminals found at transportation network entry points (metro gates, bus boarding, etc.). It validates contracts loaded by the [Reload Demo](../client/) and creates validation events that can be later verified by the [Control Demo](../control-app/).
+This Android application simulates validation terminals found at transportation network entry points (metro gates, bus boarding, etc.). It validates contracts loaded by the [Reload Demo](../reloading-remote/) and creates validation events that can be later verified by the [Control Demo](../control/).
 
 **Role in Ecosystem**: Second step in the ticketing workflow - validates loaded contracts and grants/denies access to transportation networks.
 
@@ -116,21 +116,24 @@ Device Selection → Settings → Reader Activity → Validation Result
 - Shows real-time status during card processing
 - Handles card detection and validation procedure
 
-**Validation Results**
+**Validation Results (`CardSummaryActivity`)**
 
-**Success Screen (`CardSummaryActivity`)**:
+The `CardSummaryActivity` displays both success and failure results:
+
+**Success Screen** (Status.SUCCESS):
 - **Location**: Where validation occurred
 - **Date/Time**: When validation was processed
 - **Contract Details**:
   - Season Pass: Shows validity end date
   - Multi-trip: Shows remaining ticket count
   - Stored Value: Shows remaining balance
-- **Next Steps**: Instructions for passenger
+- **Visual Feedback**: Green background with success animation
 
-**Failure Screen (`NetworkInvalidActivity`)**:
-- **Error Reason**: Why validation failed
-- **Possible Actions**: Suggested remedies
-- **Support Information**: Contact details for assistance
+**Failure Screens**:
+- **Invalid Card** (Status.INVALID_CARD): Orange background with error details
+- **Empty Card** (Status.EMPTY_CARD): Red background showing no tickets available
+- **Other Errors**: Red background with specific error message
+- **Visual Feedback**: Error animation with sound/haptic feedback
 
 ### Validation Scenarios
 
@@ -206,47 +209,27 @@ Device Selection → Settings → Reader Activity → Validation Result
 
 ### Key Classes
 
-**TicketingService**
-- **Purpose**: Orchestrates the complete ticketing process lifecycle
-- **Responsibilities**:
-  - Plugin initialization and cleanup
-  - NFC detection management
-  - Card selection scenario configuration
-  - Validation procedure coordination
-- **Lifecycle Management**:
-  - `onResume()`: Initialize plugins, start NFC detection
-  - `onPause()`: Stop NFC detection
-  - `onDestroy()`: Clean up plugins and observers
+**TicketingService** (`domain/TicketingService.kt`)
+- Orchestrates reader initialization, card selection and validation flows
+- Manages card and SAM reader lifecycle
+- Schedules card selection scenarios for supported cards
+- Executes validation procedures based on detected card type
 
-**ReaderRepository**
-- **Purpose**: Abstraction layer between business logic and hardware
-- **Functions**:
-  - Reader connection management
-  - Plugin-specific configuration
-  - Error handling and recovery
-  - Status monitoring and reporting
+**ReaderManager** (`domain/spi/ReaderManager.kt`)
+- Interface for managing card and SAM readers
+- Handles plugin registration and reader initialization
+- Provides UI feedback hooks (success/failure)
+- Implementation: `ReaderManagerImpl`
 
-**CardReaderObserver**
-- **Purpose**: Handles card reader events from Keyple middleware
-- **Events Processed**:
-  - `CARD_INSERTED`: Physical card detection
-  - `CARD_MATCHED`: Successful AID selection
-  - `CARD_REMOVED`: Card removal detection
-  - `READER_FAILURE`: Hardware error conditions
+**CalypsoCardValidationManager** (`domain/managers/CalypsoCardValidationManager.kt`)
+- Secure validation procedure for Calypso cards with SAM integration
+- Handles contract priority logic (Season Pass → Multi-trip → Stored Value)
+- Creates cryptographically verified validation events
 
-**Card Repository Implementations**
-
-**CalypsoCardRepository**
-- Implements secure validation procedure for Calypso cards
-- Manages secure sessions and SAM integration
-- Handles complex contract priority logic
-- Provides cryptographic verification of contracts
-
-**StorageCardRepository**
-- Implements simplified validation for storage cards
-- Direct read/write operations without secure sessions
-- Single contract processing
-- Basic data validation and error handling
+**StorageCardValidationManager** (`domain/managers/StorageCardValidationManager.kt`)
+- Simplified validation for storage cards (MIFARE Ultralight, ST25 SRT512)
+- Direct read/write operations without SAM requirements
+- Single contract processing per card
 
 ### Validation Procedure Details
 
@@ -311,22 +294,6 @@ The validation procedure processes contracts in priority order:
 - **Features**: Transportation-specific design, multiple payment methods
 - **Access**: Contact [CNA](https://calypsonet.org/contact-us/) for plugin
 
-### Plugin Configuration
-
-Each plugin requires specific initialization:
-
-```kotlin
-// Example: Famoco plugin initialization
-val famocoPlugin = KeyplePluginExtensionFactory.createPlugin(FamocoPluginFactory())
-val samReader = famocoPlugin.getReader("SAM_READER_NAME")
-val nfcReader = famocoPlugin.getReader("NFC_READER_NAME")
-
-// Configure card selection
-val cardSelectionManager = CardSelectionManagerBuilder()
-    .setMultipleSelectionMode()
-    .build()
-```
-
 ## Development
 
 ### Project Structure
@@ -334,18 +301,25 @@ val cardSelectionManager = CardSelectionManagerBuilder()
 ```
 validation/app/
 ├── src/main/
-│   ├── java/org/calypsonet/keyple/demo/validation/
-│   │   ├── activities/          # Android activities
-│   │   ├── data/               # Data models and repositories
-│   │   ├── di/                 # Dependency injection
-│   │   ├── domain/             # Business logic interfaces
-│   │   ├── reader/             # Card reader management
-│   │   ├── ticketing/          # Core ticketing logic
-│   │   └── ui/                 # UI components and utilities
-│   ├── res/                    # Android resources
-│   └── AndroidManifest.xml     # App configuration
-├── build.gradle                # Build configuration
-└── proguard-rules.pro         # Code obfuscation rules
+│   ├── kotlin/org/calypsonet/keyple/demo/validation/
+│   │   ├── data/                        # Data layer implementations
+│   │   ├── di/                          # Dependency injection (Dagger)
+│   │   │   └── scope/                   # DI scopes
+│   │   ├── domain/                      # Business logic layer
+│   │   │   ├── builders/                # Data builders
+│   │   │   ├── managers/                # Validation managers (Calypso, Storage)
+│   │   │   ├── model/                   # Domain models
+│   │   │   └── spi/                     # Service provider interfaces
+│   │   └── ui/                          # UI layer
+│   │       ├── activities/              # Android activities
+│   │       │   └── deviceselection/     # Device selection screens
+│   │       ├── adapters/                # UI adapters
+│   │       ├── mappers/                 # Domain to UI mappers
+│   │       └── model/                   # UI models
+│   ├── res/                             # Android resources
+│   └── AndroidManifest.xml              # App configuration
+├── build.gradle.kts                     # Build configuration (Kotlin DSL)
+└── proguard-rules.pro                   # Code obfuscation rules
 ```
 
 ### Building and Testing
@@ -357,34 +331,6 @@ validation/app/
 # Debug build
 ./gradlew assembleDebug
 ```
-
-### Custom Terminal Integration
-
-To add support for new terminal hardware:
-
-1. **Create Plugin Implementation**:
-```kotlin
-class CustomTerminalPlugin : Plugin {
-    override fun getName(): String = "CustomTerminal"
-    
-    override fun getReaders(): Map<String, Reader> {
-        // Initialize terminal-specific readers
-    }
-}
-```
-
-2. **Register Plugin**:
-```kotlin
-// In DeviceSelectionActivity
-KeyplePluginRegistry.registerPlugin(CustomTerminalPluginFactory())
-```
-
-3. **Add UI Option**:
-- Add terminal selection in device selection screen
-- Configure plugin-specific settings
-- Test with target hardware
-
-## Troubleshooting
 
 ### Common Issues
 
@@ -411,18 +357,6 @@ KeyplePluginRegistry.registerPlugin(CustomTerminalPluginFactory())
 - Check hardware drivers are installed
 - Verify device compatibility with selected plugin
 - Review device selection matches actual hardware
-
-### Debug Mode
-
-Enable comprehensive logging:
-
-1. **Settings** → **Enable Debug Mode**
-2. **View logs** via Android Studio logcat
-3. **Key log categories**:
-- `CardReader`: Hardware communication
-- `TicketingService`: Business logic flow
-- `ValidationProcedure`: Card processing steps
-- `SAMManager`: Security module operations
 
 ### Performance Optimization
 

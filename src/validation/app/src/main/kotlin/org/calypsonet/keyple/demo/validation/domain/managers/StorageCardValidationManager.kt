@@ -136,11 +136,10 @@ class StorageCardValidationManager : BaseValidationManager() {
             contract.counterValue = newCounterValue
             nbTicketsLeft = newCounterValue
 
-            // Update contract data
+            // Prepare to update contract data
             val updatedContractContent = ScContractStructureParser().generate(contract)
-            cardTransaction
-                .prepareWriteBlocks(CardConstants.SC_CONTRACT_FIRST_BLOCK, updatedContractContent)
-                .processCommands(ChannelControl.KEEP_OPEN)
+            cardTransaction.prepareWriteBlocks(
+                CardConstants.SC_CONTRACT_FIRST_BLOCK, updatedContractContent)
 
             writeEvent = true
           }
@@ -154,11 +153,10 @@ class StorageCardValidationManager : BaseValidationManager() {
             contract.counterValue = newCounterValue
             nbTicketsLeft = newCounterValue
 
-            // Update contract data
+            // Prepare to update contract data
             val updatedContractContent = ScContractStructureParser().generate(contract)
-            cardTransaction
-                .prepareWriteBlocks(CardConstants.SC_CONTRACT_FIRST_BLOCK, updatedContractContent)
-                .processCommands(ChannelControl.KEEP_OPEN)
+            cardTransaction.prepareWriteBlocks(
+                CardConstants.SC_CONTRACT_FIRST_BLOCK, updatedContractContent)
 
             writeEvent = true
           }
@@ -189,11 +187,11 @@ class StorageCardValidationManager : BaseValidationManager() {
 
           validationData = ValidationDataBuilder.buildFrom(eventToWrite, locations)
 
-          // Write the event
+          // Prepare to write the event and process all prepared commands
           val eventBytesToWrite = ScEventStructureParser().generate(eventToWrite)
           cardTransaction
               .prepareWriteBlocks(CardConstants.SC_EVENT_FIRST_BLOCK, eventBytesToWrite)
-              .processCommands(ChannelControl.KEEP_OPEN)
+              .processCommands(ChannelControl.CLOSE_AFTER)
 
           status = Status.SUCCESS
           errorMessage = null
@@ -209,18 +207,6 @@ class StorageCardValidationManager : BaseValidationManager() {
       } catch (e: Exception) {
         status = Status.ERROR
         errorMessage = e.message
-      } finally {
-        // Close the transaction
-        try {
-          cardTransaction.processCommands(ChannelControl.CLOSE_AFTER)
-        } catch (e: Exception) {
-          if (status == Status.LOADING) {
-            status = Status.ERROR
-          }
-          if (errorMessage.isNullOrEmpty()) {
-            errorMessage = e.message
-          }
-        }
       }
     }
 
