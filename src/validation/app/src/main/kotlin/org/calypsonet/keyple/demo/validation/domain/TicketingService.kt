@@ -41,6 +41,7 @@ import org.eclipse.keypop.reader.selection.CardSelectionResult
 import org.eclipse.keypop.reader.selection.ScheduledCardSelectionsResponse
 import org.eclipse.keypop.reader.selection.spi.SmartCard
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
+import org.eclipse.keypop.storagecard.card.ProductType.MIFARE_CLASSIC_1K
 import org.eclipse.keypop.storagecard.card.ProductType.MIFARE_ULTRALIGHT
 import org.eclipse.keypop.storagecard.card.ProductType.ST25_SRT512
 import org.eclipse.keypop.storagecard.card.StorageCard
@@ -87,6 +88,7 @@ constructor(
   private var indexOfNavigoIdfCardSelection = 0
   private var indexOfMifareCardSelection = 0
   private var indexOfST25CardSelection = 0
+  private var indexOfMifareClassic1KCardSelection = 0
 
   /**
    * Initializes the ticketing environment and selects a SAM if available.
@@ -223,6 +225,12 @@ constructor(
                   .createBasicCardSelector()
                   .filterByCardProtocol(CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name),
               storageCardApiFactory.createStorageCardSelectionExtension(ST25_SRT512))
+      indexOfMifareClassic1KCardSelection =
+          cardSelectionManager.prepareSelection(
+              readerApiFactory
+                  .createBasicCardSelector()
+                  .filterByCardProtocol(CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name),
+              storageCardApiFactory.createStorageCardSelectionExtension(MIFARE_CLASSIC_1K))
     }
 
     // Schedule the execution of the prepared card selection scenario as soon as a card is presented

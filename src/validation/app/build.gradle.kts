@@ -40,7 +40,11 @@ dependencies {
   implementation(libs.keypopReaderApi)
   implementation(libs.keypopCalypsoCardApi)
   implementation(libs.keypopCalypsoCryptoLegacysamApi)
-  implementation(libs.keypopStoragecardApi)
+  // implementation(libs.keypopStoragecardApi)
+  // TEMPORARY SNAPSHOT:
+  implementation("org.eclipse.keypop:keypop-storagecard-java-api:1.1.0-SNAPSHOT") {
+    isChanging = true
+  }
 
   // Keyple
   implementation(libs.keypleCommonApi)
@@ -49,7 +53,11 @@ dependencies {
   implementation(libs.keypleServiceLib)
   implementation(libs.keypleCardCalypsoLib)
   implementation(libs.keypleCardCalypsoCryptoLegacysamLib)
-  implementation(libs.keyplePluginAndroidNfcLib)
+  // implementation(libs.keyplePluginAndroidNfcLib)
+  // TEMPORARY SNAPSHOT:
+  implementation("org.eclipse.keyple:keyple-plugin-android-nfc-java-lib:3.2.0-SNAPSHOT") {
+    isChanging = true
+  }
 
   // Other Keyple plugins
   implementation(libs.keyplePluginCnaCoppernicCone2Lib)

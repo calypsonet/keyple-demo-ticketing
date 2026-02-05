@@ -41,7 +41,12 @@ dependencies {
   implementation(libs.keypopReaderApi)
   implementation(libs.keypopCalypsoCardApi)
   implementation(libs.keypopCalypsoCryptoLegacysamApi)
-  implementation(libs.keypopStoragecardApi)
+  // TEMPORARY SNAPSHOT: Required for Mifare Classic support (MifareClassicKeyType, hasAuthentication())
+  // TODO: Remove when version 1.1.0 (or later) is officially released and added to BOM
+  // Original: implementation(libs.keypopStoragecardApi)
+  implementation("org.eclipse.keypop:keypop-storagecard-java-api:1.1.0-SNAPSHOT") {
+    isChanging = true
+  }
 
   // Keyple
   implementation(libs.keypleCommonApi)
@@ -50,7 +55,12 @@ dependencies {
   implementation(libs.keypleServiceLib)
   implementation(libs.keypleCardCalypsoLib)
   implementation(libs.keypleCardCalypsoCryptoLegacysamLib)
-  implementation(libs.keyplePluginAndroidNfcLib)
+  // TEMPORARY SNAPSHOT: Required for KeyProvider SPI support in Android NFC plugin
+  // TODO: Remove when version 3.2.0 (or later) is officially released and added to BOM
+  // Original: implementation(libs.keyplePluginAndroidNfcLib)
+  implementation("org.eclipse.keyple:keyple-plugin-android-nfc-java-lib:3.2.0-SNAPSHOT") {
+    isChanging = true
+  }
   implementation(libs.keyplePluginAndroidOmapiLib)
   implementation(libs.keypleDistributedNetworkLib)
   implementation(libs.keypleDistributedLocalLib)

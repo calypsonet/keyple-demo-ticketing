@@ -135,6 +135,9 @@ abstract class AbstractCardActivity :
       configurableReader.activateProtocol(
           BluebirdContactlessProtocols.ST25_SRT512.name,
           CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name)
+      configurableReader.activateProtocol(
+          BluebirdContactlessProtocols.MIFARE_CLASSIC.name,
+          CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name)
     } else {
       configurableReader.activateProtocol(
           AndroidNfcSupportedProtocols.ISO_14443_4.name,
@@ -142,6 +145,9 @@ abstract class AbstractCardActivity :
       configurableReader.activateProtocol(
           AndroidNfcSupportedProtocols.MIFARE_ULTRALIGHT.name,
           CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name)
+      configurableReader.activateProtocol(
+          AndroidNfcSupportedProtocols.MIFARE_CLASSIC_1K.name,
+          CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name)
     }
 
     observableCardReader.startCardDetection(ObservableCardReader.DetectionMode.REPEATING)

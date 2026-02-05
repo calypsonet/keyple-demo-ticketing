@@ -96,6 +96,8 @@ constructor(
         CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name
     cardReaderProtocols[BluebirdContactlessProtocols.ST25_SRT512.name] =
         CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name
+    cardReaderProtocols[BluebirdContactlessProtocols.MIFARE_CLASSIC.name] =
+        CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name
     samPluginName = BluebirdConstants.PLUGIN_NAME
     samReaderNameRegex = ".*ContactReader"
     samReaderName = BluebirdConstants.SAM_READER_NAME
@@ -124,6 +126,8 @@ constructor(
     cardReaderName = AndroidNfcConstants.READER_NAME
     cardReaderProtocols[AndroidNfcSupportedProtocols.ISO_14443_4.name] =
         CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name
+    cardReaderProtocols[AndroidNfcSupportedProtocols.MIFARE_CLASSIC_1K.name] =
+        CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name
     samPluginName = AndroidFamocoPlugin.PLUGIN_NAME
     samReaderNameRegex = ".*FamocoReader"
     samReaderName = AndroidFamocoReader.READER_NAME
@@ -159,10 +163,16 @@ constructor(
             when (readerType) {
               ReaderType.BLUEBIRD ->
                   BluebirdPluginFactoryProvider.provideFactory(
-                      activity, ApduInterpreterFactoryProvider.provideFactory())
+                      activity,
+                      ApduInterpreterFactoryProvider.provideFactory(),
+                      MifareClassicKeyProvider())
               ReaderType.COPPERNIC -> Cone2PluginFactoryProvider.getFactory(activity)
               ReaderType.FAMOCO ->
-                  AndroidNfcPluginFactoryProvider.provideFactory(AndroidNfcConfig(activity))
+                  AndroidNfcPluginFactoryProvider.provideFactory(
+                      AndroidNfcConfig(
+                          activity = activity,
+                          apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
+                          keyProvider = MifareClassicKeyProvider()))
               ReaderType.FLOWBIRD -> { // Init files used for sounds and colors from assets
                 val mediaFiles: List<String> =
                     listOf("1_default_en.xml", "success.mp3", "error.mp3")
