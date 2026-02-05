@@ -1,5 +1,5 @@
 import background from '../../img/background.png';
-import { createMuiTheme, ThemeProvider, withStyles } from '@material-ui/core/styles';
+import { createMuiTheme } from '@material-ui/core/styles';
 
 //Create base Theme with Material UI
 let muitheme = createMuiTheme({
