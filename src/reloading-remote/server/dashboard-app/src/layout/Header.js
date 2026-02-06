@@ -1,4 +1,4 @@
-import React, { useState, useEffect,componentDidMount }  from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';

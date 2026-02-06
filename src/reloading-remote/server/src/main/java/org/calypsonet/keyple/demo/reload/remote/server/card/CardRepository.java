@@ -31,6 +31,7 @@ import org.eclipse.keyple.card.calypso.CalypsoExtensionService;
 import org.eclipse.keyple.card.calypso.crypto.legacysam.LegacySamExtensionService;
 import org.eclipse.keyple.core.service.SmartCardServiceProvider;
 import org.eclipse.keyple.core.service.resource.CardResource;
+import org.eclipse.keyple.core.util.json.JsonUtil;
 import org.eclipse.keypop.calypso.card.CalypsoCardApiFactory;
 import org.eclipse.keypop.calypso.card.WriteAccessLevel;
 import org.eclipse.keypop.calypso.card.card.CalypsoCard;
@@ -43,6 +44,8 @@ import org.eclipse.keypop.reader.ChannelControl;
 import org.eclipse.keypop.reader.ReaderApiFactory;
 import org.eclipse.keypop.reader.selection.CardSelectionManager;
 import org.eclipse.keypop.reader.selection.CardSelectionResult;
+import org.eclipse.keypop.storagecard.MifareClassicKeyType;
+import org.eclipse.keypop.storagecard.card.ProductType;
 import org.eclipse.keypop.storagecard.card.StorageCard;
 import org.eclipse.keypop.storagecard.transaction.StorageCardTransactionManager;
 import org.jetbrains.annotations.NotNull;
@@ -156,14 +159,46 @@ public class CardRepository {
   }
 
   Card readCard(CardReader cardReader, StorageCard storageCard, CardResource samResource) {
+    logger.info(
+        "Reading StorageCard: ProductType={}, BlockSize={} bytes, BlockCount={}, TotalCapacity={} bytes",
+        storageCard.getProductType(),
+        storageCard.getProductType().getBlockSize(),
+        storageCard.getProductType().getBlockCount(),
+        storageCard.getProductType().getBlockSize() * storageCard.getProductType().getBlockCount());
+
     StorageCardExtensionService storageCardExtension = StorageCardExtensionService.getInstance();
     StorageCardTransactionManager cardTransactionManager =
         storageCardExtension
             .getStorageCardApiFactory()
             .createStorageCardTransactionManager(cardReader, storageCard);
-    cardTransactionManager
-        .prepareReadBlocks(0, storageCard.getProductType().getBlockCount() - 1)
-        .processCommands(ChannelControl.KEEP_OPEN);
+
+    // Mifare Classic requires authentication before reading
+    if (storageCard.getProductType().hasAuthentication()) {
+      logger.info(
+          "Mifare Classic detected - authenticating sector 1 (block 4) with KEY_A, keyNumber=0");
+      cardTransactionManager.prepareMifareClassicAuthenticate(4, MifareClassicKeyType.KEY_A, 0);
+    } else {
+      logger.info("No authentication required for StorageCard: {}", JsonUtil.toJson(storageCard));
+    }
+
+    // For Mifare Classic 1K, read only data blocks 4-6 (sector 1, avoiding sector trailer block 7)
+    // For other storage cards, read all blocks
+    int startBlock = 0;
+    int endBlock = storageCard.getProductType().getBlockCount() - 1;
+    if (storageCard.getProductType() == ProductType.MIFARE_CLASSIC_1K) {
+      startBlock = 4;
+      endBlock = 6;
+      logger.info(
+          "Mifare Classic 1K - reading data blocks {} to {} (avoiding sector trailer block 7)",
+          startBlock,
+          endBlock);
+    } else {
+      logger.info("Preparing to read blocks {} to {} from StorageCard", startBlock, endBlock);
+    }
+
+    cardTransactionManager.prepareReadBlocks(startBlock, endBlock).processCommands(ChannelControl.KEEP_OPEN);
+
+    logger.info("StorageCard read completed successfully");
     return parse(storageCard);
   }
 
@@ -212,11 +247,25 @@ public class CardRepository {
 
   int writeCard(
       CardReader cardReader, StorageCard storageCard, CardResource samResource, Card card) {
+    logger.info(
+        "Writing StorageCard: ProductType={}, UpdatedContracts={}, EventUpdated={}",
+        storageCard.getProductType(),
+        card.getUpdatedContracts().size(),
+        card.isEventUpdated());
+
     StorageCardExtensionService storageCardExtension = StorageCardExtensionService.getInstance();
     StorageCardTransactionManager cardTransactionManager =
         storageCardExtension
             .getStorageCardApiFactory()
             .createStorageCardTransactionManager(cardReader, storageCard);
+
+    // Mifare Classic requires authentication before writing
+    if (storageCard.getProductType().hasAuthentication()) {
+      logger.info(
+          "Mifare Classic detected - authenticating sector 1 (block 4) with KEY_A, keyNumber=0 before write");
+      cardTransactionManager.prepareMifareClassicAuthenticate(4, MifareClassicKeyType.KEY_A, 0);
+    }
+
     /* Update contract records */
     // TODO simplify
     if (!card.getUpdatedContracts().isEmpty()) {
@@ -224,21 +273,34 @@ public class CardRepository {
       for (int i = 0; i < contractCount; i++) {
         ContractStructure contract = card.getContracts().get(i);
         if (card.getUpdatedContracts().contains(contract)) {
-          // update contract
+          // For Mifare Classic 1K, write to block 5 (16 bytes)
+          // For other cards, write to blocks 8-11 (4×4 bytes = 16 bytes)
+          int contractBlock =
+              (storageCard.getProductType() == ProductType.MIFARE_CLASSIC_1K)
+                  ? 5
+                  : CardConstants.SC_CONTRACT_FIRST_BLOCK;
+          logger.info("Updating contract on StorageCard at block {}", contractBlock);
           cardTransactionManager.prepareWriteBlocks(
-              CardConstants.SC_CONTRACT_FIRST_BLOCK,
-              new ScContractStructureParser().generate(contract));
+              contractBlock, new ScContractStructureParser().generate(contract));
         }
       }
     }
     /* Update event */
     if (Boolean.TRUE.equals(card.isEventUpdated())) {
+      // For Mifare Classic 1K, write to block 6 (16 bytes)
+      // For other cards, write to blocks 12-15 (4×4 bytes = 16 bytes)
+      int eventBlock =
+          (storageCard.getProductType() == ProductType.MIFARE_CLASSIC_1K)
+              ? 6
+              : CardConstants.SC_EVENT_FIRST_BLOCK;
+      logger.info("Updating event on StorageCard at block {}", eventBlock);
       cardTransactionManager.prepareWriteBlocks(
-          CardConstants.SC_EVENT_FIRST_BLOCK,
+          eventBlock,
           new ScEventStructureParser().generate(buildEvent(card.getEvent(), card.getContracts())));
     }
 
     cardTransactionManager.processCommands(ChannelControl.KEEP_OPEN);
+    logger.info("StorageCard write completed successfully");
     return 0;
   }
 
@@ -277,27 +339,50 @@ public class CardRepository {
 
   void initCard(CardReader cardReader, StorageCard storageCard, CardResource samResource) {
 
+    logger.info(
+        "Initializing StorageCard: ProductType={}, BlockSize={} bytes",
+        storageCard.getProductType(),
+        storageCard.getProductType().getBlockSize());
+
     StorageCardExtensionService storageCardExtension = StorageCardExtensionService.getInstance();
     StorageCardTransactionManager cardTransactionManager =
         storageCardExtension
             .getStorageCardApiFactory()
             .createStorageCardTransactionManager(cardReader, storageCard);
 
+    // Mifare Classic requires authentication before writing
+    if (storageCard.getProductType().hasAuthentication()) {
+      logger.info(
+          "Mifare Classic detected - authenticating sector 1 (block 4) with KEY_A, keyNumber=0 before initialization");
+      cardTransactionManager.prepareMifareClassicAuthenticate(4, MifareClassicKeyType.KEY_A, 0);
+    }
+
+    // For Mifare Classic 1K, use single-block layout (blocks 4, 5, 6)
+    // For other cards, use multi-block layout (blocks 4-7, 8-11, 12-15)
+    boolean isMifareClassic = storageCard.getProductType() == ProductType.MIFARE_CLASSIC_1K;
+    int environmentBlock =
+        isMifareClassic ? 4 : CardConstants.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK;
+    int contractBlock = isMifareClassic ? 5 : CardConstants.SC_CONTRACT_FIRST_BLOCK;
+    int eventBlock = isMifareClassic ? 6 : CardConstants.SC_EVENT_FIRST_BLOCK;
+
     // Fill the environment structure with predefined values
+    logger.info("Writing environment structure at block {}", environmentBlock);
     cardTransactionManager.prepareWriteBlocks(
-        CardConstants.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
+        environmentBlock,
         new ScEnvironmentHolderStructureParser().generate(buildEnvironmentHolderStructure()));
 
     // Clear the first event (update with a byte array filled with 0 s).
+    logger.info("Clearing event at block {}", eventBlock);
     cardTransactionManager.prepareWriteBlocks(
-        CardConstants.SC_EVENT_FIRST_BLOCK, new byte[CardConstants.SC_EVENT_RECORD_SIZE_BYTES]);
+        eventBlock, new byte[CardConstants.SC_EVENT_RECORD_SIZE_BYTES]);
 
     // Clear all contracts (update with a byte array filled with 0 s).
+    logger.info("Clearing contract at block {}", contractBlock);
     cardTransactionManager.prepareWriteBlocks(
-        CardConstants.SC_CONTRACT_FIRST_BLOCK,
-        new byte[CardConstants.SC_CONTRACT_RECORD_SIZE_BYTES]);
+        contractBlock, new byte[CardConstants.SC_CONTRACT_RECORD_SIZE_BYTES]);
 
     cardTransactionManager.processCommands(ChannelControl.KEEP_OPEN);
+    logger.info("StorageCard initialization completed successfully");
   }
 
   @NotNull
@@ -394,26 +479,61 @@ public class CardRepository {
   }
 
   private Card parse(StorageCard storageCard) {
-    // Parse environment
-    EnvironmentHolderStructure environment =
-        new ScEnvironmentHolderStructureParser()
-            .parse(
-                storageCard.getBlocks(
-                    CardConstants.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
-                    CardConstants.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK));
-    // parse contracts
+    EnvironmentHolderStructure environment;
     List<ContractStructure> contracts = new ArrayList<>();
-    contracts.add(
-        new ScContractStructureParser()
-            .parse(
-                storageCard.getBlocks(
-                    CardConstants.SC_CONTRACT_FIRST_BLOCK, CardConstants.SC_COUNTER_LAST_BLOCK)));
-    // parse event
-    EventStructure event =
-        new ScEventStructureParser()
-            .parse(
-                storageCard.getBlocks(
-                    CardConstants.SC_EVENT_FIRST_BLOCK, CardConstants.SC_EVENT_LAST_BLOCK));
+    EventStructure event;
+
+    // Mifare Classic 1K uses a different layout: 1 block of 16 bytes per structure
+    // (blocks 4, 5, 6) instead of 4 blocks of 4 bytes (blocks 4-7, 8-11, 12-15)
+    if (storageCard.getProductType() == ProductType.MIFARE_CLASSIC_1K) {
+      logger.info(
+          "Parsing Mifare Classic 1K data: Using single-block layout (block 4=Environment, 5=Contract, 6=Event)");
+
+      // Parse environment from block 4 (16 bytes)
+      environment = new ScEnvironmentHolderStructureParser().parse(storageCard.getBlock(4));
+
+      // Parse contract from block 5 (16 bytes)
+      contracts.add(new ScContractStructureParser().parse(storageCard.getBlock(5)));
+
+      // Parse event from block 6 (16 bytes)
+      event = new ScEventStructureParser().parse(storageCard.getBlock(6));
+
+    } else {
+      // MIFARE Ultralight and ST25 SRT512 use multi-block layout
+      logger.info(
+          "Parsing StorageCard data: ProductType={}, Reading blocks {}-{} for environment",
+          storageCard.getProductType(),
+          CardConstants.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
+          CardConstants.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK);
+
+      // Parse environment from blocks 4-7 (4 blocks × 4 bytes = 16 bytes)
+      environment =
+          new ScEnvironmentHolderStructureParser()
+              .parse(
+                  storageCard.getBlocks(
+                      CardConstants.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
+                      CardConstants.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK));
+
+      logger.info(
+          "Parsing contract from blocks {}-{}",
+          CardConstants.SC_CONTRACT_FIRST_BLOCK,
+          CardConstants.SC_COUNTER_LAST_BLOCK);
+
+      // Parse contract from blocks 8-11 (4 blocks × 4 bytes = 16 bytes)
+      contracts.add(
+          new ScContractStructureParser()
+              .parse(
+                  storageCard.getBlocks(
+                      CardConstants.SC_CONTRACT_FIRST_BLOCK, CardConstants.SC_COUNTER_LAST_BLOCK)));
+
+      // Parse event from blocks 12-15 (4 blocks × 4 bytes = 16 bytes)
+      event =
+          new ScEventStructureParser()
+              .parse(
+                  storageCard.getBlocks(
+                      CardConstants.SC_EVENT_FIRST_BLOCK, CardConstants.SC_EVENT_LAST_BLOCK));
+    }
+
     return new Card(environment, contracts, event);
   }
 }

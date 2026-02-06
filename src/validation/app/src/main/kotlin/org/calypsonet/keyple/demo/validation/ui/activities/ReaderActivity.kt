@@ -191,13 +191,13 @@ class ReaderActivity : BaseActivity() {
                 withContext(Dispatchers.Main) { progress.show() }
                 val validationResult =
                     withContext(Dispatchers.IO) { ticketingService.executeValidationProcedure() }
+                Timber.i("Validation procedure completed: ${validationResult.status.name}")
                 withContext(Dispatchers.Main) {
                   progress.dismiss()
                   changeDisplay(validationResult.toUi())
                 }
               } catch (e: IllegalStateException) {
-                Timber.e(e)
-                Timber.e("Load ERROR page after exception = ${e.message}")
+                Timber.e(e, "IllegalStateException during validation procedure")
                 changeDisplay(
                     UiValidationResult(
                         status = Status.ERROR,

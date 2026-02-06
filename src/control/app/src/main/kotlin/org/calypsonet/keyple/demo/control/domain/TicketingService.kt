@@ -85,6 +85,7 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
   private var indexOfNavigoIdfCardSelection = 0
   private var indexOfMifareCardSelection = 0
   private var indexOfST25CardSelection = 0
+  private var indexOfMifareClassic1KCardSelection = 0
 
   @Throws(KeyplePluginException::class, IllegalStateException::class, Exception::class)
   fun init(observer: CardReaderObserverSpi?, activity: Activity, readerType: ReaderType) {
@@ -219,6 +220,13 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
                   .filterByCardProtocol(CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name),
               storageCardExtension.storageCardApiFactory.createStorageCardSelectionExtension(
                   ProductType.ST25_SRT512))
+      indexOfMifareClassic1KCardSelection =
+          cardSelectionManager.prepareSelection(
+              readerApiFactory
+                  .createBasicCardSelector()
+                  .filterByCardProtocol(CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name),
+              storageCardExtension.storageCardApiFactory.createStorageCardSelectionExtension(
+                  ProductType.MIFARE_CLASSIC_1K))
     }
 
     // Schedule the execution of the prepared card selection scenario as soon as a card is presented

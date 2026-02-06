@@ -24,7 +24,7 @@ plugins {
 // APP CONFIGURATION
 ///////////////////////////////////////////////////////////////////////////////
 
-configurations.all { exclude(group = "com.arcao", module = "slf4j-timber") }
+// Logging configuration: using SLF4J + Timber bridge for Android
 
 dependencies {
   // Demo common
@@ -40,7 +40,11 @@ dependencies {
   implementation(libs.keypopReaderApi)
   implementation(libs.keypopCalypsoCardApi)
   implementation(libs.keypopCalypsoCryptoLegacysamApi)
-  implementation(libs.keypopStoragecardApi)
+  // implementation(libs.keypopStoragecardApi)
+  // TEMPORARY SNAPSHOT:
+  implementation("org.eclipse.keypop:keypop-storagecard-java-api:1.1.0-SNAPSHOT") {
+    isChanging = true
+  }
 
   // Keyple
   implementation(libs.keypleCommonApi)
@@ -49,7 +53,11 @@ dependencies {
   implementation(libs.keypleServiceLib)
   implementation(libs.keypleCardCalypsoLib)
   implementation(libs.keypleCardCalypsoCryptoLegacysamLib)
-  implementation(libs.keyplePluginAndroidNfcLib)
+  // implementation(libs.keyplePluginAndroidNfcLib)
+  // TEMPORARY SNAPSHOT:
+  implementation("org.eclipse.keyple:keyple-plugin-android-nfc-java-lib:3.2.0-SNAPSHOT") {
+    isChanging = true
+  }
 
   // Other Keyple plugins
   implementation(libs.keyplePluginCnaCoppernicCone2Lib)
@@ -87,10 +95,15 @@ dependencies {
   // Devnied - Byte Utils
   implementation(libs.bitLib4j) { exclude(group = "org.slf4j") }
 
-  // Logging
-  implementation(libs.timber)
+  // Logging libraries used in the project:
+  // - SLF4J API provides a common logging interface for the app and third-party libraries (e.g.,
+  //   Keyple).
+  // - slf4j-timber bridges SLF4J calls to Timber for Android logging.
+  // - Timber is used as the primary Android logging framework, offering lightweight and flexible
+  //   logging.
   implementation(libs.slf4jApi)
-  implementation(libs.slf4jAndroid)
+  implementation(libs.slf4jTimber)
+  implementation(libs.timber)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
