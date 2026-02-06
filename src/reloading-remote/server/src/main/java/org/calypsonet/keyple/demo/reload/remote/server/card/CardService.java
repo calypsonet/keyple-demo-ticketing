@@ -348,9 +348,12 @@ public class CardService {
         storageCard.getProductType().getBlockSize(),
         storageCard.getProductType().getBlockCount());
 
-    CardResource samResource =
-        CardResourceServiceProvider.getService()
-            .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
+    // SAM is not currently used for Storage Cards but may be needed in the future
+    // for crypto operations (contract verification, authentication, etc.)
+    // To enable SAM allocation when needed:
+    // CardResource samResource = CardResourceServiceProvider.getService()
+    //     .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
+    CardResource samResource = null;
     try {
       Card card = cardRepository.readCard(cardReader, storageCard, samResource);
       // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
@@ -399,7 +402,9 @@ public class CardService {
               .setCardSerialNumber(cardUID));
       return new AnalyzeContractsOutputDto(Collections.emptyList(), 2);
     } finally {
-      CardResourceServiceProvider.getService().releaseCardResource(samResource);
+      if (samResource != null) {
+        CardResourceServiceProvider.getService().releaseCardResource(samResource);
+      }
     }
   }
 
@@ -494,9 +499,12 @@ public class CardService {
         inputData.getContractTariff(),
         inputData.getTicketToLoad());
 
-    CardResource samResource =
-        CardResourceServiceProvider.getService()
-            .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
+    // SAM is not currently used for Storage Cards but may be needed in the future
+    // for crypto operations (contract verification, authentication, etc.)
+    // To enable SAM allocation when needed:
+    // CardResource samResource = CardResourceServiceProvider.getService()
+    //     .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
+    CardResource samResource = null;
     try {
       Card card = cardRepository.readCard(cardReader, storageCard, samResource);
       if (card == null) {
@@ -539,7 +547,9 @@ public class CardService {
               .setContractLoaded(""));
       return new WriteContractOutputDto(2);
     } finally {
-      CardResourceServiceProvider.getService().releaseCardResource(samResource);
+      if (samResource != null) {
+        CardResourceServiceProvider.getService().releaseCardResource(samResource);
+      }
     }
   }
 
@@ -616,9 +626,12 @@ public class CardService {
         cardUID,
         storageCard.getProductType());
 
-    CardResource samResource =
-        CardResourceServiceProvider.getService()
-            .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
+    // SAM is not currently used for Storage Cards but may be needed in the future
+    // for crypto operations (contract verification, authentication, etc.)
+    // To enable SAM allocation when needed:
+    // CardResource samResource = CardResourceServiceProvider.getService()
+    //     .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
+    CardResource samResource = null;
     try {
       cardRepository.initCard(cardReader, storageCard, samResource);
       activityService.push(
@@ -647,7 +660,9 @@ public class CardService {
               .setCardSerialNumber(cardUID));
       return new CardIssuanceOutputDto(2);
     } finally {
-      CardResourceServiceProvider.getService().releaseCardResource(samResource);
+      if (samResource != null) {
+        CardResourceServiceProvider.getService().releaseCardResource(samResource);
+      }
     }
   }
 
