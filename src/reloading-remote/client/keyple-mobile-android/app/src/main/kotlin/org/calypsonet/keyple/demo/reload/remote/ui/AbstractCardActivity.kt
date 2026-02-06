@@ -23,6 +23,8 @@ import org.calypsonet.keyple.demo.reload.remote.data.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.reload.remote.data.model.CardReaderResponse
 import org.calypsonet.keyple.demo.reload.remote.data.model.DeviceEnum
 import org.calypsonet.keyple.demo.reload.remote.data.model.Status
+import org.calypsonet.keyple.demo.reload.remote.data.spi.BluebirdMifareClassicKeyProvider
+import org.calypsonet.keyple.demo.reload.remote.data.spi.MifareClassicKeyProvider
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
 import org.calypsonet.keyple.plugin.bluebird.BluebirdContactlessProtocols
 import org.calypsonet.keyple.plugin.bluebird.BluebirdPluginFactoryProvider
@@ -103,11 +105,15 @@ abstract class AbstractCardActivity :
         readerRepository.registerPlugin(
             if (isBluebirdDevice) {
               BluebirdPluginFactoryProvider.provideFactory(
-                  this@AbstractCardActivity, ApduInterpreterFactoryProvider.provideFactory())
+                  this@AbstractCardActivity,
+                  ApduInterpreterFactoryProvider.provideFactory(),
+                  BluebirdMifareClassicKeyProvider())
             } else {
               AndroidNfcPluginFactoryProvider.provideFactory(
                   AndroidNfcConfig(
-                      this@AbstractCardActivity, ApduInterpreterFactoryProvider.provideFactory()))
+                      this@AbstractCardActivity,
+                      ApduInterpreterFactoryProvider.provideFactory(),
+                      keyProvider = MifareClassicKeyProvider()))
             })
 
     if (plugin == null) {

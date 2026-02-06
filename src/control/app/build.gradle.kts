@@ -24,7 +24,7 @@ plugins {
 // APP CONFIGURATION
 ///////////////////////////////////////////////////////////////////////////////
 
-configurations.all { exclude(group = "com.arcao", module = "slf4j-timber") }
+// Logging configuration: using SLF4J + Timber bridge for Android
 
 dependencies {
   // Demo common
@@ -102,10 +102,15 @@ dependencies {
   // Devnied - Byte Utils
   implementation(libs.bitLib4j) { exclude(group = "org.slf4j") }
 
-  // Logging
-  implementation(libs.timber)
+  // Logging libraries used in the project:
+  // - SLF4J API provides a common logging interface for the app and third-party libraries (e.g.,
+  //   Keyple).
+  // - slf4j-timber bridges SLF4J calls to Timber for Android logging.
+  // - Timber is used as the primary Android logging framework, offering lightweight and flexible
+  //   logging.
   implementation(libs.slf4jApi)
-  implementation(libs.slf4jAndroid)
+  implementation(libs.slf4jTimber)
+  implementation(libs.timber)
 }
 
 ///////////////////////////////////////////////////////////////////////////////

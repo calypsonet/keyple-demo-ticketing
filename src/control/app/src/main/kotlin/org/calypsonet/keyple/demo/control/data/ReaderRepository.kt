@@ -196,7 +196,11 @@ constructor(
                     translationFiles = translationFiles)
               }
               ReaderType.NFC_TERMINAL ->
-                  AndroidNfcPluginFactoryProvider.provideFactory(AndroidNfcConfig(activity))
+                  AndroidNfcPluginFactoryProvider.provideFactory(
+                      AndroidNfcConfig(
+                          activity = activity,
+                          apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
+                          keyProvider = MifareClassicKeyProvider()))
             }
           }
       SmartCardServiceProvider.getService().registerPlugin(pluginFactory)

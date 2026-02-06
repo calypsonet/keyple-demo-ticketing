@@ -63,7 +63,10 @@ dependencies {
   // Google GSON
   implementation(libs.gson)
 
-  // Logging
+  // Logging libraries used in the project:
+  // - SLF4J API provides a common logging interface for the server and third-party libraries
+  //   (e.g., Keyple).
+  // - slf4j-simple is used as the SLF4J implementation for Java/Quarkus server applications.
   implementation(libs.slf4jApi)
   implementation(libs.slf4jSimple)
 }
