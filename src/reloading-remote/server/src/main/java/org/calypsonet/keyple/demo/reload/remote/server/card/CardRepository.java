@@ -196,7 +196,9 @@ public class CardRepository {
       logger.info("Preparing to read blocks {} to {} from StorageCard", startBlock, endBlock);
     }
 
-    cardTransactionManager.prepareReadBlocks(startBlock, endBlock).processCommands(ChannelControl.KEEP_OPEN);
+    cardTransactionManager
+        .prepareReadBlocks(startBlock, endBlock)
+        .processCommands(ChannelControl.KEEP_OPEN);
 
     logger.info("StorageCard read completed successfully");
     return parse(storageCard);
