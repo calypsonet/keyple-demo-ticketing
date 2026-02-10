@@ -38,8 +38,7 @@ class MifareClassicKeyProvider :
   override fun getKey(keyNumber: Int): ByteArray? {
     // Validate key number
     if (keyNumber < 0 || keyNumber > MAX_KEY_NUMBER) {
-      Timber.w(
-          "Invalid key number requested: $keyNumber (valid range: 0-$MAX_KEY_NUMBER)")
+      Timber.w("Invalid key number requested: $keyNumber (valid range: 0-$MAX_KEY_NUMBER)")
       return null
     }
 

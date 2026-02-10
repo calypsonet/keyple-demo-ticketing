@@ -31,7 +31,53 @@ dependencies {
   implementation(project(":common"))
 
   // Proprietary libs
-  implementation(fileTree(mapOf("dir" to "../../../libs", "include" to listOf("*.jar", "*.aar"))))
+  // Storage card specific components
+  // Conditional dependency for the storage card library
+  val storageCardLibName = "keyple-card-cna-storagecard-java-lib-2.2.0"
+  val storageCardLibFile = file("../../../libs/${storageCardLibName}.jar")
+  if (storageCardLibFile.exists()) {
+    println("Using private storage card library: ${storageCardLibFile.name}")
+    implementation(files(storageCardLibFile))
+  } else {
+    println("Using mock storage card library")
+    implementation(files("../../../libs/${storageCardLibName}-mock.jar"))
+  }
+
+  // Conditional dependency for the storage card plugin library
+  val pluginStorageCardLibName = "keyple-plugin-cna-storagecard-java-lib-1.1.0"
+  val pluginStorageCardLibFile = file("../../../libs/${pluginStorageCardLibName}.jar")
+  if (pluginStorageCardLibFile.exists()) {
+    println("Using private storage card plugin library: ${pluginStorageCardLibFile.name}")
+    implementation(files(pluginStorageCardLibFile))
+  } else {
+    println("Using mock storage card plugin library")
+    implementation(files("../../../libs/${pluginStorageCardLibName}-mock.jar"))
+  }
+
+  // Bluebird specific components
+  val bluebirdPluginLibName = "keyple-plugin-cna-bluebird-specific-nfc-java-lib-3.2.0"
+  val bluebirdPluginLibFile = file("../../../libs/${bluebirdPluginLibName}.aar")
+  if (bluebirdPluginLibFile.exists()) {
+    println("Using release Bluebird plugin library: ${bluebirdPluginLibFile.name}")
+    implementation(files(bluebirdPluginLibFile))
+  } else {
+    println("Using debug Bluebird plugin library")
+    implementation(files("../../../libs/${bluebirdPluginLibName}-debug.aar"))
+  }
+
+  // Arrive specific components
+  val arrivePluginLibName = "keyple-plugin-cna-arrive-android-jvm-lib-3.0.0"
+  val arrivePluginLibFile = file("../../../libs/${arrivePluginLibName}-release.aar")
+  if (arrivePluginLibFile.exists()) {
+    println("Using release Arrive plugin library: ${arrivePluginLibFile.name}")
+    implementation(files(arrivePluginLibFile))
+  } else {
+    println("Using debug Arrive plugin library")
+    implementation(files("../../../libs/${arrivePluginLibName}-debug.aar"))
+  }
+
+  // Arrive/Parkeon SDK (UI: LEDs, sounds)
+  implementation(files("../../../libs/AndroidParkeonCommon-release.aar"))
 
   // Keyple BOM
   implementation(platform(libs.keypleJavaBom))
@@ -132,11 +178,12 @@ android {
     // - Minification, resource shrinking, and ProGuard rules are enabled here as an example
     //   to test release-like performance and optimizations during development.
     // - To see full, unoptimized logs during debug, this block can be commented out or adjusted.
-    getByName("debug") {
-      isMinifyEnabled = true
-      isShrinkResources = true
-      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-    }
+    //    getByName("debug") {
+    //      isMinifyEnabled = true
+    //      isShrinkResources = true
+    //      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"),
+    // "proguard-rules.pro")
+    //    }
     getByName("release") {
       isMinifyEnabled = true
       isShrinkResources = true

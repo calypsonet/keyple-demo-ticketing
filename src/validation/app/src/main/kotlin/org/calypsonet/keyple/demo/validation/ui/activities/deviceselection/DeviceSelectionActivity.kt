@@ -25,8 +25,8 @@ import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
 import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.calypsonet.keyple.demo.validation.ui.activities.BaseActivity
 import org.calypsonet.keyple.demo.validation.ui.activities.SettingsActivity
+import org.calypsonet.keyple.plugin.arrive.ArriveConstants
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
-import org.calypsonet.keyple.plugin.flowbird.FlowbirdPlugin
 
 class DeviceSelectionActivity : BaseActivity() {
 
@@ -71,12 +71,12 @@ class DeviceSelectionActivity : BaseActivity() {
       finish()
     }
 
-    // Flowbird
-    if (FlowbirdPlugin.PLUGIN_NAME.contains(mock)) {
-      activityDeviceSelectionBinding.flowbirdBtn.setBackgroundColor(Color.GRAY)
+    // Arrive
+    if (ArriveConstants.PLUGIN_NAME.contains(mock)) {
+      activityDeviceSelectionBinding.arriveBtn.setBackgroundColor(Color.GRAY)
     } else {
-      activityDeviceSelectionBinding.flowbirdBtn.setOnClickListener {
-        AppSettings.readerType = ReaderType.FLOWBIRD
+      activityDeviceSelectionBinding.arriveBtn.setOnClickListener {
+        AppSettings.readerType = ReaderType.ARRIVE
         startActivity(Intent(this, SettingsActivity::class.java))
         finish()
       }

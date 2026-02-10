@@ -43,3 +43,5 @@
 -dontwarn com.bluebird.extnfc.ExtNfcReader
 -dontwarn com.bluebird.payment.sam.SamInterface
 -dontwarn org.eclipse.keyple.core.plugin.storagecard.internal.KeyStorageType
+
+-dontwarn javax.annotation.Nullable

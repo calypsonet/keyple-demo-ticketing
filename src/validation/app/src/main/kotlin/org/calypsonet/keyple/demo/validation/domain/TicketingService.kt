@@ -165,6 +165,9 @@ constructor(
    */
   fun displayResultFailed(): Boolean = readerManager.displayResultFailed()
 
+  /** Resets the UI feedback to the waiting-for-card state (e.g. turns off result LEDs). */
+  fun displayWaiting() = readerManager.displayWaiting()
+
   /** Returns the list of available locations used during validation. */
   fun getLocations(): List<Location> = LocationRepository.getLocations()
 

@@ -78,3 +78,6 @@
 -dontwarn com.bluebird.extnfc.ExtNfcReader
 -dontwarn com.bluebird.payment.sam.SamInterface
 -dontwarn org.eclipse.keyple.core.plugin.storagecard.internal.KeyStorageType
+
+# Suppress warnings for missing OMAPI classes (system library present only on compatible devices)
+-dontwarn org.simalliance.openmobileapi.**

@@ -29,13 +29,6 @@ import org.calypsonet.keyple.plugin.famoco.AndroidFamocoPlugin
 import org.calypsonet.keyple.plugin.famoco.AndroidFamocoPluginFactoryProvider
 import org.calypsonet.keyple.plugin.famoco.AndroidFamocoReader
 import org.calypsonet.keyple.plugin.famoco.utils.ContactCardCommonProtocols
-import org.calypsonet.keyple.plugin.flowbird.FlowbirdPlugin
-import org.calypsonet.keyple.plugin.flowbird.FlowbirdPluginFactoryProvider
-import org.calypsonet.keyple.plugin.flowbird.FlowbirdUiManager
-import org.calypsonet.keyple.plugin.flowbird.contact.FlowbirdContactReader
-import org.calypsonet.keyple.plugin.flowbird.contact.SamSlot
-import org.calypsonet.keyple.plugin.flowbird.contactless.FlowbirdContactlessReader
-import org.calypsonet.keyple.plugin.flowbird.contactless.FlowbirdSupportContactlessProtocols
 import org.calypsonet.keyple.plugin.storagecard.ApduInterpreterFactoryProvider
 import org.eclipse.keyple.core.service.KeyplePluginException
 import org.eclipse.keyple.core.service.SmartCardServiceProvider
@@ -77,7 +70,6 @@ constructor(
       ReaderType.BLUEBIRD -> initBluebirdReader()
       ReaderType.COPPERNIC -> initCoppernicReader()
       ReaderType.FAMOCO -> initFamocoReader()
-      ReaderType.FLOWBIRD -> initFlowbirdReader()
       ReaderType.NFC_TERMINAL -> initNfcTerminalReader()
     }
   }
@@ -134,19 +126,6 @@ constructor(
     isStorageCardSupported = true
   }
 
-  private fun initFlowbirdReader() {
-    readerType = ReaderType.FLOWBIRD
-    cardPluginName = FlowbirdPlugin.PLUGIN_NAME
-    cardReaderName = FlowbirdContactlessReader.READER_NAME
-    cardReaderProtocols[FlowbirdSupportContactlessProtocols.ALL.key] =
-        CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name
-    samPluginName = FlowbirdPlugin.PLUGIN_NAME
-    samReaderNameRegex = ".*ContactReader_0"
-    samReaderName = "${FlowbirdContactReader.READER_NAME}_${(SamSlot.ONE.slotId)}"
-    samReaderProtocolPhysicalName = null
-    samReaderProtocolLogicalName = null
-  }
-
   private fun initNfcTerminalReader() {
     readerType = ReaderType.NFC_TERMINAL
     cardPluginName = AndroidNfcConstants.PLUGIN_NAME
@@ -163,7 +142,7 @@ constructor(
   @Throws(KeyplePluginException::class)
   fun registerPlugin(activity: Activity, readerType: ReaderType) {
     initReaderType(readerType)
-    if (readerType != ReaderType.FLOWBIRD) {
+    if (readerType != ReaderType.NFC_TERMINAL) {
       successMedia = MediaPlayer.create(activity, R.raw.success)
       errorMedia = MediaPlayer.create(activity, R.raw.error)
     }
@@ -184,17 +163,6 @@ constructor(
                           activity = activity,
                           apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
                           keyProvider = MifareClassicKeyProvider()))
-              ReaderType.FLOWBIRD -> { // Init files used for sounds and colors from assets
-                val mediaFiles: List<String> =
-                    listOf("1_default_en.xml", "success.mp3", "error.mp3")
-                val situationFiles: List<String> = listOf("1_default_en.xml")
-                val translationFiles: List<String> = listOf("0_default.xml")
-                FlowbirdPluginFactoryProvider.getFactory(
-                    activity = activity,
-                    mediaFiles = mediaFiles,
-                    situationFiles = situationFiles,
-                    translationFiles = translationFiles)
-              }
               ReaderType.NFC_TERMINAL ->
                   AndroidNfcPluginFactoryProvider.provideFactory(
                       AndroidNfcConfig(
@@ -281,7 +249,7 @@ constructor(
         it.deactivateProtocol(samReaderProtocolPhysicalName)
       }
     }
-    if (readerType != ReaderType.FLOWBIRD) {
+    if (readerType != ReaderType.NFC_TERMINAL) {
       successMedia.stop()
       successMedia.release()
       errorMedia.stop()
@@ -290,20 +258,12 @@ constructor(
   }
 
   fun displayResultSuccess(): Boolean {
-    if (readerType == ReaderType.FLOWBIRD) {
-      FlowbirdUiManager.displayResultSuccess()
-    } else {
-      successMedia.start()
-    }
+    if (readerType != ReaderType.NFC_TERMINAL) successMedia.start()
     return true
   }
 
   fun displayResultFailed(): Boolean {
-    if (readerType == ReaderType.FLOWBIRD) {
-      FlowbirdUiManager.displayResultFailed()
-    } else {
-      errorMedia.start()
-    }
+    if (readerType != ReaderType.NFC_TERMINAL) errorMedia.start()
     return true
   }
 }

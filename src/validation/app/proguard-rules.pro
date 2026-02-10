@@ -44,3 +44,14 @@
 -dontwarn com.bluebird.extnfc.ExtNfcReader
 -dontwarn com.bluebird.payment.sam.SamInterface
 -dontwarn org.eclipse.keyple.core.plugin.storagecard.internal.KeyStorageType
+
+# Keep Parkeon SDK classes used by ArriveUiManager
+-keep class com.parkeon.app.ui.UiManager { *; }
+-keep interface com.parkeon.system.LedInterface { *; }
+-keep interface com.parkeon.sound.SoundManager { *; }
+-keep class com.parkeon.content.BindJoiner { *; }
+-keep interface com.parkeon.content.BindJoiner$Listener { *; }
+
+# Suppress warnings for missing Parkeon SDK classes (system library present only on Arrive devices)
+-dontwarn com.parkeon.**
+-dontwarn javax.annotation.Nullable

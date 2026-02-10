@@ -30,7 +30,6 @@ import org.calypsonet.keyple.demo.validation.R
 import org.calypsonet.keyple.demo.validation.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.validation.di.scope.ActivityScoped
 import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
-import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.calypsonet.keyple.demo.validation.domain.model.Status
 import org.calypsonet.keyple.demo.validation.ui.adapters.UiContextImpl
 import org.calypsonet.keyple.demo.validation.ui.mappers.toUi
@@ -76,9 +75,6 @@ class ReaderActivity : BaseActivity() {
 
   override fun onResume() {
     super.onResume()
-    if (AppSettings.readerType == ReaderType.FLOWBIRD) {
-      activityCardReaderBinding.animation.repeatCount = 0
-    }
     activityCardReaderBinding.animation.playAnimation()
 
     if (!ticketingService.areReadersInitialized) {
@@ -104,6 +100,7 @@ class ReaderActivity : BaseActivity() {
         }
       }
     } else {
+      ticketingService.displayWaiting()
       ticketingService.startNfcDetection()
     }
     if (AppSettings.batteryPowered) {
@@ -225,11 +222,7 @@ class ReaderActivity : BaseActivity() {
         activityCardReaderBinding.mainView.setBackgroundColor(
             ContextCompat.getColor(this, R.color.turquoise))
         supportActionBar?.show()
-        if (AppSettings.readerType == ReaderType.FLOWBIRD) {
-          activityCardReaderBinding.animation.repeatCount = 0
-        } else {
-          activityCardReaderBinding.animation.repeatCount = LottieDrawable.INFINITE
-        }
+        activityCardReaderBinding.animation.repeatCount = LottieDrawable.INFINITE
         activityCardReaderBinding.animation.playAnimation()
       } else {
         runOnUiThread { activityCardReaderBinding.animation.cancelAnimation() }

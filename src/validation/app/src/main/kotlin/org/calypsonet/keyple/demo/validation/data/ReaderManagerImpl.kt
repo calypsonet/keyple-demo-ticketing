@@ -23,6 +23,9 @@ import org.calypsonet.keyple.demo.validation.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.calypsonet.keyple.demo.validation.domain.spi.ReaderManager
 import org.calypsonet.keyple.demo.validation.domain.spi.UiContext
+import org.calypsonet.keyple.plugin.arrive.ArriveConstants
+import org.calypsonet.keyple.plugin.arrive.ArriveContactlessProtocols
+import org.calypsonet.keyple.plugin.arrive.ArrivePluginFactoryProvider
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
 import org.calypsonet.keyple.plugin.bluebird.BluebirdContactlessProtocols
 import org.calypsonet.keyple.plugin.bluebird.BluebirdPluginFactoryProvider
@@ -31,13 +34,6 @@ import org.calypsonet.keyple.plugin.famoco.AndroidFamocoPlugin
 import org.calypsonet.keyple.plugin.famoco.AndroidFamocoPluginFactoryProvider
 import org.calypsonet.keyple.plugin.famoco.AndroidFamocoReader
 import org.calypsonet.keyple.plugin.famoco.utils.ContactCardCommonProtocols
-import org.calypsonet.keyple.plugin.flowbird.FlowbirdPlugin
-import org.calypsonet.keyple.plugin.flowbird.FlowbirdPluginFactoryProvider
-import org.calypsonet.keyple.plugin.flowbird.FlowbirdUiManager
-import org.calypsonet.keyple.plugin.flowbird.contact.FlowbirdContactReader
-import org.calypsonet.keyple.plugin.flowbird.contact.SamSlot
-import org.calypsonet.keyple.plugin.flowbird.contactless.FlowbirdContactlessReader
-import org.calypsonet.keyple.plugin.flowbird.contactless.FlowbirdSupportContactlessProtocols
 import org.calypsonet.keyple.plugin.storagecard.ApduInterpreterFactoryProvider
 import org.eclipse.keyple.core.service.KeyplePluginException
 import org.eclipse.keyple.core.service.SmartCardServiceProvider
@@ -74,13 +70,14 @@ constructor(
   // IHM
   private lateinit var successMedia: MediaPlayer
   private lateinit var errorMedia: MediaPlayer
+  private var arriveUiManager: ArriveUiManager? = null
 
   private fun initReaderType(readerType: ReaderType) {
     when (readerType) {
+      ReaderType.ARRIVE -> initArriveReader()
       ReaderType.BLUEBIRD -> initBluebirdReader()
       ReaderType.COPPERNIC -> initCoppernicReader()
       ReaderType.FAMOCO -> initFamocoReader()
-      ReaderType.FLOWBIRD -> initFlowbirdReader()
     }
   }
 
@@ -135,15 +132,15 @@ constructor(
     samReaderProtocolLogicalName = CardProtocolEnum.ISO_7816_LOGICAL_PROTOCOL.name
   }
 
-  private fun initFlowbirdReader() {
-    readerType = ReaderType.FLOWBIRD
-    cardPluginName = FlowbirdPlugin.PLUGIN_NAME
-    cardReaderName = FlowbirdContactlessReader.READER_NAME
-    cardReaderProtocols[FlowbirdSupportContactlessProtocols.ALL.key] =
+  private fun initArriveReader() {
+    readerType = ReaderType.ARRIVE
+    cardPluginName = ArriveConstants.PLUGIN_NAME
+    cardReaderName = ArriveConstants.CARD_READER_NAME
+    cardReaderProtocols[ArriveContactlessProtocols.ISO_14443_4.name] =
         CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name
-    samPluginName = FlowbirdPlugin.PLUGIN_NAME
-    samReaderNameRegex = ".*ContactReader_0"
-    samReaderName = "${FlowbirdContactReader.READER_NAME}_${(SamSlot.ONE.slotId)}"
+    samPluginName = ArriveConstants.PLUGIN_NAME
+    samReaderNameRegex = ".*SAM.*"
+    samReaderName = ArriveConstants.SAM.SAM_1.readerName
     samReaderProtocolPhysicalName = null
     samReaderProtocolLogicalName = null
   }
@@ -152,7 +149,9 @@ constructor(
   override fun registerPlugin(readerType: ReaderType, uiContext: UiContext) {
     initReaderType(readerType)
     val activity = uiContext.adaptTo(Activity::class.java)
-    if (readerType != ReaderType.FLOWBIRD) {
+    if (readerType == ReaderType.ARRIVE) {
+      arriveUiManager = ArriveUiManager(activity).also { it.init() }
+    } else {
       successMedia = MediaPlayer.create(activity, R.raw.success)
       errorMedia = MediaPlayer.create(activity, R.raw.error)
     }
@@ -161,6 +160,7 @@ constructor(
       val pluginFactory =
           withContext(Dispatchers.IO) {
             when (readerType) {
+              ReaderType.ARRIVE -> ArrivePluginFactoryProvider.provideFactory(context = activity)
               ReaderType.BLUEBIRD ->
                   BluebirdPluginFactoryProvider.provideFactory(
                       activity,
@@ -173,17 +173,6 @@ constructor(
                           activity = activity,
                           apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
                           keyProvider = MifareClassicKeyProvider()))
-              ReaderType.FLOWBIRD -> { // Init files used for sounds and colors from assets
-                val mediaFiles: List<String> =
-                    listOf("1_default_en.xml", "success.mp3", "error.mp3")
-                val situationFiles: List<String> = listOf("1_default_en.xml")
-                val translationFiles: List<String> = listOf("0_default.xml")
-                FlowbirdPluginFactoryProvider.getFactory(
-                    activity = activity,
-                    mediaFiles = mediaFiles,
-                    situationFiles = situationFiles,
-                    translationFiles = translationFiles)
-              }
             }
           }
       SmartCardServiceProvider.getService().registerPlugin(pluginFactory)
@@ -264,7 +253,10 @@ constructor(
         it.deactivateProtocol(samReaderProtocolPhysicalName)
       }
     }
-    if (readerType != ReaderType.FLOWBIRD) {
+    if (arriveUiManager != null) {
+      arriveUiManager?.release()
+      arriveUiManager = null
+    } else {
       successMedia.stop()
       successMedia.release()
       errorMedia.stop()
@@ -282,20 +274,16 @@ constructor(
   }
 
   override fun displayResultSuccess(): Boolean {
-    if (readerType == ReaderType.FLOWBIRD) {
-      FlowbirdUiManager.displayResultSuccess()
-    } else {
-      successMedia.start()
-    }
+    arriveUiManager?.displayResultSuccess() ?: successMedia.start()
     return true
   }
 
   override fun displayResultFailed(): Boolean {
-    if (readerType == ReaderType.FLOWBIRD) {
-      FlowbirdUiManager.displayResultFailed()
-    } else {
-      errorMedia.start()
-    }
+    arriveUiManager?.displayResultFailed() ?: errorMedia.start()
     return true
+  }
+
+  override fun displayWaiting() {
+    arriveUiManager?.displayWaiting()
   }
 }

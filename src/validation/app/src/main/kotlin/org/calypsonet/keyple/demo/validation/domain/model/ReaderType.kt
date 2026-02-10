@@ -13,8 +13,8 @@
 package org.calypsonet.keyple.demo.validation.domain.model
 
 enum class ReaderType {
+  ARRIVE,
   BLUEBIRD,
   COPPERNIC,
-  FAMOCO,
-  FLOWBIRD
+  FAMOCO
 }

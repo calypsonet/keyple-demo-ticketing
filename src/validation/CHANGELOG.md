@@ -148,7 +148,7 @@ New dependencies
 - `keyple-plugin-cna-coppernic-cone2-java-lib:2.0.2`
 - `keyple-plugin-cna-famoco-se-communication-java-lib:2.0.2`
 - `keyple-plugin-cna-bluebird-specific-nfc-java-lib-2.1.1-mock` (mocked library)
-- `keyple-plugin-cna-flowbird-android-java-lib-2.0.2-mock` (mocked library)
+- `keyple-plugin-cna-arrive-android-jvm-lib-3.0.0-debug` (mocked library)
 - `keyple-util-java-lib:2.3.0`
 
 [Unreleased]: https://github.com/calypsonet/keyple-demo-ticketing-validation-app/compare/2025.03.21...HEAD

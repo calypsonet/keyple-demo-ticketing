@@ -52,11 +52,8 @@ import timber.log.Timber
 class StorageCardValidationManager : BaseValidationManager() {
 
   /**
-   * Formats the card ProductType for user display.
-   * Examples:
-   *   MIFARE_CLASSIC_1K → "Mifare Classic 1K"
-   *   MIFARE_ULTRALIGHT → "Mifare Ultralight"
-   *   ST25_SRT512 → "ST25 SRT512"
+   * Formats the card ProductType for user display. Examples: MIFARE_CLASSIC_1K → "Mifare Classic
+   * 1K" MIFARE_ULTRALIGHT → "Mifare Ultralight" ST25_SRT512 → "ST25 SRT512"
    */
   private fun formatCardType(productType: ProductType): String {
     return when (productType) {
