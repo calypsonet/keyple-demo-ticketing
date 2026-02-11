@@ -256,7 +256,7 @@ constructor(
     if (arriveUiManager != null) {
       arriveUiManager?.release()
       arriveUiManager = null
-    } else {
+    } else if (::successMedia.isInitialized) {
       successMedia.stop()
       successMedia.release()
       errorMedia.stop()

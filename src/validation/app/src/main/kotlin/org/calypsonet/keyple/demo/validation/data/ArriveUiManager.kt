@@ -78,9 +78,12 @@ internal class ArriveUiManager(private val context: Context) {
     joiner?.bind()
   }
 
-  /** Copies sound files from assets to internal storage so SoundManager can access them. */
+  /** Copies sound files from assets to external files dir so SoundManager can access them. */
   private fun deploySoundFiles() {
-    val soundDir = File(context.filesDir, "sounds").also { it.mkdirs() }
+    val soundDir =
+        (context.getExternalFilesDir("sounds") ?: File(context.filesDir, "sounds")).also {
+          it.mkdirs()
+        }
     val files = listOf(SOUND_SUCCESS, SOUND_ERROR)
     val deployedUris = mutableListOf<Uri>()
     for (name in files) {
@@ -140,7 +143,6 @@ internal class ArriveUiManager(private val context: Context) {
   fun release() {
     try {
       setLeds(LEDS_OFF)
-      soundManager?.releaseSoundResources()
     } catch (e: Exception) {
       Timber.e(e, "ArriveUiManager: error during release")
     }

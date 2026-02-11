@@ -178,12 +178,11 @@ android {
     // - Minification, resource shrinking, and ProGuard rules are enabled here as an example
     //   to test release-like performance and optimizations during development.
     // - To see full, unoptimized logs during debug, this block can be commented out or adjusted.
-    //    getByName("debug") {
-    //      isMinifyEnabled = true
-    //      isShrinkResources = true
-    //      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"),
-    // "proguard-rules.pro")
-    //    }
+    getByName("debug") {
+      isMinifyEnabled = true
+      isShrinkResources = true
+      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+    }
     getByName("release") {
       isMinifyEnabled = true
       isShrinkResources = true
