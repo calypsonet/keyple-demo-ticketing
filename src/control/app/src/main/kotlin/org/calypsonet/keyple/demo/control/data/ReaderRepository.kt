@@ -142,10 +142,8 @@ constructor(
   @Throws(KeyplePluginException::class)
   fun registerPlugin(activity: Activity, readerType: ReaderType) {
     initReaderType(readerType)
-    if (readerType != ReaderType.NFC_TERMINAL) {
-      successMedia = MediaPlayer.create(activity, R.raw.success)
-      errorMedia = MediaPlayer.create(activity, R.raw.error)
-    }
+    successMedia = MediaPlayer.create(activity, R.raw.success)
+    errorMedia = MediaPlayer.create(activity, R.raw.error)
     runBlocking {
       // Plugin
       val pluginFactory =
@@ -249,21 +247,19 @@ constructor(
         it.deactivateProtocol(samReaderProtocolPhysicalName)
       }
     }
-    if (readerType != ReaderType.NFC_TERMINAL) {
-      successMedia.stop()
-      successMedia.release()
-      errorMedia.stop()
-      errorMedia.release()
-    }
+    successMedia.stop()
+    successMedia.release()
+    errorMedia.stop()
+    errorMedia.release()
   }
 
   fun displayResultSuccess(): Boolean {
-    if (readerType != ReaderType.NFC_TERMINAL) successMedia.start()
+    successMedia.start()
     return true
   }
 
   fun displayResultFailed(): Boolean {
-    if (readerType != ReaderType.NFC_TERMINAL) errorMedia.start()
+    errorMedia.start()
     return true
   }
 }
