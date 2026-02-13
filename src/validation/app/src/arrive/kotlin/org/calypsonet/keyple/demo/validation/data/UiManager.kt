@@ -29,7 +29,7 @@ import timber.log.Timber
  * Initialization is asynchronous via BindJoiner; display calls before init completes are silently
  * ignored.
  */
-internal class ArriveUiManager(private val context: Context) {
+internal class UiManager(private val context: Context) {
 
   private var joiner: BindJoiner? = null
   private var ledInterface: LedInterface? = null

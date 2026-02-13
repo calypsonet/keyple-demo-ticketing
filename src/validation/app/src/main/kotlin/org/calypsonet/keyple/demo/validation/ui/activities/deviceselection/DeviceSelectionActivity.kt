@@ -72,7 +72,7 @@ class DeviceSelectionActivity : BaseActivity() {
     }
 
     // Arrive
-    if (ArriveConstants.PLUGIN_NAME.contains(mock)) {
+    if (ArriveConstants.PLUGIN_NAME.contains(mock) || !BuildConfig.HAS_ARRIVE_SDK) {
       activityDeviceSelectionBinding.arriveBtn.setBackgroundColor(Color.GRAY)
     } else {
       activityDeviceSelectionBinding.arriveBtn.setOnClickListener {

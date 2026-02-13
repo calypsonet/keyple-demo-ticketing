@@ -23,8 +23,8 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.validation.R
@@ -51,6 +51,7 @@ class ReaderActivity : BaseActivity() {
 
   private var summaryBinding: LayoutCardSummaryOverlayBinding? = null
   private var summaryTimer: Timer? = null
+  private var cardInsertedAt = 0L
 
   /* application states */
   enum class AppState {
@@ -80,7 +81,7 @@ class ReaderActivity : BaseActivity() {
             activityCardReaderBinding.cardSummaryStub!!.inflate())
 
     // Pre-warm the IO thread pool to eliminate the ~145ms dispatch gap on first card detection
-    GlobalScope.launch(Dispatchers.IO) {}
+    lifecycleScope.launch(Dispatchers.IO) {}
   }
 
   override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
@@ -105,7 +106,7 @@ class ReaderActivity : BaseActivity() {
     activityCardReaderBinding.animation.playAnimation()
 
     if (!ticketingService.areReadersInitialized) {
-      GlobalScope.launch {
+      lifecycleScope.launch {
         withContext(Dispatchers.Main) { showProgress() }
         withContext(Dispatchers.IO) {
           try {
@@ -155,6 +156,7 @@ class ReaderActivity : BaseActivity() {
   }
 
   override fun onDestroy() {
+    timer.cancel()
     ticketingService.onDestroy(cardReaderObserver)
     cardReaderObserver = null
     super.onDestroy()
@@ -183,7 +185,7 @@ class ReaderActivity : BaseActivity() {
         if (newAppState == AppState.WAIT_SYSTEM_READY) {
           return
         }
-        Timber.i("Process the selection result...")
+        cardInsertedAt = System.currentTimeMillis()
         val error =
             ticketingService.analyseSelectionResult(readerEvent.scheduledCardSelectionsResponse)
         if (error != null) {
@@ -214,32 +216,19 @@ class ReaderActivity : BaseActivity() {
       }
       AppState.CARD_STATUS -> {
         currentAppState = newAppState
-        // Stop the waiting animation immediately to free the main thread for the transaction
-        runOnUiThread { activityCardReaderBinding.animation.cancelAnimation() }
         when (readerEvent?.type) {
           CardReaderEvent.Type.CARD_INSERTED,
           CardReaderEvent.Type.CARD_MATCHED -> {
-            GlobalScope.launch {
-              try {
-                withContext(Dispatchers.Main) { showProgress() }
-                val validationResult =
-                    withContext(Dispatchers.IO) { ticketingService.executeValidationProcedure() }
-                Timber.i("Validation procedure completed: ${validationResult.status.name}")
-                withContext(Dispatchers.Main) {
-                  dismissProgress()
-                  changeDisplay(validationResult.toUi())
-                }
-              } catch (e: IllegalStateException) {
-                Timber.e(e, "IllegalStateException during validation procedure")
-                changeDisplay(
-                    UiValidationResult(
-                        status = Status.ERROR,
-                        cardType = "Unknown card type",
-                        nbTicketsLeft = 0,
-                        contract = "",
-                        validationData = null,
-                        errorMessage = e.message))
-              }
+            // Single Main-thread dispatch: cancel animation + show progress + dispatch to IO.
+            // Merging the former runOnUiThread(cancelAnimation) into this launch eliminates
+            // one redundant message queue post (two separate Main wake-ups → one).
+            lifecycleScope.launch {
+              activityCardReaderBinding.animation.cancelAnimation()
+              showProgress()
+              val validationResult =
+                  withContext(Dispatchers.IO) { ticketingService.executeValidationProcedure() }
+              dismissProgress()
+              changeDisplay(validationResult.toUi())
             }
           }
           else -> {
@@ -271,19 +260,21 @@ class ReaderActivity : BaseActivity() {
   private fun showSummaryOverlay(result: UiValidationResult) {
     val b = summaryBinding!!
 
-    // Card type label
+    // Card type label + transaction time
+    val elapsedMs = System.currentTimeMillis() - cardInsertedAt
     if (result.cardType.isNotBlank()) {
       b.cardTypeLabel.visibility = View.VISIBLE
-      b.cardTypeLabel.text = getString(R.string.card_type, result.cardType)
+      b.cardTypeLabel.text = getString(R.string.card_type, result.cardType) + " • ${elapsedMs} ms"
     } else {
       b.cardTypeLabel.visibility = View.GONE
     }
 
+    val animationFile: String
     when (result.status) {
       Status.SUCCESS -> {
         ticketingService.displayResultSuccess()
+        animationFile = "tick_white.json"
         b.summaryMainView.setBackgroundColor(ContextCompat.getColor(this, R.color.green))
-        b.animation.setAnimation("tick_white.json")
         b.bigText.setText(R.string.valid_main_desc)
         val eventDate =
             result.eventDateTime!!.format(
@@ -310,8 +301,8 @@ class ReaderActivity : BaseActivity() {
       }
       Status.INVALID_CARD -> {
         ticketingService.displayResultFailed()
+        animationFile = "error_white.json"
         b.summaryMainView.setBackgroundColor(ContextCompat.getColor(this, R.color.orange))
-        b.animation.setAnimation("error_white.json")
         b.bigText.setText(R.string.card_invalid_main_desc)
         b.locationTime.text = result.errorMessage
         b.mediumText.visibility = View.INVISIBLE
@@ -319,8 +310,8 @@ class ReaderActivity : BaseActivity() {
       }
       Status.EMPTY_CARD -> {
         ticketingService.displayResultFailed()
+        animationFile = "error_white.json"
         b.summaryMainView.setBackgroundColor(ContextCompat.getColor(this, R.color.red))
-        b.animation.setAnimation("error_white.json")
         b.bigText.text = result.errorMessage
         b.locationTime.setText(R.string.no_tickets_small_desc)
         b.mediumText.visibility = View.INVISIBLE
@@ -328,8 +319,8 @@ class ReaderActivity : BaseActivity() {
       }
       else -> {
         ticketingService.displayResultFailed()
+        animationFile = "error_white.json"
         b.summaryMainView.setBackgroundColor(ContextCompat.getColor(this, R.color.red))
-        b.animation.setAnimation("error_white.json")
         b.bigText.setText(R.string.error_main_desc)
         b.locationTime.text = result.errorMessage ?: getString(R.string.error_small_desc)
         b.mediumText.visibility = View.INVISIBLE
@@ -339,6 +330,7 @@ class ReaderActivity : BaseActivity() {
 
     ticketingService.stopNfcDetection()
     b.summaryMainView.visibility = View.VISIBLE
+    b.animation.setAnimation(animationFile)
     b.animation.playAnimation()
 
     summaryTimer = Timer()
@@ -389,7 +381,6 @@ class ReaderActivity : BaseActivity() {
   private inner class CardReaderObserver : CardReaderObserverSpi {
 
     override fun onReaderEvent(readerEvent: CardReaderEvent?) {
-      Timber.i("New ReaderEvent received:${readerEvent?.type?.name}")
       handleAppEvents(currentAppState, readerEvent)
     }
   }

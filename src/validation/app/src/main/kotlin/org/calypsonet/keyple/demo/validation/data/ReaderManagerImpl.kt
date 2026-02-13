@@ -13,12 +13,10 @@
 package org.calypsonet.keyple.demo.validation.data
 
 import android.app.Activity
-import android.media.MediaPlayer
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import org.calypsonet.keyple.demo.validation.R
 import org.calypsonet.keyple.demo.validation.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.calypsonet.keyple.demo.validation.domain.spi.ReaderManager
@@ -68,9 +66,7 @@ constructor(
   private var samReaderProtocolLogicalName: String? = null
   private var samReaders: MutableList<CardReader> = mutableListOf()
   // IHM
-  private lateinit var successMedia: MediaPlayer
-  private lateinit var errorMedia: MediaPlayer
-  private var arriveUiManager: ArriveUiManager? = null
+  private lateinit var uiManager: UiManager
 
   private fun initReaderType(readerType: ReaderType) {
     when (readerType) {
@@ -149,12 +145,7 @@ constructor(
   override fun registerPlugin(readerType: ReaderType, uiContext: UiContext) {
     initReaderType(readerType)
     val activity = uiContext.adaptTo(Activity::class.java)
-    if (readerType == ReaderType.ARRIVE) {
-      arriveUiManager = ArriveUiManager(activity).also { it.init() }
-    } else {
-      successMedia = MediaPlayer.create(activity, R.raw.success)
-      errorMedia = MediaPlayer.create(activity, R.raw.error)
-    }
+    uiManager = UiManager(activity).also { it.init() }
     runBlocking {
       // Plugin
       val pluginFactory =
@@ -253,15 +244,7 @@ constructor(
         it.deactivateProtocol(samReaderProtocolPhysicalName)
       }
     }
-    if (arriveUiManager != null) {
-      arriveUiManager?.release()
-      arriveUiManager = null
-    } else if (::successMedia.isInitialized) {
-      successMedia.stop()
-      successMedia.release()
-      errorMedia.stop()
-      errorMedia.release()
-    }
+    uiManager.release()
   }
 
   override fun onDestroy(observer: CardReaderObserverSpi?) {
@@ -274,16 +257,16 @@ constructor(
   }
 
   override fun displayResultSuccess(): Boolean {
-    arriveUiManager?.displayResultSuccess() ?: successMedia.start()
+    uiManager.displayResultSuccess()
     return true
   }
 
   override fun displayResultFailed(): Boolean {
-    arriveUiManager?.displayResultFailed() ?: errorMedia.start()
+    uiManager.displayResultFailed()
     return true
   }
 
   override fun displayWaiting() {
-    arriveUiManager?.displayWaiting()
+    uiManager.displayWaiting()
   }
 }

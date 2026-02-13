@@ -31,7 +31,8 @@ class SettingsMenuActivity : AbstractDemoActivity() {
     setContentView(activitySettingsMenuBinding.root)
 
     // Handle edge-to-edge display with proper window insets for Android 15+
-    ViewCompat.setOnApplyWindowInsetsListener(activitySettingsMenuBinding.root) { view, windowInsets ->
+    ViewCompat.setOnApplyWindowInsetsListener(activitySettingsMenuBinding.root) { view, windowInsets
+      ->
       val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
       view.updatePadding(top = insets.top, bottom = insets.bottom)
       WindowInsetsCompat.CONSUMED

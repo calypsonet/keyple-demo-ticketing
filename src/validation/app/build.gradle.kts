@@ -26,6 +26,15 @@ plugins {
 
 // Logging configuration: using SLF4J + Timber bridge for Android
 
+val parkeonSdkFile = file("../../../libs/AndroidParkeonCommon-release.aar")
+val hasArriveSdk = parkeonSdkFile.exists()
+
+if (hasArriveSdk) {
+  println("Parkeon SDK found - Arrive UI features enabled")
+} else {
+  println("Parkeon SDK not found - Arrive UI features disabled (stub mode)")
+}
+
 dependencies {
   // Demo common
   implementation(project(":common"))
@@ -76,8 +85,10 @@ dependencies {
     implementation(files("../../../libs/${arrivePluginLibName}-debug.aar"))
   }
 
-  // Arrive/Parkeon SDK (UI: LEDs, sounds)
-  implementation(files("../../../libs/AndroidParkeonCommon-release.aar"))
+  // Arrive/Parkeon SDK (UI: LEDs, sounds) — optional, enables ArriveUiManager real implementation
+  if (hasArriveSdk) {
+    implementation(files(parkeonSdkFile))
+  }
 
   // Keyple BOM
   implementation(platform(libs.keypleJavaBom))
@@ -168,6 +179,7 @@ android {
     targetSdk = (project.findProperty("androidCompileSdk") as String).toInt()
     versionCode = (project.findProperty("androidAppVersionCode") as String).toInt()
     versionName = project.findProperty("androidAppVersionName") as String
+    buildConfigField("Boolean", "HAS_ARRIVE_SDK", "$hasArriveSdk")
   }
   buildFeatures {
     viewBinding = true
@@ -197,6 +209,8 @@ android {
   sourceSets {
     getByName("main").java.srcDirs("src/main/kotlin")
     getByName("debug").java.srcDirs("src/debug/kotlin")
+    // ArriveUiManager: real impl (Parkeon SDK) or no-op stub, mutually exclusive source sets
+    getByName("main").java.srcDir(if (hasArriveSdk) "src/arrive/kotlin" else "src/no-arrive/kotlin")
   }
   packagingOptions {
     // Exclude 'META-INF/NOTICE.md' to resolve the conflict that occurs when multiple dependencies

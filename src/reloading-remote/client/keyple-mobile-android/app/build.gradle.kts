@@ -72,7 +72,8 @@ dependencies {
   implementation(libs.keypopReaderApi)
   implementation(libs.keypopCalypsoCardApi)
   implementation(libs.keypopCalypsoCryptoLegacysamApi)
-  // TEMPORARY SNAPSHOT: Required for Mifare Classic support (MifareClassicKeyType, hasAuthentication())
+  // TEMPORARY SNAPSHOT: Required for Mifare Classic support (MifareClassicKeyType,
+  // hasAuthentication())
   // TODO: Remove when version 1.1.0 (or later) is officially released and added to BOM
   // Original: implementation(libs.keypopStoragecardApi)
   implementation("org.eclipse.keypop:keypop-storagecard-java-api:1.1.0-SNAPSHOT") {
