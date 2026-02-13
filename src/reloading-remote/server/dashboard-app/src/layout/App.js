@@ -40,7 +40,7 @@ function Paperbase(props) {
             return response.json()
           } else {
             //unexpected error connect again
-            throw "Exception, response status : "+ response.status
+            throw new Error("Exception, response status : "+ response.status)
           }
         })
         .then((json)=>{
@@ -96,7 +96,7 @@ function Paperbase(props) {
             }
             return response.json()
           }else{
-            throw 'Request status : ' + response.status;
+            throw new Error('Request status : ' + response.status);
           }
         })
         .then(json => {
@@ -117,6 +117,7 @@ function Paperbase(props) {
     }
 
     fetchIsSamReady()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, 3000);
 
   const handleDrawerToggle = () => {

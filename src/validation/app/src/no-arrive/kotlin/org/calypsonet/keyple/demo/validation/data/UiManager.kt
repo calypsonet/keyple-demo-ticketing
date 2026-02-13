@@ -1,0 +1,66 @@
+/* ******************************************************************************
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
+ *
+ * See the NOTICE file(s) distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the BSD 3-Clause License which is available at
+ * https://opensource.org/licenses/BSD-3-Clause.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ ****************************************************************************** */
+package org.calypsonet.keyple.demo.validation.data
+
+import android.content.Context
+import android.media.MediaPlayer
+import org.calypsonet.keyple.demo.validation.R
+import timber.log.Timber
+
+/**
+ * Standard UI feedback for non-Arrive terminals (Bluebird, Coppernic, Famoco).
+ *
+ * Uses Android MediaPlayer for success/error sounds. No LED control. This variant is also compiled
+ * when AndroidParkeonCommon-release.aar is absent from libs/ (stub mode for Arrive hardware).
+ */
+internal class UiManager(private val context: Context) {
+  private var successMedia: MediaPlayer? = null
+  private var errorMedia: MediaPlayer? = null
+
+  fun init(onReady: () -> Unit = {}) {
+    successMedia = MediaPlayer.create(context, R.raw.success)
+    errorMedia = MediaPlayer.create(context, R.raw.error)
+    onReady()
+  }
+
+  fun displayResultSuccess() {
+    successMedia?.start()
+  }
+
+  fun displayResultFailed() {
+    errorMedia?.start()
+  }
+
+  fun displayWaiting() {}
+
+  fun displayHuntingNone() {}
+
+  fun release() {
+    try {
+      successMedia?.stop()
+      successMedia?.release()
+    } catch (e: Exception) {
+      Timber.e(e, "UiManager: error releasing success media")
+    } finally {
+      successMedia = null
+    }
+    try {
+      errorMedia?.stop()
+      errorMedia?.release()
+    } catch (e: Exception) {
+      Timber.e(e, "UiManager: error releasing error media")
+    } finally {
+      errorMedia = null
+    }
+  }
+}

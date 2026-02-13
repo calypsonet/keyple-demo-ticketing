@@ -166,6 +166,13 @@ Each module (e.g., `src/common`, `src/reloading-remote/server`, `src/validation`
 project and should be built using the tools and instructions provided within its own directory. For Gradle-based
 projects, navigate to the module's directory and use its `./gradlew` wrapper.
 
+### Build Optimization
+
+The Android applications (`validation`, `control`, and `reloading-remote` client) are configured with ProGuard
+minification enabled for both debug and release builds. This removes SLF4J debug/trace logs from the application and
+third-party libraries (like Keyple), resulting in smaller APKs and better runtime performance. To see full unoptimized
+logs during debugging, comment out the `debug` build type configuration in the respective `app/build.gradle.kts` files.
+
 ## Card Application Identifiers
 
 Compatible Calypso card AIDs:

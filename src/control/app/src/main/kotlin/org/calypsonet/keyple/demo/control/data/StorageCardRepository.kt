@@ -32,6 +32,8 @@ import org.calypsonet.keyple.demo.control.data.model.mappers.ContractMapper
 import org.calypsonet.keyple.demo.control.data.model.mappers.ValidationMapper
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ChannelControl
+import org.eclipse.keypop.storagecard.MifareClassicKeyType
+import org.eclipse.keypop.storagecard.card.ProductType
 import org.eclipse.keypop.storagecard.card.StorageCard
 import timber.log.Timber
 
@@ -62,21 +64,63 @@ class StorageCardRepository {
             throw RuntimeException("Failed to create storage card transaction", e)
           }
 
-      // Step 2 - Read and unpack environment, event and contract structures
-      cardTransaction
-          .prepareReadBlocks(
-              CardConstants.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
-              CardConstants.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK)
-          .prepareReadBlocks(CardConstants.SC_EVENT_FIRST_BLOCK, CardConstants.SC_EVENT_LAST_BLOCK)
-          .prepareReadBlocks(
-              CardConstants.SC_CONTRACT_FIRST_BLOCK, CardConstants.SC_COUNTER_LAST_BLOCK)
-          .processCommands(ChannelControl.KEEP_OPEN)
+      // Determine card type and authentication requirements
+      val requiresAuth = storageCard.productType.hasAuthentication()
+      val isMifareClassic = storageCard.productType == ProductType.MIFARE_CLASSIC_1K
+
+      Timber.d(
+          "Reading card: ${storageCard.productType.name} " +
+              "(requiresAuth=$requiresAuth, isMifareClassic=$isMifareClassic)")
+
+      // ========= AUTHENTICATION PHASE (Mifare Classic only) =========
+      if (requiresAuth) {
+        Timber.d(
+            "Authenticating sector 1 with KEY_A (keyNumber=${CardConstants.MC_DEFAULT_KEY_NUMBER})")
+        cardTransaction.prepareMifareClassicAuthenticate(
+            CardConstants.MC_SECTOR_1_AUTH_BLOCK,
+            MifareClassicKeyType.KEY_A,
+            CardConstants.MC_DEFAULT_KEY_NUMBER)
+      }
+
+      // ========= READ DATA =========
+      // Step 2 - Read environment, event and contract structures based on card type
+      if (isMifareClassic) {
+        Timber.d(
+            "Reading Mifare Classic blocks: ${CardConstants.MC_ENVIRONMENT_AND_HOLDER_BLOCK}, " +
+                "${CardConstants.MC_CONTRACT_BLOCK}, ${CardConstants.MC_EVENT_BLOCK}")
+        // Mifare Classic: read individual 16-byte blocks
+        cardTransaction
+            .prepareReadBlocks(
+                CardConstants.MC_ENVIRONMENT_AND_HOLDER_BLOCK,
+                CardConstants.MC_ENVIRONMENT_AND_HOLDER_BLOCK)
+            .prepareReadBlocks(CardConstants.MC_CONTRACT_BLOCK, CardConstants.MC_CONTRACT_BLOCK)
+            .prepareReadBlocks(CardConstants.MC_EVENT_BLOCK, CardConstants.MC_EVENT_BLOCK)
+            .processCommands(ChannelControl.KEEP_OPEN)
+      } else {
+        Timber.d("Reading storage card block ranges...")
+        // MIFARE Ultralight/ST25: read ranges of 4-byte blocks
+        cardTransaction
+            .prepareReadBlocks(
+                CardConstants.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
+                CardConstants.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK)
+            .prepareReadBlocks(
+                CardConstants.SC_EVENT_FIRST_BLOCK, CardConstants.SC_EVENT_LAST_BLOCK)
+            .prepareReadBlocks(
+                CardConstants.SC_CONTRACT_FIRST_BLOCK, CardConstants.SC_COUNTER_LAST_BLOCK)
+            .processCommands(ChannelControl.KEEP_OPEN)
+      }
+
+      Timber.d("Card data read successfully")
 
       // Step 2 - Unpack environment structure
       val environmentContent =
-          storageCard.getBlocks(
-              CardConstants.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
-              CardConstants.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK)
+          if (isMifareClassic) {
+            storageCard.getBlock(CardConstants.MC_ENVIRONMENT_AND_HOLDER_BLOCK)
+          } else {
+            storageCard.getBlocks(
+                CardConstants.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
+                CardConstants.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK)
+          }
       val env = ScEnvironmentHolderStructureParser().parse(environmentContent)
 
       // Step 3 - If EnvVersionNumber of the Environment structure is not the expected one (==1 for
@@ -92,8 +136,12 @@ class StorageCardRepository {
 
       // Step 5 - Read and unpack the event record
       val eventContent =
-          storageCard.getBlocks(
-              CardConstants.SC_EVENT_FIRST_BLOCK, CardConstants.SC_EVENT_LAST_BLOCK)
+          if (isMifareClassic) {
+            storageCard.getBlock(CardConstants.MC_EVENT_BLOCK)
+          } else {
+            storageCard.getBlocks(
+                CardConstants.SC_EVENT_FIRST_BLOCK, CardConstants.SC_EVENT_LAST_BLOCK)
+          }
       val event = ScEventStructureParser().parse(eventContent)
 
       // Step 6 - If EventVersionNumber is not the expected one (==1 for the current version),
@@ -134,8 +182,12 @@ class StorageCardRepository {
 
       // Step 10 - CNT_READ: Read contract data (already read above)
       val contractContent =
-          storageCard.getBlocks(
-              CardConstants.SC_CONTRACT_FIRST_BLOCK, CardConstants.SC_COUNTER_LAST_BLOCK)
+          if (isMifareClassic) {
+            storageCard.getBlock(CardConstants.MC_CONTRACT_BLOCK)
+          } else {
+            storageCard.getBlocks(
+                CardConstants.SC_CONTRACT_FIRST_BLOCK, CardConstants.SC_COUNTER_LAST_BLOCK)
+          }
       val contract = ScContractStructureParser().parse(contractContent)
 
       // Create validation if the event is valid
@@ -217,11 +269,12 @@ class StorageCardRepository {
           lastValidationsList = validationList,
           titlesList = displayedContract)
     } catch (e: Exception) {
+      Timber.e(e, "Error during control procedure: ${storageCard.productType.name}")
       errorMessage = e.message
-      Timber.e(e)
       when (e) {
         is EnvironmentException -> {
           errorMessage = "Environment error: $errorMessage"
+          status = Status.ERROR
         }
         is EventCleanCardException -> {
           status = Status.EMPTY_CARD
@@ -230,6 +283,19 @@ class StorageCardRepository {
           status = Status.ERROR
         }
         else -> {
+          // Specific error handling for Mifare Classic authentication failures
+          errorMessage =
+              when {
+                storageCard.productType.hasAuthentication() &&
+                    (e.message?.contains("authentication", ignoreCase = true) == true ||
+                        e.message?.contains("auth", ignoreCase = true) == true) -> {
+                  "Authentication failed. Please ensure the card is correctly positioned."
+                }
+                storageCard.productType.hasAuthentication() -> {
+                  "Failed to read Mifare Classic card. Please try again."
+                }
+                else -> e.message ?: "An error occurred while reading the card."
+              }
           status = Status.ERROR
         }
       }

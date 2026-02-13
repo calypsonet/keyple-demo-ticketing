@@ -24,7 +24,7 @@ dagger = "2.25"
 eventbus = "3.3.1"
 glassfish = "10.0-b28"
 gson = "2.11.0"
-keypleJavaBom = "2025.11.21"
+keypleJavaBom = "2025.12.12"
 keyplePluginCnaCoppernicCone2Lib = "2.0.2"
 keyplePluginCnaFamocoSeCommunicationLib = "2.0.2"
 koin = "4.1.0"
@@ -41,8 +41,8 @@ retrofit = "2.11.0"
 retrofitCompat = "2.11.0"
 rxandroid = "2.1.1"
 rxjava = "2.2.21"
-slf4j = "1.7.32"
-slf4jAndroid = "1.7.32-0"
+slf4j = "1.7.36"
+slf4jTimber = "3.1"
 spotless = "7.0.4"
 timber = "5.0.1"
 
@@ -124,9 +124,9 @@ retrofitConverterGson = { module = "com.squareup.retrofit2:converter-gson", vers
 retrofitConverterScalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "retrofitCompat" }
 rxandroid = { module = "io.reactivex.rxjava2:rxandroid", version.ref = "rxandroid" }
 rxjava = { module = "io.reactivex.rxjava2:rxjava", version.ref = "rxjava" }
-slf4jAndroid = { module = "uk.uuid.slf4j:slf4j-android", version.ref = "slf4jAndroid" }
 slf4jApi = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 slf4jSimple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
+slf4jTimber = { module = "com.arcao:slf4j-timber", version.ref = "slf4jTimber" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 [plugins]

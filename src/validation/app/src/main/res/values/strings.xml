@@ -30,10 +30,10 @@
 
     <!-- Device selector screen -->
     <string name="device_title">Select the device</string>
+    <string name="device_arrive">ARRIVE</string>
     <string name="device_bluebird">BLUEBIRD</string>
     <string name="device_coppernic">COPPERNIC</string>
     <string name="device_famoco">FAMOCO</string>
-    <string name="device_flowbird">FLOWBIRD</string>
 
     <!-- Home screen -->
     <string name="home_description">Open source API for Smart Ticketing</string>
@@ -42,6 +42,17 @@
 
     <!-- Error screen -->
     <string name="card_invalid_main_desc">Card refused</string>
+
+    <!-- Mifare Classic specific errors -->
+    <string name="error_mifare_auth_failed">Authentication failed.\nPlease ensure the card is correctly positioned.</string>
+    <string name="error_mifare_transaction_failed">Transaction failed.\nPlease try again.</string>
+    <string name="error_generic_transaction">An error occurred during validation.</string>
+
+    <!-- Card type labels (for reference, currently using formatCardType() in code) -->
+    <string name="card_type_mifare_classic_1k">Mifare Classic 1K</string>
+    <string name="card_type_mifare_classic_4k">Mifare Classic 4K</string>
+    <string name="card_type_mifare_ultralight">Mifare Ultralight</string>
+    <string name="card_type_st25_srt512">ST25 SRT512</string>
 
     <!--    Dialog-->
     <string name="permission_denied_message">You must accept the requested permissions to continue. Please relaunch the app.</string>

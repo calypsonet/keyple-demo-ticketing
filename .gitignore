@@ -1,6 +1,5 @@
 # Built application files
 *.apk
-#*.aar For ".aar" files in "libs" directory
 *.ap_
 *.aab
 
@@ -68,3 +67,10 @@ ehthumbs_vista.db
 
 # Android Studio
 *local.properties
+
+# Proprietary libraries in libs/ directory
+# Ignore production libraries (licensed) but keep mock/debug versions for compilation
+libs/*.jar
+libs/*.aar
+!libs/*-mock.jar
+!libs/*-mock.aar

@@ -20,8 +20,6 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import org.calypsonet.keyple.demo.validation.R
 import org.calypsonet.keyple.demo.validation.databinding.ActivityCardSummaryBinding
-import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
-import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.calypsonet.keyple.demo.validation.domain.model.Status
 import org.calypsonet.keyple.demo.validation.ui.model.UiValidationResult
 import timber.log.Timber
@@ -115,9 +113,6 @@ class CardSummaryActivity : BaseActivity() {
         activityCardSummaryBinding.mediumText.visibility = View.INVISIBLE
         activityCardSummaryBinding.smallDesc.visibility = View.INVISIBLE
       }
-    }
-    if (AppSettings.readerType == ReaderType.FLOWBIRD) {
-      activityCardSummaryBinding.animation.repeatCount = 0
     }
     activityCardSummaryBinding.animation.playAnimation()
     timer.schedule(

@@ -289,8 +289,8 @@ The validation procedure processes contracts in priority order:
 - **Features**: Integrated barcode scanning, enterprise management
 - **Access**: Contact [CNA](https://calypsonet.org/contact-us/) for plugin
 
-**Flowbird Axio 2**
-- **Plugin**: [Flowbird Plugin](https://github.com/calypsonet/keyple-android-plugin-flowbird)
+**Arrive Axio 4**
+- **Plugin**: [Arrive Plugin](https://github.com/calypsonet/keyple-android-plugin-arrive)
 - **Features**: Transportation-specific design, multiple payment methods
 - **Access**: Contact [CNA](https://calypsonet.org/contact-us/) for plugin
 
@@ -387,7 +387,7 @@ By default, proprietary plugins are deactivated. To enable:
 ### Available Proprietary Plugins
 
 - **Bluebird EF501**: Enterprise terminal with barcode integration
-- **Flowbird Axio 2**: Transportation-specific validation terminal
+- **Arrive Axio 4**: Transportation-specific validation terminal
 - **Additional terminals**: Contact CNA for availability
 
 ## Security Considerations
