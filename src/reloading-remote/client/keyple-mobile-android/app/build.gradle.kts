@@ -56,11 +56,11 @@ dependencies {
   val bluebirdPluginLibName = "keyple-plugin-cna-bluebird-specific-nfc-java-lib-3.2.0"
   val bluebirdPluginLibFile = file("../../../../../libs/${bluebirdPluginLibName}.aar")
   if (bluebirdPluginLibFile.exists()) {
-    println("Using release Bluebird plugin library: ${bluebirdPluginLibFile.name}")
+    println("Using Bluebird plugin library: ${bluebirdPluginLibFile.name}")
     implementation(files(bluebirdPluginLibFile))
   } else {
-    println("Using debug Bluebird plugin library")
-    implementation(files("../../../../../libs/${bluebirdPluginLibName}-debug.aar"))
+    println("Using mock Bluebird plugin library")
+    implementation(files("../../../../../libs/${bluebirdPluginLibName}-mock.aar"))
   }
 
   // Keyple BOM

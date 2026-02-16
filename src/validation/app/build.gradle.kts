@@ -65,22 +65,22 @@ dependencies {
   val bluebirdPluginLibName = "keyple-plugin-cna-bluebird-specific-nfc-java-lib-3.2.0"
   val bluebirdPluginLibFile = file("../../../libs/${bluebirdPluginLibName}.aar")
   if (bluebirdPluginLibFile.exists()) {
-    println("Using release Bluebird plugin library: ${bluebirdPluginLibFile.name}")
+    println("Using Bluebird plugin library: ${bluebirdPluginLibFile.name}")
     implementation(files(bluebirdPluginLibFile))
   } else {
-    println("Using debug Bluebird plugin library")
-    implementation(files("../../../libs/${bluebirdPluginLibName}-debug.aar"))
+    println("Using mock Bluebird plugin library")
+    implementation(files("../../../libs/${bluebirdPluginLibName}-mock.aar"))
   }
 
   // Arrive specific components
   val arrivePluginLibName = "keyple-plugin-cna-arrive-android-jvm-lib-3.0.0"
-  val arrivePluginLibFile = file("../../../libs/${arrivePluginLibName}-release.aar")
+  val arrivePluginLibFile = file("../../../libs/${arrivePluginLibName}.aar")
   if (arrivePluginLibFile.exists()) {
-    println("Using release Arrive plugin library: ${arrivePluginLibFile.name}")
+    println("Using Arrive plugin library: ${arrivePluginLibFile.name}")
     implementation(files(arrivePluginLibFile))
   } else {
-    println("Using debug Arrive plugin library")
-    implementation(files("../../../libs/${arrivePluginLibName}-debug.aar"))
+    println("Using mock Arrive plugin library")
+    implementation(files("../../../libs/${arrivePluginLibName}-mock.aar"))
   }
 
   // Arrive/Parkeon SDK (UI: LEDs, sounds) — optional, enables ArriveUiManager real implementation
