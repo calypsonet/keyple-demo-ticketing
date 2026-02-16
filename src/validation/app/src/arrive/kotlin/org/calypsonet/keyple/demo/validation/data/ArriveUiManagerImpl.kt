@@ -29,7 +29,7 @@ import timber.log.Timber
  * Initialization is asynchronous via BindJoiner; display calls before init completes are silently
  * ignored.
  */
-internal class UiManager(private val context: Context) {
+internal class ArriveUiManagerImpl(private val context: Context) : UiManager {
 
   private var joiner: BindJoiner? = null
   private var ledInterface: LedInterface? = null
@@ -46,7 +46,7 @@ internal class UiManager(private val context: Context) {
     private val LEDS_OFF = listOf("none")
   }
 
-  fun init(onReady: () -> Unit = {}) {
+  override fun init(onReady: () -> Unit) {
     val services =
         mapOf(
             "leds" to Intent(com.parkeon.content.Intent.ACTION_LEDS),
@@ -59,10 +59,10 @@ internal class UiManager(private val context: Context) {
             object : BindJoiner.Listener {
               override fun onJoined(initDone: Boolean) {
                 if (!initDone) {
-                  Timber.e("ArriveUiManager: services binding failed (initDone=false)")
+                  Timber.e("ArriveUiManagerImpl: services binding failed (initDone=false)")
                   return
                 }
-                Timber.i("ArriveUiManager: services bound successfully")
+                Timber.i("ArriveUiManagerImpl: services bound successfully")
                 ledInterface = LedInterface.Stub.asInterface(joiner?.getService("leds"))
                 soundManager = SoundManager.Stub.asInterface(joiner?.getService("sound"))
                 deploySoundFiles()
@@ -70,7 +70,7 @@ internal class UiManager(private val context: Context) {
               }
 
               override fun onBindLost(intent: Intent) {
-                Timber.w("ArriveUiManager: bind lost for ${intent.action}")
+                Timber.w("ArriveUiManagerImpl: bind lost for ${intent.action}")
                 ledInterface = null
                 soundManager = null
               }
@@ -94,14 +94,14 @@ internal class UiManager(private val context: Context) {
         }
         deployedUris.add(Uri.fromFile(dest))
       } catch (e: Exception) {
-        Timber.e(e, "ArriveUiManager: failed to deploy sound file '$name'")
+        Timber.e(e, "ArriveUiManagerImpl: failed to deploy sound file '$name'")
       }
     }
     if (deployedUris.isNotEmpty()) {
       try {
         soundManager?.loadFiles(deployedUris)
       } catch (e: Exception) {
-        Timber.e(e, "ArriveUiManager: failed to load sound files")
+        Timber.e(e, "ArriveUiManagerImpl: failed to load sound files")
       }
     }
   }
@@ -110,7 +110,7 @@ internal class UiManager(private val context: Context) {
     try {
       ledInterface?.set(leds)
     } catch (e: Exception) {
-      Timber.e(e, "ArriveUiManager: failed to set LEDs $leds")
+      Timber.e(e, "ArriveUiManagerImpl: failed to set LEDs $leds")
     }
   }
 
@@ -118,33 +118,29 @@ internal class UiManager(private val context: Context) {
     try {
       soundManager?.startDefaultPlayingFile(filename)
     } catch (e: Exception) {
-      Timber.e(e, "ArriveUiManager: failed to play sound '$filename'")
+      Timber.e(e, "ArriveUiManagerImpl: failed to play sound '$filename'")
     }
   }
 
-  fun displayResultSuccess() {
+  override fun displayResultSuccess() {
     setLeds(LEDS_SUCCESS)
     playSound(SOUND_SUCCESS)
   }
 
-  fun displayResultFailed() {
+  override fun displayResultFailed() {
     setLeds(LEDS_FAILED)
     playSound(SOUND_ERROR)
   }
 
-  fun displayWaiting() {
+  override fun displayWaiting() {
     setLeds(LEDS_WAITING)
   }
 
-  fun displayHuntingNone() {
-    setLeds(LEDS_OFF)
-  }
-
-  fun release() {
+  override fun release() {
     try {
       setLeds(LEDS_OFF)
     } catch (e: Exception) {
-      Timber.e(e, "ArriveUiManager: error during release")
+      Timber.e(e, "ArriveUiManagerImpl: error during release")
     }
     joiner?.unbind()
     joiner = null

@@ -21,7 +21,7 @@ import org.eclipse.keyple.core.util.HexUtil
  * In production, this should be replaced with a secure key management system using Android KeyStore
  * or a similar secure storage mechanism.
  */
-class MifareClassicKeyProvider :
+class MifareClassicKeyProviderImpl :
     org.eclipse.keyple.plugin.android.nfc.spi.KeyProvider,
     org.calypsonet.keyple.plugin.bluebird.spi.KeyProvider {
   override fun getKey(keyNumber: Int): ByteArray? {

@@ -208,7 +208,9 @@ android {
     getByName("main").java.srcDirs("src/main/kotlin")
     getByName("debug").java.srcDirs("src/debug/kotlin")
     // ArriveUiManager: real impl (Parkeon SDK) or no-op stub, mutually exclusive source sets
-    getByName("main").java.srcDir(if (hasArriveSdk) "src/arrive/kotlin" else "src/no-arrive/kotlin")
+    getByName("main")
+        .java
+        .srcDir(if (hasArriveSdk) "src/arrive/kotlin" else "src/arrive-mock/kotlin")
   }
   packagingOptions {
     // Exclude 'META-INF/NOTICE.md' to resolve the conflict that occurs when multiple dependencies

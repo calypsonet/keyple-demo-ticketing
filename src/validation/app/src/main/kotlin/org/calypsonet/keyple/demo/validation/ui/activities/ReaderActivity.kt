@@ -17,13 +17,13 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.airbnb.lottie.LottieCompositionFactory
 import com.airbnb.lottie.LottieDrawable
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
-import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -77,8 +77,7 @@ class ReaderActivity : BaseActivity() {
     // (including dimensionRatio on the Lottie view) before first use, avoiding
     // GONE→VISIBLE sizing issues where the animation would cover the text views.
     summaryBinding =
-        LayoutCardSummaryOverlayBinding.bind(
-            activityCardReaderBinding.cardSummaryStub!!.inflate())
+        LayoutCardSummaryOverlayBinding.bind(activityCardReaderBinding.cardSummaryStub!!.inflate())
 
     // Pre-warm the IO thread pool to eliminate the ~145ms dispatch gap on first card detection
     lifecycleScope.launch(Dispatchers.IO) {}

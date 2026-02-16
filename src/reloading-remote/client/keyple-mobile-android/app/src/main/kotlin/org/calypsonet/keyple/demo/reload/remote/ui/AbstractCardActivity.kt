@@ -17,7 +17,7 @@ import android.os.Bundle
 import javax.inject.Inject
 import kotlin.jvm.Throws
 import org.calypsonet.keyple.demo.common.constants.CardConstants
-import org.calypsonet.keyple.demo.reload.remote.data.MifareClassicKeyProvider
+import org.calypsonet.keyple.demo.reload.remote.data.MifareClassicKeyProviderImpl
 import org.calypsonet.keyple.demo.reload.remote.data.ReaderRepository
 import org.calypsonet.keyple.demo.reload.remote.data.model.AppSettings
 import org.calypsonet.keyple.demo.reload.remote.data.model.CardProtocolEnum
@@ -106,13 +106,13 @@ abstract class AbstractCardActivity :
               BluebirdPluginFactoryProvider.provideFactory(
                   this@AbstractCardActivity,
                   ApduInterpreterFactoryProvider.provideFactory(),
-                  keyProvider = MifareClassicKeyProvider())
+                  keyProvider = MifareClassicKeyProviderImpl())
             } else {
               AndroidNfcPluginFactoryProvider.provideFactory(
                   AndroidNfcConfig(
                       this@AbstractCardActivity,
                       ApduInterpreterFactoryProvider.provideFactory(),
-                      keyProvider = MifareClassicKeyProvider()))
+                      keyProvider = MifareClassicKeyProviderImpl()))
             })
 
     if (plugin == null) {

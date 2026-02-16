@@ -145,25 +145,32 @@ constructor(
   override fun registerPlugin(readerType: ReaderType, uiContext: UiContext) {
     initReaderType(readerType)
     val activity = uiContext.adaptTo(Activity::class.java)
-    uiManager = UiManager(activity).also { it.init() }
+    uiManager =
+        if (readerType == ReaderType.ARRIVE) {
+          ArriveUiManagerImpl(activity).also { it.init() }
+        } else {
+          AndroidUiManagerImpl(activity).also { it.init() }
+        }
     runBlocking {
       // Plugin
       val pluginFactory =
           withContext(Dispatchers.IO) {
             when (readerType) {
-              ReaderType.ARRIVE -> ArrivePluginFactoryProvider.provideFactory(context = activity)
+              ReaderType.ARRIVE -> {
+                ArrivePluginFactoryProvider.provideFactory(context = activity)
+              }
               ReaderType.BLUEBIRD ->
                   BluebirdPluginFactoryProvider.provideFactory(
                       activity,
                       ApduInterpreterFactoryProvider.provideFactory(),
-                      MifareClassicKeyProvider())
+                      MifareClassicKeyProviderImpl())
               ReaderType.COPPERNIC -> Cone2PluginFactoryProvider.getFactory(activity)
               ReaderType.FAMOCO ->
                   AndroidNfcPluginFactoryProvider.provideFactory(
                       AndroidNfcConfig(
                           activity = activity,
                           apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
-                          keyProvider = MifareClassicKeyProvider()))
+                          keyProvider = MifareClassicKeyProviderImpl()))
             }
           }
       SmartCardServiceProvider.getService().registerPlugin(pluginFactory)

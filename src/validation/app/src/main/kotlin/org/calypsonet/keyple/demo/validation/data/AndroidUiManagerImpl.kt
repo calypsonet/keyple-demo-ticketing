@@ -23,34 +23,32 @@ import timber.log.Timber
  * Uses Android MediaPlayer for success/error sounds. No LED control. This variant is also compiled
  * when AndroidParkeonCommon-release.aar is absent from libs/ (stub mode for Arrive hardware).
  */
-internal class UiManager(private val context: Context) {
+internal class AndroidUiManagerImpl(private val context: Context) : UiManager {
   private var successMedia: MediaPlayer? = null
   private var errorMedia: MediaPlayer? = null
 
-  fun init(onReady: () -> Unit = {}) {
+  override fun init(onReady: () -> Unit) {
     successMedia = MediaPlayer.create(context, R.raw.success)
     errorMedia = MediaPlayer.create(context, R.raw.error)
     onReady()
   }
 
-  fun displayResultSuccess() {
+  override fun displayResultSuccess() {
     successMedia?.start()
   }
 
-  fun displayResultFailed() {
+  override fun displayResultFailed() {
     errorMedia?.start()
   }
 
-  fun displayWaiting() {}
+  override fun displayWaiting() {}
 
-  fun displayHuntingNone() {}
-
-  fun release() {
+  override fun release() {
     try {
       successMedia?.stop()
       successMedia?.release()
     } catch (e: Exception) {
-      Timber.e(e, "UiManager: error releasing success media")
+      Timber.e(e, "AndroidUiManagerImpl: error releasing success media")
     } finally {
       successMedia = null
     }
@@ -58,7 +56,7 @@ internal class UiManager(private val context: Context) {
       errorMedia?.stop()
       errorMedia?.release()
     } catch (e: Exception) {
-      Timber.e(e, "UiManager: error releasing error media")
+      Timber.e(e, "AndroidUiManagerImpl: error releasing error media")
     } finally {
       errorMedia = null
     }
