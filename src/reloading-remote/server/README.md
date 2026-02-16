@@ -137,15 +137,24 @@ npm install
 cd ..
 ```
 
-3. **Build** the project:
+3. **Build** the project (compiles Java + React dashboard, produces the runnable JAR):
 ```bash
 ./gradlew build
 ```
 
-4. **Start** development server:
+4. **Choose a run mode:**
+
+**Development mode** (hot reload, no prior build required):
 ```bash
 ./gradlew quarkusDev
 ```
+> The React dashboard is **not rebuilt** in this mode. Use this for Java development only.
+
+**Run the packaged JAR** (requires step 3):
+```bash
+./gradlew startServer
+```
+> Launches the self-contained JAR from `build/`. The React dashboard is embedded.
 
 ### Development Mode
 
