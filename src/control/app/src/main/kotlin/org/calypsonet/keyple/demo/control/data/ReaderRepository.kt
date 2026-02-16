@@ -153,20 +153,20 @@ constructor(
                   BluebirdPluginFactoryProvider.provideFactory(
                       activity,
                       ApduInterpreterFactoryProvider.provideFactory(),
-                      MifareClassicKeyProvider())
+                      MifareClassicKeyProviderImpl())
               ReaderType.COPPERNIC -> Cone2PluginFactoryProvider.getFactory(activity)
               ReaderType.FAMOCO ->
                   AndroidNfcPluginFactoryProvider.provideFactory(
                       AndroidNfcConfig(
                           activity = activity,
                           apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
-                          keyProvider = MifareClassicKeyProvider()))
+                          keyProvider = MifareClassicKeyProviderImpl()))
               ReaderType.NFC_TERMINAL ->
                   AndroidNfcPluginFactoryProvider.provideFactory(
                       AndroidNfcConfig(
                           activity = activity,
                           apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
-                          keyProvider = MifareClassicKeyProvider()))
+                          keyProvider = MifareClassicKeyProviderImpl()))
             }
           }
       SmartCardServiceProvider.getService().registerPlugin(pluginFactory)
