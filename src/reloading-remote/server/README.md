@@ -1,6 +1,6 @@
 # Keyple Reload Demo - Java Server
 
-[![Java](https://img.shields.io/badge/java-8%2B-orange.svg)](https://openjdk.java.net/)
+[![Java](https://img.shields.io/badge/java-17-orange.svg)](https://openjdk.java.net/)
 [![Quarkus](https://img.shields.io/badge/quarkus-2.x-blue.svg)](https://quarkus.io/)
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../../LICENSE)
 
@@ -42,8 +42,8 @@ This Java server implements the business logic for the Keyple Demo ecosystem, ma
 - USB connection for reader
 
 ### Software Requirements
-- **JDK 8+** (OpenJDK recommended)
-- **Node.js 14+** (for dashboard development)
+- **JDK 17** (OpenJDK recommended)
+- **Node.js 18+** (for dashboard development)
 - **Compatible PC/SC reader drivers**
 
 ### Tested Readers
@@ -133,7 +133,6 @@ cd keyple-demo-ticketing/src/reloading-remote/server
 2. **Install** dashboard dependencies:
 ```bash
 cd dashboard-app
-npm cache clear --force
 npm install
 cd ..
 ```
@@ -144,8 +143,8 @@ cd ..
 ```
 
 4. **Start** development server:
-```bash  
-./gradlew startServer
+```bash
+./gradlew quarkusDev
 ```
 
 ### Development Mode
@@ -266,7 +265,7 @@ curl http://localhost:8080/q/health/live
 ### Docker Deployment
 
 ```dockerfile
-FROM openjdk:11-jre-slim
+FROM eclipse-temurin:17-jre
 COPY kdt-reloading-server-X.Y.Z-full.jar /app/server.jar
 EXPOSE 8080
 CMD ["java", "-jar", "/app/server.jar"]
