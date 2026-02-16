@@ -24,8 +24,6 @@ plugins {
 // APP CONFIGURATION
 ///////////////////////////////////////////////////////////////////////////////
 
-// Logging configuration: using SLF4J + Timber bridge for Android
-
 val parkeonSdkFile = file("../../../libs/AndroidParkeonCommon-release.aar")
 val hasArriveSdk = parkeonSdkFile.exists()
 

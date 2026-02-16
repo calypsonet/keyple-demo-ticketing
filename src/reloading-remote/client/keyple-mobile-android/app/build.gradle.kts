@@ -24,8 +24,6 @@ plugins {
 // APP CONFIGURATION
 ///////////////////////////////////////////////////////////////////////////////
 
-// Logging configuration: using SLF4J + Timber bridge for Android
-
 dependencies {
   // Demo common
   implementation(project(":common"))
