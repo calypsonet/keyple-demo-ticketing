@@ -1027,8 +1027,8 @@ public class CardService {
     ContractStructure newContract;
     int newContractNumber;
 
-    // Storage Cards support only one contract (contracts.size() == 1)
-    boolean isStorageCard = contracts.size() == 1;
+    // Single contract cards support only one contract (contracts.size() == 1)
+    boolean isSingleContractCard = contracts.size() == 1;
 
     int existingContractNumber = getContractNumber(contractTariff, contracts);
     if (existingContractNumber > 0) {
@@ -1043,11 +1043,11 @@ public class CardService {
       } else {
         newContract = buildSeasonContract();
       }
-    } else if (isStorageCard) {
-      // Storage Card: new contract type replaces existing one at position 1
+    } else if (isSingleContractCard) {
+      // Single contract card: new contract type replaces existing one at position 1
       newContractNumber = 1;
       logger.info(
-          "Storage Card: Replacing existing contract {} with new {} contract",
+          "Single contract card: replacing existing contract {} with new {} contract",
           contracts.get(0).getContractTariff(),
           contractTariff);
       // build new contract
