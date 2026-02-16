@@ -17,13 +17,13 @@ import android.os.Bundle
 import javax.inject.Inject
 import kotlin.jvm.Throws
 import org.calypsonet.keyple.demo.common.constants.CardConstants
+import org.calypsonet.keyple.demo.reload.remote.data.MifareClassicKeyProvider
 import org.calypsonet.keyple.demo.reload.remote.data.ReaderRepository
 import org.calypsonet.keyple.demo.reload.remote.data.model.AppSettings
 import org.calypsonet.keyple.demo.reload.remote.data.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.reload.remote.data.model.CardReaderResponse
 import org.calypsonet.keyple.demo.reload.remote.data.model.DeviceEnum
 import org.calypsonet.keyple.demo.reload.remote.data.model.Status
-import org.calypsonet.keyple.demo.reload.remote.data.spi.MifareClassicKeyProvider
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
 import org.calypsonet.keyple.plugin.bluebird.BluebirdContactlessProtocols
 import org.calypsonet.keyple.plugin.bluebird.BluebirdPluginFactoryProvider

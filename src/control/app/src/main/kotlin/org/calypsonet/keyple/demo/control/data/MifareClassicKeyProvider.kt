@@ -13,40 +13,20 @@
 package org.calypsonet.keyple.demo.control.data
 
 import org.eclipse.keyple.core.util.HexUtil
-import timber.log.Timber
 
 /**
- * Provides Mifare Classic authentication keys for both Bluebird and Android NFC plugins.
+ * Provides Mifare Classic authentication keys for Android NFC and Bluebird plugins. For demo
+ * purposes, returns the factory default key (FF FF FF FF FF FF).
  *
- * This class implements both KeyProvider interfaces since the authentication keys are
- * card-specific, not plugin-specific.
- *
- * For demo purposes, returns the factory default key (FF FF FF FF FF FF).
- *
- * WARNING: In production, implement secure key storage using Android KeyStore or a secure key
- * management system.
+ * In production, this should be replaced with a secure key management system using Android KeyStore
+ * or a similar secure storage mechanism.
  */
 class MifareClassicKeyProvider :
-    org.calypsonet.keyple.plugin.bluebird.spi.KeyProvider,
-    org.eclipse.keyple.plugin.android.nfc.spi.KeyProvider {
-
-  companion object {
-    private const val DEFAULT_KEY = "FFFFFFFFFFFF" // Factory default key
-    private const val MAX_KEY_NUMBER = 255 // Mifare Classic key number range: 0-255
-  }
-
+  org.eclipse.keyple.plugin.android.nfc.spi.KeyProvider,
+  org.calypsonet.keyple.plugin.bluebird.spi.KeyProvider {
   override fun getKey(keyNumber: Int): ByteArray? {
-    // Validate key number
-    if (keyNumber < 0 || keyNumber > MAX_KEY_NUMBER) {
-      Timber.w("Invalid key number requested: $keyNumber (valid range: 0-$MAX_KEY_NUMBER)")
-      return null
-    }
-
-    // Log key request for debugging (production: remove or use debug level)
-    Timber.d("Mifare Classic key requested for keyNumber: $keyNumber")
-
-    // TODO: In production, implement secure key storage based on keyNumber
-    // For demo, return factory default key for all keyNumbers
-    return HexUtil.toByteArray(DEFAULT_KEY)
+    // Returns factory default key for demonstration purposes.
+    // TODO: In production, implement secure key storage (Android KeyStore or equivalent).
+    return HexUtil.toByteArray("FFFFFFFFFFFF")
   }
 }

@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.data.spi
+package org.calypsonet.keyple.demo.reload.remote.data
 
 import org.eclipse.keyple.core.util.HexUtil
 

@@ -53,7 +53,7 @@ dependencies {
   }
 
   // Bluebird specific components
-  val bluebirdPluginLibName = "keyple-plugin-cna-bluebird-specific-nfc-java-lib-3.2.0"
+  val bluebirdPluginLibName = "keyple-plugin-cna-bluebird-specific-nfc-java-lib-3.2.0-debug"
   val bluebirdPluginLibFile = file("../../../../../libs/${bluebirdPluginLibName}.aar")
   if (bluebirdPluginLibFile.exists()) {
     println("Using Bluebird plugin library: ${bluebirdPluginLibFile.name}")
