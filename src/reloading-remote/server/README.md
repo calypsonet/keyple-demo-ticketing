@@ -1,6 +1,6 @@
 # Keyple Reload Demo - Java Server
 
-[![Java](https://img.shields.io/badge/java-17-orange.svg)](https://openjdk.java.net/)
+[![Java](https://img.shields.io/badge/java-11%2B-orange.svg)](https://openjdk.java.net/)
 [![Quarkus](https://img.shields.io/badge/quarkus-2.x-blue.svg)](https://quarkus.io/)
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../../LICENSE)
 
@@ -42,7 +42,7 @@ This Java server implements the business logic for the Keyple Demo ecosystem, ma
 - USB connection for reader
 
 ### Software Requirements
-- **JDK 17** (OpenJDK recommended)
+- **JDK 11+** (OpenJDK recommended)
 - **Node.js 18+** (for dashboard development)
 - **Compatible PC/SC reader drivers**
 
