@@ -59,6 +59,15 @@
 -keep class com.bluebird.payment.sam.** { *; }
 -keep interface com.bluebird.payment.sam.** { *; }
 
+# Keep Keyple core service internal DTOs used by Gson reflection in the distributed API.
+# R8 optimization can make these abstract or remove constructors, breaking deserialization.
+-keep class org.eclipse.keyple.core.service.InternalDto { *; }
+-keep class org.eclipse.keyple.core.service.InternalDto$** { *; }
+
+# Keep common demo DTOs and model classes serialized/deserialized by Gson over the remote service.
+-keep class org.calypsonet.keyple.demo.common.dto.** { *; }
+-keep class org.calypsonet.keyple.demo.common.model.** { *; }
+
 # Keep Keyple storage card internal classes
 -keep class org.eclipse.keyple.core.plugin.storagecard.internal.** { *; }
 
