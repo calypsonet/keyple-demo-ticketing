@@ -241,7 +241,7 @@ constructor(
     // Schedule the execution of the prepared card selection scenario as soon as a card is presented
     cardSelectionManager.scheduleCardSelectionScenario(
         readerManager.getCardReader() as ObservableCardReader,
-        ObservableCardReader.NotificationMode.ALWAYS)
+        ObservableCardReader.NotificationMode.MATCHED_ONLY)
   }
 
   /**

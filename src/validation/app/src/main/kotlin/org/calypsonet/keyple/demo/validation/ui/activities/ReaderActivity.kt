@@ -32,6 +32,7 @@ import org.calypsonet.keyple.demo.validation.databinding.ActivityCardReaderBindi
 import org.calypsonet.keyple.demo.validation.databinding.LayoutCardSummaryOverlayBinding
 import org.calypsonet.keyple.demo.validation.di.scope.ActivityScoped
 import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
+import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.calypsonet.keyple.demo.validation.domain.model.Status
 import org.calypsonet.keyple.demo.validation.ui.adapters.UiContextImpl
 import org.calypsonet.keyple.demo.validation.ui.mappers.toUi
@@ -102,7 +103,7 @@ class ReaderActivity : BaseActivity() {
       }
     }
 
-    activityCardReaderBinding.animation.playAnimation()
+    playWaitingAnimation()
 
     if (!ticketingService.areReadersInitialized) {
       lifecycleScope.launch {
@@ -114,6 +115,7 @@ class ReaderActivity : BaseActivity() {
                 cardReaderObserver, AppSettings.readerType, UiContextImpl(this@ReaderActivity))
             handleAppEvents(AppState.WAIT_CARD, null)
             ticketingService.startNfcDetection()
+            ticketingService.displayWaiting()
           } catch (e: Exception) {
             Timber.e(e)
             withContext(Dispatchers.Main) {
@@ -185,20 +187,7 @@ class ReaderActivity : BaseActivity() {
           return
         }
         cardInsertedAt = System.currentTimeMillis()
-        val error =
-            ticketingService.analyseSelectionResult(readerEvent.scheduledCardSelectionsResponse)
-        if (error != null) {
-          Timber.e("Card not selected: %s", error)
-          ticketingService.displayResultFailed()
-          changeDisplay(
-              UiValidationResult(
-                  status = Status.INVALID_CARD,
-                  cardType = "Unknown card type",
-                  contract = null,
-                  validationData = null,
-                  errorMessage = error))
-          return
-        }
+        ticketingService.analyseSelectionResult(readerEvent.scheduledCardSelectionsResponse)
         newAppState = AppState.CARD_STATUS
       }
       CardReaderEvent.Type.CARD_REMOVED -> {
@@ -225,7 +214,7 @@ class ReaderActivity : BaseActivity() {
               if (validationResult.status == Status.CARD_LOST) {
                 // Card removed during transaction: silent reset, no display, no sound
                 currentAppState = AppState.WAIT_CARD
-                activityCardReaderBinding.animation.playAnimation()
+                playWaitingAnimation()
               } else {
                 changeDisplay(validationResult.toUi())
               }
@@ -247,7 +236,7 @@ class ReaderActivity : BaseActivity() {
             ContextCompat.getColor(this, R.color.turquoise))
         supportActionBar?.show()
         activityCardReaderBinding.animation.repeatCount = LottieDrawable.INFINITE
-        activityCardReaderBinding.animation.playAnimation()
+        playWaitingAnimation()
       } else {
         activityCardReaderBinding.animation.cancelAnimation()
         showSummaryOverlay(validationResult)
@@ -290,14 +279,19 @@ class ReaderActivity : BaseActivity() {
                 1 -> getString(R.string.valid_trips_left_single)
                 else -> getString(R.string.valid_trips_left_multiple, nbTickets)
               }
-        } else {
+        } else if (result.passValidityEndDate != null) {
           val validityEndDate =
-              result.passValidityEndDate!!.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+              result.passValidityEndDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
           b.smallDesc.text = getString(R.string.valid_season_ticket, validityEndDate)
+        } else {
+          // Recovered broken session: no ticket/pass data available
+          b.smallDesc.visibility = View.INVISIBLE
         }
         b.mediumText.setText(R.string.valid_last_desc)
         b.mediumText.visibility = View.VISIBLE
-        b.smallDesc.visibility = View.VISIBLE
+        if (result.nbTicketsLeft != null || result.passValidityEndDate != null) {
+          b.smallDesc.visibility = View.VISIBLE
+        }
       }
       Status.INVALID_CARD -> {
         ticketingService.displayResultFailed()
@@ -352,7 +346,7 @@ class ReaderActivity : BaseActivity() {
     summaryBinding?.animation?.cancelAnimation()
     activityCardReaderBinding.mainView.setBackgroundResource(R.drawable.ic_img_bg_valideur)
     activityCardReaderBinding.presentCardTv.visibility = View.VISIBLE
-    activityCardReaderBinding.animation.playAnimation()
+    playWaitingAnimation()
     ticketingService.displayWaiting()
     ticketingService.startNfcDetection()
   }
@@ -375,9 +369,27 @@ class ReaderActivity : BaseActivity() {
     activityCardReaderBinding.progressOverlay?.visibility = View.GONE
   }
 
+  /**
+   * Starts the waiting animation, unless the terminal handles its own visual feedback (Arrive). On
+   * Arrive, advances to a static frame showing the card near the reader (no animation loop, zero
+   * ongoing CPU cost).
+   */
+  private fun playWaitingAnimation() {
+    if (AppSettings.readerType != ReaderType.ARRIVE) {
+      activityCardReaderBinding.animation.playAnimation()
+    } else {
+      activityCardReaderBinding.animation.setProgress(ARRIVE_ANIMATION_STATIC_FRAME)
+    }
+  }
+
   companion object {
     private const val RETURN_DELAY_MS = 30000
     private const val SUMMARY_DELAY_MS = 6000
+    /**
+     * Static frame shown on Arrive terminals instead of the animation loop (0.0 = start, 1.0 =
+     * end).
+     */
+    private const val ARRIVE_ANIMATION_STATIC_FRAME = 0.5f
   }
 
   private inner class CardReaderObserver : CardReaderObserverSpi {
