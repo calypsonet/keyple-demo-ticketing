@@ -218,15 +218,10 @@ class ReaderActivity : BaseActivity() {
         when (readerEvent?.type) {
           CardReaderEvent.Type.CARD_INSERTED,
           CardReaderEvent.Type.CARD_MATCHED -> {
-            // Single Main-thread dispatch: cancel animation + show progress + dispatch to IO.
-            // Merging the former runOnUiThread(cancelAnimation) into this launch eliminates
-            // one redundant message queue post (two separate Main wake-ups → one).
             lifecycleScope.launch {
               activityCardReaderBinding.animation.cancelAnimation()
-              showProgress()
               val validationResult =
                   withContext(Dispatchers.IO) { ticketingService.executeValidationProcedure() }
-              dismissProgress()
               changeDisplay(validationResult.toUi())
             }
           }
