@@ -81,6 +81,7 @@ constructor(
   private lateinit var calypsoSam: LegacySam
   private lateinit var smartCard: SmartCard
   private lateinit var cardSelectionManager: CardSelectionManager
+  private lateinit var cardSecuritySettings: SymmetricCryptoSecuritySetting
 
   private var indexOfKeypleGenericCardSelection = 0
   private var indexOfCdLightGtmlCardSelection = 0
@@ -123,6 +124,7 @@ constructor(
       if (samReader == null || !selectSam(samReader)) {
         throw IllegalStateException("SAM reader or SAM not available")
       }
+      cardSecuritySettings = getSecuritySettings()
     }
     areReadersInitialized = true
   }
@@ -305,7 +307,7 @@ constructor(
                 validationAmount = 1,
                 cardReader = readerManager.getCardReader()!!,
                 calypsoCard = smartCard as CalypsoCard,
-                cardSecuritySettings = getSecuritySettings()!!,
+                cardSecuritySettings = cardSecuritySettings,
                 locations = LocationRepository.getLocations(),
                 keypopApiProvider = keypopApiProvider)
       }
@@ -325,7 +327,13 @@ constructor(
     }
   }
 
-  private fun getSecuritySettings(): SymmetricCryptoSecuritySetting? {
+  fun initCryptoContextForNextTransaction() {
+    if (smartCard is CalypsoCard) {
+      cardSecuritySettings.initCryptoContextForNextTransaction()
+    }
+  }
+
+  private fun getSecuritySettings(): SymmetricCryptoSecuritySetting {
     return calypsoCardApiFactory
         .createSymmetricCryptoSecuritySetting(
             keypopApiProvider

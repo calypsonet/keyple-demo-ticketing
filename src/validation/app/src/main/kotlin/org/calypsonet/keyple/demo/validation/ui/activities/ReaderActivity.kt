@@ -332,6 +332,8 @@ class ReaderActivity : BaseActivity() {
     b.animation.setAnimation(animationFile)
     b.animation.playAnimation()
 
+    lifecycleScope.launch(Dispatchers.IO) { ticketingService.initCryptoContextForNextTransaction() }
+
     summaryTimer = Timer()
     summaryTimer!!.schedule(
         object : TimerTask() {

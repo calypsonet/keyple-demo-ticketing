@@ -319,7 +319,6 @@ class CalypsoCardValidationManager : BaseValidationManager() {
           } else {
             cardTransaction.prepareCancelSecureSession().processCommands(ChannelControl.CLOSE_AFTER)
           }
-          cardSecuritySettings.initCryptoContextForNextTransaction()
           if (status == Status.LOADING) {
             status = Status.ERROR
           }
