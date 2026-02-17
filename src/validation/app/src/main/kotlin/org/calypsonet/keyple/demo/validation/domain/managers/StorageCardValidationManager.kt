@@ -74,7 +74,7 @@ class StorageCardValidationManager : BaseValidationManager() {
       locations: List<Location>,
       keypopApiProvider: KeypopApiProvider
   ): ValidationResult {
-    var status: Status = Status.LOADING
+    var status: Status = Status.PROCESSING
     var errorMessage: String? = null
     var passValidityEndDate: LocalDate? = null
     var nbTicketsLeft: Int? = null
@@ -296,7 +296,7 @@ class StorageCardValidationManager : BaseValidationManager() {
         Timber.w("Validation failed: ${e.status.name} - ${e.message}")
         status = e.status
         errorMessage = e.message
-        if (status == Status.LOADING) {
+        if (status == Status.PROCESSING) {
           status = Status.ERROR
         }
       } catch (e: SCCardCommunicationException) {

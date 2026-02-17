@@ -51,7 +51,7 @@ class CalypsoCardValidationManager : BaseValidationManager() {
       keypopApiProvider: KeypopApiProvider
   ): ValidationResult {
 
-    var status: Status = Status.LOADING
+    var status: Status = Status.PROCESSING
     var errorMessage: String? = null
     val cardTransaction: SecureRegularModeTransactionManager?
     var passValidityEndDate: LocalDate? = null
@@ -323,7 +323,7 @@ class CalypsoCardValidationManager : BaseValidationManager() {
           } else {
             cardTransaction.prepareCancelSecureSession().processCommands(ChannelControl.CLOSE_AFTER)
           }
-          if (status == Status.LOADING) {
+          if (status == Status.PROCESSING) {
             status = Status.ERROR
           }
         } catch (e: CardCommunicationException) {

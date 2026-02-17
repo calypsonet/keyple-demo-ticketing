@@ -241,7 +241,7 @@ class ReaderActivity : BaseActivity() {
 
   private fun changeDisplay(validationResult: UiValidationResult?) {
     if (validationResult != null) {
-      if (validationResult.status === Status.LOADING) {
+      if (validationResult.status === Status.PROCESSING) {
         activityCardReaderBinding.presentCardTv.visibility = View.GONE
         activityCardReaderBinding.mainView.setBackgroundColor(
             ContextCompat.getColor(this, R.color.turquoise))

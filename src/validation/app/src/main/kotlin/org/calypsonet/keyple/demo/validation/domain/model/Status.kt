@@ -15,7 +15,7 @@ package org.calypsonet.keyple.demo.validation.domain.model
 import java.util.Locale
 
 enum class Status(private val status: String) {
-  LOADING("Loading"),
+  PROCESSING("Processing"),
   SUCCESS("Success"),
   INVALID_CARD("Invalid card"),
   EMPTY_CARD("Empty card"),
