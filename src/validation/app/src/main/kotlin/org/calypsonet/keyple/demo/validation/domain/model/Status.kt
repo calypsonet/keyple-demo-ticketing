@@ -15,11 +15,12 @@ package org.calypsonet.keyple.demo.validation.domain.model
 import java.util.Locale
 
 enum class Status(private val status: String) {
-  LOADING("loading"),
+  LOADING("Loading"),
   SUCCESS("Success"),
   INVALID_CARD("Invalid card"),
   EMPTY_CARD("Empty card"),
-  ERROR("error");
+  ERROR("Error"),
+  CARD_LOST("Card lost");
 
   override fun toString(): String {
     return status

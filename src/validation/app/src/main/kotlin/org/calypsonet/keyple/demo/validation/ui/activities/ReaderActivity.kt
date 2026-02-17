@@ -222,7 +222,13 @@ class ReaderActivity : BaseActivity() {
               activityCardReaderBinding.animation.cancelAnimation()
               val validationResult =
                   withContext(Dispatchers.IO) { ticketingService.executeValidationProcedure() }
-              changeDisplay(validationResult.toUi())
+              if (validationResult.status == Status.CARD_LOST) {
+                // Card removed during transaction: silent reset, no display, no sound
+                currentAppState = AppState.WAIT_CARD
+                activityCardReaderBinding.animation.playAnimation()
+              } else {
+                changeDisplay(validationResult.toUi())
+              }
             }
           }
           else -> {

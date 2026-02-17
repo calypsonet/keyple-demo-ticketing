@@ -33,6 +33,7 @@ import org.calypsonet.keyple.demo.validation.domain.spi.KeypopApiProvider
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ChannelControl
 import org.eclipse.keypop.storagecard.MifareClassicKeyType
+import org.eclipse.keypop.storagecard.SCCardCommunicationException
 import org.eclipse.keypop.storagecard.card.ProductType
 import org.eclipse.keypop.storagecard.card.StorageCard
 import timber.log.Timber
@@ -298,6 +299,10 @@ class StorageCardValidationManager : BaseValidationManager() {
         if (status == Status.LOADING) {
           status = Status.ERROR
         }
+      } catch (e: SCCardCommunicationException) {
+        Timber.w("Card removed during transaction: ${storageCard.productType.name}")
+        status = Status.CARD_LOST
+        errorMessage = e.message
       } catch (e: Exception) {
         Timber.e(e, "Unexpected error during validation: ${storageCard.productType.name}")
         status = Status.ERROR
