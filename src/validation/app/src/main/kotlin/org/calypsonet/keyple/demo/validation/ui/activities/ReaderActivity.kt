@@ -79,9 +79,6 @@ class ReaderActivity : BaseActivity() {
     // GONE→VISIBLE sizing issues where the animation would cover the text views.
     summaryBinding =
         LayoutCardSummaryOverlayBinding.bind(activityCardReaderBinding.cardSummaryStub!!.inflate())
-
-    // Pre-warm the IO thread pool to eliminate the ~145ms dispatch gap on first card detection
-    lifecycleScope.launch(Dispatchers.IO) {}
   }
 
   override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
