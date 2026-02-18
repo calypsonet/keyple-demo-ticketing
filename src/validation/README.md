@@ -290,7 +290,7 @@ The validation procedure processes contracts in priority order:
 - **Access**: Contact [CNA](https://calypsonet.org/contact-us/) for plugin
 
 **Arrive Axio 4**
-- **Plugin**: [Arrive Plugin](https://github.com/calypsonet/keyple-android-plugin-arrive)
+- **Plugin**: [Arrive Plugin](https://github.com/calypsonet/keyple-plugin-cna-arrive-android-jvm-lib)
 - **Features**: Transportation-specific design, multiple payment methods
 - **Access**: Contact [CNA](https://calypsonet.org/contact-us/) for plugin
 

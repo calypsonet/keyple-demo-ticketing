@@ -324,11 +324,9 @@ class ReaderActivity : BaseActivity() {
     b.animation.setAnimation(animationFile)
     b.animation.playAnimation()
 
-    lifecycleScope.launch(Dispatchers.IO) {
-      // The preparation of the next transaction is performed after the end of the previous
-      // transaction so that the time spent is not added to the user time.
-      ticketingService.initCryptoContextForNextTransaction()
-    }
+    // The preparation of the next transaction is performed asynchronously after the end of the
+    // previous transaction so that the time spent is not added to the user time.
+    lifecycleScope.launch(Dispatchers.IO) { ticketingService.initCryptoContextForNextTransaction() }
 
     summaryTimer = Timer()
     summaryTimer!!.schedule(
