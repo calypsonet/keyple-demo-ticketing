@@ -235,7 +235,6 @@ class ReaderActivity : BaseActivity() {
         activityCardReaderBinding.mainView.setBackgroundColor(
             ContextCompat.getColor(this, R.color.turquoise))
         supportActionBar?.show()
-        activityCardReaderBinding.animation.repeatCount = LottieDrawable.INFINITE
         playWaitingAnimation()
       } else {
         activityCardReaderBinding.animation.cancelAnimation()
@@ -370,26 +369,22 @@ class ReaderActivity : BaseActivity() {
   }
 
   /**
-   * Starts the waiting animation, unless the terminal handles its own visual feedback (Arrive). On
-   * Arrive, advances to a static frame showing the card near the reader (no animation loop, zero
-   * ongoing CPU cost).
+   * Starts the waiting animation. On Arrive terminals, plays once and freezes on the last frame
+   * (card at reader) with no ongoing CPU cost. On other terminals, loops indefinitely.
    */
   private fun playWaitingAnimation() {
     if (AppSettings.readerType != ReaderType.ARRIVE) {
+      activityCardReaderBinding.animation.repeatCount = LottieDrawable.INFINITE
       activityCardReaderBinding.animation.playAnimation()
     } else {
-      activityCardReaderBinding.animation.setProgress(ARRIVE_ANIMATION_STATIC_FRAME)
+      activityCardReaderBinding.animation.repeatCount = 0
+      activityCardReaderBinding.animation.playAnimation()
     }
   }
 
   companion object {
     private const val RETURN_DELAY_MS = 30000
     private const val SUMMARY_DELAY_MS = 6000
-    /**
-     * Static frame shown on Arrive terminals instead of the animation loop (0.0 = start, 1.0 =
-     * end).
-     */
-    private const val ARRIVE_ANIMATION_STATIC_FRAME = 0.5f
   }
 
   private inner class CardReaderObserver : CardReaderObserverSpi {
