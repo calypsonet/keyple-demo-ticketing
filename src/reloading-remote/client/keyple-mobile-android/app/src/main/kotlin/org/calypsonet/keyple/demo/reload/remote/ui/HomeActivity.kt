@@ -16,6 +16,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.data.SharedPrefDataRepository
 import org.calypsonet.keyple.demo.reload.remote.data.model.DeviceEnum
@@ -30,6 +33,14 @@ class HomeActivity : AbstractDemoActivity() {
     activityHomeBinding = ActivityHomeBinding.inflate(layoutInflater)
     toolbarBinding = activityHomeBinding.appBarLayout
     setContentView(activityHomeBinding.root)
+
+    // Handle edge-to-edge display with proper window insets for Android 15+
+    ViewCompat.setOnApplyWindowInsetsListener(activityHomeBinding.root) { view, windowInsets ->
+      val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+      view.updatePadding(top = insets.top, bottom = insets.bottom)
+      WindowInsetsCompat.CONSUMED
+    }
+
     if (intent.getBooleanExtra(CHOOSE_DEVICE_FOR_PERSO, false)) {
       activityHomeBinding.chooseDeviceTv.append(" ")
       activityHomeBinding.chooseDeviceTv.append(getString(R.string.to_be_personalized))

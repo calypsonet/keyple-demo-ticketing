@@ -1,8 +1,9 @@
 import React, { useState, useEffect }  from 'react';
 import PropTypes from 'prop-types';
-import {ThemeProvider, withStyles } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Hidden from '@material-ui/core/Hidden';
+import { ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider as StylesThemeProvider, withStyles } from '@mui/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import Box from '@mui/material/Box';
 import Navigator from './Navigator';
 import Header from './Header';
 import './App.css';
@@ -40,7 +41,7 @@ function Paperbase(props) {
             return response.json()
           } else {
             //unexpected error connect again
-            throw "Exception, response status : "+ response.status
+            throw new Error("Exception, response status : "+ response.status)
           }
         })
         .then((json)=>{
@@ -96,7 +97,7 @@ function Paperbase(props) {
             }
             return response.json()
           }else{
-            throw 'Request status : ' + response.status;
+            throw new Error('Request status : ' + response.status);
           }
         })
         .then(json => {
@@ -117,6 +118,7 @@ function Paperbase(props) {
     }
 
     fetchIsSamReady()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, 3000);
 
   const handleDrawerToggle = () => {
@@ -125,31 +127,35 @@ function Paperbase(props) {
 
   return (
     <ThemeProvider theme={theme}>
-      <div className={classes.root}>
-        <CssBaseline />
-        <nav className={classes.drawer}>
-          <Hidden smUp implementation="js">
-            <Navigator
-              PaperProps={{ style: { width: drawerWidth } }}
-              variant="temporary"
-              open={mobileOpen}
-              onClose={handleDrawerToggle}
-            />
-          </Hidden>
-          <Hidden xsDown implementation="css">
-            <Navigator PaperProps={{ style: { width: drawerWidth } }} />
-          </Hidden>
-        </nav>
-        <div className={classes.app}>
-          <Header onDrawerToggle={handleDrawerToggle} isSamReady={isSamReady} isServerReady={isServerReady}/>
-          <main className={classes.main}>
-            <CollapsibleTable rows={rows} lastRowId={lastRowId} />
-          </main>
-          <footer className={classes.footer}>
-            <Copyright />
-          </footer>
+      <StylesThemeProvider theme={theme}>
+        <div className={classes.root}>
+          <CssBaseline />
+          <nav className={classes.drawer}>
+            {/* Mobile: temporary drawer (xs only) */}
+            <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
+              <Navigator
+                PaperProps={{ style: { width: drawerWidth } }}
+                variant="temporary"
+                open={mobileOpen}
+                onClose={handleDrawerToggle}
+              />
+            </Box>
+            {/* Desktop: permanent drawer (sm and above) */}
+            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+              <Navigator PaperProps={{ style: { width: drawerWidth } }} />
+            </Box>
+          </nav>
+          <div className={classes.app}>
+            <Header onDrawerToggle={handleDrawerToggle} isSamReady={isSamReady} isServerReady={isServerReady}/>
+            <main className={classes.main}>
+              <CollapsibleTable rows={rows} lastRowId={lastRowId} />
+            </main>
+            <footer className={classes.footer}>
+              <Copyright />
+            </footer>
+          </div>
         </div>
-      </div>
+      </StylesThemeProvider>
     </ThemeProvider>
   );
 }

@@ -26,6 +26,10 @@ abstract class BaseValidationManager {
 
     // User error messages
     const val ERROR_NO_VALID_TITLE_DETECTED = "No valid title detected"
+    const val ERROR_MIFARE_CLASSIC_AUTH_FAILED =
+        "Authentication failed. Please ensure the card is correctly positioned."
+    const val ERROR_MIFARE_CLASSIC_TRANSACTION_FAILED = "Transaction failed. Please try again."
+    const val ERROR_GENERIC_TRANSACTION_FAILED = "An error occurred during validation."
 
     // Exception messages
     const val EXCEPTION_ENVIRONMENT_WRONG_VERSION = "Environment error: wrong version number"

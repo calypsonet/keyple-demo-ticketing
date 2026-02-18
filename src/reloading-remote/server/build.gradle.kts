@@ -29,7 +29,17 @@ dependencies {
   implementation(project(":common"))
 
   // Proprietary libs
-  implementation(fileTree(mapOf("dir" to "../../../libs", "include" to listOf("*.jar"))))
+  // Storage card specific components
+  // Conditional dependency for the storage card library
+  val storageCardLibName = "keyple-card-cna-storagecard-java-lib-2.2.0"
+  val storageCardLibFile = file("../../../libs/${storageCardLibName}.jar")
+  if (storageCardLibFile.exists()) {
+    println("Using private storage card library: ${storageCardLibFile.name}")
+    implementation(files(storageCardLibFile))
+  } else {
+    println("Using mock storage card library")
+    implementation(files("../../../libs/${storageCardLibName}-mock.jar"))
+  }
 
   // Keyple BOM
   implementation(platform(libs.keypleJavaBom))
@@ -38,7 +48,11 @@ dependencies {
   implementation(libs.keypopReaderApi)
   implementation(libs.keypopCalypsoCardApi)
   implementation(libs.keypopCalypsoCryptoLegacysamApi)
-  implementation(libs.keypopStoragecardApi)
+  // implementation(libs.keypopStoragecardApi)
+  // TEMPORARY SNAPSHOT:
+  implementation("org.eclipse.keypop:keypop-storagecard-java-api:1.1.0-SNAPSHOT") {
+    isChanging = true
+  }
 
   // Keyple
   implementation(libs.keypleCommonApi)
@@ -59,7 +73,10 @@ dependencies {
   // Google GSON
   implementation(libs.gson)
 
-  // Logging
+  // Logging libraries used in the project:
+  // - SLF4J API provides a common logging interface for the server and third-party libraries
+  //   (e.g., Keyple).
+  // - slf4j-simple is used as the SLF4J implementation for Java/Quarkus server applications.
   implementation(libs.slf4jApi)
   implementation(libs.slf4jSimple)
 }

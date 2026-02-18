@@ -69,6 +69,7 @@ class CardConstants {
       return true
     }
 
+    // Storage Card layout for MIFARE Ultralight and ST25 SRT512 (4-byte blocks)
     const val SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK = 4
     const val SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK = 7
     const val SC_CONTRACT_FIRST_BLOCK = 8
@@ -79,6 +80,15 @@ class CardConstants {
     const val SC_ENVIRONMENT_AND_HOLDER_SIZE_BYTES = 16
     const val SC_CONTRACT_RECORD_SIZE_BYTES = 16
     const val SC_EVENT_RECORD_SIZE_BYTES = 16
+
+    // Mifare Classic 1K layout - Sector 1 only (16-byte blocks)
+    // Note: Mifare Classic blocks are 16 bytes each
+    // Sector 1: blocks 4, 5, 6 usable | block 7 = sector trailer (reserved)
+    const val MC_ENVIRONMENT_AND_HOLDER_BLOCK = 4 // 16 bytes
+    const val MC_CONTRACT_BLOCK = 5 // 16 bytes
+    const val MC_EVENT_BLOCK = 6 // 16 bytes
+    const val MC_SECTOR_1_AUTH_BLOCK = 4 // Any block in sector 1 for authentication
+    const val MC_DEFAULT_KEY_NUMBER = 0 // Key number used with KeyProvider
 
     val PCA_PUBLIC_KEY_REFERENCE: ByteArray =
         HexUtil.toByteArray("0BA000000291A0000101B0010000000000000000000000000000000002")

@@ -14,6 +14,9 @@ package org.calypsonet.keyple.demo.reload.remote.ui
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import org.calypsonet.keyple.demo.reload.remote.BuildConfig
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivitySettingsMenuBinding
@@ -26,6 +29,14 @@ class SettingsMenuActivity : AbstractDemoActivity() {
     activitySettingsMenuBinding = ActivitySettingsMenuBinding.inflate(layoutInflater)
     toolbarBinding = activitySettingsMenuBinding.appBarLayout
     setContentView(activitySettingsMenuBinding.root)
+
+    // Handle edge-to-edge display with proper window insets for Android 15+
+    ViewCompat.setOnApplyWindowInsetsListener(activitySettingsMenuBinding.root) { view, windowInsets
+      ->
+      val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+      view.updatePadding(top = insets.top, bottom = insets.bottom)
+      WindowInsetsCompat.CONSUMED
+    }
 
     activitySettingsMenuBinding.serverBtn.setOnClickListener {
       val intent = Intent(this, ServerSettingsActivity::class.java)

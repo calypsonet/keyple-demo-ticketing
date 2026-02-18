@@ -23,6 +23,7 @@ import org.calypsonet.keyple.demo.reload.remote.di.scopes.AppScoped
 import org.eclipse.keyple.card.calypso.CalypsoExtensionService
 import org.eclipse.keyple.core.service.SmartCardServiceProvider
 import org.eclipse.keypop.reader.selection.spi.SmartCard
+import org.eclipse.keypop.storagecard.card.ProductType.MIFARE_CLASSIC_1K
 import org.eclipse.keypop.storagecard.card.ProductType.MIFARE_ULTRALIGHT
 import org.eclipse.keypop.storagecard.card.ProductType.ST25_SRT512
 
@@ -77,6 +78,12 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
                 .filterByCardProtocol(CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name),
             storageCardExtension.storageCardApiFactory.createStorageCardSelectionExtension(
                 ST25_SRT512))
+        cardSelectionManager.prepareSelection(
+            readerApiFactory
+                .createBasicCardSelector()
+                .filterByCardProtocol(CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name),
+            storageCardExtension.storageCardApiFactory.createStorageCardSelectionExtension(
+                MIFARE_CLASSIC_1K))
       }
 
       val selectionResult = cardSelectionManager.processCardSelectionScenario(reader)

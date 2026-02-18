@@ -454,7 +454,6 @@ By default, proprietary plugins are deactivated to maintain open-source compatib
 
 **Available Proprietary Plugins**:
 - **Bluebird EF501**: Professional inspection terminal with integrated barcode scanning
-- **Flowbird Axio 2**: Transportation-specific control terminal with multi-modal support
 
 ## Security and Compliance
 

@@ -35,6 +35,7 @@ import org.eclipse.keypop.calypso.card.WriteAccessLevel
 import org.eclipse.keypop.calypso.card.card.CalypsoCard
 import org.eclipse.keypop.calypso.card.transaction.SecureRegularModeTransactionManager
 import org.eclipse.keypop.calypso.card.transaction.SymmetricCryptoSecuritySetting
+import org.eclipse.keypop.reader.CardCommunicationException
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ChannelControl
 
@@ -50,7 +51,7 @@ class CalypsoCardValidationManager : BaseValidationManager() {
       keypopApiProvider: KeypopApiProvider
   ): ValidationResult {
 
-    var status: Status = Status.LOADING
+    var status: Status = Status.PROCESSING
     var errorMessage: String? = null
     val cardTransaction: SecureRegularModeTransactionManager?
     var passValidityEndDate: LocalDate? = null
@@ -308,6 +309,9 @@ class CalypsoCardValidationManager : BaseValidationManager() {
       } catch (e: ValidationException) {
         status = e.status
         errorMessage = e.message
+      } catch (e: CardCommunicationException) {
+        status = Status.CARD_LOST
+        errorMessage = e.message
       } catch (e: Exception) {
         status = Status.ERROR
         errorMessage = e.message
@@ -319,12 +323,18 @@ class CalypsoCardValidationManager : BaseValidationManager() {
           } else {
             cardTransaction.prepareCancelSecureSession().processCommands(ChannelControl.CLOSE_AFTER)
           }
-          if (status == Status.LOADING) {
+          if (status == Status.PROCESSING) {
             status = Status.ERROR
           }
+        } catch (e: CardCommunicationException) {
+          // Card removed during close/cancel session (e.g. removed while writing)
+          status = Status.CARD_LOST
+          errorMessage = null
         } catch (e: Exception) {
-          errorMessage = e.message
-          status = Status.ERROR
+          if (status != Status.CARD_LOST) {
+            errorMessage = e.message
+            status = Status.ERROR
+          }
         }
       }
     }
