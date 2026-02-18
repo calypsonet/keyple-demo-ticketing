@@ -22,8 +22,8 @@ import org.eclipse.keyple.core.util.HexUtil
  * or a similar secure storage mechanism.
  */
 class MifareClassicKeyProviderImpl :
-  org.eclipse.keyple.plugin.android.nfc.spi.KeyProvider,
-  org.calypsonet.keyple.plugin.bluebird.spi.KeyProvider {
+    org.eclipse.keyple.plugin.android.nfc.spi.KeyProvider,
+    org.calypsonet.keyple.plugin.bluebird.spi.KeyProvider {
   override fun getKey(keyNumber: Int): ByteArray? {
     // Returns factory default key for demonstration purposes.
     // TODO: In production, implement secure key storage (Android KeyStore or equivalent).
