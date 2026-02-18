@@ -21,7 +21,7 @@ import timber.log.Timber
  * Standard UI feedback for non-Arrive terminals (Bluebird, Coppernic, Famoco).
  *
  * Uses Android MediaPlayer for success/error sounds. No LED control. This variant is also compiled
- * when AndroidParkeonCommon-release.aar is absent from libs/ (stub mode for Arrive hardware).
+ * when AndroidParkeonCommon-release.aar is absent from libs/ (mock mode for Arrive hardware).
  */
 internal class AndroidUiManagerImpl(private val context: Context) : UiManager {
   private var successMedia: MediaPlayer? = null

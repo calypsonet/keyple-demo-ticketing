@@ -30,7 +30,7 @@ val hasArriveSdk = parkeonSdkFile.exists()
 if (hasArriveSdk) {
   println("Parkeon SDK found - Arrive UI features enabled")
 } else {
-  println("Parkeon SDK not found - Arrive UI features disabled (stub mode)")
+  println("Parkeon SDK not found - Arrive UI features disabled (mock mode)")
 }
 
 dependencies {

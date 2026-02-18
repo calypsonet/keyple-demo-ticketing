@@ -210,6 +210,7 @@ class ReaderActivity : BaseActivity() {
                   withContext(Dispatchers.IO) { ticketingService.executeValidationProcedure() }
               if (validationResult.status == Status.CARD_LOST) {
                 // Card removed during transaction: silent reset, no display, no sound
+                Timber.i("Card removed during transaction")
                 currentAppState = AppState.WAIT_CARD
                 playWaitingAnimation()
               } else {
@@ -323,7 +324,11 @@ class ReaderActivity : BaseActivity() {
     b.animation.setAnimation(animationFile)
     b.animation.playAnimation()
 
-    lifecycleScope.launch(Dispatchers.IO) { ticketingService.initCryptoContextForNextTransaction() }
+    lifecycleScope.launch(Dispatchers.IO) {
+      // The preparation of the next transaction is performed after the end of the previous
+      // transaction so that the time spent is not added to the user time.
+      ticketingService.initCryptoContextForNextTransaction()
+    }
 
     summaryTimer = Timer()
     summaryTimer!!.schedule(
@@ -381,7 +386,7 @@ class ReaderActivity : BaseActivity() {
 
   companion object {
     private const val RETURN_DELAY_MS = 30000
-    private const val SUMMARY_DELAY_MS = 6000
+    private const val SUMMARY_DELAY_MS = 2500
   }
 
   private inner class CardReaderObserver : CardReaderObserverSpi {

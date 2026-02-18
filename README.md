@@ -120,7 +120,7 @@ Use any client application's personalization feature to initialize cards with:
 ### Proprietary Plugins (Available on Request)
 
 - Bluebird EF501
-- Flowbird Axio 2
+- Arrive Axio 4
 
 Contact [CNA](https://calypsonet.org/contact-us/) for access to proprietary terminal plugins.
 
@@ -206,5 +206,5 @@ This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICE
 ## Related Projects
 
 - [Eclipse Keyple middleware](https://keyple.org) - Core SDK and plugins
-- [Calypso Card Specification](https://calypsonet.org/technical-specifications/)
-- [Keyple Distributed JSON API](https://keyple.org/learn/user-guide/distributed-json-api-1-0/)
+- [Calypso Card Specification](https://calypsonet.org/technical-support-documentation/)
+- [Keyple Distributed JSON API](https://keyple.org/user-guides/non-keyple-client/server-json-api/)
