@@ -29,7 +29,17 @@ dependencies {
   implementation(project(":common"))
 
   // Proprietary libs
-  implementation(fileTree(mapOf("dir" to "../../../libs", "include" to listOf("*.jar"))))
+  // Storage card specific components
+  // Conditional dependency for the storage card library
+  val storageCardLibName = "keyple-card-cna-storagecard-java-lib-2.2.0"
+  val storageCardLibFile = file("../../../libs/${storageCardLibName}.jar")
+  if (storageCardLibFile.exists()) {
+    println("Using private storage card library: ${storageCardLibFile.name}")
+    implementation(files(storageCardLibFile))
+  } else {
+    println("Using mock storage card library")
+    implementation(files("../../../libs/${storageCardLibName}-mock.jar"))
+  }
 
   // Keyple BOM
   implementation(platform(libs.keypleJavaBom))
