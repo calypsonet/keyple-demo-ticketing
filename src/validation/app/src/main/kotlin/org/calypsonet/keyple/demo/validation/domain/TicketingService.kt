@@ -125,6 +125,7 @@ constructor(
         throw IllegalStateException("SAM reader or SAM not available")
       }
       cardSecuritySettings = getSecuritySettings()
+      cardSecuritySettings.initCryptoContextForNextTransaction()
     }
     areReadersInitialized = true
   }
