@@ -95,11 +95,7 @@ dependencies {
   implementation(libs.keypopReaderApi)
   implementation(libs.keypopCalypsoCardApi)
   implementation(libs.keypopCalypsoCryptoLegacysamApi)
-  // implementation(libs.keypopStoragecardApi)
-  // TEMPORARY SNAPSHOT:
-  implementation("org.eclipse.keypop:keypop-storagecard-java-api:1.1.0-SNAPSHOT") {
-    isChanging = true
-  }
+  implementation(libs.keypopStoragecardApi)
 
   // Keyple
   implementation(libs.keypleCommonApi)
