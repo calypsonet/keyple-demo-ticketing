@@ -1,18 +1,15 @@
 import background from '../../img/background.png';
-import { createMuiTheme, ThemeProvider, withStyles } from '@material-ui/core/styles';
+import { createTheme } from '@mui/material/styles';
 
-//Create base Theme with Material UI
-let muitheme = createMuiTheme({
+// Create base theme
+const muitheme = createTheme({
   palette: {
     primary: {
-      //light: '#63ccff',
-      //main: '#1A87C7',
       main: '#fff',
-      //dark: '#006db3',
     },
   },
   typography: {
-    fontFamily:'Work Sans',
+    fontFamily: 'Work Sans',
     h5: {
       fontWeight: 500,
       fontSize: 26,
@@ -22,11 +19,6 @@ let muitheme = createMuiTheme({
   shape: {
     borderRadius: 8,
   },
-  props: {
-    MuiTab: {
-      disableRipple: true,
-    },
-  },
   mixins: {
     toolbar: {
       minHeight: 48,
@@ -34,89 +26,108 @@ let muitheme = createMuiTheme({
   },
 });
 
-//Add more style to theme
-export const theme = {
-  ...muitheme,
-  overrides: {
+// Extend with component overrides (MUI v5 format)
+export const theme = createTheme(muitheme, {
+  components: {
     MuiDrawer: {
-      paper: {
-        //backgroundColor: '#18202c',
-        //backgroundColor: '#000000',
-        backgroundColor: '#1A87C7',
+      styleOverrides: {
+        paper: {
+          backgroundColor: '#1A87C7',
+        },
       },
     },
     MuiButton: {
-      label: {
-        textTransform: 'none',
-      },
-      contained: {
-        boxShadow: 'none',
-        '&:active': {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+        },
+        contained: {
           boxShadow: 'none',
+          '&:active': {
+            boxShadow: 'none',
+          },
         },
       },
     },
     MuiTabs: {
-      root: {
-        marginLeft: muitheme.spacing(1),
-      },
-      indicator: {
-        height: 3,
-        borderTopLeftRadius: 3,
-        borderTopRightRadius: 3,
-        backgroundColor: muitheme.palette.common.white,
+      styleOverrides: {
+        root: {
+          marginLeft: muitheme.spacing(1),
+        },
+        indicator: {
+          height: 3,
+          borderTopLeftRadius: 3,
+          borderTopRightRadius: 3,
+          backgroundColor: muitheme.palette.common.white,
+        },
       },
     },
     MuiTab: {
-      root: {
-        textTransform: 'none',
-        margin: '0 16px',
-        minWidth: 0,
-        padding: 0,
-        [muitheme.breakpoints.up('md')]: {
-          padding: 0,
+      defaultProps: {
+        disableRipple: true,
+      },
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+          margin: '0 16px',
           minWidth: 0,
+          padding: 0,
+          [muitheme.breakpoints.up('md')]: {
+            padding: 0,
+            minWidth: 0,
+          },
         },
       },
     },
     MuiIconButton: {
-      root: {
-        padding: muitheme.spacing(1),
+      styleOverrides: {
+        root: {
+          padding: muitheme.spacing(1),
+        },
       },
     },
     MuiTooltip: {
-      tooltip: {
-        borderRadius: 4,
+      styleOverrides: {
+        tooltip: {
+          borderRadius: 4,
+        },
       },
     },
     MuiDivider: {
-      root: {
-        //backgroundColor: '#404854',
-        backgroundColor: '#fff',
+      styleOverrides: {
+        root: {
+          backgroundColor: '#fff',
+        },
       },
     },
     MuiListItemText: {
-      primary: {
-        fontWeight: muitheme.typography.fontWeightMedium,
+      styleOverrides: {
+        primary: {
+          fontWeight: muitheme.typography.fontWeightMedium,
+        },
       },
     },
     MuiListItemIcon: {
-      root: {
-        color: 'inherit',
-        marginRight: 0,
-        '& svg': {
-          fontSize: 20,
+      styleOverrides: {
+        root: {
+          color: 'inherit',
+          marginRight: 0,
+          '& svg': {
+            fontSize: 20,
+          },
         },
       },
     },
     MuiAvatar: {
-      root: {
-        width: 32,
-        height: 32,
+      styleOverrides: {
+        root: {
+          width: 32,
+          height: 32,
+        },
       },
     },
   },
-};
+});
 
 export const drawerWidth = 200;
 
@@ -146,6 +157,6 @@ export const styles = {
   },
   footer: {
     padding: muitheme.spacing(2),
-    background: '#fff'
+    background: '#fff',
   },
 };

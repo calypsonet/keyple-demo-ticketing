@@ -120,7 +120,7 @@ Use any client application's personalization feature to initialize cards with:
 ### Proprietary Plugins (Available on Request)
 
 - Bluebird EF501
-- Flowbird Axio 2
+- Arrive Axio 4
 
 Contact [CNA](https://calypsonet.org/contact-us/) for access to proprietary terminal plugins.
 
@@ -166,6 +166,13 @@ Each module (e.g., `src/common`, `src/reloading-remote/server`, `src/validation`
 project and should be built using the tools and instructions provided within its own directory. For Gradle-based
 projects, navigate to the module's directory and use its `./gradlew` wrapper.
 
+### Build Optimization
+
+The Android applications (`validation`, `control`, and `reloading-remote` client) are configured with ProGuard
+minification enabled for both debug and release builds. This removes SLF4J debug/trace logs from the application and
+third-party libraries (like Keyple), resulting in smaller APKs and better runtime performance. To see full unoptimized
+logs during debugging, comment out the `debug` build type configuration in the respective `app/build.gradle.kts` files.
+
 ## Card Application Identifiers
 
 Compatible Calypso card AIDs:
@@ -199,5 +206,5 @@ This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICE
 ## Related Projects
 
 - [Eclipse Keyple middleware](https://keyple.org) - Core SDK and plugins
-- [Calypso Card Specification](https://calypsonet.org/technical-specifications/)
-- [Keyple Distributed JSON API](https://keyple.org/learn/user-guide/distributed-json-api-1-0/)
+- [Calypso Card Specification](https://calypsonet.org/technical-support-documentation/)
+- [Keyple Distributed JSON API](https://keyple.org/user-guides/non-keyple-client/server-json-api/)

@@ -14,6 +14,9 @@ package org.calypsonet.keyple.demo.reload.remote.ui
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import dagger.android.support.DaggerAppCompatActivity
 import java.util.Timer
 import java.util.TimerTask
@@ -28,6 +31,14 @@ class MainActivity : DaggerAppCompatActivity() {
     super.onCreate(savedInstanceState)
     activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
     setContentView(activityMainBinding.root)
+
+    // Handle edge-to-edge display with proper window insets for Android 15+
+    ViewCompat.setOnApplyWindowInsetsListener(activityMainBinding.root) { view, windowInsets ->
+      val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+      view.updatePadding(top = insets.top, bottom = insets.bottom)
+      WindowInsetsCompat.CONSUMED
+    }
+
     // Wait for Wizway Device to be connected
     Timer()
         .schedule(

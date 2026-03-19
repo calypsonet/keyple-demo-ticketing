@@ -27,7 +27,6 @@ import org.calypsonet.keyple.demo.control.databinding.ActivityDeviceSelectionBin
 import org.calypsonet.keyple.demo.control.ui.BaseActivity
 import org.calypsonet.keyple.demo.control.ui.SettingsActivity
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
-import org.calypsonet.keyple.plugin.flowbird.FlowbirdPlugin
 
 class DeviceSelectionActivity : BaseActivity() {
 
@@ -69,16 +68,6 @@ class DeviceSelectionActivity : BaseActivity() {
       AppSettings.readerType = ReaderType.FAMOCO
       startActivity(Intent(this, SettingsActivity::class.java))
       finish()
-    }
-    // Flowbird
-    if (FlowbirdPlugin.PLUGIN_NAME.contains(mock)) {
-      activityDeviceSelectionBinding.flowbirdBtn.setBackgroundColor(Color.GRAY)
-    } else {
-      activityDeviceSelectionBinding.flowbirdBtn.setOnClickListener {
-        AppSettings.readerType = ReaderType.FLOWBIRD
-        startActivity(Intent(this, SettingsActivity::class.java))
-        finish()
-      }
     }
     // Standard NFC terminal
     activityDeviceSelectionBinding.nfcTerminalBtn.setOnClickListener {

@@ -16,9 +16,9 @@ This library defines the common elements used across the Keyple Demo ecosystem:
 
 ## Used By
 
-- [Keyple Reload Demo](https://github.com/calypsonet/keyple-demo-ticketing/tree/main/src/reloading-remote)
-- [Keyple Validation Demo](https://github.com/calypsonet/keyple-demo-ticketing/tree/main/src/validation)
-- [Keyple Control Demo](https://github.com/calypsonet/keyple-demo-ticketing/tree/main/src/control)
+- [Keyple Reload Demo](../reloading-remote)
+- [Keyple Validation Demo](../validation)
+- [Keyple Control Demo](../control)
 
 ## Installation
 

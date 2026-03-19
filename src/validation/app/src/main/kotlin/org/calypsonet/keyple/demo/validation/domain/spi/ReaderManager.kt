@@ -73,4 +73,7 @@ interface ReaderManager {
    * @return true if the feedback was handled by the UI layer, false otherwise.
    */
   fun displayResultFailed(): Boolean
+
+  /** Resets the UI feedback to the waiting-for-card state (e.g. turns off result LEDs). */
+  fun displayWaiting()
 }

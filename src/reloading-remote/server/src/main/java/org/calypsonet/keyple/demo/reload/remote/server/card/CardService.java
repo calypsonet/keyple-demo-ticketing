@@ -267,6 +267,13 @@ public class CardService {
     String pluginType = inputData.getPluginType();
     String appSerialNumber = HexUtil.toHex(calypsoCard.getApplicationSerialNumber());
 
+    logger.info(
+        "=== ANALYZE CALYPSO CARD === Plugin: {}, CSN: {}, ProductType: {}, ApplicationSubtype: {}",
+        pluginType,
+        appSerialNumber,
+        calypsoCard.getProductType(),
+        HexUtil.toHex(calypsoCard.getApplicationSubtype()));
+
     if (!CardConstants.Companion.getALLOWED_FILE_STRUCTURES()
         .contains(calypsoCard.getApplicationSubtype())) {
       return new AnalyzeContractsOutputDto(Collections.emptyList(), 3);
@@ -333,9 +340,20 @@ public class CardService {
     String pluginType = inputData.getPluginType();
     String cardUID = HexUtil.toHex(storageCard.getUID());
 
-    CardResource samResource =
-        CardResourceServiceProvider.getService()
-            .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
+    logger.info(
+        "=== ANALYZE STORAGE CARD === Plugin: {}, UID: {}, ProductType: {}, BlockSize: {} bytes, BlockCount: {}",
+        pluginType,
+        cardUID,
+        storageCard.getProductType(),
+        storageCard.getProductType().getBlockSize(),
+        storageCard.getProductType().getBlockCount());
+
+    // SAM is not currently used for Storage Cards but may be needed in the future
+    // for crypto operations (contract verification, authentication, etc.)
+    // To enable SAM allocation when needed:
+    // CardResource samResource = CardResourceServiceProvider.getService()
+    //     .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
+    CardResource samResource = null;
     try {
       Card card = cardRepository.readCard(cardReader, storageCard, samResource);
       // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
@@ -384,7 +402,9 @@ public class CardService {
               .setCardSerialNumber(cardUID));
       return new AnalyzeContractsOutputDto(Collections.emptyList(), 2);
     } finally {
-      CardResourceServiceProvider.getService().releaseCardResource(samResource);
+      if (samResource != null) {
+        CardResourceServiceProvider.getService().releaseCardResource(samResource);
+      }
     }
   }
 
@@ -408,7 +428,13 @@ public class CardService {
       return new WriteContractOutputDto(3);
     }
 
-    logger.info("Inserted card application serial number: {}", appSerialNumber);
+    logger.info(
+        "=== WRITE CALYPSO CARD CONTRACT === Plugin: {}, CSN: {}, ProductType: {}, Contract: {}, Tickets: {}",
+        pluginType,
+        appSerialNumber,
+        calypsoCard.getProductType(),
+        inputData.getContractTariff(),
+        inputData.getTicketToLoad());
 
     CardResource samResource =
         CardResourceServiceProvider.getService()
@@ -465,9 +491,20 @@ public class CardService {
     String pluginType = inputData.getPluginType();
     String cardUID = HexUtil.toHex(storageCard.getUID());
 
-    CardResource samResource =
-        CardResourceServiceProvider.getService()
-            .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
+    logger.info(
+        "=== WRITE STORAGE CARD CONTRACT === Plugin: {}, UID: {}, ProductType: {}, Contract: {}, Tickets: {}",
+        pluginType,
+        cardUID,
+        storageCard.getProductType(),
+        inputData.getContractTariff(),
+        inputData.getTicketToLoad());
+
+    // SAM is not currently used for Storage Cards but may be needed in the future
+    // for crypto operations (contract verification, authentication, etc.)
+    // To enable SAM allocation when needed:
+    // CardResource samResource = CardResourceServiceProvider.getService()
+    //     .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
+    CardResource samResource = null;
     try {
       Card card = cardRepository.readCard(cardReader, storageCard, samResource);
       if (card == null) {
@@ -510,7 +547,9 @@ public class CardService {
               .setContractLoaded(""));
       return new WriteContractOutputDto(2);
     } finally {
-      CardResourceServiceProvider.getService().releaseCardResource(samResource);
+      if (samResource != null) {
+        CardResourceServiceProvider.getService().releaseCardResource(samResource);
+      }
     }
   }
 
@@ -528,6 +567,12 @@ public class CardService {
 
     String pluginType = inputData.getPluginType();
     String appSerialNumber = HexUtil.toHex(calypsoCard.getApplicationSerialNumber());
+
+    logger.info(
+        "=== INIT CALYPSO CARD === Plugin: {}, CSN: {}, ProductType: {}",
+        pluginType,
+        appSerialNumber,
+        calypsoCard.getProductType());
 
     if (!CardConstants.Companion.getALLOWED_FILE_STRUCTURES()
         .contains(calypsoCard.getApplicationSubtype())) {
@@ -575,9 +620,18 @@ public class CardService {
     String pluginType = inputData.getPluginType();
     String cardUID = HexUtil.toHex(storageCard.getUID());
 
-    CardResource samResource =
-        CardResourceServiceProvider.getService()
-            .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
+    logger.info(
+        "=== INIT STORAGE CARD === Plugin: {}, UID: {}, ProductType: {}",
+        pluginType,
+        cardUID,
+        storageCard.getProductType());
+
+    // SAM is not currently used for Storage Cards but may be needed in the future
+    // for crypto operations (contract verification, authentication, etc.)
+    // To enable SAM allocation when needed:
+    // CardResource samResource = CardResourceServiceProvider.getService()
+    //     .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
+    CardResource samResource = null;
     try {
       cardRepository.initCard(cardReader, storageCard, samResource);
       activityService.push(
@@ -606,7 +660,9 @@ public class CardService {
               .setCardSerialNumber(cardUID));
       return new CardIssuanceOutputDto(2);
     } finally {
-      CardResourceServiceProvider.getService().releaseCardResource(samResource);
+      if (samResource != null) {
+        CardResourceServiceProvider.getService().releaseCardResource(samResource);
+      }
     }
   }
 
@@ -971,9 +1027,12 @@ public class CardService {
     ContractStructure newContract;
     int newContractNumber;
 
+    // Single contract cards support only one contract (contracts.size() == 1)
+    boolean isSingleContractCard = contracts.size() == 1;
+
     int existingContractNumber = getContractNumber(contractTariff, contracts);
     if (existingContractNumber > 0) {
-      // Reloading
+      // Reloading same contract type
       newContractNumber = existingContractNumber;
       ContractStructure currentContract = contracts.get(existingContractNumber - 1);
       // build new contract
@@ -984,8 +1043,21 @@ public class CardService {
       } else {
         newContract = buildSeasonContract();
       }
+    } else if (isSingleContractCard) {
+      // Single contract card: new contract type replaces existing one at position 1
+      newContractNumber = 1;
+      logger.info(
+          "Single contract card: replacing existing contract {} with new {} contract",
+          contracts.get(0).getContractTariff(),
+          contractTariff);
+      // build new contract
+      if (PriorityCode.MULTI_TRIP == contractTariff) {
+        newContract = buildMultiTripContract(environment.getEnvEndDate(), ticketToLoad);
+      } else {
+        newContract = buildSeasonContract();
+      }
     } else {
-      // Issuing
+      // Calypso: Issuing new contract, find available position
       newContractNumber = findAvailablePosition(contracts);
       if (newContractNumber == 0) {
         // no available position, reject card

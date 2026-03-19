@@ -12,18 +12,18 @@
     <include layout="@layout/logo_toolbar" android:id="@+id/appBarLayout"/>
 
     <Button
-        android:id="@+id/flowbirdBtn"
+        android:id="@+id/arriveBtn"
         style="@style/whiteBtnText"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:background="@drawable/btn_blue"
-        android:text="@string/device_flowbird"
+        android:text="@string/device_arrive"
         android:textSize="@dimen/medium_text_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/famocoBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/device_title" />
 
     <Button
         android:id="@+id/coppernicBtn"
@@ -58,14 +58,14 @@
         style="@style/whiteBtnText"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/btn_blue"
         android:text="@string/device_bluebird"
         android:textSize="@dimen/medium_text_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/device_title" />
+        app:layout_constraintTop_toBottomOf="@+id/arriveBtn" />
 
     <TextView
         android:id="@+id/device_title"
