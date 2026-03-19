@@ -40,7 +40,7 @@ dependencies {
   // Proprietary libs
   // Storage card specific components
   // Conditional dependency for the storage card library
-  val storageCardLibName = "keyple-card-cna-storagecard-java-lib-2.2.0"
+  val storageCardLibName = "keyple-card-cna-storagecard-java-lib-2.3.0"
   val storageCardLibFile = file("../../../libs/${storageCardLibName}.jar")
   if (storageCardLibFile.exists()) {
     println("Using private storage card library: ${storageCardLibFile.name}")
@@ -104,11 +104,7 @@ dependencies {
   implementation(libs.keypleServiceLib)
   implementation(libs.keypleCardCalypsoLib)
   implementation(libs.keypleCardCalypsoCryptoLegacysamLib)
-  // implementation(libs.keyplePluginAndroidNfcLib)
-  // TEMPORARY SNAPSHOT:
-  implementation("org.eclipse.keyple:keyple-plugin-android-nfc-java-lib:3.2.0-SNAPSHOT") {
-    isChanging = true
-  }
+  implementation(libs.keyplePluginAndroidNfcLib)
 
   // Other Keyple plugins
   implementation(libs.keyplePluginCnaCoppernicCone2Lib)

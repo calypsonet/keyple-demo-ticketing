@@ -31,7 +31,7 @@ dependencies {
   // Proprietary libs
   // Storage card specific components
   // Conditional dependency for the storage card library
-  val storageCardLibName = "keyple-card-cna-storagecard-java-lib-2.2.0"
+  val storageCardLibName = "keyple-card-cna-storagecard-java-lib-2.3.0"
   val storageCardLibFile = file("../../../libs/${storageCardLibName}.jar")
   if (storageCardLibFile.exists()) {
     println("Using private storage card library: ${storageCardLibFile.name}")

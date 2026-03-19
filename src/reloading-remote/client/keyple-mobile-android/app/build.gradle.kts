@@ -31,7 +31,7 @@ dependencies {
   // Proprietary libs
   // Storage card specific components
   // Conditional dependency for the storage card library
-  val storageCardLibName = "keyple-card-cna-storagecard-java-lib-2.2.0"
+  val storageCardLibName = "keyple-card-cna-storagecard-java-lib-2.3.0"
   val storageCardLibFile = file("../../../../../libs/${storageCardLibName}.jar")
   if (storageCardLibFile.exists()) {
     println("Using private storage card library: ${storageCardLibFile.name}")
@@ -79,12 +79,7 @@ dependencies {
   implementation(libs.keypleServiceLib)
   implementation(libs.keypleCardCalypsoLib)
   implementation(libs.keypleCardCalypsoCryptoLegacysamLib)
-  // TEMPORARY SNAPSHOT: Required for KeyProvider SPI support in Android NFC plugin
-  // TODO: Remove when version 3.2.0 (or later) is officially released and added to BOM
-  // Original: implementation(libs.keyplePluginAndroidNfcLib)
-  implementation("org.eclipse.keyple:keyple-plugin-android-nfc-java-lib:3.2.0-SNAPSHOT") {
-    isChanging = true
-  }
+  implementation(libs.keyplePluginAndroidNfcLib)
   implementation(libs.keyplePluginAndroidOmapiLib)
   implementation(libs.keypleDistributedNetworkLib)
   implementation(libs.keypleDistributedLocalLib)
