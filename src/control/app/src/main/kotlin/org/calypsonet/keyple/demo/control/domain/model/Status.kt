@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.data.model
+package org.calypsonet.keyple.demo.control.domain.model
 
 enum class Status(val status: String) {
   LOADING("loading"),

@@ -22,10 +22,10 @@ import org.calypsonet.keyple.demo.common.constants.CardConstants
 import org.calypsonet.keyple.demo.control.data.CalypsoCardRepository
 import org.calypsonet.keyple.demo.control.data.ReaderRepository
 import org.calypsonet.keyple.demo.control.data.StorageCardRepository
-import org.calypsonet.keyple.demo.control.data.model.CardProtocolEnum
+import org.calypsonet.keyple.demo.control.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.control.data.model.CardReaderResponse
 import org.calypsonet.keyple.demo.control.data.model.Location
-import org.calypsonet.keyple.demo.control.data.model.ReaderType
+import org.calypsonet.keyple.demo.control.domain.model.ReaderType
 import org.calypsonet.keyple.demo.control.di.scope.AppScoped
 import org.eclipse.keyple.card.calypso.CalypsoExtensionService
 import org.eclipse.keyple.card.calypso.crypto.legacysam.LegacySamExtensionService

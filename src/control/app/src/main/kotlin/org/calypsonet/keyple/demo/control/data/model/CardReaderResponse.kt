@@ -14,6 +14,7 @@ package org.calypsonet.keyple.demo.control.data.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import org.calypsonet.keyple.demo.control.domain.model.Status
 
 @Parcelize
 data class CardReaderResponse(
