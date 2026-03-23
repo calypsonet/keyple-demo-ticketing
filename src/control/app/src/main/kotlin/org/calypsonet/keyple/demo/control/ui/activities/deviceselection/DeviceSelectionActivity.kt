@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.ui.deviceselection
+package org.calypsonet.keyple.demo.control.ui.activities.deviceselection
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -24,8 +24,6 @@ import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.domain.model.AppSettings
 import org.calypsonet.keyple.demo.control.domain.model.ReaderType
 import org.calypsonet.keyple.demo.control.databinding.ActivityDeviceSelectionBinding
-import org.calypsonet.keyple.demo.control.ui.BaseActivity
-import org.calypsonet.keyple.demo.control.ui.SettingsActivity
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
 
 class DeviceSelectionActivity : BaseActivity() {

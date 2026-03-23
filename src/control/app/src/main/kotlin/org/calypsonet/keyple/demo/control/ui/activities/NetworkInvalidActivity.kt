@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.ui
+package org.calypsonet.keyple.demo.control.ui.activities
 
 import android.os.Bundle
 import org.calypsonet.keyple.demo.control.R
