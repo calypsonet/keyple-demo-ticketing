@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.ui.cardcontent
+package org.calypsonet.keyple.demo.control.ui.activities.cardcontent
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

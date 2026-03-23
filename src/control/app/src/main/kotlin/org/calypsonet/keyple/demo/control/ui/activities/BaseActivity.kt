@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.ui
+package org.calypsonet.keyple.demo.control.ui.activities
 
 import android.widget.Toast
 import dagger.android.support.DaggerAppCompatActivity
