@@ -16,7 +16,8 @@ import android.os.Bundle
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.databinding.ActivityNetworkInvalidBinding
 import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
-import org.calypsonet.keyple.demo.control.ui.ReaderActivity.Companion.CARD_CONTENT
+import org.calypsonet.keyple.demo.control.domain.model.CardReaderResponse
+import org.calypsonet.keyple.demo.control.ui.activities.ReaderActivity.Companion.CARD_CONTENT
 import timber.log.Timber
 
 class NetworkInvalidActivity : BaseActivity() {
