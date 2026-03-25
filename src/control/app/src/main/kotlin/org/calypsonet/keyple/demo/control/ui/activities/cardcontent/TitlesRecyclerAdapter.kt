@@ -19,10 +19,10 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.control.R
-import org.calypsonet.keyple.demo.control.data.model.Contract
+import org.calypsonet.keyple.demo.control.ui.model.UiContract
 import org.calypsonet.keyple.demo.control.databinding.TitleRecyclerRowBinding
 
-class TitlesRecyclerAdapter(private val titles: ArrayList<Contract>) :
+class TitlesRecyclerAdapter(private val titles: ArrayList<UiContract>) :
     RecyclerView.Adapter<TitlesRecyclerAdapter.TitleHolder>() {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TitleHolder {
@@ -34,9 +34,9 @@ class TitlesRecyclerAdapter(private val titles: ArrayList<Contract>) :
   class TitleHolder(private val binding: TitleRecyclerRowBinding) :
       RecyclerView.ViewHolder(binding.root) {
 
-    private var title: Contract? = null
+    private var title: UiContract? = null
 
-    fun bindItem(contract: Contract) {
+    fun bindItem(contract: UiContract) {
       val context = binding.root.context
       val titleDescription =
           if (contract.name == PriorityCode.SEASON_PASS.value) {

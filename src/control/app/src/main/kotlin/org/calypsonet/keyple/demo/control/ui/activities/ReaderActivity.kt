@@ -29,7 +29,7 @@ import org.calypsonet.keyple.demo.control.domain.model.Status
 import org.calypsonet.keyple.demo.control.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
 import org.calypsonet.keyple.demo.control.di.scope.ActivityScoped
-import org.calypsonet.keyple.demo.control.ui.cardcontent.CardContentActivity
+import org.calypsonet.keyple.demo.control.ui.activities.cardcontent.CardContentActivity
 import org.eclipse.keypop.reader.CardReaderEvent
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 import timber.log.Timber

@@ -17,10 +17,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-import org.calypsonet.keyple.demo.control.data.model.Validation
+import org.calypsonet.keyple.demo.control.ui.model.UiValidation
 import org.calypsonet.keyple.demo.control.databinding.ValidationRecyclerRowBinding
 
-class ValidationsRecyclerAdapter(private val validations: ArrayList<Validation>) :
+class ValidationsRecyclerAdapter(private val validations: ArrayList<UiValidation>) :
     RecyclerView.Adapter<ValidationsRecyclerAdapter.LastValidationHolder>() {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LastValidationHolder {
@@ -32,9 +32,9 @@ class ValidationsRecyclerAdapter(private val validations: ArrayList<Validation>)
   class LastValidationHolder(private val binding: ValidationRecyclerRowBinding) :
       RecyclerView.ViewHolder(binding.root) {
 
-    private var validation: Validation? = null
+    private var validation: UiValidation? = null
 
-    fun bindItem(validation: Validation) {
+    fun bindItem(validation: UiValidation) {
       this.validation = validation
       val formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy\nHH:mm:ss", Locale.ENGLISH)
       binding.titleLocation.text =
