@@ -2,6 +2,7 @@ package org.calypsonet.keyple.demo.control.ui.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
 import org.calypsonet.keyple.demo.control.domain.model.Status
 
 @Parcelize

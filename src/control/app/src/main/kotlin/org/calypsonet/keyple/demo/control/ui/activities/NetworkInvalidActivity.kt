@@ -14,7 +14,6 @@ package org.calypsonet.keyple.demo.control.ui.activities
 
 import android.os.Bundle
 import org.calypsonet.keyple.demo.control.R
-import org.calypsonet.keyple.demo.control.data.model.CardReaderResponse
 import org.calypsonet.keyple.demo.control.databinding.ActivityNetworkInvalidBinding
 import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
 import org.calypsonet.keyple.demo.control.ui.ReaderActivity.Companion.CARD_CONTENT

@@ -20,7 +20,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
 import javax.inject.Inject
-import org.calypsonet.keyple.demo.control.data.model.Location
+import org.calypsonet.keyple.demo.control.domain.model.Location
 
 class LocationRepository @Inject constructor(context: Context) {
 

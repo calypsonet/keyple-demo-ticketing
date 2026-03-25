@@ -22,12 +22,10 @@ import org.calypsonet.keyple.demo.common.parsers.ScContractStructureParser
 import org.calypsonet.keyple.demo.common.parsers.ScEnvironmentHolderStructureParser
 import org.calypsonet.keyple.demo.common.parsers.ScEventStructureParser
 import org.calypsonet.keyple.demo.control.domain.model.AppSettings
-import org.calypsonet.keyple.demo.control.data.model.AuthenticationMode
-import org.calypsonet.keyple.demo.control.data.model.CardReaderResponse
-import org.calypsonet.keyple.demo.control.data.model.Contract
-import org.calypsonet.keyple.demo.control.data.model.Location
+import org.calypsonet.keyple.demo.control.domain.model.Contract
+import org.calypsonet.keyple.demo.control.domain.model.Location
 import org.calypsonet.keyple.demo.control.domain.model.Status
-import org.calypsonet.keyple.demo.control.data.model.Validation
+import org.calypsonet.keyple.demo.control.domain.model.Validation
 import org.calypsonet.keyple.demo.control.data.model.mappers.ContractMapper
 import org.calypsonet.keyple.demo.control.data.model.mappers.ValidationMapper
 import org.eclipse.keypop.reader.CardReader
