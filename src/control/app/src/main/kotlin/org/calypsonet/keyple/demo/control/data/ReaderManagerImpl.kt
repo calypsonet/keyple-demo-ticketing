@@ -194,7 +194,7 @@ constructor(
     return cardReader
   }
 
-  fun getCardReader(): CardReader? {
+  override fun getCardReader(): CardReader? {
     return cardReader
   }
 
