@@ -14,4 +14,3 @@ data class UiCardReaderResponse(
     val errorTitle: String? = null,
     val errorMessage: String? = null
 ) : Parcelable
-
