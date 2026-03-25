@@ -17,7 +17,7 @@ import android.os.Bundle
 import java.util.Timer
 import java.util.TimerTask
 import org.calypsonet.keyple.demo.control.databinding.ActivityMainBinding
-import org.calypsonet.keyple.demo.control.ui.deviceselection.DeviceSelectionActivity
+import org.calypsonet.keyple.demo.control.ui.activities.deviceselection.DeviceSelectionActivity
 
 class MainActivity : BaseActivity() {
   private lateinit var activityMainBinding: ActivityMainBinding
