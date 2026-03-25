@@ -20,7 +20,7 @@ import android.widget.ArrayAdapter
 import org.calypsonet.keyple.demo.control.BuildConfig
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.domain.model.AppSettings
-import org.calypsonet.keyple.demo.control.data.model.Location
+import org.calypsonet.keyple.demo.control.domain.model.Location
 import org.calypsonet.keyple.demo.control.databinding.ActivitySettingsBinding
 import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
 
