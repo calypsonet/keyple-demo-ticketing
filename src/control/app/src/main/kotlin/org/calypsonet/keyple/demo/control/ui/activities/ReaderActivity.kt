@@ -27,6 +27,8 @@ import org.calypsonet.keyple.demo.control.domain.model.Status
 import org.calypsonet.keyple.demo.control.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
 import org.calypsonet.keyple.demo.control.di.scope.ActivityScoped
+import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
+import org.calypsonet.keyple.demo.control.domain.model.CardReaderResponse
 import org.calypsonet.keyple.demo.control.ui.activities.cardcontent.CardContentActivity
 import org.eclipse.keypop.reader.CardReaderEvent
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
@@ -132,11 +134,13 @@ class ReaderActivity : BaseActivity() {
         if (error != null) {
           Timber.e("Card not selected: %s", error)
           displayResult(
-              CardReaderResponse(
-                  status = Status.INVALID_CARD,
-                  authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
-                  titlesList = arrayListOf(),
-                  errorMessage = error))
+            CardReaderResponse(
+              status = Status.INVALID_CARD,
+              authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
+              titlesList = arrayListOf(),
+              errorMessage = error
+            )
+          )
           return
         }
         Timber.i("A Calypso Card selection succeeded.")
