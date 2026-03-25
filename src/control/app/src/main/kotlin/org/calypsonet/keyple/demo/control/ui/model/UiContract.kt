@@ -18,7 +18,7 @@ import java.time.LocalDateTime
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class Contract(
+data class UiContract(
     val name: String?,
     val valid: Boolean,
     val validationDateTime: LocalDateTime?,
