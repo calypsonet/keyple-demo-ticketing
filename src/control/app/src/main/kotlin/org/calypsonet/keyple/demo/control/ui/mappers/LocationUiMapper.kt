@@ -12,7 +12,7 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.control.ui.mappers
 
-import org.calypsonet.keyple.demo.common.model.Location
+import org.calypsonet.keyple.demo.control.domain.model.Location
 import org.calypsonet.keyple.demo.control.ui.model.UiLocation
 
 fun Location.toUi(): UiLocation = UiLocation(id = id, name = name)

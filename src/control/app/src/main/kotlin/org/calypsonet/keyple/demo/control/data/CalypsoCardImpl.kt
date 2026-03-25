@@ -24,8 +24,8 @@ import org.calypsonet.keyple.demo.control.domain.model.Contract
 import org.calypsonet.keyple.demo.control.domain.model.Location
 import org.calypsonet.keyple.demo.control.domain.model.Status
 import org.calypsonet.keyple.demo.control.domain.model.Validation
-import org.calypsonet.keyple.demo.control.data.model.mappers.ContractMapper
-import org.calypsonet.keyple.demo.control.data.model.mappers.ValidationMapper
+import org.calypsonet.keyple.demo.control.data.mappers.ContractMapper
+import org.calypsonet.keyple.demo.control.data.mappers.ValidationMapper
 import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
 import org.calypsonet.keyple.demo.control.domain.model.CardReaderResponse
 import org.eclipse.keyple.card.calypso.CalypsoExtensionService
