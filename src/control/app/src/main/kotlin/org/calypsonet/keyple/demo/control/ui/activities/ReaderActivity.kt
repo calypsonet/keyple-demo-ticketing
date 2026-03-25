@@ -28,8 +28,9 @@ import org.calypsonet.keyple.demo.control.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
 import org.calypsonet.keyple.demo.control.di.scope.ActivityScoped
 import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
-import org.calypsonet.keyple.demo.control.domain.model.CardReaderResponse
 import org.calypsonet.keyple.demo.control.ui.activities.cardcontent.CardContentActivity
+import org.calypsonet.keyple.demo.control.ui.mappers.toUi
+import org.calypsonet.keyple.demo.control.ui.model.UiCardReaderResponse
 import org.eclipse.keypop.reader.CardReaderEvent
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 import timber.log.Timber
@@ -134,7 +135,7 @@ class ReaderActivity : BaseActivity() {
         if (error != null) {
           Timber.e("Card not selected: %s", error)
           displayResult(
-            CardReaderResponse(
+            UiCardReaderResponse(
               status = Status.INVALID_CARD,
               authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
               titlesList = arrayListOf(),
@@ -187,13 +188,13 @@ class ReaderActivity : BaseActivity() {
                     ticketingService.displayResultSuccess()
                   }
                   progress.dismiss()
-                  displayResult(cardReaderResponse)
+                  displayResult(cardReaderResponse.toUi())
                 }
               } catch (e: IllegalStateException) {
                 Timber.e(e)
                 Timber.e("Load ERROR page after exception = ${e.message}")
                 displayResult(
-                    CardReaderResponse(
+                    UiCardReaderResponse(
                         status = Status.ERROR,
                         authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
                         titlesList = arrayListOf()))
@@ -212,7 +213,7 @@ class ReaderActivity : BaseActivity() {
     Timber.i("New state = $currentAppState")
   }
 
-  private fun displayResult(cardReaderResponse: CardReaderResponse?) {
+  private fun displayResult(cardReaderResponse: UiCardReaderResponse?) {
     if (cardReaderResponse != null) {
       runOnUiThread { activityCardReaderBinding.loadingAnimation.cancelAnimation() }
       when (cardReaderResponse.status) {
