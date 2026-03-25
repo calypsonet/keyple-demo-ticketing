@@ -37,7 +37,7 @@ import org.eclipse.keypop.storagecard.card.StorageCard
 import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
 import timber.log.Timber
 
-class StorageCardRepository {
+class StorageCardImpl {
 
   fun executeControlProcedure(
       controlDateTime: LocalDateTime,
