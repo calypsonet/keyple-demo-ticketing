@@ -28,11 +28,13 @@ import org.calypsonet.keyple.demo.control.domain.model.Status
 import org.calypsonet.keyple.demo.control.domain.model.Validation
 import org.calypsonet.keyple.demo.control.data.model.mappers.ContractMapper
 import org.calypsonet.keyple.demo.control.data.model.mappers.ValidationMapper
+import org.calypsonet.keyple.demo.control.domain.model.CardReaderResponse
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ChannelControl
 import org.eclipse.keypop.storagecard.MifareClassicKeyType
 import org.eclipse.keypop.storagecard.card.ProductType
 import org.eclipse.keypop.storagecard.card.StorageCard
+import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
 import timber.log.Timber
 
 class StorageCardRepository {
