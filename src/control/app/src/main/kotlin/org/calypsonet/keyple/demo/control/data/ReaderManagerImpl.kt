@@ -21,6 +21,7 @@ import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.control.domain.model.ReaderType
+import org.calypsonet.keyple.demo.control.domain.spi.ReaderManager
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
 import org.calypsonet.keyple.plugin.bluebird.BluebirdContactlessProtocols
 import org.calypsonet.keyple.plugin.bluebird.BluebirdPluginFactoryProvider
@@ -41,11 +42,11 @@ import org.eclipse.keypop.reader.ConfigurableCardReader
 import org.eclipse.keypop.reader.ObservableCardReader
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 
-class ReaderRepository
+class ReaderManagerImpl
 @Inject
 constructor(
     private val readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi
-) {
+) : ReaderManager {
 
   private lateinit var readerType: ReaderType
   // Card
@@ -140,7 +141,7 @@ constructor(
   }
 
   @Throws(KeyplePluginException::class)
-  fun registerPlugin(activity: Activity, readerType: ReaderType) {
+  override fun registerPlugin(activity: Activity, readerType: ReaderType) {
     initReaderType(readerType)
     successMedia = MediaPlayer.create(activity, R.raw.success)
     errorMedia = MediaPlayer.create(activity, R.raw.error)
@@ -180,7 +181,7 @@ constructor(
   }
 
   @Throws(KeyplePluginException::class)
-  fun initCardReader(): CardReader? {
+  override fun initCardReader(): CardReader? {
     cardReader =
         SmartCardServiceProvider.getService().getPlugin(cardPluginName)?.getReader(cardReaderName)
     cardReader?.let {
@@ -198,7 +199,7 @@ constructor(
   }
 
   @Throws(KeyplePluginException::class)
-  fun initSamReaders(): List<CardReader> {
+  override fun initSamReaders(): List<CardReader> {
     samReaders =
         if (readerType == ReaderType.FAMOCO) {
           SmartCardServiceProvider.getService()
@@ -221,7 +222,7 @@ constructor(
     return samReaders
   }
 
-  fun getSamReader(): CardReader? {
+    override fun getSamReader(): CardReader? {
     return if (samReaders.isNotEmpty()) {
       val filteredByName = samReaders.filter { it.name == samReaderName }
       return if (filteredByName.isEmpty()) {
@@ -234,11 +235,11 @@ constructor(
     }
   }
 
-  fun isStorageCardSupported(): Boolean {
+    override fun isStorageCardSupported(): Boolean {
     return isStorageCardSupported
   }
 
-  fun clear() {
+    override fun clear() {
     cardReaderProtocols.forEach { entry ->
       (cardReader as ConfigurableCardReader).deactivateProtocol(entry.key)
     }
@@ -253,12 +254,12 @@ constructor(
     errorMedia.release()
   }
 
-  fun displayResultSuccess(): Boolean {
+    override fun displayResultSuccess(): Boolean {
     successMedia.start()
     return true
   }
 
-  fun displayResultFailed(): Boolean {
+  override fun displayResultFailed(): Boolean {
     errorMedia.start()
     return true
   }
