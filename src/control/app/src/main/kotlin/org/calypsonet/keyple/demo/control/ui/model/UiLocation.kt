@@ -10,13 +10,13 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.data.model
+package org.calypsonet.keyple.demo.control.ui.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class Location(val id: Int, val name: String) : Parcelable {
+data class UiLocation(val id: Int, val name: String) : Parcelable {
 
   override fun toString(): String {
     return "$id - $name"

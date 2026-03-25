@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.data.model
+package org.calypsonet.keyple.demo.control.ui.model
 
 enum class AuthenticationMode {
   SAM,

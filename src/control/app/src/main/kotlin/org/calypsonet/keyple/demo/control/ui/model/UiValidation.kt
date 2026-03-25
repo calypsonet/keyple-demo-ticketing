@@ -10,16 +10,16 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.data.model
+package org.calypsonet.keyple.demo.control.ui.model
 
 import android.os.Parcelable
 import java.time.LocalDateTime
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class Validation(
+data class UiValidation(
     val name: String,
-    val location: Location,
+    val location: UiLocation,
     val destination: String?,
     val dateTime: LocalDateTime,
     val provider: Int? = null
