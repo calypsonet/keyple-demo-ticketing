@@ -5,6 +5,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [26.03.26]
+### Added
+- Mifare Classic card support across validation, control and reloading-remote apps.
+- `UiManager` interface with two implementations in validation app: `ArriveUiManagerImpl` (Parkeon SDK — LEDs + sounds)
+  and `AndroidUiManagerImpl` (MediaPlayer — sounds only), selected at build time via conditional source sets.
+- Arrive Axio 4 proprietary plugin support (replaces Flowbird Axio 2).
+### Changed
+- Dashboard UI (reloading-remote server): refreshed layout and theme.
+### Upgraded
+- `keyple-java-bom`: `2025.11.21` -> `2026.03.19`
+- `keyple-card-cna-storagecard-java-lib` (mock): `2.1.0` -> `2.3.0`
+- `keyple-plugin-cna-storagecard-java-lib` (mock): `1.0.0` -> `1.1.0`
+- CI/CD workflows: Node.js upgraded from 16 to 20.
+### Removed
+- Flowbird Android plugin mock.
+
 ## [25.12.01]
 ### Changed
 - Standardization of naming conventions and package structure to harmonize all modules.
@@ -47,7 +63,8 @@ It brings together previously independent projects into a unified codebase to si
   - [Validation App](https://github.com/calypsonet/keyple-demo-ticketing-validation-app)
   - [Control App](https://github.com/calypsonet/keyple-demo-ticketing-control-app)
 
-[Unreleased]: https://github.com/calypsonet/keyple-demo-ticketing/compare/25.12.01...HEAD
+[Unreleased]: https://github.com/calypsonet/keyple-demo-ticketing/compare/26.03.26...HEAD
+[26.03.26]: https://github.com/calypsonet/keyple-demo-ticketing/compare/25.12.01...26.03.26
 [25.12.01]: https://github.com/calypsonet/keyple-demo-ticketing/compare/25.10.30...25.12.01
 [25.10.30]: https://github.com/calypsonet/keyple-demo-ticketing/compare/25.09.10...25.10.30
 [25.09.10]: https://github.com/calypsonet/keyple-demo-ticketing/compare/2025.08.27...25.09.10
