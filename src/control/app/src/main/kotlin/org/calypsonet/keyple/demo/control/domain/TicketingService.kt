@@ -12,9 +12,6 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.control.domain
 
-import android.app.Activity
-import android.os.Build
-import androidx.annotation.RequiresApi
 import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService
 import org.calypsonet.keyple.demo.common.constants.CardConstants
 import org.calypsonet.keyple.demo.control.data.CalypsoCardImpl
@@ -25,6 +22,7 @@ import org.calypsonet.keyple.demo.control.domain.model.CardReaderResponse
 import org.calypsonet.keyple.demo.control.domain.model.Location
 import org.calypsonet.keyple.demo.control.domain.model.ReaderType
 import org.calypsonet.keyple.demo.control.domain.spi.ReaderManager
+import org.calypsonet.keyple.demo.control.domain.spi.UiContext
 import org.eclipse.keyple.card.calypso.CalypsoExtensionService
 import org.eclipse.keyple.card.calypso.crypto.legacysam.LegacySamExtensionService
 import org.eclipse.keyple.card.calypso.crypto.legacysam.LegacySamUtil
@@ -88,10 +86,10 @@ class TicketingService @Inject constructor(private var readerManager: ReaderMana
   private var indexOfMifareClassic1KCardSelection = 0
 
   @Throws(KeyplePluginException::class, IllegalStateException::class, Exception::class)
-  fun init(observer: CardReaderObserverSpi?, activity: Activity, readerType: ReaderType) {
+  fun init(observer: CardReaderObserverSpi?, uiContext: UiContext, readerType: ReaderType) {
     // Register plugin
     try {
-      readerManager.registerPlugin(activity, readerType)
+      readerManager.registerPlugin(readerType, uiContext)
     } catch (e: Exception) {
       Timber.e(e)
       throw IllegalStateException(e.message)
@@ -279,7 +277,6 @@ class TicketingService @Inject constructor(private var readerManager: ReaderMana
     return null
   }
 
-  @RequiresApi(Build.VERSION_CODES.O)
   fun executeControlProcedure(locations: List<Location>): CardReaderResponse {
     return when (smartCard) {
       is CalypsoCard -> {
