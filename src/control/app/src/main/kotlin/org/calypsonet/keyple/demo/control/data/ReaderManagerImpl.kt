@@ -22,6 +22,7 @@ import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.control.domain.model.ReaderType
 import org.calypsonet.keyple.demo.control.domain.spi.ReaderManager
+import org.calypsonet.keyple.demo.control.domain.spi.UiContext
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
 import org.calypsonet.keyple.plugin.bluebird.BluebirdContactlessProtocols
 import org.calypsonet.keyple.plugin.bluebird.BluebirdPluginFactoryProvider
@@ -141,8 +142,9 @@ constructor(
   }
 
   @Throws(KeyplePluginException::class)
-  override fun registerPlugin(activity: Activity, readerType: ReaderType) {
+  override fun registerPlugin(readerType: ReaderType, uiContext: UiContext) {
     initReaderType(readerType)
+    val activity = uiContext.adaptTo(Activity::class.java)
     successMedia = MediaPlayer.create(activity, R.raw.success)
     errorMedia = MediaPlayer.create(activity, R.raw.error)
     runBlocking {
