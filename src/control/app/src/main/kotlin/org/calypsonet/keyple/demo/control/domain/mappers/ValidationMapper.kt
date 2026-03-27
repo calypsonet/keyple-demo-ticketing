@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.data.mappers
+package org.calypsonet.keyple.demo.control.domain.mappers
 
 import org.calypsonet.keyple.demo.common.model.ContractStructure
 import org.calypsonet.keyple.demo.common.model.EventStructure
