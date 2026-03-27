@@ -14,8 +14,8 @@ package org.calypsonet.keyple.demo.control.domain
 
 import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService
 import org.calypsonet.keyple.demo.common.constants.CardConstants
-import org.calypsonet.keyple.demo.control.data.CalypsoCardImpl
-import org.calypsonet.keyple.demo.control.data.StorageCardImpl
+import org.calypsonet.keyple.demo.control.domain.managers.CalypsoCardManager
+import org.calypsonet.keyple.demo.control.domain.managers.StorageCardManager
 import org.calypsonet.keyple.demo.control.di.scope.AppScoped
 import org.calypsonet.keyple.demo.control.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.control.domain.model.CardReaderResponse
@@ -280,7 +280,7 @@ class TicketingService @Inject constructor(private var readerManager: ReaderMana
   fun executeControlProcedure(locations: List<Location>): CardReaderResponse {
     return when (smartCard) {
       is CalypsoCard -> {
-        CalypsoCardImpl()
+        CalypsoCardManager()
             .executeControlProcedure(
                 cardReader = readerManager.getCardReader()!!,
                 calypsoCard = smartCard as CalypsoCard,
@@ -290,7 +290,7 @@ class TicketingService @Inject constructor(private var readerManager: ReaderMana
                 controlDateTime = LocalDateTime.now())
       }
       is StorageCard -> {
-        StorageCardImpl()
+        StorageCardManager()
             .executeControlProcedure(
                 cardReader = readerManager.getCardReader()!!,
                 storageCard = smartCard as StorageCard,

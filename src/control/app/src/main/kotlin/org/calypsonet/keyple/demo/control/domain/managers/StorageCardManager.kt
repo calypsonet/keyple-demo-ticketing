@@ -1,18 +1,5 @@
-/* ******************************************************************************
- * Copyright (c) 2025 Calypso Networks Association https://calypsonet.org/
- *
- * See the NOTICE file(s) distributed with this work for additional information
- * regarding copyright ownership.
- *
- * This program and the accompanying materials are made available under the
- * terms of the BSD 3-Clause License which is available at
- * https://opensource.org/licenses/BSD-3-Clause.
- *
- * SPDX-License-Identifier: BSD-3-Clause
- ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.data
+package org.calypsonet.keyple.demo.control.domain.managers
 
-import java.time.LocalDateTime
 import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService
 import org.calypsonet.keyple.demo.common.constants.CardConstants
 import org.calypsonet.keyple.demo.common.model.EventStructure
@@ -21,23 +8,24 @@ import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 import org.calypsonet.keyple.demo.common.parsers.ScContractStructureParser
 import org.calypsonet.keyple.demo.common.parsers.ScEnvironmentHolderStructureParser
 import org.calypsonet.keyple.demo.common.parsers.ScEventStructureParser
+import org.calypsonet.keyple.demo.control.domain.mappers.ContractMapper
+import org.calypsonet.keyple.demo.control.domain.mappers.ValidationMapper
 import org.calypsonet.keyple.demo.control.domain.model.AppSettings
+import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
+import org.calypsonet.keyple.demo.control.domain.model.CardReaderResponse
 import org.calypsonet.keyple.demo.control.domain.model.Contract
 import org.calypsonet.keyple.demo.control.domain.model.Location
 import org.calypsonet.keyple.demo.control.domain.model.Status
 import org.calypsonet.keyple.demo.control.domain.model.Validation
-import org.calypsonet.keyple.demo.control.data.mappers.ContractMapper
-import org.calypsonet.keyple.demo.control.data.mappers.ValidationMapper
-import org.calypsonet.keyple.demo.control.domain.model.CardReaderResponse
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ChannelControl
 import org.eclipse.keypop.storagecard.MifareClassicKeyType
 import org.eclipse.keypop.storagecard.card.ProductType
 import org.eclipse.keypop.storagecard.card.StorageCard
-import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
 import timber.log.Timber
+import java.time.LocalDateTime
 
-class StorageCardImpl {
+class StorageCardManager {
 
   fun executeControlProcedure(
       controlDateTime: LocalDateTime,
@@ -60,7 +48,7 @@ class StorageCardImpl {
             storageCardExtension.storageCardApiFactory.createStorageCardTransactionManager(
                 cardReader, storageCard)
           } catch (e: Exception) {
-            Timber.w(e)
+            Timber.Forest.w(e)
             throw RuntimeException("Failed to create storage card transaction", e)
           }
 
@@ -68,13 +56,13 @@ class StorageCardImpl {
       val requiresAuth = storageCard.productType.hasAuthentication()
       val isMifareClassic = storageCard.productType == ProductType.MIFARE_CLASSIC_1K
 
-      Timber.d(
+      Timber.Forest.d(
           "Reading card: ${storageCard.productType.name} " +
               "(requiresAuth=$requiresAuth, isMifareClassic=$isMifareClassic)")
 
       // ========= AUTHENTICATION PHASE (Mifare Classic only) =========
       if (requiresAuth) {
-        Timber.d(
+        Timber.Forest.d(
             "Authenticating sector 1 with KEY_A (keyNumber=${CardConstants.MC_DEFAULT_KEY_NUMBER})")
         cardTransaction.prepareMifareClassicAuthenticate(
             CardConstants.MC_SECTOR_1_AUTH_BLOCK,
@@ -85,7 +73,7 @@ class StorageCardImpl {
       // ========= READ DATA =========
       // Step 2 - Read environment, event and contract structures based on card type
       if (isMifareClassic) {
-        Timber.d(
+        Timber.Forest.d(
             "Reading Mifare Classic blocks: ${CardConstants.MC_ENVIRONMENT_AND_HOLDER_BLOCK}, " +
                 "${CardConstants.MC_CONTRACT_BLOCK}, ${CardConstants.MC_EVENT_BLOCK}")
         // Mifare Classic: read individual 16-byte blocks
@@ -97,7 +85,7 @@ class StorageCardImpl {
             .prepareReadBlocks(CardConstants.MC_EVENT_BLOCK, CardConstants.MC_EVENT_BLOCK)
             .processCommands(ChannelControl.KEEP_OPEN)
       } else {
-        Timber.d("Reading storage card block ranges...")
+        Timber.Forest.d("Reading storage card block ranges...")
         // MIFARE Ultralight/ST25: read ranges of 4-byte blocks
         cardTransaction
             .prepareReadBlocks(
@@ -110,7 +98,7 @@ class StorageCardImpl {
             .processCommands(ChannelControl.KEEP_OPEN)
       }
 
-      Timber.d("Card data read successfully")
+      Timber.Forest.d("Card data read successfully")
 
       // Step 2 - Unpack environment structure
       val environmentContent =
@@ -251,7 +239,7 @@ class StorageCardImpl {
                 nbTicketsLeft = nbTicketsLeft))
       }
 
-      Timber.i("Control procedure result: STATUS_OK")
+      Timber.Forest.i("Control procedure result: STATUS_OK")
       status = Status.TICKETS_FOUND
 
       // Step 20 - Close the transaction
@@ -267,9 +255,10 @@ class StorageCardImpl {
           status = status,
           authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
           lastValidationsList = validationList,
-          titlesList = displayedContract)
+          titlesList = displayedContract
+      )
     } catch (e: Exception) {
-      Timber.e(e, "Error during control procedure: ${storageCard.productType.name}")
+      Timber.Forest.e(e, "Error during control procedure: ${storageCard.productType.name}")
       errorMessage = e.message
       when (e) {
         is EnvironmentException -> {
@@ -306,7 +295,8 @@ class StorageCardImpl {
         authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
         titlesList = arrayListOf(),
         errorTitle = errorTitle,
-        errorMessage = errorMessage)
+        errorMessage = errorMessage
+    )
   }
 
   /**
