@@ -12,6 +12,7 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.data
 
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.ReaderManager
 import kotlin.jvm.Throws
 import org.eclipse.keyple.core.common.KeyplePluginExtensionFactory
 import org.eclipse.keyple.core.service.Plugin
@@ -25,10 +26,10 @@ import timber.log.Timber
  * Manager provided to encapsulate slight differences between readers provides methods to improve
  * code readability.
  */
-object ReaderRepository {
+object ReaderManagerImpl : ReaderManager {
 
   /** Register any keyple plugin */
-  fun registerPlugin(factory: KeyplePluginExtensionFactory): Plugin? {
+  override fun registerPlugin(factory: KeyplePluginExtensionFactory): Plugin? {
     return try {
       SmartCardServiceProvider.getService().registerPlugin(factory)
     } catch (_: Exception) {
@@ -36,8 +37,8 @@ object ReaderRepository {
     }
   }
 
-  /** Un register any keyple plugin */
-  fun unregisterPlugin(pluginName: String) {
+  /** Unregister any keyple plugin */
+  override fun unregisterPlugin(pluginName: String) {
     try {
       SmartCardServiceProvider.getService().unregisterPlugin(pluginName)
     } catch (e: Exception) {
@@ -47,7 +48,7 @@ object ReaderRepository {
 
   /** Retrieve a registered reader */
   @Throws(ReaderCommunicationException::class)
-  fun getReader(readerName: String): CardReader {
+  override fun getReader(readerName: String): CardReader {
     var reader: CardReader? = null
     SmartCardServiceProvider.getService().plugins.forEach { reader = it.getReader(readerName) }
     return reader ?: throw ReaderCommunicationException("$readerName not found")
@@ -55,7 +56,7 @@ object ReaderRepository {
 
   /** Retrieve a registered observable reader. */
   @Throws(Exception::class)
-  fun getObservableReader(readerName: String): ObservableCardReader {
+  override fun getObservableReader(readerName: String): ObservableCardReader {
     val reader = getReader(readerName)
     return reader as? ObservableCardReader ?: throw Exception("$readerName not found")
   }

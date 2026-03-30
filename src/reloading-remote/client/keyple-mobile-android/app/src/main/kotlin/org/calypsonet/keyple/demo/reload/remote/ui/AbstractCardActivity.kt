@@ -18,7 +18,7 @@ import javax.inject.Inject
 import kotlin.jvm.Throws
 import org.calypsonet.keyple.demo.common.constants.CardConstants
 import org.calypsonet.keyple.demo.reload.remote.data.MifareClassicKeyProviderImpl
-import org.calypsonet.keyple.demo.reload.remote.data.ReaderRepository
+import org.calypsonet.keyple.demo.reload.remote.data.ReaderManagerImpl
 import org.calypsonet.keyple.demo.reload.remote.domain.model.AppSettings
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
@@ -48,7 +48,7 @@ abstract class AbstractCardActivity :
     AbstractDemoActivity(), CardReaderObserverSpi, CardReaderObservationExceptionHandlerSpi {
 
   @Inject lateinit var localServiceClient: LocalServiceClient
-  @Inject lateinit var readerRepository: ReaderRepository
+  @Inject lateinit var readerRepository: ReaderManagerImpl
   lateinit var selectedDeviceReaderName: String
   lateinit var device: DeviceEnum
   lateinit var pluginType: String

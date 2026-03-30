@@ -23,7 +23,7 @@ import java.lang.NumberFormatException
 import kotlin.system.exitProcess
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.data.network.KeypleSyncEndPointClient
-import org.calypsonet.keyple.demo.reload.remote.data.network.RestClient
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.RestClient
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityServerSettingsBinding
 import org.calypsonet.keyple.demo.reload.remote.di.scopes.ActivityScoped
 import retrofit2.Retrofit

@@ -20,7 +20,7 @@ import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.data.SharedPrefDataRepository
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiSamStatus
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ServerStatusEvent
-import org.calypsonet.keyple.demo.reload.remote.data.network.RestClient
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.RestClient
 import org.calypsonet.keyple.demo.reload.remote.databinding.ToolbarBinding
 import org.eclipse.keyple.core.util.json.JsonUtil
 import org.greenrobot.eventbus.EventBus

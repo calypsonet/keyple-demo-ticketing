@@ -18,7 +18,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.calypsonet.keyple.demo.reload.remote.data.SharedPrefDataRepository
 import org.calypsonet.keyple.demo.reload.remote.data.network.KeypleSyncEndPointClient
-import org.calypsonet.keyple.demo.reload.remote.data.network.RestClient
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.RestClient
 import org.calypsonet.keyple.demo.reload.remote.di.scopes.AppScoped
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory

@@ -17,9 +17,10 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.jvm.Throws
 import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService
-import org.calypsonet.keyple.demo.reload.remote.data.ReaderRepository
-import org.calypsonet.keyple.demo.reload.remote.data.model.CardProtocolEnum
+import org.calypsonet.keyple.demo.reload.remote.data.ReaderManagerImpl
+import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.reload.remote.di.scopes.AppScoped
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.ReaderManager
 import org.eclipse.keyple.card.calypso.CalypsoExtensionService
 import org.eclipse.keyple.core.service.SmartCardServiceProvider
 import org.eclipse.keypop.reader.selection.spi.SmartCard
@@ -28,17 +29,17 @@ import org.eclipse.keypop.storagecard.card.ProductType.MIFARE_ULTRALIGHT
 import org.eclipse.keypop.storagecard.card.ProductType.ST25_SRT512
 
 @AppScoped
-class TicketingService @Inject constructor(private var readerRepository: ReaderRepository) {
+class TicketingService @Inject constructor(private var readerManager: ReaderManager) {
 
   /** Select the card and retrieve the active card */
   @Throws(IllegalStateException::class, Exception::class)
   fun getSmartCard(readerName: String, aidEnums: ArrayList<ByteArray>): SmartCard {
-    with(ReaderRepository.getReader(readerName)) {
+    with(ReaderManagerImpl.getReader(readerName)) {
       val smartCardService = SmartCardServiceProvider.getService()
 
       val readerApiFactory = smartCardService.readerApiFactory
 
-      val reader = ReaderRepository.getReader(readerName)
+      val reader = ReaderManagerImpl.getReader(readerName)
 
       /** Get the Calypso card extension service */
       val calypsoExtension = CalypsoExtensionService.getInstance()
