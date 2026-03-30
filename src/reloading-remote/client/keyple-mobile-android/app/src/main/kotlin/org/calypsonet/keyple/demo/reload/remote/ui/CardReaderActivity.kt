@@ -32,11 +32,15 @@ import org.calypsonet.keyple.demo.common.dto.AnalyzeContractsOutputDto
 import org.calypsonet.keyple.demo.common.model.ContractStructure
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.reload.remote.R
-import org.calypsonet.keyple.demo.reload.remote.data.model.*
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.reload.remote.di.scopes.ActivityScoped
 import org.calypsonet.keyple.demo.reload.remote.domain.TicketingService
+import org.calypsonet.keyple.demo.reload.remote.domain.model.AppSettings
+import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
+import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.cardsummary.CardSummaryActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
+import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardTitle
 import org.eclipse.keyple.core.service.KeyplePluginException
 import org.eclipse.keyple.core.util.HexUtil
 import org.eclipse.keypop.calypso.card.card.CalypsoCard
@@ -171,7 +175,7 @@ class CardReaderActivity : AbstractCardActivity() {
               when (smartCard) {
                 is CalypsoCard -> {
                   changeDisplay(
-                      CardReaderResponse(
+                      UiCardReaderResponse(
                           status,
                           cardType,
                           contracts.size,
@@ -183,7 +187,7 @@ class CardReaderActivity : AbstractCardActivity() {
                 }
                 is StorageCard -> {
                   changeDisplay(
-                      CardReaderResponse(
+                      UiCardReaderResponse(
                           status,
                           cardType,
                           contracts.size,
@@ -236,7 +240,7 @@ class CardReaderActivity : AbstractCardActivity() {
     }
   }
 
-  private fun buildCardTitle(contractStructure: ContractStructure): CardTitle {
+  private fun buildCardTitle(contractStructure: ContractStructure): UiCardTitle {
     return when (contractStructure.contractTariff) {
       PriorityCode.MULTI_TRIP -> {
         var isValid = false
@@ -245,7 +249,7 @@ class CardReaderActivity : AbstractCardActivity() {
               isValid = (it >= 1)
               if (it > 1) "$it trips left" else "$it trip left"
             }
-        CardTitle("Multi trip", description ?: "No counter", isValid)
+          UiCardTitle("Multi trip", description ?: "No counter", isValid)
       }
       PriorityCode.SEASON_PASS -> {
         val now = LocalDate.now()
@@ -254,34 +258,44 @@ class CardReaderActivity : AbstractCardActivity() {
                 contractStructure.contractSaleDate.getDate().isEqual(now)) &&
                 (contractStructure.contractValidityEndDate.getDate().isAfter(now) ||
                     contractStructure.contractValidityEndDate.getDate().isEqual(now))
-        CardTitle(
-            "Season pass",
-            "From ${contractStructure.contractSaleDate.getDate().format(dateTimeFormatter)} to ${contractStructure.contractValidityEndDate.getDate().format(dateTimeFormatter)}",
-            isValid)
+          UiCardTitle(
+              "Season pass",
+              "From ${
+                  contractStructure.contractSaleDate.getDate().format(dateTimeFormatter)
+              } to ${
+                  contractStructure.contractValidityEndDate.getDate().format(dateTimeFormatter)
+              }",
+              isValid
+          )
       }
       PriorityCode.EXPIRED -> {
-        CardTitle(
-            "Season pass - Expired",
-            "From ${contractStructure.contractSaleDate.getDate().format(dateTimeFormatter)} to ${contractStructure.contractValidityEndDate.getDate().format(dateTimeFormatter)}",
-            false)
+          UiCardTitle(
+              "Season pass - Expired",
+              "From ${
+                  contractStructure.contractSaleDate.getDate().format(dateTimeFormatter)
+              } to ${
+                  contractStructure.contractValidityEndDate.getDate().format(dateTimeFormatter)
+              }",
+              false
+          )
       }
       PriorityCode.FORBIDDEN -> {
-        CardTitle("FORBIDDEN", "", false)
+          UiCardTitle("FORBIDDEN", "", false)
       }
       PriorityCode.STORED_VALUE -> {
-        CardTitle("STORED_VALUE", "", false)
+          UiCardTitle("STORED_VALUE", "", false)
       }
-      else -> CardTitle("UNKNOWN", "", false)
+      else -> UiCardTitle("UNKNOWN", "", false)
     }
   }
 
-  private fun buildCardTitles(contractStructures: List<ContractStructure>?): List<CardTitle> {
+  private fun buildCardTitles(contractStructures: List<ContractStructure>?): List<UiCardTitle> {
     val cardTitles = contractStructures?.map { buildCardTitle(it) }
     return cardTitles ?: arrayListOf()
   }
 
   override fun changeDisplay(
-      cardReaderResponse: CardReaderResponse,
+      cardReaderResponse: UiCardReaderResponse,
       uniqueIdentifier: String?,
       finishActivity: Boolean?
   ) {

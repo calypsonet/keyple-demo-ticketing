@@ -29,13 +29,14 @@ import org.calypsonet.keyple.demo.common.dto.WriteContractInputDto
 import org.calypsonet.keyple.demo.common.dto.WriteContractOutputDto
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.reload.remote.R
-import org.calypsonet.keyple.demo.reload.remote.data.model.AppSettings
+import org.calypsonet.keyple.demo.reload.remote.domain.model.AppSettings
 import org.calypsonet.keyple.demo.reload.remote.data.model.CardReaderResponse
-import org.calypsonet.keyple.demo.reload.remote.data.model.DeviceEnum
-import org.calypsonet.keyple.demo.reload.remote.data.model.Status
+import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
+import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.reload.remote.di.scopes.ActivityScoped
 import org.calypsonet.keyple.demo.reload.remote.domain.TicketingService
+import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.eclipse.keyple.core.util.HexUtil
 import org.eclipse.keypop.calypso.card.card.CalypsoCard
 import org.eclipse.keypop.reader.CardReaderEvent
@@ -162,7 +163,7 @@ class ReloadActivity : AbstractCardActivity() {
           0 -> {
             runOnUiThread {
               changeDisplay(
-                  CardReaderResponse(
+                  UiCardReaderResponse(
                       Status.SUCCESS, cardType, ticketToBeLoaded, arrayListOf(), arrayListOf(), ""),
                   finishActivity = true)
             }
@@ -197,7 +198,7 @@ class ReloadActivity : AbstractCardActivity() {
   }
 
   override fun changeDisplay(
-      cardReaderResponse: CardReaderResponse,
+      cardReaderResponse: UiCardReaderResponse,
       uniqueIdentifier: String?,
       finishActivity: Boolean?
   ) {

@@ -19,11 +19,11 @@ import kotlin.jvm.Throws
 import org.calypsonet.keyple.demo.common.constants.CardConstants
 import org.calypsonet.keyple.demo.reload.remote.data.MifareClassicKeyProviderImpl
 import org.calypsonet.keyple.demo.reload.remote.data.ReaderRepository
-import org.calypsonet.keyple.demo.reload.remote.data.model.AppSettings
-import org.calypsonet.keyple.demo.reload.remote.data.model.CardProtocolEnum
-import org.calypsonet.keyple.demo.reload.remote.data.model.CardReaderResponse
-import org.calypsonet.keyple.demo.reload.remote.data.model.DeviceEnum
-import org.calypsonet.keyple.demo.reload.remote.data.model.Status
+import org.calypsonet.keyple.demo.reload.remote.domain.model.AppSettings
+import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocolEnum
+import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
+import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
+import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
 import org.calypsonet.keyple.plugin.bluebird.BluebirdContactlessProtocols
 import org.calypsonet.keyple.plugin.bluebird.BluebirdPluginFactoryProvider
@@ -186,7 +186,7 @@ abstract class AbstractCardActivity :
   fun launchInvalidCardResponse(cardType: String, message: String) {
     runOnUiThread {
       changeDisplay(
-          CardReaderResponse(
+          UiCardReaderResponse(
               Status.INVALID_CARD, cardType, 0, arrayListOf(), arrayListOf(), "", message),
           finishActivity =
               device !=
@@ -199,7 +199,7 @@ abstract class AbstractCardActivity :
   fun launchCardCommunicationErrorResponse() {
     runOnUiThread {
       changeDisplay(
-          CardReaderResponse(
+          UiCardReaderResponse(
               Status.ERROR, "", 0, arrayListOf(), arrayListOf(), "", "Card communication error"),
           finishActivity =
               device !=
@@ -212,7 +212,7 @@ abstract class AbstractCardActivity :
   fun launchServerErrorResponse() {
     runOnUiThread {
       changeDisplay(
-          CardReaderResponse(Status.ERROR, "", 0, arrayListOf(), arrayListOf(), ""),
+          UiCardReaderResponse(Status.ERROR, "", 0, arrayListOf(), arrayListOf(), ""),
           finishActivity =
               device !=
                   DeviceEnum.CONTACTLESS_CARD // /Only with NFC we can come back to 'wait for device
@@ -224,13 +224,13 @@ abstract class AbstractCardActivity :
   fun launchExceptionResponse(e: Exception, finishActivity: Boolean? = false) {
     runOnUiThread {
       changeDisplay(
-          CardReaderResponse(Status.ERROR, "", 0, arrayListOf(), arrayListOf(), "", e.message),
+          UiCardReaderResponse(Status.ERROR, "", 0, arrayListOf(), arrayListOf(), "", e.message),
           finishActivity = finishActivity)
     }
   }
 
   protected abstract fun changeDisplay(
-      cardReaderResponse: CardReaderResponse,
+      cardReaderResponse: UiCardReaderResponse,
       applicationSerialNumber: String? = null,
       finishActivity: Boolean? = false
   )

@@ -21,7 +21,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.data.SharedPrefDataRepository
-import org.calypsonet.keyple.demo.reload.remote.data.model.DeviceEnum
+import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityHomeBinding
 
 class HomeActivity : AbstractDemoActivity() {

@@ -18,8 +18,8 @@ import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.data.SharedPrefDataRepository
-import org.calypsonet.keyple.demo.reload.remote.data.model.SamStatus
-import org.calypsonet.keyple.demo.reload.remote.data.model.ServerStatusEvent
+import org.calypsonet.keyple.demo.reload.remote.ui.model.UiSamStatus
+import org.calypsonet.keyple.demo.reload.remote.domain.model.ServerStatusEvent
 import org.calypsonet.keyple.demo.reload.remote.data.network.RestClient
 import org.calypsonet.keyple.demo.reload.remote.databinding.ToolbarBinding
 import org.eclipse.keyple.core.util.json.JsonUtil
@@ -88,7 +88,7 @@ abstract class AbstractDemoActivity : DaggerAppCompatActivity() {
     override fun doInBackground(vararg client: RestClient): Long {
       try {
         val jsonRes = client[0].ping().blockingGet()
-        val samStatus = JsonUtil.getParser().fromJson(jsonRes.toString(), SamStatus::class.java)
+        val samStatus = JsonUtil.getParser().fromJson(jsonRes.toString(), UiSamStatus::class.java)
         EventBus.getDefault().post(ServerStatusEvent(samStatus.isSamReady))
       } catch (e: Exception) {
         EventBus.getDefault().post(ServerStatusEvent(false))
