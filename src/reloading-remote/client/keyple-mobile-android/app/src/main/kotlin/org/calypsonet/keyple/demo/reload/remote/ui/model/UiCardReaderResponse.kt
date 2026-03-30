@@ -10,11 +10,19 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.data.model
+package org.calypsonet.keyple.demo.reload.remote.ui.model
 
-enum class CardProtocolEnum {
-  ISO_14443_4_LOGICAL_PROTOCOL,
-  MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL,
-  ST25_SRT512_LOGICAL_PROTOCOL,
-  MIFARE_CLASSIC_LOGICAL_PROTOCOL
-}
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
+
+@Parcelize
+data class UiCardReaderResponse(
+    val status: Status,
+    val cardType: String,
+    val ticketsNumber: Int,
+    val titlesList: List<UiCardTitle>,
+    val lastValidationsList: ArrayList<UiValidation>,
+    val seasonPassExpiryDate: String,
+    val errorMessage: String? = null
+) : Parcelable

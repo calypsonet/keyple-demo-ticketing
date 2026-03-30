@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2022 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -10,18 +10,9 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.data.model
+package org.calypsonet.keyple.demo.reload.remote.ui.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
-@Parcelize
-data class CardReaderResponse(
-    val status: Status,
-    val cardType: String,
-    val ticketsNumber: Int,
-    val titlesList: List<CardTitle>,
-    val lastValidationsList: ArrayList<Validation>,
-    val seasonPassExpiryDate: String,
-    val errorMessage: String? = null
-) : Parcelable
+@Parcelize data class UiSamStatus(val isSamReady: Boolean) : Parcelable

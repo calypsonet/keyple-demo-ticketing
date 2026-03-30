@@ -10,6 +10,10 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.data.model
+package org.calypsonet.keyple.demo.reload.remote.ui.model
 
-class ServerStatusEvent(val isUp: Boolean)
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+data class UiCardTitle(val name: String, val description: String, val valid: Boolean) : Parcelable

@@ -10,10 +10,11 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.data.model
+package org.calypsonet.keyple.demo.reload.remote.ui.model
 
 import android.os.Parcelable
+import java.util.Date
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class CardTitle(val name: String, val description: String, val valid: Boolean) : Parcelable
+data class UiValidation(val name: String, val location: String, val date: Date) : Parcelable

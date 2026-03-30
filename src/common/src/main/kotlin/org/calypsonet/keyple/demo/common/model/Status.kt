@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2022 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -10,9 +10,15 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.data.model
+package org.calypsonet.keyple.demo.control.data.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
-
-@Parcelize data class SamStatus(val isSamReady: Boolean) : Parcelable
+enum class Status(val status: String) {
+  LOADING("loading"),
+  ERROR("error"),
+  TICKETS_FOUND("tickets_found"),
+  INVALID_CARD("invalid_card"),
+  EMPTY_CARD("empty_card"),
+  WRONG_CARD("wrong_card"),
+  DEVICE_CONNECTED("device_connected"),
+  SUCCESS("success")
+}
