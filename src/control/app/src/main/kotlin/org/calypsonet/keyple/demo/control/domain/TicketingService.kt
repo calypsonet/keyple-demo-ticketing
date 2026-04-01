@@ -21,22 +21,19 @@ import org.calypsonet.keyple.demo.control.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.control.domain.model.CardReaderResponse
 import org.calypsonet.keyple.demo.control.domain.model.Location
 import org.calypsonet.keyple.demo.control.domain.model.ReaderType
+import org.calypsonet.keyple.demo.control.domain.spi.KeypopApiProvider
+import org.calypsonet.keyple.demo.control.domain.spi.Logger
 import org.calypsonet.keyple.demo.control.domain.spi.ReaderManager
 import org.calypsonet.keyple.demo.control.domain.spi.UiContext
-import org.eclipse.keyple.card.calypso.CalypsoExtensionService
-import org.eclipse.keyple.card.calypso.crypto.legacysam.LegacySamExtensionService
-import org.eclipse.keyple.card.calypso.crypto.legacysam.LegacySamUtil
-import org.eclipse.keyple.card.calypso.crypto.pki.CertificateType
-import org.eclipse.keyple.card.calypso.crypto.pki.PkiExtensionService
-import org.eclipse.keyple.core.service.KeyplePluginException
-import org.eclipse.keyple.core.service.SmartCardServiceProvider
 import org.eclipse.keyple.core.util.HexUtil
 import org.eclipse.keypop.calypso.card.CalypsoCardApiFactory
 import org.eclipse.keypop.calypso.card.WriteAccessLevel
 import org.eclipse.keypop.calypso.card.card.CalypsoCard
+import org.eclipse.keypop.calypso.card.card.CalypsoCardSelectionExtension
 import org.eclipse.keypop.calypso.card.transaction.AsymmetricCryptoSecuritySetting
 import org.eclipse.keypop.calypso.card.transaction.SymmetricCryptoSecuritySetting
 import org.eclipse.keypop.calypso.card.transaction.spi.AsymmetricCryptoCardTransactionManagerFactory
+import org.eclipse.keypop.calypso.crypto.legacysam.LegacySamApiFactory
 import org.eclipse.keypop.calypso.crypto.legacysam.sam.LegacySam
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ObservableCardReader
@@ -48,22 +45,30 @@ import org.eclipse.keypop.reader.selection.spi.SmartCard
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 import org.eclipse.keypop.storagecard.card.ProductType
 import org.eclipse.keypop.storagecard.card.StorageCard
-import timber.log.Timber
 import java.time.LocalDateTime
 import javax.inject.Inject
 
 @AppScoped
-class TicketingService @Inject constructor(private var readerManager: ReaderManager) {
+class TicketingService @Inject constructor(
+    private var keypopApiProvider: KeypopApiProvider,
+    private var readerManager: ReaderManager,
+    private var logger: Logger
+) {
 
   private val readerApiFactory: ReaderApiFactory =
-      SmartCardServiceProvider.getService().readerApiFactory
-  private val calypsoExtensionService: CalypsoExtensionService =
-      CalypsoExtensionService.getInstance()
+      keypopApiProvider.getReaderApiFactory()
+
+  //private val calypsoExtensionService: CalypsoExtensionService =
+  //    CalypsoExtensionService.getInstance()
+
   private val calypsoCardApiFactory: CalypsoCardApiFactory =
-      calypsoExtensionService.calypsoCardApiFactory
+      keypopApiProvider.getCalypsoCardApiFactory()
+
   private val asymmetricCryptoSecuritySettings: AsymmetricCryptoSecuritySetting =
       buildAsymmetricCryptoSecuritySetting()
   private var symmetricCryptoSecuritySetting: SymmetricCryptoSecuritySetting? = null
+
+  private var legacySamApiFactory: LegacySamApiFactory = keypopApiProvider.getLegacySamApiFactory()
 
   /** Get the Storage card extension service */
   private val storageCardExtension = StorageCardExtensionService.getInstance()
@@ -85,13 +90,26 @@ class TicketingService @Inject constructor(private var readerManager: ReaderMana
   private var indexOfST25CardSelection = 0
   private var indexOfMifareClassic1KCardSelection = 0
 
-  @Throws(KeyplePluginException::class, IllegalStateException::class, Exception::class)
-  fun init(observer: CardReaderObserverSpi?, uiContext: UiContext, readerType: ReaderType) {
+    /**
+     * Initializes the ticketing environment and selects a SAM if available.
+     *
+     * Steps:
+     * - Registers the appropriate reader plugin according to [readerType].
+     * - Initializes the primary card reader and SAM reader(s).
+     * - Attaches the optional [observer] to the card reader to receive detection events.
+     * - Selects a SAM and prepares secured session capabilities.
+     *
+     * @param observer Optional reader observer to receive card detection notifications.
+     * @param readerType The target reader type to initialize (e.g., NFC).
+     * @param uiContext Platform-specific context used to register plugins.
+     * @throws IllegalStateException if no SAM reader is available or SAM selection fails.
+     */
+  fun init(observer: CardReaderObserverSpi?, readerType: ReaderType, uiContext: UiContext) {
     // Register plugin
     try {
       readerManager.registerPlugin(readerType, uiContext)
     } catch (e: Exception) {
-      Timber.e(e)
+      logger.e("An error occurred while registering plugin ${e.message}")
       throw IllegalStateException(e.message)
     }
     // Init card reader
@@ -99,7 +117,7 @@ class TicketingService @Inject constructor(private var readerManager: ReaderMana
     try {
       cardReader = readerManager.initCardReader()
     } catch (e: Exception) {
-      Timber.e(e)
+      logger.e("An error occurred while init card reader ${e.message}")
       throw IllegalStateException(e.message)
     }
     // Init SAM reader
@@ -107,10 +125,10 @@ class TicketingService @Inject constructor(private var readerManager: ReaderMana
     try {
       samReaders = readerManager.initSamReaders()
     } catch (e: Exception) {
-      Timber.e(e)
+      logger.e( "An error occurred while init sam reader ${e.message}")
     }
     if (samReaders.isNullOrEmpty()) {
-      Timber.w("No SAM reader available")
+      logger.w("No SAM reader available")
     }
     // Register a card event observer and init the ticketing session
     cardReader?.let { reader ->
@@ -135,10 +153,8 @@ class TicketingService @Inject constructor(private var readerManager: ReaderMana
     try {
       // notify the reader that se detection has been switched off
       (readerManager.getCardReader() as ObservableCardReader).stopCardDetection()
-    } catch (e: KeyplePluginException) {
-      Timber.e(e, "NFC Plugin not found")
     } catch (e: Exception) {
-      Timber.e(e)
+      logger.e("An error occurred while stopping nfc detection ${e.message}")
     }
   }
 
@@ -236,7 +252,7 @@ class TicketingService @Inject constructor(private var readerManager: ReaderMana
   fun analyseSelectionResult(
       scheduledCardSelectionsResponse: ScheduledCardSelectionsResponse
   ): String? {
-    Timber.i("selectionResponse = $scheduledCardSelectionsResponse")
+    logger.i("selectionResponse = $scheduledCardSelectionsResponse")
     val cardSelectionResult: CardSelectionResult =
         cardSelectionManager.parseScheduledCardSelectionsResponse(scheduledCardSelectionsResponse)
     if (cardSelectionResult.activeSelectionIndex == -1) {
@@ -265,13 +281,11 @@ class TicketingService @Inject constructor(private var readerManager: ReaderMana
               HexUtil.toHex((smartCard as CalypsoCard).applicationSubtype) +
               "h not supported"
         }
-        Timber.i("Card DF Name = %s", HexUtil.toHex((smartCard as CalypsoCard).dfName))
+        logger.i("Card DF Name = ${HexUtil.toHex((smartCard as CalypsoCard).dfName)}")
       }
       is StorageCard -> {
-        Timber.i(
-            "%s Card UID = %s",
-            (smartCard as StorageCard).productType.name,
-            HexUtil.toHex((smartCard as StorageCard).uid))
+        logger.i(
+            "${(smartCard as StorageCard).productType.name} Card UID = ${HexUtil.toHex((smartCard as StorageCard).uid)}")
       }
     }
     return null
@@ -306,8 +320,7 @@ class TicketingService @Inject constructor(private var readerManager: ReaderMana
   private fun buildSymmetricCryptoSecuritySetting(): SymmetricCryptoSecuritySetting {
     return calypsoCardApiFactory
         .createSymmetricCryptoSecuritySetting(
-            LegacySamExtensionService.getInstance()
-                .legacySamApiFactory
+            legacySamApiFactory
                 .createSymmetricCryptoCardTransactionManagerFactory(
                     readerManager.getSamReader(), legacySam))
         .assignDefaultKif(
@@ -358,8 +371,7 @@ class TicketingService @Inject constructor(private var readerManager: ReaderMana
       legacySam = samSelectionResult.activeSmartCard!! as LegacySam
       return true
     } catch (e: Exception) {
-      Timber.e(e)
-      Timber.e("An exception occurred while selecting the SAM.  ${e.message}")
+      logger.e("An exception occurred while selecting the SAM.  ${e.message}")
     }
     return false
   }

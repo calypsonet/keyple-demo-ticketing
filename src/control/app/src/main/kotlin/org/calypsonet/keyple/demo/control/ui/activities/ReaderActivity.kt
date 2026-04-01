@@ -29,6 +29,7 @@ import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
 import org.calypsonet.keyple.demo.control.di.scope.ActivityScoped
 import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
 import org.calypsonet.keyple.demo.control.ui.activities.cardcontent.CardContentActivity
+import org.calypsonet.keyple.demo.control.ui.adapters.UiContextImpl
 import org.calypsonet.keyple.demo.control.ui.mappers.toUi
 import org.calypsonet.keyple.demo.control.ui.model.UiCardReaderResponse
 import org.eclipse.keypop.reader.CardReaderEvent
@@ -74,7 +75,7 @@ class ReaderActivity : BaseActivity() {
         withContext(Dispatchers.IO) {
           try {
             cardReaderObserver = CardReaderObserver()
-            ticketingService.init(cardReaderObserver, this@ReaderActivity, AppSettings.readerType)
+            ticketingService.init(cardReaderObserver, AppSettings.readerType, UiContextImpl(this@ReaderActivity))
             showToast(
                 getString(
                     if (ticketingService.isSamAvailable) R.string.sam_available
