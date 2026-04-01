@@ -14,8 +14,8 @@ package org.calypsonet.keyple.demo.control.domain
 
 import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService
 import org.calypsonet.keyple.demo.common.constants.CardConstants
-import org.calypsonet.keyple.demo.control.domain.managers.CalypsoCardManager
-import org.calypsonet.keyple.demo.control.domain.managers.StorageCardManager
+import org.calypsonet.keyple.demo.control.domain.managers.CalypsoCardControlManager
+import org.calypsonet.keyple.demo.control.domain.managers.StorageCardControlManager
 import org.calypsonet.keyple.demo.control.di.scope.AppScoped
 import org.calypsonet.keyple.demo.control.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.control.domain.model.CardReaderResponse
@@ -29,7 +29,6 @@ import org.eclipse.keyple.core.util.HexUtil
 import org.eclipse.keypop.calypso.card.CalypsoCardApiFactory
 import org.eclipse.keypop.calypso.card.WriteAccessLevel
 import org.eclipse.keypop.calypso.card.card.CalypsoCard
-import org.eclipse.keypop.calypso.card.card.CalypsoCardSelectionExtension
 import org.eclipse.keypop.calypso.card.transaction.AsymmetricCryptoSecuritySetting
 import org.eclipse.keypop.calypso.card.transaction.SymmetricCryptoSecuritySetting
 import org.eclipse.keypop.calypso.card.transaction.spi.AsymmetricCryptoCardTransactionManagerFactory
@@ -294,22 +293,24 @@ class TicketingService @Inject constructor(
   fun executeControlProcedure(locations: List<Location>): CardReaderResponse {
     return when (smartCard) {
       is CalypsoCard -> {
-        CalypsoCardManager()
+        CalypsoCardControlManager()
             .executeControlProcedure(
                 cardReader = readerManager.getCardReader()!!,
                 calypsoCard = smartCard as CalypsoCard,
                 symmetricCryptoSecuritySetting = symmetricCryptoSecuritySetting,
                 asymmetricCryptoSecuritySetting = asymmetricCryptoSecuritySettings,
                 locations = locations,
-                controlDateTime = LocalDateTime.now())
+                controlDateTime = LocalDateTime.now(),
+                logger = logger)
       }
       is StorageCard -> {
-        StorageCardManager()
+        StorageCardControlManager()
             .executeControlProcedure(
                 cardReader = readerManager.getCardReader()!!,
                 storageCard = smartCard as StorageCard,
                 locations = locations,
-                controlDateTime = LocalDateTime.now())
+                controlDateTime = LocalDateTime.now(),
+                logger = logger)
       }
       else -> {
         error("Unsupported card type")

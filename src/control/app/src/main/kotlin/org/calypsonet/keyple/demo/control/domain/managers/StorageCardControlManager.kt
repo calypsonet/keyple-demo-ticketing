@@ -17,21 +17,22 @@ import org.calypsonet.keyple.demo.control.domain.model.Contract
 import org.calypsonet.keyple.demo.control.domain.model.Location
 import org.calypsonet.keyple.demo.control.domain.model.Status
 import org.calypsonet.keyple.demo.control.domain.model.Validation
+import org.calypsonet.keyple.demo.control.domain.spi.Logger
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ChannelControl
 import org.eclipse.keypop.storagecard.MifareClassicKeyType
 import org.eclipse.keypop.storagecard.card.ProductType
 import org.eclipse.keypop.storagecard.card.StorageCard
-import timber.log.Timber
 import java.time.LocalDateTime
 
-class StorageCardManager {
+class StorageCardControlManager {
 
   fun executeControlProcedure(
       controlDateTime: LocalDateTime,
       cardReader: CardReader,
       storageCard: StorageCard,
-      locations: List<Location>
+      locations: List<Location>,
+      logger: Logger
   ): CardReaderResponse {
 
     var errorMessage: String?
@@ -48,7 +49,7 @@ class StorageCardManager {
             storageCardExtension.storageCardApiFactory.createStorageCardTransactionManager(
                 cardReader, storageCard)
           } catch (e: Exception) {
-            Timber.Forest.w(e)
+            logger.w("Failed to create storage card transaction", e)
             throw RuntimeException("Failed to create storage card transaction", e)
           }
 
@@ -56,13 +57,13 @@ class StorageCardManager {
       val requiresAuth = storageCard.productType.hasAuthentication()
       val isMifareClassic = storageCard.productType == ProductType.MIFARE_CLASSIC_1K
 
-      Timber.Forest.d(
+      logger.d(
           "Reading card: ${storageCard.productType.name} " +
               "(requiresAuth=$requiresAuth, isMifareClassic=$isMifareClassic)")
 
       // ========= AUTHENTICATION PHASE (Mifare Classic only) =========
       if (requiresAuth) {
-        Timber.Forest.d(
+        logger.d(
             "Authenticating sector 1 with KEY_A (keyNumber=${CardConstants.MC_DEFAULT_KEY_NUMBER})")
         cardTransaction.prepareMifareClassicAuthenticate(
             CardConstants.MC_SECTOR_1_AUTH_BLOCK,
@@ -73,7 +74,7 @@ class StorageCardManager {
       // ========= READ DATA =========
       // Step 2 - Read environment, event and contract structures based on card type
       if (isMifareClassic) {
-        Timber.Forest.d(
+        logger.d(
             "Reading Mifare Classic blocks: ${CardConstants.MC_ENVIRONMENT_AND_HOLDER_BLOCK}, " +
                 "${CardConstants.MC_CONTRACT_BLOCK}, ${CardConstants.MC_EVENT_BLOCK}")
         // Mifare Classic: read individual 16-byte blocks
@@ -85,7 +86,7 @@ class StorageCardManager {
             .prepareReadBlocks(CardConstants.MC_EVENT_BLOCK, CardConstants.MC_EVENT_BLOCK)
             .processCommands(ChannelControl.KEEP_OPEN)
       } else {
-        Timber.Forest.d("Reading storage card block ranges...")
+        logger.d("Reading storage card block ranges...")
         // MIFARE Ultralight/ST25: read ranges of 4-byte blocks
         cardTransaction
             .prepareReadBlocks(
@@ -98,7 +99,7 @@ class StorageCardManager {
             .processCommands(ChannelControl.KEEP_OPEN)
       }
 
-      Timber.Forest.d("Card data read successfully")
+      logger.d("Card data read successfully")
 
       // Step 2 - Unpack environment structure
       val environmentContent =
@@ -239,7 +240,7 @@ class StorageCardManager {
                 nbTicketsLeft = nbTicketsLeft))
       }
 
-      Timber.Forest.i("Control procedure result: STATUS_OK")
+      logger.i("Control procedure result: STATUS_OK")
       status = Status.TICKETS_FOUND
 
       // Step 20 - Close the transaction
@@ -258,7 +259,7 @@ class StorageCardManager {
           titlesList = displayedContract
       )
     } catch (e: Exception) {
-      Timber.Forest.e(e, "Error during control procedure: ${storageCard.productType.name}")
+      logger.e("Error during control procedure: ${storageCard.productType.name}", e)
       errorMessage = e.message
       when (e) {
         is EnvironmentException -> {

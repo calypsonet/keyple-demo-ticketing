@@ -5,6 +5,10 @@ import timber.log.Timber
 
 class LoggerImpl : Logger {
 
+    override fun d(message: String) {
+        Timber.d(message)
+    }
+
     override fun i(message: String) {
         Timber.i(message)
     }

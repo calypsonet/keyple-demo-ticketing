@@ -17,6 +17,7 @@ import org.calypsonet.keyple.demo.control.domain.model.Contract
 import org.calypsonet.keyple.demo.control.domain.model.Location
 import org.calypsonet.keyple.demo.control.domain.model.Status
 import org.calypsonet.keyple.demo.control.domain.model.Validation
+import org.calypsonet.keyple.demo.control.domain.spi.Logger
 import org.eclipse.keyple.card.calypso.CalypsoExtensionService
 import org.eclipse.keypop.calypso.card.WriteAccessLevel
 import org.eclipse.keypop.calypso.card.card.CalypsoCard
@@ -27,10 +28,9 @@ import org.eclipse.keypop.calypso.card.transaction.SymmetricCryptoSecuritySettin
 import org.eclipse.keypop.calypso.card.transaction.TransactionManager
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ChannelControl
-import timber.log.Timber
 import java.time.LocalDateTime
 
-class CalypsoCardManager {
+class CalypsoCardControlManager {
 
   fun executeControlProcedure(
       controlDateTime: LocalDateTime,
@@ -38,7 +38,8 @@ class CalypsoCardManager {
       calypsoCard: CalypsoCard,
       symmetricCryptoSecuritySetting: SymmetricCryptoSecuritySetting?,
       asymmetricCryptoSecuritySetting: AsymmetricCryptoSecuritySetting,
-      locations: List<Location>
+      locations: List<Location>,
+      logger: Logger
   ): CardReaderResponse {
 
     var errorMessage: String?
@@ -265,7 +266,7 @@ class CalypsoCardManager {
         }
       }
 
-      Timber.Forest.i("Control procedure result: STATUS_OK")
+      logger.i("Control procedure result: STATUS_OK")
       status = Status.TICKETS_FOUND
 
       // Step 20 - If a session is open, Close the session
@@ -289,7 +290,7 @@ class CalypsoCardManager {
       )
     } catch (e: Exception) {
       errorMessage = e.message
-      Timber.Forest.e(e)
+      logger.e("Control procedure error: $errorMessage")
       when (e) {
         is EnvironmentException -> {
           errorMessage = "Environment error: $errorMessage"
