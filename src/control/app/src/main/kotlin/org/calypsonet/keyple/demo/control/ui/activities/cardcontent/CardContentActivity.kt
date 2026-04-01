@@ -16,7 +16,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.calypsonet.keyple.demo.control.R
-import org.calypsonet.keyple.demo.control.ui.model.UiCardReaderResponse
+import org.calypsonet.keyple.demo.control.ui.model.UiControlResult
 import org.calypsonet.keyple.demo.control.databinding.ActivityCardContentBinding
 import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
 import org.calypsonet.keyple.demo.control.setDivider
@@ -37,7 +37,7 @@ class CardContentActivity : BaseActivity() {
     setSupportActionBar(logoToolbarBinding.toolbar)
     activityCardContentBinding.presentBtn.setOnClickListener { onBackPressed() }
     @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-    val cardContent: UiCardReaderResponse = intent.getParcelableExtra(CARD_CONTENT)!!
+    val cardContent: UiControlResult = intent.getParcelableExtra(CARD_CONTENT)!!
     activityCardContentBinding.lastValidationList.layoutManager = LinearLayoutManager(this)
     activityCardContentBinding.titlesList.layoutManager = LinearLayoutManager(this)
     if (cardContent.titlesList.isNotEmpty()) {

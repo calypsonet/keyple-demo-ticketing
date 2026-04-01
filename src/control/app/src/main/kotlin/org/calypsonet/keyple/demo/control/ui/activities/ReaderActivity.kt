@@ -31,7 +31,7 @@ import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
 import org.calypsonet.keyple.demo.control.ui.activities.cardcontent.CardContentActivity
 import org.calypsonet.keyple.demo.control.ui.adapters.UiContextImpl
 import org.calypsonet.keyple.demo.control.ui.mappers.toUi
-import org.calypsonet.keyple.demo.control.ui.model.UiCardReaderResponse
+import org.calypsonet.keyple.demo.control.ui.model.UiControlResult
 import org.eclipse.keypop.reader.CardReaderEvent
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 import timber.log.Timber
@@ -136,7 +136,7 @@ class ReaderActivity : BaseActivity() {
         if (error != null) {
           Timber.e("Card not selected: %s", error)
           displayResult(
-            UiCardReaderResponse(
+            UiControlResult(
               status = Status.INVALID_CARD,
               authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
               titlesList = arrayListOf(),
@@ -195,7 +195,7 @@ class ReaderActivity : BaseActivity() {
                 Timber.e(e)
                 Timber.e("Load ERROR page after exception = ${e.message}")
                 displayResult(
-                    UiCardReaderResponse(
+                    UiControlResult(
                         status = Status.ERROR,
                         authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
                         titlesList = arrayListOf()))
@@ -214,31 +214,33 @@ class ReaderActivity : BaseActivity() {
     Timber.i("New state = $currentAppState")
   }
 
-  private fun displayResult(cardReaderResponse: UiCardReaderResponse?) {
-    if (cardReaderResponse != null) {
-      runOnUiThread { activityCardReaderBinding.loadingAnimation.cancelAnimation() }
-      when (cardReaderResponse.status) {
-        Status.TICKETS_FOUND,
-        Status.EMPTY_CARD -> {
-          val intent = Intent(this@ReaderActivity, CardContentActivity::class.java)
-          intent.putExtra(CARD_CONTENT, cardReaderResponse)
-          startActivity(intent)
-        }
-        Status.LOADING,
-        Status.ERROR,
-        Status.SUCCESS,
-        Status.INVALID_CARD -> {
-          ticketingService.displayResultFailed()
-          val intent = Intent(this@ReaderActivity, NetworkInvalidActivity::class.java)
-          intent.putExtra(CARD_CONTENT, cardReaderResponse)
-          startActivity(intent)
-        }
-        Status.WRONG_CARD -> {
-          // Do nothing
-        }
-        Status.DEVICE_CONNECTED -> {
-          // Do nothing
-        }
+  private fun displayResult(uiControlResult: UiControlResult?) {
+    if (uiControlResult == null) {
+      return
+    }
+
+    runOnUiThread { activityCardReaderBinding.loadingAnimation.cancelAnimation() }
+    when (uiControlResult.status) {
+      Status.TICKETS_FOUND,
+      Status.EMPTY_CARD -> {
+        val intent = Intent(this@ReaderActivity, CardContentActivity::class.java)
+        intent.putExtra(CARD_CONTENT, uiControlResult)
+        startActivity(intent)
+      }
+      Status.LOADING,
+      Status.ERROR,
+      Status.SUCCESS,
+      Status.INVALID_CARD -> {
+        ticketingService.displayResultFailed()
+        val intent = Intent(this@ReaderActivity, NetworkInvalidActivity::class.java)
+        intent.putExtra(CARD_CONTENT, uiControlResult)
+        startActivity(intent)
+      }
+      Status.WRONG_CARD -> {
+        // Do nothing
+      }
+      Status.DEVICE_CONNECTED -> {
+        // Do nothing
       }
     }
   }

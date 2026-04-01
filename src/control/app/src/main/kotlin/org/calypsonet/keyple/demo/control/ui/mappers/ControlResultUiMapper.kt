@@ -1,10 +1,10 @@
 package org.calypsonet.keyple.demo.control.ui.mappers
 
 import org.calypsonet.keyple.demo.control.domain.model.ControlResult
-import org.calypsonet.keyple.demo.control.ui.model.UiCardReaderResponse
+import org.calypsonet.keyple.demo.control.ui.model.UiControlResult
 
-fun ControlResult.toUi(): UiCardReaderResponse =
-    UiCardReaderResponse(
+fun ControlResult.toUi(): UiControlResult =
+    UiControlResult(
         status = status,
         authenticationMode = authenticationMode,
         lastValidationsList = lastValidationsList?.mapTo(ArrayList()) { it.toUi() },
@@ -13,7 +13,7 @@ fun ControlResult.toUi(): UiCardReaderResponse =
         errorMessage = errorMessage
     )
 
-fun UiCardReaderResponse.toDomain(): ControlResult = ControlResult(
+fun UiControlResult.toDomain(): ControlResult = ControlResult(
     status = status,
     authenticationMode = authenticationMode,
     lastValidationsList = lastValidationsList?.mapTo(ArrayList()) { it.toDomain() },

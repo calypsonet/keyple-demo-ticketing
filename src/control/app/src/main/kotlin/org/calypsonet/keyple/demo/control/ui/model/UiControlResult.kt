@@ -6,7 +6,7 @@ import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
 import org.calypsonet.keyple.demo.control.domain.model.Status
 
 @Parcelize
-data class UiCardReaderResponse(
+data class UiControlResult(
     val status: Status,
     val authenticationMode: AuthenticationMode,
     val lastValidationsList: ArrayList<UiValidation>? = null,
