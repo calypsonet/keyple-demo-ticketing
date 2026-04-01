@@ -1,6 +1,6 @@
 package org.calypsonet.keyple.demo.control.domain.model
 
-data class CardReaderResponse(
+data class ControlResult(
     val status: Status,
     val authenticationMode: AuthenticationMode,
     val lastValidationsList: ArrayList<Validation>? = null,

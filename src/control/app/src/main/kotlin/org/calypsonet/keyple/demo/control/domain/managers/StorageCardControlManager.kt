@@ -12,7 +12,7 @@ import org.calypsonet.keyple.demo.control.domain.mappers.ContractMapper
 import org.calypsonet.keyple.demo.control.domain.mappers.ValidationMapper
 import org.calypsonet.keyple.demo.control.domain.model.AppSettings
 import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
-import org.calypsonet.keyple.demo.control.domain.model.CardReaderResponse
+import org.calypsonet.keyple.demo.control.domain.model.ControlResult
 import org.calypsonet.keyple.demo.control.domain.model.Contract
 import org.calypsonet.keyple.demo.control.domain.model.Location
 import org.calypsonet.keyple.demo.control.domain.model.Status
@@ -33,7 +33,7 @@ class StorageCardControlManager {
       storageCard: StorageCard,
       locations: List<Location>,
       logger: Logger
-  ): CardReaderResponse {
+  ): ControlResult {
 
     var errorMessage: String?
     val errorTitle: String? = null
@@ -252,7 +252,7 @@ class StorageCardControlManager {
       }
 
       // Step 21 - Return the status of the operation to the upper layer. <Exit process>
-      return CardReaderResponse(
+      return ControlResult(
           status = status,
           authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
           lastValidationsList = validationList,
@@ -291,7 +291,7 @@ class StorageCardControlManager {
       }
     }
 
-    return CardReaderResponse(
+    return ControlResult(
         status = status,
         authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
         titlesList = arrayListOf(),

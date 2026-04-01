@@ -18,7 +18,7 @@ import org.calypsonet.keyple.demo.control.domain.managers.CalypsoCardControlMana
 import org.calypsonet.keyple.demo.control.domain.managers.StorageCardControlManager
 import org.calypsonet.keyple.demo.control.di.scope.AppScoped
 import org.calypsonet.keyple.demo.control.domain.model.CardProtocolEnum
-import org.calypsonet.keyple.demo.control.domain.model.CardReaderResponse
+import org.calypsonet.keyple.demo.control.domain.model.ControlResult
 import org.calypsonet.keyple.demo.control.domain.model.Location
 import org.calypsonet.keyple.demo.control.domain.model.ReaderType
 import org.calypsonet.keyple.demo.control.domain.spi.KeypopApiProvider
@@ -290,7 +290,7 @@ class TicketingService @Inject constructor(
     return null
   }
 
-  fun executeControlProcedure(locations: List<Location>): CardReaderResponse {
+  fun executeControlProcedure(locations: List<Location>): ControlResult {
     return when (smartCard) {
       is CalypsoCard -> {
         CalypsoCardControlManager()
