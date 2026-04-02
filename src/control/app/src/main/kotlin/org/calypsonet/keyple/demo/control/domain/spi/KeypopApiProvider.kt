@@ -1,6 +1,7 @@
 package org.calypsonet.keyple.demo.control.domain.spi
 
 import org.eclipse.keypop.calypso.card.CalypsoCardApiFactory
+import org.eclipse.keypop.calypso.card.transaction.AsymmetricCryptoSecuritySetting
 import org.eclipse.keypop.calypso.crypto.legacysam.LegacySamApiFactory
 import org.eclipse.keypop.reader.ReaderApiFactory
 import org.eclipse.keypop.storagecard.StorageCardApiFactory
@@ -24,4 +25,6 @@ interface KeypopApiProvider {
 
     /** Returns the factory for storage card APIs (e.g., MIFARE Ultralight, ST25...). */
     fun getStorageCardApiFactory(): StorageCardApiFactory
+
+    fun getAsymmetricCryptoSecuritySetting(): AsymmetricCryptoSecuritySetting
 }

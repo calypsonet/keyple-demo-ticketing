@@ -2,6 +2,7 @@ package org.calypsonet.keyple.demo.control.domain.spi
 
 import org.calypsonet.keyple.demo.control.domain.model.ReaderType
 import org.eclipse.keypop.reader.CardReader
+import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 
 interface ReaderManager {
     /**
@@ -22,6 +23,13 @@ interface ReaderManager {
     fun getSamReader(): CardReader?
 
     fun isStorageCardSupported(): Boolean
+
+    /**
+     * Releases resources and unregisters observers.
+     *
+     * @param observer Optional observer previously registered on the reader.
+     */
+    fun onDestroy(observer: CardReaderObserverSpi?)
 
     fun clear()
 

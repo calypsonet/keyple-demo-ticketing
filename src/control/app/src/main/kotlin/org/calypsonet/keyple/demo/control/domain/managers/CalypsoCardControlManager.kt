@@ -17,8 +17,8 @@ import org.calypsonet.keyple.demo.control.domain.model.Contract
 import org.calypsonet.keyple.demo.control.domain.model.Location
 import org.calypsonet.keyple.demo.control.domain.model.Status
 import org.calypsonet.keyple.demo.control.domain.model.Validation
+import org.calypsonet.keyple.demo.control.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.control.domain.spi.Logger
-import org.eclipse.keyple.card.calypso.CalypsoExtensionService
 import org.eclipse.keypop.calypso.card.WriteAccessLevel
 import org.eclipse.keypop.calypso.card.card.CalypsoCard
 import org.eclipse.keypop.calypso.card.transaction.AsymmetricCryptoSecuritySetting
@@ -39,14 +39,17 @@ class CalypsoCardControlManager {
       symmetricCryptoSecuritySetting: SymmetricCryptoSecuritySetting?,
       asymmetricCryptoSecuritySetting: AsymmetricCryptoSecuritySetting,
       locations: List<Location>,
-      logger: Logger
+      logger: Logger,
+      keypopApiProvider: KeypopApiProvider
   ): ControlResult {
 
     var errorMessage: String?
     val errorTitle: String? = null
     var validation: Validation? = null
     var status: Status = Status.ERROR
-    val calypsoCardApiFactory = CalypsoExtensionService.getInstance().calypsoCardApiFactory
+
+
+    val calypsoCardApiFactory = keypopApiProvider.getCalypsoCardApiFactory()
 
     val authenticationMode: AuthenticationMode =
         if (symmetricCryptoSecuritySetting != null) AuthenticationMode.SAM

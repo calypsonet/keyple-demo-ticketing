@@ -31,7 +31,6 @@ import org.eclipse.keypop.calypso.card.WriteAccessLevel
 import org.eclipse.keypop.calypso.card.card.CalypsoCard
 import org.eclipse.keypop.calypso.card.transaction.AsymmetricCryptoSecuritySetting
 import org.eclipse.keypop.calypso.card.transaction.SymmetricCryptoSecuritySetting
-import org.eclipse.keypop.calypso.card.transaction.spi.AsymmetricCryptoCardTransactionManagerFactory
 import org.eclipse.keypop.calypso.crypto.legacysam.LegacySamApiFactory
 import org.eclipse.keypop.calypso.crypto.legacysam.sam.LegacySam
 import org.eclipse.keypop.reader.CardReader
@@ -64,7 +63,7 @@ class TicketingService @Inject constructor(
       keypopApiProvider.getCalypsoCardApiFactory()
 
   private val asymmetricCryptoSecuritySettings: AsymmetricCryptoSecuritySetting =
-      buildAsymmetricCryptoSecuritySetting()
+      keypopApiProvider.getAsymmetricCryptoSecuritySetting()
   private var symmetricCryptoSecuritySetting: SymmetricCryptoSecuritySetting? = null
 
   private var legacySamApiFactory: LegacySamApiFactory = keypopApiProvider.getLegacySamApiFactory()
@@ -137,7 +136,7 @@ class TicketingService @Inject constructor(
       isSamAvailable = samReader != null && selectSam(samReader)
     }
     symmetricCryptoSecuritySetting =
-        if (isSamAvailable) buildSymmetricCryptoSecuritySetting() else null
+        if (isSamAvailable) getSymmetricCryptoSecuritySetting() else null
     readersInitialized = true
   }
 
@@ -159,12 +158,11 @@ class TicketingService @Inject constructor(
 
   fun onDestroy(observer: CardReaderObserverSpi?) {
     readersInitialized = false
+    readerManager.onDestroy(observer)
     readerManager.clear()
     if (observer != null && readerManager.getCardReader() != null) {
       (readerManager.getCardReader() as ObservableCardReader).removeObserver(observer)
     }
-    val smartCardService = SmartCardServiceProvider.getService()
-    smartCardService.plugins.forEach { smartCardService.unregisterPlugin(it.name) }
   }
 
   fun displayResultSuccess(): Boolean = readerManager.displayResultSuccess()
@@ -172,12 +170,6 @@ class TicketingService @Inject constructor(
   fun displayResultFailed(): Boolean = readerManager.displayResultFailed()
 
   fun prepareAndScheduleCardSelectionScenario() {
-
-    // Get the Keyple main service
-    val smartCardService = SmartCardServiceProvider.getService()
-
-    // Check the Calypso card extension
-    smartCardService.checkCardExtension(calypsoExtensionService)
 
     // Get a new card selection manager
     cardSelectionManager = readerApiFactory.createCardSelectionManager()
@@ -301,7 +293,8 @@ class TicketingService @Inject constructor(
                 asymmetricCryptoSecuritySetting = asymmetricCryptoSecuritySettings,
                 locations = locations,
                 controlDateTime = LocalDateTime.now(),
-                logger = logger)
+                logger = logger,
+                keypopApiProvider = keypopApiProvider)
       }
       is StorageCard -> {
         StorageCardControlManager()
@@ -318,7 +311,7 @@ class TicketingService @Inject constructor(
     }
   }
 
-  private fun buildSymmetricCryptoSecuritySetting(): SymmetricCryptoSecuritySetting {
+  private fun getSymmetricCryptoSecuritySetting(): SymmetricCryptoSecuritySetting {
     return calypsoCardApiFactory
         .createSymmetricCryptoSecuritySetting(
             legacySamApiFactory
@@ -331,25 +324,6 @@ class TicketingService @Inject constructor(
         .enableMultipleSession()
   }
 
-  private fun buildAsymmetricCryptoSecuritySetting(): AsymmetricCryptoSecuritySetting {
-    val pkiExtensionService: PkiExtensionService = PkiExtensionService.getInstance()
-    pkiExtensionService.setTestMode()
-    val transactionManagerFactory: AsymmetricCryptoCardTransactionManagerFactory? =
-        pkiExtensionService.createAsymmetricCryptoCardTransactionManagerFactory()
-    val asymmetricCryptoSecuritySetting =
-        calypsoCardApiFactory.createAsymmetricCryptoSecuritySetting(transactionManagerFactory)
-    asymmetricCryptoSecuritySetting
-        .addPcaCertificate(
-            pkiExtensionService.createPcaCertificate(
-                CardConstants.PCA_PUBLIC_KEY_REFERENCE, CardConstants.PCA_PUBLIC_KEY))
-        .addCaCertificate(pkiExtensionService.createCaCertificate(CardConstants.CA_CERTIFICATE))
-        .addCaCertificateParser(
-            pkiExtensionService.createCaCertificateParser(CertificateType.CALYPSO_LEGACY))
-        .addCardCertificateParser(
-            pkiExtensionService.createCardCertificateParser(CertificateType.CALYPSO_LEGACY))
-    return asymmetricCryptoSecuritySetting
-  }
-
   private fun selectSam(samReader: CardReader): Boolean {
 
     // Create a SAM selection manager.
@@ -358,11 +332,8 @@ class TicketingService @Inject constructor(
     // Create a SAM selection using the Calypso card extension.
     samSelectionManager.prepareSelection(
         readerApiFactory
-            .createBasicCardSelector()
-            .filterByPowerOnData(
-                LegacySamUtil.buildPowerOnDataFilter(LegacySam.ProductType.SAM_C1, null)),
-        LegacySamExtensionService.getInstance()
-            .legacySamApiFactory
+            .createBasicCardSelector(),
+        keypopApiProvider.getLegacySamApiFactory()
             .createLegacySamSelectionExtension())
     try {
       // SAM communication: run the selection scenario.
