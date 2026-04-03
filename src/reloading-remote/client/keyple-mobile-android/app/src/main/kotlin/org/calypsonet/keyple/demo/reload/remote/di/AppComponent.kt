@@ -23,11 +23,13 @@ import org.calypsonet.keyple.demo.reload.remote.di.scopes.AppScoped
 @Component(
     modules =
         [
-            AppModule::class,
-            UIModule::class,
             AndroidSupportInjectionModule::class,
+            AppModule::class,
+            KeypopApiModule::class,
+            LoggerModule::class,
             DataModule::class,
             RestModule::class,
+            UIModule::class,
             ReaderModule::class])
 interface AppComponent : AndroidInjector<Application?> {
   @Component.Builder
