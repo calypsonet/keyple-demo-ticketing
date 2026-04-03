@@ -57,9 +57,6 @@ constructor(
 
   private val readerApiFactory: ReaderApiFactory = keypopApiProvider.getReaderApiFactory()
 
-  // private val calypsoExtensionService: CalypsoExtensionService =
-  //    CalypsoExtensionService.getInstance()
-
   private val calypsoCardApiFactory: CalypsoCardApiFactory =
       keypopApiProvider.getCalypsoCardApiFactory()
 
