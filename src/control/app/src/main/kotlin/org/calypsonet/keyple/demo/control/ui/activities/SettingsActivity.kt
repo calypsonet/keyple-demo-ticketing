@@ -17,12 +17,13 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable
 import android.widget.ArrayAdapter
+import org.calypsonet.keyple.demo.common.data.LocationRepository
+import org.calypsonet.keyple.demo.common.model.Location
 import org.calypsonet.keyple.demo.control.BuildConfig
 import org.calypsonet.keyple.demo.control.R
-import org.calypsonet.keyple.demo.control.domain.model.AppSettings
-import org.calypsonet.keyple.demo.control.domain.model.Location
 import org.calypsonet.keyple.demo.control.databinding.ActivitySettingsBinding
 import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
+import org.calypsonet.keyple.demo.control.domain.model.AppSettings
 
 class SettingsActivity : BaseActivity() {
 
@@ -41,7 +42,7 @@ class SettingsActivity : BaseActivity() {
             this,
             R.layout.spinner_item_location,
             R.id.spinner_item_text,
-            locationRepository.locations)
+            LocationRepository.getLocations())
     activitySettingsBinding.validationPeriodEdit.text =
         Editable.Factory.getInstance().newEditable("10")
     activitySettingsBinding.appVersion.text = getString(R.string.version, BuildConfig.VERSION_NAME)

@@ -14,9 +14,9 @@ package org.calypsonet.keyple.demo.control.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
-import org.calypsonet.keyple.demo.control.domain.model.AppSettings
 import org.calypsonet.keyple.demo.control.databinding.ActivityHomeBinding
 import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
+import org.calypsonet.keyple.demo.control.domain.model.AppSettings
 
 class HomeActivity : BaseActivity() {
 

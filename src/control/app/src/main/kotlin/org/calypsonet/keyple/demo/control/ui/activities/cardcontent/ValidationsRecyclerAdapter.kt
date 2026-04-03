@@ -17,8 +17,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-import org.calypsonet.keyple.demo.control.ui.model.UiValidation
 import org.calypsonet.keyple.demo.control.databinding.ValidationRecyclerRowBinding
+import org.calypsonet.keyple.demo.control.ui.model.UiValidation
 
 class ValidationsRecyclerAdapter(private val validations: ArrayList<UiValidation>) :
     RecyclerView.Adapter<ValidationsRecyclerAdapter.LastValidationHolder>() {

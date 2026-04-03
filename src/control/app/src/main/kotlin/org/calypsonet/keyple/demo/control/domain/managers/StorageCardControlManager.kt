@@ -1,8 +1,22 @@
+/* ******************************************************************************
+ * Copyright (c) 2026 Calypso Networks Association https://calypsonet.org/
+ *
+ * See the NOTICE file(s) distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the BSD 3-Clause License which is available at
+ * https://opensource.org/licenses/BSD-3-Clause.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ ****************************************************************************** */
 package org.calypsonet.keyple.demo.control.domain.managers
 
+import java.time.LocalDateTime
 import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService
 import org.calypsonet.keyple.demo.common.constants.CardConstants
 import org.calypsonet.keyple.demo.common.model.EventStructure
+import org.calypsonet.keyple.demo.common.model.Location
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 import org.calypsonet.keyple.demo.common.parsers.ScContractStructureParser
@@ -12,9 +26,8 @@ import org.calypsonet.keyple.demo.control.domain.mappers.ContractMapper
 import org.calypsonet.keyple.demo.control.domain.mappers.ValidationMapper
 import org.calypsonet.keyple.demo.control.domain.model.AppSettings
 import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
-import org.calypsonet.keyple.demo.control.domain.model.ControlResult
 import org.calypsonet.keyple.demo.control.domain.model.Contract
-import org.calypsonet.keyple.demo.control.domain.model.Location
+import org.calypsonet.keyple.demo.control.domain.model.ControlResult
 import org.calypsonet.keyple.demo.control.domain.model.Status
 import org.calypsonet.keyple.demo.control.domain.model.Validation
 import org.calypsonet.keyple.demo.control.domain.spi.Logger
@@ -23,7 +36,6 @@ import org.eclipse.keypop.reader.ChannelControl
 import org.eclipse.keypop.storagecard.MifareClassicKeyType
 import org.eclipse.keypop.storagecard.card.ProductType
 import org.eclipse.keypop.storagecard.card.StorageCard
-import java.time.LocalDateTime
 
 class StorageCardControlManager {
 
@@ -256,8 +268,7 @@ class StorageCardControlManager {
           status = status,
           authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
           lastValidationsList = validationList,
-          titlesList = displayedContract
-      )
+          titlesList = displayedContract)
     } catch (e: Exception) {
       logger.e("Error during control procedure: ${storageCard.productType.name}", e)
       errorMessage = e.message
@@ -296,8 +307,7 @@ class StorageCardControlManager {
         authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
         titlesList = arrayListOf(),
         errorTitle = errorTitle,
-        errorMessage = errorMessage
-    )
+        errorMessage = errorMessage)
   }
 
   /**

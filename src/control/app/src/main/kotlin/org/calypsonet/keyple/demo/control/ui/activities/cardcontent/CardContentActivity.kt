@@ -16,12 +16,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.calypsonet.keyple.demo.control.R
-import org.calypsonet.keyple.demo.control.ui.model.UiControlResult
 import org.calypsonet.keyple.demo.control.databinding.ActivityCardContentBinding
 import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
 import org.calypsonet.keyple.demo.control.setDivider
 import org.calypsonet.keyple.demo.control.ui.activities.BaseActivity
 import org.calypsonet.keyple.demo.control.ui.activities.ReaderActivity.Companion.CARD_CONTENT
+import org.calypsonet.keyple.demo.control.ui.model.UiControlResult
 import timber.log.Timber
 
 class CardContentActivity : BaseActivity() {

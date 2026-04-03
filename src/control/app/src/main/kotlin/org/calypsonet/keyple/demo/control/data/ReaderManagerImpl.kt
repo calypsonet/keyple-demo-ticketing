@@ -42,6 +42,7 @@ import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ConfigurableCardReader
 import org.eclipse.keypop.reader.ObservableCardReader
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
+import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 
 class ReaderManagerImpl
 @Inject
@@ -224,7 +225,7 @@ constructor(
     return samReaders
   }
 
-    override fun getSamReader(): CardReader? {
+  override fun getSamReader(): CardReader? {
     return if (samReaders.isNotEmpty()) {
       val filteredByName = samReaders.filter { it.name == samReaderName }
       return if (filteredByName.isEmpty()) {
@@ -237,11 +238,11 @@ constructor(
     }
   }
 
-    override fun isStorageCardSupported(): Boolean {
+  override fun isStorageCardSupported(): Boolean {
     return isStorageCardSupported
   }
 
-    override fun clear() {
+  override fun clear() {
     cardReaderProtocols.forEach { entry ->
       (cardReader as ConfigurableCardReader).deactivateProtocol(entry.key)
     }
@@ -256,7 +257,16 @@ constructor(
     errorMedia.release()
   }
 
-    override fun displayResultSuccess(): Boolean {
+  override fun onDestroy(observer: CardReaderObserverSpi?) {
+    clear()
+    if (observer != null && cardReader != null) {
+      (cardReader as ObservableCardReader).removeObserver(observer)
+    }
+    val smartCardService = SmartCardServiceProvider.getService()
+    smartCardService.plugins.forEach { smartCardService.unregisterPlugin(it.name) }
+  }
+
+  override fun displayResultSuccess(): Boolean {
     successMedia.start()
     return true
   }

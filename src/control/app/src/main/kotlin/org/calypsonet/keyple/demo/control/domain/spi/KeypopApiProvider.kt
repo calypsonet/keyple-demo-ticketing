@@ -1,3 +1,15 @@
+/* ******************************************************************************
+ * Copyright (c) 2026 Calypso Networks Association https://calypsonet.org/
+ *
+ * See the NOTICE file(s) distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the BSD 3-Clause License which is available at
+ * https://opensource.org/licenses/BSD-3-Clause.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ ****************************************************************************** */
 package org.calypsonet.keyple.demo.control.domain.spi
 
 import org.eclipse.keypop.calypso.card.CalypsoCardApiFactory
@@ -14,17 +26,17 @@ import org.eclipse.keypop.storagecard.StorageCardApiFactory
  */
 interface KeypopApiProvider {
 
-    /** Returns the factory to create reader-related components (readers, selectors, managers...). */
-    fun getReaderApiFactory(): ReaderApiFactory
+  /** Returns the factory to create reader-related components (readers, selectors, managers...). */
+  fun getReaderApiFactory(): ReaderApiFactory
 
-    /** Returns the factory for Calypso card APIs. */
-    fun getCalypsoCardApiFactory(): CalypsoCardApiFactory
+  /** Returns the factory for Calypso card APIs. */
+  fun getCalypsoCardApiFactory(): CalypsoCardApiFactory
 
-    /** Returns the factory for legacy SAM APIs used to secure Calypso transactions. */
-    fun getLegacySamApiFactory(): LegacySamApiFactory
+  /** Returns the factory for legacy SAM APIs used to secure Calypso transactions. */
+  fun getLegacySamApiFactory(): LegacySamApiFactory
 
-    /** Returns the factory for storage card APIs (e.g., MIFARE Ultralight, ST25...). */
-    fun getStorageCardApiFactory(): StorageCardApiFactory
+  /** Returns the factory for storage card APIs (e.g., MIFARE Ultralight, ST25...). */
+  fun getStorageCardApiFactory(): StorageCardApiFactory
 
-    fun getAsymmetricCryptoSecuritySetting(): AsymmetricCryptoSecuritySetting
+  fun getAsymmetricCryptoSecuritySetting(): AsymmetricCryptoSecuritySetting
 }

@@ -21,10 +21,11 @@ import android.nfc.NfcManager
 import android.os.Bundle
 import org.calypsonet.keyple.demo.control.BuildConfig
 import org.calypsonet.keyple.demo.control.R
+import org.calypsonet.keyple.demo.control.databinding.ActivityDeviceSelectionBinding
 import org.calypsonet.keyple.demo.control.domain.model.AppSettings
 import org.calypsonet.keyple.demo.control.domain.model.ReaderType
-import org.calypsonet.keyple.demo.control.databinding.ActivityDeviceSelectionBinding
 import org.calypsonet.keyple.demo.control.ui.activities.BaseActivity
+import org.calypsonet.keyple.demo.control.ui.activities.SettingsActivity
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
 
 class DeviceSelectionActivity : BaseActivity() {

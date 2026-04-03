@@ -1,3 +1,15 @@
+/* ******************************************************************************
+ * Copyright (c) 2026 Calypso Networks Association https://calypsonet.org/
+ *
+ * See the NOTICE file(s) distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the BSD 3-Clause License which is available at
+ * https://opensource.org/licenses/BSD-3-Clause.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ ****************************************************************************** */
 package org.calypsonet.keyple.demo.control.domain.spi
 
 /**
@@ -9,33 +21,33 @@ package org.calypsonet.keyple.demo.control.domain.spi
  */
 interface Logger {
 
-    /**
-     * Logs a debug message.
-     *
-     * @param message Human-readable debugging message.
-     */
-    fun d(message: String)
+  /**
+   * Logs a debug message.
+   *
+   * @param message Human-readable debugging message.
+   */
+  fun d(message: String)
 
-    /**
-     * Logs an informational message.
-     *
-     * @param message Human-readable message to log.
-     */
-    fun i(message: String)
+  /**
+   * Logs an informational message.
+   *
+   * @param message Human-readable message to log.
+   */
+  fun i(message: String)
 
-    /**
-     * Logs an error message.
-     *
-     * @param message Human-readable message describing the error.
-     * @param throwable Optional associated exception.
-     */
-    fun e(message: String, throwable: Throwable? = null)
+  /**
+   * Logs an error message.
+   *
+   * @param message Human-readable message describing the error.
+   * @param throwable Optional associated exception.
+   */
+  fun e(message: String, throwable: Throwable? = null)
 
-    /**
-     * Logs a warning message.
-     *
-     * @param message Human-readable message describing the error.
-     * @param throwable Optional associated exception.
-     */
-    fun w(message: String, throwable: Throwable? = null)
+  /**
+   * Logs a warning message.
+   *
+   * @param message Human-readable message describing the error.
+   * @param throwable Optional associated exception.
+   */
+  fun w(message: String, throwable: Throwable? = null)
 }

@@ -14,7 +14,7 @@ package org.calypsonet.keyple.demo.control.domain.mappers
 
 import org.calypsonet.keyple.demo.common.model.ContractStructure
 import org.calypsonet.keyple.demo.common.model.EventStructure
-import org.calypsonet.keyple.demo.control.domain.model.Location
+import org.calypsonet.keyple.demo.common.model.Location
 import org.calypsonet.keyple.demo.control.domain.model.Validation
 
 object ValidationMapper {

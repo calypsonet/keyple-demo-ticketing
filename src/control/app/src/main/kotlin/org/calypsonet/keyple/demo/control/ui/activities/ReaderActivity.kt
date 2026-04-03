@@ -22,12 +22,12 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.control.R
-import org.calypsonet.keyple.demo.control.domain.model.AppSettings
-import org.calypsonet.keyple.demo.control.domain.model.Status
 import org.calypsonet.keyple.demo.control.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
 import org.calypsonet.keyple.demo.control.di.scope.ActivityScoped
+import org.calypsonet.keyple.demo.control.domain.model.AppSettings
 import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
+import org.calypsonet.keyple.demo.control.domain.model.Status
 import org.calypsonet.keyple.demo.control.ui.activities.cardcontent.CardContentActivity
 import org.calypsonet.keyple.demo.control.ui.adapters.UiContextImpl
 import org.calypsonet.keyple.demo.control.ui.mappers.toUi
@@ -75,7 +75,8 @@ class ReaderActivity : BaseActivity() {
         withContext(Dispatchers.IO) {
           try {
             cardReaderObserver = CardReaderObserver()
-            ticketingService.init(cardReaderObserver, AppSettings.readerType, UiContextImpl(this@ReaderActivity))
+            ticketingService.init(
+                cardReaderObserver, AppSettings.readerType, UiContextImpl(this@ReaderActivity))
             showToast(
                 getString(
                     if (ticketingService.isSamAvailable) R.string.sam_available
@@ -136,13 +137,11 @@ class ReaderActivity : BaseActivity() {
         if (error != null) {
           Timber.e("Card not selected: %s", error)
           displayResult(
-            UiControlResult(
-              status = Status.INVALID_CARD,
-              authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
-              titlesList = arrayListOf(),
-              errorMessage = error
-            )
-          )
+              UiControlResult(
+                  status = Status.INVALID_CARD,
+                  authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
+                  titlesList = arrayListOf(),
+                  errorMessage = error))
           return
         }
         Timber.i("A Calypso Card selection succeeded.")
@@ -170,9 +169,7 @@ class ReaderActivity : BaseActivity() {
                 // Launch the control procedure
                 withContext(Dispatchers.Main) { progress.show() }
                 val cardReaderResponse =
-                    withContext(Dispatchers.IO) {
-                      ticketingService.executeControlProcedure(locationRepository.locations)
-                    }
+                    withContext(Dispatchers.IO) { ticketingService.executeControlProcedure() }
                 withContext(Dispatchers.Main) {
                   if (cardReaderResponse.status == Status.EMPTY_CARD ||
                       cardReaderResponse.status == Status.ERROR) {

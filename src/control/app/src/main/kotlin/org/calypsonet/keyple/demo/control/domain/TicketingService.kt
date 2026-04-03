@@ -12,14 +12,16 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.control.domain
 
+import java.time.LocalDateTime
+import javax.inject.Inject
 import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService
 import org.calypsonet.keyple.demo.common.constants.CardConstants
+import org.calypsonet.keyple.demo.common.data.LocationRepository
+import org.calypsonet.keyple.demo.control.di.scope.AppScoped
 import org.calypsonet.keyple.demo.control.domain.managers.CalypsoCardControlManager
 import org.calypsonet.keyple.demo.control.domain.managers.StorageCardControlManager
-import org.calypsonet.keyple.demo.control.di.scope.AppScoped
 import org.calypsonet.keyple.demo.control.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.control.domain.model.ControlResult
-import org.calypsonet.keyple.demo.control.domain.model.Location
 import org.calypsonet.keyple.demo.control.domain.model.ReaderType
 import org.calypsonet.keyple.demo.control.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.control.domain.spi.Logger
@@ -43,20 +45,19 @@ import org.eclipse.keypop.reader.selection.spi.SmartCard
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 import org.eclipse.keypop.storagecard.card.ProductType
 import org.eclipse.keypop.storagecard.card.StorageCard
-import java.time.LocalDateTime
-import javax.inject.Inject
 
 @AppScoped
-class TicketingService @Inject constructor(
+class TicketingService
+@Inject
+constructor(
     private var keypopApiProvider: KeypopApiProvider,
     private var readerManager: ReaderManager,
     private var logger: Logger
 ) {
 
-  private val readerApiFactory: ReaderApiFactory =
-      keypopApiProvider.getReaderApiFactory()
+  private val readerApiFactory: ReaderApiFactory = keypopApiProvider.getReaderApiFactory()
 
-  //private val calypsoExtensionService: CalypsoExtensionService =
+  // private val calypsoExtensionService: CalypsoExtensionService =
   //    CalypsoExtensionService.getInstance()
 
   private val calypsoCardApiFactory: CalypsoCardApiFactory =
@@ -88,20 +89,20 @@ class TicketingService @Inject constructor(
   private var indexOfST25CardSelection = 0
   private var indexOfMifareClassic1KCardSelection = 0
 
-    /**
-     * Initializes the ticketing environment and selects a SAM if available.
-     *
-     * Steps:
-     * - Registers the appropriate reader plugin according to [readerType].
-     * - Initializes the primary card reader and SAM reader(s).
-     * - Attaches the optional [observer] to the card reader to receive detection events.
-     * - Selects a SAM and prepares secured session capabilities.
-     *
-     * @param observer Optional reader observer to receive card detection notifications.
-     * @param readerType The target reader type to initialize (e.g., NFC).
-     * @param uiContext Platform-specific context used to register plugins.
-     * @throws IllegalStateException if no SAM reader is available or SAM selection fails.
-     */
+  /**
+   * Initializes the ticketing environment and selects a SAM if available.
+   *
+   * Steps:
+   * - Registers the appropriate reader plugin according to [readerType].
+   * - Initializes the primary card reader and SAM reader(s).
+   * - Attaches the optional [observer] to the card reader to receive detection events.
+   * - Selects a SAM and prepares secured session capabilities.
+   *
+   * @param observer Optional reader observer to receive card detection notifications.
+   * @param readerType The target reader type to initialize (e.g., NFC).
+   * @param uiContext Platform-specific context used to register plugins.
+   * @throws IllegalStateException if no SAM reader is available or SAM selection fails.
+   */
   fun init(observer: CardReaderObserverSpi?, readerType: ReaderType, uiContext: UiContext) {
     // Register plugin
     try {
@@ -123,7 +124,7 @@ class TicketingService @Inject constructor(
     try {
       samReaders = readerManager.initSamReaders()
     } catch (e: Exception) {
-      logger.e( "An error occurred while init sam reader ${e.message}")
+      logger.e("An error occurred while init sam reader ${e.message}")
     }
     if (samReaders.isNullOrEmpty()) {
       logger.w("No SAM reader available")
@@ -282,7 +283,7 @@ class TicketingService @Inject constructor(
     return null
   }
 
-  fun executeControlProcedure(locations: List<Location>): ControlResult {
+  fun executeControlProcedure(): ControlResult {
     return when (smartCard) {
       is CalypsoCard -> {
         CalypsoCardControlManager()
@@ -291,7 +292,7 @@ class TicketingService @Inject constructor(
                 calypsoCard = smartCard as CalypsoCard,
                 symmetricCryptoSecuritySetting = symmetricCryptoSecuritySetting,
                 asymmetricCryptoSecuritySetting = asymmetricCryptoSecuritySettings,
-                locations = locations,
+                locations = LocationRepository.getLocations(),
                 controlDateTime = LocalDateTime.now(),
                 logger = logger,
                 keypopApiProvider = keypopApiProvider)
@@ -301,7 +302,7 @@ class TicketingService @Inject constructor(
             .executeControlProcedure(
                 cardReader = readerManager.getCardReader()!!,
                 storageCard = smartCard as StorageCard,
-                locations = locations,
+                locations = LocationRepository.getLocations(),
                 controlDateTime = LocalDateTime.now(),
                 logger = logger)
       }
@@ -314,9 +315,8 @@ class TicketingService @Inject constructor(
   private fun getSymmetricCryptoSecuritySetting(): SymmetricCryptoSecuritySetting {
     return calypsoCardApiFactory
         .createSymmetricCryptoSecuritySetting(
-            legacySamApiFactory
-                .createSymmetricCryptoCardTransactionManagerFactory(
-                    readerManager.getSamReader(), legacySam))
+            legacySamApiFactory.createSymmetricCryptoCardTransactionManagerFactory(
+                readerManager.getSamReader(), legacySam))
         .assignDefaultKif(
             WriteAccessLevel.PERSONALIZATION, CardConstants.DEFAULT_KIF_PERSONALIZATION)
         .assignDefaultKif(WriteAccessLevel.LOAD, CardConstants.DEFAULT_KIF_LOAD)
@@ -331,10 +331,8 @@ class TicketingService @Inject constructor(
 
     // Create a SAM selection using the Calypso card extension.
     samSelectionManager.prepareSelection(
-        readerApiFactory
-            .createBasicCardSelector(),
-        keypopApiProvider.getLegacySamApiFactory()
-            .createLegacySamSelectionExtension())
+        readerApiFactory.createBasicCardSelector(),
+        keypopApiProvider.getLegacySamApiFactory().createLegacySamSelectionExtension())
     try {
       // SAM communication: run the selection scenario.
       val samSelectionResult = samSelectionManager.processCardSelectionScenario(samReader)
