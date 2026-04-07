@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.ui
+package org.calypsonet.keyple.demo.reload.remote.ui.activities
 
 import android.content.Intent
 import android.nfc.NfcManager

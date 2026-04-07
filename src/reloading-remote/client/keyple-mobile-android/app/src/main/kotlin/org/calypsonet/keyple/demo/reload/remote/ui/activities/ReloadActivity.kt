@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.ui
+package org.calypsonet.keyple.demo.reload.remote.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -30,7 +30,6 @@ import org.calypsonet.keyple.demo.common.dto.WriteContractOutputDto
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.domain.model.AppSettings
-import org.calypsonet.keyple.demo.reload.remote.data.model.CardReaderResponse
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardReaderBinding
