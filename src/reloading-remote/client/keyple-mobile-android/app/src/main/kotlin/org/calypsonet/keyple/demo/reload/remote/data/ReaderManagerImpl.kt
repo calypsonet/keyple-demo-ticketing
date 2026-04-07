@@ -12,8 +12,9 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.data
 
-import org.calypsonet.keyple.demo.reload.remote.domain.spi.ReaderManager
+import javax.inject.Inject
 import kotlin.jvm.Throws
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.ReaderManager
 import org.eclipse.keyple.core.common.KeyplePluginExtensionFactory
 import org.eclipse.keyple.core.service.Plugin
 import org.eclipse.keyple.core.service.SmartCardServiceProvider
@@ -26,7 +27,7 @@ import timber.log.Timber
  * Manager provided to encapsulate slight differences between readers provides methods to improve
  * code readability.
  */
-object ReaderManagerImpl : ReaderManager {
+class ReaderManagerImpl @Inject constructor() : ReaderManager {
 
   /** Register any keyple plugin */
   override fun registerPlugin(factory: KeyplePluginExtensionFactory): Plugin? {

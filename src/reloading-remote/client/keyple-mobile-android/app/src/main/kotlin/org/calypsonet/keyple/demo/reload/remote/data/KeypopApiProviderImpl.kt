@@ -1,3 +1,15 @@
+/* ******************************************************************************
+ * Copyright (c) 2026 Calypso Networks Association https://calypsonet.org/
+ *
+ * See the NOTICE file(s) distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the BSD 3-Clause License which is available at
+ * https://opensource.org/licenses/BSD-3-Clause.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.data
 
 import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService
@@ -12,19 +24,19 @@ import org.eclipse.keypop.storagecard.StorageCardApiFactory
 
 class KeypopApiProviderImpl : KeypopApiProvider {
 
-    override fun getReaderApiFactory(): ReaderApiFactory {
-        return SmartCardServiceProvider.getService().readerApiFactory
-    }
+  override fun getReaderApiFactory(): ReaderApiFactory {
+    return SmartCardServiceProvider.getService().readerApiFactory
+  }
 
-    override fun getCalypsoCardApiFactory(): CalypsoCardApiFactory {
-        return CalypsoExtensionService.getInstance().calypsoCardApiFactory
-    }
+  override fun getCalypsoCardApiFactory(): CalypsoCardApiFactory {
+    return CalypsoExtensionService.getInstance().calypsoCardApiFactory
+  }
 
-    override fun getLegacySamApiFactory(): LegacySamApiFactory {
-        return LegacySamExtensionService.getInstance().legacySamApiFactory
-    }
+  override fun getLegacySamApiFactory(): LegacySamApiFactory {
+    return LegacySamExtensionService.getInstance().legacySamApiFactory
+  }
 
-    override fun getStorageCardApiFactory(): StorageCardApiFactory {
-        return StorageCardExtensionService.getInstance().storageCardApiFactory
-    }
+  override fun getStorageCardApiFactory(): StorageCardApiFactory {
+    return StorageCardExtensionService.getInstance().storageCardApiFactory
+  }
 }

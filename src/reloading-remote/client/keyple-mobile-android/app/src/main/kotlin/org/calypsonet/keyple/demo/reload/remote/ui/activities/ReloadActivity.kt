@@ -29,12 +29,12 @@ import org.calypsonet.keyple.demo.common.dto.WriteContractInputDto
 import org.calypsonet.keyple.demo.common.dto.WriteContractOutputDto
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.reload.remote.R
-import org.calypsonet.keyple.demo.reload.remote.domain.model.AppSettings
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
-import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.reload.remote.di.scopes.ActivityScoped
 import org.calypsonet.keyple.demo.reload.remote.domain.TicketingService
+import org.calypsonet.keyple.demo.reload.remote.domain.model.AppSettings
+import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
+import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.eclipse.keyple.core.util.HexUtil
 import org.eclipse.keypop.calypso.card.card.CalypsoCard

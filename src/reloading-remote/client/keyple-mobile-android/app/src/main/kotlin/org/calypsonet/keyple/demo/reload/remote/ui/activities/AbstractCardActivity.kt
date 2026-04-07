@@ -21,9 +21,9 @@ import org.calypsonet.keyple.demo.reload.remote.data.MifareClassicKeyProviderImp
 import org.calypsonet.keyple.demo.reload.remote.data.ReaderManagerImpl
 import org.calypsonet.keyple.demo.reload.remote.domain.model.AppSettings
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocolEnum
-import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
+import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
 import org.calypsonet.keyple.plugin.bluebird.BluebirdContactlessProtocols
 import org.calypsonet.keyple.plugin.bluebird.BluebirdPluginFactoryProvider
@@ -48,7 +48,7 @@ abstract class AbstractCardActivity :
     AbstractDemoActivity(), CardReaderObserverSpi, CardReaderObservationExceptionHandlerSpi {
 
   @Inject lateinit var localServiceClient: LocalServiceClient
-  @Inject lateinit var readerRepository: ReaderManagerImpl
+  @Inject lateinit var readerManager: ReaderManagerImpl
   lateinit var selectedDeviceReaderName: String
   lateinit var device: DeviceEnum
   lateinit var pluginType: String
@@ -101,7 +101,7 @@ abstract class AbstractCardActivity :
   @Throws(KeyplePluginException::class)
   fun initAndActivateCardReader() {
     val plugin: Plugin? =
-        readerRepository.registerPlugin(
+        readerManager.registerPlugin(
             if (isBluebirdDevice) {
               BluebirdPluginFactoryProvider.provideFactory(
                   this@AbstractCardActivity,
@@ -120,7 +120,7 @@ abstract class AbstractCardActivity :
     }
 
     val observableCardReader: ObservableCardReader =
-        readerRepository.getObservableReader(selectedDeviceReaderName)
+        readerManager.getObservableReader(selectedDeviceReaderName)
     observableCardReader.setReaderObservationExceptionHandler(this@AbstractCardActivity)
     observableCardReader.addObserver(this@AbstractCardActivity)
     observableCardReader.setReaderObservationExceptionHandler(this@AbstractCardActivity)
@@ -160,9 +160,8 @@ abstract class AbstractCardActivity :
 
   @Throws(KeyplePluginException::class)
   fun deactivateAndClearCardReader() {
-    (readerRepository.getReader(selectedDeviceReaderName) as ObservableCardReader)
-        .stopCardDetection()
-    readerRepository.unregisterPlugin(
+    (readerManager.getReader(selectedDeviceReaderName) as ObservableCardReader).stopCardDetection()
+    readerManager.unregisterPlugin(
         if (isBluebirdDevice) BluebirdConstants.PLUGIN_NAME else AndroidNfcConstants.PLUGIN_NAME)
   }
 
@@ -173,14 +172,14 @@ abstract class AbstractCardActivity :
   @Throws(KeyplePluginException::class)
   fun initOmapiReader(callback: () -> Unit) {
     AndroidOmapiPluginFactoryProvider(this@AbstractCardActivity) {
-      readerRepository.registerPlugin(it)
+      readerManager.registerPlugin(it)
       callback()
     }
   }
 
   @Throws(KeyplePluginException::class)
   fun deactivateAndClearOmapiReader() {
-    readerRepository.unregisterPlugin(AndroidOmapiPlugin.PLUGIN_NAME)
+    readerManager.unregisterPlugin(AndroidOmapiPlugin.PLUGIN_NAME)
   }
 
   fun launchInvalidCardResponse(cardType: String, message: String) {

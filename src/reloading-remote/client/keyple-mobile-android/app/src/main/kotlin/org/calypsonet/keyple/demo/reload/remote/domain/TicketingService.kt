@@ -16,18 +16,20 @@ import java.lang.IllegalStateException
 import java.util.*
 import javax.inject.Inject
 import kotlin.jvm.Throws
-import org.calypsonet.keyple.demo.reload.remote.domain.spi.ReaderManager
-import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.reload.remote.di.scopes.AppScoped
+import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.ReaderManager
 import org.eclipse.keypop.reader.selection.spi.SmartCard
 import org.eclipse.keypop.storagecard.card.ProductType.MIFARE_CLASSIC_1K
 import org.eclipse.keypop.storagecard.card.ProductType.MIFARE_ULTRALIGHT
 import org.eclipse.keypop.storagecard.card.ProductType.ST25_SRT512
 
 @AppScoped
-class TicketingService @Inject constructor(
+class TicketingService
+@Inject
+constructor(
     private var keypopApiProvider: KeypopApiProvider,
     private var readerManager: ReaderManager,
     private var logger: Logger
@@ -41,7 +43,7 @@ class TicketingService @Inject constructor(
 
       val reader = readerManager.getReader(readerName)
 
-        val storageCardApiFactory = keypopApiProvider.getStorageCardApiFactory()
+      val storageCardApiFactory = keypopApiProvider.getStorageCardApiFactory()
 
       val cardSelectionManager = readerApiFactory.createCardSelectionManager()
 
@@ -65,22 +67,19 @@ class TicketingService @Inject constructor(
             readerApiFactory
                 .createBasicCardSelector()
                 .filterByCardProtocol(CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name),
-            storageCardApiFactory.createStorageCardSelectionExtension(
-                MIFARE_ULTRALIGHT))
+            storageCardApiFactory.createStorageCardSelectionExtension(MIFARE_ULTRALIGHT))
         cardSelectionManager.prepareSelection(
             readerApiFactory
                 .createBasicCardSelector()
                 .filterByCardProtocol(CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name),
-            storageCardApiFactory.createStorageCardSelectionExtension(
-                ST25_SRT512))
+            storageCardApiFactory.createStorageCardSelectionExtension(ST25_SRT512))
         cardSelectionManager.prepareSelection(
             readerApiFactory
                 .createBasicCardSelector()
                 .filterByCardProtocol(CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name),
-            storageCardApiFactory.createStorageCardSelectionExtension(
-                MIFARE_CLASSIC_1K))
-      } catch(e: Exception) {
-          logger.e("$e")
+            storageCardApiFactory.createStorageCardSelectionExtension(MIFARE_CLASSIC_1K))
+      } catch (e: Exception) {
+        logger.e("$e")
       }
 
       val selectionResult = cardSelectionManager.processCardSelectionScenario(reader)

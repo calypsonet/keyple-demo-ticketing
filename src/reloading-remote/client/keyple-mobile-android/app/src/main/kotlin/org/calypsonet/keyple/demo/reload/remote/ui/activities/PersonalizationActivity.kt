@@ -26,12 +26,12 @@ import org.calypsonet.keyple.demo.common.constants.RemoteServiceId
 import org.calypsonet.keyple.demo.common.dto.CardIssuanceInputDto
 import org.calypsonet.keyple.demo.common.dto.CardIssuanceOutputDto
 import org.calypsonet.keyple.demo.reload.remote.R
-import org.calypsonet.keyple.demo.reload.remote.domain.model.AppSettings
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
-import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityPersonalizationBinding
 import org.calypsonet.keyple.demo.reload.remote.di.scopes.ActivityScoped
 import org.calypsonet.keyple.demo.reload.remote.domain.TicketingService
+import org.calypsonet.keyple.demo.reload.remote.domain.model.AppSettings
+import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
+import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.eclipse.keyple.core.util.HexUtil
 import org.eclipse.keypop.calypso.card.card.CalypsoCard
@@ -157,14 +157,14 @@ class PersonalizationActivity : AbstractCardActivity() {
               when (smartCard) {
                 is CalypsoCard -> {
                   changeDisplay(
-                    UiCardReaderResponse(
+                      UiCardReaderResponse(
                           Status.SUCCESS, cardType, 0, arrayListOf(), arrayListOf(), ""),
                       uniqueIdentifier = HexUtil.toHex(smartCard!!.applicationSerialNumber),
                       finishActivity = true)
                 }
                 is StorageCard -> {
                   changeDisplay(
-                    UiCardReaderResponse(
+                      UiCardReaderResponse(
                           Status.SUCCESS, cardType, 0, arrayListOf(), arrayListOf(), ""),
                       uniqueIdentifier = HexUtil.toHex(smartCard!!.uid),
                       finishActivity = true)

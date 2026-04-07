@@ -18,8 +18,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.calypsonet.keyple.demo.reload.remote.R
-import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardSummaryBinding
+import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.activities.AbstractCardActivity
 import org.calypsonet.keyple.demo.reload.remote.ui.activities.AbstractDemoActivity
 import org.calypsonet.keyple.demo.reload.remote.ui.activities.SelectTicketsActivity

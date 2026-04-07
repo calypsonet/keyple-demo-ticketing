@@ -20,8 +20,8 @@ import com.airbnb.lottie.LottieDrawable
 import java.util.Timer
 import java.util.TimerTask
 import org.calypsonet.keyple.demo.reload.remote.R
-import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityChargeResultBinding
+import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 
 class ReloadResultActivity : AbstractDemoActivity() {

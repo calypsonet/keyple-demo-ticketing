@@ -15,8 +15,8 @@ package org.calypsonet.keyple.demo.reload.remote.ui.cardsummary
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardTitle
 import org.calypsonet.keyple.demo.reload.remote.databinding.TitleRecyclerRowBinding
+import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardTitle
 
 class TitlesRecyclerAdapter(private val titles: List<UiCardTitle>) :
     RecyclerView.Adapter<TitlesRecyclerAdapter.TitleHolder>() {

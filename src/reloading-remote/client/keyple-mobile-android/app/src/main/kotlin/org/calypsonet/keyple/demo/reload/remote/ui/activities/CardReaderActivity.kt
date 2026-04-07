@@ -249,7 +249,7 @@ class CardReaderActivity : AbstractCardActivity() {
               isValid = (it >= 1)
               if (it > 1) "$it trips left" else "$it trip left"
             }
-          UiCardTitle("Multi trip", description ?: "No counter", isValid)
+        UiCardTitle("Multi trip", description ?: "No counter", isValid)
       }
       PriorityCode.SEASON_PASS -> {
         val now = LocalDate.now()
@@ -258,32 +258,30 @@ class CardReaderActivity : AbstractCardActivity() {
                 contractStructure.contractSaleDate.getDate().isEqual(now)) &&
                 (contractStructure.contractValidityEndDate.getDate().isAfter(now) ||
                     contractStructure.contractValidityEndDate.getDate().isEqual(now))
-          UiCardTitle(
-              "Season pass",
-              "From ${
+        UiCardTitle(
+            "Season pass",
+            "From ${
                   contractStructure.contractSaleDate.getDate().format(dateTimeFormatter)
               } to ${
                   contractStructure.contractValidityEndDate.getDate().format(dateTimeFormatter)
               }",
-              isValid
-          )
+            isValid)
       }
       PriorityCode.EXPIRED -> {
-          UiCardTitle(
-              "Season pass - Expired",
-              "From ${
+        UiCardTitle(
+            "Season pass - Expired",
+            "From ${
                   contractStructure.contractSaleDate.getDate().format(dateTimeFormatter)
               } to ${
                   contractStructure.contractValidityEndDate.getDate().format(dateTimeFormatter)
               }",
-              false
-          )
+            false)
       }
       PriorityCode.FORBIDDEN -> {
-          UiCardTitle("FORBIDDEN", "", false)
+        UiCardTitle("FORBIDDEN", "", false)
       }
       PriorityCode.STORED_VALUE -> {
-          UiCardTitle("STORED_VALUE", "", false)
+        UiCardTitle("STORED_VALUE", "", false)
       }
       else -> UiCardTitle("UNKNOWN", "", false)
     }
