@@ -15,9 +15,11 @@ package org.calypsonet.keyple.demo.reload.remote.di
 import dagger.Module
 import dagger.Provides
 import org.calypsonet.keyple.demo.reload.remote.data.ReaderManagerImpl
+import org.calypsonet.keyple.demo.reload.remote.data.RemoteServiceManagerImpl
 import org.calypsonet.keyple.demo.reload.remote.data.network.KeypleSyncEndPointClient
 import org.calypsonet.keyple.demo.reload.remote.di.scopes.AppScoped
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.ReaderManager
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.RemoteServiceManager
 import org.eclipse.keyple.core.service.SmartCardServiceProvider
 import org.eclipse.keyple.distributed.LocalServiceClient
 import org.eclipse.keyple.distributed.LocalServiceClientFactoryBuilder
@@ -45,5 +47,11 @@ class ReaderModule {
   @AppScoped
   fun provideReaderRepository(): ReaderManager {
     return ReaderManagerImpl()
+  }
+
+  @Provides
+  @AppScoped
+  fun provideRemoteServiceManager(localServiceClient: LocalServiceClient): RemoteServiceManager {
+    return RemoteServiceManagerImpl(localServiceClient)
   }
 }

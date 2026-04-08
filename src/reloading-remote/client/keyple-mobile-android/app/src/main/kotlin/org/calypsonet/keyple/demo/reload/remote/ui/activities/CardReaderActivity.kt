@@ -26,9 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.calypsonet.keyple.demo.common.constants.RemoteServiceId
 import org.calypsonet.keyple.demo.common.dto.AnalyzeContractsInputDto
-import org.calypsonet.keyple.demo.common.dto.AnalyzeContractsOutputDto
 import org.calypsonet.keyple.demo.common.model.ContractStructure
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.reload.remote.R
@@ -152,14 +150,9 @@ class CardReaderActivity : AbstractCardActivity() {
               else -> "unexpected card type"
             }
         val analyseContractsInput = AnalyzeContractsInputDto(pluginType)
-        // un-mock for run
         val compatibleContractOutput =
-            localServiceClient.executeRemoteService(
-                RemoteServiceId.READ_CARD_AND_ANALYZE_CONTRACTS.name,
-                selectedDeviceReaderName,
-                smartCard,
-                analyseContractsInput,
-                AnalyzeContractsOutputDto::class.java)
+            ticketingService.analyzeContracts(
+                selectedDeviceReaderName, smartCard, analyseContractsInput)
 
         when (compatibleContractOutput.statusCode) {
           0 -> {

@@ -22,11 +22,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.calypsonet.keyple.demo.common.constants.RemoteServiceId
 import org.calypsonet.keyple.demo.common.dto.AnalyzeContractsInputDto
-import org.calypsonet.keyple.demo.common.dto.AnalyzeContractsOutputDto
 import org.calypsonet.keyple.demo.common.dto.WriteContractInputDto
-import org.calypsonet.keyple.demo.common.dto.WriteContractOutputDto
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardReaderBinding
@@ -134,13 +131,7 @@ class ReloadActivity : AbstractCardActivity() {
         }
 
         val analyseContractsInput = AnalyzeContractsInputDto(pluginType)
-        // un-mock for run
-        localServiceClient.executeRemoteService(
-            RemoteServiceId.READ_CARD_AND_ANALYZE_CONTRACTS.name,
-            selectedDeviceReaderName,
-            smartCard,
-            analyseContractsInput,
-            AnalyzeContractsOutputDto::class.java)
+        ticketingService.analyzeContracts(selectedDeviceReaderName, smartCard, analyseContractsInput)
 
         val contractTariff =
             PriorityCode.findEnumByKey(
@@ -151,12 +142,7 @@ class ReloadActivity : AbstractCardActivity() {
             WriteContractInputDto(contractTariff, ticketToBeLoaded, pluginType)
 
         val writeTitleOutput =
-            localServiceClient.executeRemoteService(
-                RemoteServiceId.READ_CARD_AND_WRITE_CONTRACT.name,
-                selectedDeviceReaderName,
-                smartCard,
-                writeContractInputDto,
-                WriteContractOutputDto::class.java)
+            ticketingService.writeContract(selectedDeviceReaderName, smartCard, writeContractInputDto)
 
         when (writeTitleOutput.statusCode) {
           0 -> {

@@ -30,7 +30,6 @@ import org.calypsonet.keyple.plugin.bluebird.BluebirdPluginFactoryProvider
 import org.calypsonet.keyple.plugin.storagecard.ApduInterpreterFactoryProvider
 import org.eclipse.keyple.core.service.KeyplePluginException
 import org.eclipse.keyple.core.service.Plugin
-import org.eclipse.keyple.distributed.LocalServiceClient
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcConfig
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcConstants
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcPluginFactoryProvider
@@ -47,7 +46,6 @@ import timber.log.Timber
 abstract class AbstractCardActivity :
     AbstractDemoActivity(), CardReaderObserverSpi, CardReaderObservationExceptionHandlerSpi {
 
-  @Inject lateinit var localServiceClient: LocalServiceClient
   @Inject lateinit var readerManager: ReaderManagerImpl
   lateinit var selectedDeviceReaderName: String
   lateinit var device: DeviceEnum
