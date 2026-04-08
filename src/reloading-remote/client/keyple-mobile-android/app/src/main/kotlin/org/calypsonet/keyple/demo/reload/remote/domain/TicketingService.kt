@@ -16,11 +16,18 @@ import java.lang.IllegalStateException
 import java.util.*
 import javax.inject.Inject
 import kotlin.jvm.Throws
+import org.calypsonet.keyple.demo.common.dto.AnalyzeContractsInputDto
+import org.calypsonet.keyple.demo.common.dto.AnalyzeContractsOutputDto
+import org.calypsonet.keyple.demo.common.dto.CardIssuanceInputDto
+import org.calypsonet.keyple.demo.common.dto.CardIssuanceOutputDto
+import org.calypsonet.keyple.demo.common.dto.WriteContractInputDto
+import org.calypsonet.keyple.demo.common.dto.WriteContractOutputDto
 import org.calypsonet.keyple.demo.reload.remote.di.scopes.AppScoped
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.ReaderManager
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.RemoteServiceManager
 import org.eclipse.keypop.reader.selection.spi.SmartCard
 import org.eclipse.keypop.storagecard.card.ProductType.MIFARE_CLASSIC_1K
 import org.eclipse.keypop.storagecard.card.ProductType.MIFARE_ULTRALIGHT
@@ -32,7 +39,8 @@ class TicketingService
 constructor(
     private var keypopApiProvider: KeypopApiProvider,
     private var readerManager: ReaderManager,
-    private var logger: Logger
+    private var logger: Logger,
+    private var remoteServiceManager: RemoteServiceManager
 ) {
 
   /** Select the card and retrieve the active card */
@@ -85,17 +93,41 @@ constructor(
       val selectionResult = cardSelectionManager.processCardSelectionScenario(reader)
       val smartCard = selectionResult.activeSmartCard
       if (smartCard != null) {
-        // TODO move this code to the calling method
-        //          val calypsoCard = selectionResult.activeSmartCard as CalypsoCard
-        //          // check is the DF name is the expected one (Req. TL-SEL-AIDMATCH.1)
-        //          if (!CardConstants.aidMatch(
-        //              aidEnums[selectionResult.activeSelectionIndex], calypsoCard.dfName)) {
-        //            throw IllegalStateException("Unexpected DF name")
-        //          }
-        return smartCard
+          // TODO move this code to the calling method
+          //          val calypsoCard = selectionResult.activeSmartCard as CalypsoCard
+          //          // check is the DF name is the expected one (Req. TL-SEL-AIDMATCH.1)
+          //          if (!CardConstants.aidMatch(
+          //              aidEnums[selectionResult.activeSelectionIndex], calypsoCard.dfName)) {
+          //            throw IllegalStateException("Unexpected DF name")
+          //          }
+          return smartCard
       } else {
         throw IllegalStateException("Matching smartcard not found")
       }
     }
+  }
+
+  fun analyzeContracts(
+      localReaderName: String,
+      smartCard: SmartCard,
+      input: AnalyzeContractsInputDto
+  ): AnalyzeContractsOutputDto {
+    return remoteServiceManager.analyzeContracts(localReaderName, smartCard, input)
+  }
+
+  fun personalizeCard(
+      localReaderName: String,
+      smartCard: SmartCard,
+      input: CardIssuanceInputDto
+  ): CardIssuanceOutputDto {
+    return remoteServiceManager.personalizeCard(localReaderName, smartCard, input)
+  }
+
+  fun writeContract(
+      localReaderName: String,
+      smartCard: SmartCard,
+      input: WriteContractInputDto
+  ): WriteContractOutputDto {
+    return remoteServiceManager.writeContract(localReaderName, smartCard, input)
   }
 }
