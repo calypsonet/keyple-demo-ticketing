@@ -16,38 +16,42 @@ import java.lang.IllegalStateException
 import java.util.*
 import javax.inject.Inject
 import kotlin.jvm.Throws
-import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService
-import org.calypsonet.keyple.demo.reload.remote.data.ReaderRepository
-import org.calypsonet.keyple.demo.reload.remote.data.model.CardProtocolEnum
+import org.calypsonet.keyple.demo.common.dto.AnalyzeContractsInputDto
+import org.calypsonet.keyple.demo.common.dto.AnalyzeContractsOutputDto
+import org.calypsonet.keyple.demo.common.dto.CardIssuanceInputDto
+import org.calypsonet.keyple.demo.common.dto.CardIssuanceOutputDto
+import org.calypsonet.keyple.demo.common.dto.WriteContractInputDto
+import org.calypsonet.keyple.demo.common.dto.WriteContractOutputDto
 import org.calypsonet.keyple.demo.reload.remote.di.scopes.AppScoped
-import org.eclipse.keyple.card.calypso.CalypsoExtensionService
-import org.eclipse.keyple.core.service.SmartCardServiceProvider
+import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocolEnum
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.KeypopApiProvider
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.ReaderManager
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.RemoteServiceManager
 import org.eclipse.keypop.reader.selection.spi.SmartCard
 import org.eclipse.keypop.storagecard.card.ProductType.MIFARE_CLASSIC_1K
 import org.eclipse.keypop.storagecard.card.ProductType.MIFARE_ULTRALIGHT
 import org.eclipse.keypop.storagecard.card.ProductType.ST25_SRT512
 
 @AppScoped
-class TicketingService @Inject constructor(private var readerRepository: ReaderRepository) {
+class TicketingService
+@Inject
+constructor(
+    private var keypopApiProvider: KeypopApiProvider,
+    private var readerManager: ReaderManager,
+    private var logger: Logger,
+    private var remoteServiceManager: RemoteServiceManager
+) {
 
   /** Select the card and retrieve the active card */
   @Throws(IllegalStateException::class, Exception::class)
   fun getSmartCard(readerName: String, aidEnums: ArrayList<ByteArray>): SmartCard {
-    with(ReaderRepository.getReader(readerName)) {
-      val smartCardService = SmartCardServiceProvider.getService()
+    with(readerManager.getReader(readerName)) {
+      val readerApiFactory = keypopApiProvider.getReaderApiFactory()
 
-      val readerApiFactory = smartCardService.readerApiFactory
+      val reader = readerManager.getReader(readerName)
 
-      val reader = ReaderRepository.getReader(readerName)
-
-      /** Get the Calypso card extension service */
-      val calypsoExtension = CalypsoExtensionService.getInstance()
-
-      /** Get the Storage card extension service */
-      val storageCardExtension = StorageCardExtensionService.getInstance()
-
-      /** Verify that the extension's API level is consistent with the current service. */
-      smartCardService.checkCardExtension(calypsoExtension)
+      val storageCardApiFactory = keypopApiProvider.getStorageCardApiFactory()
 
       val cardSelectionManager = readerApiFactory.createCardSelectionManager()
 
@@ -63,27 +67,27 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
                 .filterByDfName(it)
         cardSelectionManager.prepareSelection(
             calypsoCardSelector,
-            calypsoExtension.calypsoCardApiFactory.createCalypsoCardSelectionExtension())
+            keypopApiProvider.getCalypsoCardApiFactory().createCalypsoCardSelectionExtension())
       }
-      if (storageCardExtension != null) {
+
+      try {
         cardSelectionManager.prepareSelection(
             readerApiFactory
                 .createBasicCardSelector()
                 .filterByCardProtocol(CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name),
-            storageCardExtension.storageCardApiFactory.createStorageCardSelectionExtension(
-                MIFARE_ULTRALIGHT))
+            storageCardApiFactory.createStorageCardSelectionExtension(MIFARE_ULTRALIGHT))
         cardSelectionManager.prepareSelection(
             readerApiFactory
                 .createBasicCardSelector()
                 .filterByCardProtocol(CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name),
-            storageCardExtension.storageCardApiFactory.createStorageCardSelectionExtension(
-                ST25_SRT512))
+            storageCardApiFactory.createStorageCardSelectionExtension(ST25_SRT512))
         cardSelectionManager.prepareSelection(
             readerApiFactory
                 .createBasicCardSelector()
                 .filterByCardProtocol(CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name),
-            storageCardExtension.storageCardApiFactory.createStorageCardSelectionExtension(
-                MIFARE_CLASSIC_1K))
+            storageCardApiFactory.createStorageCardSelectionExtension(MIFARE_CLASSIC_1K))
+      } catch (e: Exception) {
+        logger.e("$e")
       }
 
       val selectionResult = cardSelectionManager.processCardSelectionScenario(reader)
@@ -101,5 +105,29 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
         throw IllegalStateException("Matching smartcard not found")
       }
     }
+  }
+
+  fun analyzeContracts(
+      localReaderName: String,
+      smartCard: SmartCard,
+      input: AnalyzeContractsInputDto
+  ): AnalyzeContractsOutputDto {
+    return remoteServiceManager.analyzeContracts(localReaderName, smartCard, input)
+  }
+
+  fun personalizeCard(
+      localReaderName: String,
+      smartCard: SmartCard,
+      input: CardIssuanceInputDto
+  ): CardIssuanceOutputDto {
+    return remoteServiceManager.personalizeCard(localReaderName, smartCard, input)
+  }
+
+  fun writeContract(
+      localReaderName: String,
+      smartCard: SmartCard,
+      input: WriteContractInputDto
+  ): WriteContractOutputDto {
+    return remoteServiceManager.writeContract(localReaderName, smartCard, input)
   }
 }

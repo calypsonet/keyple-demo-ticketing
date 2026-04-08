@@ -15,11 +15,10 @@ package org.calypsonet.keyple.demo.reload.remote.ui.cardsummary
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import org.calypsonet.keyple.demo.reload.remote.data.model.CardTitle
 import org.calypsonet.keyple.demo.reload.remote.databinding.TitleRecyclerRowBinding
-import org.calypsonet.keyple.demo.reload.remote.inflate
+import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardTitle
 
-class TitlesRecyclerAdapter(private val titles: List<CardTitle>) :
+class TitlesRecyclerAdapter(private val titles: List<UiCardTitle>) :
     RecyclerView.Adapter<TitlesRecyclerAdapter.TitleHolder>() {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TitleHolder {
@@ -31,9 +30,9 @@ class TitlesRecyclerAdapter(private val titles: List<CardTitle>) :
   class TitleHolder(private val binding: TitleRecyclerRowBinding) :
       RecyclerView.ViewHolder(binding.root) {
 
-    private var title: CardTitle? = null
+    private var title: UiCardTitle? = null
 
-    fun bindItem(title: CardTitle) {
+    fun bindItem(title: UiCardTitle) {
       this.title = title
       binding.titleName.text = title.name
       binding.titleDescription.text = title.description

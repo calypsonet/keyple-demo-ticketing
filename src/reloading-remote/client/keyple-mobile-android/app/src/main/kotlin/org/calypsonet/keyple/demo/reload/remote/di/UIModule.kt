@@ -15,18 +15,18 @@ package org.calypsonet.keyple.demo.reload.remote.di
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import org.calypsonet.keyple.demo.reload.remote.di.scopes.ActivityScoped
-import org.calypsonet.keyple.demo.reload.remote.ui.CardReaderActivity
-import org.calypsonet.keyple.demo.reload.remote.ui.CheckoutActivity
-import org.calypsonet.keyple.demo.reload.remote.ui.ConfigurationSettingsActivity
-import org.calypsonet.keyple.demo.reload.remote.ui.HomeActivity
-import org.calypsonet.keyple.demo.reload.remote.ui.MainActivity
-import org.calypsonet.keyple.demo.reload.remote.ui.PaymentValidatedActivity
-import org.calypsonet.keyple.demo.reload.remote.ui.PersonalizationActivity
-import org.calypsonet.keyple.demo.reload.remote.ui.ReloadActivity
-import org.calypsonet.keyple.demo.reload.remote.ui.ReloadResultActivity
-import org.calypsonet.keyple.demo.reload.remote.ui.SelectTicketsActivity
-import org.calypsonet.keyple.demo.reload.remote.ui.ServerSettingsActivity
-import org.calypsonet.keyple.demo.reload.remote.ui.SettingsMenuActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.activities.CardReaderActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.activities.CheckoutActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.activities.ConfigurationSettingsActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.activities.HomeActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.activities.MainActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.activities.PaymentValidatedActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.activities.PersonalizationActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.activities.ReloadActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.activities.ReloadResultActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.activities.SelectTicketsActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.activities.ServerSettingsActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.activities.SettingsMenuActivity
 import org.calypsonet.keyple.demo.reload.remote.ui.cardsummary.CardSummaryActivity
 
 @Suppress("unused")

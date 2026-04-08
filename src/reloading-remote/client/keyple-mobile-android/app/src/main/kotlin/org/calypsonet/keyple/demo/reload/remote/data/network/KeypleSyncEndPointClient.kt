@@ -13,6 +13,7 @@
 package org.calypsonet.keyple.demo.reload.remote.data.network
 
 import io.reactivex.Single
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.RestClient
 import org.eclipse.keyple.distributed.MessageDto
 import org.eclipse.keyple.distributed.spi.SyncEndpointClientSpi
 

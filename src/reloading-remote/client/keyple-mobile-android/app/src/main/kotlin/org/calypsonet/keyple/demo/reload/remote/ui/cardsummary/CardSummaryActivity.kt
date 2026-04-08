@@ -18,12 +18,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.calypsonet.keyple.demo.reload.remote.R
-import org.calypsonet.keyple.demo.reload.remote.data.model.CardReaderResponse
-import org.calypsonet.keyple.demo.reload.remote.data.model.Status
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardSummaryBinding
-import org.calypsonet.keyple.demo.reload.remote.ui.AbstractCardActivity
-import org.calypsonet.keyple.demo.reload.remote.ui.AbstractDemoActivity
-import org.calypsonet.keyple.demo.reload.remote.ui.SelectTicketsActivity
+import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
+import org.calypsonet.keyple.demo.reload.remote.ui.activities.AbstractCardActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.activities.AbstractDemoActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.activities.SelectTicketsActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 
 class CardSummaryActivity : AbstractDemoActivity() {
 
@@ -37,7 +37,7 @@ class CardSummaryActivity : AbstractDemoActivity() {
     toolbarBinding = activityCardSummaryBinding.appBarLayout
     setContentView(activityCardSummaryBinding.root)
 
-    val cardContent: CardReaderResponse =
+    val cardContent: UiCardReaderResponse =
         intent.getParcelableExtra(AbstractCardActivity.CARD_CONTENT)!!
 
     titleLinearLayoutManager = LinearLayoutManager(this)
