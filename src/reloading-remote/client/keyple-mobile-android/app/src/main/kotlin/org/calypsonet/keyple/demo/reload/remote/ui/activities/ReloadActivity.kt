@@ -131,7 +131,8 @@ class ReloadActivity : AbstractCardActivity() {
         }
 
         val analyseContractsInput = AnalyzeContractsInputDto(pluginType)
-        ticketingService.analyzeContracts(selectedDeviceReaderName, smartCard, analyseContractsInput)
+        ticketingService.analyzeContracts(
+            selectedDeviceReaderName, smartCard, analyseContractsInput)
 
         val contractTariff =
             PriorityCode.findEnumByKey(
@@ -142,7 +143,8 @@ class ReloadActivity : AbstractCardActivity() {
             WriteContractInputDto(contractTariff, ticketToBeLoaded, pluginType)
 
         val writeTitleOutput =
-            ticketingService.writeContract(selectedDeviceReaderName, smartCard, writeContractInputDto)
+            ticketingService.writeContract(
+                selectedDeviceReaderName, smartCard, writeContractInputDto)
 
         when (writeTitleOutput.statusCode) {
           0 -> {

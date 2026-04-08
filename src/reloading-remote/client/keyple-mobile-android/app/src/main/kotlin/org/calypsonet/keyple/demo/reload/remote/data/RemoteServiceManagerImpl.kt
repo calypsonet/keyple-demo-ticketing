@@ -1,3 +1,15 @@
+/* ******************************************************************************
+ * Copyright (c) 2026 Calypso Networks Association https://calypsonet.org/
+ *
+ * See the NOTICE file(s) distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the BSD 3-Clause License which is available at
+ * https://opensource.org/licenses/BSD-3-Clause.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.data
 
 import javax.inject.Inject
@@ -16,42 +28,42 @@ class RemoteServiceManagerImpl
 @Inject
 constructor(private val localServiceClient: LocalServiceClient) : RemoteServiceManager {
 
-    override fun analyzeContracts(
-        localReaderName: String,
-        smartCard: SmartCard,
-        input: AnalyzeContractsInputDto
-    ): AnalyzeContractsOutputDto {
-        return localServiceClient.executeRemoteService(
-            RemoteServiceId.READ_CARD_AND_ANALYZE_CONTRACTS.name,
-            localReaderName,
-            smartCard,
-            input,
-            AnalyzeContractsOutputDto::class.java)
-    }
+  override fun analyzeContracts(
+      localReaderName: String,
+      smartCard: SmartCard,
+      input: AnalyzeContractsInputDto
+  ): AnalyzeContractsOutputDto {
+    return localServiceClient.executeRemoteService(
+        RemoteServiceId.READ_CARD_AND_ANALYZE_CONTRACTS.name,
+        localReaderName,
+        smartCard,
+        input,
+        AnalyzeContractsOutputDto::class.java)
+  }
 
-    override fun personalizeCard(
-        localReaderName: String,
-        smartCard: SmartCard,
-        input: CardIssuanceInputDto
-    ): CardIssuanceOutputDto {
-        return localServiceClient.executeRemoteService(
-            RemoteServiceId.PERSONALIZE_CARD.name,
-            localReaderName,
-            smartCard,
-            input,
-            CardIssuanceOutputDto::class.java)
-    }
+  override fun personalizeCard(
+      localReaderName: String,
+      smartCard: SmartCard,
+      input: CardIssuanceInputDto
+  ): CardIssuanceOutputDto {
+    return localServiceClient.executeRemoteService(
+        RemoteServiceId.PERSONALIZE_CARD.name,
+        localReaderName,
+        smartCard,
+        input,
+        CardIssuanceOutputDto::class.java)
+  }
 
-    override fun writeContract(
-        localReaderName: String,
-        smartCard: SmartCard,
-        input: WriteContractInputDto
-    ): WriteContractOutputDto {
-        return localServiceClient.executeRemoteService(
-            RemoteServiceId.READ_CARD_AND_WRITE_CONTRACT.name,
-            localReaderName,
-            smartCard,
-            input,
-            WriteContractOutputDto::class.java)
-    }
+  override fun writeContract(
+      localReaderName: String,
+      smartCard: SmartCard,
+      input: WriteContractInputDto
+  ): WriteContractOutputDto {
+    return localServiceClient.executeRemoteService(
+        RemoteServiceId.READ_CARD_AND_WRITE_CONTRACT.name,
+        localReaderName,
+        smartCard,
+        input,
+        WriteContractOutputDto::class.java)
+  }
 }

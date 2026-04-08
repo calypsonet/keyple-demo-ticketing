@@ -93,14 +93,14 @@ constructor(
       val selectionResult = cardSelectionManager.processCardSelectionScenario(reader)
       val smartCard = selectionResult.activeSmartCard
       if (smartCard != null) {
-          // TODO move this code to the calling method
-          //          val calypsoCard = selectionResult.activeSmartCard as CalypsoCard
-          //          // check is the DF name is the expected one (Req. TL-SEL-AIDMATCH.1)
-          //          if (!CardConstants.aidMatch(
-          //              aidEnums[selectionResult.activeSelectionIndex], calypsoCard.dfName)) {
-          //            throw IllegalStateException("Unexpected DF name")
-          //          }
-          return smartCard
+        // TODO move this code to the calling method
+        //          val calypsoCard = selectionResult.activeSmartCard as CalypsoCard
+        //          // check is the DF name is the expected one (Req. TL-SEL-AIDMATCH.1)
+        //          if (!CardConstants.aidMatch(
+        //              aidEnums[selectionResult.activeSelectionIndex], calypsoCard.dfName)) {
+        //            throw IllegalStateException("Unexpected DF name")
+        //          }
+        return smartCard
       } else {
         throw IllegalStateException("Matching smartcard not found")
       }
