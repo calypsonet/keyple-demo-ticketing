@@ -13,15 +13,12 @@
 package org.calypsonet.keyple.demo.reload.remote.data
 
 import android.app.Activity
-import android.media.MediaPlayer
 import javax.inject.Inject
 import kotlin.collections.set
 import kotlin.jvm.Throws
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import org.calypsonet.keyple.demo.control.R
-import org.calypsonet.keyple.demo.control.domain.model.AppSettings.readerType
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ReaderType
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.ReaderManager
@@ -62,9 +59,6 @@ class ReaderManagerImpl @Inject constructor() : ReaderManager {
   private var samReaderProtocolPhysicalName: String? = null
   private var samReaderProtocolLogicalName: String? = null
   private var samReaders: MutableList<CardReader> = mutableListOf()
-  // IHM
-  private lateinit var successMedia: MediaPlayer
-  private lateinit var errorMedia: MediaPlayer
 
   private fun initReaderType(readerType: ReaderType) {
     when (readerType) {
@@ -109,8 +103,6 @@ class ReaderManagerImpl @Inject constructor() : ReaderManager {
   override fun registerPlugin(readerType: ReaderType, uiContext: UiContext) {
     initReaderType(readerType)
     val activity = uiContext.adaptTo(Activity::class.java)
-    successMedia = MediaPlayer.create(activity, R.raw.success)
-    errorMedia = MediaPlayer.create(activity, R.raw.error)
     runBlocking {
       val pluginFactory =
           withContext(Dispatchers.IO) {
@@ -141,10 +133,6 @@ class ReaderManagerImpl @Inject constructor() : ReaderManager {
         it.deactivateProtocol(samReaderProtocolPhysicalName)
       }
     }
-    successMedia.stop()
-    successMedia.release()
-    errorMedia.stop()
-    errorMedia.release()
   }
 
   /** Unregister any keyple plugin */
