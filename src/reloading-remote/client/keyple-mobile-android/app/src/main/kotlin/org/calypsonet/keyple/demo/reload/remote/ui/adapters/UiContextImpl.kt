@@ -10,18 +10,18 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.domain.spi
+package org.calypsonet.keyple.demo.reload.remote.ui.adapters
 
-import org.calypsonet.keyple.demo.reload.remote.domain.model.ReaderType
-import org.eclipse.keypop.reader.CardReader
-import org.eclipse.keypop.reader.ObservableCardReader
+import android.app.Activity
+import org.calypsonet.keyple.demo.validation.domain.spi.UiContext
 
-interface ReaderManager {
-  fun registerPlugin(readerType: ReaderType, uiContext: UiContext)
+class UiContextImpl(private val activity: Activity) : UiContext {
 
-  fun unregisterPlugin(pluginName: String)
-
-  fun getReader(readerName: String): CardReader
-
-  fun getObservableReader(readerName: String): ObservableCardReader
+  override fun <T> adaptTo(adapter: Class<T>): T {
+    if (adapter.isAssignableFrom(Activity::class.java)) {
+      @Suppress("UNCHECKED_CAST")
+      return activity as T
+    }
+    throw IllegalArgumentException("Unsupported adapter type: $adapter")
+  }
 }

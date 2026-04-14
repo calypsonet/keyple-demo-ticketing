@@ -12,13 +12,32 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.data
 
+import android.app.Activity
+import android.media.MediaPlayer
 import javax.inject.Inject
+import kotlin.collections.set
 import kotlin.jvm.Throws
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import org.calypsonet.keyple.demo.control.R
+import org.calypsonet.keyple.demo.control.domain.model.AppSettings.readerType
+import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocolEnum
+import org.calypsonet.keyple.demo.reload.remote.domain.model.ReaderType
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.ReaderManager
-import org.eclipse.keyple.core.common.KeyplePluginExtensionFactory
-import org.eclipse.keyple.core.service.Plugin
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.UiContext
+import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
+import org.calypsonet.keyple.plugin.bluebird.BluebirdContactlessProtocols
+import org.calypsonet.keyple.plugin.bluebird.BluebirdPluginFactoryProvider
+import org.calypsonet.keyple.plugin.storagecard.ApduInterpreterFactoryProvider
 import org.eclipse.keyple.core.service.SmartCardServiceProvider
+import org.eclipse.keyple.core.util.protocol.ContactCardCommonProtocol
+import org.eclipse.keyple.plugin.android.nfc.AndroidNfcConfig
+import org.eclipse.keyple.plugin.android.nfc.AndroidNfcConstants
+import org.eclipse.keyple.plugin.android.nfc.AndroidNfcPluginFactoryProvider
+import org.eclipse.keyple.plugin.android.nfc.AndroidNfcSupportedProtocols
 import org.eclipse.keypop.reader.CardReader
+import org.eclipse.keypop.reader.ConfigurableCardReader
 import org.eclipse.keypop.reader.ObservableCardReader
 import org.eclipse.keypop.reader.ReaderCommunicationException
 import timber.log.Timber
@@ -29,13 +48,103 @@ import timber.log.Timber
  */
 class ReaderManagerImpl @Inject constructor() : ReaderManager {
 
-  /** Register any keyple plugin */
-  override fun registerPlugin(factory: KeyplePluginExtensionFactory): Plugin? {
-    return try {
-      SmartCardServiceProvider.getService().registerPlugin(factory)
-    } catch (_: Exception) {
-      null
+  private lateinit var readerType: ReaderType
+  // Card
+  private lateinit var cardPluginName: String
+  private lateinit var cardReaderName: String
+  private var cardReaderProtocols = mutableMapOf<String, String>()
+  private var cardReader: CardReader? = null
+  private var isStorageCardSupported = false
+  // SAM
+  private lateinit var samPluginName: String
+  private lateinit var samReaderNameRegex: String
+  private lateinit var samReaderName: String
+  private var samReaderProtocolPhysicalName: String? = null
+  private var samReaderProtocolLogicalName: String? = null
+  private var samReaders: MutableList<CardReader> = mutableListOf()
+  // IHM
+  private lateinit var successMedia: MediaPlayer
+  private lateinit var errorMedia: MediaPlayer
+
+  private fun initReaderType(readerType: ReaderType) {
+    when (readerType) {
+      ReaderType.BLUEBIRD -> initBluebirdReader()
+      ReaderType.NFC_TERMINAL -> initNfcTerminalReader()
     }
+  }
+
+  private fun initBluebirdReader() {
+    readerType = ReaderType.BLUEBIRD
+    cardPluginName = BluebirdConstants.PLUGIN_NAME
+    cardReaderName = BluebirdConstants.CARD_READER_NAME
+    cardReaderProtocols[BluebirdContactlessProtocols.ISO_14443_4_A.name] =
+        CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name
+    cardReaderProtocols[BluebirdContactlessProtocols.ISO_14443_4_B.name] =
+        CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name
+    cardReaderProtocols[BluebirdContactlessProtocols.MIFARE_ULTRALIGHT.name] =
+        CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name
+    cardReaderProtocols[BluebirdContactlessProtocols.MIFARE_CLASSIC.name] =
+        CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name
+    samPluginName = BluebirdConstants.PLUGIN_NAME
+    samReaderNameRegex = ".*ContactReader"
+    samReaderProtocolPhysicalName = ContactCardCommonProtocol.ISO_7816_3.name
+    samReaderProtocolLogicalName = CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name
+    isStorageCardSupported = true
+  }
+
+  private fun initNfcTerminalReader() {
+    readerType = ReaderType.NFC_TERMINAL
+    cardPluginName = AndroidNfcConstants.PLUGIN_NAME
+    cardReaderName = AndroidNfcConstants.READER_NAME
+    cardReaderProtocols[AndroidNfcSupportedProtocols.ISO_14443_4.name] =
+        CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name
+    samPluginName = ""
+    samReaderNameRegex = ""
+    samReaderName = ""
+    samReaderProtocolPhysicalName = ""
+    samReaderProtocolLogicalName = ""
+  }
+
+  /** Register any keyple plugin */
+  override fun registerPlugin(readerType: ReaderType, uiContext: UiContext) {
+    initReaderType(readerType)
+    val activity = uiContext.adaptTo(Activity::class.java)
+    successMedia = MediaPlayer.create(activity, R.raw.success)
+    errorMedia = MediaPlayer.create(activity, R.raw.error)
+    runBlocking {
+      val pluginFactory =
+          withContext(Dispatchers.IO) {
+            when (readerType) {
+              ReaderType.BLUEBIRD ->
+                  BluebirdPluginFactoryProvider.provideFactory(
+                      activity,
+                      ApduInterpreterFactoryProvider.provideFactory(),
+                      MifareClassicKeyProviderImpl())
+              ReaderType.NFC_TERMINAL ->
+                  AndroidNfcPluginFactoryProvider.provideFactory(
+                      AndroidNfcConfig(
+                          activity = activity,
+                          apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
+                          keyProvider = MifareClassicKeyProviderImpl()))
+            }
+          }
+      SmartCardServiceProvider.getService().registerPlugin(pluginFactory)
+    }
+  }
+
+  fun clear() {
+    cardReaderProtocols.forEach { entry ->
+      (cardReader as ConfigurableCardReader).deactivateProtocol(entry.key)
+    }
+    samReaders.forEach {
+      if (it is ConfigurableCardReader) {
+        it.deactivateProtocol(samReaderProtocolPhysicalName)
+      }
+    }
+    successMedia.stop()
+    successMedia.release()
+    errorMedia.stop()
+    errorMedia.release()
   }
 
   /** Unregister any keyple plugin */

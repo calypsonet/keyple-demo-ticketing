@@ -10,18 +10,9 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.domain.spi
+package org.calypsonet.keyple.demo.reload.remote.domain.model
 
-import org.calypsonet.keyple.demo.reload.remote.domain.model.ReaderType
-import org.eclipse.keypop.reader.CardReader
-import org.eclipse.keypop.reader.ObservableCardReader
-
-interface ReaderManager {
-  fun registerPlugin(readerType: ReaderType, uiContext: UiContext)
-
-  fun unregisterPlugin(pluginName: String)
-
-  fun getReader(readerName: String): CardReader
-
-  fun getObservableReader(readerName: String): ObservableCardReader
+enum class ReaderType {
+  BLUEBIRD,
+  NFC_TERMINAL
 }
