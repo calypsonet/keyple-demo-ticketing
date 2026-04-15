@@ -13,7 +13,7 @@
 package org.calypsonet.keyple.demo.reload.remote.ui.adapters
 
 import android.app.Activity
-import org.calypsonet.keyple.demo.validation.domain.spi.UiContext
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.UiContext
 
 class UiContextImpl(private val activity: Activity) : UiContext {
 

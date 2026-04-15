@@ -20,7 +20,6 @@ import java.lang.IllegalStateException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-import javax.inject.Inject
 import kotlin.Exception
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -32,7 +31,6 @@ import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.reload.remote.di.scopes.ActivityScoped
-import org.calypsonet.keyple.demo.reload.remote.domain.TicketingService
 import org.calypsonet.keyple.demo.reload.remote.domain.model.AppSettings
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
@@ -49,8 +47,6 @@ import timber.log.Timber
 
 @ActivityScoped
 class CardReaderActivity : AbstractCardActivity() {
-
-  @Inject lateinit var ticketingService: TicketingService
 
   private val dateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)
   private lateinit var activityCardReaderBinding: ActivityCardReaderBinding

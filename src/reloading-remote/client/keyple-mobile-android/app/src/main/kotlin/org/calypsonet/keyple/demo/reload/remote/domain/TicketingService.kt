@@ -24,11 +24,16 @@ import org.calypsonet.keyple.demo.common.dto.WriteContractInputDto
 import org.calypsonet.keyple.demo.common.dto.WriteContractOutputDto
 import org.calypsonet.keyple.demo.reload.remote.di.scopes.AppScoped
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocolEnum
+import org.calypsonet.keyple.demo.reload.remote.domain.model.ReaderType
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.ReaderManager
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.RemoteServiceManager
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.UiContext
+import org.eclipse.keypop.reader.ObservableCardReader
 import org.eclipse.keypop.reader.selection.spi.SmartCard
+import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
+import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 import org.eclipse.keypop.storagecard.card.ProductType.MIFARE_CLASSIC_1K
 import org.eclipse.keypop.storagecard.card.ProductType.MIFARE_ULTRALIGHT
 import org.eclipse.keypop.storagecard.card.ProductType.ST25_SRT512
@@ -42,6 +47,29 @@ constructor(
     private var logger: Logger,
     private var remoteServiceManager: RemoteServiceManager
 ) {
+
+  /** Indicates whether readers have been successfully initialized via [init]. */
+  var areReadersInitialized = false
+    private set
+
+  fun init(
+      readerType: ReaderType,
+      uiContext: UiContext,
+      observer: CardReaderObserverSpi?,
+      readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi?
+  ) {
+    // Register plugin
+    readerManager.registerPlugin(readerType, uiContext)
+
+    readerManager.initCardReader(observer, readerObservationExceptionHandler)
+
+    areReadersInitialized = true
+  }
+
+    fun onDestroy(observer: CardReaderObserverSpi?) {
+        areReadersInitialized = false
+        readerManager.onDestroy(observer)
+    }
 
   /** Select the card and retrieve the active card */
   @Throws(IllegalStateException::class, Exception::class)
@@ -106,6 +134,15 @@ constructor(
       }
     }
   }
+
+  fun startNfcDetection(readerName: String) {
+    (readerManager.getReader(readerName) as ObservableCardReader).startCardDetection(
+        ObservableCardReader.DetectionMode.REPEATING)
+  }
+
+    fun stopNfcDetection(readerName: String) {
+        (readerManager.getReader(readerName) as ObservableCardReader).stopCardDetection()
+    }
 
   fun analyzeContracts(
       localReaderName: String,

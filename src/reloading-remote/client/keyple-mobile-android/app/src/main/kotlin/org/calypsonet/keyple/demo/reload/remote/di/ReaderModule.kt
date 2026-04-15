@@ -45,7 +45,7 @@ class ReaderModule {
 
   @Provides
   @AppScoped
-  fun provideReaderRepository(): ReaderManager {
+  fun provideReaderManager(): ReaderManager {
     return ReaderManagerImpl()
   }
 

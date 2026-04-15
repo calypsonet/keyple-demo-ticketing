@@ -17,7 +17,6 @@ import android.os.Bundle
 import android.view.View
 import java.lang.Exception
 import java.lang.IllegalStateException
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -26,7 +25,6 @@ import org.calypsonet.keyple.demo.common.dto.CardIssuanceInputDto
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityPersonalizationBinding
 import org.calypsonet.keyple.demo.reload.remote.di.scopes.ActivityScoped
-import org.calypsonet.keyple.demo.reload.remote.domain.TicketingService
 import org.calypsonet.keyple.demo.reload.remote.domain.model.AppSettings
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
@@ -39,8 +37,6 @@ import timber.log.Timber
 
 @ActivityScoped
 class PersonalizationActivity : AbstractCardActivity() {
-
-  @Inject lateinit var ticketingService: TicketingService
   private lateinit var activityPersonalizationBinding: ActivityPersonalizationBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {

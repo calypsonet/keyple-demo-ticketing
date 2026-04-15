@@ -17,27 +17,19 @@ import android.os.Bundle
 import javax.inject.Inject
 import kotlin.jvm.Throws
 import org.calypsonet.keyple.demo.common.constants.CardConstants
-import org.calypsonet.keyple.demo.reload.remote.data.MifareClassicKeyProviderImpl
 import org.calypsonet.keyple.demo.reload.remote.data.ReaderManagerImpl
+import org.calypsonet.keyple.demo.reload.remote.domain.TicketingService
 import org.calypsonet.keyple.demo.reload.remote.domain.model.AppSettings
-import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
+import org.calypsonet.keyple.demo.reload.remote.ui.adapters.UiContextImpl
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
-import org.calypsonet.keyple.plugin.bluebird.BluebirdContactlessProtocols
-import org.calypsonet.keyple.plugin.bluebird.BluebirdPluginFactoryProvider
-import org.calypsonet.keyple.plugin.storagecard.ApduInterpreterFactoryProvider
 import org.eclipse.keyple.core.service.KeyplePluginException
-import org.eclipse.keyple.core.service.Plugin
-import org.eclipse.keyple.plugin.android.nfc.AndroidNfcConfig
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcConstants
-import org.eclipse.keyple.plugin.android.nfc.AndroidNfcPluginFactoryProvider
-import org.eclipse.keyple.plugin.android.nfc.AndroidNfcSupportedProtocols
 import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiPlugin
 import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiPluginFactoryProvider
 import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiReader
-import org.eclipse.keypop.reader.ConfigurableCardReader
 import org.eclipse.keypop.reader.ObservableCardReader
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
@@ -46,6 +38,7 @@ import timber.log.Timber
 abstract class AbstractCardActivity :
     AbstractDemoActivity(), CardReaderObserverSpi, CardReaderObservationExceptionHandlerSpi {
 
+  @Inject lateinit var ticketingService: TicketingService
   @Inject lateinit var readerManager: ReaderManagerImpl
   lateinit var selectedDeviceReaderName: String
   lateinit var device: DeviceEnum
@@ -98,69 +91,19 @@ abstract class AbstractCardActivity :
   /** Android Nfc Reader is strongly dependent and Android Activity component. */
   @Throws(KeyplePluginException::class)
   fun initAndActivateCardReader() {
-    val plugin: Plugin? =
-        readerManager.registerPlugin(
-            if (isBluebirdDevice) {
-              BluebirdPluginFactoryProvider.provideFactory(
-                  this@AbstractCardActivity,
-                  ApduInterpreterFactoryProvider.provideFactory(),
-                  keyProvider = MifareClassicKeyProviderImpl())
-            } else {
-              AndroidNfcPluginFactoryProvider.provideFactory(
-                  AndroidNfcConfig(
-                      this@AbstractCardActivity,
-                      ApduInterpreterFactoryProvider.provideFactory(),
-                      keyProvider = MifareClassicKeyProviderImpl()))
-            })
+    ticketingService.init(
+        AppSettings.readerType,
+        UiContextImpl(this@AbstractCardActivity),
+        this@AbstractCardActivity,
+        this@AbstractCardActivity)
 
-    if (plugin == null) {
-      return
-    }
-
-    val observableCardReader: ObservableCardReader =
-        readerManager.getObservableReader(selectedDeviceReaderName)
-    observableCardReader.setReaderObservationExceptionHandler(this@AbstractCardActivity)
-    observableCardReader.addObserver(this@AbstractCardActivity)
-    observableCardReader.setReaderObservationExceptionHandler(this@AbstractCardActivity)
-
-    val configurableReader = observableCardReader as ConfigurableCardReader
-
-    if (isBluebirdDevice) {
-      configurableReader.activateProtocol(
-          BluebirdContactlessProtocols.ISO_14443_4_A.name,
-          CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name)
-      configurableReader.activateProtocol(
-          BluebirdContactlessProtocols.ISO_14443_4_B.name,
-          CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name)
-      configurableReader.activateProtocol(
-          BluebirdContactlessProtocols.MIFARE_ULTRALIGHT.name,
-          CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name)
-      configurableReader.activateProtocol(
-          BluebirdContactlessProtocols.ST25_SRT512.name,
-          CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name)
-      configurableReader.activateProtocol(
-          BluebirdContactlessProtocols.MIFARE_CLASSIC.name,
-          CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name)
-    } else {
-      configurableReader.activateProtocol(
-          AndroidNfcSupportedProtocols.ISO_14443_4.name,
-          CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name)
-      configurableReader.activateProtocol(
-          AndroidNfcSupportedProtocols.MIFARE_ULTRALIGHT.name,
-          CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name)
-      configurableReader.activateProtocol(
-          AndroidNfcSupportedProtocols.MIFARE_CLASSIC_1K.name,
-          CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name)
-    }
-
-    observableCardReader.startCardDetection(ObservableCardReader.DetectionMode.REPEATING)
+    ticketingService.startNfcDetection(selectedDeviceReaderName)
   }
 
   @Throws(KeyplePluginException::class)
   fun deactivateAndClearCardReader() {
-    (readerManager.getReader(selectedDeviceReaderName) as ObservableCardReader).stopCardDetection()
-    readerManager.unregisterPlugin(
-        if (isBluebirdDevice) BluebirdConstants.PLUGIN_NAME else AndroidNfcConstants.PLUGIN_NAME)
+      ticketingService.stopNfcDetection(selectedDeviceReaderName)
+      ticketingService.onDestroy(this@AbstractCardActivity)
   }
 
   /**
@@ -170,7 +113,7 @@ abstract class AbstractCardActivity :
   @Throws(KeyplePluginException::class)
   fun initOmapiReader(callback: () -> Unit) {
     AndroidOmapiPluginFactoryProvider(this@AbstractCardActivity) {
-      readerManager.registerPlugin(it)
+      // readerManager.registerPlugin(it, UiContextImpl(this@AbstractCardActivity))
       callback()
     }
   }
