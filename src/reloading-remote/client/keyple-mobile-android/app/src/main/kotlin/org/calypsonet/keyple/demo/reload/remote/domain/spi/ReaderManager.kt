@@ -15,11 +15,15 @@ package org.calypsonet.keyple.demo.reload.remote.domain.spi
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ReaderType
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ObservableCardReader
+import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
+import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 
 interface ReaderManager {
   fun registerPlugin(readerType: ReaderType, uiContext: UiContext)
 
   fun unregisterPlugin(pluginName: String)
+
+  fun initCardReader(readerName: String, observer: CardReaderObserverSpi?, readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi?): CardReader?
 
   fun getReader(readerName: String): CardReader
 
