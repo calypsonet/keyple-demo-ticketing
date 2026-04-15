@@ -23,9 +23,9 @@ interface ReaderManager {
 
   fun unregisterPlugin(pluginName: String)
 
-  fun initCardReader(readerName: String, observer: CardReaderObserverSpi?, readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi?): CardReader?
+  fun initCardReader(observer: CardReaderObserverSpi?, readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi?): CardReader?
 
   fun getReader(readerName: String): CardReader
 
-  fun getObservableReader(readerName: String): ObservableCardReader
+  fun onDestroy(observer: CardReaderObserverSpi?)
 }

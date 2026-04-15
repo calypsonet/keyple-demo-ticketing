@@ -133,7 +133,6 @@ class ReaderManagerImpl @Inject constructor() : ReaderManager {
   }
 
   override fun initCardReader(
-      readerName: String,
       observer: CardReaderObserverSpi?,
       readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi?
   ): CardReader? {
@@ -152,7 +151,7 @@ class ReaderManagerImpl @Inject constructor() : ReaderManager {
     return cardReader
   }
 
-  fun clear() {
+  private fun clear() {
     cardReaderProtocols.forEach { entry ->
       (cardReader as ConfigurableCardReader).deactivateProtocol(entry.key)
     }
@@ -161,6 +160,15 @@ class ReaderManagerImpl @Inject constructor() : ReaderManager {
         it.deactivateProtocol(samReaderProtocolPhysicalName)
       }
     }
+  }
+
+  override fun onDestroy(observer: CardReaderObserverSpi?) {
+    clear()
+    if (observer != null && cardReader != null) {
+      (cardReader as ObservableCardReader).removeObserver(observer)
+    }
+    val smartCardService = SmartCardServiceProvider.getService()
+    smartCardService.plugins.forEach { smartCardService.unregisterPlugin(it.name) }
   }
 
   /** Unregister any keyple plugin */
@@ -180,9 +188,10 @@ class ReaderManagerImpl @Inject constructor() : ReaderManager {
     return reader ?: throw ReaderCommunicationException("$readerName not found")
   }
 
+  // TODO: delete function below
   /** Retrieve a registered observable reader. */
   @Throws(Exception::class)
-  override fun getObservableReader(readerName: String): ObservableCardReader {
+  private fun getObservableReader(readerName: String): ObservableCardReader {
     val reader = getReader(readerName)
     return reader as? ObservableCardReader ?: throw Exception("$readerName not found")
   }
