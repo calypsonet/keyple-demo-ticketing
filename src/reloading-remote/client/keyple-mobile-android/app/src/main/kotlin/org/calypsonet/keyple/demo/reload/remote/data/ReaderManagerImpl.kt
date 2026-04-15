@@ -80,7 +80,7 @@ class ReaderManagerImpl @Inject constructor() : ReaderManager {
     cardReaderProtocols[BluebirdContactlessProtocols.MIFARE_ULTRALIGHT.name] =
         CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name
     cardReaderProtocols[BluebirdContactlessProtocols.ST25_SRT512.name] =
-      CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name
+        CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name
     cardReaderProtocols[BluebirdContactlessProtocols.MIFARE_CLASSIC.name] =
         CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name
     samPluginName = BluebirdConstants.PLUGIN_NAME
@@ -97,9 +97,9 @@ class ReaderManagerImpl @Inject constructor() : ReaderManager {
     cardReaderProtocols[AndroidNfcSupportedProtocols.ISO_14443_4.name] =
         CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name
     cardReaderProtocols[AndroidNfcSupportedProtocols.MIFARE_ULTRALIGHT.name] =
-      CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name
+        CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name
     cardReaderProtocols[AndroidNfcSupportedProtocols.MIFARE_CLASSIC_1K.name] =
-      CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name
+        CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name
     samPluginName = ""
     samReaderNameRegex = ""
     samReaderName = ""
@@ -140,10 +140,11 @@ class ReaderManagerImpl @Inject constructor() : ReaderManager {
         SmartCardServiceProvider.getService().getPlugin(cardPluginName)?.getReader(cardReaderName)
 
     cardReader?.let {
-      cardReaderProtocols.forEach {
-        entry ->  (it as ConfigurableCardReader).activateProtocol(entry.key, entry.value)
+      cardReaderProtocols.forEach { entry ->
+        (it as ConfigurableCardReader).activateProtocol(entry.key, entry.value)
 
-        (cardReader as ObservableCardReader).setReaderObservationExceptionHandler(readerObservationExceptionHandler)
+        (cardReader as ObservableCardReader).setReaderObservationExceptionHandler(
+            readerObservationExceptionHandler)
         (cardReader as ObservableCardReader).addObserver(observer)
       }
     }
