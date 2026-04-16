@@ -66,10 +66,10 @@ constructor(
     areReadersInitialized = true
   }
 
-    fun onDestroy(observer: CardReaderObserverSpi?) {
-        areReadersInitialized = false
-        readerManager.onDestroy(observer)
-    }
+  fun onDestroy(observer: CardReaderObserverSpi?) {
+    areReadersInitialized = false
+    readerManager.onDestroy(observer)
+  }
 
   /** Select the card and retrieve the active card */
   @Throws(IllegalStateException::class, Exception::class)
@@ -140,9 +140,9 @@ constructor(
         ObservableCardReader.DetectionMode.REPEATING)
   }
 
-    fun stopNfcDetection(readerName: String) {
-        (readerManager.getReader(readerName) as ObservableCardReader).stopCardDetection()
-    }
+  fun stopNfcDetection(readerName: String) {
+    (readerManager.getReader(readerName) as ObservableCardReader).stopCardDetection()
+  }
 
   fun analyzeContracts(
       localReaderName: String,

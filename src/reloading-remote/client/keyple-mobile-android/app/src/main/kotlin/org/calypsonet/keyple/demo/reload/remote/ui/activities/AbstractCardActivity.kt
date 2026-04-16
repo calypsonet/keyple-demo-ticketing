@@ -101,8 +101,8 @@ abstract class AbstractCardActivity :
 
   @Throws(KeyplePluginException::class)
   fun deactivateAndClearCardReader() {
-      ticketingService.stopNfcDetection(selectedDeviceReaderName)
-      ticketingService.onDestroy(this@AbstractCardActivity)
+    ticketingService.stopNfcDetection(selectedDeviceReaderName)
+    ticketingService.onDestroy(this@AbstractCardActivity)
   }
 
   /**
