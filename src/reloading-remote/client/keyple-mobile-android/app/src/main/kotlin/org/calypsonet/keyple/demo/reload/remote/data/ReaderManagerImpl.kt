@@ -188,12 +188,4 @@ class ReaderManagerImpl @Inject constructor() : ReaderManager {
     SmartCardServiceProvider.getService().plugins.forEach { reader = it.getReader(readerName) }
     return reader ?: throw ReaderCommunicationException("$readerName not found")
   }
-
-  // TODO: delete function below
-  /** Retrieve a registered observable reader. */
-  @Throws(Exception::class)
-  private fun getObservableReader(readerName: String): ObservableCardReader {
-    val reader = getReader(readerName)
-    return reader as? ObservableCardReader ?: throw Exception("$readerName not found")
-  }
 }
