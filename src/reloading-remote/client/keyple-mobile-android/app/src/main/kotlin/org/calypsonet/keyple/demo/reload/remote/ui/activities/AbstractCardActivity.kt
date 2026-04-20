@@ -25,7 +25,6 @@ import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.adapters.UiContextImpl
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
-import org.eclipse.keyple.core.service.KeyplePluginException
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcConstants
 import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiPlugin
 import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiPluginFactoryProvider
@@ -88,7 +87,7 @@ abstract class AbstractCardActivity :
   }
 
   /** Android Nfc Reader is strongly dependent and Android Activity component. */
-  @Throws(KeyplePluginException::class)
+  @Throws(UnsupportedOperationException::class)
   fun initAndActivateCardReader() {
     ticketingService.init(
         AppSettings.readerType,
@@ -99,17 +98,18 @@ abstract class AbstractCardActivity :
     ticketingService.startNfcDetection(selectedDeviceReaderName)
   }
 
-  @Throws(KeyplePluginException::class)
+  @Throws(UnsupportedOperationException::class)
   fun deactivateAndClearCardReader() {
     ticketingService.stopNfcDetection(selectedDeviceReaderName)
     ticketingService.onDestroy(this@AbstractCardActivity)
   }
 
+
   /**
    * Initialisation of AndroidOmapiPlugin is async and take time and cannot be observed. So we'll
    * trigger process only when the plugin is registered
    */
-  @Throws(KeyplePluginException::class)
+  @Throws(UnsupportedOperationException::class)
   fun initOmapiReader(callback: () -> Unit) {
     AndroidOmapiPluginFactoryProvider(this@AbstractCardActivity) {
       // readerManager.registerPlugin(it, UiContextImpl(this@AbstractCardActivity))
@@ -117,7 +117,7 @@ abstract class AbstractCardActivity :
     }
   }
 
-  @Throws(KeyplePluginException::class)
+  @Throws(UnsupportedOperationException::class)
   fun deactivateAndClearOmapiReader() {
     readerManager.unregisterPlugin(AndroidOmapiPlugin.PLUGIN_NAME)
   }
