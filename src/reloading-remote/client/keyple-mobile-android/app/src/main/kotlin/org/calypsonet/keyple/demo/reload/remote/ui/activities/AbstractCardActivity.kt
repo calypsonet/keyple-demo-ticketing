@@ -105,19 +105,19 @@ abstract class AbstractCardActivity :
     ticketingService.onDestroy(this@AbstractCardActivity)
   }
 
-
   /**
    * Initialisation of AndroidOmapiPlugin is async and take time and cannot be observed. So we'll
    * trigger process only when the plugin is registered
    */
   @Throws(UnsupportedOperationException::class)
   fun initOmapiReader(callback: () -> Unit) {
-      ticketingService.init(
-          AppSettings.readerType,
-          UiContextImpl(this@AbstractCardActivity),
-          device,
-          null,
-          null, callback)
+    ticketingService.init(
+        AppSettings.readerType,
+        UiContextImpl(this@AbstractCardActivity),
+        device,
+        null,
+        null,
+        callback)
   }
 
   @Throws(UnsupportedOperationException::class)

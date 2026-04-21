@@ -110,7 +110,12 @@ class ReaderManagerImpl @Inject constructor() : ReaderManager {
   }
 
   /** Register any keyple plugin */
-  override fun registerPlugin(readerType: ReaderType, uiContext: UiContext, deviceEnum: DeviceEnum, callback: (() -> Unit)?) {
+  override fun registerPlugin(
+      readerType: ReaderType,
+      uiContext: UiContext,
+      deviceEnum: DeviceEnum,
+      callback: (() -> Unit)?
+  ) {
     initReaderType(readerType)
     val activity = uiContext.adaptTo(Activity::class.java)
     runBlocking {
@@ -120,25 +125,22 @@ class ReaderManagerImpl @Inject constructor() : ReaderManager {
               DeviceEnum.CONTACTLESS_CARD -> {
                 when (readerType) {
                   ReaderType.BLUEBIRD ->
-                    BluebirdPluginFactoryProvider.provideFactory(
-                      activity,
-                      ApduInterpreterFactoryProvider.provideFactory(),
-                      MifareClassicKeyProviderImpl()
-                    )
+                      BluebirdPluginFactoryProvider.provideFactory(
+                          activity,
+                          ApduInterpreterFactoryProvider.provideFactory(),
+                          MifareClassicKeyProviderImpl())
 
                   ReaderType.NFC_TERMINAL ->
-                    AndroidNfcPluginFactoryProvider.provideFactory(
-                      AndroidNfcConfig(
-                        activity = activity,
-                        apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
-                        keyProvider = MifareClassicKeyProviderImpl()
-                      )
-                    )
+                      AndroidNfcPluginFactoryProvider.provideFactory(
+                          AndroidNfcConfig(
+                              activity = activity,
+                              apduInterpreterFactory =
+                                  ApduInterpreterFactoryProvider.provideFactory(),
+                              keyProvider = MifareClassicKeyProviderImpl()))
                 }
-              } else -> {
-                AndroidOmapiPluginFactoryProvider(activity) {
-                    callback?.invoke()
-                }
+              }
+              else -> {
+                AndroidOmapiPluginFactoryProvider(activity) { callback?.invoke() }
               }
             }
           }

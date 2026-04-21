@@ -19,7 +19,12 @@ import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 
 interface ReaderManager {
-  fun registerPlugin(readerType: ReaderType, uiContext: UiContext, deviceEnum: DeviceEnum, callback: (() -> Unit)?)
+  fun registerPlugin(
+      readerType: ReaderType,
+      uiContext: UiContext,
+      deviceEnum: DeviceEnum,
+      callback: (() -> Unit)?
+  )
 
   fun unregisterPlugin(pluginName: String)
 

@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.domain.spi
+package org.calypsonet.keyple.demo.reload.remote.data.network
 
 import io.reactivex.Single
 import org.eclipse.keyple.distributed.MessageDto
