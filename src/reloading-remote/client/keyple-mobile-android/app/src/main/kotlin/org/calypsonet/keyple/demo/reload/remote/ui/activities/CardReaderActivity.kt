@@ -37,7 +37,6 @@ import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.cardsummary.CardSummaryActivity
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardTitle
-import org.eclipse.keyple.core.service.KeyplePluginException
 import org.eclipse.keyple.core.util.HexUtil
 import org.eclipse.keypop.calypso.card.card.CalypsoCard
 import org.eclipse.keypop.reader.CardReaderEvent
@@ -86,10 +85,10 @@ class CardReaderActivity : AbstractCardActivity() {
           }
         }
         DeviceEnum.WEARABLE -> {
-          throw KeyplePluginException("Wearable")
+          throw UnsupportedOperationException("Wearable")
         }
         DeviceEnum.EMBEDDED -> {
-          throw KeyplePluginException("Embedded")
+          throw UnsupportedOperationException("Embedded")
         }
       }
     } catch (e: ReaderCommunicationException) {
