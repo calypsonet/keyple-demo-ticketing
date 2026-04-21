@@ -24,6 +24,7 @@ import org.calypsonet.keyple.demo.common.dto.WriteContractInputDto
 import org.calypsonet.keyple.demo.common.dto.WriteContractOutputDto
 import org.calypsonet.keyple.demo.reload.remote.di.scopes.AppScoped
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocolEnum
+import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ReaderType
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
@@ -55,11 +56,13 @@ constructor(
   fun init(
       readerType: ReaderType,
       uiContext: UiContext,
+      deviceEnum: DeviceEnum,
       observer: CardReaderObserverSpi?,
-      readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi?
+      readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi?,
+      callback: (() -> Unit)?
   ) {
     // Register plugin
-    readerManager.registerPlugin(readerType, uiContext)
+    readerManager.registerPlugin(readerType, uiContext, deviceEnum, callback)
 
     readerManager.initCardReader(observer, readerObservationExceptionHandler)
 

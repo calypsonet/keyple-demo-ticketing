@@ -27,7 +27,6 @@ import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcConstants
 import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiPlugin
-import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiPluginFactoryProvider
 import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiReader
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
@@ -92,8 +91,10 @@ abstract class AbstractCardActivity :
     ticketingService.init(
         AppSettings.readerType,
         UiContextImpl(this@AbstractCardActivity),
+        device,
         this@AbstractCardActivity,
-        this@AbstractCardActivity)
+        this@AbstractCardActivity,
+        null)
 
     ticketingService.startNfcDetection(selectedDeviceReaderName)
   }
@@ -111,10 +112,12 @@ abstract class AbstractCardActivity :
    */
   @Throws(UnsupportedOperationException::class)
   fun initOmapiReader(callback: () -> Unit) {
-    AndroidOmapiPluginFactoryProvider(this@AbstractCardActivity) {
-      // readerManager.registerPlugin(it, UiContextImpl(this@AbstractCardActivity))
-      callback()
-    }
+      ticketingService.init(
+          AppSettings.readerType,
+          UiContextImpl(this@AbstractCardActivity),
+          device,
+          null,
+          null, callback)
   }
 
   @Throws(UnsupportedOperationException::class)

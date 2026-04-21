@@ -20,6 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocolEnum
+import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ReaderType
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.ReaderManager
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.UiContext
@@ -33,6 +34,7 @@ import org.eclipse.keyple.plugin.android.nfc.AndroidNfcConfig
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcConstants
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcPluginFactoryProvider
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcSupportedProtocols
+import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiPluginFactoryProvider
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ConfigurableCardReader
 import org.eclipse.keypop.reader.ObservableCardReader
@@ -108,24 +110,36 @@ class ReaderManagerImpl @Inject constructor() : ReaderManager {
   }
 
   /** Register any keyple plugin */
-  override fun registerPlugin(readerType: ReaderType, uiContext: UiContext) {
+  override fun registerPlugin(readerType: ReaderType, uiContext: UiContext, deviceEnum: DeviceEnum, callback: (() -> Unit)?) {
     initReaderType(readerType)
     val activity = uiContext.adaptTo(Activity::class.java)
     runBlocking {
       val pluginFactory =
           withContext(Dispatchers.IO) {
-            when (readerType) {
-              ReaderType.BLUEBIRD ->
-                  BluebirdPluginFactoryProvider.provideFactory(
+            when (deviceEnum) {
+              DeviceEnum.CONTACTLESS_CARD -> {
+                when (readerType) {
+                  ReaderType.BLUEBIRD ->
+                    BluebirdPluginFactoryProvider.provideFactory(
                       activity,
                       ApduInterpreterFactoryProvider.provideFactory(),
-                      MifareClassicKeyProviderImpl())
-              ReaderType.NFC_TERMINAL ->
-                  AndroidNfcPluginFactoryProvider.provideFactory(
+                      MifareClassicKeyProviderImpl()
+                    )
+
+                  ReaderType.NFC_TERMINAL ->
+                    AndroidNfcPluginFactoryProvider.provideFactory(
                       AndroidNfcConfig(
-                          activity = activity,
-                          apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
-                          keyProvider = MifareClassicKeyProviderImpl()))
+                        activity = activity,
+                        apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
+                        keyProvider = MifareClassicKeyProviderImpl()
+                      )
+                    )
+                }
+              } else -> {
+                AndroidOmapiPluginFactoryProvider(activity) {
+                    callback?.invoke()
+                }
+              }
             }
           }
       SmartCardServiceProvider.getService().registerPlugin(pluginFactory)

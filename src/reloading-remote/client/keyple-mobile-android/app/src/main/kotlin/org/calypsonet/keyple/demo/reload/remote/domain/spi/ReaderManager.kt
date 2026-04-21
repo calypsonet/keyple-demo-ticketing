@@ -12,13 +12,14 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.domain.spi
 
+import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ReaderType
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 
 interface ReaderManager {
-  fun registerPlugin(readerType: ReaderType, uiContext: UiContext)
+  fun registerPlugin(readerType: ReaderType, uiContext: UiContext, deviceEnum: DeviceEnum, callback: (() -> Unit)?)
 
   fun unregisterPlugin(pluginName: String)
 
