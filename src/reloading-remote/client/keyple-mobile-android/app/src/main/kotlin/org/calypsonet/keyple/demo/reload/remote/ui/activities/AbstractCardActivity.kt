@@ -98,7 +98,6 @@ abstract class AbstractCardActivity :
     ticketingService.startNfcDetection(selectedDeviceReaderName)
   }
 
-
   /**
    * Initialisation of AndroidOmapiPlugin is async and take time and cannot be observed. So we'll
    * trigger process only when the plugin is registered
@@ -114,13 +113,13 @@ abstract class AbstractCardActivity :
         callback)
   }
 
-    @Throws(UnsupportedOperationException::class)
-    fun deactivateAndClearReader() {
-        if (device == DeviceEnum.CONTACTLESS_CARD) {
-            ticketingService.stopNfcDetection(selectedDeviceReaderName)
-        }
-        ticketingService.onDestroy(this@AbstractCardActivity)
+  @Throws(UnsupportedOperationException::class)
+  fun deactivateAndClearReader() {
+    if (device == DeviceEnum.CONTACTLESS_CARD) {
+      ticketingService.stopNfcDetection(selectedDeviceReaderName)
     }
+    ticketingService.onDestroy(this@AbstractCardActivity)
+  }
 
   fun launchInvalidCardResponse(cardType: String, message: String) {
     runOnUiThread {
