@@ -71,9 +71,7 @@ class ReloadActivity : AbstractCardActivity() {
     activityCardReaderBinding.cardAnimation.cancelAnimation()
     activityCardReaderBinding.loadingAnimation.cancelAnimation()
     try {
-      if (DeviceEnum.getDeviceEnum(prefData.loadDeviceType()!!) == DeviceEnum.CONTACTLESS_CARD) {
-        deactivateAndClearCardReader()
-      }
+      deactivateAndClearReader()
     } catch (e: Exception) {
       Timber.e(e)
     }
