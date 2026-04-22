@@ -34,6 +34,7 @@ import org.eclipse.keyple.plugin.android.nfc.AndroidNfcConfig
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcConstants
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcPluginFactoryProvider
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcSupportedProtocols
+import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiPlugin
 import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiPluginFactoryProvider
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ConfigurableCardReader
@@ -50,6 +51,8 @@ import timber.log.Timber
 class ReaderManagerImpl @Inject constructor() : ReaderManager {
 
   private lateinit var readerType: ReaderType
+
+  private lateinit var device: DeviceEnum
   // Card
   private lateinit var cardPluginName: String
   private lateinit var cardReaderName: String
@@ -116,13 +119,14 @@ class ReaderManagerImpl @Inject constructor() : ReaderManager {
       deviceEnum: DeviceEnum,
       callback: (() -> Unit)?
   ) {
-    initReaderType(readerType)
+    device = deviceEnum
     val activity = uiContext.adaptTo(Activity::class.java)
     runBlocking {
       val pluginFactory =
           withContext(Dispatchers.IO) {
-            when (deviceEnum) {
+            when (device) {
               DeviceEnum.CONTACTLESS_CARD -> {
+                initReaderType(readerType)
                 when (readerType) {
                   ReaderType.BLUEBIRD ->
                       BluebirdPluginFactoryProvider.provideFactory(
@@ -176,6 +180,10 @@ class ReaderManagerImpl @Inject constructor() : ReaderManager {
       if (it is ConfigurableCardReader) {
         it.deactivateProtocol(samReaderProtocolPhysicalName)
       }
+    }
+
+    if (device != DeviceEnum.CONTACTLESS_CARD) {
+      unregisterPlugin(AndroidOmapiPlugin.PLUGIN_NAME)
     }
   }
 

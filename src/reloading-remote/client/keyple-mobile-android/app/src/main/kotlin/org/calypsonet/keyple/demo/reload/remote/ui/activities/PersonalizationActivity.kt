@@ -68,11 +68,7 @@ class PersonalizationActivity : AbstractCardActivity() {
     activityPersonalizationBinding.cardAnimation.cancelAnimation()
     activityPersonalizationBinding.loadingAnimation.cancelAnimation()
     try {
-      if (DeviceEnum.getDeviceEnum(prefData.loadDeviceType()!!) == DeviceEnum.CONTACTLESS_CARD) {
-        deactivateAndClearCardReader()
-      } else {
-        deactivateAndClearOmapiReader()
-      }
+      deactivateAndClearReader()
     } catch (e: Exception) {
       Timber.e(e)
     }

@@ -26,7 +26,6 @@ import org.calypsonet.keyple.demo.reload.remote.ui.adapters.UiContextImpl
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcConstants
-import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiPlugin
 import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiReader
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
@@ -99,11 +98,6 @@ abstract class AbstractCardActivity :
     ticketingService.startNfcDetection(selectedDeviceReaderName)
   }
 
-  @Throws(UnsupportedOperationException::class)
-  fun deactivateAndClearCardReader() {
-    ticketingService.stopNfcDetection(selectedDeviceReaderName)
-    ticketingService.onDestroy(this@AbstractCardActivity)
-  }
 
   /**
    * Initialisation of AndroidOmapiPlugin is async and take time and cannot be observed. So we'll
@@ -120,10 +114,13 @@ abstract class AbstractCardActivity :
         callback)
   }
 
-  @Throws(UnsupportedOperationException::class)
-  fun deactivateAndClearOmapiReader() {
-    readerManager.unregisterPlugin(AndroidOmapiPlugin.PLUGIN_NAME)
-  }
+    @Throws(UnsupportedOperationException::class)
+    fun deactivateAndClearReader() {
+        if (device == DeviceEnum.CONTACTLESS_CARD) {
+            ticketingService.stopNfcDetection(selectedDeviceReaderName)
+        }
+        ticketingService.onDestroy(this@AbstractCardActivity)
+    }
 
   fun launchInvalidCardResponse(cardType: String, message: String) {
     runOnUiThread {
