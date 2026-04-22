@@ -27,7 +27,7 @@ import org.calypsonet.keyple.demo.reload.remote.ui.activities.ReloadResultActivi
 import org.calypsonet.keyple.demo.reload.remote.ui.activities.SelectTicketsActivity
 import org.calypsonet.keyple.demo.reload.remote.ui.activities.ServerSettingsActivity
 import org.calypsonet.keyple.demo.reload.remote.ui.activities.SettingsMenuActivity
-import org.calypsonet.keyple.demo.reload.remote.ui.cardsummary.CardSummaryActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.activities.cardsummary.CardSummaryActivity
 
 @Suppress("unused")
 @Module

@@ -34,7 +34,7 @@ import org.calypsonet.keyple.demo.reload.remote.di.scopes.ActivityScoped
 import org.calypsonet.keyple.demo.reload.remote.domain.model.AppSettings
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
-import org.calypsonet.keyple.demo.reload.remote.ui.cardsummary.CardSummaryActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.activities.cardsummary.CardSummaryActivity
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardTitle
 import org.eclipse.keyple.core.util.HexUtil
@@ -166,7 +166,7 @@ class CardReaderActivity : AbstractCardActivity() {
                           buildCardTitles(contracts),
                           arrayListOf(),
                           ""),
-                      HexUtil.toHex(smartCard!!.applicationSerialNumber),
+                      HexUtil.toHex(smartCard.applicationSerialNumber),
                       finishActivity)
                 }
                 is StorageCard -> {
@@ -178,7 +178,7 @@ class CardReaderActivity : AbstractCardActivity() {
                           buildCardTitles(contracts),
                           arrayListOf(),
                           ""),
-                      HexUtil.toHex(smartCard!!.uid),
+                      HexUtil.toHex(smartCard.uid),
                       finishActivity)
                 }
               }
@@ -194,7 +194,7 @@ class CardReaderActivity : AbstractCardActivity() {
                     cardType,
                     String.format(
                         getString(R.string.card_invalid_structure),
-                        HexUtil.toHex(smartCard!!.applicationSubtype)))
+                        HexUtil.toHex(smartCard.applicationSubtype)))
               }
               is StorageCard -> {
                 launchInvalidCardResponse(cardType, getString(R.string.storage_card_invalid))
@@ -278,14 +278,14 @@ class CardReaderActivity : AbstractCardActivity() {
 
   override fun changeDisplay(
       cardReaderResponse: UiCardReaderResponse,
-      uniqueIdentifier: String?,
+      applicationSerialNumber: String?,
       finishActivity: Boolean?
   ) {
-    activityCardReaderBinding.loadingAnimation?.cancelAnimation()
-    activityCardReaderBinding.cardAnimation?.cancelAnimation()
+    activityCardReaderBinding.loadingAnimation.cancelAnimation()
+    activityCardReaderBinding.cardAnimation.cancelAnimation()
     val intent = Intent(this, CardSummaryActivity::class.java)
     intent.putExtra(CARD_CONTENT, cardReaderResponse)
-    intent.putExtra(CARD_APPLICATION_NUMBER, uniqueIdentifier)
+    intent.putExtra(CARD_APPLICATION_NUMBER, applicationSerialNumber)
     startActivity(intent)
     if (finishActivity == true) {
       finish()

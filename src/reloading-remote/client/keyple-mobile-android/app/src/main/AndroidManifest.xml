@@ -71,7 +71,7 @@
                 android:exported="false">
         </activity>
         <activity
-                android:name="org.calypsonet.keyple.demo.reload.remote.ui.cardsummary.CardSummaryActivity"
+                android:name="org.calypsonet.keyple.demo.reload.remote.ui.activities.cardsummary.CardSummaryActivity"
                 android:theme="@style/AppTheme.NoActionBar"
                 android:screenOrientation="portrait"
                 android:launchMode="singleTop"

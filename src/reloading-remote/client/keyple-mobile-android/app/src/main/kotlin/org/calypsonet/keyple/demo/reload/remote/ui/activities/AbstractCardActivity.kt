@@ -89,8 +89,8 @@ abstract class AbstractCardActivity :
   fun initAndActivateCardReader() {
     ticketingService.init(
         AppSettings.readerType,
-        UiContextImpl(this@AbstractCardActivity),
         device,
+        UiContextImpl(this@AbstractCardActivity),
         this@AbstractCardActivity,
         this@AbstractCardActivity,
         null)
@@ -106,8 +106,8 @@ abstract class AbstractCardActivity :
   fun initOmapiReader(callback: () -> Unit) {
     ticketingService.init(
         AppSettings.readerType,
-        UiContextImpl(this@AbstractCardActivity),
         device,
+        UiContextImpl(this@AbstractCardActivity),
         null,
         null,
         callback)

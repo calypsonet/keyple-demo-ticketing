@@ -55,8 +55,8 @@ constructor(
 
   fun init(
       readerType: ReaderType,
-      uiContext: UiContext,
       deviceEnum: DeviceEnum,
+      uiContext: UiContext,
       observer: CardReaderObserverSpi?,
       readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi?,
       callback: (() -> Unit)?
