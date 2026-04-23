@@ -80,7 +80,7 @@ class CardReaderActivity : AbstractCardActivity() {
           initOmapiReader {
             GlobalScope.launch {
               remoteServiceExecution(
-                  selectedDeviceReaderName, pluginType, AppSettings.aidEnums, null)
+                  selectedDeviceReaderName, pluginType, AppSettings.aidEnums)
             }
           }
         }
@@ -119,8 +119,7 @@ class CardReaderActivity : AbstractCardActivity() {
         remoteServiceExecution(
             selectedDeviceReaderName,
             pluginType,
-            AppSettings.aidEnums,
-            "ISO_14443_4_LOGICAL_PROTOCOL")
+            AppSettings.aidEnums) // "ISO_14443_4_LOGICAL_PROTOCOL"
       }
     }
   }
@@ -129,7 +128,6 @@ class CardReaderActivity : AbstractCardActivity() {
       selectedDeviceReaderName: String,
       pluginType: String,
       aidEnums: ArrayList<ByteArray>,
-      protocol: String?
   ) {
     withContext(Dispatchers.IO) {
       try {
