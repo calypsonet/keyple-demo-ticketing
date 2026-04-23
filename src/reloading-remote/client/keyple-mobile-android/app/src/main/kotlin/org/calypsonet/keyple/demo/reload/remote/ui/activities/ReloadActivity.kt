@@ -57,8 +57,7 @@ class ReloadActivity : AbstractCardActivity() {
         showNowLoadingInformation()
         initOmapiReader {
           GlobalScope.launch {
-            remoteServiceExecution(
-                selectedDeviceReaderName, pluginType, AppSettings.aidEnums)
+            remoteServiceExecution(selectedDeviceReaderName, pluginType, AppSettings.aidEnums)
           }
         }
       }
@@ -177,9 +176,9 @@ class ReloadActivity : AbstractCardActivity() {
   }
 
   override fun changeDisplay(
-    cardReaderResponse: UiCardReaderResponse,
-    applicationSerialNumber: String?,
-    finishActivity: Boolean?
+      cardReaderResponse: UiCardReaderResponse,
+      applicationSerialNumber: String?,
+      finishActivity: Boolean?
   ) {
     activityCardReaderBinding.loadingAnimation.cancelAnimation()
     activityCardReaderBinding.cardAnimation.cancelAnimation()

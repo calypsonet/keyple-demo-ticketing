@@ -79,8 +79,7 @@ class CardReaderActivity : AbstractCardActivity() {
           showNowLoadingInformation()
           initOmapiReader {
             GlobalScope.launch {
-              remoteServiceExecution(
-                  selectedDeviceReaderName, pluginType, AppSettings.aidEnums)
+              remoteServiceExecution(selectedDeviceReaderName, pluginType, AppSettings.aidEnums)
             }
           }
         }

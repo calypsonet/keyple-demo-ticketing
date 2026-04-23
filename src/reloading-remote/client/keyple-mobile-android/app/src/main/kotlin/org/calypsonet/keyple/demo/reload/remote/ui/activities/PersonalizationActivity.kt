@@ -114,7 +114,8 @@ class PersonalizationActivity : AbstractCardActivity() {
       runOnUiThread { showNowPersonalizingInformation() }
       GlobalScope.launch {
         remoteServiceExecution(
-            selectedDeviceReaderName, AppSettings.aidEnums) // Protocol: "ISO_14443_4_LOGICAL_PROTOCOL"
+            selectedDeviceReaderName,
+            AppSettings.aidEnums) // Protocol: "ISO_14443_4_LOGICAL_PROTOCOL"
       }
     }
   }
