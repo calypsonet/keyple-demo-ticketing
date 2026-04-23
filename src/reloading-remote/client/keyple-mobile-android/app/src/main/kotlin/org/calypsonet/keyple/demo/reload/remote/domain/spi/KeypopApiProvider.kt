@@ -35,5 +35,5 @@ interface KeypopApiProvider {
   fun getLegacySamApiFactory(): LegacySamApiFactory
 
   /** Returns the factory for storage card APIs (e.g., MIFARE Ultralight, ST25...). */
-  fun getStorageCardApiFactory(): StorageCardApiFactory
+  fun getStorageCardApiFactory(): StorageCardApiFactory?
 }

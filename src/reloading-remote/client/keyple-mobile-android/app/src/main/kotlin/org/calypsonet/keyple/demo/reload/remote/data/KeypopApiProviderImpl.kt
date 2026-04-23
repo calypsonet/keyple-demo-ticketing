@@ -36,7 +36,7 @@ class KeypopApiProviderImpl : KeypopApiProvider {
     return LegacySamExtensionService.getInstance().legacySamApiFactory
   }
 
-  override fun getStorageCardApiFactory(): StorageCardApiFactory {
-    return StorageCardExtensionService.getInstance().storageCardApiFactory
+  override fun getStorageCardApiFactory(): StorageCardApiFactory? {
+    return StorageCardExtensionService.getInstance()?.storageCardApiFactory
   }
 }

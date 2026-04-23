@@ -21,6 +21,7 @@ import org.calypsonet.keyple.demo.reload.remote.data.ReaderManagerImpl
 import org.calypsonet.keyple.demo.reload.remote.domain.TicketingService
 import org.calypsonet.keyple.demo.reload.remote.domain.model.AppSettings
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
+import org.calypsonet.keyple.demo.reload.remote.domain.model.ReaderType
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.adapters.UiContextImpl
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
@@ -88,7 +89,7 @@ abstract class AbstractCardActivity :
   @Throws(UnsupportedOperationException::class)
   fun initAndActivateCardReader() {
     ticketingService.init(
-        AppSettings.readerType,
+        if (isBluebirdDevice) ReaderType.BLUEBIRD else ReaderType.NFC_TERMINAL,
         device,
         UiContextImpl(this@AbstractCardActivity),
         this@AbstractCardActivity,
@@ -105,7 +106,7 @@ abstract class AbstractCardActivity :
   @Throws(UnsupportedOperationException::class)
   fun initOmapiReader(callback: () -> Unit) {
     ticketingService.init(
-        AppSettings.readerType,
+        if (isBluebirdDevice) ReaderType.BLUEBIRD else ReaderType.NFC_TERMINAL,
         device,
         UiContextImpl(this@AbstractCardActivity),
         null,

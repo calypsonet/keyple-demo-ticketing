@@ -102,21 +102,23 @@ constructor(
       }
 
       try {
-        cardSelectionManager.prepareSelection(
-            readerApiFactory
-                .createBasicCardSelector()
-                .filterByCardProtocol(CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name),
-            storageCardApiFactory.createStorageCardSelectionExtension(MIFARE_ULTRALIGHT))
-        cardSelectionManager.prepareSelection(
-            readerApiFactory
-                .createBasicCardSelector()
-                .filterByCardProtocol(CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name),
-            storageCardApiFactory.createStorageCardSelectionExtension(ST25_SRT512))
-        cardSelectionManager.prepareSelection(
-            readerApiFactory
-                .createBasicCardSelector()
-                .filterByCardProtocol(CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name),
-            storageCardApiFactory.createStorageCardSelectionExtension(MIFARE_CLASSIC_1K))
+        storageCardApiFactory?.let {
+          cardSelectionManager.prepareSelection(
+              readerApiFactory
+                  .createBasicCardSelector()
+                  .filterByCardProtocol(CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name),
+              storageCardApiFactory.createStorageCardSelectionExtension(MIFARE_ULTRALIGHT))
+          cardSelectionManager.prepareSelection(
+              readerApiFactory
+                  .createBasicCardSelector()
+                  .filterByCardProtocol(CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name),
+              storageCardApiFactory.createStorageCardSelectionExtension(ST25_SRT512))
+          cardSelectionManager.prepareSelection(
+              readerApiFactory
+                  .createBasicCardSelector()
+                  .filterByCardProtocol(CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name),
+              storageCardApiFactory.createStorageCardSelectionExtension(MIFARE_CLASSIC_1K))
+        }
       } catch (e: Exception) {
         logger.e("$e")
       }

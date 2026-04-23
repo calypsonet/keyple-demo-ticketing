@@ -13,6 +13,5 @@
 package org.calypsonet.keyple.demo.reload.remote.domain.model
 
 object AppSettings {
-  lateinit var readerType: ReaderType
   var aidEnums = arrayListOf<ByteArray>()
 }
