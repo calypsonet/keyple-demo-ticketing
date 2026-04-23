@@ -107,14 +107,14 @@ class ReloadActivity : AbstractCardActivity() {
             }
         when (smartCard) {
           is CalypsoCard -> {
-            if (HexUtil.toHex(smartCard!!.applicationSerialNumber) != readCardUniqueIdentifier) {
+            if (HexUtil.toHex(smartCard.applicationSerialNumber) != readCardUniqueIdentifier) {
               // Ticket would have been bought for the Card read at step one.
               // To avoid swapping we check thant loading is done on the same card
               throw IllegalStateException("Not the same card")
             }
           }
           is StorageCard -> {
-            if (HexUtil.toHex(smartCard!!.uid) != readCardUniqueIdentifier) {
+            if (HexUtil.toHex(smartCard.uid) != readCardUniqueIdentifier) {
               // Ticket would have been bought for the Card read at step one.
               // To avoid swapping we check thant loading is done on the same card
               throw IllegalStateException("Not the same card")
@@ -157,7 +157,7 @@ class ReloadActivity : AbstractCardActivity() {
                     cardType,
                     String.format(
                         getString(R.string.card_invalid_structure),
-                        HexUtil.toHex(smartCard!!.applicationSubtype)))
+                        HexUtil.toHex(smartCard.applicationSubtype)))
               }
               is StorageCard -> {
                 launchInvalidCardResponse(cardType, getString(R.string.storage_card_invalid))
@@ -177,9 +177,9 @@ class ReloadActivity : AbstractCardActivity() {
   }
 
   override fun changeDisplay(
-      cardReaderResponse: UiCardReaderResponse,
-      uniqueIdentifier: String?,
-      finishActivity: Boolean?
+    cardReaderResponse: UiCardReaderResponse,
+    applicationSerialNumber: String?,
+    finishActivity: Boolean?
   ) {
     activityCardReaderBinding.loadingAnimation.cancelAnimation()
     activityCardReaderBinding.cardAnimation.cancelAnimation()
@@ -188,7 +188,7 @@ class ReloadActivity : AbstractCardActivity() {
     intent.putExtra(ReloadResultActivity.STATUS, cardReaderResponse.status.toString())
     intent.putExtra(ReloadResultActivity.MESSAGE, cardReaderResponse.errorMessage)
     intent.putExtra(CARD_CONTENT, cardReaderResponse)
-    intent.putExtra(CARD_APPLICATION_NUMBER, uniqueIdentifier)
+    intent.putExtra(CARD_APPLICATION_NUMBER, applicationSerialNumber)
     startActivity(intent)
     if (finishActivity == true) {
       finish()
