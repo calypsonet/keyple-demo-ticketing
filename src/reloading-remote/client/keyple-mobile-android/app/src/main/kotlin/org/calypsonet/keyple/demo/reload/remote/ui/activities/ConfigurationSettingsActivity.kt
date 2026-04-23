@@ -93,7 +93,7 @@ class ConfigurationSettingsActivity : AbstractDemoActivity() {
       val checked = view.isChecked
 
       // Check which radio button was clicked
-      when (view.getId()) {
+      when (view.id) {
         R.id.contactlessCardEnable ->
             if (checked) {
               prefData.saveContactlessConfigurationVisibility(
@@ -126,7 +126,7 @@ class ConfigurationSettingsActivity : AbstractDemoActivity() {
       val checked = view.isChecked
 
       // Check which radio button was clicked
-      when (view.getId()) {
+      when (view.id) {
         R.id.simCardEnable ->
             if (checked) {
               prefData.saveSimConfigurationVisibility(
@@ -157,7 +157,7 @@ class ConfigurationSettingsActivity : AbstractDemoActivity() {
       val checked = view.isChecked
 
       // Check which radio button was clicked
-      when (view.getId()) {
+      when (view.id) {
         R.id.wearableCardEnable ->
             if (checked) {
               prefData.saveWearableConfigurationVisibility(
@@ -188,7 +188,7 @@ class ConfigurationSettingsActivity : AbstractDemoActivity() {
       val checked = view.isChecked
 
       // Check which radio button was clicked
-      when (view.getId()) {
+      when (view.id) {
         R.id.embeddedCardEnable ->
             if (checked) {
               prefData.saveEmbeddedConfigurationVisibility(
