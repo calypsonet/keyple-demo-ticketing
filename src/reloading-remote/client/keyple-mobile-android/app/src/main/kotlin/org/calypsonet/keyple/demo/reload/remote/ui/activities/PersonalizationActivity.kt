@@ -55,7 +55,7 @@ class PersonalizationActivity : AbstractCardActivity() {
         showNowPersonalizingInformation()
         initOmapiReader {
           GlobalScope.launch {
-            remoteServiceExecution(selectedDeviceReaderName, AppSettings.aidEnums, null)
+            remoteServiceExecution(selectedDeviceReaderName, AppSettings.aidEnums)
           }
         }
       }
@@ -114,7 +114,7 @@ class PersonalizationActivity : AbstractCardActivity() {
       runOnUiThread { showNowPersonalizingInformation() }
       GlobalScope.launch {
         remoteServiceExecution(
-            selectedDeviceReaderName, AppSettings.aidEnums, "ISO_14443_4_LOGICAL_PROTOCOL")
+            selectedDeviceReaderName, AppSettings.aidEnums) // Protocol: "ISO_14443_4_LOGICAL_PROTOCOL"
       }
     }
   }
@@ -122,7 +122,6 @@ class PersonalizationActivity : AbstractCardActivity() {
   private suspend fun remoteServiceExecution(
       selectedDeviceReaderName: String,
       aidEnums: ArrayList<ByteArray>,
-      protocol: String?
   ) {
     withContext(Dispatchers.IO) {
       try {
