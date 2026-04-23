@@ -34,9 +34,8 @@ import org.calypsonet.keyple.demo.validation.di.scope.ActivityScoped
 import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
 import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.calypsonet.keyple.demo.validation.domain.model.Status
+import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
 import org.calypsonet.keyple.demo.validation.ui.adapters.UiContextImpl
-import org.calypsonet.keyple.demo.validation.ui.mappers.toUi
-import org.calypsonet.keyple.demo.validation.ui.model.UiValidationResult
 import org.eclipse.keypop.reader.CardReaderEvent
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 import timber.log.Timber
@@ -214,7 +213,7 @@ class ReaderActivity : BaseActivity() {
                 currentAppState = AppState.WAIT_CARD
                 playWaitingAnimation()
               } else {
-                changeDisplay(validationResult.toUi())
+                changeDisplay(validationResult)
               }
             }
           }
@@ -226,7 +225,7 @@ class ReaderActivity : BaseActivity() {
     }
   }
 
-  private fun changeDisplay(validationResult: UiValidationResult?) {
+  private fun changeDisplay(validationResult: ValidationResult?) {
     if (validationResult != null) {
       if (validationResult.status === Status.PROCESSING) {
         activityCardReaderBinding.presentCardTv.visibility = View.GONE
@@ -243,7 +242,7 @@ class ReaderActivity : BaseActivity() {
     }
   }
 
-  private fun showSummaryOverlay(result: UiValidationResult) {
+  private fun showSummaryOverlay(result: ValidationResult) {
     val b = summaryBinding!!
 
     // Card type label + transaction time

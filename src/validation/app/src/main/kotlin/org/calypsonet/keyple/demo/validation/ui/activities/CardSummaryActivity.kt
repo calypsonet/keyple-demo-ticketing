@@ -21,7 +21,7 @@ import java.util.*
 import org.calypsonet.keyple.demo.validation.R
 import org.calypsonet.keyple.demo.validation.databinding.ActivityCardSummaryBinding
 import org.calypsonet.keyple.demo.validation.domain.model.Status
-import org.calypsonet.keyple.demo.validation.ui.model.UiValidationResult
+import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
 import timber.log.Timber
 
 class CardSummaryActivity : BaseActivity() {
@@ -37,9 +37,9 @@ class CardSummaryActivity : BaseActivity() {
     val bundle = intent.getBundleExtra(Bundle::class.java.simpleName)!!
     val validationResult =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-          bundle.getParcelable(UiValidationResult::class.simpleName, UiValidationResult::class.java)
+          bundle.getParcelable(ValidationResult::class.simpleName, ValidationResult::class.java)
         } else {
-          @Suppress("DEPRECATION") bundle.getParcelable(UiValidationResult::class.simpleName)
+          @Suppress("DEPRECATION") bundle.getParcelable(ValidationResult::class.simpleName)
         }
 
     if (validationResult != null && validationResult.cardType.isNotBlank()) {
