@@ -185,7 +185,7 @@ class ReloadActivity : AbstractCardActivity() {
     val intent = Intent(this, ReloadResultActivity::class.java)
     intent.putExtra(ReloadResultActivity.TICKETS_NUMBER, 0)
     intent.putExtra(ReloadResultActivity.STATUS, cardReaderResponse.status.toString())
-    intent.putExtra(ReloadResultActivity.MESSAGE, cardReaderResponse.errorMessage)
+    intent.putExtra(ReloadResultActivity.MESSAGE, cardReaderResponse.errorMessage ?: "")
     intent.putExtra(CARD_CONTENT, cardReaderResponse)
     intent.putExtra(CARD_APPLICATION_NUMBER, applicationSerialNumber)
     startActivity(intent)

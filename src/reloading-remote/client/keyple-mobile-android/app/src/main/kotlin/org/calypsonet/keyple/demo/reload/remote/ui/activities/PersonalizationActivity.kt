@@ -100,7 +100,7 @@ class PersonalizationActivity : AbstractCardActivity() {
     val intent = Intent(this, ReloadResultActivity::class.java)
     intent.putExtra(ReloadResultActivity.IS_PERSONALIZATION_RESULT, true)
     intent.putExtra(ReloadResultActivity.STATUS, cardReaderResponse.status.name)
-    intent.putExtra(ReloadResultActivity.MESSAGE, cardReaderResponse.errorMessage)
+    intent.putExtra(ReloadResultActivity.MESSAGE, cardReaderResponse.errorMessage ?: "")
     intent.putExtra(CARD_CONTENT, cardReaderResponse)
     intent.putExtra(CARD_APPLICATION_NUMBER, uniqueIdentifier)
     startActivity(intent)
