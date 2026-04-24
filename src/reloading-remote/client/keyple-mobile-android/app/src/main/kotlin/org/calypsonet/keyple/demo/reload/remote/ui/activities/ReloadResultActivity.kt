@@ -93,7 +93,7 @@ class ReloadResultActivity : AbstractDemoActivity() {
         activityChargeResultBinding.animation.repeatCount = 0
         activityChargeResultBinding.animation.playAnimation()
 
-        val message = intent.getStringExtra(MESSAGE)
+        val message = intent.getStringExtra(MESSAGE) ?: ""
         if (intent.getBooleanExtra(IS_PERSONALIZATION_RESULT, false)) {
           activityChargeResultBinding.bigText.setText(R.string.perso_failed_label)
           activityChargeResultBinding.bigText.append(":\n")
