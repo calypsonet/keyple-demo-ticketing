@@ -13,5 +13,5 @@
 package org.calypsonet.keyple.demo.common.model
 
 data class Location(val id: Int, val name: String) {
-    override fun toString() = name
+  override fun toString() = name
 }
