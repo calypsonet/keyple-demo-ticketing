@@ -83,7 +83,7 @@ class ReaderManagerImpl @Inject constructor() : ReaderManager {
     cardReaderProtocols[BluebirdContactlessProtocols.ISO_14443_4_B.name] =
         CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name
     cardReaderProtocols[BluebirdContactlessProtocols.MIFARE_ULTRALIGHT.name] =
-        CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name
+        CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name
     cardReaderProtocols[BluebirdContactlessProtocols.ST25_SRT512.name] =
         CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name
     cardReaderProtocols[BluebirdContactlessProtocols.MIFARE_CLASSIC.name] =
