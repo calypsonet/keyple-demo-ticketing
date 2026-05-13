@@ -154,6 +154,15 @@ constructor(
     readerManager.onDestroy(observer)
   }
 
+  fun endCardProcessing() {
+    try {
+      logger.i("endCardProcessing")
+      (readerManager.getCardReader() as ObservableCardReader).finalizeCardProcessing()
+    } catch (e: Exception) {
+      logger.e("Cannot end card processing: $e")
+    }
+  }
+
   /**
    * Asks the UI layer to display a success feedback (sound, haptics, message...).
    *

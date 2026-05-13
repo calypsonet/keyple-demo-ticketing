@@ -211,6 +211,7 @@ class ReaderActivity : BaseActivity() {
                 // Card removed during transaction: silent reset, no display, no sound
                 Timber.i("Card removed during transaction")
                 currentAppState = AppState.WAIT_CARD
+                ticketingService.endCardProcessing()
                 playWaitingAnimation()
               } else {
                 changeDisplay(validationResult)
@@ -318,7 +319,6 @@ class ReaderActivity : BaseActivity() {
       }
     }
 
-    ticketingService.stopNfcDetection()
     b.summaryMainView.visibility = View.VISIBLE
     b.animation.setAnimation(animationFile)
     b.animation.playAnimation()
@@ -346,7 +346,7 @@ class ReaderActivity : BaseActivity() {
     activityCardReaderBinding.presentCardTv.visibility = View.VISIBLE
     playWaitingAnimation()
     ticketingService.displayWaiting()
-    ticketingService.startNfcDetection()
+    ticketingService.endCardProcessing()
   }
 
   private fun showNoProxyReaderDialog(t: Throwable) {
