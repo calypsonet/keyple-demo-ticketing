@@ -157,10 +157,6 @@ constructor(
   fun onDestroy(observer: CardReaderObserverSpi?) {
     readersInitialized = false
     readerManager.onDestroy(observer)
-    readerManager.clear()
-    if (observer != null && readerManager.getCardReader() != null) {
-      (readerManager.getCardReader() as ObservableCardReader).removeObserver(observer)
-    }
   }
 
   fun displayResultSuccess(): Boolean = readerManager.displayResultSuccess()
