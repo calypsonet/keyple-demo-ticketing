@@ -171,6 +171,8 @@ class ReloadActivity : AbstractCardActivity() {
       } catch (e: Exception) {
         Timber.e(e)
         launchExceptionResponse(e)
+      } finally {
+        ticketingService.endCardProcessing()
       }
     }
   }

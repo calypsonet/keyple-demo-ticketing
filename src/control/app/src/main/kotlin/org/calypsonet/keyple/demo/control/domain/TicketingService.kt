@@ -159,6 +159,15 @@ constructor(
     readerManager.onDestroy(observer)
   }
 
+  fun endCardProcessing() {
+    try {
+      logger.i("endCardProcessing")
+      (readerManager.getCardReader() as ObservableCardReader).finalizeCardProcessing()
+    } catch (e: Exception) {
+      logger.e("Cannot end card processing: $e")
+    }
+  }
+
   fun displayResultSuccess(): Boolean = readerManager.displayResultSuccess()
 
   fun displayResultFailed(): Boolean = readerManager.displayResultFailed()

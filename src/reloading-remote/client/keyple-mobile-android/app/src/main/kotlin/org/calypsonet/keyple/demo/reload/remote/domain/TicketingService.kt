@@ -149,6 +149,15 @@ constructor(
     (readerManager.getReader(readerName) as ObservableCardReader).stopCardDetection()
   }
 
+  fun endCardProcessing() {
+    try {
+      logger.i("endCardProcessing")
+      (readerManager.getCardReader() as ObservableCardReader).finalizeCardProcessing()
+    } catch (e: Exception) {
+      logger.i("cannot end card processing: $e")
+    }
+  }
+
   fun analyzeContracts(
       localReaderName: String,
       smartCard: SmartCard,

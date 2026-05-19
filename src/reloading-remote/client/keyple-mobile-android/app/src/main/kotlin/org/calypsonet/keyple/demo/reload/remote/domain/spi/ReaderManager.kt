@@ -35,5 +35,7 @@ interface ReaderManager {
 
   fun getReader(readerName: String): CardReader
 
+  fun getCardReader(): CardReader?
+
   fun onDestroy(observer: CardReaderObserverSpi?)
 }

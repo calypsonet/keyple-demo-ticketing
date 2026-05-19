@@ -172,6 +172,10 @@ class ReaderManagerImpl @Inject constructor() : ReaderManager {
     return cardReader
   }
 
+  override fun getCardReader(): CardReader? {
+    return cardReader
+  }
+
   private fun clear() {
     cardReaderProtocols.forEach { entry ->
       (cardReader as ConfigurableCardReader).deactivateProtocol(entry.key)

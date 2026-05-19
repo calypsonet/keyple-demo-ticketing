@@ -196,6 +196,8 @@ class ReaderActivity : BaseActivity() {
                         status = Status.ERROR,
                         authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
                         titlesList = arrayListOf()))
+              } finally {
+                ticketingService.endCardProcessing()
               }
             }
           }
