@@ -174,6 +174,8 @@ class StorageCardValidationManager : BaseValidationManager() {
         // Step 6 - Validate the event version
         validateEventVersionOrThrow(event.eventVersionNumber)
 
+        validateAntiPassbackOrThrow(event.eventDatetime, validationDateTime, true)
+
         // Step 7 - Read and unpack the contract record (16 bytes)
         val contractContent =
             if (isMifareClassic) {
