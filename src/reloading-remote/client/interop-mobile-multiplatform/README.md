@@ -32,6 +32,7 @@ This innovative client showcases the power of Kotlin Multiplatform by providing 
 - Device with NFC capability
 - Android 8.0+ (API level 26+)
 - NFC enabled in system settings
+- Android SDK installed locally, with a `local.properties` file at the project root pointing to it (see [Building the Project](#building-the-project))
 
 #### iOS
 - iPhone with NFC support (iPhone 7+)
@@ -60,6 +61,17 @@ cd keyple-demo-ticketing/src/reloading-remote/client/interop-mobile-multiplatfor
 ```
 
 #### Android App
+
+Before building for Android, create a `local.properties` file at the root of this project (`interop-mobile-multiplatform/local.properties`) pointing to your local Android SDK installation. This file is not committed to the repository, so each developer must create their own:
+
+```properties
+sdk.dir=/path/to/your/Android/Sdk
+```
+
+On Windows, escape backslashes in the path, e.g. `sdk.dir=C\:\\Users\\<user>\\AppData\\Local\\Android\\Sdk`.
+
+Without this file, Gradle fails with `SDK location not found`.
+
 ```bash
 ./gradlew :composeApp:assembleDebug
 
