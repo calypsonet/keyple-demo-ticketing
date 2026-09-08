@@ -1,4 +1,4 @@
-name: Reusable Android Gradle CI
+commenname: Reusable Android Gradle CI
 
 on:
   workflow_call:
@@ -22,7 +22,7 @@ jobs:
     runs-on: ${{ inputs.target-os }}
     steps:
       - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           lfs: true
 
