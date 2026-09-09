@@ -21,10 +21,10 @@ jobs:
         with:
           lfs: true
 
-      - name: Setup .NET 7.0.x
+      - name: Setup .NET 8.0.x
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 7.0.x
+          dotnet-version: 8.0.x
 
       - name: Check code format, build and test ${{ inputs.component-name }}
         working-directory: ./src/reloading-remote/client/pc-dotnet
