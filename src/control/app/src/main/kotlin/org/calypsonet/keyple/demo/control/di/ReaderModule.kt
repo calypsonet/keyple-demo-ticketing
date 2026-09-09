@@ -14,8 +14,9 @@ package org.calypsonet.keyple.demo.control.di
 
 import dagger.Module
 import dagger.Provides
-import org.calypsonet.keyple.demo.control.data.ReaderRepository
+import org.calypsonet.keyple.demo.control.data.ReaderManagerImpl
 import org.calypsonet.keyple.demo.control.di.scope.AppScoped
+import org.calypsonet.keyple.demo.control.domain.spi.ReaderManager
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 import timber.log.Timber
 
@@ -25,9 +26,9 @@ class ReaderModule {
 
   @Provides
   @AppScoped
-  fun provideReaderRepository(
+  fun provideReaderManager(
       cardReaderObservationExceptionHandlerSpi: CardReaderObservationExceptionHandlerSpi
-  ): ReaderRepository = ReaderRepository(cardReaderObservationExceptionHandlerSpi)
+  ): ReaderManager = ReaderManagerImpl(cardReaderObservationExceptionHandlerSpi)
 
   @Provides
   @AppScoped
