@@ -121,31 +121,31 @@ class ReaderManagerImpl @Inject constructor() : ReaderManager {
   ) {
     device = deviceEnum
     val activity = uiContext.adaptTo(Activity::class.java)
+    if (device != DeviceEnum.CONTACTLESS_CARD) {
+      // The OMAPI plugin factory is provided asynchronously, once the SE service is connected.
+      AndroidOmapiPluginFactoryProvider(activity) { factory ->
+        SmartCardServiceProvider.getService().registerPlugin(factory)
+        callback?.invoke()
+      }
+      return
+    }
+    initReaderType(readerType)
     runBlocking {
       val pluginFactory =
           withContext(Dispatchers.IO) {
-            when (device) {
-              DeviceEnum.CONTACTLESS_CARD -> {
-                initReaderType(readerType)
-                when (readerType) {
-                  ReaderType.BLUEBIRD ->
-                      BluebirdPluginFactoryProvider.provideFactory(
-                          activity,
-                          ApduInterpreterFactoryProvider.provideFactory(),
-                          MifareClassicKeyProviderImpl())
+            when (readerType) {
+              ReaderType.BLUEBIRD ->
+                  BluebirdPluginFactoryProvider.provideFactory(
+                      activity,
+                      ApduInterpreterFactoryProvider.provideFactory(),
+                      MifareClassicKeyProviderImpl())
 
-                  ReaderType.NFC_TERMINAL ->
-                      AndroidNfcPluginFactoryProvider.provideFactory(
-                          AndroidNfcConfig(
-                              activity = activity,
-                              apduInterpreterFactory =
-                                  ApduInterpreterFactoryProvider.provideFactory(),
-                              keyProvider = MifareClassicKeyProviderImpl()))
-                }
-              }
-              else -> {
-                AndroidOmapiPluginFactoryProvider(activity) { callback?.invoke() }
-              }
+              ReaderType.NFC_TERMINAL ->
+                  AndroidNfcPluginFactoryProvider.provideFactory(
+                      AndroidNfcConfig(
+                          activity = activity,
+                          apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
+                          keyProvider = MifareClassicKeyProviderImpl()))
             }
           }
       SmartCardServiceProvider.getService().registerPlugin(pluginFactory)
@@ -156,17 +156,20 @@ class ReaderManagerImpl @Inject constructor() : ReaderManager {
       observer: CardReaderObserverSpi?,
       readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi?
   ): CardReader? {
+    // Only the contactless card reader is observed; the OMAPI readers are retrieved by name.
+    if (device != DeviceEnum.CONTACTLESS_CARD) {
+      return null
+    }
     cardReader =
         SmartCardServiceProvider.getService().getPlugin(cardPluginName)?.getReader(cardReaderName)
 
     cardReader?.let {
       cardReaderProtocols.forEach { entry ->
         (it as ConfigurableCardReader).activateProtocol(entry.key, entry.value)
-
-        (cardReader as ObservableCardReader).setReaderObservationExceptionHandler(
-            readerObservationExceptionHandler)
-        (cardReader as ObservableCardReader).addObserver(observer)
       }
+      (it as ObservableCardReader).setReaderObservationExceptionHandler(
+          readerObservationExceptionHandler)
+      it.addObserver(observer)
     }
 
     return cardReader

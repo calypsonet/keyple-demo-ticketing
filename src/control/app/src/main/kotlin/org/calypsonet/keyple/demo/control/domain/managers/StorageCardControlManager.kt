@@ -13,7 +13,6 @@
 package org.calypsonet.keyple.demo.control.domain.managers
 
 import java.time.LocalDateTime
-import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService
 import org.calypsonet.keyple.demo.common.constants.CardConstants
 import org.calypsonet.keyple.demo.common.model.EventStructure
 import org.calypsonet.keyple.demo.common.model.Location
@@ -30,6 +29,7 @@ import org.calypsonet.keyple.demo.control.domain.model.Contract
 import org.calypsonet.keyple.demo.control.domain.model.ControlResult
 import org.calypsonet.keyple.demo.control.domain.model.Status
 import org.calypsonet.keyple.demo.control.domain.model.Validation
+import org.calypsonet.keyple.demo.control.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.control.domain.spi.Logger
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ChannelControl
@@ -44,7 +44,8 @@ class StorageCardControlManager {
       cardReader: CardReader,
       storageCard: StorageCard,
       locations: List<Location>,
-      logger: Logger
+      logger: Logger,
+      keypopApiProvider: KeypopApiProvider
   ): ControlResult {
 
     var errorMessage: String?
@@ -52,14 +53,13 @@ class StorageCardControlManager {
     var validation: Validation? = null
     var status: Status = Status.ERROR
 
-    val storageCardExtension = StorageCardExtensionService.getInstance()
+    val storageCardApiFactory = keypopApiProvider.getStorageCardApiFactory()
 
     try {
       // Create a card transaction for control
       val cardTransaction =
           try {
-            storageCardExtension.storageCardApiFactory.createStorageCardTransactionManager(
-                cardReader, storageCard)
+            storageCardApiFactory.createStorageCardTransactionManager(cardReader, storageCard)
           } catch (e: Exception) {
             logger.w("Failed to create storage card transaction", e)
             throw RuntimeException("Failed to create storage card transaction", e)

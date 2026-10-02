@@ -14,7 +14,6 @@ package org.calypsonet.keyple.demo.control.domain
 
 import java.time.LocalDateTime
 import javax.inject.Inject
-import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService
 import org.calypsonet.keyple.demo.common.constants.CardConstants
 import org.calypsonet.keyple.demo.common.data.LocationRepository
 import org.calypsonet.keyple.demo.control.di.scope.AppScoped
@@ -43,6 +42,7 @@ import org.eclipse.keypop.reader.selection.CardSelectionResult
 import org.eclipse.keypop.reader.selection.ScheduledCardSelectionsResponse
 import org.eclipse.keypop.reader.selection.spi.SmartCard
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
+import org.eclipse.keypop.storagecard.StorageCardApiFactory
 import org.eclipse.keypop.storagecard.card.ProductType
 import org.eclipse.keypop.storagecard.card.StorageCard
 
@@ -66,8 +66,9 @@ constructor(
 
   private var legacySamApiFactory: LegacySamApiFactory = keypopApiProvider.getLegacySamApiFactory()
 
-  /** Get the Storage card extension service */
-  private val storageCardExtension = StorageCardExtensionService.getInstance()
+  private val storageCardApiFactory: StorageCardApiFactory =
+      keypopApiProvider.getStorageCardApiFactory()
+
   private lateinit var legacySam: LegacySam
   private lateinit var smartCard: SmartCard
   private lateinit var cardSelectionManager: CardSelectionManager
@@ -219,21 +220,20 @@ constructor(
               readerApiFactory
                   .createBasicCardSelector()
                   .filterByCardProtocol(CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name),
-              storageCardExtension.storageCardApiFactory.createStorageCardSelectionExtension(
+              storageCardApiFactory.createStorageCardSelectionExtension(
                   ProductType.MIFARE_ULTRALIGHT))
       indexOfST25CardSelection =
           cardSelectionManager.prepareSelection(
               readerApiFactory
                   .createBasicCardSelector()
                   .filterByCardProtocol(CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name),
-              storageCardExtension.storageCardApiFactory.createStorageCardSelectionExtension(
-                  ProductType.ST25_SRT512))
+              storageCardApiFactory.createStorageCardSelectionExtension(ProductType.ST25_SRT512))
       indexOfMifareClassic1KCardSelection =
           cardSelectionManager.prepareSelection(
               readerApiFactory
                   .createBasicCardSelector()
                   .filterByCardProtocol(CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name),
-              storageCardExtension.storageCardApiFactory.createStorageCardSelectionExtension(
+              storageCardApiFactory.createStorageCardSelectionExtension(
                   ProductType.MIFARE_CLASSIC_1K))
     }
 
@@ -306,7 +306,8 @@ constructor(
                 storageCard = smartCard as StorageCard,
                 locations = LocationRepository.getLocations(),
                 controlDateTime = LocalDateTime.now(),
-                logger = logger)
+                logger = logger,
+                keypopApiProvider = keypopApiProvider)
       }
       else -> {
         error("Unsupported card type")

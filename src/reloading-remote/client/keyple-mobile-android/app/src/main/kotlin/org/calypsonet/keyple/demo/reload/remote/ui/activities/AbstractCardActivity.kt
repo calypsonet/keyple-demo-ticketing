@@ -17,7 +17,6 @@ import android.os.Bundle
 import javax.inject.Inject
 import kotlin.jvm.Throws
 import org.calypsonet.keyple.demo.common.constants.CardConstants
-import org.calypsonet.keyple.demo.reload.remote.data.ReaderManagerImpl
 import org.calypsonet.keyple.demo.reload.remote.domain.TicketingService
 import org.calypsonet.keyple.demo.reload.remote.domain.model.AppSettings
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
@@ -36,7 +35,6 @@ abstract class AbstractCardActivity :
     AbstractDemoActivity(), CardReaderObserverSpi, CardReaderObservationExceptionHandlerSpi {
 
   @Inject lateinit var ticketingService: TicketingService
-  @Inject lateinit var readerManager: ReaderManagerImpl
   lateinit var selectedDeviceReaderName: String
   lateinit var device: DeviceEnum
   lateinit var pluginType: String
