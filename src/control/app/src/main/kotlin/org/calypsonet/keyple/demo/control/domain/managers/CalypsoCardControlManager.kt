@@ -41,7 +41,10 @@ import org.eclipse.keypop.calypso.card.transaction.TransactionManager
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ChannelControl
 
-class CalypsoCardControlManager {
+class CalypsoCardControlManager(
+    private val keypopApiProvider: KeypopApiProvider,
+    private val logger: Logger
+) {
 
   fun executeControlProcedure(
       controlDateTime: LocalDateTime,
@@ -51,9 +54,7 @@ class CalypsoCardControlManager {
       asymmetricCryptoSecuritySetting: AsymmetricCryptoSecuritySetting,
       locations: List<Location>,
       controlLocation: Location,
-      validationPeriod: Int,
-      logger: Logger,
-      keypopApiProvider: KeypopApiProvider
+      validationPeriod: Int
   ): ControlResult {
 
     var errorMessage: String?

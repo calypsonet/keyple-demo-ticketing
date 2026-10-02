@@ -42,13 +42,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="org.calypsonet.keyple.demo.validation.ui.activities.CardSummaryActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:launchMode="singleTop"
-            android:screenOrientation="fullUser"
-            android:configChanges="orientation|keyboardHidden"
-            android:exported="true"/>
-        <activity
             android:name="org.calypsonet.keyple.demo.validation.ui.activities.HomeActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:launchMode="singleTop"

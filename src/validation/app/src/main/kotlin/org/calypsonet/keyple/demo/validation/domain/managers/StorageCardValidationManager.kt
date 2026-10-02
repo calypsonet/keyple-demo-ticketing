@@ -49,7 +49,10 @@ import org.eclipse.keypop.storagecard.card.StorageCard
  * - MIFARE Ultralight/ST25 SRT512: blocks 4-7 (Env), 8-11 (Contract), 12-15 (Event) [4 bytes each]
  * - Mifare Classic 1K: blocks 4 (Env), 5 (Contract), 6 (Event) [16 bytes each, sector 1]
  */
-class StorageCardValidationManager : BaseValidationManager() {
+class StorageCardValidationManager(
+    private val keypopApiProvider: KeypopApiProvider,
+    private val logger: Logger
+) : BaseValidationManager() {
 
   /**
    * Formats the card ProductType for user display. Examples: MIFARE_CLASSIC_1K → "Mifare Classic
@@ -71,9 +74,7 @@ class StorageCardValidationManager : BaseValidationManager() {
       cardReader: CardReader,
       storageCard: StorageCard,
       locations: List<Location>,
-      validationLocation: Location,
-      keypopApiProvider: KeypopApiProvider,
-      logger: Logger
+      validationLocation: Location
   ): ValidationResult {
     var status: Status = Status.PROCESSING
     var errorMessage: String? = null

@@ -36,7 +36,10 @@ import org.eclipse.keypop.storagecard.MifareClassicKeyType
 import org.eclipse.keypop.storagecard.card.ProductType
 import org.eclipse.keypop.storagecard.card.StorageCard
 
-class StorageCardControlManager {
+class StorageCardControlManager(
+    private val keypopApiProvider: KeypopApiProvider,
+    private val logger: Logger
+) {
 
   fun executeControlProcedure(
       controlDateTime: LocalDateTime,
@@ -44,9 +47,7 @@ class StorageCardControlManager {
       storageCard: StorageCard,
       locations: List<Location>,
       controlLocation: Location,
-      validationPeriod: Int,
-      logger: Logger,
-      keypopApiProvider: KeypopApiProvider
+      validationPeriod: Int
   ): ControlResult {
 
     var errorMessage: String?

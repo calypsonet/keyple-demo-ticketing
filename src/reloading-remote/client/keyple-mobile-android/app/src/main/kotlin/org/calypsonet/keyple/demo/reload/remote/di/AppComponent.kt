@@ -25,6 +25,7 @@ import org.calypsonet.keyple.demo.reload.remote.di.scopes.AppScoped
         [
             AndroidSupportInjectionModule::class,
             AppModule::class,
+            DomainModule::class,
             KeypopApiModule::class,
             LoggerModule::class,
             DataModule::class,

@@ -14,7 +14,6 @@ package org.calypsonet.keyple.demo.reload.remote.domain
 
 import java.lang.IllegalStateException
 import java.util.*
-import javax.inject.Inject
 import kotlin.jvm.Throws
 import org.calypsonet.keyple.demo.common.dto.AnalyzeContractsInputDto
 import org.calypsonet.keyple.demo.common.dto.AnalyzeContractsOutputDto
@@ -22,7 +21,6 @@ import org.calypsonet.keyple.demo.common.dto.CardIssuanceInputDto
 import org.calypsonet.keyple.demo.common.dto.CardIssuanceOutputDto
 import org.calypsonet.keyple.demo.common.dto.WriteContractInputDto
 import org.calypsonet.keyple.demo.common.dto.WriteContractOutputDto
-import org.calypsonet.keyple.demo.reload.remote.di.scopes.AppScoped
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ReaderType
@@ -39,10 +37,7 @@ import org.eclipse.keypop.storagecard.card.ProductType.MIFARE_CLASSIC_1K
 import org.eclipse.keypop.storagecard.card.ProductType.MIFARE_ULTRALIGHT
 import org.eclipse.keypop.storagecard.card.ProductType.ST25_SRT512
 
-@AppScoped
-class TicketingService
-@Inject
-constructor(
+class TicketingService(
     private var keypopApiProvider: KeypopApiProvider,
     private var readerManager: ReaderManager,
     private var logger: Logger,

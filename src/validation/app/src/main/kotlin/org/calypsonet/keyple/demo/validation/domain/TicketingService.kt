@@ -13,11 +13,9 @@
 package org.calypsonet.keyple.demo.validation.domain
 
 import java.time.LocalDateTime
-import javax.inject.Inject
 import org.calypsonet.keyple.demo.common.constants.CardConstants
 import org.calypsonet.keyple.demo.common.data.LocationRepository
 import org.calypsonet.keyple.demo.common.model.Location
-import org.calypsonet.keyple.demo.validation.di.scope.AppScoped
 import org.calypsonet.keyple.demo.validation.domain.managers.CalypsoCardValidationManager
 import org.calypsonet.keyple.demo.validation.domain.managers.StorageCardValidationManager
 import org.calypsonet.keyple.demo.validation.domain.model.CardProtocolEnum
@@ -62,15 +60,14 @@ import org.eclipse.keypop.storagecard.card.StorageCard
  * Thread-safety: instances are designed to be used on the UI thread / main scope coordinating
  * reader events; no internal synchronization is provided.
  */
-@AppScoped
-class TicketingService
-@Inject
-constructor(
+class TicketingService(
     private var keypopApiProvider: KeypopApiProvider,
     private var appSettings: AppSettingsRepository,
     private var readerManager: ReaderManager,
     private var uiManager: UiManager,
-    private var logger: Logger
+    private var logger: Logger,
+    private val calypsoCardValidationManager: CalypsoCardValidationManager,
+    private val storageCardValidationManager: StorageCardValidationManager
 ) {
 
   /** Indicates whether readers have been successfully initialized via [init]. */
@@ -323,28 +320,23 @@ constructor(
   fun executeValidationProcedure(): ValidationResult {
     return when (smartCard) {
       is CalypsoCard -> {
-        CalypsoCardValidationManager()
-            .executeValidationProcedure(
-                validationDateTime = LocalDateTime.now(),
-                validationAmount = 1,
-                cardReader = readerManager.getCardReader()!!,
-                calypsoCard = smartCard as CalypsoCard,
-                cardSecuritySettings = cardSecuritySettings,
-                locations = LocationRepository.getLocations(),
-                validationLocation = appSettings.location,
-                keypopApiProvider = keypopApiProvider)
+        calypsoCardValidationManager.executeValidationProcedure(
+            validationDateTime = LocalDateTime.now(),
+            validationAmount = 1,
+            cardReader = readerManager.getCardReader()!!,
+            calypsoCard = smartCard as CalypsoCard,
+            cardSecuritySettings = cardSecuritySettings,
+            locations = LocationRepository.getLocations(),
+            validationLocation = appSettings.location)
       }
       is StorageCard -> {
-        StorageCardValidationManager()
-            .executeValidationProcedure(
-                validationDateTime = LocalDateTime.now(),
-                validationAmount = 1,
-                cardReader = readerManager.getCardReader()!!,
-                storageCard = smartCard as StorageCard,
-                locations = LocationRepository.getLocations(),
-                validationLocation = appSettings.location,
-                keypopApiProvider = keypopApiProvider,
-                logger = logger)
+        storageCardValidationManager.executeValidationProcedure(
+            validationDateTime = LocalDateTime.now(),
+            validationAmount = 1,
+            cardReader = readerManager.getCardReader()!!,
+            storageCard = smartCard as StorageCard,
+            locations = LocationRepository.getLocations(),
+            validationLocation = appSettings.location)
       }
       else -> {
         error("Unsupported card type")

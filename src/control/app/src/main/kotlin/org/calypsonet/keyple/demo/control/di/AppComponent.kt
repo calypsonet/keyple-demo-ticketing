@@ -25,6 +25,7 @@ import org.calypsonet.keyple.demo.control.di.scope.AppScoped
         [
             AndroidSupportInjectionModule::class,
             AppModule::class,
+            DomainModule::class,
             AppSettingsModule::class,
             KeypopApiModule::class,
             LoggerModule::class,

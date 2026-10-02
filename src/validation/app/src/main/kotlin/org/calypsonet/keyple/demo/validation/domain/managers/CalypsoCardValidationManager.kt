@@ -38,7 +38,8 @@ import org.eclipse.keypop.reader.CardCommunicationException
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ChannelControl
 
-class CalypsoCardValidationManager : BaseValidationManager() {
+class CalypsoCardValidationManager(private val keypopApiProvider: KeypopApiProvider) :
+    BaseValidationManager() {
 
   fun executeValidationProcedure(
       validationDateTime: LocalDateTime,
@@ -47,8 +48,7 @@ class CalypsoCardValidationManager : BaseValidationManager() {
       calypsoCard: CalypsoCard,
       cardSecuritySettings: SymmetricCryptoSecuritySetting,
       locations: List<Location>,
-      validationLocation: Location,
-      keypopApiProvider: KeypopApiProvider
+      validationLocation: Location
   ): ValidationResult {
 
     var status: Status = Status.PROCESSING

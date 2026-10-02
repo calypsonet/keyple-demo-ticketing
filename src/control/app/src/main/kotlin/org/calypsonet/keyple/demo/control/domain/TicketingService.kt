@@ -13,10 +13,8 @@
 package org.calypsonet.keyple.demo.control.domain
 
 import java.time.LocalDateTime
-import javax.inject.Inject
 import org.calypsonet.keyple.demo.common.constants.CardConstants
 import org.calypsonet.keyple.demo.common.data.LocationRepository
-import org.calypsonet.keyple.demo.control.di.scope.AppScoped
 import org.calypsonet.keyple.demo.control.domain.managers.CalypsoCardControlManager
 import org.calypsonet.keyple.demo.control.domain.managers.StorageCardControlManager
 import org.calypsonet.keyple.demo.control.domain.model.CardProtocolEnum
@@ -48,15 +46,14 @@ import org.eclipse.keypop.storagecard.StorageCardApiFactory
 import org.eclipse.keypop.storagecard.card.ProductType
 import org.eclipse.keypop.storagecard.card.StorageCard
 
-@AppScoped
-class TicketingService
-@Inject
-constructor(
+class TicketingService(
     private var keypopApiProvider: KeypopApiProvider,
     private var appSettings: AppSettingsRepository,
     private var readerManager: ReaderManager,
     private var uiManager: UiManager,
-    private var logger: Logger
+    private var logger: Logger,
+    private val calypsoCardControlManager: CalypsoCardControlManager,
+    private val storageCardControlManager: StorageCardControlManager
 ) {
 
   private val readerApiFactory: ReaderApiFactory = keypopApiProvider.getReaderApiFactory()
@@ -300,30 +297,24 @@ constructor(
   fun executeControlProcedure(): ControlResult {
     return when (smartCard) {
       is CalypsoCard -> {
-        CalypsoCardControlManager()
-            .executeControlProcedure(
-                cardReader = readerManager.getCardReader()!!,
-                calypsoCard = smartCard as CalypsoCard,
-                symmetricCryptoSecuritySetting = symmetricCryptoSecuritySetting,
-                asymmetricCryptoSecuritySetting = asymmetricCryptoSecuritySettings,
-                locations = LocationRepository.getLocations(),
-                controlLocation = appSettings.location,
-                validationPeriod = appSettings.validationPeriod,
-                controlDateTime = LocalDateTime.now(),
-                logger = logger,
-                keypopApiProvider = keypopApiProvider)
+        calypsoCardControlManager.executeControlProcedure(
+            cardReader = readerManager.getCardReader()!!,
+            calypsoCard = smartCard as CalypsoCard,
+            symmetricCryptoSecuritySetting = symmetricCryptoSecuritySetting,
+            asymmetricCryptoSecuritySetting = asymmetricCryptoSecuritySettings,
+            locations = LocationRepository.getLocations(),
+            controlLocation = appSettings.location,
+            validationPeriod = appSettings.validationPeriod,
+            controlDateTime = LocalDateTime.now())
       }
       is StorageCard -> {
-        StorageCardControlManager()
-            .executeControlProcedure(
-                cardReader = readerManager.getCardReader()!!,
-                storageCard = smartCard as StorageCard,
-                locations = LocationRepository.getLocations(),
-                controlLocation = appSettings.location,
-                validationPeriod = appSettings.validationPeriod,
-                controlDateTime = LocalDateTime.now(),
-                logger = logger,
-                keypopApiProvider = keypopApiProvider)
+        storageCardControlManager.executeControlProcedure(
+            cardReader = readerManager.getCardReader()!!,
+            storageCard = smartCard as StorageCard,
+            locations = LocationRepository.getLocations(),
+            controlLocation = appSettings.location,
+            validationPeriod = appSettings.validationPeriod,
+            controlDateTime = LocalDateTime.now())
       }
       else -> {
         error("Unsupported card type")
