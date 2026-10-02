@@ -15,9 +15,9 @@ package org.calypsonet.keyple.demo.control.di
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import org.calypsonet.keyple.demo.control.di.scope.ActivityScoped
-import org.calypsonet.keyple.demo.control.ui.*
-import org.calypsonet.keyple.demo.control.ui.cardcontent.CardContentActivity
-import org.calypsonet.keyple.demo.control.ui.deviceselection.DeviceSelectionActivity
+import org.calypsonet.keyple.demo.control.ui.activities.*
+import org.calypsonet.keyple.demo.control.ui.activities.cardcontent.CardContentActivity
+import org.calypsonet.keyple.demo.control.ui.activities.deviceselection.DeviceSelectionActivity
 
 @Suppress("unused")
 @Module

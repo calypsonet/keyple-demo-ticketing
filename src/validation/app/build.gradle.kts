@@ -40,7 +40,7 @@ dependencies {
   // Proprietary libs
   // Storage card specific components
   // Conditional dependency for the storage card library
-  val storageCardLibName = "keyple-card-cna-storagecard-java-lib-2.3.0"
+  val storageCardLibName = "keyple-card-cna-storagecard-java-lib-2.3.1"
   val storageCardLibFile = file("../../../libs/${storageCardLibName}.jar")
   if (storageCardLibFile.exists()) {
     println("Using private storage card library: ${storageCardLibFile.name}")
@@ -51,7 +51,7 @@ dependencies {
   }
 
   // Conditional dependency for the storage card plugin library
-  val pluginStorageCardLibName = "keyple-plugin-cna-storagecard-java-lib-1.1.0"
+  val pluginStorageCardLibName = "keyple-plugin-cna-storagecard-java-lib-1.1.1"
   val pluginStorageCardLibFile = file("../../../libs/${pluginStorageCardLibName}.jar")
   if (pluginStorageCardLibFile.exists()) {
     println("Using private storage card plugin library: ${pluginStorageCardLibFile.name}")
@@ -83,7 +83,8 @@ dependencies {
     implementation(files("../../../libs/${arrivePluginLibName}-mock.aar"))
   }
 
-  // Arrive/Parkeon SDK (UI: LEDs, sounds) — optional, enables ArriveUiManager real implementation
+  // Arrive/Parkeon SDK (UI: LEDs, sounds) — optional, enables ArriveFeedbackDevice real
+  // implementation
   if (hasArriveSdk) {
     implementation(files(parkeonSdkFile))
   }
@@ -199,7 +200,7 @@ android {
   sourceSets {
     getByName("main").java.srcDirs("src/main/kotlin")
     getByName("debug").java.srcDirs("src/debug/kotlin")
-    // ArriveUiManager: real impl (Parkeon SDK) or no-op stub, mutually exclusive source sets
+    // ArriveFeedbackDevice: real impl (Parkeon SDK) or no-op stub, mutually exclusive source sets
     getByName("main")
         .java
         .srcDir(if (hasArriveSdk) "src/arrive/kotlin" else "src/arrive-mock/kotlin")

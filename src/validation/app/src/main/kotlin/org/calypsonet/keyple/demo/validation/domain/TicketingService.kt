@@ -13,20 +13,20 @@
 package org.calypsonet.keyple.demo.validation.domain
 
 import java.time.LocalDateTime
-import javax.inject.Inject
 import org.calypsonet.keyple.demo.common.constants.CardConstants
 import org.calypsonet.keyple.demo.common.data.LocationRepository
 import org.calypsonet.keyple.demo.common.model.Location
-import org.calypsonet.keyple.demo.validation.di.scope.AppScoped
 import org.calypsonet.keyple.demo.validation.domain.managers.CalypsoCardValidationManager
 import org.calypsonet.keyple.demo.validation.domain.managers.StorageCardValidationManager
 import org.calypsonet.keyple.demo.validation.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
+import org.calypsonet.keyple.demo.validation.domain.spi.AppSettingsRepository
 import org.calypsonet.keyple.demo.validation.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.validation.domain.spi.Logger
 import org.calypsonet.keyple.demo.validation.domain.spi.ReaderManager
 import org.calypsonet.keyple.demo.validation.domain.spi.UiContext
+import org.calypsonet.keyple.demo.validation.domain.spi.UiManager
 import org.eclipse.keyple.core.util.HexUtil
 import org.eclipse.keypop.calypso.card.CalypsoCardApiFactory
 import org.eclipse.keypop.calypso.card.WriteAccessLevel
@@ -60,13 +60,14 @@ import org.eclipse.keypop.storagecard.card.StorageCard
  * Thread-safety: instances are designed to be used on the UI thread / main scope coordinating
  * reader events; no internal synchronization is provided.
  */
-@AppScoped
-class TicketingService
-@Inject
-constructor(
+class TicketingService(
     private var keypopApiProvider: KeypopApiProvider,
+    private var appSettings: AppSettingsRepository,
     private var readerManager: ReaderManager,
-    private var logger: Logger
+    private var uiManager: UiManager,
+    private var logger: Logger,
+    private val calypsoCardValidationManager: CalypsoCardValidationManager,
+    private val storageCardValidationManager: StorageCardValidationManager
 ) {
 
   /** Indicates whether readers have been successfully initialized via [init]. */
@@ -106,7 +107,8 @@ constructor(
    * @throws IllegalStateException if no SAM reader is available or SAM selection fails.
    */
   fun init(observer: CardReaderObserverSpi?, readerType: ReaderType, uiContext: UiContext) {
-    // Register plugin
+    // Init user feedback and register plugin
+    uiManager.init(readerType, uiContext)
     readerManager.registerPlugin(readerType, uiContext)
 
     // Init card reader
@@ -152,6 +154,16 @@ constructor(
   fun onDestroy(observer: CardReaderObserverSpi?) {
     areReadersInitialized = false
     readerManager.onDestroy(observer)
+    uiManager.release()
+  }
+
+  fun endCardProcessing() {
+    try {
+      logger.i("endCardProcessing")
+      (readerManager.getCardReader() as ObservableCardReader).finalizeCardProcessing()
+    } catch (e: Exception) {
+      logger.e("Cannot end card processing: $e")
+    }
   }
 
   /**
@@ -159,17 +171,23 @@ constructor(
    *
    * @return true if handled by the UI, false otherwise.
    */
-  fun displayResultSuccess(): Boolean = readerManager.displayResultSuccess()
+  fun displayResultSuccess(): Boolean {
+    uiManager.displayResultSuccess()
+    return true
+  }
 
   /**
    * Asks the UI layer to display a failure feedback (sound, haptics, message...).
    *
    * @return true if handled by the UI, false otherwise.
    */
-  fun displayResultFailed(): Boolean = readerManager.displayResultFailed()
+  fun displayResultFailed(): Boolean {
+    uiManager.displayResultFailed()
+    return true
+  }
 
   /** Resets the UI feedback to the waiting-for-card state (e.g. turns off result LEDs). */
-  fun displayWaiting() = readerManager.displayWaiting()
+  fun displayWaiting() = uiManager.displayWaiting()
 
   /** Returns the list of available locations used during validation. */
   fun getLocations(): List<Location> = LocationRepository.getLocations()
@@ -302,25 +320,23 @@ constructor(
   fun executeValidationProcedure(): ValidationResult {
     return when (smartCard) {
       is CalypsoCard -> {
-        CalypsoCardValidationManager()
-            .executeValidationProcedure(
-                validationDateTime = LocalDateTime.now(),
-                validationAmount = 1,
-                cardReader = readerManager.getCardReader()!!,
-                calypsoCard = smartCard as CalypsoCard,
-                cardSecuritySettings = cardSecuritySettings,
-                locations = LocationRepository.getLocations(),
-                keypopApiProvider = keypopApiProvider)
+        calypsoCardValidationManager.executeValidationProcedure(
+            validationDateTime = LocalDateTime.now(),
+            validationAmount = 1,
+            cardReader = readerManager.getCardReader()!!,
+            calypsoCard = smartCard as CalypsoCard,
+            cardSecuritySettings = cardSecuritySettings,
+            locations = LocationRepository.getLocations(),
+            validationLocation = appSettings.location)
       }
       is StorageCard -> {
-        StorageCardValidationManager()
-            .executeValidationProcedure(
-                validationDateTime = LocalDateTime.now(),
-                validationAmount = 1,
-                cardReader = readerManager.getCardReader()!!,
-                storageCard = smartCard as StorageCard,
-                locations = LocationRepository.getLocations(),
-                keypopApiProvider = keypopApiProvider)
+        storageCardValidationManager.executeValidationProcedure(
+            validationDateTime = LocalDateTime.now(),
+            validationAmount = 1,
+            cardReader = readerManager.getCardReader()!!,
+            storageCard = smartCard as StorageCard,
+            locations = LocationRepository.getLocations(),
+            validationLocation = appSettings.location)
       }
       else -> {
         error("Unsupported card type")

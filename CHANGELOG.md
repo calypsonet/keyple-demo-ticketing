@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Upgraded
+- `keyple-java-bom`: `2026.03.19` -> `2026.09.29`
+- `keyple-card-cna-storagecard-java-lib` (mock): `2.3.0` -> `2.3.1`
+### Removed
+- Unused mocks: `keyple-card-cna-storagecard-java-lib-2.3.0` and `keyple-plugin-cna-storagecard-java-lib-1.1.0`.
+### Reloading remote server
+#### Changed
+- The storage card extension is now registered with `SmartCardService.checkCardExtension(...)` at startup, as required
+  by `keyple-service-java-lib` `3.5.0` for card extensions outside the `org.eclipse.keyple` package whose types are
+  received as JSON data.
+- Replaced the deprecated `RemoteReaderServer.getInitialCardContent()` by `getInitialCardContent(Class)`
+  (`keyple-distributed-remote-java-lib` `2.6.0`).
 
 ## [26.03.26]
 ### Added

@@ -21,7 +21,6 @@ import org.calypsonet.keyple.demo.validation.BuildConfig
 import org.calypsonet.keyple.demo.validation.R
 import org.calypsonet.keyple.demo.validation.databinding.ActivitySettingsBinding
 import org.calypsonet.keyple.demo.validation.databinding.LogoToolbarBinding
-import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
 
 class SettingsActivity : BaseActivity() {
 
@@ -43,9 +42,9 @@ class SettingsActivity : BaseActivity() {
       startActivityForResult(Intent(Settings.ACTION_DATE_SETTINGS), 0)
     }
     activitySettingsBinding.startBtn.setOnClickListener {
-      AppSettings.location = activitySettingsBinding.spinnerLocationList.selectedItem as Location
-      AppSettings.batteryPowered = activitySettingsBinding.batteryPoweredBox.isChecked
-      if (AppSettings.batteryPowered) {
+      appSettings.location = activitySettingsBinding.spinnerLocationList.selectedItem as Location
+      appSettings.batteryPowered = activitySettingsBinding.batteryPoweredBox.isChecked
+      if (appSettings.batteryPowered) {
         startActivity(Intent(this, HomeActivity::class.java))
         finish()
       } else {

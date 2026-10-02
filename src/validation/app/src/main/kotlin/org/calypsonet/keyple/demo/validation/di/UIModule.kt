@@ -15,7 +15,6 @@ package org.calypsonet.keyple.demo.validation.di
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import org.calypsonet.keyple.demo.validation.di.scope.ActivityScoped
-import org.calypsonet.keyple.demo.validation.ui.activities.CardSummaryActivity
 import org.calypsonet.keyple.demo.validation.ui.activities.HomeActivity
 import org.calypsonet.keyple.demo.validation.ui.activities.MainActivity
 import org.calypsonet.keyple.demo.validation.ui.activities.ReaderActivity
@@ -37,8 +36,4 @@ abstract class UIModule {
   @ActivityScoped @ContributesAndroidInjector abstract fun homeActivity(): HomeActivity
 
   @ActivityScoped @ContributesAndroidInjector abstract fun readerActivity(): ReaderActivity
-
-  @ActivityScoped
-  @ContributesAndroidInjector
-  abstract fun cardSummaryActivity(): CardSummaryActivity
 }
