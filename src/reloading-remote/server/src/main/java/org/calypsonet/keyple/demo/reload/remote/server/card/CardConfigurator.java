@@ -15,6 +15,7 @@ package org.calypsonet.keyple.demo.reload.remote.server.card;
 import java.util.Properties;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService;
 import org.calypsonet.keyple.demo.common.constants.RemoteServiceId;
 import org.calypsonet.keyple.demo.common.dto.*;
 import org.eclipse.keyple.card.calypso.crypto.legacysam.LegacySamExtensionService;
@@ -53,8 +54,16 @@ public class CardConfigurator {
   @Inject CardService cardService;
 
   public void init() {
+    registerCardExtensions();
     initSamPlugin();
     initCardPlugin();
+  }
+
+  private void registerCardExtensions() {
+    // Card extensions outside the "org.eclipse.keyple" package must be registered so that the
+    // types they provide (e.g. the initial card content) can be rebuilt from JSON data.
+    SmartCardServiceProvider.getService()
+        .checkCardExtension(StorageCardExtensionService.getInstance());
   }
 
   private void initSamPlugin() {
@@ -217,7 +226,7 @@ public class CardConfigurator {
         // Execute service
         outputData =
             cardService.analyzeContracts(
-                reader, (SmartCard) readerExtension.getInitialCardContent(), inputData);
+                reader, readerExtension.getInitialCardContent(SmartCard.class), inputData);
 
       } else if (RemoteServiceId.READ_CARD_AND_WRITE_CONTRACT.name().equals(serviceId)) {
 
@@ -227,7 +236,7 @@ public class CardConfigurator {
         // Execute service
         outputData =
             cardService.writeContract(
-                reader, (SmartCard) readerExtension.getInitialCardContent(), inputData);
+                reader, readerExtension.getInitialCardContent(SmartCard.class), inputData);
 
       } else if (RemoteServiceId.PERSONALIZE_CARD.name().equals(serviceId)) {
 
@@ -237,7 +246,7 @@ public class CardConfigurator {
         // Execute service
         outputData =
             cardService.initCard(
-                reader, (SmartCard) readerExtension.getInitialCardContent(), inputData);
+                reader, readerExtension.getInitialCardContent(SmartCard.class), inputData);
 
       } else if (RemoteServiceId.SELECT_APP_AND_ANALYZE_CONTRACTS.name().equals(serviceId)) {
 
@@ -246,7 +255,7 @@ public class CardConfigurator {
             readerExtension.getInputData(SelectAppAndAnalyzeContractsInputDto.class);
 
         // Get the eventually processed selection scenario
-        Properties properties = (Properties) readerExtension.getInitialCardContent();
+        Properties properties = readerExtension.getInitialCardContent(Properties.class);
 
         // Execute service
         outputData = cardService.selectAppAndAnalyzeContracts(reader, inputData, properties);
@@ -258,7 +267,7 @@ public class CardConfigurator {
             readerExtension.getInputData(SelectAppAndLoadContractInputDto.class);
 
         // Get the eventually processed selection scenario
-        Properties properties = (Properties) readerExtension.getInitialCardContent();
+        Properties properties = readerExtension.getInitialCardContent(Properties.class);
 
         // Execute service
         outputData = cardService.selectAppAndLoadContract(reader, inputData, properties);
@@ -270,7 +279,7 @@ public class CardConfigurator {
             readerExtension.getInputData(SelectAppAndPersonalizeCardInputDto.class);
 
         // Get the eventually processed selection scenario
-        Properties properties = (Properties) readerExtension.getInitialCardContent();
+        Properties properties = readerExtension.getInitialCardContent(Properties.class);
 
         // Execute service
         outputData = cardService.selectAppAndPersonalizeCard(reader, inputData, properties);
