@@ -23,7 +23,6 @@ import org.calypsonet.keyple.demo.common.parsers.ScEnvironmentHolderStructurePar
 import org.calypsonet.keyple.demo.common.parsers.ScEventStructureParser
 import org.calypsonet.keyple.demo.control.domain.mappers.ContractMapper
 import org.calypsonet.keyple.demo.control.domain.mappers.ValidationMapper
-import org.calypsonet.keyple.demo.control.domain.model.AppSettings
 import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
 import org.calypsonet.keyple.demo.control.domain.model.Contract
 import org.calypsonet.keyple.demo.control.domain.model.ControlResult
@@ -44,6 +43,8 @@ class StorageCardControlManager {
       cardReader: CardReader,
       storageCard: StorageCard,
       locations: List<Location>,
+      controlLocation: Location,
+      validationPeriod: Int,
       logger: Logger,
       keypopApiProvider: KeypopApiProvider
   ): ControlResult {
@@ -160,12 +161,11 @@ class StorageCardControlManager {
       var contractEventValid = true
       val contractUsed = event.eventContractUsed
 
-      val eventValidityEndDate =
-          event.eventDatetime.plusMinutes(AppSettings.validationPeriod.toLong())
+      val eventValidityEndDate = event.eventDatetime.plusMinutes(validationPeriod.toLong())
 
       // Step 7 - If EventLocation != value configured in the control terminal, set the validated
       // contract validity flag as false and go to the point CNT_READ.
-      if (AppSettings.location.id != event.eventLocation) {
+      if (controlLocation.id != event.eventLocation) {
         contractEventValid = false
       }
       // Step 8 - Else If EventDateStamp points to a date in the past

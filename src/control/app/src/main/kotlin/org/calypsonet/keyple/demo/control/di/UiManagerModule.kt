@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2026 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -10,12 +10,17 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.domain.model
+package org.calypsonet.keyple.demo.control.di
 
-import org.calypsonet.keyple.demo.common.model.Location
+import dagger.Module
+import dagger.Provides
+import org.calypsonet.keyple.demo.control.data.UiManagerImpl
+import org.calypsonet.keyple.demo.control.di.scope.AppScoped
+import org.calypsonet.keyple.demo.control.domain.spi.UiManager
 
-object AppSettings {
-  lateinit var readerType: ReaderType
-  lateinit var location: Location
-  var batteryPowered: Boolean = true
+@Suppress("unused")
+@Module
+class UiManagerModule {
+
+  @Provides @AppScoped fun provideUiManager(): UiManager = UiManagerImpl()
 }

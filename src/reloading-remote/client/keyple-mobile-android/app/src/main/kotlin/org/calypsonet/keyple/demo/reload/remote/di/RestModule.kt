@@ -20,10 +20,10 @@ import org.calypsonet.keyple.demo.reload.remote.data.SharedPrefDataRepository
 import org.calypsonet.keyple.demo.reload.remote.data.network.KeypleSyncEndPointClient
 import org.calypsonet.keyple.demo.reload.remote.data.network.RestClient
 import org.calypsonet.keyple.demo.reload.remote.di.scopes.AppScoped
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import timber.log.Timber
 
 @Suppress("unused")
 @Module
@@ -32,11 +32,12 @@ class RestModule {
   @Provides
   @AppScoped
   fun provideKeypleSyncEndpointClient(
-      prefData: SharedPrefDataRepository
+      prefData: SharedPrefDataRepository,
+      logger: Logger
   ): KeypleSyncEndPointClient {
     val serverUrl =
         prefData.loadServerProtocol() + prefData.loadServerIP() + ":" + prefData.loadServerPort()
-    Timber.i("Loaded Rest client with URL: $serverUrl")
+    logger.i("Loaded Rest client with URL: $serverUrl")
     return KeypleSyncEndPointClient(
         Retrofit.Builder()
             .baseUrl(serverUrl)

@@ -44,8 +44,4 @@ interface ReaderManager {
   fun onDestroy(observer: CardReaderObserverSpi?)
 
   fun clear()
-
-  fun displayResultSuccess(): Boolean
-
-  fun displayResultFailed(): Boolean
 }

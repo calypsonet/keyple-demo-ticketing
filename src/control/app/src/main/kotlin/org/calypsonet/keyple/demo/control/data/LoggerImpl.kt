@@ -10,12 +10,26 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.domain.model
+package org.calypsonet.keyple.demo.control.data
 
-import org.calypsonet.keyple.demo.common.model.Location
+import org.calypsonet.keyple.demo.control.domain.spi.Logger
+import timber.log.Timber
 
-object AppSettings {
-  lateinit var readerType: ReaderType
-  lateinit var location: Location
-  var validationPeriod: Int = 0
+class LoggerImpl : Logger {
+
+  override fun d(message: String) {
+    Timber.d(message)
+  }
+
+  override fun i(message: String) {
+    Timber.i(message)
+  }
+
+  override fun e(message: String, throwable: Throwable?) {
+    Timber.e(throwable, message)
+  }
+
+  override fun w(message: String, throwable: Throwable?) {
+    Timber.w(throwable, message)
+  }
 }

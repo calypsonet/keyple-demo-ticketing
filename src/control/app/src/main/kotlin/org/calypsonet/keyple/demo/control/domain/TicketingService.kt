@@ -22,10 +22,12 @@ import org.calypsonet.keyple.demo.control.domain.managers.StorageCardControlMana
 import org.calypsonet.keyple.demo.control.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.control.domain.model.ControlResult
 import org.calypsonet.keyple.demo.control.domain.model.ReaderType
+import org.calypsonet.keyple.demo.control.domain.spi.AppSettingsRepository
 import org.calypsonet.keyple.demo.control.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.control.domain.spi.Logger
 import org.calypsonet.keyple.demo.control.domain.spi.ReaderManager
 import org.calypsonet.keyple.demo.control.domain.spi.UiContext
+import org.calypsonet.keyple.demo.control.domain.spi.UiManager
 import org.eclipse.keyple.core.util.HexUtil
 import org.eclipse.keypop.calypso.card.CalypsoCardApiFactory
 import org.eclipse.keypop.calypso.card.WriteAccessLevel
@@ -51,7 +53,9 @@ class TicketingService
 @Inject
 constructor(
     private var keypopApiProvider: KeypopApiProvider,
+    private var appSettings: AppSettingsRepository,
     private var readerManager: ReaderManager,
+    private var uiManager: UiManager,
     private var logger: Logger
 ) {
 
@@ -104,6 +108,7 @@ constructor(
   fun init(observer: CardReaderObserverSpi?, readerType: ReaderType, uiContext: UiContext) {
     // Register plugin
     try {
+      uiManager.init(readerType, uiContext)
       readerManager.registerPlugin(readerType, uiContext)
     } catch (e: Exception) {
       logger.e("An error occurred while registering plugin ${e.message}")
@@ -158,6 +163,7 @@ constructor(
   fun onDestroy(observer: CardReaderObserverSpi?) {
     readersInitialized = false
     readerManager.onDestroy(observer)
+    uiManager.release()
   }
 
   fun endCardProcessing() {
@@ -169,9 +175,15 @@ constructor(
     }
   }
 
-  fun displayResultSuccess(): Boolean = readerManager.displayResultSuccess()
+  fun displayResultSuccess(): Boolean {
+    uiManager.displayResultSuccess()
+    return true
+  }
 
-  fun displayResultFailed(): Boolean = readerManager.displayResultFailed()
+  fun displayResultFailed(): Boolean {
+    uiManager.displayResultFailed()
+    return true
+  }
 
   fun prepareAndScheduleCardSelectionScenario() {
 
@@ -295,6 +307,8 @@ constructor(
                 symmetricCryptoSecuritySetting = symmetricCryptoSecuritySetting,
                 asymmetricCryptoSecuritySetting = asymmetricCryptoSecuritySettings,
                 locations = LocationRepository.getLocations(),
+                controlLocation = appSettings.location,
+                validationPeriod = appSettings.validationPeriod,
                 controlDateTime = LocalDateTime.now(),
                 logger = logger,
                 keypopApiProvider = keypopApiProvider)
@@ -305,6 +319,8 @@ constructor(
                 cardReader = readerManager.getCardReader()!!,
                 storageCard = smartCard as StorageCard,
                 locations = LocationRepository.getLocations(),
+                controlLocation = appSettings.location,
+                validationPeriod = appSettings.validationPeriod,
                 controlDateTime = LocalDateTime.now(),
                 logger = logger,
                 keypopApiProvider = keypopApiProvider)

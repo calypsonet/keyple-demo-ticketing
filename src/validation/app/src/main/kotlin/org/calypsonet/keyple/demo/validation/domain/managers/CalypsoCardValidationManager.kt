@@ -25,7 +25,6 @@ import org.calypsonet.keyple.demo.common.parsers.ContractStructureParser
 import org.calypsonet.keyple.demo.common.parsers.EnvironmentHolderStructureParser
 import org.calypsonet.keyple.demo.common.parsers.EventStructureParser
 import org.calypsonet.keyple.demo.validation.domain.builders.ValidationDataBuilder
-import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
 import org.calypsonet.keyple.demo.validation.domain.model.Status
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationData
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
@@ -48,6 +47,7 @@ class CalypsoCardValidationManager : BaseValidationManager() {
       calypsoCard: CalypsoCard,
       cardSecuritySettings: SymmetricCryptoSecuritySetting,
       locations: List<Location>,
+      validationLocation: Location,
       keypopApiProvider: KeypopApiProvider
   ): ValidationResult {
 
@@ -273,7 +273,7 @@ class CalypsoCardValidationManager : BaseValidationManager() {
                     eventVersionNumber = VersionNumber.CURRENT_VERSION,
                     eventDateStamp = DateCompact(validationDateTime.toLocalDate()),
                     eventTimeStamp = TimeCompact(validationDateTime),
-                    eventLocation = AppSettings.location.id,
+                    eventLocation = validationLocation.id,
                     eventContractUsed = contractUsed,
                     contractPriority1 = priority1,
                     contractPriority2 = priority2,

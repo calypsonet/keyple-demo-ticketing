@@ -10,18 +10,20 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.ui.adapters
+package org.calypsonet.keyple.demo.validation.domain.spi
 
-import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
-import timber.log.Timber
+import org.calypsonet.keyple.demo.common.model.Location
+import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 
-class LoggerImpl : Logger {
+/** Port giving access to the application settings chosen by the user. */
+interface AppSettingsRepository {
 
-  override fun i(message: String) {
-    Timber.i(message)
-  }
+  /** The type of reader (terminal) the application runs on. */
+  var readerType: ReaderType
 
-  override fun e(message: String, throwable: Throwable?) {
-    Timber.e(throwable, message)
-  }
+  /** The location where the validation takes place. */
+  var location: Location
+
+  /** Indicates whether the terminal is battery powered. */
+  var batteryPowered: Boolean
 }

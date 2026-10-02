@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2025 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2026 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -10,18 +10,21 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.ui.adapters
+package org.calypsonet.keyple.demo.validation.data
 
+import android.content.Context
 import org.calypsonet.keyple.demo.validation.domain.spi.Logger
-import timber.log.Timber
 
-class LoggerImpl : Logger {
+/** Mock UI manager feedback for Arrive terminals */
+internal class ArriveFeedbackDevice(private val context: Context, private val logger: Logger) :
+    FeedbackDevice {
+  override fun init(onReady: () -> Unit) {}
 
-  override fun i(message: String) {
-    Timber.i(message)
-  }
+  override fun displayResultSuccess() {}
 
-  override fun e(message: String, throwable: Throwable?) {
-    Timber.e(throwable, message)
-  }
+  override fun displayResultFailed() {}
+
+  override fun displayWaiting() {}
+
+  override fun release() {}
 }

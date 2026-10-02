@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2026 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2025 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -12,17 +12,24 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.validation.data
 
-import android.content.Context
+import org.calypsonet.keyple.demo.validation.domain.spi.Logger
+import timber.log.Timber
 
-/** Mock UI manager feedback for Arrive terminals */
-internal class ArriveUiManagerImpl(private val context: Context) : UiManager {
-  override fun init(onReady: () -> Unit) {}
+class LoggerImpl : Logger {
 
-  override fun displayResultSuccess() {}
+  override fun d(message: String) {
+    Timber.d(message)
+  }
 
-  override fun displayResultFailed() {}
+  override fun i(message: String) {
+    Timber.i(message)
+  }
 
-  override fun displayWaiting() {}
+  override fun e(message: String, throwable: Throwable?) {
+    Timber.e(throwable, message)
+  }
 
-  override fun release() {}
+  override fun w(message: String, throwable: Throwable?) {
+    Timber.w(throwable, message)
+  }
 }

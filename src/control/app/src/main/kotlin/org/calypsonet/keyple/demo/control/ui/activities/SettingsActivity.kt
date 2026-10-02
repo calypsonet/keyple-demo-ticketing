@@ -23,7 +23,6 @@ import org.calypsonet.keyple.demo.control.BuildConfig
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.databinding.ActivitySettingsBinding
 import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
-import org.calypsonet.keyple.demo.control.domain.model.AppSettings
 
 class SettingsActivity : BaseActivity() {
 
@@ -50,10 +49,10 @@ class SettingsActivity : BaseActivity() {
       startActivityForResult(Intent(Settings.ACTION_DATE_SETTINGS), 0)
     }
     activitySettingsBinding.startBtn.setOnClickListener {
-      AppSettings.location = activitySettingsBinding.spinnerLocationList.selectedItem as Location
+      appSettings.location = activitySettingsBinding.spinnerLocationList.selectedItem as Location
       val validationPeriod = activitySettingsBinding.validationPeriodEdit.text.toString()
       if (validationPeriod.isNotBlank()) {
-        AppSettings.validationPeriod = validationPeriod.toInt()
+        appSettings.validationPeriod = validationPeriod.toInt()
         startActivity(Intent(this, HomeActivity::class.java))
         finish()
       } else {

@@ -22,6 +22,13 @@ package org.calypsonet.keyple.demo.reload.remote.domain.spi
 interface Logger {
 
   /**
+   * Logs a debug message.
+   *
+   * @param message Human-readable debugging message.
+   */
+  fun d(message: String)
+
+  /**
    * Logs an informational message.
    *
    * @param message Human-readable message to log.
@@ -35,4 +42,12 @@ interface Logger {
    * @param throwable Optional associated exception.
    */
   fun e(message: String, throwable: Throwable? = null)
+
+  /**
+   * Logs a warning message.
+   *
+   * @param message Human-readable message describing the error.
+   * @param throwable Optional associated exception.
+   */
+  fun w(message: String, throwable: Throwable? = null)
 }

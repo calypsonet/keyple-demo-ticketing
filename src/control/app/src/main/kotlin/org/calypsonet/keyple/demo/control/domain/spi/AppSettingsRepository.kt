@@ -10,17 +10,20 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.di
+package org.calypsonet.keyple.demo.control.domain.spi
 
-import dagger.Module
-import dagger.Provides
-import org.calypsonet.keyple.demo.control.data.LoggerImpl
-import org.calypsonet.keyple.demo.control.di.scope.AppScoped
-import org.calypsonet.keyple.demo.control.domain.spi.Logger
+import org.calypsonet.keyple.demo.common.model.Location
+import org.calypsonet.keyple.demo.control.domain.model.ReaderType
 
-@Suppress("unused")
-@Module
-class LoggerModule {
+/** Port giving access to the application settings chosen by the user. */
+interface AppSettingsRepository {
 
-  @Provides @AppScoped fun provideLogger(): Logger = LoggerImpl()
+  /** The type of reader (terminal) the application runs on. */
+  var readerType: ReaderType
+
+  /** The location where the control takes place. */
+  var location: Location
+
+  /** The period (in minutes) during which a validation is considered valid. */
+  var validationPeriod: Int
 }

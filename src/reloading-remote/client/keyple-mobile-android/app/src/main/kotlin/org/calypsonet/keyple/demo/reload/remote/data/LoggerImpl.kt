@@ -10,17 +10,26 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.di
+package org.calypsonet.keyple.demo.reload.remote.data
 
-import dagger.Module
-import dagger.Provides
-import org.calypsonet.keyple.demo.control.data.LoggerImpl
-import org.calypsonet.keyple.demo.control.di.scope.AppScoped
-import org.calypsonet.keyple.demo.control.domain.spi.Logger
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
+import timber.log.Timber
 
-@Suppress("unused")
-@Module
-class LoggerModule {
+class LoggerImpl : Logger {
 
-  @Provides @AppScoped fun provideLogger(): Logger = LoggerImpl()
+  override fun d(message: String) {
+    Timber.d(message)
+  }
+
+  override fun i(message: String) {
+    Timber.i(message)
+  }
+
+  override fun e(message: String, throwable: Throwable?) {
+    Timber.e(throwable, message)
+  }
+
+  override fun w(message: String, throwable: Throwable?) {
+    Timber.w(throwable, message)
+  }
 }

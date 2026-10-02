@@ -23,10 +23,12 @@ import org.calypsonet.keyple.demo.validation.domain.managers.StorageCardValidati
 import org.calypsonet.keyple.demo.validation.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
+import org.calypsonet.keyple.demo.validation.domain.spi.AppSettingsRepository
 import org.calypsonet.keyple.demo.validation.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.validation.domain.spi.Logger
 import org.calypsonet.keyple.demo.validation.domain.spi.ReaderManager
 import org.calypsonet.keyple.demo.validation.domain.spi.UiContext
+import org.calypsonet.keyple.demo.validation.domain.spi.UiManager
 import org.eclipse.keyple.core.util.HexUtil
 import org.eclipse.keypop.calypso.card.CalypsoCardApiFactory
 import org.eclipse.keypop.calypso.card.WriteAccessLevel
@@ -65,7 +67,9 @@ class TicketingService
 @Inject
 constructor(
     private var keypopApiProvider: KeypopApiProvider,
+    private var appSettings: AppSettingsRepository,
     private var readerManager: ReaderManager,
+    private var uiManager: UiManager,
     private var logger: Logger
 ) {
 
@@ -106,7 +110,8 @@ constructor(
    * @throws IllegalStateException if no SAM reader is available or SAM selection fails.
    */
   fun init(observer: CardReaderObserverSpi?, readerType: ReaderType, uiContext: UiContext) {
-    // Register plugin
+    // Init user feedback and register plugin
+    uiManager.init(readerType, uiContext)
     readerManager.registerPlugin(readerType, uiContext)
 
     // Init card reader
@@ -152,6 +157,7 @@ constructor(
   fun onDestroy(observer: CardReaderObserverSpi?) {
     areReadersInitialized = false
     readerManager.onDestroy(observer)
+    uiManager.release()
   }
 
   fun endCardProcessing() {
@@ -168,17 +174,23 @@ constructor(
    *
    * @return true if handled by the UI, false otherwise.
    */
-  fun displayResultSuccess(): Boolean = readerManager.displayResultSuccess()
+  fun displayResultSuccess(): Boolean {
+    uiManager.displayResultSuccess()
+    return true
+  }
 
   /**
    * Asks the UI layer to display a failure feedback (sound, haptics, message...).
    *
    * @return true if handled by the UI, false otherwise.
    */
-  fun displayResultFailed(): Boolean = readerManager.displayResultFailed()
+  fun displayResultFailed(): Boolean {
+    uiManager.displayResultFailed()
+    return true
+  }
 
   /** Resets the UI feedback to the waiting-for-card state (e.g. turns off result LEDs). */
-  fun displayWaiting() = readerManager.displayWaiting()
+  fun displayWaiting() = uiManager.displayWaiting()
 
   /** Returns the list of available locations used during validation. */
   fun getLocations(): List<Location> = LocationRepository.getLocations()
@@ -319,6 +331,7 @@ constructor(
                 calypsoCard = smartCard as CalypsoCard,
                 cardSecuritySettings = cardSecuritySettings,
                 locations = LocationRepository.getLocations(),
+                validationLocation = appSettings.location,
                 keypopApiProvider = keypopApiProvider)
       }
       is StorageCard -> {
@@ -329,7 +342,9 @@ constructor(
                 cardReader = readerManager.getCardReader()!!,
                 storageCard = smartCard as StorageCard,
                 locations = LocationRepository.getLocations(),
-                keypopApiProvider = keypopApiProvider)
+                validationLocation = appSettings.location,
+                keypopApiProvider = keypopApiProvider,
+                logger = logger)
       }
       else -> {
         error("Unsupported card type")

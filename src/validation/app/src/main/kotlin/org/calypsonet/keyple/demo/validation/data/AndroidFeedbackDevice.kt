@@ -15,7 +15,7 @@ package org.calypsonet.keyple.demo.validation.data
 import android.content.Context
 import android.media.MediaPlayer
 import org.calypsonet.keyple.demo.validation.R
-import timber.log.Timber
+import org.calypsonet.keyple.demo.validation.domain.spi.Logger
 
 /**
  * Standard UI feedback for non-Arrive terminals (Bluebird, Coppernic, Famoco).
@@ -23,7 +23,8 @@ import timber.log.Timber
  * Uses Android MediaPlayer for success/error sounds. No LED control. This variant is also compiled
  * when AndroidParkeonCommon-release.aar is absent from libs/ (mock mode for Arrive hardware).
  */
-internal class AndroidUiManagerImpl(private val context: Context) : UiManager {
+internal class AndroidFeedbackDevice(private val context: Context, private val logger: Logger) :
+    FeedbackDevice {
   private var successMedia: MediaPlayer? = null
   private var errorMedia: MediaPlayer? = null
 
@@ -48,7 +49,7 @@ internal class AndroidUiManagerImpl(private val context: Context) : UiManager {
       successMedia?.stop()
       successMedia?.release()
     } catch (e: Exception) {
-      Timber.e(e, "AndroidUiManagerImpl: error releasing success media")
+      logger.e("AndroidFeedbackDevice: error releasing success media", e)
     } finally {
       successMedia = null
     }
@@ -56,7 +57,7 @@ internal class AndroidUiManagerImpl(private val context: Context) : UiManager {
       errorMedia?.stop()
       errorMedia?.release()
     } catch (e: Exception) {
-      Timber.e(e, "AndroidUiManagerImpl: error releasing error media")
+      logger.e("AndroidFeedbackDevice: error releasing error media", e)
     } finally {
       errorMedia = null
     }

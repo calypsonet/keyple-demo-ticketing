@@ -25,18 +25,17 @@ import org.calypsonet.keyple.demo.common.parsers.ScContractStructureParser
 import org.calypsonet.keyple.demo.common.parsers.ScEnvironmentHolderStructureParser
 import org.calypsonet.keyple.demo.common.parsers.ScEventStructureParser
 import org.calypsonet.keyple.demo.validation.domain.builders.ValidationDataBuilder
-import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
 import org.calypsonet.keyple.demo.validation.domain.model.Status
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationData
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
 import org.calypsonet.keyple.demo.validation.domain.spi.KeypopApiProvider
+import org.calypsonet.keyple.demo.validation.domain.spi.Logger
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ChannelControl
 import org.eclipse.keypop.storagecard.MifareClassicKeyType
 import org.eclipse.keypop.storagecard.SCCardCommunicationException
 import org.eclipse.keypop.storagecard.card.ProductType
 import org.eclipse.keypop.storagecard.card.StorageCard
-import timber.log.Timber
 
 /**
  * Unified validation manager for all storage cards (MIFARE Ultralight, ST25, Mifare Classic).
@@ -72,7 +71,9 @@ class StorageCardValidationManager : BaseValidationManager() {
       cardReader: CardReader,
       storageCard: StorageCard,
       locations: List<Location>,
-      keypopApiProvider: KeypopApiProvider
+      validationLocation: Location,
+      keypopApiProvider: KeypopApiProvider,
+      logger: Logger
   ): ValidationResult {
     var status: Status = Status.PROCESSING
     var errorMessage: String? = null
@@ -99,13 +100,13 @@ class StorageCardValidationManager : BaseValidationManager() {
         val isMifareClassic = storageCard.productType == ProductType.MIFARE_CLASSIC_1K
 
         // LOG: Card detected
-        Timber.d(
+        logger.d(
             "Starting validation for ${storageCard.productType.name} " +
                 "(requiresAuth=$requiresAuth, isMifareClassic=$isMifareClassic)")
 
         // ========= AUTHENTICATION PHASE (Mifare Classic only) =========
         if (requiresAuth) {
-          Timber.d(
+          logger.d(
               "Authenticating sector 1 with KEY_A (keyNumber=${CardConstants.MC_DEFAULT_KEY_NUMBER})")
           cardTransaction.prepareMifareClassicAuthenticate(
               CardConstants.MC_SECTOR_1_AUTH_BLOCK,
@@ -116,7 +117,7 @@ class StorageCardValidationManager : BaseValidationManager() {
         // ========= READ DATA =========
         // Read environment, contract, and event based on card type
         if (isMifareClassic) {
-          Timber.d(
+          logger.d(
               "Reading Mifare Classic blocks: ${CardConstants.MC_ENVIRONMENT_AND_HOLDER_BLOCK}, " +
                   "${CardConstants.MC_CONTRACT_BLOCK}, ${CardConstants.MC_EVENT_BLOCK}")
           // Mifare Classic: read individual 16-byte blocks
@@ -128,7 +129,7 @@ class StorageCardValidationManager : BaseValidationManager() {
               .prepareReadBlocks(CardConstants.MC_EVENT_BLOCK, CardConstants.MC_EVENT_BLOCK)
               .processCommands(ChannelControl.KEEP_OPEN)
         } else {
-          Timber.d("Reading storage card block ranges...")
+          logger.d("Reading storage card block ranges...")
           // MIFARE Ultralight/ST25: read ranges of 4-byte blocks
           cardTransaction
               .prepareReadBlocks(
@@ -141,7 +142,7 @@ class StorageCardValidationManager : BaseValidationManager() {
               .processCommands(ChannelControl.KEEP_OPEN)
         }
 
-        Timber.d("Card data read successfully")
+        logger.d("Card data read successfully")
 
         // Step 2 - Unpack environment structure (16 bytes regardless of card type)
         val environmentContent =
@@ -251,7 +252,7 @@ class StorageCardValidationManager : BaseValidationManager() {
                   eventVersionNumber = VersionNumber.CURRENT_VERSION,
                   eventDateStamp = DateCompact(validationDateTime.toLocalDate()),
                   eventTimeStamp = TimeCompact(validationDateTime),
-                  eventLocation = AppSettings.location.id,
+                  eventLocation = validationLocation.id,
                   eventContractUsed = contractUsed,
                   contractPriority1 = contractPriority,
                   contractPriority2 = PriorityCode.FORBIDDEN,
@@ -262,14 +263,14 @@ class StorageCardValidationManager : BaseValidationManager() {
 
           // Re-authenticate for Mifare Classic before writing (best practice)
           if (requiresAuth) {
-            Timber.d("Re-authenticating before write operation")
+            logger.d("Re-authenticating before write operation")
             cardTransaction.prepareMifareClassicAuthenticate(
                 CardConstants.MC_SECTOR_1_AUTH_BLOCK,
                 MifareClassicKeyType.KEY_A,
                 CardConstants.MC_DEFAULT_KEY_NUMBER)
           }
 
-          Timber.d("Writing updated contract and event to card")
+          logger.d("Writing updated contract and event to card")
           // Prepare write operations based on card type
           val updatedContractContent = ScContractStructureParser().generate(contract)
           val eventBytesToWrite = ScEventStructureParser().generate(eventToWrite)
@@ -288,25 +289,25 @@ class StorageCardValidationManager : BaseValidationManager() {
 
           cardTransaction.processCommands(ChannelControl.CLOSE_AFTER)
 
-          Timber.i("Validation successful: ${storageCard.productType.name}")
+          logger.i("Validation successful: ${storageCard.productType.name}")
           status = Status.SUCCESS
           errorMessage = null
         } else {
           errorMessage = ERROR_NO_VALID_TITLE_DETECTED
         }
       } catch (e: ValidationException) {
-        Timber.w("Validation failed: ${e.status.name} - ${e.message}")
+        logger.w("Validation failed: ${e.status.name} - ${e.message}")
         status = e.status
         errorMessage = e.message
         if (status == Status.PROCESSING) {
           status = Status.ERROR
         }
       } catch (e: SCCardCommunicationException) {
-        Timber.w("Card removed during transaction: ${storageCard.productType.name}")
+        logger.w("Card removed during transaction: ${storageCard.productType.name}")
         status = Status.CARD_LOST
         errorMessage = e.message
       } catch (e: Exception) {
-        Timber.e(e, "Unexpected error during validation: ${storageCard.productType.name}")
+        logger.e("Unexpected error during validation: ${storageCard.productType.name}", e)
         status = Status.ERROR
 
         // Determine the error message based on exception type and context
@@ -327,7 +328,7 @@ class StorageCardValidationManager : BaseValidationManager() {
             }
       }
     } else {
-      Timber.e("Failed to create card transaction")
+      logger.e("Failed to create card transaction")
     }
 
     return ValidationResult(

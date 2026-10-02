@@ -22,7 +22,6 @@ import android.os.Bundle
 import org.calypsonet.keyple.demo.control.BuildConfig
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.databinding.ActivityDeviceSelectionBinding
-import org.calypsonet.keyple.demo.control.domain.model.AppSettings
 import org.calypsonet.keyple.demo.control.domain.model.ReaderType
 import org.calypsonet.keyple.demo.control.ui.activities.BaseActivity
 import org.calypsonet.keyple.demo.control.ui.activities.SettingsActivity
@@ -45,7 +44,7 @@ class DeviceSelectionActivity : BaseActivity() {
       activityDeviceSelectionBinding.bluebirdBtn.setBackgroundColor(Color.GRAY)
     } else {
       activityDeviceSelectionBinding.bluebirdBtn.setOnClickListener {
-        AppSettings.readerType = ReaderType.BLUEBIRD
+        appSettings.readerType = ReaderType.BLUEBIRD
         val permissions: MutableList<String> =
             mutableListOf(
                 Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -59,13 +58,13 @@ class DeviceSelectionActivity : BaseActivity() {
     }
     // Coppernic
     activityDeviceSelectionBinding.coppernicBtn.setOnClickListener {
-      AppSettings.readerType = ReaderType.COPPERNIC
+      appSettings.readerType = ReaderType.COPPERNIC
       startActivity(Intent(this, SettingsActivity::class.java))
       finish()
     }
     // Famoco
     activityDeviceSelectionBinding.famocoBtn.setOnClickListener {
-      AppSettings.readerType = ReaderType.FAMOCO
+      appSettings.readerType = ReaderType.FAMOCO
       startActivity(Intent(this, SettingsActivity::class.java))
       finish()
     }
@@ -73,7 +72,7 @@ class DeviceSelectionActivity : BaseActivity() {
     activityDeviceSelectionBinding.nfcTerminalBtn.setOnClickListener {
       val nfcManager = getSystemService(NFC_SERVICE) as NfcManager
       if (nfcManager.defaultAdapter?.isEnabled == true) {
-        AppSettings.readerType = ReaderType.NFC_TERMINAL
+        appSettings.readerType = ReaderType.NFC_TERMINAL
         startActivity(Intent(this, SettingsActivity::class.java))
         finish()
       } else {

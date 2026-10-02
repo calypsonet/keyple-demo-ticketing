@@ -83,7 +83,8 @@ dependencies {
     implementation(files("../../../libs/${arrivePluginLibName}-mock.aar"))
   }
 
-  // Arrive/Parkeon SDK (UI: LEDs, sounds) — optional, enables ArriveUiManager real implementation
+  // Arrive/Parkeon SDK (UI: LEDs, sounds) — optional, enables ArriveFeedbackDevice real
+  // implementation
   if (hasArriveSdk) {
     implementation(files(parkeonSdkFile))
   }
@@ -199,7 +200,7 @@ android {
   sourceSets {
     getByName("main").java.srcDirs("src/main/kotlin")
     getByName("debug").java.srcDirs("src/debug/kotlin")
-    // ArriveUiManager: real impl (Parkeon SDK) or no-op stub, mutually exclusive source sets
+    // ArriveFeedbackDevice: real impl (Parkeon SDK) or no-op stub, mutually exclusive source sets
     getByName("main")
         .java
         .srcDir(if (hasArriveSdk) "src/arrive/kotlin" else "src/arrive-mock/kotlin")

@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2026 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -10,17 +10,19 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.di
+package org.calypsonet.keyple.demo.control.di
 
 import dagger.Module
 import dagger.Provides
-import org.calypsonet.keyple.demo.validation.data.LoggerImpl
-import org.calypsonet.keyple.demo.validation.di.scope.AppScoped
-import org.calypsonet.keyple.demo.validation.domain.spi.Logger
+import org.calypsonet.keyple.demo.control.data.AppSettingsRepositoryImpl
+import org.calypsonet.keyple.demo.control.di.scope.AppScoped
+import org.calypsonet.keyple.demo.control.domain.spi.AppSettingsRepository
 
 @Suppress("unused")
 @Module
-class LoggerModule {
+class AppSettingsModule {
 
-  @Provides @AppScoped fun provideLogger(): Logger = LoggerImpl()
+  @Provides
+  @AppScoped
+  fun provideAppSettingsRepository(): AppSettingsRepository = AppSettingsRepositoryImpl()
 }

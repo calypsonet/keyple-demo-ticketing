@@ -59,21 +59,4 @@ interface ReaderManager {
    * @param observer Optional observer previously registered on the reader.
    */
   fun onDestroy(observer: CardReaderObserverSpi?)
-
-  /**
-   * Triggers a success feedback in the UI (sound, vibration, message...).
-   *
-   * @return true if the feedback was handled by the UI layer, false otherwise.
-   */
-  fun displayResultSuccess(): Boolean
-
-  /**
-   * Triggers a failure feedback in the UI (sound, vibration, message...).
-   *
-   * @return true if the feedback was handled by the UI layer, false otherwise.
-   */
-  fun displayResultFailed(): Boolean
-
-  /** Resets the UI feedback to the waiting-for-card state (e.g. turns off result LEDs). */
-  fun displayWaiting()
 }

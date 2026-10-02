@@ -21,7 +21,6 @@ import android.os.Bundle
 import org.calypsonet.keyple.demo.validation.BuildConfig
 import org.calypsonet.keyple.demo.validation.R
 import org.calypsonet.keyple.demo.validation.databinding.ActivityDeviceSelectionBinding
-import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
 import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.calypsonet.keyple.demo.validation.ui.activities.BaseActivity
 import org.calypsonet.keyple.demo.validation.ui.activities.SettingsActivity
@@ -44,7 +43,7 @@ class DeviceSelectionActivity : BaseActivity() {
       activityDeviceSelectionBinding.bluebirdBtn.setBackgroundColor(Color.GRAY)
     } else {
       activityDeviceSelectionBinding.bluebirdBtn.setOnClickListener {
-        AppSettings.readerType = ReaderType.BLUEBIRD
+        appSettings.readerType = ReaderType.BLUEBIRD
         val permissions: MutableList<String> =
             mutableListOf(
                 Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -59,14 +58,14 @@ class DeviceSelectionActivity : BaseActivity() {
 
     // Coppernic
     activityDeviceSelectionBinding.coppernicBtn.setOnClickListener {
-      AppSettings.readerType = ReaderType.COPPERNIC
+      appSettings.readerType = ReaderType.COPPERNIC
       startActivity(Intent(this, SettingsActivity::class.java))
       finish()
     }
 
     // Famoco
     activityDeviceSelectionBinding.famocoBtn.setOnClickListener {
-      AppSettings.readerType = ReaderType.FAMOCO
+      appSettings.readerType = ReaderType.FAMOCO
       startActivity(Intent(this, SettingsActivity::class.java))
       finish()
     }
@@ -76,7 +75,7 @@ class DeviceSelectionActivity : BaseActivity() {
       activityDeviceSelectionBinding.arriveBtn.setBackgroundColor(Color.GRAY)
     } else {
       activityDeviceSelectionBinding.arriveBtn.setOnClickListener {
-        AppSettings.readerType = ReaderType.ARRIVE
+        appSettings.readerType = ReaderType.ARRIVE
         startActivity(Intent(this, SettingsActivity::class.java))
         finish()
       }

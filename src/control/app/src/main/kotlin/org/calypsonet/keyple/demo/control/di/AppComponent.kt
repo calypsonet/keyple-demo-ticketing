@@ -25,9 +25,11 @@ import org.calypsonet.keyple.demo.control.di.scope.AppScoped
         [
             AndroidSupportInjectionModule::class,
             AppModule::class,
+            AppSettingsModule::class,
             KeypopApiModule::class,
             LoggerModule::class,
             ReaderModule::class,
+            UiManagerModule::class,
             UIModule::class])
 interface AppComponent : AndroidInjector<Application?> {
   @Component.Builder

@@ -10,20 +10,20 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.data
+package org.calypsonet.keyple.demo.control.domain.spi
 
-/**
- * Manages the User Interface (UI) feedback for the validation application, handling visual (LEDs)
- * and auditory (sounds) indications. This interface provides a common API for different terminal
- * implementations.
- */
+import org.calypsonet.keyple.demo.control.domain.model.ReaderType
+
+/** Port providing the user feedback of the terminal (sounds, LEDs...). */
 interface UiManager {
+
   /**
-   * Initializes the UI manager.
+   * Initializes the feedback resources for the given reader type.
    *
-   * @param onReady Callback to be invoked when initialization is complete.
+   * @param readerType The type of reader (terminal) the application runs on.
+   * @param uiContext Platform-specific context used to access the feedback facilities.
    */
-  fun init(onReady: () -> Unit = {})
+  fun init(readerType: ReaderType, uiContext: UiContext)
 
   /** Displays feedback for a successful result. */
   fun displayResultSuccess()
@@ -31,9 +31,6 @@ interface UiManager {
   /** Displays feedback for a failed result. */
   fun displayResultFailed()
 
-  /** Displays feedback indicating the terminal is waiting for a card. */
-  fun displayWaiting()
-
-  /** Releases resources held by the UI manager. */
+  /** Releases the feedback resources. */
   fun release()
 }

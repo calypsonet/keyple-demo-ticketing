@@ -65,8 +65,8 @@ constructor(
   private var samReaderProtocolPhysicalName: String? = null
   private var samReaderProtocolLogicalName: String? = null
   private var samReaders: MutableList<CardReader> = mutableListOf()
+
   // IHM
-  private lateinit var uiManager: UiManager
 
   private fun initReaderType(readerType: ReaderType) {
     when (readerType) {
@@ -145,12 +145,6 @@ constructor(
   override fun registerPlugin(readerType: ReaderType, uiContext: UiContext) {
     initReaderType(readerType)
     val activity = uiContext.adaptTo(Activity::class.java)
-    uiManager =
-        if (readerType == ReaderType.ARRIVE) {
-          ArriveUiManagerImpl(activity).also { it.init() }
-        } else {
-          AndroidUiManagerImpl(activity).also { it.init() }
-        }
     runBlocking {
       // Plugin
       val pluginFactory =
@@ -251,7 +245,6 @@ constructor(
         it.deactivateProtocol(samReaderProtocolPhysicalName)
       }
     }
-    uiManager.release()
   }
 
   override fun onDestroy(observer: CardReaderObserverSpi?) {
@@ -261,19 +254,5 @@ constructor(
     }
     val smartCardService = SmartCardServiceProvider.getService()
     smartCardService.plugins.forEach { smartCardService.unregisterPlugin(it.name) }
-  }
-
-  override fun displayResultSuccess(): Boolean {
-    uiManager.displayResultSuccess()
-    return true
-  }
-
-  override fun displayResultFailed(): Boolean {
-    uiManager.displayResultFailed()
-    return true
-  }
-
-  override fun displayWaiting() {
-    uiManager.displayWaiting()
   }
 }

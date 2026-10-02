@@ -22,6 +22,7 @@ import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ReaderType
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.ReaderManager
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.UiContext
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
@@ -42,13 +43,12 @@ import org.eclipse.keypop.reader.ObservableCardReader
 import org.eclipse.keypop.reader.ReaderCommunicationException
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
-import timber.log.Timber
 
 /**
  * Manager provided to encapsulate slight differences between readers provides methods to improve
  * code readability.
  */
-class ReaderManagerImpl @Inject constructor() : ReaderManager {
+class ReaderManagerImpl @Inject constructor(private val logger: Logger) : ReaderManager {
 
   private lateinit var readerType: ReaderType
 
@@ -208,7 +208,7 @@ class ReaderManagerImpl @Inject constructor() : ReaderManager {
     try {
       SmartCardServiceProvider.getService().unregisterPlugin(pluginName)
     } catch (e: Exception) {
-      Timber.e(e)
+      logger.e("Failed to unregister plugin $pluginName", e)
     }
   }
 

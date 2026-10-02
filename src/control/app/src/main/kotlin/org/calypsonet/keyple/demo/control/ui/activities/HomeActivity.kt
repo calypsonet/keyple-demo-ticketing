@@ -16,7 +16,6 @@ import android.content.Intent
 import android.os.Bundle
 import org.calypsonet.keyple.demo.control.databinding.ActivityHomeBinding
 import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
-import org.calypsonet.keyple.demo.control.domain.model.AppSettings
 
 class HomeActivity : BaseActivity() {
 
@@ -29,7 +28,7 @@ class HomeActivity : BaseActivity() {
     logoToolbarBinding = activityHomeBinding.appBarLayout
     setContentView(activityHomeBinding.root)
     setSupportActionBar(logoToolbarBinding.toolbar)
-    activityHomeBinding.locationSelected.text = AppSettings.location.toString()
+    activityHomeBinding.locationSelected.text = appSettings.location.toString()
     activityHomeBinding.startBtn.setOnClickListener {
       startActivity(Intent(this, ReaderActivity::class.java))
     }

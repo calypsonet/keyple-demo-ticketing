@@ -13,12 +13,10 @@
 package org.calypsonet.keyple.demo.control.data
 
 import android.app.Activity
-import android.media.MediaPlayer
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.control.domain.model.ReaderType
 import org.calypsonet.keyple.demo.control.domain.spi.ReaderManager
@@ -64,9 +62,6 @@ constructor(
   private var samReaderProtocolPhysicalName: String? = null
   private var samReaderProtocolLogicalName: String? = null
   private var samReaders: MutableList<CardReader> = mutableListOf()
-  // IHM
-  private lateinit var successMedia: MediaPlayer
-  private lateinit var errorMedia: MediaPlayer
 
   private fun initReaderType(readerType: ReaderType) {
     when (readerType) {
@@ -146,8 +141,6 @@ constructor(
   override fun registerPlugin(readerType: ReaderType, uiContext: UiContext) {
     initReaderType(readerType)
     val activity = uiContext.adaptTo(Activity::class.java)
-    successMedia = MediaPlayer.create(activity, R.raw.success)
-    errorMedia = MediaPlayer.create(activity, R.raw.error)
     runBlocking {
       // Plugin
       val pluginFactory =
@@ -251,10 +244,6 @@ constructor(
         it.deactivateProtocol(samReaderProtocolPhysicalName)
       }
     }
-    successMedia.stop()
-    successMedia.release()
-    errorMedia.stop()
-    errorMedia.release()
   }
 
   override fun onDestroy(observer: CardReaderObserverSpi?) {
@@ -264,15 +253,5 @@ constructor(
     }
     val smartCardService = SmartCardServiceProvider.getService()
     smartCardService.plugins.forEach { smartCardService.unregisterPlugin(it.name) }
-  }
-
-  override fun displayResultSuccess(): Boolean {
-    successMedia.start()
-    return true
-  }
-
-  override fun displayResultFailed(): Boolean {
-    errorMedia.start()
-    return true
   }
 }

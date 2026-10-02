@@ -31,7 +31,6 @@ import org.calypsonet.keyple.demo.validation.R
 import org.calypsonet.keyple.demo.validation.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.validation.databinding.LayoutCardSummaryOverlayBinding
 import org.calypsonet.keyple.demo.validation.di.scope.ActivityScoped
-import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
 import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.calypsonet.keyple.demo.validation.domain.model.Status
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
@@ -108,7 +107,7 @@ class ReaderActivity : BaseActivity() {
           try {
             cardReaderObserver = CardReaderObserver()
             ticketingService.init(
-                cardReaderObserver, AppSettings.readerType, UiContextImpl(this@ReaderActivity))
+                cardReaderObserver, appSettings.readerType, UiContextImpl(this@ReaderActivity))
             handleAppEvents(AppState.WAIT_CARD, null)
             ticketingService.startNfcDetection()
             ticketingService.displayWaiting()
@@ -128,7 +127,7 @@ class ReaderActivity : BaseActivity() {
       ticketingService.displayWaiting()
       ticketingService.startNfcDetection()
     }
-    if (AppSettings.batteryPowered) {
+    if (appSettings.batteryPowered) {
       timer = Timer() // Need to reinit timer after cancel
       timer.schedule(
           object : TimerTask() {
@@ -372,7 +371,7 @@ class ReaderActivity : BaseActivity() {
    * (card at reader) with no ongoing CPU cost. On other terminals, loops indefinitely.
    */
   private fun playWaitingAnimation() {
-    if (AppSettings.readerType != ReaderType.ARRIVE) {
+    if (appSettings.readerType != ReaderType.ARRIVE) {
       activityCardReaderBinding.animation.repeatCount = LottieDrawable.INFINITE
       activityCardReaderBinding.animation.playAnimation()
     } else {

@@ -10,26 +10,16 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.ui.adapters
+package org.calypsonet.keyple.demo.control.data
 
-import org.calypsonet.keyple.demo.control.domain.spi.Logger
-import timber.log.Timber
+import javax.inject.Inject
+import org.calypsonet.keyple.demo.common.model.Location
+import org.calypsonet.keyple.demo.control.domain.model.ReaderType
+import org.calypsonet.keyple.demo.control.domain.spi.AppSettingsRepository
 
-class LoggerImpl : Logger {
-
-  override fun d(message: String) {
-    Timber.d(message)
-  }
-
-  override fun i(message: String) {
-    Timber.i(message)
-  }
-
-  override fun e(message: String, throwable: Throwable?) {
-    Timber.e(throwable, message)
-  }
-
-  override fun w(message: String, throwable: Throwable?) {
-    Timber.w(throwable, message)
-  }
+/** In-memory implementation of the application settings (not persisted). */
+class AppSettingsRepositoryImpl @Inject constructor() : AppSettingsRepository {
+  override lateinit var readerType: ReaderType
+  override lateinit var location: Location
+  override var validationPeriod: Int = 0
 }

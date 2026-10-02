@@ -19,7 +19,7 @@ import com.parkeon.content.BindJoiner
 import com.parkeon.sound.SoundManager
 import com.parkeon.system.LedInterface
 import java.io.File
-import timber.log.Timber
+import org.calypsonet.keyple.demo.validation.domain.spi.Logger
 
 /**
  * Manages UI feedback (LEDs, sounds) for Arrive terminals using the Parkeon SDK.
@@ -29,7 +29,8 @@ import timber.log.Timber
  * Initialization is asynchronous via BindJoiner; display calls before init completes are silently
  * ignored.
  */
-internal class ArriveUiManagerImpl(private val context: Context) : UiManager {
+internal class ArriveFeedbackDevice(private val context: Context, private val logger: Logger) :
+    FeedbackDevice {
 
   private var joiner: BindJoiner? = null
   private var ledInterface: LedInterface? = null
@@ -59,10 +60,10 @@ internal class ArriveUiManagerImpl(private val context: Context) : UiManager {
             object : BindJoiner.Listener {
               override fun onJoined(initDone: Boolean) {
                 if (!initDone) {
-                  Timber.e("ArriveUiManagerImpl: services binding failed (initDone=false)")
+                  logger.e("ArriveFeedbackDevice: services binding failed (initDone=false)")
                   return
                 }
-                Timber.i("ArriveUiManagerImpl: services bound successfully")
+                logger.i("ArriveFeedbackDevice: services bound successfully")
                 ledInterface = LedInterface.Stub.asInterface(joiner?.getService("leds"))
                 soundManager = SoundManager.Stub.asInterface(joiner?.getService("sound"))
                 deploySoundFiles()
@@ -70,7 +71,7 @@ internal class ArriveUiManagerImpl(private val context: Context) : UiManager {
               }
 
               override fun onBindLost(intent: Intent) {
-                Timber.w("ArriveUiManagerImpl: bind lost for ${intent.action}")
+                logger.w("ArriveFeedbackDevice: bind lost for ${intent.action}")
                 ledInterface = null
                 soundManager = null
               }
@@ -94,14 +95,14 @@ internal class ArriveUiManagerImpl(private val context: Context) : UiManager {
         }
         deployedUris.add(Uri.fromFile(dest))
       } catch (e: Exception) {
-        Timber.e(e, "ArriveUiManagerImpl: failed to deploy sound file '$name'")
+        logger.e("ArriveFeedbackDevice: failed to deploy sound file '$name'", e)
       }
     }
     if (deployedUris.isNotEmpty()) {
       try {
         soundManager?.loadFiles(deployedUris)
       } catch (e: Exception) {
-        Timber.e(e, "ArriveUiManagerImpl: failed to load sound files")
+        logger.e("ArriveFeedbackDevice: failed to load sound files", e)
       }
     }
   }
@@ -110,7 +111,7 @@ internal class ArriveUiManagerImpl(private val context: Context) : UiManager {
     try {
       ledInterface?.set(leds)
     } catch (e: Exception) {
-      Timber.e(e, "ArriveUiManagerImpl: failed to set LEDs $leds")
+      logger.e("ArriveFeedbackDevice: failed to set LEDs $leds", e)
     }
   }
 
@@ -118,7 +119,7 @@ internal class ArriveUiManagerImpl(private val context: Context) : UiManager {
     try {
       soundManager?.startDefaultPlayingFile(filename)
     } catch (e: Exception) {
-      Timber.e(e, "ArriveUiManagerImpl: failed to play sound '$filename'")
+      logger.e("ArriveFeedbackDevice: failed to play sound '$filename'", e)
     }
   }
 
@@ -140,7 +141,7 @@ internal class ArriveUiManagerImpl(private val context: Context) : UiManager {
     try {
       setLeds(LEDS_OFF)
     } catch (e: Exception) {
-      Timber.e(e, "ArriveUiManagerImpl: error during release")
+      logger.e("ArriveFeedbackDevice: error during release", e)
     }
     joiner?.unbind()
     joiner = null
