@@ -12,23 +12,12 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.domain.model
 
-import java.util.Locale
+import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
 
-enum class DeviceEnum {
-  CONTACTLESS_CARD,
-  SIM,
-  WEARABLE,
-  EMBEDDED;
-
-  companion object {
-    @JvmStatic
-    fun getDeviceEnum(name: String): DeviceEnum {
-      return try {
-        valueOf(name.uppercase(Locale.ROOT))
-      } catch (_: Exception) {
-        // If the given state does not exist, return the default value.
-        CONTACTLESS_CARD
-      }
-    }
-  }
-}
+/** Result of the reading of the contracts of a card by the server. */
+data class ReadContractsResult(
+    val card: CardInfo,
+    val status: RemoteServiceStatus,
+    /** Contracts of the card, empty if the status is not [RemoteServiceStatus.SUCCESS]. */
+    val titles: List<CardTitle>
+)

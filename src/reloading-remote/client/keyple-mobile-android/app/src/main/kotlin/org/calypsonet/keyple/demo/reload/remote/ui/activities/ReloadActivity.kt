@@ -21,20 +21,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.calypsonet.keyple.demo.common.dto.AnalyzeContractsInputDto
-import org.calypsonet.keyple.demo.common.dto.WriteContractInputDto
+import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.reload.remote.di.scopes.ActivityScoped
-import org.calypsonet.keyple.demo.reload.remote.domain.model.AppSettings
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
-import org.eclipse.keyple.core.util.HexUtil
-import org.eclipse.keypop.calypso.card.card.CalypsoCard
 import org.eclipse.keypop.reader.CardReaderEvent
-import org.eclipse.keypop.storagecard.card.StorageCard
 import timber.log.Timber
 
 @ActivityScoped
@@ -50,16 +45,12 @@ class ReloadActivity : AbstractCardActivity() {
 
   override fun initReaders() {
     try {
-      if (DeviceEnum.getDeviceEnum(prefData.loadDeviceType()!!) == DeviceEnum.CONTACTLESS_CARD) {
+      if (device == DeviceEnum.CONTACTLESS_CARD) {
         showPresentNfcCardInstructions()
         initAndActivateCardReader()
       } else {
         showNowLoadingInformation()
-        initOmapiReader {
-          GlobalScope.launch {
-            remoteServiceExecution(selectedDeviceReaderName, pluginType, AppSettings.aidEnums)
-          }
-        }
+        initOmapiReader { GlobalScope.launch { remoteServiceExecution() } }
       }
     } catch (e: Exception) {
       Timber.e(e)
@@ -80,90 +71,34 @@ class ReloadActivity : AbstractCardActivity() {
   override fun onReaderEvent(event: CardReaderEvent?) {
     if (event?.type == CardReaderEvent.Type.CARD_INSERTED) {
       runOnUiThread { showNowLoadingInformation() }
-      GlobalScope.launch {
-        remoteServiceExecution(
-            selectedDeviceReaderName,
-            pluginType,
-            AppSettings.aidEnums) // Protocol: "ISO_14443_4_LOGICAL_PROTOCOL"
-      }
+      GlobalScope.launch { remoteServiceExecution() }
     }
   }
 
-  private suspend fun remoteServiceExecution(
-      selectedDeviceReaderName: String,
-      pluginType: String,
-      aidEnums: ArrayList<ByteArray>,
-  ) {
+  private suspend fun remoteServiceExecution() {
     withContext(Dispatchers.IO) {
       try {
-        val readCardUniqueIdentifier = intent.getStringExtra(CARD_APPLICATION_NUMBER)
-        val smartCard = ticketingService.getSmartCard(selectedDeviceReaderName, aidEnums)
-        val cardType =
-            when (smartCard) {
-              is CalypsoCard -> "CALYPSO: DF name " + HexUtil.toHex(smartCard.dfName)
-              is StorageCard -> smartCard.productType.name
-              else -> "unexpected card type"
-            }
-        when (smartCard) {
-          is CalypsoCard -> {
-            if (HexUtil.toHex(smartCard.applicationSerialNumber) != readCardUniqueIdentifier) {
-              // Ticket would have been bought for the Card read at step one.
-              // To avoid swapping we check thant loading is done on the same card
-              throw IllegalStateException("Not the same card")
-            }
+        val ticketsToLoad = intent.getIntExtra(SelectTicketsActivity.TICKETS_NUMBER, 0)
+        val result =
+            ticketingService.reloadCard(
+                intent.getStringExtra(CARD_APPLICATION_NUMBER),
+                PriorityCode.findEnumByKey(
+                    intent.getIntExtra(SelectTicketsActivity.SELECTED_TICKET_PRIORITY_CODE, 0)),
+                ticketsToLoad)
+        if (result.status == RemoteServiceStatus.SUCCESS) {
+          runOnUiThread {
+            changeDisplay(
+                UiCardReaderResponse(
+                    Status.SUCCESS,
+                    result.card.description,
+                    ticketsToLoad,
+                    arrayListOf(),
+                    arrayListOf(),
+                    ""),
+                finishActivity = true)
           }
-          is StorageCard -> {
-            if (HexUtil.toHex(smartCard.uid) != readCardUniqueIdentifier) {
-              // Ticket would have been bought for the Card read at step one.
-              // To avoid swapping we check thant loading is done on the same card
-              throw IllegalStateException("Not the same card")
-            }
-          }
-        }
-
-        val analyseContractsInput = AnalyzeContractsInputDto(pluginType)
-        ticketingService.analyzeContracts(
-            selectedDeviceReaderName, smartCard, analyseContractsInput)
-
-        val contractTariff =
-            PriorityCode.findEnumByKey(
-                intent.getIntExtra(SelectTicketsActivity.SELECTED_TICKET_PRIORITY_CODE, 0))
-        val ticketToBeLoaded = intent.getIntExtra(SelectTicketsActivity.TICKETS_NUMBER, 0)
-
-        val writeContractInputDto =
-            WriteContractInputDto(contractTariff, ticketToBeLoaded, pluginType)
-
-        val writeTitleOutput =
-            ticketingService.writeContract(
-                selectedDeviceReaderName, smartCard, writeContractInputDto)
-
-        when (writeTitleOutput.statusCode) {
-          0 -> {
-            runOnUiThread {
-              changeDisplay(
-                  UiCardReaderResponse(
-                      Status.SUCCESS, cardType, ticketToBeLoaded, arrayListOf(), arrayListOf(), ""),
-                  finishActivity = true)
-            }
-          }
-          1 -> {
-            launchServerErrorResponse()
-          } // server not ready,
-          2 -> {
-            when (smartCard) {
-              is CalypsoCard -> {
-                launchInvalidCardResponse(
-                    cardType,
-                    String.format(
-                        getString(R.string.card_invalid_structure),
-                        HexUtil.toHex(smartCard.applicationSubtype)))
-              }
-              is StorageCard -> {
-                launchInvalidCardResponse(cardType, getString(R.string.storage_card_invalid))
-              }
-              else -> {}
-            } // card rejected
-          }
+        } else {
+          launchStatusErrorResponse(result.card, result.status)
         }
       } catch (e: IllegalStateException) {
         Timber.e(e)

@@ -37,6 +37,7 @@ import org.eclipse.keyple.plugin.android.nfc.AndroidNfcPluginFactoryProvider
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcSupportedProtocols
 import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiPlugin
 import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiPluginFactoryProvider
+import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiReader
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ConfigurableCardReader
 import org.eclipse.keypop.reader.ObservableCardReader
@@ -202,6 +203,16 @@ class ReaderManagerImpl @Inject constructor(private val logger: Logger) : Reader
     val smartCardService = SmartCardServiceProvider.getService()
     smartCardService.plugins.forEach { smartCardService.unregisterPlugin(it.name) }
   }
+
+  override fun getReaderName(readerType: ReaderType, deviceEnum: DeviceEnum): String =
+      when (deviceEnum) {
+        DeviceEnum.CONTACTLESS_CARD ->
+            if (readerType == ReaderType.BLUEBIRD) BluebirdConstants.CARD_READER_NAME
+            else AndroidNfcConstants.READER_NAME
+        DeviceEnum.SIM -> AndroidOmapiReader.READER_NAME_SIM_1
+        DeviceEnum.WEARABLE -> "WEARABLE"
+        DeviceEnum.EMBEDDED -> "EMBEDDED"
+      }
 
   /** Unregister any keyple plugin */
   override fun unregisterPlugin(pluginName: String) {

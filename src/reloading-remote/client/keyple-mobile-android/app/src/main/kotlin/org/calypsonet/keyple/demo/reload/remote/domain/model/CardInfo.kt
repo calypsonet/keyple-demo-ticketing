@@ -12,23 +12,14 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.domain.model
 
-import java.util.Locale
-
-enum class DeviceEnum {
-  CONTACTLESS_CARD,
-  SIM,
-  WEARABLE,
-  EMBEDDED;
-
-  companion object {
-    @JvmStatic
-    fun getDeviceEnum(name: String): DeviceEnum {
-      return try {
-        valueOf(name.uppercase(Locale.ROOT))
-      } catch (_: Exception) {
-        // If the given state does not exist, return the default value.
-        CONTACTLESS_CARD
-      }
-    }
-  }
-}
+/** Information about the card presented to the terminal. */
+data class CardInfo(
+    /** Description of the card type (e.g. "CALYPSO: DF name ..." or the storage card type). */
+    val description: String,
+    /** Application serial number of a Calypso card, or UID of a storage card (hexadecimal). */
+    val serialNumber: String,
+    /** True for a storage card, false for a Calypso card. */
+    val isStorageCard: Boolean,
+    /** Application subtype of a Calypso card (hexadecimal), null for a storage card. */
+    val applicationSubtype: String? = null
+)

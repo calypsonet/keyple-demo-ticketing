@@ -6,7 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 ### Changed
 - Android applications: layered architecture with ports and adapters, documented in the README ("Android Application
-  Architecture") and checked by the CI (`.github/scripts/check-android-architecture.sh`). The domain layer no longer
+  Architecture") and checked by the CI (`.github/scripts/check-android-architecture.sh`) for the domain, data and ui
+  layers. The domain layer no longer
   depends on Android, Timber or the dependency injection framework: the domain services are provided by a Dagger
   `DomainModule`, and the card managers receive their dependencies through their constructor.
 - Android applications: logging through the `Logger` port (same `d`/`i`/`w`/`e` interface in all applications) in the
@@ -24,8 +25,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 - Unused mocks: `keyple-card-cna-storagecard-java-lib-2.3.0` and `keyple-plugin-cna-storagecard-java-lib-1.1.0`.
 ### Common library
+#### Added
+- `RemoteServiceStatus` enum defining the status codes of the remote services (`statusCode` field of
+  `AnalyzeContractsOutputDto`, `WriteContractOutputDto` and `CardIssuanceOutputDto`, still transmitted as an integer).
 #### Changed
 - `Location.toString()` now returns the name of the location.
+- Documentation of the status codes of `AnalyzeContractsOutputDto`, `WriteContractOutputDto` and
+  `CardIssuanceOutputDto` aligned with the codes actually returned by the server.
 ### Validation app
 #### Added
 - Anti-passback check for storage cards: a card presented again within the anti-passback delay is rejected.
@@ -52,8 +58,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Major architectural refactoring to apply the layered architecture with ports and adapters: the plugins and readers
   management is moved from the activities to `ReaderManagerImpl`, and the remote services are called through the
   `RemoteServiceManager` port.
+- The business logic is moved from the activities to the domain: card selection (AIDs depending on the device),
+  interpretation of the server status codes, building of the card titles and check that the reloaded card is the one
+  read before. The activities no longer handle the Keypop card types.
+- The settings and the server status are accessed through the `AppSettingsRepository` and `ServerStatusProvider` ports,
+  instead of the shared preferences and the REST client.
 #### Fixed
 - Typo in the "Invalid storage card" message.
+- Interpretation of the status codes returned by the server, which was shifted by one: each error now displays the
+  right message (e.g. "card not personalized" instead of "expired environment"), and the expired environment (contracts
+  reading) and the rejected card (reload, personalization) no longer leave the screen stuck on the loading animation.
 ### Reloading remote server
 #### Changed
 - The storage card extension is now registered with `SmartCardService.checkCardExtension(...)` at startup, as required
@@ -62,6 +76,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Replaced the deprecated `RemoteReaderServer.getInitialCardContent()` by `getInitialCardContent(Class)`
   (`keyple-distributed-remote-java-lib` `2.6.0`).
 - Dashboard: removed the Jest-specific ESLint configuration.
+- The status codes of the remote services are produced with the `RemoteServiceStatus` enum.
+#### Removed
+- Unreachable "card not read" status code (`4`) of the contract writing.
 ### Reloading remote .NET client
 #### Changed
 - Target framework: `net7.0` -> `net8.0`.

@@ -176,11 +176,13 @@ drive the user flow and call the domain directly.
 **Dependency rules**
 
 - The `domain` layer only depends on the `common` library, the Keypop APIs and the Keyple utilities. It depends neither
-  on Android, Timber or the dependency injection framework (no Dagger or `javax.inject` annotation), nor on the `data`,
-  `ui` and `di` layers.
+  on Android (including the application resources `R`), Timber or the dependency injection framework (no Dagger or
+  `javax.inject` annotation), nor on the `data`, `ui` and `di` layers.
 - Everything the domain needs from the outside world is expressed as a port in `domain/spi` (e.g. `ReaderManager`,
-  `KeypopApiProvider`, `UiManager`, `AppSettingsRepository`, `Logger`, `UiContext`, `RemoteServiceManager`) and
-  implemented by an adapter in `data`, or in `ui/adapters` for the UI-bound ones.
+  `KeypopApiProvider`, `UiManager`, `AppSettingsRepository`, `Logger`, `UiContext`, `RemoteServiceManager`,
+  `ServerStatusProvider`) and implemented by an adapter in `data`, or in `ui/adapters` for the UI-bound ones.
+- The `ui` layer calls the use cases of the domain services, or the ports directly for simple accesses (e.g. settings).
+  It never accesses the `data` layer, and does not handle the Keypop card types (`CalypsoCard`, `StorageCard`...).
 - The `data` layer implements the ports and does not depend on the `ui` layer.
 - The `di` layer is the only place where adapters are bound to ports. The domain services (`TicketingService` and the
   managers) carry no annotation and are provided by the `DomainModule`. The stable dependencies of the managers are
@@ -203,10 +205,6 @@ These rules are checked by the CI (`.github/scripts/check-android-architecture.s
 ```sh
 bash .github/scripts/check-android-architecture.sh src/control
 ```
-
-> **Known deviation:** in the `reloading-remote` Android client, part of the business logic (analysis of the server
-> status codes, building of the card titles, choice of the AIDs) and some accesses to the `data` layer (shared
-> preferences, REST client) are still located in the activities. They will be moved in a later refactoring.
 
 ### Building from Source
 

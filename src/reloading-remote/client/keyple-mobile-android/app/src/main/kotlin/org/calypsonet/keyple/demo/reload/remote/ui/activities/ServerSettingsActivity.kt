@@ -16,25 +16,20 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
 import android.view.View
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
-import java.lang.NumberFormatException
 import kotlin.system.exitProcess
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.reload.remote.R
-import org.calypsonet.keyple.demo.reload.remote.data.network.KeypleSyncEndPointClient
-import org.calypsonet.keyple.demo.reload.remote.data.network.RestClient
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityServerSettingsBinding
 import org.calypsonet.keyple.demo.reload.remote.di.scopes.ActivityScoped
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
+import org.calypsonet.keyple.demo.reload.remote.domain.model.ServerConfig
 import timber.log.Timber
 
 @ActivityScoped
 class ServerSettingsActivity : AbstractDemoActivity() {
 
-  private lateinit var disposables: CompositeDisposable
   private lateinit var activityServerSettingsBinding: ActivityServerSettingsBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,63 +38,43 @@ class ServerSettingsActivity : AbstractDemoActivity() {
     toolbarBinding = activityServerSettingsBinding.appBarLayout
     setContentView(activityServerSettingsBinding.root)
 
-    disposables = CompositeDisposable()
-
-    activityServerSettingsBinding.serverIpEdit.text.append(prefData.loadServerIP() ?: "")
-    activityServerSettingsBinding.serverPortEdit.text.append(prefData.loadServerPort().toString())
-    activityServerSettingsBinding.serverProtocolEdit.text.append(prefData.loadServerProtocol())
+    val serverConfig = appSettings.serverConfig
+    activityServerSettingsBinding.serverIpEdit.text.append(serverConfig.ip)
+    activityServerSettingsBinding.serverPortEdit.text.append(serverConfig.port.toString())
+    activityServerSettingsBinding.serverProtocolEdit.text.append(serverConfig.protocol)
 
     activityServerSettingsBinding.restart.setOnClickListener {
-      if (validateEntries(true)) restartApp()
+      readServerConfig()?.let {
+        appSettings.serverConfig = it
+        restartApp()
+      }
     }
 
     activityServerSettingsBinding.pingBtn.setOnClickListener {
-      if (validateEntries(false)) {
-        val serverUrl =
-            activityServerSettingsBinding.serverProtocolEdit.text.toString() +
-                activityServerSettingsBinding.serverIpEdit.text.toString() +
-                ":" +
-                activityServerSettingsBinding.serverPortEdit.text.toString()
-        Timber.i("Loaded Rest client with URL: $serverUrl")
-        val testKeypleEndpointClient =
-            KeypleSyncEndPointClient(
-                Retrofit.Builder()
-                    .baseUrl(serverUrl)
-                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                    .addConverterFactory(ScalarsConverterFactory.create())
-                    .build()
-                    .create(RestClient::class.java))
-
-        disposables.add(
-            testKeypleEndpointClient
-                .ping()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe {
-                  activityServerSettingsBinding.pingProgressBar.visibility = View.VISIBLE
-                  activityServerSettingsBinding.pingResultText.visibility = View.INVISIBLE
-                }
-                .subscribe(
-                    {
-                      activityServerSettingsBinding.pingProgressBar.visibility = View.INVISIBLE
-                      activityServerSettingsBinding.pingResultText.visibility = View.VISIBLE
-                      activityServerSettingsBinding.pingResultText.text =
-                          getString(R.string.ping_success)
-                    },
-                    {
-                      Timber.e(it)
-                      activityServerSettingsBinding.pingProgressBar.visibility = View.INVISIBLE
-                      activityServerSettingsBinding.pingResultText.visibility = View.VISIBLE
-                      activityServerSettingsBinding.pingResultText.text =
-                          getString(R.string.ping_failed)
-                    }))
-      }
+      readServerConfig()?.let { ping(it) }
     }
   }
 
-  override fun onDestroy() {
-    disposables.clear()
-    super.onDestroy()
+  private fun ping(serverConfig: ServerConfig) {
+    Timber.i("Ping server with URL: ${serverConfig.url}")
+    activityServerSettingsBinding.pingProgressBar.visibility = View.VISIBLE
+    activityServerSettingsBinding.pingResultText.visibility = View.INVISIBLE
+    GlobalScope.launch(Dispatchers.Main) {
+      val isReachable =
+          withContext(Dispatchers.IO) {
+            try {
+              serverStatusProvider.isSamReady(serverConfig)
+              true
+            } catch (e: Exception) {
+              Timber.e(e)
+              false
+            }
+          }
+      activityServerSettingsBinding.pingProgressBar.visibility = View.INVISIBLE
+      activityServerSettingsBinding.pingResultText.visibility = View.VISIBLE
+      activityServerSettingsBinding.pingResultText.text =
+          getString(if (isReachable) R.string.ping_success else R.string.ping_failed)
+    }
   }
 
   private fun restartApp() {
@@ -107,35 +82,23 @@ class ServerSettingsActivity : AbstractDemoActivity() {
     exitProcess(0)
   }
 
-  private fun validateEntries(saveOnSuccess: Boolean): Boolean {
-    with(activityServerSettingsBinding.serverIpEdit) {
-      if (this.text.isNotBlank() && Patterns.IP_ADDRESS.matcher(this.text.toString()).matches()) {
-        if (saveOnSuccess) prefData.saveServerIP(this.text.toString())
-      } else {
-        this.error = "Please set a valid IP"
-        return false
-      }
+  /** Returns the server configuration entered by the user, or null if an entry is not valid. */
+  private fun readServerConfig(): ServerConfig? {
+    val ip = activityServerSettingsBinding.serverIpEdit.text.toString()
+    if (ip.isBlank() || !Patterns.IP_ADDRESS.matcher(ip).matches()) {
+      activityServerSettingsBinding.serverIpEdit.error = "Please set a valid IP"
+      return null
     }
-    with(activityServerSettingsBinding.serverPortEdit) {
-      try {
-        if (this.text.isNotBlank()) {
-          if (saveOnSuccess) prefData.saveServerPort(Integer.valueOf(this.text.toString()))
-        } else {
-          throw NumberFormatException()
-        }
-      } catch (e: NumberFormatException) {
-        this.error = "Please set a valid Port"
-        return false
-      }
+    val port = activityServerSettingsBinding.serverPortEdit.text.toString().toIntOrNull()
+    if (port == null) {
+      activityServerSettingsBinding.serverPortEdit.error = "Please set a valid Port"
+      return null
     }
-    with(activityServerSettingsBinding.serverProtocolEdit) {
-      if (this.text.isNotBlank() && arrayOf("http://", "https://").contains(this.text.toString())) {
-        if (saveOnSuccess) prefData.saveServerProtocol(this.text.toString())
-      } else {
-        this.error = "Please set a valid Protocol"
-        return false
-      }
+    val protocol = activityServerSettingsBinding.serverProtocolEdit.text.toString()
+    if (protocol !in arrayOf("http://", "https://")) {
+      activityServerSettingsBinding.serverProtocolEdit.error = "Please set a valid Protocol"
+      return null
     }
-    return true
+    return ServerConfig(protocol, ip, port)
   }
 }

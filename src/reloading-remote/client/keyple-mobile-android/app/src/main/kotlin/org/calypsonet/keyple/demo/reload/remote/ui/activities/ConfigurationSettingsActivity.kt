@@ -16,8 +16,9 @@ import android.os.Bundle
 import android.view.View
 import android.widget.RadioButton
 import org.calypsonet.keyple.demo.reload.remote.R
-import org.calypsonet.keyple.demo.reload.remote.data.SharedPrefDataRepository
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityConfigurationSettingsBinding
+import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
+import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceVisibility
 
 class ConfigurationSettingsActivity : AbstractDemoActivity() {
   private lateinit var activityConfigurationSettingsBinding: ActivityConfigurationSettingsBinding
@@ -31,185 +32,58 @@ class ConfigurationSettingsActivity : AbstractDemoActivity() {
 
     activityConfigurationSettingsBinding.backBtn.setOnClickListener { onBackPressed() }
 
-    setupRadioBtn(
-        prefData.loadContactlessConfigurationVisibility(),
-        activityConfigurationSettingsBinding.contactlessCardEnable,
-        activityConfigurationSettingsBinding.contactlessCardDisable,
-        activityConfigurationSettingsBinding.contactlessCardHide)
-    setupRadioBtn(
-        prefData.loadSimConfigurationVisibility(),
-        activityConfigurationSettingsBinding.simCardEnable,
-        activityConfigurationSettingsBinding.simCardDisable,
-        activityConfigurationSettingsBinding.simCardHide)
-    setupRadioBtn(
-        prefData.loadWearableConfigurationVisibility(),
-        activityConfigurationSettingsBinding.wearableCardEnable,
-        activityConfigurationSettingsBinding.wearableCardDisable,
-        activityConfigurationSettingsBinding.wearableCardHide)
-    setupRadioBtn(
-        prefData.loadEmbeddedConfigurationVisibility(),
-        activityConfigurationSettingsBinding.embeddedCardEnable,
-        activityConfigurationSettingsBinding.embeddedCardDisable,
-        activityConfigurationSettingsBinding.embeddedCardHide)
+    DeviceEnum.values().forEach { updateRadioButtons(it) }
   }
 
-  private fun setupRadioBtn(
-      visibility: SharedPrefDataRepository.Companion.Visibility,
-      enableBtn: RadioButton,
-      disableBtn: RadioButton,
-      hideBtn: RadioButton
-  ) {
-    when (visibility) {
-      SharedPrefDataRepository.Companion.Visibility.ENABLE -> {
-        enableBtn.isChecked = true
-        enableBtn.setTextColor(resources.getColor(R.color.dark_blue))
-        disableBtn.isChecked = false
-        disableBtn.setTextColor(resources.getColor(R.color.light_grey))
-        hideBtn.isChecked = false
-        hideBtn.setTextColor(resources.getColor(R.color.light_grey))
-      }
-      SharedPrefDataRepository.Companion.Visibility.DISABLE -> {
-        enableBtn.isChecked = false
-        enableBtn.setTextColor(resources.getColor(R.color.light_grey))
-        disableBtn.isChecked = true
-        disableBtn.setTextColor(resources.getColor(R.color.dark_blue))
-        hideBtn.isChecked = false
-        hideBtn.setTextColor(resources.getColor(R.color.light_grey))
-      }
-      SharedPrefDataRepository.Companion.Visibility.HIDE -> {
-        enableBtn.isChecked = false
-        enableBtn.setTextColor(resources.getColor(R.color.light_grey))
-        disableBtn.isChecked = false
-        disableBtn.setTextColor(resources.getColor(R.color.light_grey))
-        hideBtn.isChecked = true
-        hideBtn.setTextColor(resources.getColor(R.color.dark_blue))
-      }
+  fun onContactlessRadioButtonClicked(view: View) =
+      onRadioButtonClicked(view, DeviceEnum.CONTACTLESS_CARD)
+
+  fun onSimRadioButtonClicked(view: View) = onRadioButtonClicked(view, DeviceEnum.SIM)
+
+  fun onWearableRadioButtonClicked(view: View) = onRadioButtonClicked(view, DeviceEnum.WEARABLE)
+
+  fun onEmbeddedRadioButtonClicked(view: View) = onRadioButtonClicked(view, DeviceEnum.EMBEDDED)
+
+  private fun onRadioButtonClicked(view: View, device: DeviceEnum) {
+    if (view !is RadioButton) {
+      return
     }
+    if (view.isChecked) {
+      val (enableBtn, disableBtn, _) = radioButtons(device)
+      appSettings.setDeviceVisibility(
+          device,
+          when (view) {
+            enableBtn -> DeviceVisibility.ENABLE
+            disableBtn -> DeviceVisibility.DISABLE
+            else -> DeviceVisibility.HIDE
+          })
+    }
+    updateRadioButtons(device)
   }
 
-  fun onContactlessRadioButtonClicked(view: View) {
-    if (view is RadioButton) {
-      // Is the button now checked?
-      val checked = view.isChecked
-
-      // Check which radio button was clicked
-      when (view.id) {
-        R.id.contactlessCardEnable ->
-            if (checked) {
-              prefData.saveContactlessConfigurationVisibility(
-                  SharedPrefDataRepository.Companion.Visibility.ENABLE)
-            }
-        R.id.contactlessCardDisable ->
-            if (checked) {
-              prefData.saveContactlessConfigurationVisibility(
-                  SharedPrefDataRepository.Companion.Visibility.DISABLE)
-            }
-        R.id.contactlessCardHide ->
-            if (checked) {
-              prefData.saveContactlessConfigurationVisibility(
-                  SharedPrefDataRepository.Companion.Visibility.HIDE)
-            }
+  /** Returns the "enable", "disable" and "hide" radio buttons of the given device type. */
+  private fun radioButtons(device: DeviceEnum): Triple<RadioButton, RadioButton, RadioButton> =
+      with(activityConfigurationSettingsBinding) {
+        when (device) {
+          DeviceEnum.CONTACTLESS_CARD ->
+              Triple(contactlessCardEnable, contactlessCardDisable, contactlessCardHide)
+          DeviceEnum.SIM -> Triple(simCardEnable, simCardDisable, simCardHide)
+          DeviceEnum.WEARABLE -> Triple(wearableCardEnable, wearableCardDisable, wearableCardHide)
+          DeviceEnum.EMBEDDED -> Triple(embeddedCardEnable, embeddedCardDisable, embeddedCardHide)
+        }
       }
 
-      // Update layout
-      setupRadioBtn(
-          prefData.loadContactlessConfigurationVisibility(),
-          activityConfigurationSettingsBinding.contactlessCardEnable,
-          activityConfigurationSettingsBinding.contactlessCardDisable,
-          activityConfigurationSettingsBinding.contactlessCardHide)
-    }
+  private fun updateRadioButtons(device: DeviceEnum) {
+    val visibility = appSettings.getDeviceVisibility(device)
+    val (enableBtn, disableBtn, hideBtn) = radioButtons(device)
+    setRadioButtonChecked(enableBtn, visibility == DeviceVisibility.ENABLE)
+    setRadioButtonChecked(disableBtn, visibility == DeviceVisibility.DISABLE)
+    setRadioButtonChecked(hideBtn, visibility == DeviceVisibility.HIDE)
   }
 
-  fun onSimRadioButtonClicked(view: View) {
-    if (view is RadioButton) {
-      // Is the button now checked?
-      val checked = view.isChecked
-
-      // Check which radio button was clicked
-      when (view.id) {
-        R.id.simCardEnable ->
-            if (checked) {
-              prefData.saveSimConfigurationVisibility(
-                  SharedPrefDataRepository.Companion.Visibility.ENABLE)
-            }
-        R.id.simCardDisable ->
-            if (checked) {
-              prefData.saveSimConfigurationVisibility(
-                  SharedPrefDataRepository.Companion.Visibility.DISABLE)
-            }
-        R.id.simCardHide ->
-            if (checked) {
-              prefData.saveSimConfigurationVisibility(
-                  SharedPrefDataRepository.Companion.Visibility.HIDE)
-            }
-      }
-      setupRadioBtn(
-          prefData.loadSimConfigurationVisibility(),
-          activityConfigurationSettingsBinding.simCardEnable,
-          activityConfigurationSettingsBinding.simCardDisable,
-          activityConfigurationSettingsBinding.simCardHide)
-    }
-  }
-
-  fun onWearableRadioButtonClicked(view: View) {
-    if (view is RadioButton) {
-      // Is the button now checked?
-      val checked = view.isChecked
-
-      // Check which radio button was clicked
-      when (view.id) {
-        R.id.wearableCardEnable ->
-            if (checked) {
-              prefData.saveWearableConfigurationVisibility(
-                  SharedPrefDataRepository.Companion.Visibility.ENABLE)
-            }
-        R.id.wearableCardDisable ->
-            if (checked) {
-              prefData.saveWearableConfigurationVisibility(
-                  SharedPrefDataRepository.Companion.Visibility.DISABLE)
-            }
-        R.id.wearableCardHide ->
-            if (checked) {
-              prefData.saveWearableConfigurationVisibility(
-                  SharedPrefDataRepository.Companion.Visibility.HIDE)
-            }
-      }
-      setupRadioBtn(
-          prefData.loadWearableConfigurationVisibility(),
-          activityConfigurationSettingsBinding.wearableCardEnable,
-          activityConfigurationSettingsBinding.wearableCardDisable,
-          activityConfigurationSettingsBinding.wearableCardHide)
-    }
-  }
-
-  fun onEmbeddedRadioButtonClicked(view: View) {
-    if (view is RadioButton) {
-      // Is the button now checked?
-      val checked = view.isChecked
-
-      // Check which radio button was clicked
-      when (view.id) {
-        R.id.embeddedCardEnable ->
-            if (checked) {
-              prefData.saveEmbeddedConfigurationVisibility(
-                  SharedPrefDataRepository.Companion.Visibility.ENABLE)
-            }
-        R.id.embeddedCardDisable ->
-            if (checked) {
-              prefData.saveEmbeddedConfigurationVisibility(
-                  SharedPrefDataRepository.Companion.Visibility.DISABLE)
-            }
-        R.id.embeddedCardHide ->
-            if (checked) {
-              prefData.saveEmbeddedConfigurationVisibility(
-                  SharedPrefDataRepository.Companion.Visibility.HIDE)
-            }
-      }
-      setupRadioBtn(
-          prefData.loadEmbeddedConfigurationVisibility(),
-          activityConfigurationSettingsBinding.embeddedCardEnable,
-          activityConfigurationSettingsBinding.embeddedCardDisable,
-          activityConfigurationSettingsBinding.embeddedCardHide)
-    }
+  private fun setRadioButtonChecked(radioButton: RadioButton, checked: Boolean) {
+    radioButton.isChecked = checked
+    radioButton.setTextColor(
+        resources.getColor(if (checked) R.color.dark_blue else R.color.light_grey))
   }
 }

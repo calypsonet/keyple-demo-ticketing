@@ -16,10 +16,10 @@ import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.calypsonet.keyple.demo.reload.remote.data.SharedPrefDataRepository
 import org.calypsonet.keyple.demo.reload.remote.data.network.KeypleSyncEndPointClient
 import org.calypsonet.keyple.demo.reload.remote.data.network.RestClient
 import org.calypsonet.keyple.demo.reload.remote.di.scopes.AppScoped
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.AppSettingsRepository
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -32,11 +32,10 @@ class RestModule {
   @Provides
   @AppScoped
   fun provideKeypleSyncEndpointClient(
-      prefData: SharedPrefDataRepository,
+      appSettings: AppSettingsRepository,
       logger: Logger
   ): KeypleSyncEndPointClient {
-    val serverUrl =
-        prefData.loadServerProtocol() + prefData.loadServerIP() + ":" + prefData.loadServerPort()
+    val serverUrl = appSettings.serverConfig.url
     logger.i("Loaded Rest client with URL: $serverUrl")
     return KeypleSyncEndPointClient(
         Retrofit.Builder()

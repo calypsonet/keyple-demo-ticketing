@@ -17,8 +17,9 @@ import org.calypsonet.keyple.demo.common.model.ContractStructure
 /**
  * - validContracts: List of contracts present in the card. Each contract is tied to a counter by
  *   its index.
- * - statusCode: 0 (if successful), 1 (card communication error), 2 (server is not ready), 3 (card
- *   rejected).
+ * - statusCode: code of the [RemoteServiceStatus]: 0 (successful), 1 (card communication error), 2
+ *   (server error), 3 (card rejected, Calypso cards only), 4 (card not personalized), 5 (expired
+ *   environment).
  */
 data class AnalyzeContractsOutputDto(
     var validContracts: List<ContractStructure>,

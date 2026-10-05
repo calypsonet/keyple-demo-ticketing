@@ -17,7 +17,11 @@ import android.content.SharedPreferences
 import dagger.Module
 import dagger.Provides
 import org.calypsonet.keyple.demo.reload.remote.Application
+import org.calypsonet.keyple.demo.reload.remote.data.AppSettingsRepositoryImpl
+import org.calypsonet.keyple.demo.reload.remote.data.network.ServerStatusProviderImpl
 import org.calypsonet.keyple.demo.reload.remote.di.scopes.AppScoped
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.AppSettingsRepository
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.ServerStatusProvider
 
 @Suppress("unused")
 @Module
@@ -28,4 +32,13 @@ class DataModule {
   fun getSharedPreferences(app: Application): SharedPreferences {
     return app.getSharedPreferences("Keyple-prefs", Context.MODE_PRIVATE)
   }
+
+  @Provides
+  @AppScoped
+  fun provideAppSettingsRepository(prefs: SharedPreferences): AppSettingsRepository =
+      AppSettingsRepositoryImpl(prefs)
+
+  @Provides
+  @AppScoped
+  fun provideServerStatusProvider(): ServerStatusProvider = ServerStatusProviderImpl()
 }

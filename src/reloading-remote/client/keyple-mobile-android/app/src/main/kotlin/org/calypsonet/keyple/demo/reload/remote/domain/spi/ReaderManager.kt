@@ -19,6 +19,14 @@ import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 
 interface ReaderManager {
+  /**
+   * Returns the name of the reader to use for the given reader type and device.
+   *
+   * @param readerType The type of terminal.
+   * @param deviceEnum The type of device (contactless card, SIM...) to read.
+   */
+  fun getReaderName(readerType: ReaderType, deviceEnum: DeviceEnum): String
+
   fun registerPlugin(
       readerType: ReaderType,
       uiContext: UiContext,

@@ -10,25 +10,19 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.domain.model
+package org.calypsonet.keyple.demo.reload.remote.domain.spi
 
-import java.util.Locale
+import org.calypsonet.keyple.demo.reload.remote.domain.model.ServerConfig
 
-enum class DeviceEnum {
-  CONTACTLESS_CARD,
-  SIM,
-  WEARABLE,
-  EMBEDDED;
+/** Port giving the status of the reloading server. */
+interface ServerStatusProvider {
 
-  companion object {
-    @JvmStatic
-    fun getDeviceEnum(name: String): DeviceEnum {
-      return try {
-        valueOf(name.uppercase(Locale.ROOT))
-      } catch (_: Exception) {
-        // If the given state does not exist, return the default value.
-        CONTACTLESS_CARD
-      }
-    }
-  }
+  /**
+   * Requests the status of the server at the provided address.
+   *
+   * @param serverConfig The address of the server.
+   * @return True if the server and its SAM are ready, false if the SAM is not ready.
+   * @throws Exception If the server cannot be reached.
+   */
+  fun isSamReady(serverConfig: ServerConfig): Boolean
 }

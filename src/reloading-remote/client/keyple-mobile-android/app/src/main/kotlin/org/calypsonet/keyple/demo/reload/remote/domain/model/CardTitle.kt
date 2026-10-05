@@ -12,23 +12,16 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.domain.model
 
-import java.util.Locale
+import java.time.LocalDate
+import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 
-enum class DeviceEnum {
-  CONTACTLESS_CARD,
-  SIM,
-  WEARABLE,
-  EMBEDDED;
-
-  companion object {
-    @JvmStatic
-    fun getDeviceEnum(name: String): DeviceEnum {
-      return try {
-        valueOf(name.uppercase(Locale.ROOT))
-      } catch (_: Exception) {
-        // If the given state does not exist, return the default value.
-        CONTACTLESS_CARD
-      }
-    }
-  }
-}
+/** Contract (title) present in the card. */
+data class CardTitle(
+    val contractTariff: PriorityCode,
+    /** Number of remaining trips of a multi-trip contract, null if there is no counter. */
+    val counterValue: Int?,
+    val saleDate: LocalDate,
+    val validityEndDate: LocalDate,
+    /** Indicates whether the contract can currently be used. */
+    val isValid: Boolean
+)

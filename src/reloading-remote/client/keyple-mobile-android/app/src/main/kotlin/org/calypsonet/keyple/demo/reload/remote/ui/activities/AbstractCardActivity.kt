@@ -16,17 +16,15 @@ import android.os.Build
 import android.os.Bundle
 import javax.inject.Inject
 import kotlin.jvm.Throws
-import org.calypsonet.keyple.demo.common.constants.CardConstants
+import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
+import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.domain.TicketingService
-import org.calypsonet.keyple.demo.reload.remote.domain.model.AppSettings
+import org.calypsonet.keyple.demo.reload.remote.domain.model.CardInfo
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ReaderType
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.adapters.UiContextImpl
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
-import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
-import org.eclipse.keyple.plugin.android.nfc.AndroidNfcConstants
-import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiReader
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 import timber.log.Timber
@@ -35,47 +33,16 @@ abstract class AbstractCardActivity :
     AbstractDemoActivity(), CardReaderObserverSpi, CardReaderObservationExceptionHandlerSpi {
 
   @Inject lateinit var ticketingService: TicketingService
-  lateinit var selectedDeviceReaderName: String
   lateinit var device: DeviceEnum
-  lateinit var pluginType: String
 
   val isBluebirdDevice = Build.MANUFACTURER?.lowercase()?.contains("bluebird") == true
 
+  private val readerType: ReaderType
+    get() = if (isBluebirdDevice) ReaderType.BLUEBIRD else ReaderType.NFC_TERMINAL
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    device = DeviceEnum.getDeviceEnum(prefData.loadDeviceType()!!)
-    selectedDeviceReaderName =
-        when (device) {
-          DeviceEnum.CONTACTLESS_CARD -> {
-            pluginType = if (isBluebirdDevice) "Bluebird" else "Android Nfc"
-            AppSettings.aidEnums.clear()
-            AppSettings.aidEnums.add(CardConstants.AID_KEYPLE_GENERIC)
-            AppSettings.aidEnums.add(CardConstants.AID_CD_LIGHT_GTML)
-            AppSettings.aidEnums.add(CardConstants.AID_CALYPSO_LIGHT)
-            AppSettings.aidEnums.add(CardConstants.AID_NORMALIZED_IDF)
-            if (isBluebirdDevice) BluebirdConstants.CARD_READER_NAME
-            else AndroidNfcConstants.READER_NAME
-          }
-          DeviceEnum.SIM -> {
-            pluginType = "Android OMAPI"
-            AppSettings.aidEnums.clear()
-            AppSettings.aidEnums.add(CardConstants.AID_CD_LIGHT_GTML)
-            AppSettings.aidEnums.add(CardConstants.AID_NORMALIZED_IDF)
-            AndroidOmapiReader.READER_NAME_SIM_1
-          }
-          DeviceEnum.WEARABLE -> {
-            pluginType = "Android WEARABLE"
-            AppSettings.aidEnums.clear()
-            AppSettings.aidEnums.add(CardConstants.AID_CD_LIGHT_GTML)
-            "WEARABLE"
-          }
-          DeviceEnum.EMBEDDED -> {
-            pluginType = "Android EMBEDDED"
-            AppSettings.aidEnums.clear()
-            AppSettings.aidEnums.add(CardConstants.AID_CD_LIGHT_GTML)
-            "EMBEDDED"
-          }
-        }
+    device = appSettings.deviceType
   }
 
   override fun onResume() {
@@ -83,18 +50,18 @@ abstract class AbstractCardActivity :
     initReaders()
   }
 
-  /** Android Nfc Reader is strongly dependent and Android Activity component. */
+  /** Android NFC Reader is strongly dependent and Android Activity component. */
   @Throws(UnsupportedOperationException::class)
   fun initAndActivateCardReader() {
     ticketingService.init(
-        if (isBluebirdDevice) ReaderType.BLUEBIRD else ReaderType.NFC_TERMINAL,
+        readerType,
         device,
         UiContextImpl(this@AbstractCardActivity),
         this@AbstractCardActivity,
         this@AbstractCardActivity,
         null)
 
-    ticketingService.startNfcDetection(selectedDeviceReaderName)
+    ticketingService.startNfcDetection()
   }
 
   /**
@@ -104,20 +71,37 @@ abstract class AbstractCardActivity :
   @Throws(UnsupportedOperationException::class)
   fun initOmapiReader(callback: () -> Unit) {
     ticketingService.init(
-        if (isBluebirdDevice) ReaderType.BLUEBIRD else ReaderType.NFC_TERMINAL,
-        device,
-        UiContextImpl(this@AbstractCardActivity),
-        null,
-        null,
-        callback)
+        readerType, device, UiContextImpl(this@AbstractCardActivity), null, null, callback)
   }
 
   @Throws(UnsupportedOperationException::class)
   fun deactivateAndClearReader() {
     if (device == DeviceEnum.CONTACTLESS_CARD) {
-      ticketingService.stopNfcDetection(selectedDeviceReaderName)
+      ticketingService.stopNfcDetection()
     }
     ticketingService.onDestroy(this@AbstractCardActivity)
+  }
+
+  /** Displays the error corresponding to the status returned by the server for the given card. */
+  fun launchStatusErrorResponse(card: CardInfo, status: RemoteServiceStatus) {
+    when (status) {
+      RemoteServiceStatus.CARD_COMMUNICATION_ERROR -> launchCardCommunicationErrorResponse()
+      RemoteServiceStatus.SERVER_ERROR -> launchServerErrorResponse()
+      RemoteServiceStatus.CARD_REJECTED ->
+          launchInvalidCardResponse(
+              card.description,
+              if (card.isStorageCard) getString(R.string.storage_card_invalid)
+              else
+                  String.format(
+                      getString(R.string.card_invalid_structure), card.applicationSubtype))
+      RemoteServiceStatus.CARD_NOT_PERSONALIZED ->
+          launchInvalidCardResponse(card.description, getString(R.string.card_not_personalized))
+      RemoteServiceStatus.EXPIRED_ENVIRONMENT ->
+          launchInvalidCardResponse(card.description, getString(R.string.expired_environment))
+      RemoteServiceStatus.SUCCESS -> {
+        // Not an error
+      }
+    }
   }
 
   fun launchInvalidCardResponse(cardType: String, message: String) {
@@ -125,11 +109,7 @@ abstract class AbstractCardActivity :
       changeDisplay(
           UiCardReaderResponse(
               Status.INVALID_CARD, cardType, 0, arrayListOf(), arrayListOf(), "", message),
-          finishActivity =
-              device !=
-                  DeviceEnum.CONTACTLESS_CARD // /Only with NFC we can come back to 'wait for device
-          // screen'
-          )
+          finishActivity = isFinishActivityAfterResult())
     }
   }
 
@@ -138,11 +118,7 @@ abstract class AbstractCardActivity :
       changeDisplay(
           UiCardReaderResponse(
               Status.ERROR, "", 0, arrayListOf(), arrayListOf(), "", "Card communication error"),
-          finishActivity =
-              device !=
-                  DeviceEnum.CONTACTLESS_CARD // /Only with NFC we can come back to 'wait for device
-          // screen'
-          )
+          finishActivity = isFinishActivityAfterResult())
     }
   }
 
@@ -150,11 +126,7 @@ abstract class AbstractCardActivity :
     runOnUiThread {
       changeDisplay(
           UiCardReaderResponse(Status.ERROR, "", 0, arrayListOf(), arrayListOf(), ""),
-          finishActivity =
-              device !=
-                  DeviceEnum.CONTACTLESS_CARD // /Only with NFC we can come back to 'wait for device
-          // screen'
-          )
+          finishActivity = isFinishActivityAfterResult())
     }
   }
 
@@ -165,6 +137,9 @@ abstract class AbstractCardActivity :
           finishActivity = finishActivity)
     }
   }
+
+  /** Only with NFC we can come back to the 'wait for device' screen after a result. */
+  protected fun isFinishActivityAfterResult(): Boolean = device != DeviceEnum.CONTACTLESS_CARD
 
   protected abstract fun changeDisplay(
       cardReaderResponse: UiCardReaderResponse,

@@ -20,9 +20,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import org.calypsonet.keyple.demo.reload.remote.R
-import org.calypsonet.keyple.demo.reload.remote.data.SharedPrefDataRepository
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityHomeBinding
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
+import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceVisibility
 
 class HomeActivity : AbstractDemoActivity() {
 
@@ -53,47 +53,33 @@ class HomeActivity : AbstractDemoActivity() {
 
   override fun onResume() {
     super.onResume()
-    setupBtn(
-        activityHomeBinding.contactlessCardBtn,
-        prefData.loadContactlessConfigurationVisibility(),
-        DeviceEnum.CONTACTLESS_CARD)
-    setupBtn(
-        activityHomeBinding.simCardBtn, prefData.loadSimConfigurationVisibility(), DeviceEnum.SIM)
-    setupBtn(
-        activityHomeBinding.wearableBtn,
-        prefData.loadWearableConfigurationVisibility(),
-        DeviceEnum.WEARABLE)
-    setupBtn(
-        activityHomeBinding.embeddedElemBtn,
-        prefData.loadEmbeddedConfigurationVisibility(),
-        DeviceEnum.EMBEDDED)
+    setupBtn(activityHomeBinding.contactlessCardBtn, DeviceEnum.CONTACTLESS_CARD)
+    setupBtn(activityHomeBinding.simCardBtn, DeviceEnum.SIM)
+    setupBtn(activityHomeBinding.wearableBtn, DeviceEnum.WEARABLE)
+    setupBtn(activityHomeBinding.embeddedElemBtn, DeviceEnum.EMBEDDED)
   }
 
-  private fun setupBtn(
-      btn: View,
-      visibility: SharedPrefDataRepository.Companion.Visibility,
-      type: DeviceEnum
-  ) {
+  private fun setupBtn(btn: View, type: DeviceEnum) {
     btn.setOnClickListener {
-      prefData.saveDeviceType(type.toString())
+      appSettings.deviceType = type
       if (intent.getBooleanExtra(CHOOSE_DEVICE_FOR_PERSO, false)) {
         intent.putExtras(intent)
         startActivity(Intent(this, PersonalizationActivity::class.java))
         this.finish()
       } else startActivity(Intent(this, CardReaderActivity::class.java))
     }
-    when (visibility) {
-      SharedPrefDataRepository.Companion.Visibility.ENABLE -> {
+    when (appSettings.getDeviceVisibility(type)) {
+      DeviceVisibility.ENABLE -> {
         btn.visibility = View.VISIBLE
         btn.background = ContextCompat.getDrawable(this, R.drawable.white_card)
         btn.isEnabled = true
       }
-      SharedPrefDataRepository.Companion.Visibility.DISABLE -> {
+      DeviceVisibility.DISABLE -> {
         btn.visibility = View.VISIBLE
         btn.background = ContextCompat.getDrawable(this, R.drawable.grey_card)
         btn.isEnabled = false
       }
-      SharedPrefDataRepository.Companion.Visibility.HIDE -> {
+      DeviceVisibility.HIDE -> {
         btn.visibility = View.GONE
       }
     }

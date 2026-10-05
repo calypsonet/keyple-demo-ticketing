@@ -12,46 +12,26 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.ui.activities
 
-import android.os.AsyncTask
-import android.os.Bundle
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.calypsonet.keyple.demo.reload.remote.R
-import org.calypsonet.keyple.demo.reload.remote.data.SharedPrefDataRepository
-import org.calypsonet.keyple.demo.reload.remote.data.network.RestClient
-import org.calypsonet.keyple.demo.reload.remote.data.network.SamStatus
 import org.calypsonet.keyple.demo.reload.remote.databinding.ToolbarBinding
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ServerStatusEvent
-import org.eclipse.keyple.core.util.json.JsonUtil
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.AppSettingsRepository
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.ServerStatusProvider
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
 
 /** Each Activity of the app should show status connexion result */
 abstract class AbstractDemoActivity : DaggerAppCompatActivity() {
 
-  private lateinit var client: RestClient
+  @Inject lateinit var appSettings: AppSettingsRepository
+  @Inject lateinit var serverStatusProvider: ServerStatusProvider
   protected lateinit var toolbarBinding: ToolbarBinding
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    client =
-        Retrofit.Builder()
-            .baseUrl(
-                prefData.loadServerProtocol() +
-                    prefData.loadServerIP() +
-                    ":" +
-                    prefData.loadServerPort())
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(ScalarsConverterFactory.create())
-            .build()
-            .create(RestClient::class.java)
-  }
-
-  @Inject lateinit var prefData: SharedPrefDataRepository
 
   override fun onResume() {
     super.onResume()
@@ -70,30 +50,26 @@ abstract class AbstractDemoActivity : DaggerAppCompatActivity() {
 
   @Subscribe(threadMode = ThreadMode.MAIN)
   fun onServerStatusEvent(serverStatusEvent: ServerStatusEvent) {
-    prefData.saveLastStatus(serverStatusEvent.isUp)
+    appSettings.lastServerStatus = serverStatusEvent.isUp
     updateServerStatusIndicator()
   }
 
   private fun updateServerStatusIndicator() {
-    if (prefData.loadLastStatus())
+    if (appSettings.lastServerStatus)
         toolbarBinding.serverStatus.setImageResource(R.drawable.ic_connection_success)
     else toolbarBinding.serverStatus.setImageResource(R.drawable.ic_connection_wait)
   }
 
   private fun checkServerStatus() {
-    PingAsyncTask().execute(client)
-  }
-
-  class PingAsyncTask : AsyncTask<RestClient, Void, Long>() {
-    override fun doInBackground(vararg client: RestClient): Long {
-      try {
-        val jsonRes = client[0].ping().blockingGet()
-        val samStatus = JsonUtil.getParser().fromJson(jsonRes.toString(), SamStatus::class.java)
-        EventBus.getDefault().post(ServerStatusEvent(samStatus.isSamReady))
-      } catch (e: Exception) {
-        EventBus.getDefault().post(ServerStatusEvent(false))
-      }
-      return 0
+    val serverConfig = appSettings.serverConfig
+    GlobalScope.launch(Dispatchers.IO) {
+      val isUp =
+          try {
+            serverStatusProvider.isSamReady(serverConfig)
+          } catch (e: Exception) {
+            false
+          }
+      EventBus.getDefault().post(ServerStatusEvent(isUp))
     }
   }
 }

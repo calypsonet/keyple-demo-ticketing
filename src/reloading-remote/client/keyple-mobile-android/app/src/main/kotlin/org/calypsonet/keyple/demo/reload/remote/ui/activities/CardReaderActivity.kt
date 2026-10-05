@@ -17,37 +17,27 @@ import android.nfc.NfcManager
 import android.os.Bundle
 import android.view.View
 import java.lang.IllegalStateException
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 import kotlin.Exception
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.calypsonet.keyple.demo.common.dto.AnalyzeContractsInputDto
-import org.calypsonet.keyple.demo.common.model.ContractStructure
-import org.calypsonet.keyple.demo.common.model.type.PriorityCode
+import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.reload.remote.di.scopes.ActivityScoped
-import org.calypsonet.keyple.demo.reload.remote.domain.model.AppSettings
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.activities.cardsummary.CardSummaryActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.mappers.toUi
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
-import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardTitle
-import org.eclipse.keyple.core.util.HexUtil
-import org.eclipse.keypop.calypso.card.card.CalypsoCard
 import org.eclipse.keypop.reader.CardReaderEvent
 import org.eclipse.keypop.reader.ReaderCommunicationException
-import org.eclipse.keypop.storagecard.card.StorageCard
 import timber.log.Timber
 
 @ActivityScoped
 class CardReaderActivity : AbstractCardActivity() {
 
-  private val dateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)
   private lateinit var activityCardReaderBinding: ActivityCardReaderBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,11 +67,7 @@ class CardReaderActivity : AbstractCardActivity() {
         }
         DeviceEnum.SIM -> {
           showNowLoadingInformation()
-          initOmapiReader {
-            GlobalScope.launch {
-              remoteServiceExecution(selectedDeviceReaderName, pluginType, AppSettings.aidEnums)
-            }
-          }
+          initOmapiReader { GlobalScope.launch { remoteServiceExecution() } }
         }
         DeviceEnum.WEARABLE -> {
           throw UnsupportedOperationException("Wearable")
@@ -112,167 +98,43 @@ class CardReaderActivity : AbstractCardActivity() {
   override fun onReaderEvent(event: CardReaderEvent?) {
     if (event?.type == CardReaderEvent.Type.CARD_INSERTED) {
       // We'll select Card when SmartCard is presented in field
-      // Method handlePo is described below
       runOnUiThread { showNowLoadingInformation() }
-      GlobalScope.launch {
-        remoteServiceExecution(
-            selectedDeviceReaderName,
-            pluginType,
-            AppSettings.aidEnums) // "ISO_14443_4_LOGICAL_PROTOCOL"
-      }
+      GlobalScope.launch { remoteServiceExecution() }
     }
   }
 
-  private suspend fun remoteServiceExecution(
-      selectedDeviceReaderName: String,
-      pluginType: String,
-      aidEnums: ArrayList<ByteArray>,
-  ) {
+  private suspend fun remoteServiceExecution() {
     withContext(Dispatchers.IO) {
       try {
-        val smartCard = ticketingService.getSmartCard(selectedDeviceReaderName, aidEnums)
-        val cardType =
-            when (smartCard) {
-              is CalypsoCard -> "CALYPSO: DF name " + HexUtil.toHex(smartCard.dfName)
-              is StorageCard -> smartCard.productType.name
-              else -> "unexpected card type"
-            }
-        val analyseContractsInput = AnalyzeContractsInputDto(pluginType)
-        val compatibleContractOutput =
-            ticketingService.analyzeContracts(
-                selectedDeviceReaderName, smartCard, analyseContractsInput)
-
-        when (compatibleContractOutput.statusCode) {
-          0 -> {
-            runOnUiThread {
-              val contracts = compatibleContractOutput.validContracts
-              val status = if (contracts.isNotEmpty()) Status.TICKETS_FOUND else Status.EMPTY_CARD
-              val finishActivity =
-                  device !=
-                      DeviceEnum
-                          .CONTACTLESS_CARD // Only with NFC we can come back to 'wait for device
-              // screen'
-
-              when (smartCard) {
-                is CalypsoCard -> {
-                  changeDisplay(
-                      UiCardReaderResponse(
-                          status,
-                          cardType,
-                          contracts.size,
-                          buildCardTitles(contracts),
-                          arrayListOf(),
-                          ""),
-                      HexUtil.toHex(smartCard.applicationSerialNumber),
-                      finishActivity)
-                }
-                is StorageCard -> {
-                  changeDisplay(
-                      UiCardReaderResponse(
-                          status,
-                          cardType,
-                          contracts.size,
-                          buildCardTitles(contracts),
-                          arrayListOf(),
-                          ""),
-                      HexUtil.toHex(smartCard.uid),
-                      finishActivity)
-                }
-              }
-            }
-          } // success,
-          1 -> {
-            launchServerErrorResponse()
-          } // server not ready,
-          2 -> {
-            when (smartCard) {
-              is CalypsoCard -> {
-                launchInvalidCardResponse(
-                    cardType,
-                    String.format(
-                        getString(R.string.card_invalid_structure),
-                        HexUtil.toHex(smartCard.applicationSubtype)))
-              }
-              is StorageCard -> {
-                launchInvalidCardResponse(cardType, getString(R.string.storage_card_invalid))
-              }
-              else -> {}
-            } // card rejected
+        val result = ticketingService.readCardContracts()
+        if (result.status == RemoteServiceStatus.SUCCESS) {
+          runOnUiThread {
+            val status = if (result.titles.isNotEmpty()) Status.TICKETS_FOUND else Status.EMPTY_CARD
+            changeDisplay(
+                UiCardReaderResponse(
+                    status,
+                    result.card.description,
+                    result.titles.size,
+                    result.titles.map { it.toUi() },
+                    arrayListOf(),
+                    ""),
+                result.card.serialNumber,
+                isFinishActivityAfterResult())
           }
-          3 -> {
-            launchInvalidCardResponse(cardType, getString(R.string.card_not_personalized))
-          } // card not personalized
-          4 -> {
-            launchInvalidCardResponse(cardType, getString(R.string.expired_environment))
-          } // expired environment
+        } else {
+          launchStatusErrorResponse(result.card, result.status)
         }
       } catch (e: IllegalStateException) {
         Timber.e(e)
         launchInvalidCardResponse("Undetermined card type", e.message!!)
       } catch (e: Exception) {
         Timber.e(e)
-        val finishActivity =
-            device !=
-                DeviceEnum
-                    .CONTACTLESS_CARD // Only with NFC we can come back to 'wait for device screen'
         launchExceptionResponse(
-            IllegalStateException("Server error:\n" + e.message), finishActivity)
+            IllegalStateException("Server error:\n" + e.message), isFinishActivityAfterResult())
       } finally {
         ticketingService.endCardProcessing()
       }
     }
-  }
-
-  private fun buildCardTitle(contractStructure: ContractStructure): UiCardTitle {
-    return when (contractStructure.contractTariff) {
-      PriorityCode.MULTI_TRIP -> {
-        var isValid = false
-        val description =
-            contractStructure.counterValue?.let {
-              isValid = (it >= 1)
-              if (it > 1) "$it trips left" else "$it trip left"
-            }
-        UiCardTitle("Multi trip", description ?: "No counter", isValid)
-      }
-      PriorityCode.SEASON_PASS -> {
-        val now = LocalDate.now()
-        val isValid =
-            (contractStructure.contractSaleDate.getDate().isBefore(now) ||
-                contractStructure.contractSaleDate.getDate().isEqual(now)) &&
-                (contractStructure.contractValidityEndDate.getDate().isAfter(now) ||
-                    contractStructure.contractValidityEndDate.getDate().isEqual(now))
-        UiCardTitle(
-            "Season pass",
-            "From ${
-                  contractStructure.contractSaleDate.getDate().format(dateTimeFormatter)
-              } to ${
-                  contractStructure.contractValidityEndDate.getDate().format(dateTimeFormatter)
-              }",
-            isValid)
-      }
-      PriorityCode.EXPIRED -> {
-        UiCardTitle(
-            "Season pass - Expired",
-            "From ${
-                  contractStructure.contractSaleDate.getDate().format(dateTimeFormatter)
-              } to ${
-                  contractStructure.contractValidityEndDate.getDate().format(dateTimeFormatter)
-              }",
-            false)
-      }
-      PriorityCode.FORBIDDEN -> {
-        UiCardTitle("FORBIDDEN", "", false)
-      }
-      PriorityCode.STORED_VALUE -> {
-        UiCardTitle("STORED_VALUE", "", false)
-      }
-      else -> UiCardTitle("UNKNOWN", "", false)
-    }
-  }
-
-  private fun buildCardTitles(contractStructures: List<ContractStructure>?): List<UiCardTitle> {
-    val cardTitles = contractStructures?.map { buildCardTitle(it) }
-    return cardTitles ?: arrayListOf()
   }
 
   override fun changeDisplay(

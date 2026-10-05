@@ -12,23 +12,10 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.domain.model
 
-import java.util.Locale
+/** Address of the reloading server. */
+data class ServerConfig(val protocol: String, val ip: String, val port: Int) {
 
-enum class DeviceEnum {
-  CONTACTLESS_CARD,
-  SIM,
-  WEARABLE,
-  EMBEDDED;
-
-  companion object {
-    @JvmStatic
-    fun getDeviceEnum(name: String): DeviceEnum {
-      return try {
-        valueOf(name.uppercase(Locale.ROOT))
-      } catch (_: Exception) {
-        // If the given state does not exist, return the default value.
-        CONTACTLESS_CARD
-      }
-    }
-  }
+  /** Base URL of the server (e.g. "http://192.168.0.1:8080"). */
+  val url: String
+    get() = "$protocol$ip:$port"
 }

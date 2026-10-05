@@ -12,6 +12,12 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.domain.model
 
-object AppSettings {
-  var aidEnums = arrayListOf<ByteArray>()
+/** Visibility of a device type (contactless card, SIM...) in the home screen. */
+enum class DeviceVisibility {
+  /** The device type is displayed and can be selected. */
+  ENABLE,
+  /** The device type is displayed but cannot be selected. */
+  DISABLE,
+  /** The device type is not displayed. */
+  HIDE
 }

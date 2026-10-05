@@ -276,7 +276,8 @@ public class CardService {
 
     if (!CardConstants.Companion.getALLOWED_FILE_STRUCTURES()
         .contains(calypsoCard.getApplicationSubtype())) {
-      return new AnalyzeContractsOutputDto(Collections.emptyList(), 3);
+      return new AnalyzeContractsOutputDto(
+          Collections.emptyList(), RemoteServiceStatus.CARD_REJECTED.getCode());
     }
 
     CardResource samResource =
@@ -292,7 +293,7 @@ public class CardService {
               .setStatus(SUCCESS)
               .setType(SECURED_READ)
               .setCardSerialNumber(appSerialNumber));
-      return new AnalyzeContractsOutputDto(validContracts, 0);
+      return new AnalyzeContractsOutputDto(validContracts, RemoteServiceStatus.SUCCESS.getCode());
     } catch (CardNotPersonalizedException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
       activityService.push(
@@ -301,7 +302,8 @@ public class CardService {
               .setStatus(FAIL)
               .setType(SECURED_READ)
               .setCardSerialNumber(appSerialNumber));
-      return new AnalyzeContractsOutputDto(Collections.emptyList(), 4);
+      return new AnalyzeContractsOutputDto(
+          Collections.emptyList(), RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode());
     } catch (ExpiredEnvironmentException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
       activityService.push(
@@ -310,7 +312,8 @@ public class CardService {
               .setStatus(FAIL)
               .setType(SECURED_READ)
               .setCardSerialNumber(appSerialNumber));
-      return new AnalyzeContractsOutputDto(Collections.emptyList(), 5);
+      return new AnalyzeContractsOutputDto(
+          Collections.emptyList(), RemoteServiceStatus.EXPIRED_ENVIRONMENT.getCode());
     } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
       activityService.push(
@@ -319,7 +322,8 @@ public class CardService {
               .setStatus(FAIL)
               .setType(SECURED_READ)
               .setCardSerialNumber(appSerialNumber));
-      return new AnalyzeContractsOutputDto(Collections.emptyList(), 1);
+      return new AnalyzeContractsOutputDto(
+          Collections.emptyList(), RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
       activityService.push(
@@ -328,7 +332,8 @@ public class CardService {
               .setStatus(FAIL)
               .setType(SECURED_READ)
               .setCardSerialNumber(appSerialNumber));
-      return new AnalyzeContractsOutputDto(Collections.emptyList(), 2);
+      return new AnalyzeContractsOutputDto(
+          Collections.emptyList(), RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
       CardResourceServiceProvider.getService().releaseCardResource(samResource);
     }
@@ -364,7 +369,7 @@ public class CardService {
               .setStatus(SUCCESS)
               .setType(READ)
               .setCardSerialNumber(cardUID));
-      return new AnalyzeContractsOutputDto(validContracts, 0);
+      return new AnalyzeContractsOutputDto(validContracts, RemoteServiceStatus.SUCCESS.getCode());
     } catch (CardNotPersonalizedException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
       activityService.push(
@@ -373,7 +378,8 @@ public class CardService {
               .setStatus(FAIL)
               .setType(READ)
               .setCardSerialNumber(cardUID));
-      return new AnalyzeContractsOutputDto(Collections.emptyList(), 4);
+      return new AnalyzeContractsOutputDto(
+          Collections.emptyList(), RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode());
     } catch (ExpiredEnvironmentException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
       activityService.push(
@@ -382,7 +388,8 @@ public class CardService {
               .setStatus(FAIL)
               .setType(READ)
               .setCardSerialNumber(cardUID));
-      return new AnalyzeContractsOutputDto(Collections.emptyList(), 5);
+      return new AnalyzeContractsOutputDto(
+          Collections.emptyList(), RemoteServiceStatus.EXPIRED_ENVIRONMENT.getCode());
     } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
       activityService.push(
@@ -391,7 +398,8 @@ public class CardService {
               .setStatus(FAIL)
               .setType(READ)
               .setCardSerialNumber(cardUID));
-      return new AnalyzeContractsOutputDto(Collections.emptyList(), 1);
+      return new AnalyzeContractsOutputDto(
+          Collections.emptyList(), RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
       activityService.push(
@@ -400,7 +408,8 @@ public class CardService {
               .setStatus(FAIL)
               .setType(READ)
               .setCardSerialNumber(cardUID));
-      return new AnalyzeContractsOutputDto(Collections.emptyList(), 2);
+      return new AnalyzeContractsOutputDto(
+          Collections.emptyList(), RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
       if (samResource != null) {
         CardResourceServiceProvider.getService().releaseCardResource(samResource);
@@ -425,7 +434,7 @@ public class CardService {
 
     if (!CardConstants.Companion.getALLOWED_FILE_STRUCTURES()
         .contains(calypsoCard.getApplicationSubtype())) {
-      return new WriteContractOutputDto(3);
+      return new WriteContractOutputDto(RemoteServiceStatus.CARD_REJECTED.getCode());
     }
 
     logger.info(
@@ -441,10 +450,6 @@ public class CardService {
             .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
     try {
       Card card = cardRepository.readCard(cardReader, calypsoCard, samResource);
-      if (card == null) {
-        // If the card has not been read previously, throw error
-        return new WriteContractOutputDto(4);
-      }
       // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
       insertNewContract(inputData.getContractTariff(), inputData.getTicketToLoad(), card);
       int statusCode = cardRepository.writeCard(cardReader, calypsoCard, samResource, card);
@@ -469,7 +474,7 @@ public class CardService {
               .setType(RELOAD)
               .setCardSerialNumber(appSerialNumber)
               .setContractLoaded(""));
-      return new WriteContractOutputDto(1);
+      return new WriteContractOutputDto(RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT, e.getMessage(), e);
       activityService.push(
@@ -479,7 +484,7 @@ public class CardService {
               .setType(RELOAD)
               .setCardSerialNumber(appSerialNumber)
               .setContractLoaded(""));
-      return new WriteContractOutputDto(2);
+      return new WriteContractOutputDto(RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
       CardResourceServiceProvider.getService().releaseCardResource(samResource);
     }
@@ -507,10 +512,6 @@ public class CardService {
     CardResource samResource = null;
     try {
       Card card = cardRepository.readCard(cardReader, storageCard, samResource);
-      if (card == null) {
-        // If the card has not been read previously, throw error
-        return new WriteContractOutputDto(4);
-      }
       // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
       insertNewContract(inputData.getContractTariff(), inputData.getTicketToLoad(), card);
       int statusCode = cardRepository.writeCard(cardReader, storageCard, samResource, card);
@@ -535,7 +536,7 @@ public class CardService {
               .setType(RELOAD)
               .setCardSerialNumber(cardUID)
               .setContractLoaded(""));
-      return new WriteContractOutputDto(1);
+      return new WriteContractOutputDto(RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT, e.getMessage(), e);
       activityService.push(
@@ -545,7 +546,7 @@ public class CardService {
               .setType(RELOAD)
               .setCardSerialNumber(cardUID)
               .setContractLoaded(""));
-      return new WriteContractOutputDto(2);
+      return new WriteContractOutputDto(RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
       if (samResource != null) {
         CardResourceServiceProvider.getService().releaseCardResource(samResource);
@@ -576,7 +577,7 @@ public class CardService {
 
     if (!CardConstants.Companion.getALLOWED_FILE_STRUCTURES()
         .contains(calypsoCard.getApplicationSubtype())) {
-      return new CardIssuanceOutputDto(3);
+      return new CardIssuanceOutputDto(RemoteServiceStatus.CARD_REJECTED.getCode());
     }
 
     CardResource samResource =
@@ -590,7 +591,7 @@ public class CardService {
               .setStatus(SUCCESS)
               .setType(ISSUANCE)
               .setCardSerialNumber(appSerialNumber));
-      return new CardIssuanceOutputDto(0);
+      return new CardIssuanceOutputDto(RemoteServiceStatus.SUCCESS.getCode());
     } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_INITIALIZING_THE_CARD, e.getMessage(), e);
       activityService.push(
@@ -599,7 +600,7 @@ public class CardService {
               .setStatus(FAIL)
               .setType(ISSUANCE)
               .setCardSerialNumber(appSerialNumber));
-      return new CardIssuanceOutputDto(1);
+      return new CardIssuanceOutputDto(RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_INITIALIZING_THE_CARD, e.getMessage(), e);
       activityService.push(
@@ -608,7 +609,7 @@ public class CardService {
               .setStatus(FAIL)
               .setType(ISSUANCE)
               .setCardSerialNumber(appSerialNumber));
-      return new CardIssuanceOutputDto(2);
+      return new CardIssuanceOutputDto(RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
       CardResourceServiceProvider.getService().releaseCardResource(samResource);
     }
@@ -640,7 +641,7 @@ public class CardService {
               .setStatus(SUCCESS)
               .setType(ISSUANCE)
               .setCardSerialNumber(cardUID));
-      return new CardIssuanceOutputDto(0);
+      return new CardIssuanceOutputDto(RemoteServiceStatus.SUCCESS.getCode());
     } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_INITIALIZING_THE_CARD, e.getMessage(), e);
       activityService.push(
@@ -649,7 +650,7 @@ public class CardService {
               .setStatus(FAIL)
               .setType(ISSUANCE)
               .setCardSerialNumber(cardUID));
-      return new CardIssuanceOutputDto(1);
+      return new CardIssuanceOutputDto(RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_INITIALIZING_THE_CARD, e.getMessage(), e);
       activityService.push(
@@ -658,7 +659,7 @@ public class CardService {
               .setStatus(FAIL)
               .setType(ISSUANCE)
               .setCardSerialNumber(cardUID));
-      return new CardIssuanceOutputDto(2);
+      return new CardIssuanceOutputDto(RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
       if (samResource != null) {
         CardResourceServiceProvider.getService().releaseCardResource(samResource);
