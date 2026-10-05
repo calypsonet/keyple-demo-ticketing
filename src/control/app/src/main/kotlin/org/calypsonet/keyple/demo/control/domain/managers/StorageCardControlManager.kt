@@ -55,7 +55,10 @@ class StorageCardControlManager(
     var validation: Validation? = null
     var status: Status = Status.ERROR
 
-    val storageCardApiFactory = keypopApiProvider.getStorageCardApiFactory()
+    val storageCardApiFactory =
+        checkNotNull(keypopApiProvider.getStorageCardApiFactory()) {
+          "Storage card extension not available"
+        }
 
     try {
       // Create a card transaction for control

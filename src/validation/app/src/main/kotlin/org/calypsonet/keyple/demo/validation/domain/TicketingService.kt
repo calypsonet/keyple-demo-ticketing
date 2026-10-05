@@ -41,6 +41,7 @@ import org.eclipse.keypop.reader.selection.CardSelectionResult
 import org.eclipse.keypop.reader.selection.ScheduledCardSelectionsResponse
 import org.eclipse.keypop.reader.selection.spi.SmartCard
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
+import org.eclipse.keypop.storagecard.StorageCardApiFactory
 import org.eclipse.keypop.storagecard.card.ProductType.MIFARE_CLASSIC_1K
 import org.eclipse.keypop.storagecard.card.ProductType.MIFARE_ULTRALIGHT
 import org.eclipse.keypop.storagecard.card.ProductType.ST25_SRT512
@@ -77,7 +78,14 @@ class TicketingService(
   private val readerApiFactory: ReaderApiFactory = keypopApiProvider.getReaderApiFactory()
   private val calypsoCardApiFactory: CalypsoCardApiFactory =
       keypopApiProvider.getCalypsoCardApiFactory()
-  private val storageCardApiFactory = keypopApiProvider.getStorageCardApiFactory()
+  private val storageCardApiFactory: StorageCardApiFactory? =
+      keypopApiProvider.getStorageCardApiFactory()
+
+  init {
+    if (storageCardApiFactory == null) {
+      logger.w("Storage card extension not available: storage cards are not supported")
+    }
+  }
 
   private lateinit var calypsoSam: LegacySam
   private lateinit var smartCard: SmartCard
@@ -236,7 +244,7 @@ class TicketingService(
                 .filterByCardProtocol(CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
-    if (readerManager.isStorageCardSupported()) {
+    if (storageCardApiFactory != null && readerManager.isStorageCardSupported()) {
       indexOfMifareCardSelection =
           cardSelectionManager.prepareSelection(
               readerApiFactory

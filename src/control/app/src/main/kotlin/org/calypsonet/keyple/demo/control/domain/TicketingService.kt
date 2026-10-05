@@ -67,8 +67,14 @@ class TicketingService(
 
   private var legacySamApiFactory: LegacySamApiFactory = keypopApiProvider.getLegacySamApiFactory()
 
-  private val storageCardApiFactory: StorageCardApiFactory =
+  private val storageCardApiFactory: StorageCardApiFactory? =
       keypopApiProvider.getStorageCardApiFactory()
+
+  init {
+    if (storageCardApiFactory == null) {
+      logger.w("Storage card extension not available: storage cards are not supported")
+    }
+  }
 
   private lateinit var legacySam: LegacySam
   private lateinit var smartCard: SmartCard
@@ -223,7 +229,7 @@ class TicketingService(
                 .filterByCardProtocol(CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
-    if (readerManager.isStorageCardSupported()) {
+    if (storageCardApiFactory != null && readerManager.isStorageCardSupported()) {
       indexOfMifareCardSelection =
           cardSelectionManager.prepareSelection(
               readerApiFactory

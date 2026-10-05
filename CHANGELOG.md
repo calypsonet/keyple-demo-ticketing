@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   domain, data and di layers. Timber is only used by `LoggerImpl`, `Application` and the activities.
 - Android applications: card processing is now finalized with `ObservableCardReader.finalizeCardProcessing()` after
   each card.
+- Android applications: when the storage card extension is not available (e.g. mocked library), the storage cards are
+  not supported and a warning is logged once, instead of failing.
 - CI/CD workflows: GitHub actions `checkout`, `setup-java`, `setup-node` and `setup-dotnet` upgraded from v4 to v5, and
   .NET upgraded from 7.0 to 8.0.
 ### Upgraded
@@ -34,6 +36,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The UI uses the domain models directly (UI models removed, as no object is passed between activities).
 #### Removed
 - Unused `CardSummaryActivity` and its layouts (replaced by the summary overlay of the reader screen).
+#### Fixed
+- Crash at startup when the storage card library is mocked.
 ### Control app
 #### Changed
 - Major architectural refactoring to apply the layered architecture with ports and adapters, isolating the business

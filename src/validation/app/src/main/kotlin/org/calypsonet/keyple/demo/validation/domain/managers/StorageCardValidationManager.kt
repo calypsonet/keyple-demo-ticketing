@@ -82,7 +82,10 @@ class StorageCardValidationManager(
     var nbTicketsLeft: Int? = null
     var validationData: ValidationData? = null
 
-    val storageCardApiFactory = keypopApiProvider.getStorageCardApiFactory()
+    val storageCardApiFactory =
+        checkNotNull(keypopApiProvider.getStorageCardApiFactory()) {
+          "Storage card extension not available"
+        }
 
     // Create a card transaction for validation
     val cardTransaction =
