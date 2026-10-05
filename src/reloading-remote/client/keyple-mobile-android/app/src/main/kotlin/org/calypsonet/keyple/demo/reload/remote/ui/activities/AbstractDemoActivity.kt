@@ -19,9 +19,9 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ToolbarBinding
-import org.calypsonet.keyple.demo.reload.remote.domain.model.ServerStatusEvent
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.AppSettingsRepository
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.ServerStatusProvider
+import org.calypsonet.keyple.demo.reload.remote.ui.events.ServerStatusEvent
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode

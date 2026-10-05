@@ -10,6 +10,10 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.domain.model
+package org.calypsonet.keyple.demo.reload.remote.ui.events
 
+/**
+ * EventBus event notifying the activities of the status of the server (true if the server and its
+ * SAM are ready).
+ */
 class ServerStatusEvent(val isUp: Boolean)
