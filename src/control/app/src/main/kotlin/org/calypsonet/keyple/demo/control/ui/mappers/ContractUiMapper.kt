@@ -25,14 +25,3 @@ fun Contract.toUi(): UiContract =
         contractValidityStartDate = contractValidityStartDate,
         contractValidityEndDate = contractValidityEndDate,
         nbTicketsLeft = nbTicketsLeft)
-
-fun UiContract.toDomain(): Contract =
-    Contract(
-        name = name,
-        valid = valid,
-        validationDateTime = validationDateTime,
-        record = record,
-        expired = expired,
-        contractValidityStartDate = contractValidityStartDate,
-        contractValidityEndDate = contractValidityEndDate,
-        nbTicketsLeft = nbTicketsLeft)

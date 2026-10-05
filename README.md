@@ -71,7 +71,7 @@ management.
 
 - Android 8.0+ (Native and KMP)
 - iOS 14+ (KMP)
-- Windows Desktop (.NET 7.0)
+- Windows Desktop (.NET 8.0)
 - JVM Desktop (Kotlin Multiplatform)
 
 **Server Requirements:**
@@ -159,6 +159,54 @@ keyple-demo-ticketing/
 ├── src/validation/                         # Android validation terminal
 └── src/control/                            # Android control terminal
 ```
+
+### Android Application Architecture
+
+The Android applications (`validation`, `control` and `reloading-remote/client/keyple-mobile-android`) follow a
+**layered architecture with ports and adapters** (hexagonal style). They do not use the MVVM pattern: the activities
+drive the user flow and call the domain directly.
+
+| Package  | Content                                                                                               |
+|----------|-------------------------------------------------------------------------------------------------------|
+| `domain` | Business logic: `TicketingService` (entry point of the UI), `managers`, `model`, and the ports (`spi`) |
+| `data`   | Adapters implementing the ports (readers, Keypop API factories, user feedback, settings, logging...)  |
+| `ui`     | Activities, UI adapters (e.g. `UiContextImpl`), and UI models with their mappers when needed          |
+| `di`     | Dagger modules binding the adapters to the ports and providing the domain services                    |
+
+**Dependency rules**
+
+- The `domain` layer only depends on the `common` library, the Keypop APIs and the Keyple utilities. It depends neither
+  on Android, Timber or the dependency injection framework (no Dagger or `javax.inject` annotation), nor on the `data`,
+  `ui` and `di` layers.
+- Everything the domain needs from the outside world is expressed as a port in `domain/spi` (e.g. `ReaderManager`,
+  `KeypopApiProvider`, `UiManager`, `AppSettingsRepository`, `Logger`, `UiContext`, `RemoteServiceManager`) and
+  implemented by an adapter in `data`, or in `ui/adapters` for the UI-bound ones.
+- The `data` layer implements the ports and does not depend on the `ui` layer.
+- The `di` layer is the only place where adapters are bound to ports. The domain services (`TicketingService` and the
+  managers) carry no annotation and are provided by the `DomainModule`. The stable dependencies of the managers are
+  injected through their constructor; only the data of the current transaction is passed to their methods.
+- The application settings are accessed through the `AppSettingsRepository` port, never through a global object.
+
+**Logging**
+
+- `domain`, `data` and `di` log through the `Logger` port. Timber is only used by its implementation (`data/LoggerImpl`),
+  by `Application` (Timber initialization) and by the activities.
+
+**UI models**
+
+- A UI model (`ui/model`, `Parcelable`) is only created when an object must be passed between activities through an
+  `Intent`. Otherwise, the UI uses the domain models directly. When a UI model has a domain counterpart, the mapping
+  from the domain model to the UI model is done in `ui/mappers`.
+
+These rules are checked by the CI (`.github/scripts/check-android-architecture.sh`), which can also be run locally:
+
+```sh
+bash .github/scripts/check-android-architecture.sh src/control
+```
+
+> **Known deviation:** in the `reloading-remote` Android client, part of the business logic (analysis of the server
+> status codes, building of the card titles, choice of the AIDs) and some accesses to the `data` layer (shared
+> preferences, REST client) are still located in the activities. They will be moved in a later refactoring.
 
 ### Building from Source
 

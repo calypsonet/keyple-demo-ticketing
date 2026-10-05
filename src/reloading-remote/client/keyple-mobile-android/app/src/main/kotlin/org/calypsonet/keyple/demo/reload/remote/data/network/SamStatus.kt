@@ -10,9 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.ui.model
+package org.calypsonet.keyple.demo.reload.remote.data.network
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
-
-@Parcelize data class UiSamStatus(val isSamReady: Boolean) : Parcelable
+/** SAM status returned by the server (`/card/sam-status` endpoint). */
+data class SamStatus(val isSamReady: Boolean)

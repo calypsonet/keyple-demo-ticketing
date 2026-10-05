@@ -16,5 +16,3 @@ import org.calypsonet.keyple.demo.common.model.Location
 import org.calypsonet.keyple.demo.control.ui.model.UiLocation
 
 fun Location.toUi(): UiLocation = UiLocation(id = id, name = name)
-
-fun UiLocation.toDomain(): Location = Location(id = id, name = name)

@@ -22,11 +22,3 @@ fun Validation.toUi(): UiValidation =
         destination = destination,
         dateTime = dateTime,
         provider = provider)
-
-fun UiValidation.toDomain(): Validation =
-    Validation(
-        name = name,
-        location = location.toDomain(),
-        destination = destination,
-        dateTime = dateTime,
-        provider = provider)

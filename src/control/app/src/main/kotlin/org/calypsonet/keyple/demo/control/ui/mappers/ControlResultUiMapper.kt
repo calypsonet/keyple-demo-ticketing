@@ -23,13 +23,3 @@ fun ControlResult.toUi(): UiControlResult =
         titlesList = titlesList.mapTo(ArrayList()) { it.toUi() },
         errorTitle = errorTitle,
         errorMessage = errorMessage)
-
-fun UiControlResult.toDomain(): ControlResult =
-    ControlResult(
-        status = status,
-        authenticationMode = authenticationMode,
-        lastValidationsList = lastValidationsList?.mapTo(ArrayList()) { it.toDomain() },
-        titlesList = titlesList.mapTo(ArrayList()) { it.toDomain() },
-        errorTitle = errorTitle,
-        errorMessage = errorMessage,
-    )

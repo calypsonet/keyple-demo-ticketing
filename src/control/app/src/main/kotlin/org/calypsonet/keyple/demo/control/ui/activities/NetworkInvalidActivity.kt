@@ -16,8 +16,8 @@ import android.os.Bundle
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.databinding.ActivityNetworkInvalidBinding
 import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
-import org.calypsonet.keyple.demo.control.domain.model.ControlResult
 import org.calypsonet.keyple.demo.control.ui.activities.ReaderActivity.Companion.CARD_CONTENT
+import org.calypsonet.keyple.demo.control.ui.model.UiControlResult
 import timber.log.Timber
 
 class NetworkInvalidActivity : BaseActivity() {
@@ -31,7 +31,7 @@ class NetworkInvalidActivity : BaseActivity() {
     setContentView(activityNetworkInvalidBinding.root)
     setSupportActionBar(logoToolbarBinding.toolbar)
     logoToolbarBinding.toolbarLogo.setImageResource(R.drawable.ic_logo_white)
-    val cardContent: ControlResult? = intent.getParcelableExtra(CARD_CONTENT)
+    val cardContent: UiControlResult? = intent.getParcelableExtra(CARD_CONTENT)
     cardContent?.errorTitle?.let { activityNetworkInvalidBinding.invalidTitle.text = it }
     activityNetworkInvalidBinding.invalidDescription.text = cardContent?.errorMessage
     activityNetworkInvalidBinding.presentBtn.setOnClickListener { onBackPressed() }

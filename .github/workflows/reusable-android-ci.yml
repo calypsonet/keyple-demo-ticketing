@@ -36,6 +36,11 @@ jobs:
         working-directory: .
         run: chmod +x ${{ inputs.working-directory }}/gradlew
 
+      - name: Check architecture rules of ${{ inputs.component-name }}
+        working-directory: .
+        shell: bash
+        run: bash .github/scripts/check-android-architecture.sh ${{ inputs.working-directory }}
+
       - name: Build ${{ inputs.component-name }} artifacts
         working-directory: ${{ inputs.working-directory }}
         run: ./gradlew spotlessCheck testDebugUnitTest assembleDebug

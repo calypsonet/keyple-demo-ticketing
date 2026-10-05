@@ -4,11 +4,52 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Changed
+- Android applications: layered architecture with ports and adapters, documented in the README ("Android Application
+  Architecture") and checked by the CI (`.github/scripts/check-android-architecture.sh`). The domain layer no longer
+  depends on Android, Timber or the dependency injection framework: the domain services are provided by a Dagger
+  `DomainModule`, and the card managers receive their dependencies through their constructor.
+- Android applications: logging through the `Logger` port (same `d`/`i`/`w`/`e` interface in all applications) in the
+  domain, data and di layers. Timber is only used by `LoggerImpl`, `Application` and the activities.
+- Android applications: card processing is now finalized with `ObservableCardReader.finalizeCardProcessing()` after
+  each card.
+- CI/CD workflows: GitHub actions `checkout`, `setup-java`, `setup-node` and `setup-dotnet` upgraded from v4 to v5, and
+  .NET upgraded from 7.0 to 8.0.
 ### Upgraded
 - `keyple-java-bom`: `2026.03.19` -> `2026.09.29`
 - `keyple-card-cna-storagecard-java-lib` (mock): `2.3.0` -> `2.3.1`
+- `keyple-plugin-cna-storagecard-java-lib` (mock): `1.1.0` -> `1.1.1`
 ### Removed
 - Unused mocks: `keyple-card-cna-storagecard-java-lib-2.3.0` and `keyple-plugin-cna-storagecard-java-lib-1.1.0`.
+### Common library
+#### Changed
+- `Location.toString()` now returns the name of the location.
+### Validation app
+#### Added
+- Anti-passback check for storage cards: a card presented again within the anti-passback delay is rejected.
+#### Changed
+- The user feedback (sounds, LEDs) is provided by the dedicated `UiManager` port instead of `ReaderManager`. The Arrive
+  and Android implementations are renamed `ArriveFeedbackDevice` and `AndroidFeedbackDevice`.
+- The settings are accessed through the `AppSettingsRepository` port instead of the global `AppSettings` object.
+- The UI uses the domain models directly (UI models removed, as no object is passed between activities).
+#### Removed
+- Unused `CardSummaryActivity` and its layouts (replaced by the summary overlay of the reader screen).
+### Control app
+#### Changed
+- Major architectural refactoring to apply the layered architecture with ports and adapters, isolating the business
+  logic (domain) from the Android and UI implementations.
+- The locations are provided by the `common` library (local `locations.json` file removed), and are displayed by their
+  name only.
+- The SAM selection no longer filters the SAM on its power-on data (SAM C1).
+- The user feedback (sounds) is provided by the `UiManager` port, and the settings are accessed through the
+  `AppSettingsRepository` port.
+### Reloading remote Android client
+#### Changed
+- Major architectural refactoring to apply the layered architecture with ports and adapters: the plugins and readers
+  management is moved from the activities to `ReaderManagerImpl`, and the remote services are called through the
+  `RemoteServiceManager` port.
+#### Fixed
+- Typo in the "Invalid storage card" message.
 ### Reloading remote server
 #### Changed
 - The storage card extension is now registered with `SmartCardService.checkCardExtension(...)` at startup, as required
@@ -16,6 +57,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   received as JSON data.
 - Replaced the deprecated `RemoteReaderServer.getInitialCardContent()` by `getInitialCardContent(Class)`
   (`keyple-distributed-remote-java-lib` `2.6.0`).
+- Dashboard: removed the Jest-specific ESLint configuration.
+### Reloading remote .NET client
+#### Changed
+- Target framework: `net7.0` -> `net8.0`.
 
 ## [26.03.26]
 ### Added
