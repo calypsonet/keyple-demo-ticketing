@@ -41,7 +41,6 @@ abstract class BaseValidationManager {
     const val EXCEPTION_RECOVER_BROKEN_SESSION = "Recover previous broken valid session"
     const val EXCEPTION_EXPIRED_TITLE = "Expired title"
     const val EXCEPTION_NO_TRIPS_LEFT = "No trips left"
-    const val EXCEPTION_INSUFFICIENT_STORED_VALUE = "Insufficient stored value"
     const val EXCEPTION_CONTRACT_FORBIDDEN_OR_EXPIRED = "Contract is forbidden or expired"
 
     // Card type prefix
@@ -59,19 +58,18 @@ abstract class BaseValidationManager {
    * Calculates the amount to decrement from the counter based on the contract type.
    *
    * @param contractPriority The contract priority/type
-   * @param validationAmount The validation amount for stored-value contracts
    * @return The amount to decrement
    */
-  fun calculateDecrementAmount(contractPriority: PriorityCode, validationAmount: Int): Int {
+  fun calculateDecrementAmount(contractPriority: PriorityCode): Int {
     return when (contractPriority) {
       PriorityCode.MULTI_TRIP -> SINGLE_VALIDATION_AMOUNT
-      PriorityCode.STORED_VALUE -> validationAmount
       else -> 0
     }
   }
 
   /**
-   * Filters a list of contract priorities to keep only valid ones (not FORBIDDEN or EXPIRED).
+   * Filters a list of contract priorities to keep only valid ones (not FORBIDDEN, EXPIRED or
+   * UNKNOWN).
    *
    * @param priorities List of pairs (contract index, priority code)
    * @return Filtered list of valid contract priorities
@@ -80,7 +78,9 @@ abstract class BaseValidationManager {
       priorities: List<Pair<Int, PriorityCode>>
   ): List<Pair<Int, PriorityCode>> {
     return priorities.filter { (_, priority) ->
-      priority != PriorityCode.FORBIDDEN && priority != PriorityCode.EXPIRED
+      priority != PriorityCode.FORBIDDEN &&
+          priority != PriorityCode.EXPIRED &&
+          priority != PriorityCode.UNKNOWN
     }
   }
 
@@ -97,13 +97,13 @@ abstract class BaseValidationManager {
   }
 
   /**
-   * Checks if a priority code represents a contract with a counter (MULTI_TRIP or STORED_VALUE).
+   * Checks if a priority code represents a contract with a counter (MULTI_TRIP).
    *
    * @param priority The priority code to check
    * @return true if the contract type uses a counter, false otherwise
    */
   fun isCounterBasedContract(priority: PriorityCode): Boolean {
-    return priority == PriorityCode.MULTI_TRIP || priority == PriorityCode.STORED_VALUE
+    return priority == PriorityCode.MULTI_TRIP
   }
 
   // ========== Validation methods that throw ValidationException ==========
@@ -212,19 +212,6 @@ abstract class BaseValidationManager {
   fun validateTripsAvailableOrThrow(counterValue: Int) {
     if (counterValue <= 0) {
       throw ValidationException(EXCEPTION_NO_TRIPS_LEFT, Status.EMPTY_CARD)
-    }
-  }
-
-  /**
-   * Validates that sufficient stored value is available and throws if not.
-   *
-   * @param counterValue The current counter-value
-   * @param validationAmount The amount required for validation
-   * @throws ValidationException with `Status.EMPTY_CARD` if insufficient stored value
-   */
-  fun validateSufficientStoredValueOrThrow(counterValue: Int, validationAmount: Int) {
-    if (counterValue < validationAmount) {
-      throw ValidationException(EXCEPTION_INSUFFICIENT_STORED_VALUE, Status.EMPTY_CARD)
     }
   }
 

@@ -31,7 +31,6 @@ fun CardTitle.toUi(): UiCardTitle =
       PriorityCode.SEASON_PASS -> UiCardTitle("Season pass", validityPeriod(), isValid)
       PriorityCode.EXPIRED -> UiCardTitle("Season pass - Expired", validityPeriod(), isValid)
       PriorityCode.FORBIDDEN -> UiCardTitle("FORBIDDEN", "", isValid)
-      PriorityCode.STORED_VALUE -> UiCardTitle("STORED_VALUE", "", isValid)
       else -> UiCardTitle("UNKNOWN", "", isValid)
     }
 

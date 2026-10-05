@@ -768,11 +768,6 @@ public class CardService {
                       description = "";
                       isValid = false;
                       break;
-                    case STORED_VALUE:
-                      title = "STORED_VALUE";
-                      description = "";
-                      isValid = false;
-                      break;
                     default:
                       title = "UNKNOWN";
                       description = "";

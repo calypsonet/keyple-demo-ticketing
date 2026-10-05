@@ -16,7 +16,6 @@ enum class PriorityCode constructor(val key: Int, val value: String) {
   FORBIDDEN(0, "Forbidden (present in clean records only)"),
   SEASON_PASS(1, "Season Pass"),
   MULTI_TRIP(2, "Multi-trip ticket"),
-  STORED_VALUE(3, "Stored Value"),
   EXPIRED(31, "Expired"),
   UNKNOWN(-1, "Unknown");
 

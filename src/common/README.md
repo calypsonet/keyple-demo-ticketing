@@ -100,8 +100,7 @@ Contract types and status indicators used throughout the system:
 |    0 | FORBIDDEN    | Prohibited usage               | Clean records only              |
 |    1 | SEASON_PASS  | Unlimited travel period        | Highest priority validation     |
 |    2 | MULTI_TRIP   | Count-based ticket             | Decremented per journey         |
-|    3 | STORED_VALUE | Monetary value storage         | Decremented by fare amount      |
-| 4-30 | RFU          | Reserved for future use        | -                               |
+| 3-30 | RFU          | Reserved for future use        | -                               |
 |   31 | EXPIRED      | Contract has expired           | Automatically set by system     |
 
 ## Supported Card Applications

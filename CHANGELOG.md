@@ -24,6 +24,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `keyple-plugin-cna-storagecard-java-lib` (mock): `1.1.0` -> `1.1.1`
 ### Removed
 - Unused mocks: `keyple-card-cna-storagecard-java-lib-2.3.0` and `keyple-plugin-cna-storagecard-java-lib-1.1.0`.
+- Stored value contract type (`PriorityCode.STORED_VALUE`, contract tariff `3`), which could not be created by the demo
+  (neither loaded by the server nor issued at personalization) and was only partially handled (e.g. not debited when
+  validating a Calypso card). The contract tariff `3` is now reserved for future use and handled as unknown.
 ### Common library
 #### Added
 - `RemoteServiceStatus` enum defining the status codes of the remote services (`statusCode` field of
@@ -44,6 +47,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Unused `CardSummaryActivity` and its layouts (replaced by the summary overlay of the reader screen).
 #### Fixed
 - Crash at startup when the storage card library is mocked.
+- Calypso cards: contracts of unknown type (contract tariff not supported by the demo) are no longer validated (they
+  were accepted without any debit).
 ### Control app
 #### Changed
 - Major architectural refactoring to apply the layered architecture with ports and adapters, isolating the business

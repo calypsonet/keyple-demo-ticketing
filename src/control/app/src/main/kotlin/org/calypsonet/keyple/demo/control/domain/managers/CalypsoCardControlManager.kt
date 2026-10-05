@@ -257,7 +257,7 @@ class CalypsoCardControlManager(
             validationDateTime = event.eventDatetime
           }
 
-          // Step 18 - If the ContractTariff value for the contract is 2 or 3, unpack the counter
+          // Step 18 - If the ContractTariff value for the contract is 2, unpack the counter
           // associated with the contract to extract the counter-value.
           val nbTicketsLeft =
               if (contract.contractTariff == PriorityCode.MULTI_TRIP) {

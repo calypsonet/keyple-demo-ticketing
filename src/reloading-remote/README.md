@@ -90,7 +90,7 @@ This use case loads a new transport title, or reloads/extends an existing contra
 levels if necessary.
 
 Transport Titles can be period duration in which they are valid for a specific period or have an associated counter that
-will represent either Trips or Stored Value (depending on the configuration of the contract).
+represents the number of trips left.
 
 This use case must also contemplate the option of loading the contracts with traceability mode (thus adding an 
 authenticator to the end of the file). During the Contract Analysis phase the authenticator needs to be checked.
@@ -145,7 +145,7 @@ This procedure's main steps are as follows:
     - `ContractTariff` = Value provided by upper layer.
     - `ContractSaleDate` = Current Date converted to `DateCompact`.
     - If the operation is a reload of the `ContractTariff` == 1,  set `ContractValidityEndDate` = original `ContractValidityEndDate` + 30
-    - Else `ContractValidityEndDate` = (`ContractSaleDate` + 30 if `ContractTariff` == 1) or (`EnvEndDate` if `ContractTariff` == 2 or 3)
+    - Else `ContractValidityEndDate` = (`ContractSaleDate` + 30 if `ContractTariff` == 1) or (`EnvEndDate` if `ContractTariff` == 2)
   - Pack the Contract structure to write into the contract record.
   - If the operation is a reload use the index of the original contract to update the information.
   - `ContractPriority` Analysis: 
@@ -156,7 +156,7 @@ This procedure's main steps are as follows:
     - Else, if there is no `ContractPriority` Field at 0 then search for the first `ContractPriority` field at 31 and set that index as the one to load. Set `ContractPriority` Value = `ContractTariff`, set the flag to true and go to CNT_UPD.
     - Else (there are no expired nor empty positions) reject the card. <Abort Transaction and exit process>.
   - CNT_UPD: Update the contract record present in the appropriate index with the binary data.
-  - If the `ContractTariff` == 2 or 3 then increment the counter with the value sent from the upper layer. 
+  - If the `ContractTariff` == 2 then increment the counter with the value sent from the upper layer. 
   - If `ContractPriority` changed flag is true, fill the event structure to update:
    - `EventVersionNumber` = 1.
    - `EventDateStamp` = value read from previous event.

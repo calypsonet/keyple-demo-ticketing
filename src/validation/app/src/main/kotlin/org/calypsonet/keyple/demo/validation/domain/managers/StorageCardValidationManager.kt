@@ -70,7 +70,6 @@ class StorageCardValidationManager(
 
   fun executeValidationProcedure(
       validationDateTime: LocalDateTime,
-      validationAmount: Int,
       cardReader: CardReader,
       storageCard: StorageCard,
       locations: List<Location>,
@@ -218,20 +217,7 @@ class StorageCardValidationManager(
             validateTripsAvailableOrThrow(counterValue)
 
             // Decrement counter
-            val newCounterValue =
-                counterValue - calculateDecrementAmount(contractPriority, validationAmount)
-            contract.counterValue = newCounterValue
-            nbTicketsLeft = newCounterValue
-
-            writeEvent = true
-          }
-          PriorityCode.STORED_VALUE -> {
-            // Check if there's enough value
-            val counterValue = contract.counterValue ?: 0
-            validateSufficientStoredValueOrThrow(counterValue, validationAmount)
-
-            // Decrement counter by validation amount
-            val newCounterValue = counterValue - validationAmount
+            val newCounterValue = counterValue - calculateDecrementAmount(contractPriority)
             contract.counterValue = newCounterValue
             nbTicketsLeft = newCounterValue
 

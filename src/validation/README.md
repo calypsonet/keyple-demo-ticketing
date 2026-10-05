@@ -16,7 +16,7 @@ This Android application simulates validation terminals found at transportation 
 
 **Role in Ecosystem**: Second step in the ticketing workflow - validates loaded contracts and grants/denies access to transportation networks.
 
-**Validation Flow**: Season Pass → Multi-trip Ticket → Stored Value (in order of priority)
+**Validation Flow**: Season Pass → Multi-trip Ticket (in order of priority)
 
 ## Prerequisites
 
@@ -72,7 +72,6 @@ cd keyple-demo-ticketing/src/validation
 
 **Operational Settings**:
 - **Battery Powered**: Enable for portable terminals (shows Home screen)
-- **Validation Amount**: Cost for stored value contracts (default: 1 unit)
 - **Auto-validation**: Immediate validation on card detection
 
 **Security Settings**:
@@ -102,7 +101,7 @@ Device Selection → Settings → Reader Activity → Validation Result
 
 **Settings (`SettingsActivity`)**
 - Configure location identifier and operational parameters
-- Set battery mode and validation amounts
+- Set battery mode
 - Access diagnostic and debug options
 
 **Home (`HomeActivity`)** _(Battery-powered mode only)_
@@ -126,7 +125,6 @@ The `CardSummaryActivity` displays both success and failure results:
 - **Contract Details**:
   - Season Pass: Shows validity end date
   - Multi-trip: Shows remaining ticket count
-  - Stored Value: Shows remaining balance
 - **Visual Feedback**: Green background with success animation
 
 **Failure Screens**:
@@ -151,18 +149,11 @@ The `CardSummaryActivity` displays both success and failure results:
 - Access granted
 - Remaining count displayed
 
-**Stored Value Validation**:
-- Card detected with sufficient balance
-- Balance decremented by validation amount
-- Access granted
-- Remaining balance displayed
-
 #### Failed Validations
 
-**Insufficient Funds/Trips**:
+**No Trips Left**:
 - Multi-trip counter = 0
-- Stored value < validation amount
-- Access denied with balance information
+- Access denied
 
 **Expired Contracts**:
 - Season Pass validity date passed
@@ -223,7 +214,7 @@ The `CardSummaryActivity` displays both success and failure results:
 
 **CalypsoCardValidationManager** (`domain/managers/CalypsoCardValidationManager.kt`)
 - Secure validation procedure for Calypso cards with SAM integration
-- Handles contract priority logic (Season Pass → Multi-trip → Stored Value)
+- Handles contract priority logic (Season Pass → Multi-trip)
 - Creates cryptographically verified validation events
 
 **StorageCardValidationManager** (`domain/managers/StorageCardValidationManager.kt`)
@@ -241,8 +232,8 @@ The validation procedure processes contracts in priority order:
 |:---------|:--------------|:-----------------------------------|
 | 1        | Season Pass   | Check validity date only           |
 | 2        | Multi-trip    | Check counter > 0, decrement       |
-| 3        | Stored Value  | Check balance >= amount, decrement |
 | 31       | Expired       | Skip (automatic marking)           |
+| Other    | Unknown       | Skip (never validated)             |
 
 #### Best Contract Search Algorithm
 
@@ -344,7 +335,7 @@ validation/app/
 - Check card has valid contracts loaded via Reload Demo
 - Verify card AID is supported by application
 - Ensure contract validity dates are current
-- Check sufficient balance/trips for validation
+- Check trips left for validation
 
 **"NFC detection not working"**
 - Enable NFC in Android system settings

@@ -131,7 +131,7 @@ The ecosystem uses standardized data structures defined in the [Common Library](
 - **Environment Record**: Card metadata and validity information
 - **Event Log**: Transaction history and validation events
 - **Contract Records**: Transportation titles and their properties
-- **Counter Files**: Usage tracking for multi-trip and stored value
+- **Counter Files**: Usage tracking for multi-trip tickets
 
 See [Common Library Documentation](src/common/README.md) for detailed specifications.
 

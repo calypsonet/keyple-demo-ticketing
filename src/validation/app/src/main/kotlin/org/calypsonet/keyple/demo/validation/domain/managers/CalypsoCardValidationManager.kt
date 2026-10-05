@@ -43,7 +43,6 @@ class CalypsoCardValidationManager(private val keypopApiProvider: KeypopApiProvi
 
   fun executeValidationProcedure(
       validationDateTime: LocalDateTime,
-      validationAmount: Int,
       cardReader: CardReader,
       calypsoCard: CalypsoCard,
       cardSecuritySettings: SymmetricCryptoSecuritySetting,
@@ -118,8 +117,8 @@ class CalypsoCardValidationManager(private val keypopApiProvider: KeypopApiProvi
             event.eventDatetime, validationDateTime, calypsoCard.isDfRatified)
 
         // ***************** Best Contract Search
-        // Step 7 - Create a list of PriorityCode fields that are different from FORBIDDEN and
-        // EXPIRED.
+        // Step 7 - Create a list of PriorityCode fields that are different from FORBIDDEN, EXPIRED
+        // and UNKNOWN.
         val allPriorities =
             listOf(
                 Pair(1, event.contractPriority1),
@@ -193,7 +192,7 @@ class CalypsoCardValidationManager(private val keypopApiProvider: KeypopApiProvi
             continue
           }
 
-          // Step 11.5 - If the ContractTariff value for the contract read is 2 or 3:
+          // Step 11.5 - If the ContractTariff value for the contract read is 2:
           if (isCounterBasedContract(contractPriority)) {
 
             val nbContractRecords =
@@ -230,28 +229,11 @@ class CalypsoCardValidationManager(private val keypopApiProvider: KeypopApiProvi
               continue
             }
 
-            // Step 11.5.3 - If the counter-value is > 0 && ContractTariff == 3 && CounterValue <
-            // ValidationAmount move to the next element in the list
-            if (contractPriority == PriorityCode.STORED_VALUE) {
-              try {
-                validateSufficientStoredValueOrThrow(counterValue, validationAmount)
-              } catch (e: ValidationException) {
-                status = e.status
-                errorMessage = e.message
-                continue
-              }
-            }
-            // Step 11.5.4 - UPDATE COUNTER: Decrement the counter-value by the appropriate amount
-            // (1
-            // if ContractTariff is 2, and the configured value for the trip if ContractTariff is
-            // 3).
-            else {
-              val decrement = calculateDecrementAmount(contractPriority, validationAmount)
-              if (decrement > 0) {
-                cardTransaction.prepareDecreaseCounter(
-                    CardConstants.SFI_COUNTERS, record, decrement)
-                nbTicketsLeft = counterValue - decrement
-              }
+            // Step 11.5.3 - UPDATE COUNTER: Decrement the counter-value by 1.
+            val decrement = calculateDecrementAmount(contractPriority)
+            if (decrement > 0) {
+              cardTransaction.prepareDecreaseCounter(CardConstants.SFI_COUNTERS, record, decrement)
+              nbTicketsLeft = counterValue - decrement
             }
           } else if (contractPriority == PriorityCode.SEASON_PASS) {
             passValidityEndDate = contract.contractValidityEndDate.getDate()

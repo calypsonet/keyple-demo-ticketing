@@ -231,7 +231,6 @@ To integrate additional reader types:
 **"Loading failed"**
 - Ensure server has SAM properly configured
 - Check card has available contract slots
-- Verify sufficient balance for stored value operations
 
 ### Debug Mode
 

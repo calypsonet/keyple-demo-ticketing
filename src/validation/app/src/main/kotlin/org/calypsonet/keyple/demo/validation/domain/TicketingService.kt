@@ -330,7 +330,6 @@ class TicketingService(
       is CalypsoCard -> {
         calypsoCardValidationManager.executeValidationProcedure(
             validationDateTime = LocalDateTime.now(),
-            validationAmount = 1,
             cardReader = readerManager.getCardReader()!!,
             calypsoCard = smartCard as CalypsoCard,
             cardSecuritySettings = cardSecuritySettings,
@@ -340,7 +339,6 @@ class TicketingService(
       is StorageCard -> {
         storageCardValidationManager.executeValidationProcedure(
             validationDateTime = LocalDateTime.now(),
-            validationAmount = 1,
             cardReader = readerManager.getCardReader()!!,
             storageCard = smartCard as StorageCard,
             locations = LocationRepository.getLocations(),

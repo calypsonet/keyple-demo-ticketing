@@ -235,11 +235,9 @@ class StorageCardControlManager(
           validationDateTime = event.eventDatetime
         }
 
-        // Step 18 - If the ContractTariff value for the contract is 2 or 3, extract the
-        // counter-value.
+        // Step 18 - If the ContractTariff value for the contract is 2, extract the counter-value.
         val nbTicketsLeft =
-            if (contract.contractTariff == PriorityCode.MULTI_TRIP ||
-                contract.contractTariff == PriorityCode.STORED_VALUE) {
+            if (contract.contractTariff == PriorityCode.MULTI_TRIP) {
               contract.counterValue
             } else {
               null

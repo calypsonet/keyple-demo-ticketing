@@ -117,7 +117,7 @@ Device Selection → Settings → Home → Reader Activity → Control Results
   - Validation status (valid/expired/insufficient)
 - **Contract Analysis**:
   - List of all contracts with current status
-  - Validity periods and remaining balances
+  - Validity periods and remaining trips
   - Priority assignments and usage history
 - **Compliance Status**: Clear indication of card validity
 
@@ -162,11 +162,6 @@ Device Selection → Settings → Home → Reader Activity → Control Results
 - Validation attempted with expired contract
 - System should have rejected but may indicate tampering
 - **Action**: Detailed inspection and possible citation
-
-**Insufficient Balance**:
-- Stored value validation with insufficient funds
-- May indicate payment system bypass
-- **Action**: Verify payment and request top-up
 
 ## Technical Architecture
 
@@ -274,7 +269,7 @@ Device Selection → Settings → Home → Reader Activity → Control Results
 | **Validated**    | Used in recent valid validation                    | ✅ Accept                 |
 | **Valid Unused** | Available for use but not recently validated       | ℹ️ Informational         |
 | **Expired**      | Past validity date                                 | ❌ Cannot be used         |
-| **Insufficient** | Multi-trip (0 trips) or Stored Value (low balance) | ❌ Requires reload        |
+| **Insufficient** | Multi-trip (0 trips)                               | ❌ Requires reload        |
 | **Unknown**      | Unrecognized contract type                         | ⚠️ Manual review         |
 | **Blank**        | Empty contract slot                                | ℹ️ Available for loading |
 
@@ -420,7 +415,7 @@ control/app/
 - No further action required
 
 **Yellow Status (Warning)**:
-- Minor issues detected (e.g., low balance, near expiration)
+- Minor issues detected (e.g., few trips left, near expiration)
 - Inform passenger of status
 - Suggest remedial action (reload, renewal)
 

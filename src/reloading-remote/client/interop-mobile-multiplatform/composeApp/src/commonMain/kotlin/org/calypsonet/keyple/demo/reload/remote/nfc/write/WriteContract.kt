@@ -19,7 +19,6 @@ enum class PriorityCode {
   FORBIDDEN,
   SEASON_PASS,
   MULTI_TRIP,
-  STORED_VALUE,
   EXPIRED,
   UNKNOWN
 }
