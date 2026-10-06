@@ -71,7 +71,7 @@ management.
 
 - Android 8.0+ (Native and KMP)
 - iOS 15.3+ (KMP)
-- Windows Desktop (.NET 8.0)
+- Windows Desktop (.NET 10.0)
 - JVM Desktop (Kotlin Multiplatform)
 
 **Server Requirements:**

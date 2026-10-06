@@ -22,7 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Control and validation apps: the plugin registration is a suspend function instead of using `runBlocking`. Reloading
   Android client: the plugins are registered directly, as before the refactoring.
 - CI/CD workflows: GitHub actions `checkout`, `setup-java`, `setup-node` and `setup-dotnet` upgraded from v4 to v5, and
-  .NET upgraded from 7.0 to 8.0.
+  .NET upgraded from 7.0 to 10.0.
 - The changelogs of the archived repositories, no longer maintained, are moved from the modules to `docs/history/`.
 - Versions in the READMEs aligned with the build: Java 11+ for the server and the KMP desktop client, JDK 17 to build,
   Quarkus 1.8, Kotlin 2.2, Android 8.0+ and iOS 15.3+ for the KMP client.
@@ -123,7 +123,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   contract.
 ### Reloading remote .NET client
 #### Changed
-- Target framework: `net7.0` -> `net8.0` (README updated accordingly).
+- Target framework: `net7.0` -> `net10.0` (README updated accordingly), .NET 8 reaching its end of support in
+  November 2026.
+- `Microsoft.Extensions.Configuration*`, `Microsoft.Extensions.Logging.Abstractions`,
+  `System.Configuration.ConfigurationManager` and `System.ServiceProcess.ServiceController`: `7.0.0` -> `10.0.12`.
 
 ## [26.03.26]
 ### Added
