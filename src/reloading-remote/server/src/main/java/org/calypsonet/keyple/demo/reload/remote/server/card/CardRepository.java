@@ -12,12 +12,12 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.server.card;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
-import javax.enterprise.context.ApplicationScoped;
 import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService;
 import org.calypsonet.keyple.demo.common.constants.CardConstants;
 import org.calypsonet.keyple.demo.common.model.ContractStructure;

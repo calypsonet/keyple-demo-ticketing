@@ -24,13 +24,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - CI/CD workflows: GitHub actions `checkout`, `setup-java`, `setup-node` and `setup-dotnet` upgraded from v4 to v5, and
   .NET upgraded from 7.0 to 10.0.
 - The changelogs of the archived repositories, no longer maintained, are moved from the modules to `docs/history/`.
-- Versions in the READMEs aligned with the build: Java 11+ for the server and the KMP desktop client, JDK 17 to build,
-  Quarkus 1.8, Kotlin 2.2, Android 8.0+ and iOS 15.3+ for the KMP client.
+- Versions in the READMEs aligned with the build: JDK 17 to build, Java 11+ for the KMP desktop client, Kotlin 2.2,
+  Android 8.0+ and iOS 15.3+ for the KMP client.
 ### Upgraded
 - `keyple-java-bom`: `2026.03.19` -> `2026.09.29`
 - `keyple-card-cna-storagecard-java-lib` (mock): `2.3.0` -> `2.3.1`
 - `keyple-plugin-cna-storagecard-java-lib` (mock): `1.1.0` -> `1.1.1`
 ### Removed
+- `log4j` `1.2.17` (end of life), declared but not used by `bit-lib4j`: excluded from the dependencies of the common
+  library, the Android applications and the server.
 - Android applications: MultiDex (`androidx.multidex`), useless since the minimum SDK is 26.
 - Unused mocks: `keyple-card-cna-storagecard-java-lib-2.3.0` and `keyple-plugin-cna-storagecard-java-lib-1.1.0`.
 - Stored value contract type (`PriorityCode.STORED_VALUE`, contract tariff `3`), which could not be created by the demo
@@ -102,7 +104,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - When the card presented for the reload is not the one read before, the type of the presented card is displayed
   instead of "Undetermined card type".
 ### Reloading remote server
+#### Upgraded
+- Quarkus: `1.8.1.Final` -> `3.40.1` (LTS):
+  - Java 17 required (instead of 11);
+  - `jakarta.*` packages instead of `javax.*`;
+  - `io.quarkus.platform:quarkus-bom` instead of `io.quarkus:quarkus-universe-bom`;
+  - configuration properties renamed: `quarkus.http.cors.enabled` (all the origins still allowed with
+    `quarkus.http.cors.origins`) and `quarkus.package.jar.type`.
+- Gradle wrapper: `8.4` -> `8.11.1` (same version as the other projects).
 #### Changed
+- The dashboard is embedded as static resources by the `processResources` task, instead of being copied into the build
+  output (not supported by the Quarkus 3 build tasks).
+- Logging: the SLF4J implementation is provided by Quarkus (JBoss Log Manager) and configured by the `quarkus.log.*`
+  properties (`slf4j-simple` and `simplelogger.properties` removed).
 - The storage card extension is now registered with `SmartCardService.checkCardExtension(...)` at startup, as required
   by `keyple-service-java-lib` `3.5.0` for card extensions outside the `org.eclipse.keyple` package whose types are
   received as JSON data.
@@ -117,6 +131,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   of `2`) when the presented card is not the one read before.
 #### Removed
 - Unreachable "card not read" status code (`4`) of the contract writing.
+#### Fixed
+- Startup failure with the mocked storage card library: when the storage card extension is not available, a warning is
+  logged and the storage cards are not supported.
 ### Reloading remote KMP client
 #### Fixed
 - The status code returned by the server when reading the card is now checked: a rejected card, a card not

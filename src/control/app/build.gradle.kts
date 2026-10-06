@@ -118,7 +118,11 @@ dependencies {
   implementation(libs.gson)
 
   // Devnied - Byte Utils
-  implementation(libs.bitLib4j) { exclude(group = "org.slf4j") }
+  implementation(libs.bitLib4j) {
+    // Logging dependencies declared but not used by the library (log4j 1.x is end of life)
+    exclude(group = "org.slf4j")
+    exclude(group = "log4j")
+  }
 
   // Logging libraries used in the project:
   // - SLF4J API provides a common logging interface for the app and third-party libraries (e.g.,

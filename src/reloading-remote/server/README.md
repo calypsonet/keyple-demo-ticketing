@@ -1,7 +1,7 @@
 # Keyple Reload Demo - Java Server
 
-[![Java](https://img.shields.io/badge/java-11%2B-orange.svg)](https://openjdk.java.net/)
-[![Quarkus](https://img.shields.io/badge/quarkus-1.8-blue.svg)](https://quarkus.io/)
+[![Java](https://img.shields.io/badge/java-17%2B-orange.svg)](https://openjdk.java.net/)
+[![Quarkus](https://img.shields.io/badge/quarkus-3.40-blue.svg)](https://quarkus.io/)
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../../LICENSE)
 
 The server component of the Keyple Reload Demo, providing distributed ticketing services with web-based monitoring and
@@ -42,7 +42,7 @@ This Java server implements the business logic for the Keyple Demo ecosystem, ma
 - USB connection for reader
 
 ### Software Requirements
-- **JDK 11+** (OpenJDK recommended)
+- **JDK 17+** (OpenJDK recommended)
 - **Node.js 18+** (for dashboard development)
 - **Compatible PC/SC reader drivers**
 
@@ -96,10 +96,11 @@ The server uses the following default configuration in `application.properties`:
 
 ```properties
 # CORS Configuration (for web clients)
-quarkus.http.cors=true
+quarkus.http.cors.enabled=true
+quarkus.http.cors.origins=/.*/
 
 # Package Configuration
-quarkus.package.type=uber-jar
+quarkus.package.jar.type=uber-jar
 quarkus.package.runner-suffix=-full
 
 # Logging Configuration

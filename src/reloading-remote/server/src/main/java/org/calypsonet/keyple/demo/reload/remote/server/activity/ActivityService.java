@@ -12,13 +12,13 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.server.activity;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
-import javax.enterprise.context.ApplicationScoped;
-import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

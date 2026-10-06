@@ -12,9 +12,9 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.server.card;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import java.util.Properties;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService;
 import org.calypsonet.keyple.demo.common.constants.RemoteServiceId;
 import org.calypsonet.keyple.demo.common.dto.*;
@@ -62,8 +62,13 @@ public class CardConfigurator {
   private void registerCardExtensions() {
     // Card extensions outside the "org.eclipse.keyple" package must be registered so that the
     // types they provide (e.g. the initial card content) can be rebuilt from JSON data.
-    SmartCardServiceProvider.getService()
-        .checkCardExtension(StorageCardExtensionService.getInstance());
+    StorageCardExtensionService storageCardExtension = StorageCardExtensionService.getInstance();
+    if (storageCardExtension == null) {
+      // E.g. mocked storage card library
+      logger.warn("Storage card extension not available: storage cards are not supported");
+      return;
+    }
+    SmartCardServiceProvider.getService().checkCardExtension(storageCardExtension);
   }
 
   private void initSamPlugin() {

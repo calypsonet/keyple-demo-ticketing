@@ -24,7 +24,11 @@ dependencies {
   implementation(platform(libs.keypleJavaBom))
   implementation(libs.keypleUtilJavaLib)
 
-  implementation(libs.bitLib4j) { exclude(group = "org.slf4j") }
+  implementation(libs.bitLib4j) {
+    // Logging dependencies declared but not used by the library (log4j 1.x is end of life)
+    exclude(group = "org.slf4j")
+    exclude(group = "log4j")
+  }
 
   testImplementation(libs.kotlinTest)
   testImplementation(libs.assertjCore)

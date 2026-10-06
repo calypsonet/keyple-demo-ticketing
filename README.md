@@ -1,7 +1,7 @@
 # Keyple Demo Ticketing Ecosystem
 
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](LICENSE)
-[![Java](https://img.shields.io/badge/java-11%2B-orange.svg)](https://openjdk.java.net/)
+[![Java](https://img.shields.io/badge/java-17%2B-orange.svg)](https://openjdk.java.net/)
 [![Android](https://img.shields.io/badge/android-8.0%2B-green.svg)](https://developer.android.com/)
 
 A comprehensive open source ticketing ecosystem demonstrating the [Eclipse Keyple middleware](https://keyple.org) in
@@ -76,7 +76,7 @@ management.
 
 **Server Requirements:**
 
-- Java 11+ with PC/SC reader
+- Java 17+ with PC/SC reader
 - SAM (Security Access Module) for Calypso cards
 - Web dashboard for monitoring
 

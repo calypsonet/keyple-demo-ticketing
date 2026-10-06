@@ -12,13 +12,13 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.server.card;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.Collections;
 import java.util.stream.Collectors;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import org.calypsonet.keyple.demo.common.constants.CardConstants;
 import org.calypsonet.keyple.demo.common.dto.*;
 import org.calypsonet.keyple.demo.common.model.ContractStructure;

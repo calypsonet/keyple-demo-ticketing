@@ -69,12 +69,10 @@ dependencies {
   // Google GSON
   implementation(libs.gson)
 
-  // Logging libraries used in the project:
-  // - SLF4J API provides a common logging interface for the server and third-party libraries
-  //   (e.g., Keyple).
-  // - slf4j-simple is used as the SLF4J implementation for Java/Quarkus server applications.
+  // Logging: SLF4J API used by the server and third-party libraries (e.g., Keyple). The SLF4J
+  // implementation is provided by Quarkus (JBoss Log Manager), configured by the "quarkus.log.*"
+  // properties.
   implementation(libs.slf4jApi)
-  implementation(libs.slf4jSimple)
 }
 
 val syncPackageVersion by
@@ -104,12 +102,6 @@ val buildDashboard by
       }
       commandLine(npm, "run", "build")
     }
-val copyDashboard by
-    tasks.creating(Copy::class) {
-      from("dashboard-app/build")
-      into("build/resources/main/META-INF/resources")
-      dependsOn.add("buildDashboard")
-    }
 val startServer by
     tasks.creating(Exec::class) {
       group = "server"
@@ -119,7 +111,11 @@ val startServer by
 
 tasks {
   clean { delete("dashboard-app/build") }
-  jar { dependsOn.add("copyDashboard") }
+  // The dashboard is served by Quarkus as static resources (META-INF/resources)
+  processResources {
+    dependsOn(buildDashboard)
+    from("dashboard-app/build") { into("META-INF/resources") }
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////

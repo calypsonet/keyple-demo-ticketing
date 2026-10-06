@@ -12,9 +12,9 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.server.card;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import java.util.regex.Pattern;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import org.eclipse.keyple.core.service.ObservablePlugin;
 import org.eclipse.keyple.core.service.Plugin;
 import org.eclipse.keyple.core.service.PluginEvent;
