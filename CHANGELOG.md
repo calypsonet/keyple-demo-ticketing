@@ -42,8 +42,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Reloading remote Android client: unused "last validations" display (`UiValidation`, related fields of
     `UiCardReaderResponse`, layout and resources).
   - Reloading remote KMP client: unused Compose resources (images, animation, strings), colors and navigation helper.
-  - Reloading remote .NET client: unused `MessageDto` setters, and unused `WaitForCardAbsent()` and
-    `IsCardPresent()` methods of the PC/SC reader adapter.
+  - Reloading remote .NET client: unused `MessageDto` setters, unused `WaitForCardAbsent()` and `IsCardPresent()`
+    methods of the PC/SC reader adapter, and unused `Serilog.Sinks.Console` and
+    `Microsoft.Extensions.Logging.Abstractions` packages.
   - Common library: unused `CardConstants.SC_ENVIRONMENT_AND_HOLDER_SIZE_BYTES` constant.
   - Reloading remote server dashboard: unused `@testing-library/*` and `web-vitals` dependencies.
 ### Common library
@@ -125,8 +126,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 #### Changed
 - Target framework: `net7.0` -> `net10.0` (README updated accordingly), .NET 8 reaching its end of support in
   November 2026.
-- `Microsoft.Extensions.Configuration*`, `Microsoft.Extensions.Logging.Abstractions`,
-  `System.Configuration.ConfigurationManager` and `System.ServiceProcess.ServiceController`: `7.0.0` -> `10.0.12`.
+- `Microsoft.Extensions.Configuration*`, `System.Configuration.ConfigurationManager` and
+  `System.ServiceProcess.ServiceController`: `7.0.0` -> `10.0.12`.
+- `Serilog`: `2.12.0` -> `4.4.0`, `Serilog.Sinks.File`: `5.0.0` -> `7.0.0`.
+- `PCSC.Iso7816`: `6.1.3` -> `7.0.1`, `Newtonsoft.Json`: `13.0.3` -> `13.0.4`.
 
 ## [26.03.26]
 ### Added
