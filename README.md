@@ -1,7 +1,7 @@
 # Keyple Demo Ticketing Ecosystem
 
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](LICENSE)
-[![Java](https://img.shields.io/badge/java-8%2B-orange.svg)](https://openjdk.java.net/)
+[![Java](https://img.shields.io/badge/java-11%2B-orange.svg)](https://openjdk.java.net/)
 [![Android](https://img.shields.io/badge/android-8.0%2B-green.svg)](https://developer.android.com/)
 
 A comprehensive open source ticketing ecosystem demonstrating the [Eclipse Keyple middleware](https://keyple.org) in
@@ -70,13 +70,13 @@ management.
 **Client Applications:**
 
 - Android 8.0+ (Native and KMP)
-- iOS 14+ (KMP)
+- iOS 15.3+ (KMP)
 - Windows Desktop (.NET 8.0)
 - JVM Desktop (Kotlin Multiplatform)
 
 **Server Requirements:**
 
-- Java 8+ with PC/SC reader
+- Java 11+ with PC/SC reader
 - SAM (Security Access Module) for Calypso cards
 - Web dashboard for monitoring
 
@@ -139,7 +139,7 @@ See [Common Library Documentation](src/common/README.md) for detailed specificat
 
 ### Prerequisites
 
-- JDK 8+ for server components
+- JDK 17 to build the Java and Kotlin components (Android apps, KMP client, server)
 - Android Studio for mobile development
 - Node.js for web dashboard
 - PC/SC compatible readers for testing
@@ -149,6 +149,8 @@ See [Common Library Documentation](src/common/README.md) for detailed specificat
 ```
 keyple-demo-ticketing/
 ├── README.md                               # This file
+├── CHANGELOG.md                            # Changes of the demo since the repository merge
+├── docs/history/                           # Changelogs of the archived repositories (before the merge)
 ├── src/common/                             # Shared data structures and utilities
 ├── src/reloading-remote/                   # Remote reload clients and server
 │   ├── server/                             # Java server application

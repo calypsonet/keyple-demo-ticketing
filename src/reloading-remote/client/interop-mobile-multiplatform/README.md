@@ -1,6 +1,6 @@
 # Keyple Reload Demo - Kotlin Multiplatform Client
 
-[![Kotlin](https://img.shields.io/badge/kotlin-1.9+-blue.svg)](https://kotlinlang.org/)
+[![Kotlin](https://img.shields.io/badge/kotlin-2.2-blue.svg)](https://kotlinlang.org/)
 [![KMP](https://img.shields.io/badge/multiplatform-android%20%7C%20ios%20%7C%20desktop-green.svg)](https://www.jetbrains.com/kotlin-multiplatform/)
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../../../LICENSE)
 
@@ -14,8 +14,8 @@ desktop platforms using Keyple Distributed Client KMP libraries for seamless cro
 This innovative client showcases the power of Kotlin Multiplatform by providing a single codebase that runs natively on multiple platforms while maintaining full functionality with the Keyple server ecosystem. It demonstrates modern cross-platform development practices for contactless card applications.
 
 **Supported Platforms**:
-- **Android 7.0+** (API 24+) with native NFC support
-- **iOS 14+** with Core NFC integration
+- **Android 8.0+** (API 26+) with native NFC support
+- **iOS 15.3+** with Core NFC integration
 - **JVM Desktop** (Windows/macOS/Linux) with PC/SC readers
 
 ## Prerequisites
@@ -23,8 +23,8 @@ This innovative client showcases the power of Kotlin Multiplatform by providing 
 ### Development Environment
 - **Android Studio** with Kotlin Multiplatform plugin
 - **Xcode** (for iOS development on macOS)
-- **JDK 11+** for desktop targets
-- **Kotlin 1.9+** with multiplatform support
+- **JDK 17** to build the project (the desktop application runs on Java 11+)
+- **Kotlin 2.2** with multiplatform support (provided by the Gradle build)
 
 ### Platform-Specific Requirements
 
@@ -36,7 +36,7 @@ This innovative client showcases the power of Kotlin Multiplatform by providing 
 
 #### iOS
 - iPhone with NFC support (iPhone 7+)
-- iOS 14.0 or later
+- iOS 15.3 or later
 - Core NFC entitlements configured
 - Apple Developer account for device deployment
 

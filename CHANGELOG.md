@@ -18,6 +18,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   not supported and a warning is logged once, instead of failing.
 - CI/CD workflows: GitHub actions `checkout`, `setup-java`, `setup-node` and `setup-dotnet` upgraded from v4 to v5, and
   .NET upgraded from 7.0 to 8.0.
+- The changelogs of the archived repositories, no longer maintained, are moved from the modules to `docs/history/`.
+- Versions in the READMEs aligned with the build: Java 11+ for the server and the KMP desktop client, JDK 17 to build,
+  Quarkus 1.8, Kotlin 2.2, Android 8.0+ and iOS 15.3+ for the KMP client.
 ### Upgraded
 - `keyple-java-bom`: `2026.03.19` -> `2026.09.29`
 - `keyple-card-cna-storagecard-java-lib` (mock): `2.3.0` -> `2.3.1`
@@ -165,7 +168,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This is the first release of the consolidated Keyple Ticketing demo applications, now hosted in a single repository.
 It brings together previously independent projects into a unified codebase to simplify development, maintenance, and distribution.
 
-🔄 Merged archived repositories:
+🔄 Merged archived repositories (their changelogs are kept in [docs/history](docs/history)):
   - [Common Lib](https://github.com/calypsonet/keyple-demo-ticketing-common-lib)
   - [Reloading Remote](https://github.com/calypsonet/keyple-demo-ticketing-reloading-remote)
   - [Validation App](https://github.com/calypsonet/keyple-demo-ticketing-validation-app)
