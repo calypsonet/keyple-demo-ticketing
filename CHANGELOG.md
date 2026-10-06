@@ -27,6 +27,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Stored value contract type (`PriorityCode.STORED_VALUE`, contract tariff `3`), which could not be created by the demo
   (neither loaded by the server nor issued at personalization) and was only partially handled (e.g. not debited when
   validating a Calypso card). The contract tariff `3` is now reserved for future use and handled as unknown.
+- Unused elements detected by Android Lint and code analysis:
+  - Android applications: unused resources (strings, dimensions, styles, drawables, layouts, menu, sound), the unused
+    `FragmentScoped` annotation and extension functions, and duplicated sounds in the control app assets.
+  - Reloading remote Android client: unused "last validations" display (`UiValidation`, related fields of
+    `UiCardReaderResponse`, layout and resources).
+  - Reloading remote KMP client: unused Compose resources (images, animation, strings), colors and navigation helper.
+  - Reloading remote .NET client: unused `MessageDto` setters and `WaitForCardAbsent()` method.
+  - Common library: unused `CardConstants.SC_ENVIRONMENT_AND_HOLDER_SIZE_BYTES` constant.
+  - Reloading remote server dashboard: unused `@testing-library/*` and `web-vitals` dependencies.
 ### Common library
 #### Added
 - `RemoteServiceStatus` enum defining the status codes of the remote services (`statusCode` field of

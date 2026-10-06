@@ -20,9 +20,6 @@ import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 data class UiCardReaderResponse(
     val status: Status,
     val cardType: String,
-    val ticketsNumber: Int,
     val titlesList: List<UiCardTitle>,
-    val lastValidationsList: ArrayList<UiValidation>,
-    val seasonPassExpiryDate: String,
     val errorMessage: String? = null
 ) : Parcelable

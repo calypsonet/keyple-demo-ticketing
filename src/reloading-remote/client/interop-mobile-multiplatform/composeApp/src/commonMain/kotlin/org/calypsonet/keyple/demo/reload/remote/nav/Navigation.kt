@@ -19,15 +19,6 @@ import org.calypsonet.keyple.demo.reload.remote.card.Title
 
 @Serializable data object Settings
 
-fun String.toScanNavArgs(): ScanNavArgs {
-  return when (this) {
-    "read-contracts" -> ScanNavArgs.READ_CONTRACTS
-    "personalize-card" -> ScanNavArgs.PERSONALIZE_CARD
-    "write-title" -> ScanNavArgs.WRITE_TITLE
-    else -> throw IllegalArgumentException()
-  }
-}
-
 enum class ScanNavArgs(val value: String) {
   READ_CONTRACTS("read-contracts"),
   PERSONALIZE_CARD("personalize-card"),

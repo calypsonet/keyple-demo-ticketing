@@ -12,8 +12,6 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.validation.domain.model
 
-import java.util.Locale
-
 enum class Status(private val status: String) {
   PROCESSING("Processing"),
   SUCCESS("Success"),
@@ -24,17 +22,5 @@ enum class Status(private val status: String) {
 
   override fun toString(): String {
     return status
-  }
-
-  companion object {
-    @JvmStatic
-    fun getStatus(name: String): Status {
-      return try {
-        valueOf(name.uppercase(Locale.ENGLISH))
-      } catch (e: Exception) {
-        // If the given state does not exist, return the default value.
-        ERROR
-      }
-    }
   }
 }

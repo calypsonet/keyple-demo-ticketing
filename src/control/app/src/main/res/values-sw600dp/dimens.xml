@@ -18,7 +18,6 @@
     <dimen name="medium_text_size">23sp</dimen>
     <dimen name="small_text_size">20sp</dimen>
     <dimen name="smaller_text_size">15sp</dimen>
-    <dimen name="smallest_text_size">13sp</dimen>
 
     <dimen name="settings_start_ic_size">150dp</dimen>
 

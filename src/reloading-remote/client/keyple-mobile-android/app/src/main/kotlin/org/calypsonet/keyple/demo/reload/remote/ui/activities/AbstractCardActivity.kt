@@ -109,8 +109,7 @@ abstract class AbstractCardActivity :
   fun launchInvalidCardResponse(cardType: String, message: String) {
     runOnUiThread {
       changeDisplay(
-          UiCardReaderResponse(
-              Status.INVALID_CARD, cardType, 0, arrayListOf(), arrayListOf(), "", message),
+          UiCardReaderResponse(Status.INVALID_CARD, cardType, arrayListOf(), message),
           finishActivity = isFinishActivityAfterResult())
     }
   }
@@ -119,13 +118,7 @@ abstract class AbstractCardActivity :
     runOnUiThread {
       changeDisplay(
           UiCardReaderResponse(
-              Status.ERROR,
-              "",
-              0,
-              arrayListOf(),
-              arrayListOf(),
-              "",
-              getString(R.string.card_communication_error)),
+              Status.ERROR, "", arrayListOf(), getString(R.string.card_communication_error)),
           finishActivity = isFinishActivityAfterResult())
     }
   }
@@ -133,7 +126,7 @@ abstract class AbstractCardActivity :
   fun launchServerErrorResponse() {
     runOnUiThread {
       changeDisplay(
-          UiCardReaderResponse(Status.ERROR, "", 0, arrayListOf(), arrayListOf(), ""),
+          UiCardReaderResponse(Status.ERROR, "", arrayListOf()),
           finishActivity = isFinishActivityAfterResult())
     }
   }
@@ -141,7 +134,7 @@ abstract class AbstractCardActivity :
   fun launchExceptionResponse(e: Exception, finishActivity: Boolean? = false) {
     runOnUiThread {
       changeDisplay(
-          UiCardReaderResponse(Status.ERROR, "", 0, arrayListOf(), arrayListOf(), "", e.message),
+          UiCardReaderResponse(Status.ERROR, "", arrayListOf(), e.message),
           finishActivity = finishActivity)
     }
   }

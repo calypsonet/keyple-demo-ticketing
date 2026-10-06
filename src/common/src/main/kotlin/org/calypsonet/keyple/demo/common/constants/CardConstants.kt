@@ -77,7 +77,6 @@ class CardConstants {
     const val SC_EVENT_FIRST_BLOCK = 12
     const val SC_EVENT_LAST_BLOCK = 15
 
-    const val SC_ENVIRONMENT_AND_HOLDER_SIZE_BYTES = 16
     const val SC_CONTRACT_RECORD_SIZE_BYTES = 16
     const val SC_EVENT_RECORD_SIZE_BYTES = 16
 

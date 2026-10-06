@@ -12,7 +12,5 @@
   -->
 
 <resources>
-    <style name="Theme.KeypleValidator.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="Theme.KeypleValidator.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

@@ -113,12 +113,7 @@ class CardReaderActivity : AbstractCardActivity() {
             val status = if (result.titles.isNotEmpty()) Status.TICKETS_FOUND else Status.EMPTY_CARD
             changeDisplay(
                 UiCardReaderResponse(
-                    status,
-                    result.card.description,
-                    result.titles.size,
-                    result.titles.map { it.toUi(resources) },
-                    arrayListOf(),
-                    ""),
+                    status, result.card.description, result.titles.map { it.toUi(resources) }),
                 result.card.serialNumber,
                 isFinishActivityAfterResult())
           }

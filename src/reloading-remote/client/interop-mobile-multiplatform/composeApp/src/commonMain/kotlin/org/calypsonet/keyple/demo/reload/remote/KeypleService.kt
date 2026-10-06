@@ -61,10 +61,7 @@ private val SERVER_PROTOCOL_KEY = stringPreferencesKey("server_protocol_key")
 private val SERVER_ENDPOINT_KEY = stringPreferencesKey("server_endpoint_key")
 private val SERVER_BASIC_AUTH = stringPreferencesKey("server_basicauth_key")
 
-data class KeypleServiceState(
-    val serverReachable: Boolean = false,
-    val outputData: OutputData? = null
-)
+data class KeypleServiceState(val serverReachable: Boolean = false)
 
 private const val TAG = "KeypleService"
 

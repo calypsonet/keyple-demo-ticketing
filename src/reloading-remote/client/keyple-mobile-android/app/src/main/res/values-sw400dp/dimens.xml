@@ -5,7 +5,6 @@
     <dimen name="big_text_size">22sp</dimen>
     <dimen name="medium_text_size">20sp</dimen>
     <dimen name="smaller_text_size">15sp</dimen>
-    <dimen name="smallest_text_size">12sp</dimen>
 
     <dimen name="img_contactless_card_width">38dp</dimen>
     <dimen name="img_sim_width">28dp</dimen>

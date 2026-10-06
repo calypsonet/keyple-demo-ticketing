@@ -115,8 +115,7 @@ class PersonalizationActivity : AbstractCardActivity() {
         if (result.status == RemoteServiceStatus.SUCCESS) {
           runOnUiThread {
             changeDisplay(
-                UiCardReaderResponse(
-                    Status.SUCCESS, result.card.description, 0, arrayListOf(), arrayListOf(), ""),
+                UiCardReaderResponse(Status.SUCCESS, result.card.description, arrayListOf()),
                 applicationSerialNumber = result.card.serialNumber,
                 finishActivity = true)
           }

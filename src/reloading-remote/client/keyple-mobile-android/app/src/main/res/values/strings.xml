@@ -31,11 +31,6 @@
     <string name="wearable">Wearable</string>
     <string name="embedded_secure_elem">Embedded Secure Element</string>
 
-    <string name="device_invalid">Invalid</string>
-    <string name="device_empty">Empty</string>
-    <string name="device_with_tickets">Valid</string>
-    <string name="success">Success</string>
-    <string name="fail">Fail</string>
 
     <string name="device_selection">Choose a device</string>
     <string name="to_be_personalized">to be personalized</string>
@@ -58,7 +53,6 @@
     <string name="present_card">Please present the contactless support to be loaded</string>
 
     <string name="present_card_personalization">Please present the contactless support to be personalized</string>
-    <string name="perso_in_progress">Personalization in progress</string>
 
     <string name="season_pass_title">Monthly Season Pass</string>
     <string name="ticket_price">%d,00 €</string>
@@ -95,11 +89,8 @@
 
     <!-- CardContent screen -->
     <string name="content_title">Content</string>
-    <string name="last_validation_title">Last validation</string>
     <string name="card_content_title_placeholder">Multi Trip</string>
     <string name="card_content_description_placeholder">From JJ Month YYYY to JJ Month YYYY</string>
-    <string name="card_content_validation_title_placeholder">Multi Trip - Place d\'Italie</string>
-    <string name="card_content_validation_date_placeholder">JJ Month YYYY, HH:MM:SS</string>
     <string name="card_type">%1$s</string>
     <string name="title_multi_trip">Multi trip</string>
     <plurals name="trips_left">
