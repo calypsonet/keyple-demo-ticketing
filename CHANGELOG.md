@@ -69,6 +69,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   read before. The activities no longer handle the Keypop card types.
 - The settings and the server status are accessed through the `AppSettingsRepository` and `ServerStatusProvider` ports,
   instead of the shared preferences and the REST client.
+- The texts displayed by the activities (error messages, contract titles and descriptions, server settings checks) are
+  defined as string resources instead of being hardcoded.
 #### Fixed
 - Typo in the "Invalid storage card" message.
 - Interpretation of the status codes returned by the server, which was shifted by one: each error now displays the

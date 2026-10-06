@@ -12,27 +12,39 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.ui.mappers
 
+import android.content.res.Resources
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
+import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardTitle
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardTitle
 
 private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)
 
-fun CardTitle.toUi(): UiCardTitle =
+fun CardTitle.toUi(resources: Resources): UiCardTitle =
     when (contractTariff) {
       PriorityCode.MULTI_TRIP ->
           UiCardTitle(
-              "Multi trip",
-              counterValue?.let { if (it > 1) "$it trips left" else "$it trip left" }
-                  ?: "No counter",
+              resources.getString(R.string.title_multi_trip),
+              counterValue?.let { resources.getQuantityString(R.plurals.trips_left, it, it) }
+                  ?: resources.getString(R.string.no_counter),
               isValid)
-      PriorityCode.SEASON_PASS -> UiCardTitle("Season pass", validityPeriod(), isValid)
-      PriorityCode.EXPIRED -> UiCardTitle("Season pass - Expired", validityPeriod(), isValid)
-      PriorityCode.FORBIDDEN -> UiCardTitle("FORBIDDEN", "", isValid)
-      else -> UiCardTitle("UNKNOWN", "", isValid)
+      PriorityCode.SEASON_PASS ->
+          UiCardTitle(
+              resources.getString(R.string.title_season_pass), validityPeriod(resources), isValid)
+      PriorityCode.EXPIRED ->
+          UiCardTitle(
+              resources.getString(R.string.title_season_pass_expired),
+              validityPeriod(resources),
+              isValid)
+      PriorityCode.FORBIDDEN ->
+          UiCardTitle(resources.getString(R.string.title_forbidden), "", isValid)
+      else -> UiCardTitle(resources.getString(R.string.title_unknown), "", isValid)
     }
 
-private fun CardTitle.validityPeriod(): String =
-    "From ${saleDate.format(dateFormatter)} to ${validityEndDate.format(dateFormatter)}"
+private fun CardTitle.validityPeriod(resources: Resources): String =
+    resources.getString(
+        R.string.validity_period,
+        saleDate.format(dateFormatter),
+        validityEndDate.format(dateFormatter))

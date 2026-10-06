@@ -86,17 +86,18 @@ class ServerSettingsActivity : AbstractDemoActivity() {
   private fun readServerConfig(): ServerConfig? {
     val ip = activityServerSettingsBinding.serverIpEdit.text.toString()
     if (ip.isBlank() || !Patterns.IP_ADDRESS.matcher(ip).matches()) {
-      activityServerSettingsBinding.serverIpEdit.error = "Please set a valid IP"
+      activityServerSettingsBinding.serverIpEdit.error = getString(R.string.invalid_server_ip)
       return null
     }
     val port = activityServerSettingsBinding.serverPortEdit.text.toString().toIntOrNull()
     if (port == null) {
-      activityServerSettingsBinding.serverPortEdit.error = "Please set a valid Port"
+      activityServerSettingsBinding.serverPortEdit.error = getString(R.string.invalid_server_port)
       return null
     }
     val protocol = activityServerSettingsBinding.serverProtocolEdit.text.toString()
     if (protocol !in arrayOf("http://", "https://")) {
-      activityServerSettingsBinding.serverProtocolEdit.error = "Please set a valid Protocol"
+      activityServerSettingsBinding.serverProtocolEdit.error =
+          getString(R.string.invalid_server_protocol)
       return null
     }
     return ServerConfig(protocol, ip, port)

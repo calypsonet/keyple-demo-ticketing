@@ -119,7 +119,13 @@ abstract class AbstractCardActivity :
     runOnUiThread {
       changeDisplay(
           UiCardReaderResponse(
-              Status.ERROR, "", 0, arrayListOf(), arrayListOf(), "", "Card communication error"),
+              Status.ERROR,
+              "",
+              0,
+              arrayListOf(),
+              arrayListOf(),
+              "",
+              getString(R.string.card_communication_error)),
           finishActivity = isFinishActivityAfterResult())
     }
   }

@@ -58,7 +58,8 @@ class CardReaderActivity : AbstractCardActivity() {
               initAndActivateCardReader()
             } else {
               launchExceptionResponse(
-                  IllegalStateException("NFC not activated"), finishActivity = true)
+                  IllegalStateException(getString(R.string.nfc_not_activated)),
+                  finishActivity = true)
             }
           } else {
             showPresentNfcCardInstructions()
@@ -115,7 +116,7 @@ class CardReaderActivity : AbstractCardActivity() {
                     status,
                     result.card.description,
                     result.titles.size,
-                    result.titles.map { it.toUi() },
+                    result.titles.map { it.toUi(resources) },
                     arrayListOf(),
                     ""),
                 result.card.serialNumber,
@@ -126,11 +127,12 @@ class CardReaderActivity : AbstractCardActivity() {
         }
       } catch (e: IllegalStateException) {
         Timber.e(e)
-        launchInvalidCardResponse("Undetermined card type", e.message!!)
+        launchInvalidCardResponse(getString(R.string.undetermined_card_type), e.message!!)
       } catch (e: Exception) {
         Timber.e(e)
         launchExceptionResponse(
-            IllegalStateException("Server error:\n" + e.message), isFinishActivityAfterResult())
+            IllegalStateException(getString(R.string.server_error, e.message)),
+            isFinishActivityAfterResult())
       } finally {
         ticketingService.endCardProcessing()
       }

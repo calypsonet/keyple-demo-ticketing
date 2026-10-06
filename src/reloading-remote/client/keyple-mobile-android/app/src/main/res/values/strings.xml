@@ -12,6 +12,10 @@
     <string name="card_not_personalized">Environment error: wrong version number</string>
     <string name="expired_environment">Environment error: end date expired</string>
     <string name="not_the_same_card">Not the same card</string>
+    <string name="undetermined_card_type">Undetermined card type</string>
+    <string name="card_communication_error">Card communication error</string>
+    <string name="server_error">Server error:\n%s</string>
+    <string name="nfc_not_activated">NFC not activated</string>
     <string name="transaction_cancelled_label">Title not loaded</string>
 
     <string name="validation_confirmation_label">Payment validated</string>
@@ -85,6 +89,9 @@
 
     <string name="ping_success">Ping Success</string>
     <string name="ping_failed">Ping failed</string>
+    <string name="invalid_server_ip">Please set a valid IP</string>
+    <string name="invalid_server_port">Please set a valid Port</string>
+    <string name="invalid_server_protocol">Please set a valid Protocol</string>
 
     <!-- CardContent screen -->
     <string name="content_title">Content</string>
@@ -94,4 +101,15 @@
     <string name="card_content_validation_title_placeholder">Multi Trip - Place d\'Italie</string>
     <string name="card_content_validation_date_placeholder">JJ Month YYYY, HH:MM:SS</string>
     <string name="card_type">%1$s</string>
+    <string name="title_multi_trip">Multi trip</string>
+    <plurals name="trips_left">
+        <item quantity="one">%d trip left</item>
+        <item quantity="other">%d trips left</item>
+    </plurals>
+    <string name="no_counter">No counter</string>
+    <string name="title_season_pass">Season pass</string>
+    <string name="title_season_pass_expired">Season pass - Expired</string>
+    <string name="title_forbidden">FORBIDDEN</string>
+    <string name="title_unknown">UNKNOWN</string>
+    <string name="validity_period">From %1$s to %2$s</string>
 </resources>

@@ -125,7 +125,7 @@ class PersonalizationActivity : AbstractCardActivity() {
         }
       } catch (e: IllegalStateException) {
         Timber.e(e)
-        launchInvalidCardResponse("Undetermined card type", e.message!!)
+        launchInvalidCardResponse(getString(R.string.undetermined_card_type), e.message!!)
       } catch (e: Exception) {
         Timber.e(e)
         launchExceptionResponse(e)
