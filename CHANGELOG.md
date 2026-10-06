@@ -16,6 +16,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   each card.
 - Android applications: when the storage card extension is not available (e.g. mocked library), the storage cards are
   not supported and a warning is logged once, instead of failing.
+- Android applications: the coroutines launched by the activities are bound to their lifecycle (`lifecycleScope`
+  instead of `GlobalScope`), and deprecated Android APIs are replaced (`ProgressDialog`, `startActivityForResult`,
+  `onBackPressed`, `Resources.getColor`).
+- Control and validation apps: the plugin registration is a suspend function instead of using `runBlocking`. Reloading
+  Android client: the plugins are registered directly, as before the refactoring.
 - CI/CD workflows: GitHub actions `checkout`, `setup-java`, `setup-node` and `setup-dotnet` upgraded from v4 to v5, and
   .NET upgraded from 7.0 to 8.0.
 - The changelogs of the archived repositories, no longer maintained, are moved from the modules to `docs/history/`.
@@ -26,6 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `keyple-card-cna-storagecard-java-lib` (mock): `2.3.0` -> `2.3.1`
 - `keyple-plugin-cna-storagecard-java-lib` (mock): `1.1.0` -> `1.1.1`
 ### Removed
+- Android applications: MultiDex (`androidx.multidex`), useless since the minimum SDK is 26.
 - Unused mocks: `keyple-card-cna-storagecard-java-lib-2.3.0` and `keyple-plugin-cna-storagecard-java-lib-1.1.0`.
 - Stored value contract type (`PriorityCode.STORED_VALUE`, contract tariff `3`), which could not be created by the demo
   (neither loaded by the server nor issued at personalization) and was only partially handled (e.g. not debited when
@@ -72,6 +78,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The SAM selection no longer filters the SAM on its power-on data (SAM C1).
 - The user feedback (sounds) is provided by the `UiManager` port, and the settings are accessed through the
   `AppSettingsRepository` port.
+#### Fixed
+- The waiting indicator is now hidden when the control procedure fails, instead of staying displayed when returning to
+  the reader screen.
 ### Reloading remote Android client
 #### Changed
 - Major architectural refactoring to apply the layered architecture with ports and adapters: the plugins and readers

@@ -16,6 +16,7 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardSummaryBinding
@@ -51,9 +52,11 @@ class CardSummaryActivity : AbstractDemoActivity() {
         activityCardSummaryBinding.animation.setAnimation("error_orange_anim.json")
         activityCardSummaryBinding.animation.playAnimation()
         activityCardSummaryBinding.bigText.setText(R.string.card_invalid_label)
-        activityCardSummaryBinding.bigText.setTextColor(resources.getColor(R.color.orange))
+        activityCardSummaryBinding.bigText.setTextColor(
+            ContextCompat.getColor(this, R.color.orange))
         activityCardSummaryBinding.smallDesc.text = cardContent.errorMessage
-        activityCardSummaryBinding.smallDesc.setTextColor(resources.getColor(R.color.orange))
+        activityCardSummaryBinding.smallDesc.setTextColor(
+            ContextCompat.getColor(this, R.color.orange))
         activityCardSummaryBinding.buyBtn.visibility = View.INVISIBLE
         activityCardSummaryBinding.titlesList.visibility = View.GONE
         activityCardSummaryBinding.lastValidationContent.visibility = View.GONE
@@ -73,9 +76,9 @@ class CardSummaryActivity : AbstractDemoActivity() {
         activityCardSummaryBinding.animation.setAnimation("error_anim.json")
         activityCardSummaryBinding.animation.playAnimation()
         activityCardSummaryBinding.bigText.text = getString(R.string.no_valid_label)
-        activityCardSummaryBinding.bigText.setTextColor(resources.getColor(R.color.red))
+        activityCardSummaryBinding.bigText.setTextColor(ContextCompat.getColor(this, R.color.red))
         activityCardSummaryBinding.smallDesc.visibility = View.VISIBLE
-        activityCardSummaryBinding.smallDesc.setTextColor(resources.getColor(R.color.red))
+        activityCardSummaryBinding.smallDesc.setTextColor(ContextCompat.getColor(this, R.color.red))
         activityCardSummaryBinding.smallDesc.text = getString(R.string.no_valid_desc)
         activityCardSummaryBinding.buyBtn.visibility = View.VISIBLE
         activityCardSummaryBinding.titlesList.visibility = View.GONE
@@ -88,7 +91,7 @@ class CardSummaryActivity : AbstractDemoActivity() {
         if (cardContent.errorMessage != null)
             activityCardSummaryBinding.bigText.text = cardContent.errorMessage
         else activityCardSummaryBinding.bigText.setText(R.string.error_label)
-        activityCardSummaryBinding.bigText.setTextColor(resources.getColor(R.color.red))
+        activityCardSummaryBinding.bigText.setTextColor(ContextCompat.getColor(this, R.color.red))
         activityCardSummaryBinding.smallDesc.visibility = View.INVISIBLE
         activityCardSummaryBinding.buyBtn.visibility = View.INVISIBLE
         activityCardSummaryBinding.titlesList.visibility = View.GONE
@@ -99,7 +102,7 @@ class CardSummaryActivity : AbstractDemoActivity() {
         activityCardSummaryBinding.animation.setAnimation("error_anim.json")
         activityCardSummaryBinding.animation.playAnimation()
         activityCardSummaryBinding.bigText.setText(R.string.error_label)
-        activityCardSummaryBinding.bigText.setTextColor(resources.getColor(R.color.red))
+        activityCardSummaryBinding.bigText.setTextColor(ContextCompat.getColor(this, R.color.red))
         activityCardSummaryBinding.smallDesc.visibility = View.INVISIBLE
         activityCardSummaryBinding.buyBtn.visibility = View.INVISIBLE
         activityCardSummaryBinding.titlesList.visibility = View.GONE

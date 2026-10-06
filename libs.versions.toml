@@ -12,7 +12,6 @@ androidxCore = "1.16.0"
 androidxDatastorePreferences = "1.1.7"
 androidxFragment = "1.8.8"
 androidxLifecycleViewmodel = "2.9.2"
-androidxMultidex = "2.0.1"
 androidxNavigationCompose = "2.9.0-rc01"
 assertj = "3.25.3"
 bitLib4j = "1.4.5"
@@ -55,7 +54,6 @@ androidxCore = { module = "androidx.core:core-ktx", version.ref = "androidxCore"
 androidxDatastorePreferences = { module = "androidx.datastore:datastore-preferences", version.ref = "androidxDatastorePreferences" }
 androidxFragment = { module = "androidx.fragment:fragment-ktx", version.ref = "androidxFragment" }
 androidxLifecycleViewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidxLifecycleViewmodel" }
-androidxMultidex = { module = "androidx.multidex:multidex", version.ref = "androidxMultidex" }
 androidxNavigationCompose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "androidxNavigationCompose" }
 assertjCore = { module = "org.assertj:assertj-core", version.ref = "assertj" }
 bitLib4j = { module = "com.github.devnied:bit-lib4j", version.ref = "bitLib4j" }

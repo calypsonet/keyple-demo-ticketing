@@ -46,7 +46,7 @@ class SettingsActivity : BaseActivity() {
         Editable.Factory.getInstance().newEditable("10")
     activitySettingsBinding.appVersion.text = getString(R.string.version, BuildConfig.VERSION_NAME)
     activitySettingsBinding.timeBtn.setOnClickListener {
-      startActivityForResult(Intent(Settings.ACTION_DATE_SETTINGS), 0)
+      startActivity(Intent(Settings.ACTION_DATE_SETTINGS))
     }
     activitySettingsBinding.startBtn.setOnClickListener {
       appSettings.location = activitySettingsBinding.spinnerLocationList.selectedItem as Location

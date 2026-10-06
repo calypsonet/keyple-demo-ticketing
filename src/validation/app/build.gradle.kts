@@ -117,7 +117,6 @@ dependencies {
   implementation(libs.androidxConstraintLayout)
   implementation(libs.androidxActivity)
   implementation(libs.androidxFragment)
-  implementation(libs.androidxMultidex)
 
   // Kotlin
   implementation(libs.androidxCore)

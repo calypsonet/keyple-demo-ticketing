@@ -16,9 +16,6 @@ import android.app.Activity
 import javax.inject.Inject
 import kotlin.collections.set
 import kotlin.jvm.Throws
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ReaderType
@@ -131,26 +128,22 @@ class ReaderManagerImpl @Inject constructor(private val logger: Logger) : Reader
       return
     }
     initReaderType(readerType)
-    runBlocking {
-      val pluginFactory =
-          withContext(Dispatchers.IO) {
-            when (readerType) {
-              ReaderType.BLUEBIRD ->
-                  BluebirdPluginFactoryProvider.provideFactory(
-                      activity,
-                      ApduInterpreterFactoryProvider.provideFactory(),
-                      MifareClassicKeyProviderImpl())
+    val pluginFactory =
+        when (readerType) {
+          ReaderType.BLUEBIRD ->
+              BluebirdPluginFactoryProvider.provideFactory(
+                  activity,
+                  ApduInterpreterFactoryProvider.provideFactory(),
+                  MifareClassicKeyProviderImpl())
 
-              ReaderType.NFC_TERMINAL ->
-                  AndroidNfcPluginFactoryProvider.provideFactory(
-                      AndroidNfcConfig(
-                          activity = activity,
-                          apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
-                          keyProvider = MifareClassicKeyProviderImpl()))
-            }
-          }
-      SmartCardServiceProvider.getService().registerPlugin(pluginFactory)
-    }
+          ReaderType.NFC_TERMINAL ->
+              AndroidNfcPluginFactoryProvider.provideFactory(
+                  AndroidNfcConfig(
+                      activity = activity,
+                      apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
+                      keyProvider = MifareClassicKeyProviderImpl()))
+        }
+    SmartCardServiceProvider.getService().registerPlugin(pluginFactory)
   }
 
   override fun initCardReader(

@@ -15,6 +15,7 @@ package org.calypsonet.keyple.demo.validation.ui.activities
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
@@ -63,6 +64,7 @@ class ReaderActivity : BaseActivity() {
     super.onCreate(savedInstanceState)
     activityCardReaderBinding = ActivityCardReaderBinding.inflate(layoutInflater)
     setContentView(activityCardReaderBinding.root)
+    onBackPressedDispatcher.addCallback(this, backCallback)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     // Enable merge paths so the waiting animation renders efficiently (avoids fallback path)
@@ -132,7 +134,7 @@ class ReaderActivity : BaseActivity() {
       timer.schedule(
           object : TimerTask() {
             override fun run() {
-              runOnUiThread { onBackPressed() }
+              runOnUiThread { onBackPressedDispatcher.onBackPressed() }
             }
           },
           RETURN_DELAY_MS.toLong())
@@ -158,14 +160,18 @@ class ReaderActivity : BaseActivity() {
     super.onDestroy()
   }
 
-  @Suppress("OVERRIDE_DEPRECATION")
-  override fun onBackPressed() {
-    if (summaryBinding?.root?.visibility == View.VISIBLE) {
-      hideSummaryOverlay()
-    } else {
-      super.onBackPressed()
-    }
-  }
+  /** Back closes the summary overlay when it is visible, otherwise closes the activity. */
+  private val backCallback =
+      object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+          if (summaryBinding?.root?.visibility == View.VISIBLE) {
+            hideSummaryOverlay()
+          } else {
+            isEnabled = false
+            onBackPressedDispatcher.onBackPressed()
+          }
+        }
+      }
 
   /**
    * main app state machine handle

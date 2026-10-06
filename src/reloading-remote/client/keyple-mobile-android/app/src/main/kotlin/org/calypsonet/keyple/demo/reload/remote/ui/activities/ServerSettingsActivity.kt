@@ -16,9 +16,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
 import android.view.View
+import androidx.lifecycle.lifecycleScope
 import kotlin.system.exitProcess
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.reload.remote.R
@@ -59,7 +59,7 @@ class ServerSettingsActivity : AbstractDemoActivity() {
     Timber.i("Ping server with URL: ${serverConfig.url}")
     activityServerSettingsBinding.pingProgressBar.visibility = View.VISIBLE
     activityServerSettingsBinding.pingResultText.visibility = View.INVISIBLE
-    GlobalScope.launch(Dispatchers.Main) {
+    lifecycleScope.launch(Dispatchers.Main) {
       val isReachable =
           withContext(Dispatchers.IO) {
             try {

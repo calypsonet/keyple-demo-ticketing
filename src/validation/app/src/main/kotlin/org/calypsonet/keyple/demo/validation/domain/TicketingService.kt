@@ -114,7 +114,7 @@ class TicketingService(
    * @param uiContext Platform-specific context used to register plugins.
    * @throws IllegalStateException if no SAM reader is available or SAM selection fails.
    */
-  fun init(observer: CardReaderObserverSpi?, readerType: ReaderType, uiContext: UiContext) {
+  suspend fun init(observer: CardReaderObserverSpi?, readerType: ReaderType, uiContext: UiContext) {
     // Init user feedback and register plugin
     uiManager.init(readerType, uiContext)
     readerManager.registerPlugin(readerType, uiContext)

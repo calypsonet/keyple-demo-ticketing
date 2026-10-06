@@ -16,10 +16,10 @@ import android.content.Intent
 import android.nfc.NfcManager
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.lifecycleScope
 import java.lang.IllegalStateException
 import kotlin.Exception
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
@@ -68,7 +68,9 @@ class CardReaderActivity : AbstractCardActivity() {
         }
         DeviceEnum.SIM -> {
           showNowLoadingInformation()
-          initOmapiReader { GlobalScope.launch { remoteServiceExecution() } }
+          initOmapiReader {
+            lifecycleScope.launch(Dispatchers.Default) { remoteServiceExecution() }
+          }
         }
         DeviceEnum.WEARABLE -> {
           throw UnsupportedOperationException("Wearable")
@@ -100,7 +102,7 @@ class CardReaderActivity : AbstractCardActivity() {
     if (event?.type == CardReaderEvent.Type.CARD_INSERTED) {
       // We'll select Card when SmartCard is presented in field
       runOnUiThread { showNowLoadingInformation() }
-      GlobalScope.launch { remoteServiceExecution() }
+      lifecycleScope.launch(Dispatchers.Default) { remoteServiceExecution() }
     }
   }
 

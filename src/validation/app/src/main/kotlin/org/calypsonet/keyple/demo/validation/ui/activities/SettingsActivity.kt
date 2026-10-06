@@ -39,7 +39,7 @@ class SettingsActivity : BaseActivity() {
         ArrayAdapter(this, R.layout.spinner_item_location, R.id.spinner_item_text, locations)
     activitySettingsBinding.spinnerLocationList.adapter = locationsAdapter
     activitySettingsBinding.timeBtn.setOnClickListener {
-      startActivityForResult(Intent(Settings.ACTION_DATE_SETTINGS), 0)
+      startActivity(Intent(Settings.ACTION_DATE_SETTINGS))
     }
     activitySettingsBinding.startBtn.setOnClickListener {
       appSettings.location = activitySettingsBinding.spinnerLocationList.selectedItem as Location

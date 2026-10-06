@@ -15,6 +15,7 @@ package org.calypsonet.keyple.demo.reload.remote.ui.activities
 import android.os.Bundle
 import android.view.View
 import android.widget.RadioButton
+import androidx.core.content.ContextCompat
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityConfigurationSettingsBinding
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
@@ -30,7 +31,9 @@ class ConfigurationSettingsActivity : AbstractDemoActivity() {
     toolbarBinding = activityConfigurationSettingsBinding.appBarLayout
     setContentView(activityConfigurationSettingsBinding.root)
 
-    activityConfigurationSettingsBinding.backBtn.setOnClickListener { onBackPressed() }
+    activityConfigurationSettingsBinding.backBtn.setOnClickListener {
+      onBackPressedDispatcher.onBackPressed()
+    }
 
     DeviceEnum.values().forEach { updateRadioButtons(it) }
   }
@@ -84,6 +87,6 @@ class ConfigurationSettingsActivity : AbstractDemoActivity() {
   private fun setRadioButtonChecked(radioButton: RadioButton, checked: Boolean) {
     radioButton.isChecked = checked
     radioButton.setTextColor(
-        resources.getColor(if (checked) R.color.dark_blue else R.color.light_grey))
+        ContextCompat.getColor(this, if (checked) R.color.dark_blue else R.color.light_grey))
   }
 }

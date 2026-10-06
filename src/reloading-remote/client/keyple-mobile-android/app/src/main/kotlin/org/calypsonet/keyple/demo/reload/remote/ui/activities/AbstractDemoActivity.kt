@@ -12,10 +12,10 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.ui.activities
 
+import androidx.lifecycle.lifecycleScope
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ToolbarBinding
@@ -62,7 +62,7 @@ abstract class AbstractDemoActivity : DaggerAppCompatActivity() {
 
   private fun checkServerStatus() {
     val serverConfig = appSettings.serverConfig
-    GlobalScope.launch(Dispatchers.IO) {
+    lifecycleScope.launch(Dispatchers.IO) {
       val isUp =
           try {
             serverStatusProvider.isSamReady(serverConfig)

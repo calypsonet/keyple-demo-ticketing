@@ -12,13 +12,14 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.control.ui.activities
 
-import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.control.R
@@ -41,7 +42,6 @@ class ReaderActivity : BaseActivity() {
   private lateinit var activityCardReaderBinding: ActivityCardReaderBinding
   private lateinit var logoToolbarBinding: LogoToolbarBinding
 
-  @Suppress("DEPRECATION") private lateinit var progress: ProgressDialog
   private var cardReaderObserver: CardReaderObserver? = null
   var currentAppState = AppState.WAIT_SYSTEM_READY
 
@@ -59,17 +59,13 @@ class ReaderActivity : BaseActivity() {
     logoToolbarBinding = activityCardReaderBinding.appBarLayout
     setContentView(activityCardReaderBinding.root)
     setSupportActionBar(logoToolbarBinding.toolbar)
-    @Suppress("DEPRECATION")
-    progress = ProgressDialog(this)
-    @Suppress("DEPRECATION") progress.setMessage(getString(R.string.please_wait))
-    progress.setCancelable(false)
   }
 
   override fun onResume() {
     super.onResume()
     activityCardReaderBinding.loadingAnimation.playAnimation()
     if (!ticketingService.readersInitialized) {
-      GlobalScope.launch {
+      lifecycleScope.launch(Dispatchers.Default) {
         withContext(Dispatchers.Main) { showProgress() }
         withContext(Dispatchers.IO) {
           try {
@@ -163,10 +159,10 @@ class ReaderActivity : BaseActivity() {
         when (readerEvent?.type) {
           CardReaderEvent.Type.CARD_INSERTED,
           CardReaderEvent.Type.CARD_MATCHED -> {
-            GlobalScope.launch {
+            lifecycleScope.launch(Dispatchers.Default) {
               try {
                 // Launch the control procedure
-                withContext(Dispatchers.Main) { progress.show() }
+                withContext(Dispatchers.Main) { showProgress() }
                 val cardReaderResponse =
                     withContext(Dispatchers.IO) { ticketingService.executeControlProcedure() }
                 withContext(Dispatchers.Main) {
@@ -184,12 +180,16 @@ class ReaderActivity : BaseActivity() {
                     }
                     ticketingService.displayResultSuccess()
                   }
-                  progress.dismiss()
+                  dismissProgress()
                   displayResult(cardReaderResponse.toUi())
                 }
+              } catch (e: CancellationException) {
+                // The activity has been destroyed
+                throw e
               } catch (e: IllegalStateException) {
                 Timber.e(e)
                 Timber.e("Load ERROR page after exception = ${e.message}")
+                withContext(Dispatchers.Main) { dismissProgress() }
                 displayResult(
                     UiControlResult(
                         status = Status.ERROR,
@@ -254,15 +254,11 @@ class ReaderActivity : BaseActivity() {
   }
 
   private fun showProgress() {
-    if (!progress.isShowing) {
-      progress.show()
-    }
+    activityCardReaderBinding.progressOverlay.visibility = View.VISIBLE
   }
 
   private fun dismissProgress() {
-    if (progress.isShowing) {
-      progress.dismiss()
-    }
+    activityCardReaderBinding.progressOverlay.visibility = View.GONE
   }
 
   companion object {

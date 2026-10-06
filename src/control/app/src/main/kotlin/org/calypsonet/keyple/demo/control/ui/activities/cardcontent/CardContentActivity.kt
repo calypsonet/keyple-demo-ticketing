@@ -35,7 +35,9 @@ class CardContentActivity : BaseActivity() {
     logoToolbarBinding = activityCardContentBinding.appBarLayout
     setContentView(activityCardContentBinding.root)
     setSupportActionBar(logoToolbarBinding.toolbar)
-    activityCardContentBinding.presentBtn.setOnClickListener { onBackPressed() }
+    activityCardContentBinding.presentBtn.setOnClickListener {
+      onBackPressedDispatcher.onBackPressed()
+    }
     @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     val cardContent: UiControlResult = intent.getParcelableExtra(CARD_CONTENT)!!
     activityCardContentBinding.lastValidationList.layoutManager = LinearLayoutManager(this)

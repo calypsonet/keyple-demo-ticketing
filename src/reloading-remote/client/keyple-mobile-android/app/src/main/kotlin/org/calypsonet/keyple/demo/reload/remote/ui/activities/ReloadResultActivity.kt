@@ -16,6 +16,7 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat
 import com.airbnb.lottie.LottieDrawable
 import java.util.Timer
 import java.util.TimerTask
@@ -40,7 +41,9 @@ class ReloadResultActivity : AbstractDemoActivity() {
     val cardContent: UiCardReaderResponse? =
         intent.getParcelableExtra(AbstractCardActivity.CARD_CONTENT)
 
-    activityChargeResultBinding.tryBtn.setOnClickListener { onBackPressed() }
+    activityChargeResultBinding.tryBtn.setOnClickListener {
+      onBackPressedDispatcher.onBackPressed()
+    }
     activityChargeResultBinding.cancelBtn.setOnClickListener {
       val intent = Intent(this, HomeActivity::class.java)
       startActivity(intent)
@@ -63,7 +66,7 @@ class ReloadResultActivity : AbstractDemoActivity() {
       }
       Status.SUCCESS -> {
         activityChargeResultBinding.mainBackground.setBackgroundColor(
-            resources.getColor(R.color.green))
+            ContextCompat.getColor(this, R.color.green))
         activityChargeResultBinding.animation.setAnimation("tick_white.json")
         activityChargeResultBinding.animation.repeatCount = 0
         activityChargeResultBinding.animation.playAnimation()
@@ -88,7 +91,7 @@ class ReloadResultActivity : AbstractDemoActivity() {
       }
       else -> {
         activityChargeResultBinding.mainBackground.setBackgroundColor(
-            resources.getColor(R.color.red))
+            ContextCompat.getColor(this, R.color.red))
         activityChargeResultBinding.animation.setAnimation("error_white.json")
         activityChargeResultBinding.animation.repeatCount = 0
         activityChargeResultBinding.animation.playAnimation()

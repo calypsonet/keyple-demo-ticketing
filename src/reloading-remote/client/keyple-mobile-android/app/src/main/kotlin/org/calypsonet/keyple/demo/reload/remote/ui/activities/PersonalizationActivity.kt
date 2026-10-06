@@ -15,10 +15,10 @@ package org.calypsonet.keyple.demo.reload.remote.ui.activities
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.lifecycleScope
 import java.lang.Exception
 import java.lang.IllegalStateException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
@@ -49,7 +49,7 @@ class PersonalizationActivity : AbstractCardActivity() {
         initAndActivateCardReader()
       } else {
         showNowPersonalizingInformation()
-        initOmapiReader { GlobalScope.launch { remoteServiceExecution() } }
+        initOmapiReader { lifecycleScope.launch(Dispatchers.Default) { remoteServiceExecution() } }
       }
     } catch (e: Exception) {
       Timber.e(e)
@@ -104,7 +104,7 @@ class PersonalizationActivity : AbstractCardActivity() {
   override fun onReaderEvent(event: CardReaderEvent?) {
     if (event?.type == CardReaderEvent.Type.CARD_INSERTED) {
       runOnUiThread { showNowPersonalizingInformation() }
-      GlobalScope.launch { remoteServiceExecution() }
+      lifecycleScope.launch(Dispatchers.Default) { remoteServiceExecution() }
     }
   }
 

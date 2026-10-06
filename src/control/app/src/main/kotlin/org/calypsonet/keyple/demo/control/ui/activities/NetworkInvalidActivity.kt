@@ -34,7 +34,9 @@ class NetworkInvalidActivity : BaseActivity() {
     val cardContent: UiControlResult? = intent.getParcelableExtra(CARD_CONTENT)
     cardContent?.errorTitle?.let { activityNetworkInvalidBinding.invalidTitle.text = it }
     activityNetworkInvalidBinding.invalidDescription.text = cardContent?.errorMessage
-    activityNetworkInvalidBinding.presentBtn.setOnClickListener { onBackPressed() }
+    activityNetworkInvalidBinding.presentBtn.setOnClickListener {
+      onBackPressedDispatcher.onBackPressed()
+    }
   }
 
   override fun onResume() {

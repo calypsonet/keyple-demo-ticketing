@@ -15,7 +15,6 @@ package org.calypsonet.keyple.demo.control.data
 import android.app.Activity
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.control.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.control.domain.model.ReaderType
@@ -138,41 +137,39 @@ constructor(
   }
 
   @Throws(KeyplePluginException::class)
-  override fun registerPlugin(readerType: ReaderType, uiContext: UiContext) {
+  override suspend fun registerPlugin(readerType: ReaderType, uiContext: UiContext) {
     initReaderType(readerType)
     val activity = uiContext.adaptTo(Activity::class.java)
-    runBlocking {
-      // Plugin
-      val pluginFactory =
-          withContext(Dispatchers.IO) {
-            when (readerType) {
-              ReaderType.BLUEBIRD ->
-                  BluebirdPluginFactoryProvider.provideFactory(
-                      activity,
-                      ApduInterpreterFactoryProvider.provideFactory(),
-                      MifareClassicKeyProviderImpl())
-              ReaderType.COPPERNIC -> Cone2PluginFactoryProvider.getFactory(activity)
-              ReaderType.FAMOCO ->
-                  AndroidNfcPluginFactoryProvider.provideFactory(
-                      AndroidNfcConfig(
-                          activity = activity,
-                          apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
-                          keyProvider = MifareClassicKeyProviderImpl()))
-              ReaderType.NFC_TERMINAL ->
-                  AndroidNfcPluginFactoryProvider.provideFactory(
-                      AndroidNfcConfig(
-                          activity = activity,
-                          apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
-                          keyProvider = MifareClassicKeyProviderImpl()))
-            }
+    // Plugin
+    val pluginFactory =
+        withContext(Dispatchers.IO) {
+          when (readerType) {
+            ReaderType.BLUEBIRD ->
+                BluebirdPluginFactoryProvider.provideFactory(
+                    activity,
+                    ApduInterpreterFactoryProvider.provideFactory(),
+                    MifareClassicKeyProviderImpl())
+            ReaderType.COPPERNIC -> Cone2PluginFactoryProvider.getFactory(activity)
+            ReaderType.FAMOCO ->
+                AndroidNfcPluginFactoryProvider.provideFactory(
+                    AndroidNfcConfig(
+                        activity = activity,
+                        apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
+                        keyProvider = MifareClassicKeyProviderImpl()))
+            ReaderType.NFC_TERMINAL ->
+                AndroidNfcPluginFactoryProvider.provideFactory(
+                    AndroidNfcConfig(
+                        activity = activity,
+                        apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
+                        keyProvider = MifareClassicKeyProviderImpl()))
           }
-      SmartCardServiceProvider.getService().registerPlugin(pluginFactory)
-      // SAM plugin (if different of card plugin)
-      if (readerType == ReaderType.FAMOCO) {
-        val samPluginFactory =
-            withContext(Dispatchers.IO) { AndroidFamocoPluginFactoryProvider.getFactory() }
-        SmartCardServiceProvider.getService().registerPlugin(samPluginFactory)
-      }
+        }
+    SmartCardServiceProvider.getService().registerPlugin(pluginFactory)
+    // SAM plugin (if different of card plugin)
+    if (readerType == ReaderType.FAMOCO) {
+      val samPluginFactory =
+          withContext(Dispatchers.IO) { AndroidFamocoPluginFactoryProvider.getFactory() }
+      SmartCardServiceProvider.getService().registerPlugin(samPluginFactory)
     }
   }
 

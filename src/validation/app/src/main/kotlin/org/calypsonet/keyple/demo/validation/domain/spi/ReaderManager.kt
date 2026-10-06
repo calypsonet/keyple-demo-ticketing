@@ -31,7 +31,7 @@ interface ReaderManager {
    * @param readerType The type of reader to use (e.g. contactless reader).
    * @param uiContext UI context used to access platform-specific facilities.
    */
-  fun registerPlugin(readerType: ReaderType, uiContext: UiContext)
+  suspend fun registerPlugin(readerType: ReaderType, uiContext: UiContext)
 
   /**
    * Initializes and returns the primary card reader (contactless). Returns null if not available.
