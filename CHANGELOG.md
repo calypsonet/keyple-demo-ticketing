@@ -94,6 +94,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   of `2`) when the presented card is not the one read before.
 #### Removed
 - Unreachable "card not read" status code (`4`) of the contract writing.
+### Reloading remote KMP client
+#### Fixed
+- The status code returned by the server when reading the card is now checked: a rejected card, a card not
+  personalized, an expired environment or a communication error are displayed as an error, instead of a card without
+  contract.
 ### Reloading remote .NET client
 #### Changed
 - Target framework: `net7.0` -> `net8.0` (README updated accordingly).

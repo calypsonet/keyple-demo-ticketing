@@ -239,6 +239,12 @@ class KeypleService(
             return@withContext result
           }
           is KeypleResult.Success -> {
+            if (result.data.statusCode != 0) {
+              Napier.i(tag = TAG, message = "Output = ${result.data.message}")
+              return@withContext KeypleResult.Failure(
+                  status = Status.SERVER_ERROR,
+                  message = "Server side error: ${result.data.statusCode} / ${result.data.message}")
+            }
             cardRepository.saveCardSerial(result.data.applicationSerialNumber)
             cardRepository.saveCardContracts(result.data.validContracts)
             return@withContext KeypleResult.Success(result.data)
