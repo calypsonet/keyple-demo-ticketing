@@ -33,7 +33,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Reloading remote Android client: unused "last validations" display (`UiValidation`, related fields of
     `UiCardReaderResponse`, layout and resources).
   - Reloading remote KMP client: unused Compose resources (images, animation, strings), colors and navigation helper.
-  - Reloading remote .NET client: unused `MessageDto` setters and `WaitForCardAbsent()` method.
+  - Reloading remote .NET client: unused `MessageDto` setters, and unused `WaitForCardAbsent()` and
+    `IsCardPresent()` methods of the PC/SC reader adapter.
   - Common library: unused `CardConstants.SC_ENVIRONMENT_AND_HOLDER_SIZE_BYTES` constant.
   - Reloading remote server dashboard: unused `@testing-library/*` and `web-vitals` dependencies.
 ### Common library

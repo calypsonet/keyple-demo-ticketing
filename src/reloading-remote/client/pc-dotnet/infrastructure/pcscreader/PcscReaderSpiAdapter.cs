@@ -84,13 +84,6 @@ namespace App.infrastructure.pcscreader
         }
 
         /// <inheritdoc/>
-        public bool IsCardPresent()
-        {
-            // Implement the logic to check if a card is present using the PC/SC library
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc/>
         public bool WaitForCardPresent()
         {
             try
