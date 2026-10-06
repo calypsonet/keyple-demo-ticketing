@@ -151,8 +151,9 @@ class TicketingService(
    * @param expectedSerialNumber Serial number of the card for which the contract has been bought.
    * @param contractTariff The contract to load.
    * @param ticketsToLoad The number of trips to load (multi-trip contract).
-   * @throws IllegalStateException If no supported card is selected, or if the presented card is not
-   *   the one for which the contract has been bought.
+   * @return The result of the operation, with the status [RemoteServiceStatus.DIFFERENT_CARD] if
+   *   the presented card is not the one for which the contract has been bought.
+   * @throws IllegalStateException If no supported card is selected.
    */
   fun reloadCard(
       expectedSerialNumber: String?,
@@ -164,7 +165,7 @@ class TicketingService(
     if (card.serialNumber != expectedSerialNumber) {
       // The contract has been bought for the card read at the first step: the reload must be done
       // on the same card.
-      throw IllegalStateException("Not the same card")
+      return CardOperationResult(card, RemoteServiceStatus.DIFFERENT_CARD)
     }
     remoteServiceManager.analyzeContracts(
         readerName, smartCard, AnalyzeContractsInputDto(pluginType))

@@ -12,4 +12,9 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.common.dto
 
+/**
+ * - statusCode: code of the [RemoteServiceStatus]: 0 (successful), 1 (card communication error), 2
+ *   (server error), 4 (card not personalized), 5 (expired environment).
+ * - message: Status message.
+ */
 data class SelectAppAndIncreaseContractCounterOutputDto(var statusCode: Int, var message: String)

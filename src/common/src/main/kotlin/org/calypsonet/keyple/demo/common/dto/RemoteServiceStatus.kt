@@ -13,9 +13,10 @@
 package org.calypsonet.keyple.demo.common.dto
 
 /**
- * Status of a remote service executed by the server for the Keyple distributed clients, transmitted
- * as an integer [code] in the `statusCode` field of [AnalyzeContractsOutputDto],
- * [WriteContractOutputDto] and [CardIssuanceOutputDto].
+ * Status of a remote service executed by the server, transmitted as an integer [code] in the
+ * `statusCode` field of the output DTOs of the remote services: [AnalyzeContractsOutputDto],
+ * [WriteContractOutputDto] and [CardIssuanceOutputDto] (Keyple distributed clients), and the
+ * `SelectAppAnd...OutputDto` of the Server JSON API.
  *
  * The integer is kept in the DTOs so that the JSON format remains unchanged for all the clients.
  */
@@ -31,7 +32,9 @@ enum class RemoteServiceStatus(val code: Int) {
   /** The card has not been personalized. */
   CARD_NOT_PERSONALIZED(4),
   /** The environment of the card has expired. */
-  EXPIRED_ENVIRONMENT(5);
+  EXPIRED_ENVIRONMENT(5),
+  /** The presented card is not the one read before the contract loading. */
+  DIFFERENT_CARD(6);
 
   companion object {
     /**

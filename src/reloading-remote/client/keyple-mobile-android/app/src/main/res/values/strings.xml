@@ -11,6 +11,7 @@
     <string name="storage_card_invalid">Invalid storage card</string>
     <string name="card_not_personalized">Environment error: wrong version number</string>
     <string name="expired_environment">Environment error: end date expired</string>
+    <string name="not_the_same_card">Not the same card</string>
     <string name="transaction_cancelled_label">Title not loaded</string>
 
     <string name="validation_confirmation_label">Payment validated</string>

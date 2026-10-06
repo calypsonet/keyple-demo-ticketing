@@ -77,6 +77,7 @@ public class CardService {
   private static final String CARD_NOT_PERSONALIZED = "Card not personalized.";
   private static final String ENVIRONMENT_EXPIRED = "Environment expired.";
   private static final String RUNTIME_EXCEPTION = "Runtime exception: ";
+  private static final String CARD_COMMUNICATION_ERROR = "Card communication error: ";
   private static final String PROCESSED_CARD_SELECTION_SCENARIO_JSON_STRING =
       "processedCardSelectionScenarioJsonString";
 
@@ -145,7 +146,7 @@ public class CardService {
 
     CalypsoCard calypsoCard = null;
     List<String> output = new ArrayList<>();
-    int statusCode = 0;
+    int statusCode = RemoteServiceStatus.SUCCESS.getCode();
     String message = "Success.";
     CardResource samResource = null;
 
@@ -170,15 +171,19 @@ public class CardService {
         output.add(formatContractStructure(contractStructure));
       }
     } catch (CardNotPersonalizedException e) {
-      statusCode = 3;
+      statusCode = RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode();
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
       message = CARD_NOT_PERSONALIZED;
     } catch (ExpiredEnvironmentException e) {
-      statusCode = 4;
+      statusCode = RemoteServiceStatus.EXPIRED_ENVIRONMENT.getCode();
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
       message = ENVIRONMENT_EXPIRED;
+    } catch (CardCommunicationException e) {
+      statusCode = RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode();
+      logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
+      message = CARD_COMMUNICATION_ERROR + e.getMessage();
     } catch (RuntimeException e) {
-      statusCode = 1;
+      statusCode = RemoteServiceStatus.SERVER_ERROR.getCode();
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
       message = RUNTIME_EXCEPTION + e.getMessage();
     } finally {
@@ -203,7 +208,7 @@ public class CardService {
 
     CalypsoCard calypsoCard = null;
     CardResource samResource = null;
-    int statusCode = 0;
+    int statusCode = RemoteServiceStatus.SUCCESS.getCode();
     String message = "Success.";
     try {
       calypsoCard = cardRepository.selectCard(cardReader);
@@ -224,15 +229,19 @@ public class CardService {
       insertNewContract(PriorityCode.MULTI_TRIP, inputData.getCounterIncrement(), card);
       statusCode = cardRepository.writeCard(cardReader, calypsoCard, samResource, card);
     } catch (CardNotPersonalizedException e) {
-      statusCode = 3;
+      statusCode = RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode();
       message = CARD_NOT_PERSONALIZED;
       logger.error(AN_ERROR_OCCURRED_WHILE_INCREASING_THE_CONTRACT_COUNTER, e.getMessage());
     } catch (ExpiredEnvironmentException e) {
-      statusCode = 4;
+      statusCode = RemoteServiceStatus.EXPIRED_ENVIRONMENT.getCode();
       message = ENVIRONMENT_EXPIRED;
       logger.error(AN_ERROR_OCCURRED_WHILE_INCREASING_THE_CONTRACT_COUNTER, e.getMessage());
+    } catch (CardCommunicationException e) {
+      statusCode = RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode();
+      message = CARD_COMMUNICATION_ERROR + e.getMessage();
+      logger.error(AN_ERROR_OCCURRED_WHILE_INCREASING_THE_CONTRACT_COUNTER, e.getMessage(), e);
     } catch (RuntimeException e) {
-      statusCode = 1;
+      statusCode = RemoteServiceStatus.SERVER_ERROR.getCode();
       message = RUNTIME_EXCEPTION + e.getMessage();
       logger.error(AN_ERROR_OCCURRED_WHILE_INCREASING_THE_CONTRACT_COUNTER, e.getMessage(), e);
     } finally {
@@ -697,7 +706,10 @@ public class CardService {
               .setType(SECURED_READ)
               .setCardSerialNumber(""));
       return new SelectAppAndAnalyzeContractsOutputDto(
-          "", Collections.emptyList(), 1, e.getMessage());
+          "",
+          Collections.emptyList(),
+          RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode(),
+          e.getMessage());
     } catch (RuntimeException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
       activityService.push(
@@ -707,7 +719,7 @@ public class CardService {
               .setType(SECURED_READ)
               .setCardSerialNumber(""));
       return new SelectAppAndAnalyzeContractsOutputDto(
-          "", Collections.emptyList(), 2, e.getMessage());
+          "", Collections.emptyList(), RemoteServiceStatus.SERVER_ERROR.getCode(), e.getMessage());
     }
 
     // Analyze contracts
@@ -782,26 +794,26 @@ public class CardService {
     int statusCode = outputData2.getStatusCode();
 
     String message;
-    switch (statusCode) {
-      case 0:
+    switch (RemoteServiceStatus.fromCode(statusCode)) {
+      case SUCCESS:
         message = "Success";
         break;
-      case 1:
+      case CARD_COMMUNICATION_ERROR:
         message = "Card communication error";
         break;
-      case 2:
+      case SERVER_ERROR:
         message = "Server error";
         break;
-      case 3:
+      case CARD_REJECTED:
         message =
             "Invalid card\nFile structure "
                 + HexUtil.toHex(calypsoCard.getApplicationSubtype())
                 + "h not supported";
         break;
-      case 4:
+      case CARD_NOT_PERSONALIZED:
         message = "Environment error: wrong version number";
         break;
-      case 5:
+      case EXPIRED_ENVIRONMENT:
         message = "Environment error: end date expired";
         break;
       default:
@@ -838,7 +850,8 @@ public class CardService {
               .setStatus(FAIL)
               .setType(SECURED_READ)
               .setCardSerialNumber(""));
-      return new SelectAppAndLoadContractOutputDto(1, e.getMessage());
+      return new SelectAppAndLoadContractOutputDto(
+          RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode(), e.getMessage());
     } catch (RuntimeException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT, e.getMessage(), e);
       activityService.push(
@@ -847,7 +860,8 @@ public class CardService {
               .setStatus(FAIL)
               .setType(SECURED_READ)
               .setCardSerialNumber(""));
-      return new SelectAppAndLoadContractOutputDto(2, e.getMessage());
+      return new SelectAppAndLoadContractOutputDto(
+          RemoteServiceStatus.SERVER_ERROR.getCode(), e.getMessage());
     }
 
     String selectedApplicationSerialNumber =
@@ -856,7 +870,8 @@ public class CardService {
     if (!selectedApplicationSerialNumber.equals(expectedApplicationSerialNumber)) {
       // Ticket would have been bought for the Card read at step one.
       // To avoid swapping, we check that loading is done on the same card
-      return new SelectAppAndLoadContractOutputDto(2, "Not the same card");
+      return new SelectAppAndLoadContractOutputDto(
+          RemoteServiceStatus.DIFFERENT_CARD.getCode(), "Not the same card");
     }
 
     // Write contract
@@ -869,17 +884,17 @@ public class CardService {
     int statusCode = outputData2.getStatusCode();
 
     String message;
-    switch (statusCode) {
-      case 0:
+    switch (RemoteServiceStatus.fromCode(statusCode)) {
+      case SUCCESS:
         message = "Success";
         break;
-      case 1:
+      case CARD_COMMUNICATION_ERROR:
         message = "Card communication error";
         break;
-      case 2:
+      case SERVER_ERROR:
         message = "Server error";
         break;
-      case 3:
+      case CARD_REJECTED:
         message =
             "Invalid card\nFile structure "
                 + HexUtil.toHex(calypsoCard.getApplicationSubtype())
@@ -918,7 +933,8 @@ public class CardService {
               .setStatus(FAIL)
               .setType(SECURED_READ)
               .setCardSerialNumber(""));
-      return new SelectAppAndPersonalizeCardOutputDto(1, e.getMessage());
+      return new SelectAppAndPersonalizeCardOutputDto(
+          RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode(), e.getMessage());
     } catch (RuntimeException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_INITIALIZING_THE_CARD, e.getMessage(), e);
       activityService.push(
@@ -927,7 +943,8 @@ public class CardService {
               .setStatus(FAIL)
               .setType(SECURED_READ)
               .setCardSerialNumber(""));
-      return new SelectAppAndPersonalizeCardOutputDto(2, e.getMessage());
+      return new SelectAppAndPersonalizeCardOutputDto(
+          RemoteServiceStatus.SERVER_ERROR.getCode(), e.getMessage());
     }
 
     // Init card
@@ -938,17 +955,17 @@ public class CardService {
     int statusCode = outputData2.getStatusCode();
 
     String message;
-    switch (statusCode) {
-      case 0:
+    switch (RemoteServiceStatus.fromCode(statusCode)) {
+      case SUCCESS:
         message = "Success";
         break;
-      case 1:
+      case CARD_COMMUNICATION_ERROR:
         message = "Card communication error";
         break;
-      case 2:
+      case SERVER_ERROR:
         message = "Server error";
         break;
-      case 3:
+      case CARD_REJECTED:
         message =
             "Invalid card\nFile structure "
                 + HexUtil.toHex(calypsoCard.getApplicationSubtype())

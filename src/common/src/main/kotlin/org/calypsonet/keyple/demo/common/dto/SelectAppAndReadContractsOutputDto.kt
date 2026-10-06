@@ -12,6 +12,12 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.common.dto
 
+/**
+ * - items: Contracts present in the card, formatted as text.
+ * - statusCode: code of the [RemoteServiceStatus]: 0 (successful), 1 (card communication error), 2
+ *   (server error), 4 (card not personalized), 5 (expired environment).
+ * - message: Status message.
+ */
 data class SelectAppAndReadContractsOutputDto(
     var items: List<String>,
     var statusCode: Int,

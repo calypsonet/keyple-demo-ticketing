@@ -98,6 +98,8 @@ abstract class AbstractCardActivity :
           launchInvalidCardResponse(card.description, getString(R.string.card_not_personalized))
       RemoteServiceStatus.EXPIRED_ENVIRONMENT ->
           launchInvalidCardResponse(card.description, getString(R.string.expired_environment))
+      RemoteServiceStatus.DIFFERENT_CARD ->
+          launchInvalidCardResponse(card.description, getString(R.string.not_the_same_card))
       RemoteServiceStatus.SUCCESS -> {
         // Not an error
       }

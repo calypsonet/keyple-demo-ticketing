@@ -1,6 +1,6 @@
 # Keyple Reload Demo - .NET Desktop Client
 
-[![.NET](https://img.shields.io/badge/.NET-7.0-purple.svg)](https://dotnet.microsoft.com/)
+[![.NET](https://img.shields.io/badge/.NET-8.0-purple.svg)](https://dotnet.microsoft.com/)
 [![Release](https://img.shields.io/github/v/release/calypsonet/keyple-demo-ticketing)](https://github.com/calypsonet/keyple-demo-ticketing/releases)
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../../../LICENSE)
 
@@ -27,7 +27,7 @@ demonstrates the minimal integration approach while maintaining full functionali
 
 ### Development Environment
 - **Microsoft Visual Studio 2022** (recommended)
-- **.NET 7.0 SDK** or later
+- **.NET 8.0 SDK** or later
 - **Windows 10/11** (primary target platform)
 
 ### Hardware Requirements

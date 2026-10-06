@@ -30,11 +30,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Common library
 #### Added
 - `RemoteServiceStatus` enum defining the status codes of the remote services (`statusCode` field of
-  `AnalyzeContractsOutputDto`, `WriteContractOutputDto` and `CardIssuanceOutputDto`, still transmitted as an integer).
+  `AnalyzeContractsOutputDto`, `WriteContractOutputDto`, `CardIssuanceOutputDto` and of the `SelectAppAnd...OutputDto`
+  of the Server JSON API, still transmitted as an integer).
 #### Changed
 - `Location.toString()` now returns the name of the location.
-- Documentation of the status codes of `AnalyzeContractsOutputDto`, `WriteContractOutputDto` and
-  `CardIssuanceOutputDto` aligned with the codes actually returned by the server.
+- Documentation of the status codes of `AnalyzeContractsOutputDto`, `WriteContractOutputDto`, `CardIssuanceOutputDto`
+  and of the `SelectAppAnd...OutputDto` aligned with the codes actually returned by the server.
 ### Validation app
 #### Added
 - Anti-passback check for storage cards: a card presented again within the anti-passback delay is rejected.
@@ -73,6 +74,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Interpretation of the status codes returned by the server, which was shifted by one: each error now displays the
   right message (e.g. "card not personalized" instead of "expired environment"), and the expired environment (contracts
   reading) and the rejected card (reload, personalization) no longer leave the screen stuck on the loading animation.
+- When the card presented for the reload is not the one read before, the type of the presented card is displayed
+  instead of "Undetermined card type".
 ### Reloading remote server
 #### Changed
 - The storage card extension is now registered with `SmartCardService.checkCardExtension(...)` at startup, as required
@@ -82,11 +85,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   (`keyple-distributed-remote-java-lib` `2.6.0`).
 - Dashboard: removed the Jest-specific ESLint configuration.
 - The status codes of the remote services are produced with the `RemoteServiceStatus` enum.
+- Server JSON API: same status codes for all the services. `SELECT_APP_AND_READ_CONTRACTS` and
+  `SELECT_APP_AND_INCREASE_CONTRACT_COUNTER` now return `4` (instead of `3`) for a card not personalized, `5` (instead
+  of `4`) for an expired environment, and distinguish the card communication errors (`1`) from the other errors (`2`)
+  instead of returning `1` for all errors. `SELECT_APP_AND_LOAD_CONTRACT` now returns the dedicated code `6` (instead
+  of `2`) when the presented card is not the one read before.
 #### Removed
 - Unreachable "card not read" status code (`4`) of the contract writing.
 ### Reloading remote .NET client
 #### Changed
-- Target framework: `net7.0` -> `net8.0`.
+- Target framework: `net7.0` -> `net8.0` (README updated accordingly).
 
 ## [26.03.26]
 ### Added
