@@ -58,13 +58,6 @@ class DeviceSelectionActivity : BaseActivity() {
       }
     }
 
-    // Coppernic
-    activityDeviceSelectionBinding.coppernicBtn.setOnClickListener {
-      appSettings.readerType = ReaderType.COPPERNIC
-      startActivity(Intent(this, SettingsActivity::class.java))
-      finish()
-    }
-
     // Famoco
     activityDeviceSelectionBinding.famocoBtn.setOnClickListener {
       appSettings.readerType = ReaderType.FAMOCO

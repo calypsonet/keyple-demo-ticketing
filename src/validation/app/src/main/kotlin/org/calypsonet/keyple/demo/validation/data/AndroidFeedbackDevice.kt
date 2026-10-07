@@ -18,7 +18,7 @@ import org.calypsonet.keyple.demo.validation.R
 import org.calypsonet.keyple.demo.validation.domain.spi.Logger
 
 /**
- * Standard UI feedback for non-Arrive terminals (Bluebird, Coppernic, Famoco).
+ * Standard UI feedback for non-Arrive terminals (Bluebird, Famoco).
  *
  * Uses Android MediaPlayer for success/error sounds. No LED control. This variant is also compiled
  * when AndroidParkeonCommon-release.aar is absent from libs/ (mock mode for Arrive hardware).

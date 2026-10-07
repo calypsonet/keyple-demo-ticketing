@@ -26,7 +26,6 @@ import org.calypsonet.keyple.plugin.arrive.ArrivePluginFactoryProvider
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
 import org.calypsonet.keyple.plugin.bluebird.BluebirdContactlessProtocols
 import org.calypsonet.keyple.plugin.bluebird.BluebirdPluginFactoryProvider
-import org.calypsonet.keyple.plugin.coppernic.*
 import org.calypsonet.keyple.plugin.famoco.AndroidFamocoPlugin
 import org.calypsonet.keyple.plugin.famoco.AndroidFamocoPluginFactoryProvider
 import org.calypsonet.keyple.plugin.famoco.AndroidFamocoReader
@@ -71,7 +70,6 @@ constructor(
     when (readerType) {
       ReaderType.ARRIVE -> initArriveReader()
       ReaderType.BLUEBIRD -> initBluebirdReader()
-      ReaderType.COPPERNIC -> initCoppernicReader()
       ReaderType.FAMOCO -> initFamocoReader()
     }
   }
@@ -96,20 +94,6 @@ constructor(
     samReaderProtocolPhysicalName = ContactCardCommonProtocols.ISO_7816_3.name
     samReaderProtocolLogicalName = CardProtocolEnum.ISO_7816_LOGICAL_PROTOCOL.name
     isStorageCardSupported = true
-  }
-
-  private fun initCoppernicReader() {
-    readerType = ReaderType.COPPERNIC
-    cardPluginName = Cone2Plugin.PLUGIN_NAME
-    cardReaderName = Cone2ContactlessReader.READER_NAME
-    cardReaderProtocols[ParagonSupportedContactlessProtocols.ISO_14443.name] =
-        CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name
-    samPluginName = Cone2Plugin.PLUGIN_NAME
-    samReaderNameRegex = ".*ContactReader_1"
-    samReaderName = "${Cone2ContactReader.READER_NAME}_1"
-    samReaderProtocolPhysicalName =
-        ParagonSupportedContactProtocols.INNOVATRON_HIGH_SPEED_PROTOCOL.name
-    samReaderProtocolLogicalName = CardProtocolEnum.ISO_7816_LOGICAL_PROTOCOL.name
   }
 
   private fun initFamocoReader() {
@@ -156,7 +140,6 @@ constructor(
                     activity,
                     ApduInterpreterFactoryProvider.provideFactory(),
                     MifareClassicKeyProviderImpl())
-            ReaderType.COPPERNIC -> Cone2PluginFactoryProvider.getFactory(activity)
             ReaderType.FAMOCO ->
                 AndroidNfcPluginFactoryProvider.provideFactory(
                     AndroidNfcConfig(

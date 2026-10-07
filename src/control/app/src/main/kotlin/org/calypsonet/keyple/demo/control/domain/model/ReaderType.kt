@@ -14,7 +14,6 @@ package org.calypsonet.keyple.demo.control.domain.model
 
 enum class ReaderType {
   BLUEBIRD,
-  COPPERNIC,
   FAMOCO,
   NFC_TERMINAL
 }

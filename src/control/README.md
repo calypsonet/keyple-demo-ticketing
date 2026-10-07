@@ -55,7 +55,6 @@ cd keyple-demo-ticketing/src/control
 1. Launch application
 2. Select device type from **Device Selection** screen:
   - **Famoco FX205**: Enterprise terminal with SAM reader
-  - **Coppernic C-One 2**: Rugged Android terminal
   - **Standard NFC**: Consumer Android device (No card authentication)
   - Proprietary terminals (grayed out by default)
 
@@ -284,12 +283,6 @@ Device Selection → Settings → Home → Reader Activity → Control Results
 - **Plugins**: [Famoco Plugin](https://github.com/calypsonet/keyple-famoco) + [Android NFC](https://keyple.org/components/standard-reader-plugins/keyple-plugin-android-nfc-lib/)
 - **Advantages**: Enterprise security, robust construction, integrated SAM
 - **Use Case**: Fixed inspection points, high-security environments
-
-**Coppernic C-One 2**
-- **Configuration**: Integrated NFC reader
-- **Plugin**: [Coppernic Plugin](https://github.com/calypsonet/keyple-android-plugin-coppernic)
-- **Advantages**: Rugged design, mobile form factor, long battery life
-- **Use Case**: Mobile inspectors, field operations
 
 **Standard NFC Smartphones**
 - **Configuration**: Built-in NFC radio

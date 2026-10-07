@@ -23,7 +23,6 @@ gson = "2.11.0"
 # Last version compatible with AGP 8 (the Hilt Gradle plugin requires AGP 9 since 2.59)
 hilt = "2.58"
 keypleJavaBom = "2026.09.29"
-keyplePluginCnaCoppernicCone2Lib = "2.0.2"
 keyplePluginCnaFamocoSeCommunicationLib = "2.0.2"
 koin = "4.1.0"
 kotlin = "2.2.10"
@@ -74,7 +73,6 @@ keypleInteropJsonapiClientKmpLib = { module = "org.eclipse.keyple:keyple-interop
 keypleInteropLocalreaderNfcmobileKmpLib = { module = "org.eclipse.keyple:keyple-interop-localreader-nfcmobile-kmp-lib" }
 keyplePluginAndroidNfcLib = { module = "org.eclipse.keyple:keyple-plugin-android-nfc-java-lib" }
 keyplePluginAndroidOmapiLib = { module = "org.eclipse.keyple:keyple-plugin-android-omapi-java-lib" }
-keyplePluginCnaCoppernicCone2Lib = { module = "org.calypsonet.keyple:keyple-plugin-cna-coppernic-cone2-java-lib", version.ref = "keyplePluginCnaCoppernicCone2Lib" }
 keyplePluginCnaFamocoSeCommunicationLib = { module = "org.calypsonet.keyple:keyple-plugin-cna-famoco-se-communication-java-lib", version.ref = "keyplePluginCnaFamocoSeCommunicationLib" }
 keyplePluginPcscLib = { module = "org.eclipse.keyple:keyple-plugin-pcsc-java-lib" }
 keyplePluginStoragecardApi = { module = "org.eclipse.keyple:keyple-plugin-storagecard-java-api" }

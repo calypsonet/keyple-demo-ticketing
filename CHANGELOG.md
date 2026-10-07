@@ -38,8 +38,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     the modules are installed in the `SingletonComponent` (`@Singleton` bindings);
   - the `AppComponent`, the activity injectors (`UIModule`), the `AppModule` and the custom scopes (`AppScoped`,
     `ActivityScoped`) are removed.
-- Android applications: Jetifier is disabled in the reloading Android client, no library requiring it anymore. It
-  remains required by the Coppernic plugin in the control and validation apps, as documented in `gradle.properties`.
+- Android applications: Jetifier is disabled, no library requiring it anymore (Dagger `2.25` and the Coppernic plugin
+  were the last ones).
 - CI/CD workflows: GitHub actions `checkout`, `setup-java`, `setup-node` and `setup-dotnet` upgraded from v4 to v5,
   .NET upgraded from 7.0 to 10.0, and Node.js upgraded from 20 (end of life) to 24.
 - The changelogs of the archived repositories, no longer maintained, are moved from the modules to `docs/history/`.
@@ -54,6 +54,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 - Android applications: dagger-android, the `javax.annotation` (GlassFish) dependency and the kapt plugin, replaced by
   Hilt and KSP.
+- Control and validation apps: support of the Coppernic C-One 2 terminal (device selection button, reader
+  configuration, `keyple-plugin-cna-coppernic-cone2-java-lib` `2.0.2` and Coppernic Maven repository). The plugin, not
+  updated since 2022, required Jetifier through the Coppernic SDK.
 - `kotlin-stdlib-jdk8` dependency of the Android applications, merged into `kotlin-stdlib` (added by the Kotlin Gradle
   plugin) since Kotlin 1.8.
 - `log4j` `1.2.17` (end of life), declared but not used by `bit-lib4j`: excluded from the dependencies of the common

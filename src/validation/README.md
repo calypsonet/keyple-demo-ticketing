@@ -57,7 +57,6 @@ cd keyple-demo-ticketing/src/validation
 1. Launch application
 2. Select device type from **Device Selection** screen:
   - **Famoco FX205**: Enterprise terminal with dual readers
-  - **Coppernic C-One 2**: Rugged Android terminal
   - **Standard NFC**: Consumer Android device
   - Proprietary terminals (grayed out by default)
 
@@ -262,11 +261,6 @@ The validation procedure processes contracts in priority order:
 - **Plugins**: [Famoco Plugin](https://github.com/calypsonet/keyple-famoco) + [Android NFC](https://keyple.org/components/standard-reader-plugins/keyple-plugin-android-nfc-lib/)
 - **Features**: Enterprise-grade security, robust construction
 - **Use Case**: Fixed terminal installations
-
-**Coppernic C-One 2**
-- **Plugin**: [Coppernic Plugin](https://github.com/calypsonet/keyple-android-plugin-coppernic)
-- **Features**: Rugged design, multiple connectivity options
-- **Use Case**: Mobile validation scenarios
 
 **Standard NFC Smartphones**
 - **Plugin**: [Android NFC Plugin](https://keyple.org/components/standard-reader-plugins/keyple-plugin-android-nfc-lib/)

@@ -30,7 +30,6 @@
     <string name="device_title">Select the device</string>
     <string name="device_arrive">ARRIVE</string>
     <string name="device_bluebird">BLUEBIRD</string>
-    <string name="device_coppernic">COPPERNIC</string>
     <string name="device_famoco">FAMOCO</string>
 
     <!-- Home screen -->

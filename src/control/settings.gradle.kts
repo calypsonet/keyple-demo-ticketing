@@ -19,7 +19,6 @@ dependencyResolutionManagement {
   repositories {
     mavenLocal()
     mavenCentral()
-    maven(url = "https://nexus.coppernic.fr/repository/libs-release")
     google()
     maven(url = "https://central.sonatype.com/repository/maven-snapshots")
   }

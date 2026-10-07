@@ -84,7 +84,6 @@ dependencies {
   implementation(libs.keyplePluginAndroidNfcLib)
 
   // Other Keyple plugins
-  implementation(libs.keyplePluginCnaCoppernicCone2Lib)
   implementation(libs.keyplePluginCnaFamocoSeCommunicationLib)
 
   // Android components

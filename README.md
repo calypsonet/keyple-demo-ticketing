@@ -113,7 +113,6 @@ Use any client application's personalization feature to initialize cards with:
 ### Tested Terminals
 
 - **Famoco FX205** - Enterprise NFC terminal
-- **Coppernic C-One 2** - Rugged Android terminal
 - **Standard NFC Smartphones** - Consumer devices
 - **PC/SC Readers** - Desktop integration
 
