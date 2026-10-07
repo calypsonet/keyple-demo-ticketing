@@ -222,8 +222,8 @@ GET  /card/sam-status
 ### Activity Monitoring
 
 ```http
-GET  /activity/events
-GET  /activity/events/wait
+GET  /activity/events    # all the transactions (JSON)
+GET  /activity/stream    # new transactions (Server-Sent Events, one JSON transaction per event)
 ```
 
 ## Troubleshooting

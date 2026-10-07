@@ -134,6 +134,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   (`npm start`, port 3000) forwards the API calls to the server through the proxy defined in `vite.config.js`. The
   icons are imported from the `@mui/icons-material` ES module entry point. Removed: the unused `env-cmd` dependency and
   `.env` files, the `ajv` workaround, the obsolete `build-dev` script and the Create React App ESLint configuration.
+- Activity monitoring: the long polling endpoint `/activity/events/wait` is replaced by the Server-Sent Events stream
+  `/activity/stream`, which broadcasts each new transaction to all the subscribers.
 - Dashboard: the entry page (`index.html`) is no longer cached by the browsers (`Cache-Control: no-cache`), so that a
   server update is taken into account immediately; the built assets, whose names change at each build, remain cached.
 - The status codes of the remote services are produced with the `RemoteServiceStatus` enum.
@@ -147,6 +149,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 #### Fixed
 - Startup failure with the mocked storage card library: when the storage card extension is not available, a warning is
   logged and the storage cards are not supported.
+- Dashboard: the transactions already processed are displayed when the dashboard is opened or reloaded (they were
+  lost), no transaction is missed anymore when several transactions occur close together (the server kept only the
+  last one), and each open dashboard receives all the transactions (they were shared between the dashboards). The
+  history is reloaded after a connection loss.
 ### Reloading remote KMP client
 #### Fixed
 - The status code returned by the server when reading the card is now checked: a rejected card, a card not

@@ -12,13 +12,14 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.server.activity;
 
+import io.smallrye.mutiny.Multi;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import java.util.List;
+import org.jboss.resteasy.reactive.RestStreamElementType;
 
 @Path("/activity")
 public class ActivityController {
@@ -26,9 +27,9 @@ public class ActivityController {
   @Inject ActivityService activityService;
 
   /**
-   * List all events
+   * Returns all the transactions, in their order of arrival.
    *
-   * @return not nullable set of events
+   * @return A not null list.
    */
   @GET
   @Path("/events")
@@ -38,20 +39,16 @@ public class ActivityController {
   }
 
   /**
-   * Long Polling API to get a new event. HTTP code: 200: a new event is available. HTTP code 204:
-   * timeout, please renew request
+   * Server-Sent Events stream of the new transactions, each event being a JSON {@link Activity}.
+   * Every subscriber (e.g. each open dashboard) receives all the new transactions.
    *
-   * @return a {@link Activity} when a new log is push
+   * @return The stream of the new transactions.
    */
   @GET
-  @Path("/events/wait")
-  @Produces(MediaType.APPLICATION_JSON)
-  public Response waitForEvent() {
-    Activity t = activityService.waitForNew();
-    if (t == null) {
-      return Response.noContent().build();
-    } else {
-      return Response.ok(t).build();
-    }
+  @Path("/stream")
+  @Produces(MediaType.SERVER_SENT_EVENTS)
+  @RestStreamElementType(MediaType.APPLICATION_JSON)
+  public Multi<Activity> stream() {
+    return activityService.stream();
   }
 }

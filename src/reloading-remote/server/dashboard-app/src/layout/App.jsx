@@ -20,60 +20,49 @@ function Paperbase(props) {
   const [isServerReady, setIsServerReady] = useState(true);
   const [rows, setRows] = useState([]);
   const [lastRowId, setLastRowId] = useState();
-  const [shouldPoll, setShouldPoll] = useState(1);
 
   /*
-   * Use Effect Hook to long poll a new transaction
-    * useEffect will executed only once when component is mounted
+   * Receives the transactions (executed once, when the component is mounted): the new transactions
+   * are streamed by the server (Server-Sent Events), and the history is loaded at each
+   * (re)connection, so that no transaction is missed while the connection was lost.
    */
-
   useEffect(() => {
+    // Transactions received from the stream since the last (re)connection
+    const streamed = [];
 
-    //activate transaction polling
-    function activateTransactionPoll(handleNewTransaction) {
-      fetch("/activity/events/wait")
+    const eventSource = new EventSource("/activity/stream");
+
+    eventSource.onopen = () => {
+      streamed.length = 0;
+      fetch("/activity/events")
         .then(response => {
-          if (response.status === 204) {
-            console.log("Received a No-Content response from server: " + response.status);
-            //return null;
-          } else if (response.status === 200) {
-            // Received a new transaction
-            return response.json()
-          } else {
-            //unexpected error connect again
-            throw new Error("Exception, response status : "+ response.status)
+          if (!response.ok) {
+            throw new Error("Response status: " + response.status);
           }
+          return response.json();
         })
-        .then((json)=>{
-          if(json){
-            handleNewTransaction(json);
-          }
-          console.log("Polling iteration: " + shouldPoll);
-          setShouldPoll(shouldPoll+1);//update shouldPoll value to rerun the useEffect
+        .then(history => {
+          // The history (oldest first) is authoritative, completed by the transactions streamed
+          // after it was read. The table displays the most recent transactions first.
+          const historyIds = new Set(history.map(transaction => transaction.id));
+          const newer = streamed.filter(transaction => !historyIds.has(transaction.id));
+          setRows([...newer].reverse().concat([...history].reverse()));
         })
-        .catch(e =>{
-          console.log("Error while connection to server : "+ e)
-          setTimeout(()=>{
-            console.log("Timeout polling iteration : " + shouldPoll);
-            setShouldPoll(shouldPoll+1)//update shouldPoll value to rerun the useEffect
-          },5000);
-        })
-    }
+        .catch(e => console.log("Error while loading the transactions: " + e));
+    };
 
-    function handleNewTransaction(transaction){
-        setLastRowId(transaction.id);
-        console.log("Adding a new row to transaction table: " + JSON.stringify(transaction));
-        setRows(rows =>[
-          transaction,
-          ...rows
-        ]);
-    }
+    eventSource.onmessage = event => {
+      const transaction = JSON.parse(event.data);
+      streamed.push(transaction);
+      setLastRowId(transaction.id);
+      setRows(rows => [transaction, ...rows]);
+    };
 
-    //activate
-    activateTransactionPoll(handleNewTransaction);
-    },
-    //use effect when should poll value is updated
-    [shouldPoll]);
+    // The browser reconnects automatically
+    eventSource.onerror = () => console.log("Transactions stream interrupted, reconnecting...");
+
+    return () => eventSource.close();
+  }, []);
 
   /*
    * Use Custom Interval Hook to poll SAM and Server state

@@ -112,7 +112,7 @@ export default function CollapsibleTable(props) {
         </TableHead>
         <TableBody>
           {rows.length>0 ?
-            rows.map((row) => (<Row key={row.name} row={row} lastRowId={lastRowId} />))
+            rows.map((row) => (<Row key={row.id} row={row} lastRowId={lastRowId} />))
             : <TableRow key="empty-row"><TableCell colSpan={6}>No transaction has been processed yet</TableCell></TableRow>}
 
         </TableBody>
