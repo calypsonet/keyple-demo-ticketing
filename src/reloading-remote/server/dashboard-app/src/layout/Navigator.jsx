@@ -8,11 +8,13 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import PeopleIcon from '@mui/icons-material/People';
-import DnsRoundedIcon from '@mui/icons-material/DnsRounded';
-import SettingsInputComponentIcon from '@mui/icons-material/SettingsInputComponent';
-import TimerIcon from '@mui/icons-material/Timer';
-import SettingsIcon from '@mui/icons-material/Settings';
+import {
+  People as PeopleIcon,
+  DnsRounded as DnsRoundedIcon,
+  SettingsInputComponent as SettingsInputComponentIcon,
+  Timer as TimerIcon,
+  Settings as SettingsIcon,
+} from '@mui/icons-material';
 import logo from '../img/logo.png';
 
 

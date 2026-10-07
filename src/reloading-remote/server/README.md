@@ -43,7 +43,7 @@ This Java server implements the business logic for the Keyple Demo ecosystem, ma
 
 ### Software Requirements
 - **JDK 17+** (OpenJDK recommended)
-- **Node.js 18+** (for dashboard development)
+- **Node.js 20.19+ or 22.12+** (for dashboard development, as required by Vite)
 - **Compatible PC/SC reader drivers**
 
 ### Tested Readers
@@ -150,6 +150,13 @@ cd ..
 ./gradlew quarkusDev
 ```
 > The React dashboard is **not rebuilt** in this mode. Use this for Java development only.
+
+**Dashboard development** (Vite development server with hot reload, the server must be running on port 8080):
+```bash
+cd dashboard-app
+npm start
+```
+> Opens the dashboard at `http://localhost:3000`. The API calls (`/activity`, `/card`) are forwarded to the server.
 
 **Run the packaged JAR** (requires step 3):
 ```bash

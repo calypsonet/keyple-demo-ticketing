@@ -1,31 +1,41 @@
 # Keyple Distributed Demo - server dashboard
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+React application monitoring the Keyple Reload Demo server, built with [Vite](https://vite.dev/).
+
+## Prerequisites
+
+Node.js 20.19+ or 22.12+ (required by Vite), then install the dependencies:
+
+```bash
+npm install
+```
 
 ## Available Scripts
 
 In the project directory, you can run:
 
-### `yarn start`
+### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser. 
+Runs the app in development mode at [http://localhost:3000](http://localhost:3000), with hot reload.
 
-Be aware that the application relies on the Keyple Distributed Server Demo API. A local proxy is created to point to the backend API http://localhost:8080. 
+Be aware that the application relies on the Keyple Reload Demo server API: the API calls (`/activity`, `/card`) are
+forwarded to the server at http://localhost:8080 (see `vite.config.js`), which must be running.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### `npm run build`
 
-### Package the application
+Builds the app for production into the `build` folder.
 
-To package the application, please use the upper level gradle task
+### `npm run preview`
 
-```../gradlew buildServerExecutable```
+Serves the production build locally, to check it before packaging.
 
-See the [server documentation](../README.md)
+## Package the application
 
-## Learn More
+The dashboard is built and embedded into the server by the server Gradle build:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```bash
+cd ..
+./gradlew build
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+See the [server documentation](../README.md).

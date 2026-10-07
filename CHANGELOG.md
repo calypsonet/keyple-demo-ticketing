@@ -126,7 +126,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   received as JSON data.
 - Replaced the deprecated `RemoteReaderServer.getInitialCardContent()` by `getInitialCardContent(Class)`
   (`keyple-distributed-remote-java-lib` `2.6.0`).
-- Dashboard: removed the Jest-specific ESLint configuration.
+- Dashboard: built with Vite instead of Create React App (`react-scripts`, deprecated). The development server
+  (`npm start`, port 3000) forwards the API calls to the server through the proxy defined in `vite.config.js`. The
+  icons are imported from the `@mui/icons-material` ES module entry point. Removed: the unused `env-cmd` dependency and
+  `.env` files, the `ajv` workaround, the obsolete `build-dev` script and the Create React App ESLint configuration.
+- Dashboard: the entry page (`index.html`) is no longer cached by the browsers (`Cache-Control: no-cache`), so that a
+  server update is taken into account immediately; the built assets, whose names change at each build, remain cached.
 - The status codes of the remote services are produced with the `RemoteServiceStatus` enum.
 - Server JSON API: same status codes for all the services. `SELECT_APP_AND_READ_CONTRACTS` and
   `SELECT_APP_AND_INCREASE_CONTRACT_COUNTER` now return `4` (instead of `3`) for a card not personalized, `5` (instead
