@@ -12,7 +12,6 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.data
 
-import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import java.util.Locale
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
@@ -29,16 +28,13 @@ class AppSettingsRepositoryImpl(private val prefs: SharedPreferences) : AppSetti
             protocol = prefs.getString(SERVER_PROTOCOL_KEY, DEFAULT_PROTOCOL) ?: DEFAULT_PROTOCOL,
             ip = prefs.getString(SERVER_IP_KEY, DEFAULT_SERVER_IP) ?: DEFAULT_SERVER_IP,
             port = prefs.getInt(SERVER_PORT_KEY, DEFAULT_PORT))
-    @SuppressLint("ApplySharedPref")
     set(value) {
-      // We need to use commit instead of apply because the app is restarted just after the change
-      // of the server settings
       prefs
           .edit()
           .putString(SERVER_PROTOCOL_KEY, value.protocol)
           .putString(SERVER_IP_KEY, value.ip)
           .putInt(SERVER_PORT_KEY, value.port)
-          .commit()
+          .apply()
     }
 
   override var deviceType: DeviceEnum

@@ -75,7 +75,7 @@
     <string name="server_port">Server Port</string>
     <string name="protocol">Protocol</string>
     <string name="ping_action">Server state</string>
-    <string name="restart">Restart</string>
+    <string name="save">Save</string>
 
     <string name="enable">Enable</string>
     <string name="disable">Disable</string>

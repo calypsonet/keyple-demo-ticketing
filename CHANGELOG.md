@@ -127,10 +127,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   coroutine requesting the status instead of an EventBus event.
 - The HTTP exchanges with the server are logged in the debug builds through the `Logger` port. The logging interceptor
   had no level set, so it logged nothing.
+- The server settings are saved without restarting the application: the "Restart" button, which killed the
+  application, is replaced by a "Save" button. The remote services use the server configured at the time of each
+  request.
+- The server IP address entered in the settings is checked as an IPv4 address (four numbers from 0 to 255) instead of
+  using the deprecated `Patterns.IP_ADDRESS`.
 #### Upgraded
 - `okhttp-logging-interceptor`: `3.9.1` -> `3.14.9`, the version of the OkHttp library used by Retrofit.
 #### Removed
 - RxJava (`rxjava`, `rxandroid`, Retrofit `adapter-rxjava2`), EventBus and Retrofit `converter-scalars` dependencies.
+- Unused SAM reader settings of the reader manager (the SAM is managed by the server), which used the deprecated
+  `ContactCardCommonProtocol`.
 #### Fixed
 - Typo in the "Invalid storage card" message.
 - Interpretation of the status codes returned by the server, which was shifted by one: each error now displays the

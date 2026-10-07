@@ -27,7 +27,6 @@ import org.calypsonet.keyple.plugin.bluebird.BluebirdContactlessProtocols
 import org.calypsonet.keyple.plugin.bluebird.BluebirdPluginFactoryProvider
 import org.calypsonet.keyple.plugin.storagecard.ApduInterpreterFactoryProvider
 import org.eclipse.keyple.core.service.SmartCardServiceProvider
-import org.eclipse.keyple.core.util.protocol.ContactCardCommonProtocol
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcConfig
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcConstants
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcPluginFactoryProvider
@@ -57,13 +56,6 @@ class ReaderManagerImpl @Inject constructor(private val logger: Logger) : Reader
   private var cardReaderProtocols = mutableMapOf<String, String>()
   private var cardReader: CardReader? = null
   private var isStorageCardSupported = false
-  // SAM
-  private lateinit var samPluginName: String
-  private lateinit var samReaderNameRegex: String
-  private lateinit var samReaderName: String
-  private var samReaderProtocolPhysicalName: String? = null
-  private var samReaderProtocolLogicalName: String? = null
-  private var samReaders: MutableList<CardReader> = mutableListOf()
 
   private fun initReaderType(readerType: ReaderType) {
     when (readerType) {
@@ -86,10 +78,6 @@ class ReaderManagerImpl @Inject constructor(private val logger: Logger) : Reader
         CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name
     cardReaderProtocols[BluebirdContactlessProtocols.MIFARE_CLASSIC.name] =
         CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name
-    samPluginName = BluebirdConstants.PLUGIN_NAME
-    samReaderNameRegex = ".*ContactReader"
-    samReaderProtocolPhysicalName = ContactCardCommonProtocol.ISO_7816_3.name
-    samReaderProtocolLogicalName = CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name
     isStorageCardSupported = true
   }
 
@@ -103,11 +91,6 @@ class ReaderManagerImpl @Inject constructor(private val logger: Logger) : Reader
         CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name
     cardReaderProtocols[AndroidNfcSupportedProtocols.MIFARE_CLASSIC_1K.name] =
         CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name
-    samPluginName = ""
-    samReaderNameRegex = ""
-    samReaderName = ""
-    samReaderProtocolPhysicalName = ""
-    samReaderProtocolLogicalName = ""
   }
 
   /** Register any keyple plugin */
@@ -176,11 +159,6 @@ class ReaderManagerImpl @Inject constructor(private val logger: Logger) : Reader
   private fun clear() {
     cardReaderProtocols.forEach { entry ->
       (cardReader as ConfigurableCardReader).deactivateProtocol(entry.key)
-    }
-    samReaders.forEach {
-      if (it is ConfigurableCardReader) {
-        it.deactivateProtocol(samReaderProtocolPhysicalName)
-      }
     }
 
     if (device != DeviceEnum.CONTACTLESS_CARD) {

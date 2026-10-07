@@ -132,7 +132,7 @@
         style="@style/buy_text_info_medium"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/protocol_line"
-        app:layout_constraintBottom_toTopOf="@id/restart"
+        app:layout_constraintBottom_toTopOf="@id/save"
          />
 
     <TextView
@@ -145,7 +145,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toRightOf="@id/ping_btn"
         app:layout_constraintTop_toBottomOf="@id/protocol_line"
-        app:layout_constraintBottom_toTopOf="@id/restart"/>
+        app:layout_constraintBottom_toTopOf="@id/save"/>
 
     <ProgressBar
         android:id="@+id/ping_progress_bar"
@@ -155,11 +155,11 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toRightOf="@id/ping_btn"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/restart"/>
+        app:layout_constraintBottom_toTopOf="@id/save"/>
 
     <Button
-        android:id="@+id/restart"
-        android:text="@string/restart"
+        android:id="@+id/save"
+        android:text="@string/save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/btn_blue"

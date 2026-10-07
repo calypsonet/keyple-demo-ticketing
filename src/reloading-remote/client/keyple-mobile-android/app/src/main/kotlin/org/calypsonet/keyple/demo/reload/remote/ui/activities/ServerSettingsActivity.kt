@@ -12,13 +12,10 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.ui.activities
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Patterns
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.system.exitProcess
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -43,10 +40,11 @@ class ServerSettingsActivity : AbstractDemoActivity() {
     activityServerSettingsBinding.serverPortEdit.text.append(serverConfig.port.toString())
     activityServerSettingsBinding.serverProtocolEdit.text.append(serverConfig.protocol)
 
-    activityServerSettingsBinding.restart.setOnClickListener {
+    // The new server is used from the next request: no restart of the application is needed
+    activityServerSettingsBinding.save.setOnClickListener {
       readServerConfig()?.let {
         appSettings.serverConfig = it
-        restartApp()
+        finish()
       }
     }
 
@@ -77,15 +75,10 @@ class ServerSettingsActivity : AbstractDemoActivity() {
     }
   }
 
-  private fun restartApp() {
-    startActivity(Intent(applicationContext, MainActivity::class.java))
-    exitProcess(0)
-  }
-
   /** Returns the server configuration entered by the user, or null if an entry is not valid. */
   private fun readServerConfig(): ServerConfig? {
     val ip = activityServerSettingsBinding.serverIpEdit.text.toString()
-    if (ip.isBlank() || !Patterns.IP_ADDRESS.matcher(ip).matches()) {
+    if (!isIpv4Address(ip)) {
       activityServerSettingsBinding.serverIpEdit.error = getString(R.string.invalid_server_ip)
       return null
     }
@@ -101,5 +94,14 @@ class ServerSettingsActivity : AbstractDemoActivity() {
       return null
     }
     return ServerConfig(protocol, ip, port)
+  }
+
+  /** Returns true if [ip] is an IPv4 address: four numbers from 0 to 255 separated by dots. */
+  private fun isIpv4Address(ip: String): Boolean {
+    val parts = ip.split('.')
+    return parts.size == 4 &&
+        parts.all { part ->
+          part.length in 1..3 && part.all { it in '0'..'9' } && part.toInt() <= 255
+        }
   }
 }
