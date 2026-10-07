@@ -93,15 +93,19 @@ val syncPackageVersion by
         println("Updated package.json version to ${project.version}")
       }
     }
+val npm = if (Os.isFamily(Os.FAMILY_WINDOWS)) "npm.cmd" else "npm"
 val buildDashboard by
     tasks.creating(Exec::class) {
       dependsOn.add("syncPackageVersion")
       workingDir = File("dashboard-app")
-      var npm = "npm"
-      if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-        npm = "npm.cmd"
-      }
       commandLine(npm, "run", "build")
+    }
+val lintDashboard by
+    tasks.registering(Exec::class) {
+      group = "verification"
+      description = "Checks the dashboard source code with ESLint"
+      workingDir = File("dashboard-app")
+      commandLine(npm, "run", "lint")
     }
 val startServer by
     tasks.creating(Exec::class) {
@@ -112,6 +116,7 @@ val startServer by
 
 tasks {
   clean { delete("dashboard-app/build") }
+  check { dependsOn(lintDashboard) }
   // The dashboard is served by Quarkus as static resources (META-INF/resources)
   processResources {
     dependsOn(buildDashboard)

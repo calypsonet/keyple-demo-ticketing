@@ -25,6 +25,11 @@ forwarded to the server at http://localhost:8080 (see `vite.config.js`), which m
 
 Builds the app for production into the `build` folder.
 
+### `npm run lint`
+
+Checks the source code with [ESLint](https://eslint.org/) (configuration in `eslint.config.js`). This check is also run
+by the server build (`check` task), and therefore by the CI.
+
 ### `npm run preview`
 
 Serves the production build locally, to check it before packaging.

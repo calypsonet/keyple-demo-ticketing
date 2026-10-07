@@ -104,7 +104,6 @@ export default function App() {
     }
 
     fetchIsSamReady()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, 3000);
 
   const handleDrawerToggle = () => {
