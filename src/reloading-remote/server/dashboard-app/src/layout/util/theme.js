@@ -111,6 +111,8 @@ export const theme = createTheme(muitheme, {
       styleOverrides: {
         root: {
           color: 'inherit',
+          // Material UI v9 default is 36px
+          minWidth: 56,
           marginRight: 0,
           '& svg': {
             fontSize: 20,
@@ -131,16 +133,15 @@ export const theme = createTheme(muitheme, {
 
 export const drawerWidth = 200;
 
-export const styles = {
+// Layout styles (sx prop)
+export const layoutSx = {
   root: {
     display: 'flex',
     minHeight: '100vh',
   },
   drawer: {
-    [muitheme.breakpoints.up('sm')]: {
-      width: drawerWidth,
-      flexShrink: 0,
-    },
+    width: { sm: drawerWidth },
+    flexShrink: { sm: 0 },
   },
   app: {
     flex: 1,
@@ -149,14 +150,15 @@ export const styles = {
   },
   main: {
     flex: 1,
-    padding: muitheme.spacing(3, 4),
+    py: 3,
+    px: 4,
     background: '#fff',
     backgroundImage: `url(${background})`,
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
   },
   footer: {
-    padding: muitheme.spacing(2),
+    p: 2,
     background: '#fff',
   },
 };

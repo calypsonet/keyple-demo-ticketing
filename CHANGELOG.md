@@ -116,6 +116,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - configuration properties renamed: `quarkus.http.cors.enabled` (all the origins still allowed with
     `quarkus.http.cors.origins`) and `quarkus.package.jar.type`.
 - Gradle wrapper: `8.4` -> `8.11.1` (same version as the other projects).
+- Dashboard: React `18.2` -> `19.3`, Material UI (`@mui/material`, `@mui/icons-material`) `5.17` -> `9.4`.
 #### Changed
 - REST layer: RESTEasy classic (`quarkus-resteasy`, `quarkus-resteasy-jsonb`) replaced by Quarkus REST (`quarkus-rest`,
   `quarkus-rest-jsonb`), the default REST stack of Quarkus. The endpoints and their JSON content are unchanged (still
@@ -134,6 +135,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   (`npm start`, port 3000) forwards the API calls to the server through the proxy defined in `vite.config.js`. The
   icons are imported from the `@mui/icons-material` ES module entry point. Removed: the unused `env-cmd` dependency and
   `.env` files, the `ajv` workaround, the obsolete `build-dev` script and the Create React App ESLint configuration.
+- Dashboard: the legacy `@mui/styles` (JSS) styles are replaced by the `sx` prop of Material UI, with the same
+  rendering, and the `propTypes` declarations (ignored by React 19) are removed.
 - Activity monitoring: the long polling endpoint `/activity/events/wait` is replaced by the Server-Sent Events stream
   `/activity/stream`, which broadcasts each new transaction to all the subscribers.
 - Dashboard: the entry page (`index.html`) is no longer cached by the browsers (`Cache-Control: no-cache`), so that a
@@ -153,6 +156,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   lost), no transaction is missed anymore when several transactions occur close together (the server kept only the
   last one), and each open dashboard receives all the transactions (they were shared between the dashboards). The
   history is reloaded after a connection loss.
+- Dashboard: the transactions table could be corrupted (rows displayed several times) when two transactions had the
+  same identifier, generated with only 4 hexadecimal characters (collisions after a few hundred transactions). The
+  transactions now have a unique identifier (UUID), whose first 4 characters are displayed as before.
 ### Reloading remote KMP client
 #### Fixed
 - The status code returned by the server when reading the card is now checked: a rejected card, a card not

@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -28,10 +27,5 @@ function AlertDialog(props) {
   );
 }
 
-AlertDialog.propTypes = {
-  title: PropTypes.string,
-  text: PropTypes.string,
-  show: PropTypes.bool
-};
 
 export default AlertDialog;

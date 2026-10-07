@@ -1,6 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { makeStyles } from '@mui/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -9,24 +7,15 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
-const useRowStyles = makeStyles({
-  root: {
-    '& > *': {
-      borderBottom: 'unset',
-    },
-  },
-});
-
 function Row(props) {
   const { row,lastRowId } = props;
   // const [open, setOpen] = React.useState(false); // Unused - for future collapsible functionality
-  const classes = useRowStyles();
 
 
   return (
     <React.Fragment>
-      <TableRow className={row.id === lastRowId ? (row.status === "SUCCESS" ? `newRowSuccess`:`newRowError`)  : classes.root} key={row.id}>
-        <TableCell align="center">{row.id}</TableCell>
+      <TableRow className={row.id === lastRowId ? (row.status === "SUCCESS" ? `newRowSuccess`:`newRowError`)  : undefined} key={row.id}>
+        <TableCell align="center">{row.id.substring(0, 4)}</TableCell>
         <TableCell align="center">{row.startedAt}</TableCell>
         <TableCell align="center">{row.plugin}</TableCell>
         <TableCell align="center">{row.type}</TableCell>
@@ -75,23 +64,6 @@ function Row(props) {
   );
 }
 
-Row.propTypes = {
-  row: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    startedAt: PropTypes.string.isRequired,
-    /*history: PropTypes.arrayOf(
-      PropTypes.shape({
-        amount: PropTypes.number.isRequired,
-        customerId: PropTypes.string.isRequired,
-        date: PropTypes.string.isRequired,
-      }),
-    ),*/
-    plugin: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired,
-    cardSerialNumber: PropTypes.string.isRequired,
-    status: PropTypes.string.isRequired,
-  }).isRequired,
-};
 
 export default function CollapsibleTable(props) {
   const {rows, lastRowId} = props;

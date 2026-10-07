@@ -1,7 +1,5 @@
 import React, { useState, useEffect }  from 'react';
-import PropTypes from 'prop-types';
 import { ThemeProvider } from '@mui/material/styles';
-import { ThemeProvider as StylesThemeProvider, withStyles } from '@mui/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Navigator from './Navigator';
@@ -10,11 +8,10 @@ import './App.css';
 import useInterval from './util/useInterval'
 import CollapsibleTable from './CollapsibleTable';
 import Copyright from './Copyright'
-import {styles,drawerWidth,theme} from './util/theme'
+import {layoutSx,drawerWidth,theme} from './util/theme'
 
 
-function Paperbase(props) {
-  const { classes } = props;
+export default function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isSamReady, setIsSamReady] = useState(true);
   const [isServerReady, setIsServerReady] = useState(true);
@@ -114,43 +111,37 @@ function Paperbase(props) {
     setMobileOpen(!mobileOpen);
   };
 
+  const drawerSlotProps = { paper: { style: { width: drawerWidth } } };
+
   return (
     <ThemeProvider theme={theme}>
-      <StylesThemeProvider theme={theme}>
-        <div className={classes.root}>
-          <CssBaseline />
-          <nav className={classes.drawer}>
-            {/* Mobile: temporary drawer (xs only) */}
-            <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
-              <Navigator
-                PaperProps={{ style: { width: drawerWidth } }}
-                variant="temporary"
-                open={mobileOpen}
-                onClose={handleDrawerToggle}
-              />
-            </Box>
-            {/* Desktop: permanent drawer (sm and above) */}
-            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-              <Navigator PaperProps={{ style: { width: drawerWidth } }} />
-            </Box>
-          </nav>
-          <div className={classes.app}>
-            <Header onDrawerToggle={handleDrawerToggle} isSamReady={isSamReady} isServerReady={isServerReady}/>
-            <main className={classes.main}>
-              <CollapsibleTable rows={rows} lastRowId={lastRowId} />
-            </main>
-            <footer className={classes.footer}>
-              <Copyright />
-            </footer>
-          </div>
-        </div>
-      </StylesThemeProvider>
+      <Box sx={layoutSx.root}>
+        <CssBaseline />
+        <Box component="nav" sx={layoutSx.drawer}>
+          {/* Mobile: temporary drawer (xs only) */}
+          <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
+            <Navigator
+              slotProps={drawerSlotProps}
+              variant="temporary"
+              open={mobileOpen}
+              onClose={handleDrawerToggle}
+            />
+          </Box>
+          {/* Desktop: permanent drawer (sm and above) */}
+          <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+            <Navigator slotProps={drawerSlotProps} />
+          </Box>
+        </Box>
+        <Box sx={layoutSx.app}>
+          <Header onDrawerToggle={handleDrawerToggle} isSamReady={isSamReady} isServerReady={isServerReady}/>
+          <Box component="main" sx={layoutSx.main}>
+            <CollapsibleTable rows={rows} lastRowId={lastRowId} />
+          </Box>
+          <Box component="footer" sx={layoutSx.footer}>
+            <Copyright />
+          </Box>
+        </Box>
+      </Box>
     </ThemeProvider>
   );
 }
-
-Paperbase.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
-
-export default withStyles(styles)(Paperbase);

@@ -21,7 +21,7 @@ import java.util.UUID;
 /** Transaction log object for the dashboard view */
 public class Activity {
 
-  String id; // id of the transaction
+  String id; // unique id of the transaction
   String cardSerialNumber; // Calypso Card Serial Number
   String plugin; // plugin name
   String startedAt; // when the transaction started
@@ -30,7 +30,7 @@ public class Activity {
   String contractLoaded; // (opt) description of the contract loaded
 
   public Activity() {
-    this.id = UUID.randomUUID().toString().substring(0, 4);
+    this.id = UUID.randomUUID().toString();
     this.startedAt =
         DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
             .withZone(ZoneId.systemDefault())
