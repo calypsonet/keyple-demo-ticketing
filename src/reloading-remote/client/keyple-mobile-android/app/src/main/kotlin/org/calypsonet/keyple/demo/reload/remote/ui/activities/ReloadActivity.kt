@@ -16,6 +16,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.lifecycleScope
+import dagger.hilt.android.AndroidEntryPoint
 import java.lang.Exception
 import java.lang.IllegalStateException
 import kotlinx.coroutines.Dispatchers
@@ -25,14 +26,13 @@ import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardReaderBinding
-import org.calypsonet.keyple.demo.reload.remote.di.scopes.ActivityScoped
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.eclipse.keypop.reader.CardReaderEvent
 import timber.log.Timber
 
-@ActivityScoped
+@AndroidEntryPoint
 class ReloadActivity : AbstractCardActivity() {
   private lateinit var activityCardReaderBinding: ActivityCardReaderBinding
 

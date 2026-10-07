@@ -14,13 +14,16 @@ package org.calypsonet.keyple.demo.control.di
 
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 import org.calypsonet.keyple.demo.control.data.LoggerImpl
-import org.calypsonet.keyple.demo.control.di.scope.AppScoped
 import org.calypsonet.keyple.demo.control.domain.spi.Logger
 
 @Suppress("unused")
 @Module
+@InstallIn(SingletonComponent::class)
 class LoggerModule {
 
-  @Provides @AppScoped fun provideLogger(): Logger = LoggerImpl()
+  @Provides @Singleton fun provideLogger(): Logger = LoggerImpl()
 }

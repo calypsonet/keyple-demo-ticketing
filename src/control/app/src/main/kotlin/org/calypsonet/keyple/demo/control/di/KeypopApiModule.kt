@@ -14,13 +14,16 @@ package org.calypsonet.keyple.demo.control.di
 
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 import org.calypsonet.keyple.demo.control.data.KeypopApiProviderImpl
-import org.calypsonet.keyple.demo.control.di.scope.AppScoped
 import org.calypsonet.keyple.demo.control.domain.spi.KeypopApiProvider
 
 @Suppress("unused")
 @Module
+@InstallIn(SingletonComponent::class)
 class KeypopApiModule {
 
-  @Provides @AppScoped fun provideKeypopApiProvider(): KeypopApiProvider = KeypopApiProviderImpl()
+  @Provides @Singleton fun provideKeypopApiProvider(): KeypopApiProvider = KeypopApiProviderImpl()
 }

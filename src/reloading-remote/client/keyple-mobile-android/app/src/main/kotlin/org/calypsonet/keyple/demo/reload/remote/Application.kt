@@ -12,20 +12,15 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote
 
-import dagger.android.DaggerApplication
-import org.calypsonet.keyple.demo.reload.remote.di.AppComponent
-import org.calypsonet.keyple.demo.reload.remote.di.DaggerAppComponent
+import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 import timber.log.Timber.DebugTree
 
-class Application : DaggerApplication() {
+@HiltAndroidApp
+class Application : android.app.Application() {
 
   override fun onCreate() {
     super.onCreate()
     Timber.plant(DebugTree())
-  }
-
-  override fun applicationInjector(): AppComponent? {
-    return DaggerAppComponent.builder().application(this).build()
   }
 }

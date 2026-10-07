@@ -14,9 +14,11 @@ package org.calypsonet.keyple.demo.reload.remote.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
+import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityPaymentValidatedBinding
 
+@AndroidEntryPoint
 class PaymentValidatedActivity : AbstractDemoActivity() {
 
   private lateinit var activityPaymentValidatedBinding: ActivityPaymentValidatedBinding

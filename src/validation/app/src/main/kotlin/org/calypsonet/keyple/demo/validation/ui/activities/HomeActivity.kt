@@ -14,9 +14,11 @@ package org.calypsonet.keyple.demo.validation.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
+import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.validation.databinding.ActivityHomeBinding
 import org.calypsonet.keyple.demo.validation.databinding.LogoToolbarBinding
 
+@AndroidEntryPoint
 class HomeActivity : BaseActivity() {
 
   private lateinit var activityHomeBinding: ActivityHomeBinding

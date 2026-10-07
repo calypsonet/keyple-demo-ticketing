@@ -18,6 +18,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
+import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.validation.BuildConfig
 import org.calypsonet.keyple.demo.validation.R
 import org.calypsonet.keyple.demo.validation.databinding.ActivityDeviceSelectionBinding
@@ -27,6 +28,7 @@ import org.calypsonet.keyple.demo.validation.ui.activities.SettingsActivity
 import org.calypsonet.keyple.plugin.arrive.ArriveConstants
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
 
+@AndroidEntryPoint
 class DeviceSelectionActivity : BaseActivity() {
 
   private val mock: String = "Mock"

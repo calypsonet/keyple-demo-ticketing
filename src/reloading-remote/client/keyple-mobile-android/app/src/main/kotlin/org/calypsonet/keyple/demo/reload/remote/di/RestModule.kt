@@ -14,12 +14,14 @@ package org.calypsonet.keyple.demo.reload.remote.di
 
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.calypsonet.keyple.demo.reload.remote.BuildConfig
 import org.calypsonet.keyple.demo.reload.remote.data.network.KeypleSyncEndPointClient
 import org.calypsonet.keyple.demo.reload.remote.data.network.RestClient
-import org.calypsonet.keyple.demo.reload.remote.di.scopes.AppScoped
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.AppSettingsRepository
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
 import retrofit2.Retrofit
@@ -27,10 +29,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 @Suppress("unused")
 @Module
+@InstallIn(SingletonComponent::class)
 class RestModule {
 
   @Provides
-  @AppScoped
+  @Singleton
   fun provideKeypleSyncEndpointClient(
       appSettings: AppSettingsRepository,
       logger: Logger

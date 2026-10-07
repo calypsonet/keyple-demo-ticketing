@@ -14,6 +14,7 @@ package org.calypsonet.keyple.demo.control.ui.activities
 
 import android.os.Bundle
 import androidx.core.content.IntentCompat
+import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.databinding.ActivityNetworkInvalidBinding
 import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
@@ -21,6 +22,7 @@ import org.calypsonet.keyple.demo.control.ui.activities.ReaderActivity.Companion
 import org.calypsonet.keyple.demo.control.ui.model.UiControlResult
 import timber.log.Timber
 
+@AndroidEntryPoint
 class NetworkInvalidActivity : BaseActivity() {
   private lateinit var activityNetworkInvalidBinding: ActivityNetworkInvalidBinding
   private lateinit var logoToolbarBinding: LogoToolbarBinding

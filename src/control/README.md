@@ -322,8 +322,7 @@ control/app/
 │   │   ├── data/                            # Data layer
 │   │   │   └── model/                       # Data models
 │   │   │       └── mappers/                 # Data mappers
-│   │   ├── di/                              # Dependency injection
-│   │   │   └── scope/                       # DI scopes
+│   │   ├── di/                              # Dependency injection (Hilt modules)
 │   │   ├── domain/                          # Business logic
 │   │   └── ui/                              # UI layer
 │   │       ├── cardcontent/                 # Card display components

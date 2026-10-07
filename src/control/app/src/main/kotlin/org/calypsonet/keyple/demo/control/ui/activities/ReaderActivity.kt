@@ -18,6 +18,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,7 +26,6 @@ import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
-import org.calypsonet.keyple.demo.control.di.scope.ActivityScoped
 import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
 import org.calypsonet.keyple.demo.control.domain.model.Status
 import org.calypsonet.keyple.demo.control.ui.activities.cardcontent.CardContentActivity
@@ -36,7 +36,7 @@ import org.eclipse.keypop.reader.CardReaderEvent
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 import timber.log.Timber
 
-@ActivityScoped
+@AndroidEntryPoint
 class ReaderActivity : BaseActivity() {
 
   private lateinit var activityCardReaderBinding: ActivityCardReaderBinding

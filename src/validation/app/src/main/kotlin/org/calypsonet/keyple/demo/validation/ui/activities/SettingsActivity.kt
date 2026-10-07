@@ -16,12 +16,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.ArrayAdapter
+import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.common.model.Location
 import org.calypsonet.keyple.demo.validation.BuildConfig
 import org.calypsonet.keyple.demo.validation.R
 import org.calypsonet.keyple.demo.validation.databinding.ActivitySettingsBinding
 import org.calypsonet.keyple.demo.validation.databinding.LogoToolbarBinding
 
+@AndroidEntryPoint
 class SettingsActivity : BaseActivity() {
 
   private lateinit var activitySettingsBinding: ActivitySettingsBinding

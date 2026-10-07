@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.airbnb.lottie.LottieCompositionFactory
 import com.airbnb.lottie.LottieDrawable
+import dagger.hilt.android.AndroidEntryPoint
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.util.Timer
@@ -31,7 +32,6 @@ import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.validation.R
 import org.calypsonet.keyple.demo.validation.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.validation.databinding.LayoutCardSummaryOverlayBinding
-import org.calypsonet.keyple.demo.validation.di.scope.ActivityScoped
 import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.calypsonet.keyple.demo.validation.domain.model.Status
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
@@ -40,7 +40,7 @@ import org.eclipse.keypop.reader.CardReaderEvent
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 import timber.log.Timber
 
-@ActivityScoped
+@AndroidEntryPoint
 class ReaderActivity : BaseActivity() {
 
   private lateinit var activityCardReaderBinding: ActivityCardReaderBinding

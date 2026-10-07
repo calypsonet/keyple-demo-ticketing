@@ -12,8 +12,8 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.ui.activities
 
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,7 +24,7 @@ import org.calypsonet.keyple.demo.reload.remote.domain.spi.AppSettingsRepository
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.ServerStatusProvider
 
 /** Each Activity of the app should show status connexion result */
-abstract class AbstractDemoActivity : DaggerAppCompatActivity() {
+abstract class AbstractDemoActivity : AppCompatActivity() {
 
   @Inject lateinit var appSettings: AppSettingsRepository
   @Inject lateinit var serverStatusProvider: ServerStatusProvider

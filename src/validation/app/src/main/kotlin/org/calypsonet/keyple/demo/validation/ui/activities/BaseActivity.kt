@@ -12,12 +12,12 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.validation.ui.activities
 
-import dagger.android.support.DaggerAppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import javax.inject.Inject
 import org.calypsonet.keyple.demo.validation.domain.TicketingService
 import org.calypsonet.keyple.demo.validation.domain.spi.AppSettingsRepository
 
-abstract class BaseActivity : DaggerAppCompatActivity() {
+abstract class BaseActivity : AppCompatActivity() {
 
   @Inject lateinit var ticketingService: TicketingService
   @Inject lateinit var appSettings: AppSettingsRepository

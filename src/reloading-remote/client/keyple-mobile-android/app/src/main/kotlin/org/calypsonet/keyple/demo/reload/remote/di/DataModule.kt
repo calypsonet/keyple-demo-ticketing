@@ -16,29 +16,32 @@ import android.content.Context
 import android.content.SharedPreferences
 import dagger.Module
 import dagger.Provides
-import org.calypsonet.keyple.demo.reload.remote.Application
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 import org.calypsonet.keyple.demo.reload.remote.data.AppSettingsRepositoryImpl
 import org.calypsonet.keyple.demo.reload.remote.data.network.ServerStatusProviderImpl
-import org.calypsonet.keyple.demo.reload.remote.di.scopes.AppScoped
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.AppSettingsRepository
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.ServerStatusProvider
 
 @Suppress("unused")
 @Module
+@InstallIn(SingletonComponent::class)
 class DataModule {
 
   @Provides
-  @AppScoped
-  fun getSharedPreferences(app: Application): SharedPreferences {
-    return app.getSharedPreferences("Keyple-prefs", Context.MODE_PRIVATE)
+  @Singleton
+  fun getSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
+    return context.getSharedPreferences("Keyple-prefs", Context.MODE_PRIVATE)
   }
 
   @Provides
-  @AppScoped
+  @Singleton
   fun provideAppSettingsRepository(prefs: SharedPreferences): AppSettingsRepository =
       AppSettingsRepositoryImpl(prefs)
 
   @Provides
-  @AppScoped
+  @Singleton
   fun provideServerStatusProvider(): ServerStatusProvider = ServerStatusProviderImpl()
 }

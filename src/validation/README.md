@@ -294,8 +294,7 @@ validation/app/
 ├── src/main/
 │   ├── kotlin/org/calypsonet/keyple/demo/validation/
 │   │   ├── data/                        # Data layer implementations
-│   │   ├── di/                          # Dependency injection (Dagger)
-│   │   │   └── scope/                   # DI scopes
+│   │   ├── di/                          # Dependency injection (Hilt modules)
 │   │   ├── domain/                      # Business logic layer
 │   │   │   ├── builders/                # Data builders
 │   │   │   ├── managers/                # Validation managers (Calypso, Storage)

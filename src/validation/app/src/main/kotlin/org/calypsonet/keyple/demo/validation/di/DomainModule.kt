@@ -14,7 +14,9 @@ package org.calypsonet.keyple.demo.validation.di
 
 import dagger.Module
 import dagger.Provides
-import org.calypsonet.keyple.demo.validation.di.scope.AppScoped
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 import org.calypsonet.keyple.demo.validation.domain.TicketingService
 import org.calypsonet.keyple.demo.validation.domain.managers.CalypsoCardValidationManager
 import org.calypsonet.keyple.demo.validation.domain.managers.StorageCardValidationManager
@@ -27,23 +29,24 @@ import org.calypsonet.keyple.demo.validation.domain.spi.UiManager
 /** Provides the domain services, which carry no dependency injection annotation. */
 @Suppress("unused")
 @Module
+@InstallIn(SingletonComponent::class)
 class DomainModule {
 
   @Provides
-  @AppScoped
+  @Singleton
   fun provideCalypsoCardValidationManager(
       keypopApiProvider: KeypopApiProvider
   ): CalypsoCardValidationManager = CalypsoCardValidationManager(keypopApiProvider)
 
   @Provides
-  @AppScoped
+  @Singleton
   fun provideStorageCardValidationManager(
       keypopApiProvider: KeypopApiProvider,
       logger: Logger
   ): StorageCardValidationManager = StorageCardValidationManager(keypopApiProvider, logger)
 
   @Provides
-  @AppScoped
+  @Singleton
   fun provideTicketingService(
       keypopApiProvider: KeypopApiProvider,
       appSettings: AppSettingsRepository,

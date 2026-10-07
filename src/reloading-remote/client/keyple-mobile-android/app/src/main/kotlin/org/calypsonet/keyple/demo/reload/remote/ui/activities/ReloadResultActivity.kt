@@ -19,6 +19,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.content.IntentCompat
 import com.airbnb.lottie.LottieDrawable
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.Timer
 import java.util.TimerTask
 import org.calypsonet.keyple.demo.reload.remote.R
@@ -26,6 +27,7 @@ import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityChargeResult
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 
+@AndroidEntryPoint
 class ReloadResultActivity : AbstractDemoActivity() {
 
   private val timer = Timer()

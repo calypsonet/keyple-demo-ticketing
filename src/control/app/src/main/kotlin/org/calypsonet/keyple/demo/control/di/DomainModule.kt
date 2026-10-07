@@ -14,7 +14,9 @@ package org.calypsonet.keyple.demo.control.di
 
 import dagger.Module
 import dagger.Provides
-import org.calypsonet.keyple.demo.control.di.scope.AppScoped
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 import org.calypsonet.keyple.demo.control.domain.TicketingService
 import org.calypsonet.keyple.demo.control.domain.managers.CalypsoCardControlManager
 import org.calypsonet.keyple.demo.control.domain.managers.StorageCardControlManager
@@ -27,24 +29,25 @@ import org.calypsonet.keyple.demo.control.domain.spi.UiManager
 /** Provides the domain services, which carry no dependency injection annotation. */
 @Suppress("unused")
 @Module
+@InstallIn(SingletonComponent::class)
 class DomainModule {
 
   @Provides
-  @AppScoped
+  @Singleton
   fun provideCalypsoCardControlManager(
       keypopApiProvider: KeypopApiProvider,
       logger: Logger
   ): CalypsoCardControlManager = CalypsoCardControlManager(keypopApiProvider, logger)
 
   @Provides
-  @AppScoped
+  @Singleton
   fun provideStorageCardControlManager(
       keypopApiProvider: KeypopApiProvider,
       logger: Logger
   ): StorageCardControlManager = StorageCardControlManager(keypopApiProvider, logger)
 
   @Provides
-  @AppScoped
+  @Singleton
   fun provideTicketingService(
       keypopApiProvider: KeypopApiProvider,
       appSettings: AppSettingsRepository,

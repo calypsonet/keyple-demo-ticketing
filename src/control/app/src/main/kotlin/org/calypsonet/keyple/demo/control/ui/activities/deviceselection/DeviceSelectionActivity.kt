@@ -19,6 +19,7 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.nfc.NfcManager
 import android.os.Bundle
+import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.control.BuildConfig
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.databinding.ActivityDeviceSelectionBinding
@@ -27,6 +28,7 @@ import org.calypsonet.keyple.demo.control.ui.activities.BaseActivity
 import org.calypsonet.keyple.demo.control.ui.activities.SettingsActivity
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
 
+@AndroidEntryPoint
 class DeviceSelectionActivity : BaseActivity() {
 
   private lateinit var activityDeviceSelectionBinding: ActivityDeviceSelectionBinding

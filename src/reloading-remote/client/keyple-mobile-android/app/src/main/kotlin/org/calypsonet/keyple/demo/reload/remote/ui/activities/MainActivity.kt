@@ -14,15 +14,15 @@ package org.calypsonet.keyple.demo.reload.remote.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import dagger.android.support.DaggerAppCompatActivity
 import java.util.Timer
 import java.util.TimerTask
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityMainBinding
 
-class MainActivity : DaggerAppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
   private lateinit var activityMainBinding: ActivityMainBinding
 

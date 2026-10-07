@@ -16,7 +16,8 @@ plugins {
   alias(libs.plugins.androidApplication)
   alias(libs.plugins.kotlinAndroid)
   alias(libs.plugins.kotlinParcelize)
-  alias(libs.plugins.kotlinKapt)
+  alias(libs.plugins.ksp)
+  alias(libs.plugins.hilt)
   alias(libs.plugins.spotless)
 }
 
@@ -100,15 +101,9 @@ dependencies {
   implementation(libs.kotlinxCoroutinesCore)
   implementation(libs.kotlinxCoroutinesAndroid)
 
-  // Dagger
-  implementation(libs.dagger)
-  implementation(libs.daggerAndroid)
-  implementation(libs.daggerAndroidSupport)
-  kapt(libs.daggerCompiler)
-  kapt(libs.daggerAndroidProcessor)
-  annotationProcessor(libs.daggerCompiler)
-  annotationProcessor(libs.daggerAndroidProcessor)
-  compileOnly(libs.glassfishAnnotations)
+  // Hilt (dependency injection)
+  implementation(libs.hiltAndroid)
+  ksp(libs.hiltCompiler)
 
   // Lottie
   implementation(libs.lottie)

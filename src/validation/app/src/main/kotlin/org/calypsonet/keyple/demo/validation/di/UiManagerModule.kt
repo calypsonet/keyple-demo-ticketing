@@ -14,14 +14,17 @@ package org.calypsonet.keyple.demo.validation.di
 
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 import org.calypsonet.keyple.demo.validation.data.UiManagerImpl
-import org.calypsonet.keyple.demo.validation.di.scope.AppScoped
 import org.calypsonet.keyple.demo.validation.domain.spi.Logger
 import org.calypsonet.keyple.demo.validation.domain.spi.UiManager
 
 @Suppress("unused")
 @Module
+@InstallIn(SingletonComponent::class)
 class UiManagerModule {
 
-  @Provides @AppScoped fun provideUiManager(logger: Logger): UiManager = UiManagerImpl(logger)
+  @Provides @Singleton fun provideUiManager(logger: Logger): UiManager = UiManagerImpl(logger)
 }

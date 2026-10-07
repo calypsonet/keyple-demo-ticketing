@@ -17,10 +17,12 @@ import android.os.Bundle
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.reload.remote.BuildConfig
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivitySettingsMenuBinding
 
+@AndroidEntryPoint
 class SettingsMenuActivity : AbstractDemoActivity() {
   private lateinit var activitySettingsMenuBinding: ActivitySettingsMenuBinding
 

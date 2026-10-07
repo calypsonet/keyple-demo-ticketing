@@ -14,11 +14,13 @@ package org.calypsonet.keyple.demo.control.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.Timer
 import java.util.TimerTask
 import org.calypsonet.keyple.demo.control.databinding.ActivityMainBinding
 import org.calypsonet.keyple.demo.control.ui.activities.deviceselection.DeviceSelectionActivity
 
+@AndroidEntryPoint
 class MainActivity : BaseActivity() {
   private lateinit var activityMainBinding: ActivityMainBinding
 

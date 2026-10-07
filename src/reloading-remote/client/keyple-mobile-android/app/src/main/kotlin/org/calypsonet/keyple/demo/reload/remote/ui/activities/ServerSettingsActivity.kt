@@ -17,17 +17,17 @@ import android.os.Bundle
 import android.util.Patterns
 import android.view.View
 import androidx.lifecycle.lifecycleScope
+import dagger.hilt.android.AndroidEntryPoint
 import kotlin.system.exitProcess
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityServerSettingsBinding
-import org.calypsonet.keyple.demo.reload.remote.di.scopes.ActivityScoped
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ServerConfig
 import timber.log.Timber
 
-@ActivityScoped
+@AndroidEntryPoint
 class ServerSettingsActivity : AbstractDemoActivity() {
 
   private lateinit var activityServerSettingsBinding: ActivityServerSettingsBinding

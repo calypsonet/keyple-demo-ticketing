@@ -16,6 +16,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.content.IntentCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.databinding.ActivityCardContentBinding
 import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
@@ -25,6 +26,7 @@ import org.calypsonet.keyple.demo.control.ui.activities.ReaderActivity.Companion
 import org.calypsonet.keyple.demo.control.ui.model.UiControlResult
 import timber.log.Timber
 
+@AndroidEntryPoint
 class CardContentActivity : BaseActivity() {
 
   private lateinit var activityCardContentBinding: ActivityCardContentBinding

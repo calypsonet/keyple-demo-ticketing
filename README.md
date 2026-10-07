@@ -173,13 +173,13 @@ drive the user flow and call the domain directly.
 | `domain` | Business logic: `TicketingService` (entry point of the UI), `managers`, `model`, and the ports (`spi`) |
 | `data`   | Adapters implementing the ports (readers, Keypop API factories, user feedback, settings, logging...)  |
 | `ui`     | Activities, UI adapters (e.g. `UiContextImpl`), and UI models with their mappers when needed          |
-| `di`     | Dagger modules binding the adapters to the ports and providing the domain services                    |
+| `di`     | Hilt modules binding the adapters to the ports and providing the domain services                      |
 
 **Dependency rules**
 
 - The `domain` layer only depends on the `common` library, the Keypop APIs and the Keyple utilities. It depends neither
-  on Android (including the application resources `R`), Timber or the dependency injection framework (no Dagger or
-  `javax.inject` annotation), nor on the `data`, `ui` and `di` layers.
+  on Android (including the application resources `R`), Timber or the dependency injection framework (no Hilt, Dagger
+  or `javax.inject` annotation), nor on the `data`, `ui` and `di` layers.
 - Everything the domain needs from the outside world is expressed as a port in `domain/spi` (e.g. `ReaderManager`,
   `KeypopApiProvider`, `UiManager`, `AppSettingsRepository`, `Logger`, `UiContext`, `RemoteServiceManager`,
   `ServerStatusProvider`) and implemented by an adapter in `data`, or in `ui/adapters` for the UI-bound ones.
@@ -188,7 +188,9 @@ drive the user flow and call the domain directly.
 - The `data` layer implements the ports and does not depend on the `ui` layer.
 - The `di` layer is the only place where adapters are bound to ports. The domain services (`TicketingService` and the
   managers) carry no annotation and are provided by the `DomainModule`. The stable dependencies of the managers are
-  injected through their constructor; only the data of the current transaction is passed to their methods.
+  injected through their constructor; only the data of the current transaction is passed to their methods. The
+  bindings are application-wide singletons (`SingletonComponent`); the application is annotated `@HiltAndroidApp`, and
+  each activity receiving dependencies (through its base activity) `@AndroidEntryPoint`.
 - The application settings are accessed through the `AppSettingsRepository` port, never through a global object.
 
 **Logging**

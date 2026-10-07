@@ -14,7 +14,9 @@ package org.calypsonet.keyple.demo.reload.remote.di
 
 import dagger.Module
 import dagger.Provides
-import org.calypsonet.keyple.demo.reload.remote.di.scopes.AppScoped
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 import org.calypsonet.keyple.demo.reload.remote.domain.TicketingService
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
@@ -24,10 +26,11 @@ import org.calypsonet.keyple.demo.reload.remote.domain.spi.RemoteServiceManager
 /** Provides the domain services, which carry no dependency injection annotation. */
 @Suppress("unused")
 @Module
+@InstallIn(SingletonComponent::class)
 class DomainModule {
 
   @Provides
-  @AppScoped
+  @Singleton
   fun provideTicketingService(
       keypopApiProvider: KeypopApiProvider,
       readerManager: ReaderManager,

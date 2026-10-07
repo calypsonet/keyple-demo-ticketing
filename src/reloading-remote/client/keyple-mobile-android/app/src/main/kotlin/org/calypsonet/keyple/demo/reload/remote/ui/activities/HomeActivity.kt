@@ -19,11 +19,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityHomeBinding
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceVisibility
 
+@AndroidEntryPoint
 class HomeActivity : AbstractDemoActivity() {
 
   private lateinit var activityHomeBinding: ActivityHomeBinding

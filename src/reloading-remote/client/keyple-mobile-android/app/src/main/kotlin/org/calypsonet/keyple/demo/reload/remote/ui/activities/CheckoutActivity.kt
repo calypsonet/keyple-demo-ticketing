@@ -14,12 +14,14 @@ package org.calypsonet.keyple.demo.reload.remote.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
+import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCheckoutBinding
 
+@AndroidEntryPoint
 class CheckoutActivity : AbstractDemoActivity() {
 
   private lateinit var activityCheckoutBinding: ActivityCheckoutBinding

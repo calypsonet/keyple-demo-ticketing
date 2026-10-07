@@ -14,15 +14,18 @@ package org.calypsonet.keyple.demo.validation.di
 
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 import org.calypsonet.keyple.demo.validation.data.AppSettingsRepositoryImpl
-import org.calypsonet.keyple.demo.validation.di.scope.AppScoped
 import org.calypsonet.keyple.demo.validation.domain.spi.AppSettingsRepository
 
 @Suppress("unused")
 @Module
+@InstallIn(SingletonComponent::class)
 class AppSettingsModule {
 
   @Provides
-  @AppScoped
+  @Singleton
   fun provideAppSettingsRepository(): AppSettingsRepository = AppSettingsRepositoryImpl()
 }

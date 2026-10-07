@@ -14,10 +14,12 @@ package org.calypsonet.keyple.demo.reload.remote.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
+import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivitySelectTicketsBinding
 
+@AndroidEntryPoint
 class SelectTicketsActivity : AbstractDemoActivity() {
   private lateinit var activitySelectTicketsBinding: ActivitySelectTicketsBinding
 

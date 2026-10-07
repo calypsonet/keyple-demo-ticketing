@@ -19,14 +19,16 @@ compottie = "2.0.0"
 composeBom = "2025.08.01"
 composePlugin = "1.8.2"
 coroutines = "1.10.2"
-dagger = "2.25"
-glassfish = "10.0-b28"
 gson = "2.11.0"
+# Last version compatible with AGP 8 (the Hilt Gradle plugin requires AGP 9 since 2.59)
+hilt = "2.58"
 keypleJavaBom = "2026.09.29"
 keyplePluginCnaCoppernicCone2Lib = "2.0.2"
 keyplePluginCnaFamocoSeCommunicationLib = "2.0.2"
 koin = "4.1.0"
 kotlin = "2.2.10"
+# KSP version associated with the Kotlin version
+ksp = "2.2.10-2.0.2"
 kotlinxSerializationCore = "1.9.0"
 ktor = "3.2.3"
 lottie = "3.4.4"
@@ -57,13 +59,9 @@ bitLib4j = { module = "com.github.devnied:bit-lib4j", version.ref = "bitLib4j" }
 compottieLite = { module = "io.github.alexzhirkevich:compottie-lite", version.ref = "compottie" }
 compottieRes = { module = "io.github.alexzhirkevich:compottie-resources", version.ref = "compottie" }
 composeBom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
-dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
-daggerAndroid = { module = "com.google.dagger:dagger-android", version.ref = "dagger" }
-daggerAndroidProcessor = { module = "com.google.dagger:dagger-android-processor", version.ref = "dagger" }
-daggerAndroidSupport = { module = "com.google.dagger:dagger-android-support", version.ref = "dagger" }
-daggerCompiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
-glassfishAnnotations = { module = "org.glassfish:javax.annotation", version.ref = "glassfish" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+hiltAndroid = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hiltCompiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
 keypleJavaBom = { module = "org.eclipse.keyple:keyple-java-bom", version.ref = "keypleJavaBom" }
 keypleCardCalypsoCryptoLegacysamLib = { module = "org.eclipse.keyple:keyple-card-calypso-crypto-legacysam-java-lib" }
 keypleCardCalypsoCryptoPkiLib = { module = "org.eclipse.keyple:keyple-card-calypso-crypto-pki-java-lib" }
@@ -121,12 +119,13 @@ timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "composePlugin" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-kotlinKapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinParcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 quarkus = { id = "io.quarkus", version.ref = "quarkus" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }

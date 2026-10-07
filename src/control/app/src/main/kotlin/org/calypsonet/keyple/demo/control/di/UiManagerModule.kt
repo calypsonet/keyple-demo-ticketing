@@ -14,13 +14,16 @@ package org.calypsonet.keyple.demo.control.di
 
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 import org.calypsonet.keyple.demo.control.data.UiManagerImpl
-import org.calypsonet.keyple.demo.control.di.scope.AppScoped
 import org.calypsonet.keyple.demo.control.domain.spi.UiManager
 
 @Suppress("unused")
 @Module
+@InstallIn(SingletonComponent::class)
 class UiManagerModule {
 
-  @Provides @AppScoped fun provideUiManager(): UiManager = UiManagerImpl()
+  @Provides @Singleton fun provideUiManager(): UiManager = UiManagerImpl()
 }

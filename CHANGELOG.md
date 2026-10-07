@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Android applications: layered architecture with ports and adapters, documented in the README ("Android Application
   Architecture") and checked by the CI (`.github/scripts/check-android-architecture.sh`) for the domain, data and ui
   layers. The domain layer no longer
-  depends on Android, Timber or the dependency injection framework: the domain services are provided by a Dagger
+  depends on Android, Timber or the dependency injection framework: the domain services are provided by a Hilt
   `DomainModule`, and the card managers receive their dependencies through their constructor.
 - Android applications: logging through the `Logger` port (same `d`/`i`/`w`/`e` interface in all applications) in the
   domain, data and di layers. Timber is only used by `LoggerImpl`, `Application` and the activities.
@@ -32,8 +32,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `packagingOptions` is replaced by `packaging`;
   - the Android and Kotlin Gradle plugins are declared once in the root project, instead of being loaded separately by
     the application and the common module.
-- Android applications: the libraries still requiring Jetifier are documented in `gradle.properties`: Dagger `2.25` in
-  all the applications, and the Coppernic plugin in the control and validation apps.
+- Android applications: dependency injection with Hilt instead of Dagger `2.25` and dagger-android (deprecated), and
+  annotation processing with KSP instead of kapt:
+  - the application is annotated `@HiltAndroidApp`, the activities receiving dependencies `@AndroidEntryPoint`, and
+    the modules are installed in the `SingletonComponent` (`@Singleton` bindings);
+  - the `AppComponent`, the activity injectors (`UIModule`), the `AppModule` and the custom scopes (`AppScoped`,
+    `ActivityScoped`) are removed.
+- Android applications: Jetifier is disabled in the reloading Android client, no library requiring it anymore. It
+  remains required by the Coppernic plugin in the control and validation apps, as documented in `gradle.properties`.
 - CI/CD workflows: GitHub actions `checkout`, `setup-java`, `setup-node` and `setup-dotnet` upgraded from v4 to v5,
   .NET upgraded from 7.0 to 10.0, and Node.js upgraded from 20 (end of life) to 24.
 - The changelogs of the archived repositories, no longer maintained, are moved from the modules to `docs/history/`.
@@ -43,7 +49,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `keyple-java-bom`: `2026.03.19` -> `2026.09.29`
 - `keyple-card-cna-storagecard-java-lib` (mock): `2.3.0` -> `2.3.1`
 - `keyple-plugin-cna-storagecard-java-lib` (mock): `1.1.0` -> `1.1.1`
+- Android applications: Dagger `2.25` -> Hilt `2.58` (last version compatible with the Android Gradle plugin 8), with
+  KSP `2.2.10-2.0.2`.
 ### Removed
+- Android applications: dagger-android, the `javax.annotation` (GlassFish) dependency and the kapt plugin, replaced by
+  Hilt and KSP.
 - `kotlin-stdlib-jdk8` dependency of the Android applications, merged into `kotlin-stdlib` (added by the Kotlin Gradle
   plugin) since Kotlin 1.8.
 - `log4j` `1.2.17` (end of life), declared but not used by `bit-lib4j`: excluded from the dependencies of the common

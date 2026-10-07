@@ -16,11 +16,13 @@ import android.os.Bundle
 import android.view.View
 import android.widget.RadioButton
 import androidx.core.content.ContextCompat
+import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityConfigurationSettingsBinding
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceVisibility
 
+@AndroidEntryPoint
 class ConfigurationSettingsActivity : AbstractDemoActivity() {
   private lateinit var activityConfigurationSettingsBinding: ActivityConfigurationSettingsBinding
 

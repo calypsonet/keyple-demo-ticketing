@@ -14,10 +14,12 @@ package org.calypsonet.keyple.demo.reload.remote.di
 
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 import org.calypsonet.keyple.demo.reload.remote.data.ReaderManagerImpl
 import org.calypsonet.keyple.demo.reload.remote.data.RemoteServiceManagerImpl
 import org.calypsonet.keyple.demo.reload.remote.data.network.KeypleSyncEndPointClient
-import org.calypsonet.keyple.demo.reload.remote.di.scopes.AppScoped
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.ReaderManager
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.RemoteServiceManager
@@ -27,10 +29,11 @@ import org.eclipse.keyple.distributed.LocalServiceClientFactoryBuilder
 
 @Suppress("unused")
 @Module
+@InstallIn(SingletonComponent::class)
 class ReaderModule {
 
   @Provides
-  @AppScoped
+  @Singleton
   fun provideLocalServiceClient(
       keypleSyncEndPointClient: KeypleSyncEndPointClient
   ): LocalServiceClient {
@@ -45,13 +48,13 @@ class ReaderModule {
   }
 
   @Provides
-  @AppScoped
+  @Singleton
   fun provideReaderManager(logger: Logger): ReaderManager {
     return ReaderManagerImpl(logger)
   }
 
   @Provides
-  @AppScoped
+  @Singleton
   fun provideRemoteServiceManager(localServiceClient: LocalServiceClient): RemoteServiceManager {
     return RemoteServiceManagerImpl(localServiceClient)
   }
