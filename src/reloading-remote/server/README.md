@@ -230,15 +230,15 @@ GET  /activity/stream    # new transactions (Server-Sent Events, one JSON transa
 
 ### Common Issues
 
-**"No PC/SC reader found"**
-- Verify reader is connected and drivers installed
-- Check reader filter pattern matches your device name
-- Test with `pcsc_scan` on Linux/macOS or Device Manager on Windows
+**"SAM Resource is not available" in the dashboard**
 
-**"SAM not detected"**
+The server starts even if no SAM reader is connected or no SAM is inserted, and the dashboard displays this message
+until a SAM is detected (no restart needed once the reader is connected and the SAM inserted). If the message persists:
+- Verify reader is connected and drivers installed
+- Check reader filter pattern (`sam.pcsc.reader.filter`) matches your device name
+- Test with `pcsc_scan` on Linux/macOS or Device Manager on Windows
 - Ensure SAM is properly inserted in reader
 - Verify SAM is compatible with your cards (Test vs Production keys)
-- Check SAM status in dashboard
 
 **"Port already in use"**
 - Kill existing process: `lsof -ti:8080 | xargs kill -9` (Linux/macOS) or check Task Manager (Windows)

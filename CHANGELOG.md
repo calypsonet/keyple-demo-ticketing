@@ -156,6 +156,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 #### Removed
 - Unreachable "card not read" status code (`4`) of the contract writing.
 #### Fixed
+- The server starts even if no PC/SC reader is connected or no SAM is inserted (it stopped at startup): the dashboard
+  displays that the SAM is not available, as when the SAM reader is disconnected after the startup, until a SAM is
+  detected.
 - Startup failure with the mocked storage card library: when the storage card extension is not available, a warning is
   logged and the storage cards are not supported.
 - Dashboard: the transactions already processed are displayed when the dashboard is opened or reloaded (they were

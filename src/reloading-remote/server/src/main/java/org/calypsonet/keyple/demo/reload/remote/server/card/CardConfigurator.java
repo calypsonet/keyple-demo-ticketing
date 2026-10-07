@@ -76,14 +76,15 @@ public class CardConfigurator {
     SmartCardService smartCardService = SmartCardServiceProvider.getService();
     Plugin plugin = smartCardService.registerPlugin(PcscPluginFactoryBuilder.builder().build());
     if (plugin.getReaders().isEmpty()) {
-      throw new IllegalStateException(
-          "For the matter of this demo, we expect at least one PCSC reader to be connected");
+      // The server starts anyway: the SAM reader is taken into account as soon as it is connected,
+      // the dashboard showing meanwhile that the SAM is not available.
+      logger.warn("No PC/SC reader connected: waiting for the SAM reader to be connected");
     }
     // Set up the associated card resource service
     setupCardResourceService(plugin);
 
-    // Start monitoring the SAM reader
-    cardSamObserver.startMonitoring();
+    // Start monitoring the SAM plugin (reader connection) and reader (SAM insertion)
+    cardSamObserver.startMonitoring((ObservablePlugin) plugin);
   }
 
   private void setupCardResourceService(Plugin plugin) {
@@ -124,10 +125,14 @@ public class CardConfigurator {
     // verify the resource availability
     CardResource cardResource = cardResourceService.getCardResource(SAM_RESOURCE_PROFILE_NAME);
     if (cardResource == null) {
-      throw new IllegalStateException(
-          String.format(
-              "Unable to retrieve a SAM card resource for profile '%s' from reader '%s' in plugin '%s'",
-              SAM_RESOURCE_PROFILE_NAME, samReaderFilter, plugin.getName()));
+      // E.g. no reader connected or no SAM inserted: the card resource service monitors the plugin
+      // and its readers, so the SAM resource becomes available as soon as a SAM is detected.
+      logger.warn(
+          "No SAM card resource available yet for profile '{}' from reader '{}' in plugin '{}'",
+          SAM_RESOURCE_PROFILE_NAME,
+          samReaderFilter,
+          plugin.getName());
+      return;
     }
     cardResourceService.releaseCardResource(cardResource);
   }
