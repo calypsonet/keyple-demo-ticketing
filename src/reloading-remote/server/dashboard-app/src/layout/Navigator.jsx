@@ -42,6 +42,17 @@ const headerItemSx = {
   boxShadow: '0 -1px 0 #fff inset',
 };
 
+// Selected item: lighter background (text contrast 6.7:1) and white mark on the left
+const itemSx = {
+  '&.Mui-selected': {
+    backgroundColor: 'rgba(255, 255, 255, 0.24)',
+    boxShadow: 'inset 4px 0 0 #fff',
+  },
+  '&.Mui-selected:hover': {
+    backgroundColor: 'rgba(255, 255, 255, 0.32)',
+  },
+};
+
 /**
  * Navigator Component (drawer)
  * @param props Drawer props
@@ -70,8 +81,13 @@ export default function Navigator(props) {
                 {id}
               </ListItemText>
             </ListItem>
-            {children.map(({ id: childId, icon }) => (
-              <ListItemButton key={childId}>
+            {children.map(({ id: childId, icon, active }) => (
+              <ListItemButton
+                key={childId}
+                selected={!!active}
+                aria-current={active ? 'page' : undefined}
+                sx={itemSx}
+              >
                 <ListItemIcon>{icon}</ListItemIcon>
                 <ListItemText>{childId}</ListItemText>
               </ListItemButton>

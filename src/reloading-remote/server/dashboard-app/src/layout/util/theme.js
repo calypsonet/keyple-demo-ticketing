@@ -26,7 +26,7 @@ const muitheme = createTheme({
   },
 });
 
-// Extend with component overrides (MUI v5 format)
+// Extend with overrides of the components used by the dashboard
 export const theme = createTheme(muitheme, {
   components: {
     MuiDrawer: {
@@ -36,60 +36,10 @@ export const theme = createTheme(muitheme, {
         },
       },
     },
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          textTransform: 'none',
-        },
-        contained: {
-          boxShadow: 'none',
-          '&:active': {
-            boxShadow: 'none',
-          },
-        },
-      },
-    },
-    MuiTabs: {
-      styleOverrides: {
-        root: {
-          marginLeft: muitheme.spacing(1),
-        },
-        indicator: {
-          height: 3,
-          borderTopLeftRadius: 3,
-          borderTopRightRadius: 3,
-          backgroundColor: muitheme.palette.common.white,
-        },
-      },
-    },
-    MuiTab: {
-      defaultProps: {
-        disableRipple: true,
-      },
-      styleOverrides: {
-        root: {
-          textTransform: 'none',
-          margin: '0 16px',
-          minWidth: 0,
-          padding: 0,
-          [muitheme.breakpoints.up('md')]: {
-            padding: 0,
-            minWidth: 0,
-          },
-        },
-      },
-    },
     MuiIconButton: {
       styleOverrides: {
         root: {
           padding: muitheme.spacing(1),
-        },
-      },
-    },
-    MuiTooltip: {
-      styleOverrides: {
-        tooltip: {
-          borderRadius: 4,
         },
       },
     },

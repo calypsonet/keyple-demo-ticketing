@@ -136,7 +136,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   icons are imported from the `@mui/icons-material` ES module entry point. Removed: the unused `env-cmd` dependency and
   `.env` files, the `ajv` workaround, the obsolete `build-dev` script and the Create React App ESLint configuration.
 - Dashboard: the legacy `@mui/styles` (JSS) styles are replaced by the `sx` prop of Material UI, with the same
-  rendering, and the `propTypes` declarations (ignored by React 19) are removed.
+  rendering, and the `propTypes` declarations (ignored by React 19) are removed. Removed as well: the theme overrides of
+  components not used by the dashboard (buttons, tabs, tooltips), the obsolete `-o-` CSS prefixes and the empty
+  `index.css` file.
+- Dashboard: the selected entry of the side menu ("Transactions") is highlighted (lighter background and white mark,
+  `aria-current="page"`).
 - Dashboard: the source code is checked with ESLint (`npm run lint`, React hooks rules), also run by the `check` task of
   the server build, and therefore by the CI.
 - Activity monitoring: the long polling endpoint `/activity/events/wait` is replaced by the Server-Sent Events stream
