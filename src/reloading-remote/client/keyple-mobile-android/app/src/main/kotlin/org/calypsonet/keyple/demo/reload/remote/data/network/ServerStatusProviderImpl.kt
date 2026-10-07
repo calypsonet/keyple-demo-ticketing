@@ -14,23 +14,30 @@ package org.calypsonet.keyple.demo.reload.remote.data.network
 
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ServerConfig
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.ServerStatusProvider
-import org.eclipse.keyple.core.util.json.JsonUtil
+import retrofit2.HttpException
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 
-/** Requests the SAM status of the server through its REST API. */
+/**
+ * Requests the SAM status of the server through its REST API.
+ *
+ * The client is built at each request, the server address being provided by the caller (e.g. an
+ * address being entered in the settings).
+ */
 class ServerStatusProviderImpl : ServerStatusProvider {
 
   override fun isSamReady(serverConfig: ServerConfig): Boolean {
     val client =
         Retrofit.Builder()
             .baseUrl(serverConfig.url)
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(RestClient::class.java)
-    val response = client.ping().blockingGet()
-    return JsonUtil.getParser().fromJson(response, SamStatus::class.java).isSamReady
+    val response = client.getSamStatus().execute()
+    if (!response.isSuccessful) {
+      throw HttpException(response)
+    }
+    val samStatus = response.body() ?: throw IllegalStateException("Empty SAM status")
+    return samStatus.isSamReady
   }
 }

@@ -12,22 +12,24 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.data.network
 
-import io.reactivex.Single
 import org.eclipse.keyple.distributed.MessageDto
+import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
 
 /**
+ * REST API of the reloading server.
+ *
  * Cannot directly extend SyncEndpointClient because retrofit allows API interfaces to extend
  * interfaces.
  */
 interface RestClient {
 
-  @GET("/card/sam-status") fun ping(): Single<String>
+  @GET("/card/sam-status") fun getSamStatus(): Call<SamStatus>
 
   @Headers("Accept: application/json", "Content-Type: application/json; charset=UTF-8")
   @POST("/card/remote-plugin")
-  fun sendRequest(@Body msg: MessageDto?): Single<MutableList<MessageDto>>
+  fun sendRequest(@Body msg: MessageDto?): Call<MutableList<MessageDto>>
 }

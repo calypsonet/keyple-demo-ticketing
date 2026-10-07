@@ -107,19 +107,10 @@ dependencies {
   annotationProcessor(libs.daggerAndroidProcessor)
   compileOnly(libs.glassfishAnnotations)
 
-  // RxJava
-  implementation(libs.rxjava)
-  implementation(libs.rxandroid)
-
   // Retrofit
   implementation(libs.retrofit)
   implementation(libs.retrofitConverterGson)
-  implementation(libs.retrofitConverterScalars)
-  implementation(libs.retrofitAdapterRxjava2)
   implementation(libs.okhttpLoggingInterceptor)
-
-  // Server status
-  implementation(libs.eventbus)
 
   // Lottie
   implementation(libs.lottie)
@@ -158,7 +149,7 @@ android {
   defaultConfig {
     applicationId = project.findProperty("androidAppId") as String
     minSdk = (project.findProperty("androidMinSdk") as String).toInt()
-    targetSdk = (project.findProperty("androidCompileSdk") as String).toInt()
+    targetSdk = (project.findProperty("androidTargetSdk") as String).toInt()
     versionCode = (project.findProperty("androidAppVersionCode") as String).toInt()
     versionName = project.findProperty("androidAppVersionName") as String
   }
@@ -168,9 +159,12 @@ android {
   }
   buildTypes {
     // Configuration for the debug build variant:
-    // - Minification, resource shrinking, and ProGuard rules are enabled here as an example
-    //   to test release-like performance and optimizations during development.
-    // - To see full, unoptimized logs during debug, this block can be commented out or adjusted.
+    // - Code and resource shrinking are enabled with the ProGuard rules of the release build, to
+    //   detect the missing keep rules during development (e.g. classes used by reflection, such as
+    //   the DTOs serialized with Gson).
+    // - The build being debuggable, R8 neither optimizes nor obfuscates the code: the stack traces
+    //   and the debug logs are kept, and the effects of the optimizations (e.g. the
+    //   "-assumenosideeffects" rules) can only be observed with the release build.
     getByName("debug") {
       isMinifyEnabled = true
       isShrinkResources = true
@@ -191,22 +185,16 @@ android {
     getByName("main").java.srcDirs("src/main/kotlin")
     getByName("debug").java.srcDirs("src/debug/kotlin")
   }
-  packagingOptions {
+  packaging {
     // Exclude 'META-INF/NOTICE.md' to resolve the conflict that occurs when multiple dependencies
     // include this file
     resources.excludes.add("META-INF/NOTICE.md")
   }
-  applicationVariants.all {
-    outputs.all {
-      val outputImpl = this as com.android.build.gradle.internal.api.ApkVariantOutputImpl
-      val variantName = name
-      val versionName = project.version.toString()
-      val newName = "${rootProject.name}-$versionName-$variantName.apk"
-      outputImpl.outputFileName = newName
-    }
-  }
   lint { abortOnError = false }
 }
+
+// Name of the APK files: <root project name>-<version>-<variant>.apk
+base { archivesName.set("${rootProject.name}-${project.version}") }
 
 tasks.withType<AbstractArchiveTask>().configureEach { archiveBaseName.set(rootProject.name) }
 

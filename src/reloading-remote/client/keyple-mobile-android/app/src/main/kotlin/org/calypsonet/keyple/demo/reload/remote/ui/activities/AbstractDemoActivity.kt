@@ -17,14 +17,11 @@ import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ToolbarBinding
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.AppSettingsRepository
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.ServerStatusProvider
-import org.calypsonet.keyple.demo.reload.remote.ui.events.ServerStatusEvent
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 
 /** Each Activity of the app should show status connexion result */
 abstract class AbstractDemoActivity : DaggerAppCompatActivity() {
@@ -38,38 +35,26 @@ abstract class AbstractDemoActivity : DaggerAppCompatActivity() {
     checkServerStatus()
   }
 
-  override fun onStart() {
-    super.onStart()
-    EventBus.getDefault().register(this)
-  }
-
-  override fun onStop() {
-    super.onStop()
-    EventBus.getDefault().unregister(this)
-  }
-
-  @Subscribe(threadMode = ThreadMode.MAIN)
-  fun onServerStatusEvent(serverStatusEvent: ServerStatusEvent) {
-    appSettings.lastServerStatus = serverStatusEvent.isUp
-    updateServerStatusIndicator()
-  }
-
   private fun updateServerStatusIndicator() {
     if (appSettings.lastServerStatus)
         toolbarBinding.serverStatus.setImageResource(R.drawable.ic_connection_success)
     else toolbarBinding.serverStatus.setImageResource(R.drawable.ic_connection_wait)
   }
 
+  /** Requests the server status in background, then updates the indicator in the main thread. */
   private fun checkServerStatus() {
     val serverConfig = appSettings.serverConfig
-    lifecycleScope.launch(Dispatchers.IO) {
+    lifecycleScope.launch {
       val isUp =
-          try {
-            serverStatusProvider.isSamReady(serverConfig)
-          } catch (e: Exception) {
-            false
+          withContext(Dispatchers.IO) {
+            try {
+              serverStatusProvider.isSamReady(serverConfig)
+            } catch (e: Exception) {
+              false
+            }
           }
-      EventBus.getDefault().post(ServerStatusEvent(isUp))
+      appSettings.lastServerStatus = isUp
+      updateServerStatusIndicator()
     }
   }
 }

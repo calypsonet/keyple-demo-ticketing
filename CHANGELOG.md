@@ -21,6 +21,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `onBackPressed`, `Resources.getColor`).
 - Control and validation apps: the plugin registration is a suspend function instead of using `runBlocking`. Reloading
   Android client: the plugins are registered directly, as before the refactoring.
+- Android applications: Java 17 as source and target level instead of Java 8. No impact on the supported devices: the
+  bytecode is converted for the minimum SDK by the Android build.
+- Android applications: target SDK defined by its own `androidTargetSdk` property (still `35`) instead of
+  `androidCompileSdk`.
+- Android applications: build scripts updated:
+  - the APK files are named through `base.archivesName` instead of an internal Android Gradle plugin API
+    (`ApkVariantOutputImpl`). The debug APK keeps its name; the unsigned release APK is now suffixed
+    `-release-unsigned`;
+  - `packagingOptions` is replaced by `packaging`;
+  - the Android and Kotlin Gradle plugins are declared once in the root project, instead of being loaded separately by
+    the application and the common module.
+- Android applications: the libraries still requiring Jetifier are documented in `gradle.properties`: Dagger `2.25` in
+  all the applications, and the Coppernic plugin in the control and validation apps.
 - CI/CD workflows: GitHub actions `checkout`, `setup-java`, `setup-node` and `setup-dotnet` upgraded from v4 to v5,
   .NET upgraded from 7.0 to 10.0, and Node.js upgraded from 20 (end of life) to 24.
 - The changelogs of the archived repositories, no longer maintained, are moved from the modules to `docs/history/`.
@@ -100,6 +113,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   instead of the shared preferences and the REST client.
 - The texts displayed by the activities (error messages, contract titles and descriptions, server settings checks) are
   defined as string resources instead of being hardcoded.
+- The REST client uses synchronous Retrofit calls instead of RxJava, and the server status indicator is updated by the
+  coroutine requesting the status instead of an EventBus event.
+- The HTTP exchanges with the server are logged in the debug builds through the `Logger` port. The logging interceptor
+  had no level set, so it logged nothing.
+#### Upgraded
+- `okhttp-logging-interceptor`: `3.9.1` -> `3.14.9`, the version of the OkHttp library used by Retrofit.
+#### Removed
+- RxJava (`rxjava`, `rxandroid`, Retrofit `adapter-rxjava2`), EventBus and Retrofit `converter-scalars` dependencies.
 #### Fixed
 - Typo in the "Invalid storage card" message.
 - Interpretation of the status codes returned by the server, which was shifted by one: each error now displays the

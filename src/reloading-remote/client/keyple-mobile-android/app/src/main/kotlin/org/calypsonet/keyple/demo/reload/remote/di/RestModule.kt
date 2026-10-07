@@ -16,13 +16,13 @@ import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.calypsonet.keyple.demo.reload.remote.BuildConfig
 import org.calypsonet.keyple.demo.reload.remote.data.network.KeypleSyncEndPointClient
 import org.calypsonet.keyple.demo.reload.remote.data.network.RestClient
 import org.calypsonet.keyple.demo.reload.remote.di.scopes.AppScoped
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.AppSettingsRepository
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 @Suppress("unused")
@@ -37,12 +37,17 @@ class RestModule {
   ): KeypleSyncEndPointClient {
     val serverUrl = appSettings.serverConfig.url
     logger.i("Loaded Rest client with URL: $serverUrl")
+    // Logs the exchanges with the server (messages of the remote plugin) in the debug builds only
+    val loggingInterceptor =
+        HttpLoggingInterceptor { message -> logger.d(message) }
+            .setLevel(
+                if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
+                else HttpLoggingInterceptor.Level.NONE)
     return KeypleSyncEndPointClient(
         Retrofit.Builder()
             .baseUrl(serverUrl)
-            .client(OkHttpClient.Builder().addNetworkInterceptor(HttpLoggingInterceptor()).build())
+            .client(OkHttpClient.Builder().addNetworkInterceptor(loggingInterceptor).build())
             .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
             .create(RestClient::class.java))
   }

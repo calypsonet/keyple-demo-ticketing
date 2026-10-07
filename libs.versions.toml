@@ -20,7 +20,6 @@ composeBom = "2025.08.01"
 composePlugin = "1.8.2"
 coroutines = "1.10.2"
 dagger = "2.25"
-eventbus = "3.3.1"
 glassfish = "10.0-b28"
 gson = "2.11.0"
 keypleJavaBom = "2026.09.29"
@@ -33,12 +32,11 @@ ktor = "3.2.3"
 lottie = "3.4.4"
 material = "1.12.0"
 napier = "2.7.1"
-okhttpLogging = "3.9.1"
+# Same version as the OkHttp library used by Retrofit
+okhttpLogging = "3.14.9"
 quarkus = "3.40.1"
 retrofit = "2.11.0"
 retrofitCompat = "2.11.0"
-rxandroid = "2.1.1"
-rxjava = "2.2.21"
 slf4j = "1.7.36"
 slf4jTimber = "3.1"
 spotless = "7.0.4"
@@ -64,7 +62,6 @@ daggerAndroid = { module = "com.google.dagger:dagger-android", version.ref = "da
 daggerAndroidProcessor = { module = "com.google.dagger:dagger-android-processor", version.ref = "dagger" }
 daggerAndroidSupport = { module = "com.google.dagger:dagger-android-support", version.ref = "dagger" }
 daggerCompiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
-eventbus = { module = "org.greenrobot:eventbus", version.ref = "eventbus" }
 glassfishAnnotations = { module = "org.glassfish:javax.annotation", version.ref = "glassfish" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 keypleJavaBom = { module = "org.eclipse.keyple:keyple-java-bom", version.ref = "keypleJavaBom" }
@@ -115,11 +112,7 @@ quarkusBom = { module = "io.quarkus.platform:quarkus-bom", version.ref = "quarku
 quarkusRest = { module = "io.quarkus:quarkus-rest" }
 quarkusRestJsonb = { module = "io.quarkus:quarkus-rest-jsonb" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
-retrofitAdapterRxjava2 = { module = "com.squareup.retrofit2:adapter-rxjava2", version.ref = "retrofitCompat" }
 retrofitConverterGson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofitCompat" }
-retrofitConverterScalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "retrofitCompat" }
-rxandroid = { module = "io.reactivex.rxjava2:rxandroid", version.ref = "rxandroid" }
-rxjava = { module = "io.reactivex.rxjava2:rxjava", version.ref = "rxjava" }
 slf4jApi = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 slf4jTimber = { module = "com.arcao:slf4j-timber", version.ref = "slf4jTimber" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
