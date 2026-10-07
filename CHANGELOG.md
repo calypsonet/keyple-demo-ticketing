@@ -113,6 +113,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     `quarkus.http.cors.origins`) and `quarkus.package.jar.type`.
 - Gradle wrapper: `8.4` -> `8.11.1` (same version as the other projects).
 #### Changed
+- REST layer: RESTEasy classic (`quarkus-resteasy`, `quarkus-resteasy-jsonb`) replaced by Quarkus REST (`quarkus-rest`,
+  `quarkus-rest-jsonb`), the default REST stack of Quarkus. The endpoints and their JSON content are unchanged (still
+  executed on worker threads). The remote plugin endpoint reads the request explicitly: only an unreadable request
+  (malformed JSON, no content) gets a "400 Bad Request" response, the processing errors remaining server errors.
 - The dashboard is embedded as static resources by the `processResources` task, instead of being copied into the build
   output (not supported by the Quarkus 3 build tasks).
 - Logging: the SLF4J implementation is provided by Quarkus (JBoss Log Manager) and configured by the `quarkus.log.*`

@@ -63,8 +63,8 @@ dependencies {
 
   // Quarkus
   implementation(enforcedPlatform(libs.quarkusBom))
-  implementation(libs.quarkusResteasy)
-  implementation(libs.quarkusResteasyJsonb)
+  implementation(libs.quarkusRest)
+  implementation(libs.quarkusRestJsonb)
 
   // Google GSON
   implementation(libs.gson)
@@ -88,7 +88,8 @@ val syncPackageVersion by
         val json = JsonSlurper().parseText(jsonText) as MutableMap<String, Any>
         json["version"] = project.version
         val updatedJsonText = JsonOutput.prettyPrint(JsonOutput.toJson(json))
-        packageJsonFile.writeText(updatedJsonText)
+        // Keep the final newline written by npm
+        packageJsonFile.writeText(updatedJsonText + "\n")
         println("Updated package.json version to ${project.version}")
       }
     }

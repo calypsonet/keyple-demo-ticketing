@@ -114,8 +114,8 @@ material = { module = "com.google.android.material:material", version.ref = "mat
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 okhttpLoggingInterceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttpLogging" }
 quarkusBom = { module = "io.quarkus.platform:quarkus-bom", version.ref = "quarkus" }
-quarkusResteasy = { module = "io.quarkus:quarkus-resteasy" }
-quarkusResteasyJsonb = { module = "io.quarkus:quarkus-resteasy-jsonb" }
+quarkusRest = { module = "io.quarkus:quarkus-rest" }
+quarkusRestJsonb = { module = "io.quarkus:quarkus-rest-jsonb" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofitAdapterRxjava2 = { module = "com.squareup.retrofit2:adapter-rxjava2", version.ref = "retrofitCompat" }
 retrofitConverterGson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofitCompat" }

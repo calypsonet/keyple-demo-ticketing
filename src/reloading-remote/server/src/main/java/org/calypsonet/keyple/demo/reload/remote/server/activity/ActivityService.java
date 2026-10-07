@@ -13,7 +13,6 @@
 package org.calypsonet.keyple.demo.reload.remote.server.activity;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -45,7 +44,7 @@ public class ActivityService {
    *
    * @param t Transaction object to push.
    */
-  public void push(@NotNull Activity t) {
+  public void push(Activity t) {
     // store the new transaction
     activities.add(t);
     // make it available in the queue
