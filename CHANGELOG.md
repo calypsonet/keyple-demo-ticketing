@@ -21,8 +21,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `onBackPressed`, `Resources.getColor`).
 - Control and validation apps: the plugin registration is a suspend function instead of using `runBlocking`. Reloading
   Android client: the plugins are registered directly, as before the refactoring.
-- CI/CD workflows: GitHub actions `checkout`, `setup-java`, `setup-node` and `setup-dotnet` upgraded from v4 to v5, and
-  .NET upgraded from 7.0 to 10.0.
+- CI/CD workflows: GitHub actions `checkout`, `setup-java`, `setup-node` and `setup-dotnet` upgraded from v4 to v5,
+  .NET upgraded from 7.0 to 10.0, and Node.js upgraded from 20 (end of life) to 24.
 - The changelogs of the archived repositories, no longer maintained, are moved from the modules to `docs/history/`.
 - Versions in the READMEs aligned with the build: JDK 17 to build, Java 11+ for the KMP desktop client, Kotlin 2.2,
   Android 8.0+ and iOS 15.3+ for the KMP client.
