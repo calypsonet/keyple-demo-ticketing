@@ -58,6 +58,8 @@ class StorageCardValidationManager(
    * Formats the card ProductType for user display. Examples: MIFARE_CLASSIC_1K → "Mifare Classic
    * 1K" MIFARE_ULTRALIGHT → "Mifare Ultralight" ST25_SRT512 → "ST25 SRT512"
    */
+  // The "else" branch is kept for the product types that a newer version of the Keypop API may add
+  @Suppress("REDUNDANT_ELSE_IN_WHEN")
   private fun formatCardType(productType: ProductType): String {
     return when (productType) {
       ProductType.MIFARE_CLASSIC_1K -> "Mifare Classic 1K"

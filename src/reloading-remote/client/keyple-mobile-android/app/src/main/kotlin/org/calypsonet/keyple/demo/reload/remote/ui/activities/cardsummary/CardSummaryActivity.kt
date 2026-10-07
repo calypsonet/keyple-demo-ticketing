@@ -17,6 +17,7 @@ import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.content.IntentCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardSummaryBinding
@@ -39,7 +40,8 @@ class CardSummaryActivity : AbstractDemoActivity() {
     setContentView(activityCardSummaryBinding.root)
 
     val cardContent: UiCardReaderResponse =
-        intent.getParcelableExtra(AbstractCardActivity.CARD_CONTENT)!!
+        IntentCompat.getParcelableExtra(
+            intent, AbstractCardActivity.CARD_CONTENT, UiCardReaderResponse::class.java)!!
 
     titleLinearLayoutManager = LinearLayoutManager(this)
     activityCardSummaryBinding.titlesList.layoutManager = titleLinearLayoutManager

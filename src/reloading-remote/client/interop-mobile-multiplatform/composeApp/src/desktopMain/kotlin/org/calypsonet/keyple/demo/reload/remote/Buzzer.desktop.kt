@@ -16,11 +16,16 @@ import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioSystem
 import javax.sound.sampled.LineUnavailableException
 import kotlin.math.sin
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 actual class PlatformBuzzer {
+
+  // The tones are played in background, a failing tone not preventing the next ones
+  private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
   actual fun vibrate() {
     // do nothing on desktop...
   }
@@ -34,7 +39,7 @@ actual class PlatformBuzzer {
 
   @Throws(LineUnavailableException::class)
   fun tone(hz: Int, msecs: Int, vol: Double) {
-    GlobalScope.launch(Dispatchers.IO) {
+    scope.launch {
       val buf = ByteArray(1)
       val af =
           AudioFormat(

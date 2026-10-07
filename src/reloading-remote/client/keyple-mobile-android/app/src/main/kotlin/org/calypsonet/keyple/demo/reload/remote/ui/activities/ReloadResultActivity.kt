@@ -17,6 +17,7 @@ import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.content.IntentCompat
 import com.airbnb.lottie.LottieDrawable
 import java.util.Timer
 import java.util.TimerTask
@@ -39,7 +40,8 @@ class ReloadResultActivity : AbstractDemoActivity() {
 
     val status = Status.getStatus(intent.getStringExtra(STATUS))
     val cardContent: UiCardReaderResponse? =
-        intent.getParcelableExtra(AbstractCardActivity.CARD_CONTENT)
+        IntentCompat.getParcelableExtra(
+            intent, AbstractCardActivity.CARD_CONTENT, UiCardReaderResponse::class.java)
 
     activityChargeResultBinding.tryBtn.setOnClickListener {
       onBackPressedDispatcher.onBackPressed()

@@ -33,6 +33,8 @@ val javaTargetLevel: String by project
 
 kotlin {
   jvmToolchain(jvmToolchainVersion.toInt())
+  // The platform specific implementations (e.g. Buzzer, DataStore) use expect/actual classes
+  compilerOptions { freeCompilerArgs.add("-Xexpect-actual-classes") }
   if (System.getProperty("os.name").lowercase().contains("mac")) {
     listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
       iosTarget.binaries.framework {
@@ -109,7 +111,7 @@ android {
   defaultConfig {
     applicationId = project.findProperty("androidAppId") as String
     minSdk = (project.findProperty("androidMinSdk") as String).toInt()
-    targetSdk = (project.findProperty("androidCompileSdk") as String).toInt()
+    targetSdk = (project.findProperty("androidTargetSdk") as String).toInt()
     versionCode = (project.findProperty("androidAppVersionCode") as String).toInt()
     versionName = project.findProperty("androidAppVersionName") as String
   }
@@ -126,15 +128,6 @@ android {
   sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
   sourceSets["main"].res.srcDirs("src/androidMain/res")
   packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
-  applicationVariants.all {
-    outputs.all {
-      val outputImpl = this as com.android.build.gradle.internal.api.ApkVariantOutputImpl
-      val variantName = name
-      val versionName = project.version.toString()
-      val newName = "${rootProject.name}-android-$versionName-$variantName.apk"
-      outputImpl.outputFileName = newName
-    }
-  }
   publishing { singleVariant("debug") {} }
   lint { abortOnError = false }
 }
@@ -154,6 +147,9 @@ compose.desktop {
     }
   }
 }
+
+// Name of the Android APK files: <root project name>-android-<version>-<variant>.apk
+base { archivesName.set("${rootProject.name}-android-${project.version}") }
 
 tasks.withType<AbstractArchiveTask>().configureEach { archiveBaseName.set(rootProject.name) }
 

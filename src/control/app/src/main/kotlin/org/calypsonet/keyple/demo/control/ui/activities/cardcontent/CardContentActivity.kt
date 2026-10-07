@@ -14,6 +14,7 @@ package org.calypsonet.keyple.demo.control.ui.activities.cardcontent
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.IntentCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.databinding.ActivityCardContentBinding
@@ -38,8 +39,8 @@ class CardContentActivity : BaseActivity() {
     activityCardContentBinding.presentBtn.setOnClickListener {
       onBackPressedDispatcher.onBackPressed()
     }
-    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-    val cardContent: UiControlResult = intent.getParcelableExtra(CARD_CONTENT)!!
+    val cardContent: UiControlResult =
+        IntentCompat.getParcelableExtra(intent, CARD_CONTENT, UiControlResult::class.java)!!
     activityCardContentBinding.lastValidationList.layoutManager = LinearLayoutManager(this)
     activityCardContentBinding.titlesList.layoutManager = LinearLayoutManager(this)
     if (cardContent.titlesList.isNotEmpty()) {

@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   not supported and a warning is logged once, instead of failing.
 - Android applications: the coroutines launched by the activities are bound to their lifecycle (`lifecycleScope`
   instead of `GlobalScope`), and deprecated Android APIs are replaced (`ProgressDialog`, `startActivityForResult`,
-  `onBackPressed`, `Resources.getColor`).
+  `onBackPressed`, `Resources.getColor`, `Intent.getParcelableExtra`).
 - Control and validation apps: the plugin registration is a suspend function instead of using `runBlocking`. Reloading
   Android client: the plugins are registered directly, as before the refactoring.
 - Android applications: Java 17 as source and target level instead of Java 8. No impact on the supported devices: the
@@ -190,6 +190,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   same identifier, generated with only 4 hexadecimal characters (collisions after a few hundred transactions). The
   transactions now have a unique identifier (UUID), whose first 4 characters are displayed as before.
 ### Reloading remote KMP client
+#### Changed
+- The Android APK files are named through `base.archivesName` instead of an internal Android Gradle plugin API
+  (`ApkVariantOutputImpl`). The debug APK keeps its name.
+- Android target SDK defined by its own `androidTargetSdk` property (still `35`) instead of `androidCompileSdk`.
+- The background tasks of `KeypleService` (server ping, card selection scenario) and the tones of the desktop buzzer
+  are launched in a scope owned by their class instead of `GlobalScope`.
+- The `expect`/`actual` classes (beta feature of Kotlin) are explicitly enabled (`-Xexpect-actual-classes`), removing
+  the related compilation warnings.
 #### Fixed
 - The status code returned by the server when reading the card is now checked: a rejected card, a card not
   personalized, an expired environment or a communication error are displayed as an error, instead of a card without

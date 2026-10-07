@@ -25,10 +25,11 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.request.get
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -95,6 +96,9 @@ class KeypleService(
     expectSuccess = true
     followRedirects = true
   }
+  // Background tasks of the service (server ping, card selection scenario), living as long as the
+  // service: a failing task does not cancel the others
+  private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
   private var pingJob: Job? = null
 
   fun start() {
@@ -147,7 +151,7 @@ class KeypleService(
     pingJob?.cancel()
     pingJob =
         remoteService?.let {
-          GlobalScope.launch {
+          scope.launch {
             while (true) {
               try {
                 val response = pingServer()
@@ -165,7 +169,7 @@ class KeypleService(
 
   private fun launchGetCardSelectionScenarioJob() {
     remoteService?.let {
-      GlobalScope.launch {
+      scope.launch {
         try {
           val scenarioJsonString = retrieveSelectionScenarioJson()
           Napier.d("Card Selection Scenario retrieved: $scenarioJsonString")
