@@ -31,6 +31,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `keyple-card-cna-storagecard-java-lib` (mock): `2.3.0` -> `2.3.1`
 - `keyple-plugin-cna-storagecard-java-lib` (mock): `1.1.0` -> `1.1.1`
 ### Removed
+- `kotlin-stdlib-jdk8` dependency of the Android applications, merged into `kotlin-stdlib` (added by the Kotlin Gradle
+  plugin) since Kotlin 1.8.
 - `log4j` `1.2.17` (end of life), declared but not used by `bit-lib4j`: excluded from the dependencies of the common
   library, the Android applications and the server.
 - Android applications: MultiDex (`androidx.multidex`), useless since the minimum SDK is 26.
@@ -58,6 +60,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `Location.toString()` now returns the name of the location.
 - Documentation of the status codes of `AnalyzeContractsOutputDto`, `WriteContractOutputDto`, `CardIssuanceOutputDto`
   and of the `SelectAppAnd...OutputDto` aligned with the codes actually returned by the server.
+#### Upgraded
+- Kotlin: `1.7.22` -> `2.2.10` (same version as the other projects). The library still targets Java 8.
 ### Validation app
 #### Added
 - Anti-passback check for storage cards: a card presented again within the anti-passback delay is rejected.

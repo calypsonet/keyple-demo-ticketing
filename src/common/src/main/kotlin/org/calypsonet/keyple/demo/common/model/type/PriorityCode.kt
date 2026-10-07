@@ -21,7 +21,7 @@ enum class PriorityCode constructor(val key: Int, val value: String) {
 
   companion object {
     fun findEnumByKey(key: Int): PriorityCode {
-      for (contractPriority in values()) {
+      for (contractPriority in entries) {
         if (contractPriority.key == key) {
           return contractPriority
         }

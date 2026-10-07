@@ -42,6 +42,6 @@ enum class RemoteServiceStatus(val code: Int) {
      * unknown.
      */
     @JvmStatic
-    fun fromCode(code: Int): RemoteServiceStatus = values().find { it.code == code } ?: SERVER_ERROR
+    fun fromCode(code: Int): RemoteServiceStatus = entries.find { it.code == code } ?: SERVER_ERROR
   }
 }

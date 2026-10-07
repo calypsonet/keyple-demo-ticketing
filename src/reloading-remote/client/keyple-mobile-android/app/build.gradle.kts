@@ -90,9 +90,8 @@ dependencies {
   implementation(libs.androidxConstraintLayout)
   implementation(libs.androidxActivity)
 
-  // Kotlin
+  // Kotlin (the Kotlin standard library is added by the Kotlin Gradle plugin)
   implementation(libs.androidxCore)
-  implementation(libs.kotlinStdlibJdk8)
 
   // Coroutines
   implementation(libs.kotlinxCoroutinesCore)
