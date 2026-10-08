@@ -65,6 +65,8 @@ class CardSummaryActivity : AbstractDemoActivity() {
         activityCardSummaryBinding.titlesList.visibility = View.GONE
         activityCardSummaryBinding.lastValidationContent.visibility = View.GONE
         activityCardSummaryBinding.contentTitle.visibility = View.GONE
+        // Return to the card presentation screen (or the home screen) to try again
+        scheduleAutoReturn(ERROR_RETURN_DELAY_MS)
       }
       Status.TICKETS_FOUND,
       Status.SUCCESS -> {
@@ -101,6 +103,8 @@ class CardSummaryActivity : AbstractDemoActivity() {
         activityCardSummaryBinding.titlesList.visibility = View.GONE
         activityCardSummaryBinding.lastValidationContent.visibility = View.GONE
         activityCardSummaryBinding.contentTitle.visibility = View.GONE
+        // Return to the card presentation screen (or the home screen) to try again
+        scheduleAutoReturn(ERROR_RETURN_DELAY_MS)
       }
       else -> {
         activityCardSummaryBinding.animation.setAnimation("error_anim.json")
@@ -112,6 +116,8 @@ class CardSummaryActivity : AbstractDemoActivity() {
         activityCardSummaryBinding.titlesList.visibility = View.GONE
         activityCardSummaryBinding.lastValidationContent.visibility = View.GONE
         activityCardSummaryBinding.contentTitle.visibility = View.GONE
+        // Return to the card presentation screen (or the home screen) to try again
+        scheduleAutoReturn(ERROR_RETURN_DELAY_MS)
       }
     }
 

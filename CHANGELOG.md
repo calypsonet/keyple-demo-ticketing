@@ -146,6 +146,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   request.
 - The server IP address entered in the settings is checked as an IPv4 address (four numbers from 0 to 255) instead of
   using the deprecated `Patterns.IP_ADDRESS`.
+- The error screens return automatically to the previous screen after 8 seconds, as the success screen does after 5
+  seconds: the card presentation screen to try again (or the home screen when it was closed), unless the user
+  chooses before with the buttons. This applies to the reload and personalization result in error, and to the card
+  summary for an invalid card or a technical error. The automatic return uses a coroutine bound to the screen
+  lifecycle instead of a `Timer`.
 #### Upgraded
 - `okhttp-logging-interceptor`: `3.9.1` -> `3.14.9`, the version of the OkHttp library used by Retrofit.
 #### Removed

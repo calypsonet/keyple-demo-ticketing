@@ -16,6 +16,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.reload.remote.R
@@ -29,10 +31,30 @@ abstract class AbstractDemoActivity : AppCompatActivity() {
   @Inject lateinit var appSettings: AppSettingsRepository
   @Inject lateinit var serverStatusProvider: ServerStatusProvider
   protected lateinit var toolbarBinding: ToolbarBinding
+  private var autoReturnJob: Job? = null
 
   override fun onResume() {
     super.onResume()
     checkServerStatus()
+  }
+
+  override fun onPause() {
+    super.onPause()
+    // The automatic return is abandoned when the user leaves the screen (e.g. with a button)
+    autoReturnJob?.cancel()
+  }
+
+  /**
+   * Closes the screen after the provided delay, returning to the previous screen (e.g. the card
+   * presentation screen to try again, or the home screen).
+   */
+  protected fun scheduleAutoReturn(delayMs: Long) {
+    autoReturnJob?.cancel()
+    autoReturnJob =
+        lifecycleScope.launch {
+          delay(delayMs)
+          finish()
+        }
   }
 
   private fun updateServerStatusIndicator() {
@@ -56,5 +78,12 @@ abstract class AbstractDemoActivity : AppCompatActivity() {
       appSettings.lastServerStatus = isUp
       updateServerStatusIndicator()
     }
+  }
+
+  companion object {
+    /** Display duration of a successful result before the automatic return. */
+    const val SUCCESS_RETURN_DELAY_MS = 5000L
+    /** Display duration of an error before the automatic return, longer to read the message. */
+    const val ERROR_RETURN_DELAY_MS = 8000L
   }
 }

@@ -20,8 +20,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.IntentCompat
 import com.airbnb.lottie.LottieDrawable
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Timer
-import java.util.TimerTask
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityChargeResultBinding
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
@@ -30,7 +28,6 @@ import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 @AndroidEntryPoint
 class ReloadResultActivity : AbstractDemoActivity() {
 
-  private val timer = Timer()
   private lateinit var activityChargeResultBinding: ActivityChargeResultBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,14 +81,7 @@ class ReloadResultActivity : AbstractDemoActivity() {
           activityChargeResultBinding.bigText.setText(R.string.charging_success_label)
         }
 
-        Intent(this, HomeActivity::class.java)
-        timer.schedule(
-            object : TimerTask() {
-              override fun run() {
-                runOnUiThread { this@ReloadResultActivity.finish() }
-              }
-            },
-            RETURN_DELAY_MS.toLong())
+        scheduleAutoReturn(SUCCESS_RETURN_DELAY_MS)
       }
       else -> {
         activityChargeResultBinding.mainBackground.setBackgroundColor(
@@ -112,6 +102,9 @@ class ReloadResultActivity : AbstractDemoActivity() {
         }
         activityChargeResultBinding.bigText.visibility = View.VISIBLE
         activityChargeResultBinding.btnLayout.visibility = View.VISIBLE
+
+        // Same as the "try again" button, unless the user chooses before
+        scheduleAutoReturn(ERROR_RETURN_DELAY_MS)
       }
     }
 
@@ -120,13 +113,7 @@ class ReloadResultActivity : AbstractDemoActivity() {
     mp.start()
   }
 
-  override fun onPause() {
-    super.onPause()
-    timer.cancel()
-  }
-
   companion object {
-    private const val RETURN_DELAY_MS = 5000
     const val TICKETS_NUMBER = "ticketsNumber"
     const val STATUS = "status"
     const val MESSAGE = "message"
