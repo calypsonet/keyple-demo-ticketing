@@ -38,8 +38,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     the modules are installed in the `SingletonComponent` (`@Singleton` bindings);
   - the `AppComponent`, the activity injectors (`UIModule`), the `AppModule` and the custom scopes (`AppScoped`,
     `ActivityScoped`) are removed.
-- Android applications: Jetifier is disabled, no library requiring it anymore (Dagger `2.25` and the Coppernic plugin
-  were the last ones).
+- Android applications and KMP client: Jetifier is disabled, no library requiring it anymore (Dagger `2.25` and the
+  Coppernic plugin were the last ones).
 - CI/CD workflows: GitHub actions `checkout`, `setup-java`, `setup-node` and `setup-dotnet` upgraded from v4 to v5,
   .NET upgraded from 7.0 to 10.0, and Node.js upgraded from 20 (end of life) to 24.
 - The changelogs of the archived repositories, no longer maintained, are moved from the modules to `docs/history/`.
