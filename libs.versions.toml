@@ -15,21 +15,19 @@ androidxLifecycleViewmodel = "2.9.2"
 androidxNavigationCompose = "2.9.0-rc01"
 assertj = "3.25.3"
 bitLib4j = "1.4.5"
-# Compottie 2.1.0+ requires Kotlin 2.3
-compottie = "2.0.2"
+# Compottie 2.3.0+ requires Kotlin 2.4
+compottie = "2.2.4"
 composeBom = "2025.08.01"
-# Compose Multiplatform plugin and libraries: 1.9.3+ supports AGP 9; 1.11+ requires Kotlin 2.3 for iOS
-composePlugin = "1.10.3"
+# Compose Multiplatform plugin and libraries (1.11 requires Kotlin 2.3 for iOS)
+composePlugin = "1.11.1"
 # Compose Multiplatform Material 3 (versioned separately)
 composeMaterial3 = "1.9.0"
 coroutines = "1.10.2"
 gson = "2.11.0"
-# Hilt 2.60+ is built with Kotlin 2.3
-hilt = "2.59.2"
+hilt = "2.60.1"
 keypleJavaBom = "2026.09.29"
 keyplePluginCnaFamocoSeCommunicationLib = "2.0.2"
-# 2.2.20+: the Kotlin compiler plugins (e.g. Parcelize) support the Kotlin built into AGP 9
-kotlin = "2.2.21"
+kotlin = "2.3.21"
 # KSP 2.3.1+ supports the Kotlin built into AGP 9 (the KSP versions no longer follow the Kotlin ones)
 ksp = "2.3.12"
 kotlinxSerializationCore = "1.9.0"

@@ -43,19 +43,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - CI/CD workflows: GitHub actions `checkout`, `setup-java`, `setup-node` and `setup-dotnet` upgraded from v4 to v5,
   .NET upgraded from 7.0 to 10.0, and Node.js upgraded from 20 (end of life) to 24.
 - The changelogs of the archived repositories, no longer maintained, are moved from the modules to `docs/history/`.
-- Versions in the READMEs aligned with the build: JDK 17 to build, Java 11+ for the KMP desktop client, Kotlin 2.2,
+- Versions in the READMEs aligned with the build: JDK 17 to build, Java 11+ for the KMP desktop client, Kotlin 2.3,
   Android 8.0+ and iOS 15.3+ for the KMP client.
 ### Upgraded
 - `keyple-java-bom`: `2026.03.19` -> `2026.09.29`
 - `keyple-card-cna-storagecard-java-lib` (mock): `2.3.0` -> `2.3.1`
 - `keyple-plugin-cna-storagecard-java-lib` (mock): `1.1.0` -> `1.1.1`
-- Android applications: Dagger `2.25` -> Hilt `2.59.2`, with KSP `2.3.12`.
+- Android applications: Dagger `2.25` -> Hilt `2.60.1`, with KSP `2.3.12`.
 - Android applications and KMP client: Android Gradle plugin `8.10.1` -> `9.4.1` and Gradle wrapper `8.11.1` ->
   `9.8.1` (also for the common library):
   - the Kotlin support built into the Android Gradle plugin replaces the `org.jetbrains.kotlin.android` plugin (the
     Kotlin JVM target follows the Java target, and `src/main/kotlin` is a default source directory);
-  - Kotlin `2.2.10` -> `2.2.21`, the Kotlin compiler plugins (e.g. Parcelize) supporting the built-in Kotlin since
-    `2.2.20`;
+  - Kotlin `2.2.10` -> `2.3.21` (the Kotlin compiler plugins, e.g. Parcelize, support the built-in Kotlin since
+    `2.2.20`);
   - the build scripts read the Gradle properties with `project.property()` instead of the delegates deprecated by
     Gradle 9.6.
 - Control and validation apps: the runtime of the obsolete `kotlin-android-extensions` plugin, declared but not used by
@@ -98,7 +98,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Documentation of the status codes of `AnalyzeContractsOutputDto`, `WriteContractOutputDto`, `CardIssuanceOutputDto`
   and of the `SelectAppAnd...OutputDto` aligned with the codes actually returned by the server.
 #### Upgraded
-- Kotlin: `1.7.22` -> `2.2.21` (same version as the other projects). The library still targets Java 8.
+- Kotlin: `1.7.22` -> `2.3.21` (same version as the other projects). The library still targets Java 8.
 ### Validation app
 #### Added
 - Anti-passback check for storage cards: a card presented again within the anti-passback delay is rejected.
@@ -231,10 +231,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   (`com.android.kotlin.multiplatform.library` plugin) with the shared code, the Android specific implementations and
   the desktop and iOS applications. The Android APK is built by `:androidApp:assembleDebug` and keeps its name; the
   iOS framework and the desktop application are still built by `composeApp`.
-- Compose Multiplatform: `1.8.2` -> `1.10.3` (support of the Android Gradle plugin 9; `1.11` requires Kotlin 2.3 for
-  iOS), Material 3 `1.9.0`. The Compose libraries are declared explicitly in the version catalog instead of using the
+- Compose Multiplatform: `1.8.2` -> `1.11.1` (support of the Android Gradle plugin 9 since `1.9.3`; Kotlin 2.3 required
+  for iOS), Material 3 `1.9.0`. The Compose libraries are declared explicitly in the version catalog instead of using the
   deprecated `compose.*` accessors, and the previews use `androidx.compose.ui.tooling.preview.Preview`.
-- Compottie (Lottie animations): `2.0.0` -> `2.0.2` (`2.1.0`+ requires Kotlin 2.3).
+- Compottie (Lottie animations): `2.0.0` -> `2.2.4` (`2.3.0`+ requires Kotlin 2.4).
 - The Android APK files are named through `base.archivesName` instead of an internal Android Gradle plugin API
   (`ApkVariantOutputImpl`). The debug APK keeps its name.
 - Android target SDK defined by its own `androidTargetSdk` property (still `35`) instead of `androidCompileSdk`.

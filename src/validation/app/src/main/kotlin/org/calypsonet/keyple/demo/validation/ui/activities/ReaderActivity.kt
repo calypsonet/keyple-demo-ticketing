@@ -78,7 +78,7 @@ class ReaderActivity : BaseActivity() {
     // (including dimensionRatio on the Lottie view) before first use, avoiding
     // GONE→VISIBLE sizing issues where the animation would cover the text views.
     summaryBinding =
-        LayoutCardSummaryOverlayBinding.bind(activityCardReaderBinding.cardSummaryStub!!.inflate())
+        LayoutCardSummaryOverlayBinding.bind(activityCardReaderBinding.cardSummaryStub.inflate())
   }
 
   override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
@@ -365,11 +365,11 @@ class ReaderActivity : BaseActivity() {
   }
 
   private fun showProgress() {
-    activityCardReaderBinding.progressOverlay?.visibility = View.VISIBLE
+    activityCardReaderBinding.progressOverlay.visibility = View.VISIBLE
   }
 
   private fun dismissProgress() {
-    activityCardReaderBinding.progressOverlay?.visibility = View.GONE
+    activityCardReaderBinding.progressOverlay.visibility = View.GONE
   }
 
   /**
