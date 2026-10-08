@@ -34,7 +34,9 @@ kotlin {
   // The platform specific implementations (e.g. Buzzer, DataStore) use expect/actual classes
   compilerOptions { freeCompilerArgs.add("-Xexpect-actual-classes") }
   if (System.getProperty("os.name").lowercase().contains("mac")) {
-    listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
+    // Apple Silicon targets only: Compose Multiplatform 1.11 no longer supports the Intel simulator
+    // (iosX64)
+    listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
       iosTarget.binaries.framework {
         baseName = rootProject.name
         isStatic = true

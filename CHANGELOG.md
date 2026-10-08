@@ -235,6 +235,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   for iOS), Material 3 `1.9.0`. The Compose libraries are declared explicitly in the version catalog instead of using the
   deprecated `compose.*` accessors, and the previews use `androidx.compose.ui.tooling.preview.Preview`.
 - Compottie (Lottie animations): `2.0.0` -> `2.2.4` (`2.3.0`+ requires Kotlin 2.4).
+- iOS: the Intel simulator target (`iosX64`) is removed, no longer supported by Compose Multiplatform 1.11 and
+  Compottie: the application targets the iOS devices (`iosArm64`) and the Apple Silicon simulator
+  (`iosSimulatorArm64`), and the related CI job is removed.
 - The Android APK files are named through `base.archivesName` instead of an internal Android Gradle plugin API
   (`ApkVariantOutputImpl`). The debug APK keeps its name.
 - Android target SDK defined by its own `androidTargetSdk` property (still `35`) instead of `androidCompileSdk`.
