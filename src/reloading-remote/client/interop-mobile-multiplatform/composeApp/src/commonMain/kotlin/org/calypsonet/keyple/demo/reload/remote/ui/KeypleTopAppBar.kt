@@ -25,8 +25,6 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -49,6 +47,7 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import org.calypsonet.keyple.composeapp.generated.resources.Res
+import org.calypsonet.keyple.composeapp.generated.resources.ic_arrow_back
 import org.calypsonet.keyple.composeapp.generated.resources.ic_logo_keyple
 import org.calypsonet.keyple.demo.reload.remote.AppState
 import org.jetbrains.compose.resources.vectorResource
@@ -81,7 +80,7 @@ fun KeypleTopAppBar(
         if (showBackArrow) {
           IconButton(onClick = { onBack() }) {
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                imageVector = vectorResource(Res.drawable.ic_arrow_back),
                 contentDescription = "Back",
             )
           }

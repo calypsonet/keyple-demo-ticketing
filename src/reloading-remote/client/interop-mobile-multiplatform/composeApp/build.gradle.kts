@@ -66,7 +66,6 @@ kotlin {
       implementation(libs.composeFoundation)
       implementation(libs.composeMaterial)
       implementation(libs.composeMaterial3)
-      implementation(libs.composeMaterialIconsExtended)
       implementation(libs.composeAnimation)
       implementation(libs.composeUi)
       implementation(libs.composeComponentsResources)

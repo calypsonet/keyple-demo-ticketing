@@ -60,6 +60,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     Gradle 9.6.
 - Control and validation apps: the runtime of the obsolete `kotlin-android-extensions` plugin, declared but not used by
   the Famoco plugin, is excluded: it duplicated the classes of the Parcelize runtime.
+- Android applications: Lottie `3.4.4` -> `6.7.1`. SLF4J remains in `1.7.36`, the last 1.7 version, the `slf4j-timber`
+  binding not supporting SLF4J 2.
 ### Removed
 - Android applications: dagger-android, the `javax.annotation` (GlassFish) dependency and the kapt plugin, replaced by
   Hilt and KSP.
@@ -232,6 +234,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Compose Multiplatform: `1.8.2` -> `1.10.3` (support of the Android Gradle plugin 9; `1.11` requires Kotlin 2.3 for
   iOS), Material 3 `1.9.0`. The Compose libraries are declared explicitly in the version catalog instead of using the
   deprecated `compose.*` accessors, and the previews use `androidx.compose.ui.tooling.preview.Preview`.
+- Compottie (Lottie animations): `2.0.0` -> `2.0.2` (`2.1.0`+ requires Kotlin 2.3).
 - The Android APK files are named through `base.archivesName` instead of an internal Android Gradle plugin API
   (`ApkVariantOutputImpl`). The debug APK keeps its name.
 - Android target SDK defined by its own `androidTargetSdk` property (still `35`) instead of `androidCompileSdk`.
@@ -241,6 +244,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   the related compilation warnings.
 #### Removed
 - Koin dependencies (`koin-core`, `koin-compose`, `koin-android`, `koin-androidx-compose`), declared but not used.
+- Material icons extended (`material-icons-extended`, no longer updated, about 8 MB of the debug APK): the only icon
+  used, the back arrow, is now the Material Symbols `arrow_back` vector, provided as a Compose resource.
 #### Fixed
 - The status code returned by the server when reading the card is now checked: a rejected card, a card not
   personalized, an expired environment or a communication error are displayed as an error, instead of a card without
