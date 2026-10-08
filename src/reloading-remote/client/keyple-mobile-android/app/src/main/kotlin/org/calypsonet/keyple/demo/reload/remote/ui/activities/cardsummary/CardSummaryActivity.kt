@@ -13,9 +13,11 @@
 package org.calypsonet.keyple.demo.reload.remote.ui.activities.cardsummary
 
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.View
+import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.core.content.IntentCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -65,8 +67,7 @@ class CardSummaryActivity : AbstractDemoActivity() {
         activityCardSummaryBinding.titlesList.visibility = View.GONE
         activityCardSummaryBinding.lastValidationContent.visibility = View.GONE
         activityCardSummaryBinding.contentTitle.visibility = View.GONE
-        // Return to the card presentation screen (or the home screen) to try again
-        scheduleAutoReturn(ERROR_RETURN_DELAY_MS)
+        scheduleErrorAutoReturn(R.color.orange)
       }
       Status.TICKETS_FOUND,
       Status.SUCCESS -> {
@@ -103,8 +104,7 @@ class CardSummaryActivity : AbstractDemoActivity() {
         activityCardSummaryBinding.titlesList.visibility = View.GONE
         activityCardSummaryBinding.lastValidationContent.visibility = View.GONE
         activityCardSummaryBinding.contentTitle.visibility = View.GONE
-        // Return to the card presentation screen (or the home screen) to try again
-        scheduleAutoReturn(ERROR_RETURN_DELAY_MS)
+        scheduleErrorAutoReturn(R.color.red)
       }
       else -> {
         activityCardSummaryBinding.animation.setAnimation("error_anim.json")
@@ -116,8 +116,7 @@ class CardSummaryActivity : AbstractDemoActivity() {
         activityCardSummaryBinding.titlesList.visibility = View.GONE
         activityCardSummaryBinding.lastValidationContent.visibility = View.GONE
         activityCardSummaryBinding.contentTitle.visibility = View.GONE
-        // Return to the card presentation screen (or the home screen) to try again
-        scheduleAutoReturn(ERROR_RETURN_DELAY_MS)
+        scheduleErrorAutoReturn(R.color.red)
       }
     }
 
@@ -140,5 +139,16 @@ class CardSummaryActivity : AbstractDemoActivity() {
       startActivity(intent)
       this@CardSummaryActivity.finish()
     }
+  }
+
+  /**
+   * Returns to the card presentation screen (or the home screen) to try again after the error
+   * display duration, the remaining time being shown by a bar of the color of the message.
+   */
+  private fun scheduleErrorAutoReturn(@ColorRes color: Int) {
+    val tint = ColorStateList.valueOf(ContextCompat.getColor(this, color))
+    activityCardSummaryBinding.autoReturnProgress.progressTintList = tint
+    activityCardSummaryBinding.autoReturnProgress.progressBackgroundTintList = tint
+    scheduleAutoReturn(ERROR_RETURN_DELAY_MS, activityCardSummaryBinding.autoReturnProgress)
   }
 }

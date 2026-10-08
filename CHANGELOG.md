@@ -157,6 +157,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   chooses before with the buttons. This applies to the reload and personalization result in error, and to the card
   summary for an invalid card or a technical error. The automatic return uses a coroutine bound to the screen
   lifecycle instead of a `Timer`.
+- The screens returning automatically show the remaining time: a bar emptied at the bottom of the screen (white on the
+  result screens, of the color of the message on the card summary), and the remaining seconds in the "Retry" button
+  of the result screen in error ("Retry (8)"), which performs the same action.
 #### Upgraded
 - `okhttp-logging-interceptor`: `3.9.1` -> `3.14.9`, the version of the OkHttp library used by Retrofit.
 #### Removed

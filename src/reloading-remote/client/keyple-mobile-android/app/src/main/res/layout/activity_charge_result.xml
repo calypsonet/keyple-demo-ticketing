@@ -138,6 +138,21 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
+    <!-- Remaining time before the automatic return to the previous screen (shown when it is scheduled) -->
+    <ProgressBar
+        android:id="@+id/autoReturnProgress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minHeight="6dp"
+        android:maxHeight="6dp"
+        android:max="1000"
+        android:progress="1000"
+        android:progressTint="@color/white"
+        android:progressBackgroundTint="@color/white"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

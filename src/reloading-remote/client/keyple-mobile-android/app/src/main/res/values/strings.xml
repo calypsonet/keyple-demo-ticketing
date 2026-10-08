@@ -36,6 +36,7 @@
     <string name="to_be_personalized">to be personalized</string>
     <string name="choose_trips">Choose a type of title</string>
     <string name="try_again">Retry</string>
+    <string name="try_again_countdown">Retry (%1$d)</string>
     <string name="cancel">Cancel</string>
     <string name="buy_titles">Buy title</string>
     <string name="load_card">Load title</string>

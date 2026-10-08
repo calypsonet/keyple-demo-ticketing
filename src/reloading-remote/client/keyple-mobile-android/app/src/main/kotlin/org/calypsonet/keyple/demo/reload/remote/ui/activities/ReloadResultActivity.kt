@@ -81,7 +81,7 @@ class ReloadResultActivity : AbstractDemoActivity() {
           activityChargeResultBinding.bigText.setText(R.string.charging_success_label)
         }
 
-        scheduleAutoReturn(SUCCESS_RETURN_DELAY_MS)
+        scheduleAutoReturn(SUCCESS_RETURN_DELAY_MS, activityChargeResultBinding.autoReturnProgress)
       }
       else -> {
         activityChargeResultBinding.mainBackground.setBackgroundColor(
@@ -103,8 +103,14 @@ class ReloadResultActivity : AbstractDemoActivity() {
         activityChargeResultBinding.bigText.visibility = View.VISIBLE
         activityChargeResultBinding.btnLayout.visibility = View.VISIBLE
 
-        // Same as the "try again" button, unless the user chooses before
-        scheduleAutoReturn(ERROR_RETURN_DELAY_MS)
+        // Same as the "try again" button, unless the user chooses before: its label shows the
+        // remaining seconds
+        scheduleAutoReturn(ERROR_RETURN_DELAY_MS, activityChargeResultBinding.autoReturnProgress) {
+            seconds ->
+          activityChargeResultBinding.tryBtn.text =
+              if (seconds != null) getString(R.string.try_again_countdown, seconds)
+              else getString(R.string.try_again)
+        }
       }
     }
 
