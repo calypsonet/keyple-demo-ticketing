@@ -1,8 +1,8 @@
 rootProject.name = "kdt-reloading-server"
 
-include(":common")
-
-project(":common").projectDir = file("../../common")
+// Common library of the demo: its own build, included instead of being shared as a subproject
+// (one build state for all the applications, its outputs remaining up to date between builds)
+includeBuild("../../common")
 
 pluginManagement {
   repositories {

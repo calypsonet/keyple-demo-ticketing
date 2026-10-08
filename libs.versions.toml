@@ -48,6 +48,8 @@ spotless = "7.0.4"
 timber = "5.0.1"
 
 [libraries]
+# Common library of the demo, provided by the "src/common" build included in each application build
+demoCommon = { module = "org.calypsonet.keyple:kdt-common-lib", version.ref = "project" }
 androidxActivity = { module = "androidx.activity:activity-ktx", version.ref = "androidxActivity" }
 androidxActivityCompose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivityCompose" }
 androidxAppcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidxAppcompat" }

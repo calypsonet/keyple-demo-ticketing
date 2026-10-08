@@ -40,6 +40,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     `ActivityScoped`) are removed.
 - Android applications and KMP client: Jetifier is disabled, no library requiring it anymore (Dagger `2.25` and the
   Coppernic plugin were the last ones).
+- Android applications and server: the common library is included as a separate build (`includeBuild`, Gradle
+  composite build) instead of being declared as a subproject of each build (`include(":common")`). The builds no
+  longer share the outputs of the common library with their own build state: the library is no longer rebuilt by each
+  build (e.g. when opening the projects in the IDE), and the Kotlin JVM plugin is no longer declared in the root
+  projects of the Android applications. The library is referenced by its coordinates (`demoCommon` in the version
+  catalog).
 - CI/CD workflows: GitHub actions `checkout`, `setup-java`, `setup-node` and `setup-dotnet` upgraded from v4 to v5,
   .NET upgraded from 7.0 to 10.0, and Node.js upgraded from 20 (end of life) to 24.
 - The changelogs of the archived repositories, no longer maintained, are moved from the modules to `docs/history/`.

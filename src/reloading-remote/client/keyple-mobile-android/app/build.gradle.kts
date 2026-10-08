@@ -24,7 +24,7 @@ plugins {
 
 dependencies {
   // Demo common
-  implementation(project(":common"))
+  implementation(libs.demoCommon)
 
   // Proprietary libs
   // Storage card specific components
