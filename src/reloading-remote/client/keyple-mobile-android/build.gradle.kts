@@ -3,10 +3,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 plugins {
-  // Android and Kotlin plugins loaded once for all the projects (the application and the common
-  // module), the Kotlin Android plugin needing the classes of the Android plugin
+  // Android and Kotlin plugins loaded once for all the projects (the application, with the Kotlin
+  // support built into the Android plugin, and the common module)
   alias(libs.plugins.androidApplication) apply false
-  alias(libs.plugins.kotlinAndroid) apply false
   alias(libs.plugins.kotlinJvm) apply false
   alias(libs.plugins.ksp) apply false
   alias(libs.plugins.hilt) apply false

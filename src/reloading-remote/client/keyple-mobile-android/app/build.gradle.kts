@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 ///////////////////////////////////////////////////////////////////////////////
 // GRADLE CONFIGURATION
 ///////////////////////////////////////////////////////////////////////////////
@@ -14,7 +12,6 @@ if (project.hasProperty("releaseTag")) {
 
 plugins {
   alias(libs.plugins.androidApplication)
-  alias(libs.plugins.kotlinAndroid)
   alias(libs.plugins.kotlinParcelize)
   alias(libs.plugins.ksp)
   alias(libs.plugins.hilt)
@@ -135,8 +132,8 @@ dependencies {
 // STANDARD CONFIGURATION FOR ANDROID KOTLIN-BASED APP-TYPE PROJECTS
 ///////////////////////////////////////////////////////////////////////////////
 
-val javaSourceLevel: String by project
-val javaTargetLevel: String by project
+val javaSourceLevel = project.property("javaSourceLevel") as String
+val javaTargetLevel = project.property("javaTargetLevel") as String
 
 android {
   namespace = project.findProperty("androidAppNamespace") as String
@@ -174,11 +171,6 @@ android {
   compileOptions {
     sourceCompatibility = JavaVersion.toVersion(javaSourceLevel)
     targetCompatibility = JavaVersion.toVersion(javaTargetLevel)
-  }
-  kotlin { compilerOptions { jvmTarget.set(JvmTarget.fromTarget(javaTargetLevel)) } }
-  sourceSets {
-    getByName("main").java.srcDirs("src/main/kotlin")
-    getByName("debug").java.srcDirs("src/debug/kotlin")
   }
   packaging {
     // Exclude 'META-INF/NOTICE.md' to resolve the conflict that occurs when multiple dependencies

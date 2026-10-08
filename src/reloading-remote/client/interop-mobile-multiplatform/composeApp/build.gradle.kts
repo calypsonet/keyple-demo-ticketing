@@ -1,5 +1,4 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -16,16 +15,15 @@ if (project.hasProperty("releaseTag")) {
 
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
-  alias(libs.plugins.androidApplication)
+  alias(libs.plugins.androidKmpLibrary)
   alias(libs.plugins.jetbrainsCompose)
   alias(libs.plugins.composeCompiler)
   alias(libs.plugins.kotlinSerialization)
   alias(libs.plugins.spotless)
 }
 
-val jvmToolchainVersion: String by project
-val javaSourceLevel: String by project
-val javaTargetLevel: String by project
+val jvmToolchainVersion = project.property("jvmToolchainVersion") as String
+val javaTargetLevel = project.property("javaTargetLevel") as String
 
 ///////////////////////////////////////////////////////////////////////////////
 // APP CONFIGURATION
@@ -43,13 +41,18 @@ kotlin {
       }
     }
   }
-  androidTarget {
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+  // Android library used by the Android application (androidApp module): AGP 9 does not support the
+  // Kotlin Multiplatform and Android application plugins in the same module
+  android {
+    namespace = "${project.property("androidAppNamespace")}.shared"
+    compileSdk = (project.property("androidCompileSdk") as String).toInt()
+    minSdk = (project.property("androidMinSdk") as String).toInt()
     compilerOptions { jvmTarget.set(JvmTarget.fromTarget(javaTargetLevel)) }
+    // Packages the Compose Multiplatform resources (composeResources) in the Android library
+    androidResources { enable = true }
   }
   jvm("desktop") { kotlin { jvmToolchain(jvmToolchainVersion.toInt()) } }
   sourceSets {
-    val desktopMain by getting
     commonMain.dependencies {
       // Keyple BOM
       implementation(project.dependencies.platform(libs.keypleJavaBom))
@@ -59,17 +62,15 @@ kotlin {
       implementation(libs.kotlinxSerializationCore)
       implementation(libs.ktorSerializationKotlinxJson)
       implementation(project.dependencies.platform(libs.composeBom))
-      implementation(compose.runtime)
-      implementation(compose.foundation)
-      implementation(compose.material)
-      implementation(compose.material3)
-      implementation(compose.materialIconsExtended)
-      implementation(compose.animation)
-      implementation(compose.ui)
-      implementation(compose.components.resources)
-      implementation(compose.components.uiToolingPreview)
-      implementation(libs.koinCore)
-      implementation(libs.koinCompose)
+      implementation(libs.composeRuntime)
+      implementation(libs.composeFoundation)
+      implementation(libs.composeMaterial)
+      implementation(libs.composeMaterial3)
+      implementation(libs.composeMaterialIconsExtended)
+      implementation(libs.composeAnimation)
+      implementation(libs.composeUi)
+      implementation(libs.composeComponentsResources)
+      implementation(libs.composeUiToolingPreview)
       implementation(libs.androidxNavigationCompose)
       implementation(libs.androidxLifecycleViewmodel)
       implementation(libs.androidxDatastorePreferences)
@@ -87,13 +88,8 @@ kotlin {
     if (System.getProperty("os.name").lowercase().contains("mac")) {
       iosMain.dependencies { implementation(libs.ktorClientDarwin) }
     }
-    androidMain.dependencies {
-      implementation(libs.androidxActivityCompose)
-      implementation(libs.koinAndroid)
-      implementation(libs.koinAndroidxCompose)
-      implementation(libs.ktorClientOkhttp)
-    }
-    desktopMain.dependencies {
+    androidMain.dependencies { implementation(libs.ktorClientOkhttp) }
+    getByName("desktopMain").dependencies {
       implementation(compose.desktop.currentOs)
       implementation(libs.kotlinxCoroutinesSwing)
       implementation(libs.ktorClientCio)
@@ -102,38 +98,11 @@ kotlin {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// STANDARD CONFIGURATION FOR KOTLIN MULTIPLATFORM APP-TYPE PROJECTS
+// STANDARD CONFIGURATION FOR KOTLIN MULTIPLATFORM PROJECTS
 ///////////////////////////////////////////////////////////////////////////////
 
-android {
-  namespace = project.findProperty("androidAppNamespace") as String
-  compileSdk = (project.findProperty("androidCompileSdk") as String).toInt()
-  defaultConfig {
-    applicationId = project.findProperty("androidAppId") as String
-    minSdk = (project.findProperty("androidMinSdk") as String).toInt()
-    targetSdk = (project.findProperty("androidTargetSdk") as String).toInt()
-    versionCode = (project.findProperty("androidAppVersionCode") as String).toInt()
-    versionName = project.findProperty("androidAppVersionName") as String
-  }
-  buildFeatures {
-    viewBinding = true
-    compose = true
-  }
-  buildTypes { getByName("release") { isMinifyEnabled = false } }
-  dependencies { debugImplementation(compose.uiTooling) }
-  compileOptions {
-    sourceCompatibility = JavaVersion.toVersion(javaSourceLevel)
-    targetCompatibility = JavaVersion.toVersion(javaTargetLevel)
-  }
-  sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-  sourceSets["main"].res.srcDirs("src/androidMain/res")
-  packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
-  publishing { singleVariant("debug") {} }
-  lint { abortOnError = false }
-}
-
 tasks.withType<JavaExec>().configureEach {
-  val customArgs: String? by project
+  val customArgs = project.findProperty("customArgs") as String?
   args = customArgs?.split(" ") ?: emptyList()
 }
 
@@ -147,9 +116,6 @@ compose.desktop {
     }
   }
 }
-
-// Name of the Android APK files: <root project name>-android-<version>-<variant>.apk
-base { archivesName.set("${rootProject.name}-android-${project.version}") }
 
 tasks.withType<AbstractArchiveTask>().configureEach { archiveBaseName.set(rootProject.name) }
 

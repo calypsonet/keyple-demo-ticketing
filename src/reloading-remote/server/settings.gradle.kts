@@ -1,7 +1,5 @@
 rootProject.name = "kdt-reloading-server"
 
-include(":app")
-
 include(":common")
 
 project(":common").projectDir = file("../../common")

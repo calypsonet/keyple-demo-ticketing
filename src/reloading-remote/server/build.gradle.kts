@@ -75,44 +75,47 @@ dependencies {
   implementation(libs.slf4jApi)
 }
 
-val syncPackageVersion by
-    tasks.registering {
+val syncPackageVersion =
+    tasks.register("syncPackageVersion") {
       group = "versioning"
       description = "Synchronize version in package.json with Gradle project version"
       val packageJsonFile = file("dashboard-app/package.json")
+      // Read at configuration time: the project must not be accessed when the task is executed
+      val projectVersion = project.version.toString()
       inputs.file(packageJsonFile)
+      inputs.property("version", projectVersion)
       outputs.file(packageJsonFile)
       doLast {
         val jsonText = packageJsonFile.readText()
         @Suppress("UNCHECKED_CAST")
         val json = JsonSlurper().parseText(jsonText) as MutableMap<String, Any>
-        json["version"] = project.version
+        json["version"] = projectVersion
         val updatedJsonText = JsonOutput.prettyPrint(JsonOutput.toJson(json))
         // Keep the final newline written by npm
         packageJsonFile.writeText(updatedJsonText + "\n")
-        println("Updated package.json version to ${project.version}")
+        println("Updated package.json version to $projectVersion")
       }
     }
 val npm = if (Os.isFamily(Os.FAMILY_WINDOWS)) "npm.cmd" else "npm"
-val buildDashboard by
-    tasks.creating(Exec::class) {
-      dependsOn.add("syncPackageVersion")
-      workingDir = File("dashboard-app")
+val buildDashboard =
+    tasks.register<Exec>("buildDashboard") {
+      dependsOn(syncPackageVersion)
+      workingDir = file("dashboard-app")
       commandLine(npm, "run", "build")
     }
-val lintDashboard by
-    tasks.registering(Exec::class) {
+val lintDashboard =
+    tasks.register<Exec>("lintDashboard") {
       group = "verification"
       description = "Checks the dashboard source code with ESLint"
-      workingDir = File("dashboard-app")
+      workingDir = file("dashboard-app")
       commandLine(npm, "run", "lint")
     }
-val startServer by
-    tasks.creating(Exec::class) {
-      group = "server"
-      workingDir = File("build")
-      commandLine("java", "-jar", "${quarkus.finalName()}-full.jar")
-    }
+
+tasks.register<Exec>("startServer") {
+  group = "server"
+  workingDir = file("build")
+  commandLine("java", "-jar", "${quarkus.finalName()}-full.jar")
+}
 
 tasks {
   clean { delete("dashboard-app/build") }
@@ -128,8 +131,8 @@ tasks {
 // STANDARD CONFIGURATION FOR JAVA APP-TYPE PROJECTS
 ///////////////////////////////////////////////////////////////////////////////
 
-val javaSourceLevel: String by project
-val javaTargetLevel: String by project
+val javaSourceLevel = project.property("javaSourceLevel") as String
+val javaTargetLevel = project.property("javaTargetLevel") as String
 
 java {
   sourceCompatibility = JavaVersion.toVersion(javaSourceLevel)

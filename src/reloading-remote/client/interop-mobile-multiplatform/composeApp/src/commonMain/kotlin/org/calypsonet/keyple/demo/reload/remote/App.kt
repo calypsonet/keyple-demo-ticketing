@@ -14,6 +14,7 @@ package org.calypsonet.keyple.demo.reload.remote
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -43,7 +44,6 @@ import org.calypsonet.keyple.demo.reload.remote.ui.ErrorScreen
 import org.calypsonet.keyple.demo.reload.remote.ui.HomeScreen
 import org.calypsonet.keyple.demo.reload.remote.ui.KeypleTheme
 import org.calypsonet.keyple.demo.reload.remote.ui.SuccessScreen
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview

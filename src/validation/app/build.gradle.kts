@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 ///////////////////////////////////////////////////////////////////////////////
 // GRADLE CONFIGURATION
 ///////////////////////////////////////////////////////////////////////////////
@@ -14,7 +12,6 @@ if (project.hasProperty("releaseTag")) {
 
 plugins {
   alias(libs.plugins.androidApplication)
-  alias(libs.plugins.kotlinAndroid)
   alias(libs.plugins.kotlinParcelize)
   alias(libs.plugins.ksp)
   alias(libs.plugins.hilt)
@@ -109,7 +106,11 @@ dependencies {
   implementation(libs.keyplePluginAndroidNfcLib)
 
   // Other Keyple plugins
-  implementation(libs.keyplePluginCnaFamocoSeCommunicationLib)
+  implementation(libs.keyplePluginCnaFamocoSeCommunicationLib) {
+    // Runtime of the obsolete "kotlin-android-extensions" plugin, declared but not used by the
+    // plugin, and duplicating the classes of the Parcelize runtime
+    exclude(group = "org.jetbrains.kotlin", module = "kotlin-android-extensions-runtime")
+  }
 
   // Android components
   implementation(libs.androidxAppcompat)
@@ -154,8 +155,8 @@ dependencies {
 // STANDARD CONFIGURATION FOR ANDROID KOTLIN-BASED APP-TYPE PROJECTS
 ///////////////////////////////////////////////////////////////////////////////
 
-val javaSourceLevel: String by project
-val javaTargetLevel: String by project
+val javaSourceLevel = project.property("javaSourceLevel") as String
+val javaTargetLevel = project.property("javaTargetLevel") as String
 
 android {
   namespace = project.findProperty("androidAppNamespace") as String
@@ -195,14 +196,10 @@ android {
     sourceCompatibility = JavaVersion.toVersion(javaSourceLevel)
     targetCompatibility = JavaVersion.toVersion(javaTargetLevel)
   }
-  kotlin { compilerOptions { jvmTarget.set(JvmTarget.fromTarget(javaTargetLevel)) } }
   sourceSets {
-    getByName("main").java.srcDirs("src/main/kotlin")
-    getByName("debug").java.srcDirs("src/debug/kotlin")
     // ArriveFeedbackDevice: real impl (Parkeon SDK) or no-op stub, mutually exclusive source sets
-    getByName("main")
-        .java
-        .srcDir(if (hasArriveSdk) "src/arrive/kotlin" else "src/arrive-mock/kotlin")
+    getByName("main").kotlin.directories +=
+        if (hasArriveSdk) "src/arrive/kotlin" else "src/arrive-mock/kotlin"
   }
   packaging {
     // Exclude 'META-INF/NOTICE.md' to resolve the conflict that occurs when multiple dependencies

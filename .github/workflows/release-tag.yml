@@ -24,7 +24,7 @@ jobs:
     with:
       component-name: "Reloading Client Interop Mobile Multiplatform"
       working-directory: "./src/reloading-remote/client/interop-mobile-multiplatform/"
-      apk-output-path: "composeApp/build/outputs/apk/debug/*.apk"
+      apk-output-path: "androidApp/build/outputs/apk/debug/*.apk"
 
   release-reloading-android:
     name: "Reload (Android)"

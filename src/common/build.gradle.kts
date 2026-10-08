@@ -39,9 +39,9 @@ dependencies {
 // STANDARD CONFIGURATION FOR KOTLIN APP-TYPE PROJECTS
 ///////////////////////////////////////////////////////////////////////////////
 
-val jvmToolchainVersion: String by project
-val javaSourceLevel: String by project
-val javaTargetLevel: String by project
+val jvmToolchainVersion = project.property("jvmToolchainVersion") as String
+val javaSourceLevel = project.property("javaSourceLevel") as String
+val javaTargetLevel = project.property("javaTargetLevel") as String
 
 kotlin { jvmToolchain(jvmToolchainVersion.toInt()) }
 

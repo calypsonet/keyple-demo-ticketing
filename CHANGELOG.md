@@ -49,8 +49,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `keyple-java-bom`: `2026.03.19` -> `2026.09.29`
 - `keyple-card-cna-storagecard-java-lib` (mock): `2.3.0` -> `2.3.1`
 - `keyple-plugin-cna-storagecard-java-lib` (mock): `1.1.0` -> `1.1.1`
-- Android applications: Dagger `2.25` -> Hilt `2.58` (last version compatible with the Android Gradle plugin 8), with
-  KSP `2.2.10-2.0.2`.
+- Android applications: Dagger `2.25` -> Hilt `2.59.2`, with KSP `2.3.12`.
+- Android applications and KMP client: Android Gradle plugin `8.10.1` -> `9.4.1` and Gradle wrapper `8.11.1` ->
+  `9.8.1` (also for the common library):
+  - the Kotlin support built into the Android Gradle plugin replaces the `org.jetbrains.kotlin.android` plugin (the
+    Kotlin JVM target follows the Java target, and `src/main/kotlin` is a default source directory);
+  - Kotlin `2.2.10` -> `2.2.21`, the Kotlin compiler plugins (e.g. Parcelize) supporting the built-in Kotlin since
+    `2.2.20`;
+  - the build scripts read the Gradle properties with `project.property()` instead of the delegates deprecated by
+    Gradle 9.6.
+- Control and validation apps: the runtime of the obsolete `kotlin-android-extensions` plugin, declared but not used by
+  the Famoco plugin, is excluded: it duplicated the classes of the Parcelize runtime.
 ### Removed
 - Android applications: dagger-android, the `javax.annotation` (GlassFish) dependency and the kapt plugin, replaced by
   Hilt and KSP.
@@ -87,7 +96,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Documentation of the status codes of `AnalyzeContractsOutputDto`, `WriteContractOutputDto`, `CardIssuanceOutputDto`
   and of the `SelectAppAnd...OutputDto` aligned with the codes actually returned by the server.
 #### Upgraded
-- Kotlin: `1.7.22` -> `2.2.10` (same version as the other projects). The library still targets Java 8.
+- Kotlin: `1.7.22` -> `2.2.21` (same version as the other projects). The library still targets Java 8.
 ### Validation app
 #### Added
 - Anti-passback check for storage cards: a card presented again within the anti-passback delay is rejected.
@@ -156,9 +165,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `io.quarkus.platform:quarkus-bom` instead of `io.quarkus:quarkus-universe-bom`;
   - configuration properties renamed: `quarkus.http.cors.enabled` (all the origins still allowed with
     `quarkus.http.cors.origins`) and `quarkus.package.jar.type`.
-- Gradle wrapper: `8.4` -> `8.11.1` (same version as the other projects).
+- Gradle wrapper: `8.4` -> `9.8.1` (same version as the other projects; Quarkus 3.40 is tested with Gradle 8.14+, and
+  Quarkus 4 will require Gradle 9.6+).
 - Dashboard: React `18.2` -> `19.3`, Material UI (`@mui/material`, `@mui/icons-material`) `5.17` -> `9.4`.
 #### Changed
+- Build script: the tasks are registered with `tasks.register()` instead of the property delegates deprecated by
+  Gradle 9 (`by registering`, `by creating`), `syncPackageVersion` no longer accesses the project when it is executed,
+  and the declaration of the nonexistent `app` subproject is removed (an error with Gradle 9).
 - REST layer: RESTEasy classic (`quarkus-resteasy`, `quarkus-resteasy-jsonb`) replaced by Quarkus REST (`quarkus-rest`,
   `quarkus-rest-jsonb`), the default REST stack of Quarkus. The endpoints and their JSON content are unchanged (still
   executed on worker threads). The remote plugin endpoint reads the request explicitly: only an unreadable request
@@ -211,6 +224,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   transactions now have a unique identifier (UUID), whose first 4 characters are displayed as before.
 ### Reloading remote KMP client
 #### Changed
+- The Android application is moved to a new `androidApp` module, the Android Gradle plugin 9 not supporting the Kotlin
+  Multiplatform and Android application plugins in the same module: `composeApp` becomes a Kotlin Multiplatform library
+  (`com.android.kotlin.multiplatform.library` plugin) with the shared code, the Android specific implementations and
+  the desktop and iOS applications. The Android APK is built by `:androidApp:assembleDebug` and keeps its name; the
+  iOS framework and the desktop application are still built by `composeApp`.
+- Compose Multiplatform: `1.8.2` -> `1.10.3` (support of the Android Gradle plugin 9; `1.11` requires Kotlin 2.3 for
+  iOS), Material 3 `1.9.0`. The Compose libraries are declared explicitly in the version catalog instead of using the
+  deprecated `compose.*` accessors, and the previews use `androidx.compose.ui.tooling.preview.Preview`.
 - The Android APK files are named through `base.archivesName` instead of an internal Android Gradle plugin API
   (`ApkVariantOutputImpl`). The debug APK keeps its name.
 - Android target SDK defined by its own `androidTargetSdk` property (still `35`) instead of `androidCompileSdk`.
@@ -218,6 +239,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   are launched in a scope owned by their class instead of `GlobalScope`.
 - The `expect`/`actual` classes (beta feature of Kotlin) are explicitly enabled (`-Xexpect-actual-classes`), removing
   the related compilation warnings.
+#### Removed
+- Koin dependencies (`koin-core`, `koin-compose`, `koin-android`, `koin-androidx-compose`), declared but not used.
 #### Fixed
 - The status code returned by the server when reading the card is now checked: a rejected card, a card not
   personalized, an expired environment or a communication error are displayed as an error, instead of a card without

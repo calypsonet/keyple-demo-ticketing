@@ -3,7 +3,7 @@
 # as it is the release tag that indicates the release version.
 project = "99.99.99"
 # Dependencies versions
-agp = "8.10.1"
+agp = "9.4.1"
 androidxActivity = "1.10.1"
 androidxActivityCompose = "1.10.1"
 androidxAppcompat = "1.7.1"
@@ -17,17 +17,21 @@ assertj = "3.25.3"
 bitLib4j = "1.4.5"
 compottie = "2.0.0"
 composeBom = "2025.08.01"
-composePlugin = "1.8.2"
+# Compose Multiplatform plugin and libraries: 1.9.3+ supports AGP 9; 1.11+ requires Kotlin 2.3 for iOS
+composePlugin = "1.10.3"
+# Compose Multiplatform Material 3 (versioned separately) and Material icons (no longer updated)
+composeMaterial3 = "1.9.0"
+composeMaterialIcons = "1.7.3"
 coroutines = "1.10.2"
 gson = "2.11.0"
-# Last version compatible with AGP 8 (the Hilt Gradle plugin requires AGP 9 since 2.59)
-hilt = "2.58"
+# Hilt 2.60+ is built with Kotlin 2.3
+hilt = "2.59.2"
 keypleJavaBom = "2026.09.29"
 keyplePluginCnaFamocoSeCommunicationLib = "2.0.2"
-koin = "4.1.0"
-kotlin = "2.2.10"
-# KSP version associated with the Kotlin version
-ksp = "2.2.10-2.0.2"
+# 2.2.20+: the Kotlin compiler plugins (e.g. Parcelize) support the Kotlin built into AGP 9
+kotlin = "2.2.21"
+# KSP 2.3.1+ supports the Kotlin built into AGP 9 (the KSP versions no longer follow the Kotlin ones)
+ksp = "2.3.12"
 kotlinxSerializationCore = "1.9.0"
 ktor = "3.2.3"
 lottie = "3.4.4"
@@ -58,6 +62,16 @@ bitLib4j = { module = "com.github.devnied:bit-lib4j", version.ref = "bitLib4j" }
 compottieLite = { module = "io.github.alexzhirkevich:compottie-lite", version.ref = "compottie" }
 compottieRes = { module = "io.github.alexzhirkevich:compottie-resources", version.ref = "compottie" }
 composeBom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
+composeAnimation = { module = "org.jetbrains.compose.animation:animation", version.ref = "composePlugin" }
+composeComponentsResources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composePlugin" }
+composeFoundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "composePlugin" }
+composeMaterial = { module = "org.jetbrains.compose.material:material", version.ref = "composePlugin" }
+composeMaterial3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "composeMaterial3" }
+composeMaterialIconsExtended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "composeMaterialIcons" }
+composeRuntime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composePlugin" }
+composeUi = { module = "org.jetbrains.compose.ui:ui", version.ref = "composePlugin" }
+composeUiTooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "composePlugin" }
+composeUiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "composePlugin" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 hiltAndroid = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hiltCompiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
@@ -83,10 +97,6 @@ keypopCalypsoCardApi = { module = "org.eclipse.keypop:keypop-calypso-card-java-a
 keypopCalypsoCryptoLegacysamApi = { module = "org.eclipse.keypop:keypop-calypso-crypto-legacysam-java-api" }
 keypopReaderApi = { module = "org.eclipse.keypop:keypop-reader-java-api" }
 keypopStoragecardApi = { module = "org.eclipse.keypop:keypop-storagecard-java-api" }
-koinAndroid = { module = "io.insert-koin:koin-android", version.ref = "koin" }
-koinAndroidxCompose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
-koinCompose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
-koinCore = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 kotlinTest = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlinxCoroutinesAndroid = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinxCoroutinesCore = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
@@ -115,11 +125,10 @@ timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
-androidLibrary = { id = "com.android.library", version.ref = "agp" }
+androidKmpLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "composePlugin" }
-kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinParcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }

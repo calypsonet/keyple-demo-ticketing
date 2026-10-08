@@ -73,10 +73,10 @@ On Windows, escape backslashes in the path, e.g. `sdk.dir=C\:\\Users\\<user>\\Ap
 Without this file, Gradle fails with `SDK location not found`.
 
 ```bash
-./gradlew :composeApp:assembleDebug
+./gradlew :androidApp:assembleDebug
 
 # Install on connected device
-./gradlew :composeApp:installDebug
+./gradlew :androidApp:installDebug
 ```
 
 #### iOS App
@@ -174,7 +174,7 @@ The application uses Compose Multiplatform for consistent UI across all platform
 ### Multiplatform Structure
 
 ```
-composeApp/src/
+composeApp/src/                   # Kotlin Multiplatform library, desktop and iOS applications
 ├── commonMain/                    # Shared business logic
 │   └── kotlin/
 │       ├── card/                 # Card content screens
@@ -182,10 +182,14 @@ composeApp/src/
 │       ├── network/              # Server communication
 │       ├── settings/             # Settings screens
 │       └── ui/                   # Common UI components
-├── androidMain/                  # Android-specific code
+├── androidMain/                  # Android-specific implementations (buzzer, data store...)
 ├── iosMain/                      # iOS-specific code
 └── desktopMain/                  # Desktop-specific code
+androidApp/src/main/              # Android application (activity, manifest, launcher icons)
 ```
+
+The Android application is a separate module: the Android Gradle plugin 9 does not support the Kotlin
+Multiplatform and Android application plugins in the same module.
 
 ### Key Components
 
@@ -217,10 +221,10 @@ Each platform provides:
 #### Android Development
 ```bash
 # Debug build
-./gradlew :composeApp:assembleDebug
+./gradlew :androidApp:assembleDebug
 
 # Run on connected device
-./gradlew :composeApp:installDebug
+./gradlew :androidApp:installDebug
 ```
 
 #### iOS Development
@@ -298,7 +302,7 @@ Each platform provides:
 ### Android
 ```bash
 # Generate signed APK
-./gradlew :composeApp:assembleRelease
+./gradlew :androidApp:assembleRelease
 
 # Upload to Google Play Console
 # Or distribute via Firebase App Distribution
