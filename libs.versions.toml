@@ -11,8 +11,9 @@ androidxConstraintLayout = "2.2.1"
 androidxCore = "1.16.0"
 androidxDatastorePreferences = "1.1.7"
 androidxFragment = "1.8.8"
-androidxLifecycleViewmodel = "2.9.2"
-androidxNavigationCompose = "2.9.0-rc01"
+# Lifecycle 2.11+ requires compileSdk 37
+androidxLifecycleViewmodel = "2.10.0"
+androidxNavigationCompose = "2.9.2"
 assertj = "3.25.3"
 bitLib4j = "1.4.5"
 # Compottie 2.3.0+ requires Kotlin 2.4
