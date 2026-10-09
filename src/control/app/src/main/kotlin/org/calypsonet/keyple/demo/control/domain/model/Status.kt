@@ -13,12 +13,8 @@
 package org.calypsonet.keyple.demo.control.domain.model
 
 enum class Status {
-  LOADING,
   ERROR,
   TICKETS_FOUND,
   INVALID_CARD,
-  EMPTY_CARD,
-  WRONG_CARD,
-  DEVICE_CONNECTED,
-  SUCCESS
+  EMPTY_CARD
 }

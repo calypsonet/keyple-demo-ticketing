@@ -225,20 +225,12 @@ class CardReaderActivity : BaseActivity() {
         intent.putExtra(CARD_CONTENT, uiControlResult)
         startActivity(intent)
       }
-      Status.LOADING,
       Status.ERROR,
-      Status.SUCCESS,
       Status.INVALID_CARD -> {
         ticketingService.displayResultFailed()
         val intent = Intent(this@CardReaderActivity, NetworkInvalidActivity::class.java)
         intent.putExtra(CARD_CONTENT, uiControlResult)
         startActivity(intent)
-      }
-      Status.WRONG_CARD -> {
-        // Do nothing
-      }
-      Status.DEVICE_CONNECTED -> {
-        // Do nothing
       }
     }
   }

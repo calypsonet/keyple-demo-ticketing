@@ -159,6 +159,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `ReaderManager.clear()` is no longer part of the port, being only used by its implementation (as in the other
   applications).
 #### Removed
+- Values of the `Status` enum never produced by the control procedure (`LOADING`, `SUCCESS`, `WRONG_CARD`,
+  `DEVICE_CONNECTED`).
 - Gson dependency, not used by the application (still provided to the Keyple libraries by their own dependencies), as
   in the validation app.
 #### Fixed
