@@ -140,6 +140,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Unused `CardSummaryActivity` and its layouts (replaced by the summary overlay of the reader screen).
 #### Fixed
 - Crash at startup when the storage card library is mocked.
+- Bluebird terminals running Android 13 or later: the Bluebird reader can be selected again. The storage permission,
+  requested with the SAM access and refused without prompt since Android 13, is only declared and requested up to
+  Android 12. The unused `WRITE_EXTERNAL_STORAGE` permission is removed.
 - Calypso cards: contracts of unknown type (contract tariff not supported by the demo) are no longer validated (they
   were accepted without any debit).
 ### Control app
@@ -157,6 +160,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Gson dependency, not used by the application (still provided to the Keyple libraries by their own dependencies), as
   in the validation app.
 #### Fixed
+- Bluebird terminals running Android 13 or later: the Bluebird reader can be selected again. The storage permission,
+  requested with the SAM access and refused without prompt since Android 13, is only declared and requested up to
+  Android 12. The unused `WRITE_EXTERNAL_STORAGE` permission is removed.
 - The waiting indicator is now hidden when the control procedure fails, instead of staying displayed when returning to
   the reader screen.
 ### Reloading remote Android client
@@ -295,6 +301,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   the related compilation warnings (and the related `@Suppress` annotations).
 - Android: Java 17 as source and target level instead of Java 11, as in the other Android applications. The desktop
   application was already compiled for Java 17 (Kotlin toolchain).
+- Android: code and resource shrinking (R8) enabled in the debug and release builds, as in the other Android
+  applications (release APK of about 2 MB). The libraries provide their own R8 rules (e.g. the Ktor
+  engine loaded by a service loader).
 - The platform specific files of `DataStorePathProducer` are suffixed by their platform (`Datastore.android.kt`,
   `Datastore.desktop.kt`, `Datastore.ios.kt`), as the other `actual` files.
 #### Removed

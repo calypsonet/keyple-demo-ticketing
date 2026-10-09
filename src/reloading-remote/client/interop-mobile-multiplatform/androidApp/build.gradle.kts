@@ -58,7 +58,24 @@ android {
     versionName = project.property("androidAppVersionName") as String
   }
   buildFeatures { compose = true }
-  buildTypes { getByName("release") { isMinifyEnabled = false } }
+  buildTypes {
+    // Configuration for the debug build variant:
+    // - Code and resource shrinking are enabled with the ProGuard rules of the release build, to
+    //   detect the missing keep rules during development (e.g. classes loaded by reflection or by a
+    //   service loader).
+    // - The build being debuggable, R8 neither optimizes nor obfuscates the code: the stack traces
+    //   and the debug logs are kept.
+    getByName("debug") {
+      isMinifyEnabled = true
+      isShrinkResources = true
+      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+    }
+    getByName("release") {
+      isMinifyEnabled = true
+      isShrinkResources = true
+      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+    }
+  }
   compileOptions {
     sourceCompatibility = JavaVersion.toVersion(javaSourceLevel)
     targetCompatibility = JavaVersion.toVersion(javaTargetLevel)

@@ -17,6 +17,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.validation.BuildConfig
@@ -46,10 +47,11 @@ class DeviceSelectionActivity : BaseActivity() {
     } else {
       activityDeviceSelectionBinding.bluebirdBtn.setOnClickListener {
         appSettings.readerType = ReaderType.BLUEBIRD
-        val permissions: MutableList<String> =
-            mutableListOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                "com.bluebird.permission.SAM_DEVICE_ACCESS")
+        val permissions = mutableListOf("com.bluebird.permission.SAM_DEVICE_ACCESS")
+        // Storage permission refused without prompt since Android 13 (declared up to Android 12)
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+          permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
         val granted = PermissionHelper.checkPermission(this, permissions.toTypedArray())
         if (granted) {
           startActivity(Intent(this, SettingsActivity::class.java))

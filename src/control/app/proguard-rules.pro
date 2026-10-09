@@ -8,8 +8,6 @@
     public boolean isDebugEnabled() return false;
 }
 
-# Keep demo app classes
-
 # Keep Bluebird NFC library classes
 -keep class com.bluebird.extnfc.** { *; }
 -keep interface com.bluebird.extnfc.** { *; }
