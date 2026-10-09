@@ -14,8 +14,8 @@ package org.calypsonet.keyple.demo.reload.remote.data
 
 import android.app.Activity
 import javax.inject.Inject
-import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocolEnum
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
+import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocol
+import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceType
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ReaderType
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.ReaderManager
@@ -47,7 +47,7 @@ class ReaderManagerImpl @Inject constructor(private val logger: Logger) : Reader
 
   private lateinit var readerType: ReaderType
 
-  private lateinit var device: DeviceEnum
+  private lateinit var device: DeviceType
   // Card
   private lateinit var cardPluginName: String
   private lateinit var cardReaderName: String
@@ -67,15 +67,15 @@ class ReaderManagerImpl @Inject constructor(private val logger: Logger) : Reader
     cardPluginName = BluebirdConstants.PLUGIN_NAME
     cardReaderName = BluebirdConstants.CARD_READER_NAME
     cardReaderProtocols[BluebirdContactlessProtocols.ISO_14443_4_A.name] =
-        CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name
+        CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name
     cardReaderProtocols[BluebirdContactlessProtocols.ISO_14443_4_B.name] =
-        CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name
+        CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name
     cardReaderProtocols[BluebirdContactlessProtocols.MIFARE_ULTRALIGHT.name] =
-        CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name
+        CardProtocol.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name
     cardReaderProtocols[BluebirdContactlessProtocols.ST25_SRT512.name] =
-        CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name
+        CardProtocol.ST25_SRT512_LOGICAL_PROTOCOL.name
     cardReaderProtocols[BluebirdContactlessProtocols.MIFARE_CLASSIC.name] =
-        CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name
+        CardProtocol.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name
     isStorageCardSupported = true
   }
 
@@ -84,23 +84,23 @@ class ReaderManagerImpl @Inject constructor(private val logger: Logger) : Reader
     cardPluginName = AndroidNfcConstants.PLUGIN_NAME
     cardReaderName = AndroidNfcConstants.READER_NAME
     cardReaderProtocols[AndroidNfcSupportedProtocols.ISO_14443_4.name] =
-        CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name
+        CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name
     cardReaderProtocols[AndroidNfcSupportedProtocols.MIFARE_ULTRALIGHT.name] =
-        CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name
+        CardProtocol.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name
     cardReaderProtocols[AndroidNfcSupportedProtocols.MIFARE_CLASSIC_1K.name] =
-        CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name
+        CardProtocol.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name
   }
 
   /** Register any keyple plugin */
   override fun registerPlugin(
       readerType: ReaderType,
       uiContext: UiContext,
-      deviceEnum: DeviceEnum,
+      deviceType: DeviceType,
       callback: (() -> Unit)?
   ) {
-    device = deviceEnum
+    device = deviceType
     val activity = uiContext.adaptTo(Activity::class.java)
-    if (device != DeviceEnum.CONTACTLESS_CARD) {
+    if (device != DeviceType.CONTACTLESS_CARD) {
       // The OMAPI plugin factory is provided asynchronously, once the SE service is connected.
       AndroidOmapiPluginFactoryProvider(activity) { factory ->
         SmartCardServiceProvider.getService().registerPlugin(factory)
@@ -132,7 +132,7 @@ class ReaderManagerImpl @Inject constructor(private val logger: Logger) : Reader
       readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi?
   ): CardReader? {
     // Only the contactless card reader is observed; the OMAPI readers are retrieved by name.
-    if (device != DeviceEnum.CONTACTLESS_CARD) {
+    if (device != DeviceType.CONTACTLESS_CARD) {
       return null
     }
     cardReader =
@@ -159,7 +159,7 @@ class ReaderManagerImpl @Inject constructor(private val logger: Logger) : Reader
       (cardReader as ConfigurableCardReader).deactivateProtocol(entry.key)
     }
 
-    if (device != DeviceEnum.CONTACTLESS_CARD) {
+    if (device != DeviceType.CONTACTLESS_CARD) {
       unregisterPlugin(AndroidOmapiPlugin.PLUGIN_NAME)
     }
   }
@@ -173,14 +173,14 @@ class ReaderManagerImpl @Inject constructor(private val logger: Logger) : Reader
     smartCardService.plugins.forEach { smartCardService.unregisterPlugin(it.name) }
   }
 
-  override fun getReaderName(readerType: ReaderType, deviceEnum: DeviceEnum): String =
-      when (deviceEnum) {
-        DeviceEnum.CONTACTLESS_CARD ->
+  override fun getReaderName(readerType: ReaderType, deviceType: DeviceType): String =
+      when (deviceType) {
+        DeviceType.CONTACTLESS_CARD ->
             if (readerType == ReaderType.BLUEBIRD) BluebirdConstants.CARD_READER_NAME
             else AndroidNfcConstants.READER_NAME
-        DeviceEnum.SIM -> AndroidOmapiReader.READER_NAME_SIM_1
-        DeviceEnum.WEARABLE -> "WEARABLE"
-        DeviceEnum.EMBEDDED -> "EMBEDDED"
+        DeviceType.SIM -> AndroidOmapiReader.READER_NAME_SIM_1
+        DeviceType.WEARABLE -> "WEARABLE"
+        DeviceType.EMBEDDED -> "EMBEDDED"
       }
 
   /** Unregister any keyple plugin */

@@ -16,7 +16,7 @@
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true"
             android:label="@string/app_name"
-            android:name="org.calypsonet.keyple.demo.reload.remote.Application">
+            android:name="org.calypsonet.keyple.demo.reload.remote.DemoApplication">
         <activity
                 android:name="org.calypsonet.keyple.demo.reload.remote.ui.activities.MainActivity"
                 android:theme="@style/AppTheme.NoActionBar"

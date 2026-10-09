@@ -42,6 +42,4 @@ interface ReaderManager {
    * @param observer Optional observer previously registered on the reader.
    */
   fun onDestroy(observer: CardReaderObserverSpi?)
-
-  fun clear()
 }

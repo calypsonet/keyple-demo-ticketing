@@ -18,7 +18,7 @@ import org.calypsonet.keyple.demo.common.data.LocationRepository
 import org.calypsonet.keyple.demo.common.model.Location
 import org.calypsonet.keyple.demo.validation.domain.managers.CalypsoCardValidationManager
 import org.calypsonet.keyple.demo.validation.domain.managers.StorageCardValidationManager
-import org.calypsonet.keyple.demo.validation.domain.model.CardProtocolEnum
+import org.calypsonet.keyple.demo.validation.domain.model.CardProtocol
 import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
 import org.calypsonet.keyple.demo.validation.domain.spi.AppSettingsRepository
@@ -214,7 +214,7 @@ class TicketingService(
             readerApiFactory
                 .createIsoCardSelector()
                 .filterByDfName(CardConstants.AID_KEYPLE_GENERIC)
-                .filterByCardProtocol(CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name),
+                .filterByCardProtocol(CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
     // Prepare card selection case #2: CD LIGHT/GTML
@@ -223,7 +223,7 @@ class TicketingService(
             readerApiFactory
                 .createIsoCardSelector()
                 .filterByDfName(CardConstants.AID_CD_LIGHT_GTML)
-                .filterByCardProtocol(CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name),
+                .filterByCardProtocol(CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
     // Prepare card selection case #3: CALYPSO LIGHT
@@ -232,7 +232,7 @@ class TicketingService(
             readerApiFactory
                 .createIsoCardSelector()
                 .filterByDfName(CardConstants.AID_CALYPSO_LIGHT)
-                .filterByCardProtocol(CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name),
+                .filterByCardProtocol(CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
     // Prepare card selection case #4: Navigo IDF
@@ -241,7 +241,7 @@ class TicketingService(
             readerApiFactory
                 .createIsoCardSelector()
                 .filterByDfName(CardConstants.AID_NORMALIZED_IDF)
-                .filterByCardProtocol(CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name),
+                .filterByCardProtocol(CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
     if (storageCardApiFactory != null && readerManager.isStorageCardSupported()) {
@@ -249,19 +249,19 @@ class TicketingService(
           cardSelectionManager.prepareSelection(
               readerApiFactory
                   .createBasicCardSelector()
-                  .filterByCardProtocol(CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name),
+                  .filterByCardProtocol(CardProtocol.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name),
               storageCardApiFactory.createStorageCardSelectionExtension(MIFARE_ULTRALIGHT))
       indexOfST25CardSelection =
           cardSelectionManager.prepareSelection(
               readerApiFactory
                   .createBasicCardSelector()
-                  .filterByCardProtocol(CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name),
+                  .filterByCardProtocol(CardProtocol.ST25_SRT512_LOGICAL_PROTOCOL.name),
               storageCardApiFactory.createStorageCardSelectionExtension(ST25_SRT512))
       indexOfMifareClassic1KCardSelection =
           cardSelectionManager.prepareSelection(
               readerApiFactory
                   .createBasicCardSelector()
-                  .filterByCardProtocol(CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name),
+                  .filterByCardProtocol(CardProtocol.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name),
               storageCardApiFactory.createStorageCardSelectionExtension(MIFARE_CLASSIC_1K))
     }
 

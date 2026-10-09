@@ -12,7 +12,7 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.domain.spi
 
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
+import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceType
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceVisibility
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ServerConfig
 
@@ -23,14 +23,14 @@ interface AppSettingsRepository {
   var serverConfig: ServerConfig
 
   /** Type of device (contactless card, SIM...) chosen by the user. */
-  var deviceType: DeviceEnum
+  var deviceType: DeviceType
 
   /** Last known status of the server (true if the server and its SAM are ready). */
   var lastServerStatus: Boolean
 
   /** Returns the visibility of the given device type in the home screen. */
-  fun getDeviceVisibility(device: DeviceEnum): DeviceVisibility
+  fun getDeviceVisibility(device: DeviceType): DeviceVisibility
 
   /** Sets the visibility of the given device type in the home screen. */
-  fun setDeviceVisibility(device: DeviceEnum, visibility: DeviceVisibility)
+  fun setDeviceVisibility(device: DeviceType, visibility: DeviceVisibility)
 }

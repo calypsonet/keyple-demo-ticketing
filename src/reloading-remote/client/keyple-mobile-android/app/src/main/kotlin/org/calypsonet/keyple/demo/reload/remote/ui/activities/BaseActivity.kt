@@ -30,7 +30,7 @@ import org.calypsonet.keyple.demo.reload.remote.domain.spi.AppSettingsRepository
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.ServerStatusProvider
 
 /** Each Activity of the app should show status connexion result */
-abstract class AbstractDemoActivity : AppCompatActivity() {
+abstract class BaseActivity : AppCompatActivity() {
 
   @Inject lateinit var appSettings: AppSettingsRepository
   @Inject lateinit var serverStatusProvider: ServerStatusProvider

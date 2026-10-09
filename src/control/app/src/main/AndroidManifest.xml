@@ -7,18 +7,17 @@
 
     <application
         android:allowBackup="true"
-        android:name="org.calypsonet.keyple.demo.control.Application"
+        android:name="org.calypsonet.keyple.demo.control.DemoApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.NoActionBar">
+        android:theme="@style/AppTheme">
 
         <activity
             android:name="org.calypsonet.keyple.demo.control.ui.activities.MainActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:screenOrientation="portrait"
-	        android:exported="true">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
@@ -32,42 +31,36 @@
             android:label="@string/title_activity_network_invalid"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:exported="false" />
         <activity
             android:name="org.calypsonet.keyple.demo.control.ui.activities.cardcontent.CardContentActivity"
             android:label="@string/title_activity_card_content"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:exported="false" />
         <activity
-            android:name="org.calypsonet.keyple.demo.control.ui.activities.ReaderActivity"
+            android:name="org.calypsonet.keyple.demo.control.ui.activities.CardReaderActivity"
             android:label="@string/title_activity_card_reader"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:exported="false" />
         <activity
             android:name="org.calypsonet.keyple.demo.control.ui.activities.HomeActivity"
             android:label="@string/title_activity_home"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:exported="false" />
         <activity
             android:name="org.calypsonet.keyple.demo.control.ui.activities.SettingsActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:exported="false" />
         <activity
             android:name="org.calypsonet.keyple.demo.control.ui.activities.deviceselection.DeviceSelectionActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:exported="false" />
     </application>
 </manifest>

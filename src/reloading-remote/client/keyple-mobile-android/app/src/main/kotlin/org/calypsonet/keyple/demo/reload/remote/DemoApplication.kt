@@ -10,14 +10,14 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control
+package org.calypsonet.keyple.demo.reload.remote
 
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 import timber.log.Timber.DebugTree
 
 @HiltAndroidApp
-class Application : android.app.Application() {
+class DemoApplication : android.app.Application() {
 
   override fun onCreate() {
     super.onCreate()

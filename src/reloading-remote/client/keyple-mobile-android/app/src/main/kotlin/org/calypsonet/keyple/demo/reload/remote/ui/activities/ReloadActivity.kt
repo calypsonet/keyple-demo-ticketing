@@ -26,14 +26,14 @@ import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardReaderBinding
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
+import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceType
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.eclipse.keypop.reader.CardReaderEvent
 import timber.log.Timber
 
 @AndroidEntryPoint
-class ReloadActivity : AbstractCardActivity() {
+class ReloadActivity : BaseCardActivity() {
   private lateinit var activityCardReaderBinding: ActivityCardReaderBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +45,7 @@ class ReloadActivity : AbstractCardActivity() {
 
   override fun initReaders() {
     try {
-      if (device == DeviceEnum.CONTACTLESS_CARD) {
+      if (device == DeviceType.CONTACTLESS_CARD) {
         showPresentNfcCardInstructions()
         initAndActivateCardReader()
       } else {
@@ -115,7 +115,7 @@ class ReloadActivity : AbstractCardActivity() {
     activityCardReaderBinding.cardAnimation.cancelAnimation()
     val intent = Intent(this, ReloadResultActivity::class.java)
     intent.putExtra(ReloadResultActivity.TICKETS_NUMBER, 0)
-    intent.putExtra(ReloadResultActivity.STATUS, cardReaderResponse.status.toString())
+    intent.putExtra(ReloadResultActivity.STATUS, cardReaderResponse.status.name)
     intent.putExtra(ReloadResultActivity.MESSAGE, cardReaderResponse.errorMessage)
     intent.putExtra(CARD_CONTENT, cardReaderResponse)
     intent.putExtra(CARD_APPLICATION_NUMBER, applicationSerialNumber)

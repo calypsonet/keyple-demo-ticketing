@@ -19,7 +19,7 @@ import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityPaymentValidatedBinding
 
 @AndroidEntryPoint
-class PaymentValidatedActivity : AbstractDemoActivity() {
+class PaymentValidatedActivity : BaseActivity() {
 
   private lateinit var activityPaymentValidatedBinding: ActivityPaymentValidatedBinding
 

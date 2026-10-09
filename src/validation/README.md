@@ -108,7 +108,7 @@ Device Selection → Settings → Reader Activity → Validation Result
 - Quick access to settings and diagnostics
 - Manual trigger for card detection phase
 
-**Reader Activity (`ReaderActivity`)**
+**Reader Activity (`CardReaderActivity`)**
 - Initializes selected Keyple plugin and SAM integration
 - Displays "Present Card" message to user
 - Shows real-time status during card processing

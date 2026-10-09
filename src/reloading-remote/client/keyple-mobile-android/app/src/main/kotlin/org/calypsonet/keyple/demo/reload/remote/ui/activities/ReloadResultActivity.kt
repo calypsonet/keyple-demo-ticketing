@@ -21,93 +21,95 @@ import androidx.core.content.IntentCompat
 import com.airbnb.lottie.LottieDrawable
 import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.reload.remote.R
-import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityChargeResultBinding
+import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityReloadResultBinding
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 
 @AndroidEntryPoint
-class ReloadResultActivity : AbstractDemoActivity() {
+class ReloadResultActivity : BaseActivity() {
 
-  private lateinit var activityChargeResultBinding: ActivityChargeResultBinding
+  private lateinit var activityReloadResultBinding: ActivityReloadResultBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    activityChargeResultBinding = ActivityChargeResultBinding.inflate(layoutInflater)
-    toolbarBinding = activityChargeResultBinding.appBarLayout
-    setContentView(activityChargeResultBinding.root)
+    activityReloadResultBinding = ActivityReloadResultBinding.inflate(layoutInflater)
+    toolbarBinding = activityReloadResultBinding.appBarLayout
+    setContentView(activityReloadResultBinding.root)
     toolbarBinding.toolbarLogo.setImageResource(R.drawable.ic_logo_white)
 
-    val status = Status.getStatus(intent.getStringExtra(STATUS))
+    // Status name provided by the calling activity (error status by default)
+    val statusName = intent.getStringExtra(STATUS)
+    val status = Status.entries.firstOrNull { it.name == statusName } ?: Status.ERROR
     val cardContent: UiCardReaderResponse? =
         IntentCompat.getParcelableExtra(
-            intent, AbstractCardActivity.CARD_CONTENT, UiCardReaderResponse::class.java)
+            intent, BaseCardActivity.CARD_CONTENT, UiCardReaderResponse::class.java)
 
-    activityChargeResultBinding.tryBtn.setOnClickListener {
+    activityReloadResultBinding.tryBtn.setOnClickListener {
       onBackPressedDispatcher.onBackPressed()
     }
-    activityChargeResultBinding.cancelBtn.setOnClickListener {
+    activityReloadResultBinding.cancelBtn.setOnClickListener {
       val intent = Intent(this, HomeActivity::class.java)
       startActivity(intent)
     }
 
     if (cardContent != null && !cardContent.cardType.isNullOrBlank()) {
-      activityChargeResultBinding.cardTypeLabel.visibility = View.VISIBLE
-      activityChargeResultBinding.cardTypeLabel.text =
+      activityReloadResultBinding.cardTypeLabel.visibility = View.VISIBLE
+      activityReloadResultBinding.cardTypeLabel.text =
           getString(R.string.card_type, cardContent.cardType)
     } else {
-      activityChargeResultBinding.cardTypeLabel.visibility = View.GONE
+      activityReloadResultBinding.cardTypeLabel.visibility = View.GONE
     }
 
     when (status) {
       Status.LOADING -> {
-        activityChargeResultBinding.animation.setAnimation("loading_anim.json")
-        activityChargeResultBinding.animation.repeatCount = LottieDrawable.INFINITE
-        activityChargeResultBinding.bigText.visibility = View.INVISIBLE
-        activityChargeResultBinding.btnLayout.visibility = View.INVISIBLE
+        activityReloadResultBinding.animation.setAnimation("loading_anim.json")
+        activityReloadResultBinding.animation.repeatCount = LottieDrawable.INFINITE
+        activityReloadResultBinding.bigText.visibility = View.INVISIBLE
+        activityReloadResultBinding.btnLayout.visibility = View.INVISIBLE
       }
       Status.SUCCESS -> {
-        activityChargeResultBinding.mainBackground.setBackgroundColor(
+        activityReloadResultBinding.mainBackground.setBackgroundColor(
             ContextCompat.getColor(this, R.color.green))
-        activityChargeResultBinding.animation.setAnimation("tick_white.json")
-        activityChargeResultBinding.animation.repeatCount = 0
-        activityChargeResultBinding.animation.playAnimation()
-        activityChargeResultBinding.bigText.setText(R.string.charging_success_label)
-        activityChargeResultBinding.bigText.visibility = View.VISIBLE
-        activityChargeResultBinding.btnLayout.visibility = View.INVISIBLE
+        activityReloadResultBinding.animation.setAnimation("tick_white.json")
+        activityReloadResultBinding.animation.repeatCount = 0
+        activityReloadResultBinding.animation.playAnimation()
+        activityReloadResultBinding.bigText.setText(R.string.charging_success_label)
+        activityReloadResultBinding.bigText.visibility = View.VISIBLE
+        activityReloadResultBinding.btnLayout.visibility = View.INVISIBLE
 
         if (intent.getBooleanExtra(IS_PERSONALIZATION_RESULT, false)) {
-          activityChargeResultBinding.bigText.setText(R.string.perso_success_label)
+          activityReloadResultBinding.bigText.setText(R.string.perso_success_label)
         } else {
-          activityChargeResultBinding.bigText.setText(R.string.charging_success_label)
+          activityReloadResultBinding.bigText.setText(R.string.charging_success_label)
         }
 
-        scheduleAutoReturn(SUCCESS_RETURN_DELAY_MS, activityChargeResultBinding.autoReturnProgress)
+        scheduleAutoReturn(SUCCESS_RETURN_DELAY_MS, activityReloadResultBinding.autoReturnProgress)
       }
       else -> {
-        activityChargeResultBinding.mainBackground.setBackgroundColor(
+        activityReloadResultBinding.mainBackground.setBackgroundColor(
             ContextCompat.getColor(this, R.color.red))
-        activityChargeResultBinding.animation.setAnimation("error_white.json")
-        activityChargeResultBinding.animation.repeatCount = 0
-        activityChargeResultBinding.animation.playAnimation()
+        activityReloadResultBinding.animation.setAnimation("error_white.json")
+        activityReloadResultBinding.animation.repeatCount = 0
+        activityReloadResultBinding.animation.playAnimation()
 
         val message = intent.getStringExtra(MESSAGE) ?: ""
         if (intent.getBooleanExtra(IS_PERSONALIZATION_RESULT, false)) {
-          activityChargeResultBinding.bigText.setText(R.string.perso_failed_label)
-          activityChargeResultBinding.bigText.append(":\n")
-          activityChargeResultBinding.bigText.append(message)
+          activityReloadResultBinding.bigText.setText(R.string.perso_failed_label)
+          activityReloadResultBinding.bigText.append(":\n")
+          activityReloadResultBinding.bigText.append(message)
         } else {
-          activityChargeResultBinding.bigText.setText(R.string.transaction_cancelled_label)
-          activityChargeResultBinding.bigText.append(":\n")
-          activityChargeResultBinding.bigText.append(message)
+          activityReloadResultBinding.bigText.setText(R.string.transaction_cancelled_label)
+          activityReloadResultBinding.bigText.append(":\n")
+          activityReloadResultBinding.bigText.append(message)
         }
-        activityChargeResultBinding.bigText.visibility = View.VISIBLE
-        activityChargeResultBinding.btnLayout.visibility = View.VISIBLE
+        activityReloadResultBinding.bigText.visibility = View.VISIBLE
+        activityReloadResultBinding.btnLayout.visibility = View.VISIBLE
 
         // Same as the "try again" button, unless the user chooses before: its label shows the
         // remaining seconds
-        scheduleAutoReturn(ERROR_RETURN_DELAY_MS, activityChargeResultBinding.autoReturnProgress) {
+        scheduleAutoReturn(ERROR_RETURN_DELAY_MS, activityReloadResultBinding.autoReturnProgress) {
             seconds ->
-          activityChargeResultBinding.tryBtn.text =
+          activityReloadResultBinding.tryBtn.text =
               if (seconds != null) getString(R.string.try_again_countdown, seconds)
               else getString(R.string.try_again)
         }

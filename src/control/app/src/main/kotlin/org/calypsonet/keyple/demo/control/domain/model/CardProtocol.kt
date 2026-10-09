@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2024 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2025 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -10,17 +10,12 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote
+package org.calypsonet.keyple.demo.control.domain.model
 
-import android.app.Application
-import io.github.aakira.napier.DebugAntilog
-import io.github.aakira.napier.Napier
-
-class KeypleDemoApp : Application() {
-
-  override fun onCreate() {
-    super.onCreate()
-
-    Napier.base(DebugAntilog())
-  }
+enum class CardProtocol {
+  ISO_7816_LOGICAL_PROTOCOL,
+  ISO_14443_4_LOGICAL_PROTOCOL,
+  MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL,
+  ST25_SRT512_LOGICAL_PROTOCOL,
+  MIFARE_CLASSIC_LOGICAL_PROTOCOL
 }

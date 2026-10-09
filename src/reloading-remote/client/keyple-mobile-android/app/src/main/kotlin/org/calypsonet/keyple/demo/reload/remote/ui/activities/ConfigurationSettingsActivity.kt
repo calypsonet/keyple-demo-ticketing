@@ -19,11 +19,11 @@ import androidx.core.content.ContextCompat
 import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityConfigurationSettingsBinding
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
+import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceType
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceVisibility
 
 @AndroidEntryPoint
-class ConfigurationSettingsActivity : AbstractDemoActivity() {
+class ConfigurationSettingsActivity : BaseActivity() {
   private lateinit var activityConfigurationSettingsBinding: ActivityConfigurationSettingsBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,19 +37,19 @@ class ConfigurationSettingsActivity : AbstractDemoActivity() {
       onBackPressedDispatcher.onBackPressed()
     }
 
-    DeviceEnum.values().forEach { updateRadioButtons(it) }
+    DeviceType.values().forEach { updateRadioButtons(it) }
   }
 
   fun onContactlessRadioButtonClicked(view: View) =
-      onRadioButtonClicked(view, DeviceEnum.CONTACTLESS_CARD)
+      onRadioButtonClicked(view, DeviceType.CONTACTLESS_CARD)
 
-  fun onSimRadioButtonClicked(view: View) = onRadioButtonClicked(view, DeviceEnum.SIM)
+  fun onSimRadioButtonClicked(view: View) = onRadioButtonClicked(view, DeviceType.SIM)
 
-  fun onWearableRadioButtonClicked(view: View) = onRadioButtonClicked(view, DeviceEnum.WEARABLE)
+  fun onWearableRadioButtonClicked(view: View) = onRadioButtonClicked(view, DeviceType.WEARABLE)
 
-  fun onEmbeddedRadioButtonClicked(view: View) = onRadioButtonClicked(view, DeviceEnum.EMBEDDED)
+  fun onEmbeddedRadioButtonClicked(view: View) = onRadioButtonClicked(view, DeviceType.EMBEDDED)
 
-  private fun onRadioButtonClicked(view: View, device: DeviceEnum) {
+  private fun onRadioButtonClicked(view: View, device: DeviceType) {
     if (view !is RadioButton) {
       return
     }
@@ -67,18 +67,18 @@ class ConfigurationSettingsActivity : AbstractDemoActivity() {
   }
 
   /** Returns the "enable", "disable" and "hide" radio buttons of the given device type. */
-  private fun radioButtons(device: DeviceEnum): Triple<RadioButton, RadioButton, RadioButton> =
+  private fun radioButtons(device: DeviceType): Triple<RadioButton, RadioButton, RadioButton> =
       with(activityConfigurationSettingsBinding) {
         when (device) {
-          DeviceEnum.CONTACTLESS_CARD ->
+          DeviceType.CONTACTLESS_CARD ->
               Triple(contactlessCardEnable, contactlessCardDisable, contactlessCardHide)
-          DeviceEnum.SIM -> Triple(simCardEnable, simCardDisable, simCardHide)
-          DeviceEnum.WEARABLE -> Triple(wearableCardEnable, wearableCardDisable, wearableCardHide)
-          DeviceEnum.EMBEDDED -> Triple(embeddedCardEnable, embeddedCardDisable, embeddedCardHide)
+          DeviceType.SIM -> Triple(simCardEnable, simCardDisable, simCardHide)
+          DeviceType.WEARABLE -> Triple(wearableCardEnable, wearableCardDisable, wearableCardHide)
+          DeviceType.EMBEDDED -> Triple(embeddedCardEnable, embeddedCardDisable, embeddedCardHide)
         }
       }
 
-  private fun updateRadioButtons(device: DeviceEnum) {
+  private fun updateRadioButtons(device: DeviceType) {
     val visibility = appSettings.getDeviceVisibility(device)
     val (enableBtn, disableBtn, hideBtn) = radioButtons(device)
     setRadioButtonChecked(enableBtn, visibility == DeviceVisibility.ENABLE)

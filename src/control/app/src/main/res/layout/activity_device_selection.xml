@@ -91,6 +91,6 @@
 
     <include
         android:id="@+id/appBarLayout"
-        layout="@layout/logo_toolbar" />
+        layout="@layout/toolbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

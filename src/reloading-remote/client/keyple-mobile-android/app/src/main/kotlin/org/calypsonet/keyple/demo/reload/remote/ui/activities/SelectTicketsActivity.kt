@@ -20,7 +20,7 @@ import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivitySelectTicketsBinding
 
 @AndroidEntryPoint
-class SelectTicketsActivity : AbstractDemoActivity() {
+class SelectTicketsActivity : BaseActivity() {
   private lateinit var activitySelectTicketsBinding: ActivitySelectTicketsBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,8 +68,8 @@ class SelectTicketsActivity : AbstractDemoActivity() {
     if (ticketNumber != null) {
       intent.putExtra(TICKETS_NUMBER, ticketNumber)
     }
-    getIntent().getStringExtra(AbstractCardActivity.CARD_APPLICATION_NUMBER)?.let {
-      intent.putExtra(AbstractCardActivity.CARD_APPLICATION_NUMBER, it)
+    getIntent().getStringExtra(BaseCardActivity.CARD_APPLICATION_NUMBER)?.let {
+      intent.putExtra(BaseCardActivity.CARD_APPLICATION_NUMBER, it)
     }
     startActivity(intent)
     this@SelectTicketsActivity.finish()

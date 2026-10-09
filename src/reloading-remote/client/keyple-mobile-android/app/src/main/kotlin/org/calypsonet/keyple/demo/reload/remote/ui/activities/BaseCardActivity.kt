@@ -20,7 +20,7 @@ import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.domain.TicketingService
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardInfo
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
+import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceType
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ReaderType
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.adapters.UiContextImpl
@@ -29,11 +29,11 @@ import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 import timber.log.Timber
 
-abstract class AbstractCardActivity :
-    AbstractDemoActivity(), CardReaderObserverSpi, CardReaderObservationExceptionHandlerSpi {
+abstract class BaseCardActivity :
+    BaseActivity(), CardReaderObserverSpi, CardReaderObservationExceptionHandlerSpi {
 
   @Inject lateinit var ticketingService: TicketingService
-  lateinit var device: DeviceEnum
+  lateinit var device: DeviceType
 
   val isBluebirdDevice = Build.MANUFACTURER?.lowercase()?.contains("bluebird") == true
 
@@ -56,9 +56,9 @@ abstract class AbstractCardActivity :
     ticketingService.init(
         readerType,
         device,
-        UiContextImpl(this@AbstractCardActivity),
-        this@AbstractCardActivity,
-        this@AbstractCardActivity,
+        UiContextImpl(this@BaseCardActivity),
+        this@BaseCardActivity,
+        this@BaseCardActivity,
         null)
 
     ticketingService.startNfcDetection()
@@ -71,15 +71,15 @@ abstract class AbstractCardActivity :
   @Throws(UnsupportedOperationException::class)
   fun initOmapiReader(callback: () -> Unit) {
     ticketingService.init(
-        readerType, device, UiContextImpl(this@AbstractCardActivity), null, null, callback)
+        readerType, device, UiContextImpl(this@BaseCardActivity), null, null, callback)
   }
 
   @Throws(UnsupportedOperationException::class)
   fun deactivateAndClearReader() {
-    if (device == DeviceEnum.CONTACTLESS_CARD) {
+    if (device == DeviceType.CONTACTLESS_CARD) {
       ticketingService.stopNfcDetection()
     }
-    ticketingService.onDestroy(this@AbstractCardActivity)
+    ticketingService.onDestroy(this@BaseCardActivity)
   }
 
   /** Displays the error corresponding to the status returned by the server for the given card. */
@@ -140,7 +140,7 @@ abstract class AbstractCardActivity :
   }
 
   /** Only with NFC we can come back to the 'wait for device' screen after a result. */
-  protected fun isFinishActivityAfterResult(): Boolean = device != DeviceEnum.CONTACTLESS_CARD
+  protected fun isFinishActivityAfterResult(): Boolean = device != DeviceType.CONTACTLESS_CARD
 
   protected abstract fun changeDisplay(
       cardReaderResponse: UiCardReaderResponse,
@@ -151,7 +151,7 @@ abstract class AbstractCardActivity :
   override fun onReaderObservationError(contextInfo: String?, readerName: String?, e: Throwable?) {
     Timber.e(e)
     Timber.d("Error on $contextInfo, $readerName")
-    this@AbstractCardActivity.finish()
+    this@BaseCardActivity.finish()
   }
 
   protected abstract fun initReaders()

@@ -20,7 +20,7 @@
     android:background="@color/orange">
 
     <include
-        layout="@layout/logo_toolbar"
+        layout="@layout/toolbar"
         android:id="@+id/appBarLayout" />
 
     <androidx.constraintlayout.widget.Guideline

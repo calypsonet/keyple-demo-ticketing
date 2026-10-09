@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.databinding.ActivityCardReaderBinding
-import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
+import org.calypsonet.keyple.demo.control.databinding.ToolbarBinding
 import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
 import org.calypsonet.keyple.demo.control.domain.model.Status
 import org.calypsonet.keyple.demo.control.ui.activities.cardcontent.CardContentActivity
@@ -37,10 +37,10 @@ import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 import timber.log.Timber
 
 @AndroidEntryPoint
-class ReaderActivity : BaseActivity() {
+class CardReaderActivity : BaseActivity() {
 
   private lateinit var activityCardReaderBinding: ActivityCardReaderBinding
-  private lateinit var logoToolbarBinding: LogoToolbarBinding
+  private lateinit var toolbarBinding: ToolbarBinding
 
   private var cardReaderObserver: CardReaderObserver? = null
   var currentAppState = AppState.WAIT_SYSTEM_READY
@@ -56,9 +56,9 @@ class ReaderActivity : BaseActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     activityCardReaderBinding = ActivityCardReaderBinding.inflate(layoutInflater)
-    logoToolbarBinding = activityCardReaderBinding.appBarLayout
+    toolbarBinding = activityCardReaderBinding.appBarLayout
     setContentView(activityCardReaderBinding.root)
-    setSupportActionBar(logoToolbarBinding.toolbar)
+    setSupportActionBar(toolbarBinding.toolbar)
   }
 
   override fun onResume() {
@@ -71,7 +71,7 @@ class ReaderActivity : BaseActivity() {
           try {
             cardReaderObserver = CardReaderObserver()
             ticketingService.init(
-                cardReaderObserver, appSettings.readerType, UiContextImpl(this@ReaderActivity))
+                cardReaderObserver, appSettings.readerType, UiContextImpl(this@CardReaderActivity))
             showToast(
                 getString(
                     if (ticketingService.isSamAvailable) R.string.sam_available
@@ -221,7 +221,7 @@ class ReaderActivity : BaseActivity() {
     when (uiControlResult.status) {
       Status.TICKETS_FOUND,
       Status.EMPTY_CARD -> {
-        val intent = Intent(this@ReaderActivity, CardContentActivity::class.java)
+        val intent = Intent(this@CardReaderActivity, CardContentActivity::class.java)
         intent.putExtra(CARD_CONTENT, uiControlResult)
         startActivity(intent)
       }
@@ -230,7 +230,7 @@ class ReaderActivity : BaseActivity() {
       Status.SUCCESS,
       Status.INVALID_CARD -> {
         ticketingService.displayResultFailed()
-        val intent = Intent(this@ReaderActivity, NetworkInvalidActivity::class.java)
+        val intent = Intent(this@CardReaderActivity, NetworkInvalidActivity::class.java)
         intent.putExtra(CARD_CONTENT, uiControlResult)
         startActivity(intent)
       }

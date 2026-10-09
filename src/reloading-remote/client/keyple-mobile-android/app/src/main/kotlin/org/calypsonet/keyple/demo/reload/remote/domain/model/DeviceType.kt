@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2026 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -10,12 +10,19 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.domain.model
+package org.calypsonet.keyple.demo.reload.remote.domain.model
 
-enum class CardProtocolEnum {
-  ISO_7816_LOGICAL_PROTOCOL,
-  ISO_14443_4_LOGICAL_PROTOCOL,
-  MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL,
-  ST25_SRT512_LOGICAL_PROTOCOL,
-  MIFARE_CLASSIC_LOGICAL_PROTOCOL
+import java.util.Locale
+
+enum class DeviceType {
+  CONTACTLESS_CARD,
+  SIM,
+  WEARABLE,
+  EMBEDDED;
+
+  companion object {
+    /** Returns the device type having the given name, or [CONTACTLESS_CARD] if it is unknown. */
+    fun fromName(name: String): DeviceType =
+        entries.firstOrNull { it.name == name.uppercase(Locale.ROOT) } ?: CONTACTLESS_CARD
+  }
 }

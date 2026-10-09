@@ -14,7 +14,7 @@ package org.calypsonet.keyple.demo.reload.remote.data
 
 import android.content.SharedPreferences
 import java.util.Locale
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
+import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceType
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceVisibility
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ServerConfig
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.AppSettingsRepository
@@ -37,8 +37,8 @@ class AppSettingsRepositoryImpl(private val prefs: SharedPreferences) : AppSetti
           .apply()
     }
 
-  override var deviceType: DeviceEnum
-    get() = DeviceEnum.getDeviceEnum(prefs.getString(DEVICE_TYPE, "") ?: "")
+  override var deviceType: DeviceType
+    get() = DeviceType.fromName(prefs.getString(DEVICE_TYPE, "") ?: "")
     set(value) {
       prefs.edit().putString(DEVICE_TYPE, value.toString()).apply()
     }
@@ -49,24 +49,24 @@ class AppSettingsRepositoryImpl(private val prefs: SharedPreferences) : AppSetti
       prefs.edit().putBoolean(SETTING_SERVER_LAST_STATUS_UP, value).apply()
     }
 
-  override fun getDeviceVisibility(device: DeviceEnum): DeviceVisibility {
+  override fun getDeviceVisibility(device: DeviceType): DeviceVisibility {
     val defaultVisibility =
-        if (device == DeviceEnum.CONTACTLESS_CARD) DeviceVisibility.ENABLE
+        if (device == DeviceType.CONTACTLESS_CARD) DeviceVisibility.ENABLE
         else DeviceVisibility.DISABLE
     val value = prefs.getString(visibilityKey(device), null) ?: return defaultVisibility
     return DeviceVisibility.valueOf(value.uppercase(Locale.ROOT))
   }
 
-  override fun setDeviceVisibility(device: DeviceEnum, visibility: DeviceVisibility) {
+  override fun setDeviceVisibility(device: DeviceType, visibility: DeviceVisibility) {
     prefs.edit().putString(visibilityKey(device), visibility.name.lowercase(Locale.ROOT)).apply()
   }
 
-  private fun visibilityKey(device: DeviceEnum): String =
+  private fun visibilityKey(device: DeviceType): String =
       when (device) {
-        DeviceEnum.CONTACTLESS_CARD -> SETTING_CONTACTLESS_VISIBILITY
-        DeviceEnum.SIM -> SETTING_SIM_VISIBILITY
-        DeviceEnum.WEARABLE -> SETTING_WEARABLE_VISIBILITY
-        DeviceEnum.EMBEDDED -> SETTING_EMBEDDED_VISIBILITY
+        DeviceType.CONTACTLESS_CARD -> SETTING_CONTACTLESS_VISIBILITY
+        DeviceType.SIM -> SETTING_SIM_VISIBILITY
+        DeviceType.WEARABLE -> SETTING_WEARABLE_VISIBILITY
+        DeviceType.EMBEDDED -> SETTING_EMBEDDED_VISIBILITY
       }
 
   companion object {

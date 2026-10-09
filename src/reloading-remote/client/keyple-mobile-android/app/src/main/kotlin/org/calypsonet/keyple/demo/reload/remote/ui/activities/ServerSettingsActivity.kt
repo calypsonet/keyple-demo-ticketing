@@ -25,7 +25,7 @@ import org.calypsonet.keyple.demo.reload.remote.domain.model.ServerConfig
 import timber.log.Timber
 
 @AndroidEntryPoint
-class ServerSettingsActivity : AbstractDemoActivity() {
+class ServerSettingsActivity : BaseActivity() {
 
   private lateinit var activityServerSettingsBinding: ActivityServerSettingsBinding
 

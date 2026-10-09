@@ -21,8 +21,10 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.calypsonet.keyple.demo.reload.remote.BuildConfig
 import org.calypsonet.keyple.demo.reload.remote.data.network.KeypleSyncEndPointClient
+import org.calypsonet.keyple.demo.reload.remote.data.network.ServerStatusProviderImpl
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.AppSettingsRepository
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.ServerStatusProvider
 
 @Suppress("unused")
 @Module
@@ -46,4 +48,8 @@ class RestModule {
         OkHttpClient.Builder().addNetworkInterceptor(loggingInterceptor).build(),
         logger)
   }
+
+  @Provides
+  @Singleton
+  fun provideServerStatusProvider(): ServerStatusProvider = ServerStatusProviderImpl()
 }

@@ -26,7 +26,7 @@ import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardReaderBinding
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
+import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceType
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.activities.cardsummary.CardSummaryActivity
 import org.calypsonet.keyple.demo.reload.remote.ui.mappers.toUi
@@ -36,7 +36,7 @@ import org.eclipse.keypop.reader.ReaderCommunicationException
 import timber.log.Timber
 
 @AndroidEntryPoint
-class CardReaderActivity : AbstractCardActivity() {
+class CardReaderActivity : BaseCardActivity() {
 
   private lateinit var activityCardReaderBinding: ActivityCardReaderBinding
 
@@ -50,7 +50,7 @@ class CardReaderActivity : AbstractCardActivity() {
   override fun initReaders() {
     try {
       when (device) {
-        DeviceEnum.CONTACTLESS_CARD -> {
+        DeviceType.CONTACTLESS_CARD -> {
           if (!isBluebirdDevice) {
             val nfcManager = getSystemService(NFC_SERVICE) as NfcManager
             if (nfcManager.defaultAdapter?.isEnabled == true) {
@@ -66,16 +66,16 @@ class CardReaderActivity : AbstractCardActivity() {
             initAndActivateCardReader()
           }
         }
-        DeviceEnum.SIM -> {
+        DeviceType.SIM -> {
           showNowLoadingInformation()
           initOmapiReader {
             lifecycleScope.launch(Dispatchers.Default) { remoteServiceExecution() }
           }
         }
-        DeviceEnum.WEARABLE -> {
+        DeviceType.WEARABLE -> {
           throw UnsupportedOperationException("Wearable")
         }
-        DeviceEnum.EMBEDDED -> {
+        DeviceType.EMBEDDED -> {
           throw UnsupportedOperationException("Embedded")
         }
       }

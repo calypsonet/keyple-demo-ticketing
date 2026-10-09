@@ -12,15 +12,11 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.validation.domain.model
 
-enum class Status(private val status: String) {
-  PROCESSING("Processing"),
-  SUCCESS("Success"),
-  INVALID_CARD("Invalid card"),
-  EMPTY_CARD("Empty card"),
-  ERROR("Error"),
-  CARD_LOST("Card lost");
-
-  override fun toString(): String {
-    return status
-  }
+enum class Status {
+  PROCESSING,
+  SUCCESS,
+  INVALID_CARD,
+  EMPTY_CARD,
+  ERROR,
+  CARD_LOST
 }

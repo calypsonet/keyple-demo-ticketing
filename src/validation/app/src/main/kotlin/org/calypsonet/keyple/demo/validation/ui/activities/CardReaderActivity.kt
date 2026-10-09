@@ -41,7 +41,7 @@ import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 import timber.log.Timber
 
 @AndroidEntryPoint
-class ReaderActivity : BaseActivity() {
+class CardReaderActivity : BaseActivity() {
 
   private lateinit var activityCardReaderBinding: ActivityCardReaderBinding
 
@@ -109,7 +109,7 @@ class ReaderActivity : BaseActivity() {
           try {
             cardReaderObserver = CardReaderObserver()
             ticketingService.init(
-                cardReaderObserver, appSettings.readerType, UiContextImpl(this@ReaderActivity))
+                cardReaderObserver, appSettings.readerType, UiContextImpl(this@CardReaderActivity))
             handleAppEvents(AppState.WAIT_CARD, null)
             ticketingService.startNfcDetection()
             ticketingService.displayWaiting()

@@ -16,7 +16,7 @@ import android.app.Activity
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.calypsonet.keyple.demo.control.domain.model.CardProtocolEnum
+import org.calypsonet.keyple.demo.control.domain.model.CardProtocol
 import org.calypsonet.keyple.demo.control.domain.model.ReaderType
 import org.calypsonet.keyple.demo.control.domain.spi.ReaderManager
 import org.calypsonet.keyple.demo.control.domain.spi.UiContext
@@ -74,20 +74,20 @@ constructor(
     cardPluginName = BluebirdConstants.PLUGIN_NAME
     cardReaderName = BluebirdConstants.CARD_READER_NAME
     cardReaderProtocols[BluebirdContactlessProtocols.ISO_14443_4_A.name] =
-        CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name
+        CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name
     cardReaderProtocols[BluebirdContactlessProtocols.ISO_14443_4_B.name] =
-        CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name
+        CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name
     cardReaderProtocols[BluebirdContactlessProtocols.MIFARE_ULTRALIGHT.name] =
-        CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name
+        CardProtocol.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name
     cardReaderProtocols[BluebirdContactlessProtocols.ST25_SRT512.name] =
-        CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name
+        CardProtocol.ST25_SRT512_LOGICAL_PROTOCOL.name
     cardReaderProtocols[BluebirdContactlessProtocols.MIFARE_CLASSIC.name] =
-        CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name
+        CardProtocol.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name
     samPluginName = BluebirdConstants.PLUGIN_NAME
     samReaderNameRegex = ".*ContactReader"
     samReaderName = BluebirdConstants.SAM_READER_NAME
     samReaderProtocolPhysicalName = ContactCardCommonProtocols.ISO_7816_3.name
-    samReaderProtocolLogicalName = CardProtocolEnum.ISO_7816_LOGICAL_PROTOCOL.name
+    samReaderProtocolLogicalName = CardProtocol.ISO_7816_LOGICAL_PROTOCOL.name
     isStorageCardSupported = true
   }
 
@@ -96,14 +96,14 @@ constructor(
     cardPluginName = AndroidNfcConstants.PLUGIN_NAME
     cardReaderName = AndroidNfcConstants.READER_NAME
     cardReaderProtocols[AndroidNfcSupportedProtocols.ISO_14443_4.name] =
-        CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name
+        CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name
     cardReaderProtocols[AndroidNfcSupportedProtocols.MIFARE_CLASSIC_1K.name] =
-        CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name
+        CardProtocol.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name
     samPluginName = AndroidFamocoPlugin.PLUGIN_NAME
     samReaderNameRegex = ".*FamocoReader"
     samReaderName = AndroidFamocoReader.READER_NAME
     samReaderProtocolPhysicalName = ContactCardCommonProtocols.ISO_7816_3.name
-    samReaderProtocolLogicalName = CardProtocolEnum.ISO_7816_LOGICAL_PROTOCOL.name
+    samReaderProtocolLogicalName = CardProtocol.ISO_7816_LOGICAL_PROTOCOL.name
     isStorageCardSupported = true
   }
 
@@ -112,7 +112,7 @@ constructor(
     cardPluginName = AndroidNfcConstants.PLUGIN_NAME
     cardReaderName = AndroidNfcConstants.READER_NAME
     cardReaderProtocols[AndroidNfcSupportedProtocols.ISO_14443_4.name] =
-        CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name
+        CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name
     samPluginName = ""
     samReaderNameRegex = ""
     samReaderName = ""
@@ -215,7 +215,7 @@ constructor(
     return isStorageCardSupported
   }
 
-  override fun clear() {
+  private fun clear() {
     cardReaderProtocols.forEach { entry ->
       (cardReader as ConfigurableCardReader).deactivateProtocol(entry.key)
     }

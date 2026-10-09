@@ -195,13 +195,22 @@ drive the user flow and call the domain directly.
 **Logging**
 
 - `domain`, `data` and `di` log through the `Logger` port. Timber is only used by its implementation (`data/LoggerImpl`),
-  by `Application` (Timber initialization) and by the activities.
+  by `DemoApplication` (Timber initialization) and by the activities.
 
 **UI models**
 
 - A UI model (`ui/model`, `Parcelable`) is only created when an object must be passed between activities through an
   `Intent`. Otherwise, the UI uses the domain models directly. When a UI model has a domain counterpart, the mapping
   from the domain model to the UI model is done in `ui/mappers`.
+
+**Naming conventions**
+
+- Application class `DemoApplication`, base activity `BaseActivity` (and `BaseCardActivity` for the card screens of
+  the reloading client), card presentation screen `CardReaderActivity`.
+- Layouts named after their activity (`activity_<name>.xml`), shared toolbar `toolbar.xml`.
+- Hilt modules named after what they provide (e.g. `AppSettingsModule`, `DomainModule`, `ReaderModule`), with
+  `provide<Type>` methods.
+- Enums named without suffix (e.g. `ReaderType`, `CardProtocol`, `Status`).
 
 These rules are checked by the CI (`.github/scripts/check-android-architecture.sh`), which can also be run locally:
 

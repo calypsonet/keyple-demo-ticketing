@@ -22,11 +22,11 @@ import androidx.core.view.updatePadding
 import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityHomeBinding
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
+import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceType
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceVisibility
 
 @AndroidEntryPoint
-class HomeActivity : AbstractDemoActivity() {
+class HomeActivity : BaseActivity() {
 
   private lateinit var activityHomeBinding: ActivityHomeBinding
 
@@ -55,13 +55,13 @@ class HomeActivity : AbstractDemoActivity() {
 
   override fun onResume() {
     super.onResume()
-    setupBtn(activityHomeBinding.contactlessCardBtn, DeviceEnum.CONTACTLESS_CARD)
-    setupBtn(activityHomeBinding.simCardBtn, DeviceEnum.SIM)
-    setupBtn(activityHomeBinding.wearableBtn, DeviceEnum.WEARABLE)
-    setupBtn(activityHomeBinding.embeddedElemBtn, DeviceEnum.EMBEDDED)
+    setupBtn(activityHomeBinding.contactlessCardBtn, DeviceType.CONTACTLESS_CARD)
+    setupBtn(activityHomeBinding.simCardBtn, DeviceType.SIM)
+    setupBtn(activityHomeBinding.wearableBtn, DeviceType.WEARABLE)
+    setupBtn(activityHomeBinding.embeddedElemBtn, DeviceType.EMBEDDED)
   }
 
-  private fun setupBtn(btn: View, type: DeviceEnum) {
+  private fun setupBtn(btn: View, type: DeviceType) {
     btn.setOnClickListener {
       appSettings.deviceType = type
       if (intent.getBooleanExtra(CHOOSE_DEVICE_FOR_PERSO, false)) {

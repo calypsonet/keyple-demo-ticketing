@@ -23,7 +23,7 @@ import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivitySettingsMenuBinding
 
 @AndroidEntryPoint
-class SettingsMenuActivity : AbstractDemoActivity() {
+class SettingsMenuActivity : BaseActivity() {
   private lateinit var activitySettingsMenuBinding: ActivitySettingsMenuBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {

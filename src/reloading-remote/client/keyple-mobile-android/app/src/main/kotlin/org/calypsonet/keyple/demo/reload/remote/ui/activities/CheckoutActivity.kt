@@ -22,7 +22,7 @@ import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCheckoutBinding
 
 @AndroidEntryPoint
-class CheckoutActivity : AbstractDemoActivity() {
+class CheckoutActivity : BaseActivity() {
 
   private lateinit var activityCheckoutBinding: ActivityCheckoutBinding
 

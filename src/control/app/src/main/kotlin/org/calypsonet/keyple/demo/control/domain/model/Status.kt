@@ -12,13 +12,13 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.control.domain.model
 
-enum class Status(val status: String) {
-  LOADING("loading"),
-  ERROR("error"),
-  TICKETS_FOUND("tickets_found"),
-  INVALID_CARD("invalid_card"),
-  EMPTY_CARD("empty_card"),
-  WRONG_CARD("wrong_card"),
-  DEVICE_CONNECTED("device_connected"),
-  SUCCESS("success")
+enum class Status {
+  LOADING,
+  ERROR,
+  TICKETS_FOUND,
+  INVALID_CARD,
+  EMPTY_CARD,
+  WRONG_CARD,
+  DEVICE_CONNECTED,
+  SUCCESS
 }

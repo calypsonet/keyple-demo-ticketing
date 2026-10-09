@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2024 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -10,17 +10,17 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation
+package org.calypsonet.keyple.demo.reload.remote
 
-import dagger.hilt.android.HiltAndroidApp
-import timber.log.Timber
-import timber.log.Timber.DebugTree
+import android.app.Application
+import io.github.aakira.napier.DebugAntilog
+import io.github.aakira.napier.Napier
 
-@HiltAndroidApp
-class Application : android.app.Application() {
+class DemoApplication : Application() {
 
   override fun onCreate() {
     super.onCreate()
-    Timber.plant(DebugTree())
+
+    Napier.base(DebugAntilog())
   }
 }

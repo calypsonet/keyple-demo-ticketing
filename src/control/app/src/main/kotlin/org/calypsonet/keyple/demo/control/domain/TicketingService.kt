@@ -17,7 +17,7 @@ import org.calypsonet.keyple.demo.common.constants.CardConstants
 import org.calypsonet.keyple.demo.common.data.LocationRepository
 import org.calypsonet.keyple.demo.control.domain.managers.CalypsoCardControlManager
 import org.calypsonet.keyple.demo.control.domain.managers.StorageCardControlManager
-import org.calypsonet.keyple.demo.control.domain.model.CardProtocolEnum
+import org.calypsonet.keyple.demo.control.domain.model.CardProtocol
 import org.calypsonet.keyple.demo.control.domain.model.ControlResult
 import org.calypsonet.keyple.demo.control.domain.model.ReaderType
 import org.calypsonet.keyple.demo.control.domain.spi.AppSettingsRepository
@@ -199,7 +199,7 @@ class TicketingService(
             readerApiFactory
                 .createIsoCardSelector()
                 .filterByDfName(CardConstants.AID_KEYPLE_GENERIC)
-                .filterByCardProtocol(CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name),
+                .filterByCardProtocol(CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
     // Prepare card selection case #2: CD LIGHT/GTML
@@ -208,7 +208,7 @@ class TicketingService(
             readerApiFactory
                 .createIsoCardSelector()
                 .filterByDfName(CardConstants.AID_CD_LIGHT_GTML)
-                .filterByCardProtocol(CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name),
+                .filterByCardProtocol(CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
     // Prepare card selection case #3: CALYPSO LIGHT
@@ -217,7 +217,7 @@ class TicketingService(
             readerApiFactory
                 .createIsoCardSelector()
                 .filterByDfName(CardConstants.AID_CALYPSO_LIGHT)
-                .filterByCardProtocol(CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name),
+                .filterByCardProtocol(CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
     // Prepare card selection case #4: Navigo IDF
@@ -226,7 +226,7 @@ class TicketingService(
             readerApiFactory
                 .createIsoCardSelector()
                 .filterByDfName(CardConstants.AID_NORMALIZED_IDF)
-                .filterByCardProtocol(CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name),
+                .filterByCardProtocol(CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
     if (storageCardApiFactory != null && readerManager.isStorageCardSupported()) {
@@ -234,20 +234,20 @@ class TicketingService(
           cardSelectionManager.prepareSelection(
               readerApiFactory
                   .createBasicCardSelector()
-                  .filterByCardProtocol(CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name),
+                  .filterByCardProtocol(CardProtocol.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name),
               storageCardApiFactory.createStorageCardSelectionExtension(
                   ProductType.MIFARE_ULTRALIGHT))
       indexOfST25CardSelection =
           cardSelectionManager.prepareSelection(
               readerApiFactory
                   .createBasicCardSelector()
-                  .filterByCardProtocol(CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name),
+                  .filterByCardProtocol(CardProtocol.ST25_SRT512_LOGICAL_PROTOCOL.name),
               storageCardApiFactory.createStorageCardSelectionExtension(ProductType.ST25_SRT512))
       indexOfMifareClassic1KCardSelection =
           cardSelectionManager.prepareSelection(
               readerApiFactory
                   .createBasicCardSelector()
-                  .filterByCardProtocol(CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name),
+                  .filterByCardProtocol(CardProtocol.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name),
               storageCardApiFactory.createStorageCardSelectionExtension(
                   ProductType.MIFARE_CLASSIC_1K))
     }

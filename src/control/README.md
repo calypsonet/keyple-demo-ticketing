@@ -101,7 +101,7 @@ Device Selection → Settings → Home → Reader Activity → Control Results
 - Quick access to settings and help documentation
 - Statistics on recent control operations
 
-**Reader Activity (`ReaderActivity`)**
+**Reader Activity (`CardReaderActivity`)**
 - Initializes selected Keyple plugin and optional SAM integration
 - Displays "Present Card for Control" message
 - Shows real-time analysis during card processing

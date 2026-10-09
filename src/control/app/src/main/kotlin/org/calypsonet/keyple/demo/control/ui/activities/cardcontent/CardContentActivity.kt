@@ -19,10 +19,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.databinding.ActivityCardContentBinding
-import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
+import org.calypsonet.keyple.demo.control.databinding.ToolbarBinding
 import org.calypsonet.keyple.demo.control.setDivider
 import org.calypsonet.keyple.demo.control.ui.activities.BaseActivity
-import org.calypsonet.keyple.demo.control.ui.activities.ReaderActivity.Companion.CARD_CONTENT
+import org.calypsonet.keyple.demo.control.ui.activities.CardReaderActivity.Companion.CARD_CONTENT
 import org.calypsonet.keyple.demo.control.ui.model.UiControlResult
 import timber.log.Timber
 
@@ -30,14 +30,14 @@ import timber.log.Timber
 class CardContentActivity : BaseActivity() {
 
   private lateinit var activityCardContentBinding: ActivityCardContentBinding
-  private lateinit var logoToolbarBinding: LogoToolbarBinding
+  private lateinit var toolbarBinding: ToolbarBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     activityCardContentBinding = ActivityCardContentBinding.inflate(layoutInflater)
-    logoToolbarBinding = activityCardContentBinding.appBarLayout
+    toolbarBinding = activityCardContentBinding.appBarLayout
     setContentView(activityCardContentBinding.root)
-    setSupportActionBar(logoToolbarBinding.toolbar)
+    setSupportActionBar(toolbarBinding.toolbar)
     activityCardContentBinding.presentBtn.setOnClickListener {
       onBackPressedDispatcher.onBackPressed()
     }

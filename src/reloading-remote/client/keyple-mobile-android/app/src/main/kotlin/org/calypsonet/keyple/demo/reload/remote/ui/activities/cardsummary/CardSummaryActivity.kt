@@ -25,13 +25,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardSummaryBinding
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
-import org.calypsonet.keyple.demo.reload.remote.ui.activities.AbstractCardActivity
-import org.calypsonet.keyple.demo.reload.remote.ui.activities.AbstractDemoActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.activities.BaseActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.activities.BaseCardActivity
 import org.calypsonet.keyple.demo.reload.remote.ui.activities.SelectTicketsActivity
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 
 @AndroidEntryPoint
-class CardSummaryActivity : AbstractDemoActivity() {
+class CardSummaryActivity : BaseActivity() {
 
   private lateinit var titleLinearLayoutManager: LinearLayoutManager
   private lateinit var titlesAdapter: TitlesRecyclerAdapter
@@ -45,7 +45,7 @@ class CardSummaryActivity : AbstractDemoActivity() {
 
     val cardContent: UiCardReaderResponse =
         IntentCompat.getParcelableExtra(
-            intent, AbstractCardActivity.CARD_CONTENT, UiCardReaderResponse::class.java)!!
+            intent, BaseCardActivity.CARD_CONTENT, UiCardReaderResponse::class.java)!!
 
     titleLinearLayoutManager = LinearLayoutManager(this)
     activityCardSummaryBinding.titlesList.layoutManager = titleLinearLayoutManager
@@ -133,8 +133,8 @@ class CardSummaryActivity : AbstractDemoActivity() {
     mp.start()
     activityCardSummaryBinding.buyBtn.setOnClickListener {
       val intent = Intent(this, SelectTicketsActivity::class.java)
-      getIntent().getStringExtra(AbstractCardActivity.CARD_APPLICATION_NUMBER)?.let {
-        intent.putExtra(AbstractCardActivity.CARD_APPLICATION_NUMBER, it)
+      getIntent().getStringExtra(BaseCardActivity.CARD_APPLICATION_NUMBER)?.let {
+        intent.putExtra(BaseCardActivity.CARD_APPLICATION_NUMBER, it)
       }
       startActivity(intent)
       this@CardSummaryActivity.finish()

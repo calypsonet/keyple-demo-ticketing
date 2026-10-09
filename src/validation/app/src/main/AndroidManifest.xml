@@ -6,7 +6,7 @@
     <uses-permission android:name="com.bluebird.permission.SAM_DEVICE_ACCESS" />
 
     <application
-        android:name="org.calypsonet.keyple.demo.validation.Application"
+        android:name="org.calypsonet.keyple.demo.validation.DemoApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -32,7 +32,7 @@
         </activity>
 
         <activity
-            android:name="org.calypsonet.keyple.demo.validation.ui.activities.ReaderActivity"
+            android:name="org.calypsonet.keyple.demo.validation.ui.activities.CardReaderActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:launchMode="singleTop"
             android:screenOrientation="fullUser"

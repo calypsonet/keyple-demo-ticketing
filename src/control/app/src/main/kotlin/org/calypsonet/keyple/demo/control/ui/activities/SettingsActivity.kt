@@ -23,20 +23,20 @@ import org.calypsonet.keyple.demo.common.model.Location
 import org.calypsonet.keyple.demo.control.BuildConfig
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.databinding.ActivitySettingsBinding
-import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
+import org.calypsonet.keyple.demo.control.databinding.ToolbarBinding
 
 @AndroidEntryPoint
 class SettingsActivity : BaseActivity() {
 
   private lateinit var activitySettingsBinding: ActivitySettingsBinding
-  private lateinit var logoToolbarBinding: LogoToolbarBinding
+  private lateinit var toolbarBinding: ToolbarBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     activitySettingsBinding = ActivitySettingsBinding.inflate(layoutInflater)
-    logoToolbarBinding = activitySettingsBinding.appBarLayout
+    toolbarBinding = activitySettingsBinding.appBarLayout
     setContentView(activitySettingsBinding.root)
-    setSupportActionBar(logoToolbarBinding.toolbar)
+    setSupportActionBar(toolbarBinding.toolbar)
 
     activitySettingsBinding.spinnerLocationList.adapter =
         ArrayAdapter(

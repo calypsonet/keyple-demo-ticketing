@@ -22,8 +22,8 @@ import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.reload.remote.domain.mappers.toCardTitle
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardInfo
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardOperationResult
-import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocolEnum
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
+import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocol
+import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceType
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ReadContractsResult
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ReaderType
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.KeypopApiProvider
@@ -75,7 +75,7 @@ class TicketingService(
    * Initializes the reader of the given device.
    *
    * @param readerType The type of terminal.
-   * @param deviceEnum The type of device (contactless card, SIM...) to read.
+   * @param deviceType The type of device (contactless card, SIM...) to read.
    * @param uiContext Platform-specific context used to register the plugins.
    * @param observer Optional observer of the card reader events (contactless cards only).
    * @param readerObservationExceptionHandler Optional handler of the reader observation errors.
@@ -84,17 +84,17 @@ class TicketingService(
    */
   fun init(
       readerType: ReaderType,
-      deviceEnum: DeviceEnum,
+      deviceType: DeviceType,
       uiContext: UiContext,
       observer: CardReaderObserverSpi?,
       readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi?,
       callback: (() -> Unit)?
   ) {
-    readerName = readerManager.getReaderName(readerType, deviceEnum)
-    pluginType = getPluginType(readerType, deviceEnum)
-    aids = getAids(deviceEnum)
+    readerName = readerManager.getReaderName(readerType, deviceType)
+    pluginType = getPluginType(readerType, deviceType)
+    aids = getAids(deviceType)
 
-    readerManager.registerPlugin(readerType, uiContext, deviceEnum, callback)
+    readerManager.registerPlugin(readerType, uiContext, deviceType, callback)
     readerManager.initCardReader(observer, readerObservationExceptionHandler)
 
     areReadersInitialized = true
@@ -201,7 +201,7 @@ class TicketingService(
       val calypsoCardSelector =
           readerApiFactory
               .createIsoCardSelector()
-              .filterByCardProtocol(CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name)
+              .filterByCardProtocol(CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name)
               .filterByDfName(it)
       cardSelectionManager.prepareSelection(
           calypsoCardSelector,
@@ -212,17 +212,17 @@ class TicketingService(
       cardSelectionManager.prepareSelection(
           readerApiFactory
               .createBasicCardSelector()
-              .filterByCardProtocol(CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name),
+              .filterByCardProtocol(CardProtocol.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name),
           storageCardApiFactory.createStorageCardSelectionExtension(MIFARE_ULTRALIGHT))
       cardSelectionManager.prepareSelection(
           readerApiFactory
               .createBasicCardSelector()
-              .filterByCardProtocol(CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name),
+              .filterByCardProtocol(CardProtocol.ST25_SRT512_LOGICAL_PROTOCOL.name),
           storageCardApiFactory.createStorageCardSelectionExtension(ST25_SRT512))
       cardSelectionManager.prepareSelection(
           readerApiFactory
               .createBasicCardSelector()
-              .filterByCardProtocol(CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name),
+              .filterByCardProtocol(CardProtocol.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name),
           storageCardApiFactory.createStorageCardSelectionExtension(MIFARE_CLASSIC_1K))
     }
 
@@ -247,26 +247,26 @@ class TicketingService(
       }
 
   /** Returns the plugin type reported to the server, depending on the terminal and the device. */
-  private fun getPluginType(readerType: ReaderType, deviceEnum: DeviceEnum): String =
-      when (deviceEnum) {
-        DeviceEnum.CONTACTLESS_CARD ->
+  private fun getPluginType(readerType: ReaderType, deviceType: DeviceType): String =
+      when (deviceType) {
+        DeviceType.CONTACTLESS_CARD ->
             if (readerType == ReaderType.BLUEBIRD) "Bluebird" else "Android NFC"
-        DeviceEnum.SIM -> "Android OMAPI"
-        DeviceEnum.WEARABLE -> "Android WEARABLE"
-        DeviceEnum.EMBEDDED -> "Android EMBEDDED"
+        DeviceType.SIM -> "Android OMAPI"
+        DeviceType.WEARABLE -> "Android WEARABLE"
+        DeviceType.EMBEDDED -> "Android EMBEDDED"
       }
 
   /** Returns the AIDs of the Calypso applications to select, depending on the device. */
-  private fun getAids(deviceEnum: DeviceEnum): List<ByteArray> =
-      when (deviceEnum) {
-        DeviceEnum.CONTACTLESS_CARD ->
+  private fun getAids(deviceType: DeviceType): List<ByteArray> =
+      when (deviceType) {
+        DeviceType.CONTACTLESS_CARD ->
             listOf(
                 CardConstants.AID_KEYPLE_GENERIC,
                 CardConstants.AID_CD_LIGHT_GTML,
                 CardConstants.AID_CALYPSO_LIGHT,
                 CardConstants.AID_NORMALIZED_IDF)
-        DeviceEnum.SIM -> listOf(CardConstants.AID_CD_LIGHT_GTML, CardConstants.AID_NORMALIZED_IDF)
-        DeviceEnum.WEARABLE,
-        DeviceEnum.EMBEDDED -> listOf(CardConstants.AID_CD_LIGHT_GTML)
+        DeviceType.SIM -> listOf(CardConstants.AID_CD_LIGHT_GTML, CardConstants.AID_NORMALIZED_IDF)
+        DeviceType.WEARABLE,
+        DeviceType.EMBEDDED -> listOf(CardConstants.AID_CD_LIGHT_GTML)
       }
 }

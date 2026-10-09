@@ -10,9 +10,10 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.domain.model
+package org.calypsonet.keyple.demo.validation.domain.model
 
-enum class CardProtocolEnum {
+enum class CardProtocol {
+  ISO_7816_LOGICAL_PROTOCOL,
   ISO_14443_4_LOGICAL_PROTOCOL,
   MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL,
   ST25_SRT512_LOGICAL_PROTOCOL,

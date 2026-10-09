@@ -12,7 +12,7 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.domain.spi
 
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
+import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceType
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ReaderType
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
@@ -23,14 +23,14 @@ interface ReaderManager {
    * Returns the name of the reader to use for the given reader type and device.
    *
    * @param readerType The type of terminal.
-   * @param deviceEnum The type of device (contactless card, SIM...) to read.
+   * @param deviceType The type of device (contactless card, SIM...) to read.
    */
-  fun getReaderName(readerType: ReaderType, deviceEnum: DeviceEnum): String
+  fun getReaderName(readerType: ReaderType, deviceType: DeviceType): String
 
   fun registerPlugin(
       readerType: ReaderType,
       uiContext: UiContext,
-      deviceEnum: DeviceEnum,
+      deviceType: DeviceType,
       callback: (() -> Unit)?
   )
 

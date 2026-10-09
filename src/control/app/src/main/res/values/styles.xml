@@ -13,6 +13,9 @@
 
 <resources>
 
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar" />
+
     <style name="mediumBoldBlue">
         <item name="fontFamily">@font/worksans_bold</item>
         <item name="android:textSize">@dimen/medium_text_size</item>

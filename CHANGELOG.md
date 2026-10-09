@@ -40,6 +40,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     the modules are installed in the `SingletonComponent` (`@Singleton` bindings);
   - the `AppComponent`, the activity injectors (`UIModule`), the `AppModule` and the custom scopes (`AppScoped`,
     `ActivityScoped`) are removed.
+- Android applications: names harmonized between the applications (conventions documented in the README):
+  - application class `DemoApplication` instead of `Application`, the name of the Android class it extends (also in
+    the KMP client, instead of `KeypleDemoApp`);
+  - card presentation screen `CardReaderActivity` in all the applications (`ReaderActivity` in the control and
+    validation apps), and base activities `BaseActivity` and `BaseCardActivity` in the reloading client
+    (`AbstractDemoActivity` and `AbstractCardActivity`);
+  - toolbar layout `toolbar.xml` (`logo_toolbar.xml` in the control and validation apps), and reload result layout
+    `activity_reload_result.xml` (`activity_charge_result.xml`) named after its activity;
+  - enums without the `Enum` suffix: `CardProtocol` (`CardProtocolEnum`) and, in the reloading client, `DeviceType`
+    (`DeviceEnum`);
+  - `Status` enums reduced to their values, the labels they carried being displayed nowhere (the reloading client
+    passes the status name between its activities);
+  - Hilt modules of the reloading client: `AppSettingsModule` (settings and shared preferences) instead of
+    `DataModule`, the server status provider being provided by `RestModule` with the other network adapters.
+- Android applications: the empty `themes.xml` files are removed. The control app defines its `AppTheme` theme (same
+  appearance), applied to the whole application instead of being repeated on each activity.
 - Android applications and KMP client: Jetifier is disabled, no library requiring it anymore (Dagger `2.25` and the
   Coppernic plugin were the last ones).
 - Android applications and server: the common library is included as a separate build (`includeBuild`, Gradle
@@ -135,6 +151,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The SAM selection no longer filters the SAM on its power-on data (SAM C1).
 - The user feedback (sounds) is provided by the `UiManager` port, and the settings are accessed through the
   `AppSettingsRepository` port.
+- `ReaderManager.clear()` is no longer part of the port, being only used by its implementation (as in the other
+  applications).
 #### Removed
 - Gson dependency, not used by the application (still provided to the Keyple libraries by their own dependencies), as
   in the validation app.

@@ -147,7 +147,7 @@ Main Screen → Card Reader → Card Summary → Select Tickets → Checkout →
 - Abstracts reader-specific operations
 - Provides consistent API for different reader types
 
-**AbstractCardActivity**
+**BaseCardActivity**
 - Base class for card-related activities
 - Implements `CardReaderObserverSpi` from Keyple middleware
 - Responds to card insertion/removal events

@@ -10,7 +10,7 @@
 
     <include
         android:id="@+id/appBarLayout"
-        layout="@layout/logo_toolbar" />
+        layout="@layout/toolbar" />
 
     <Button
         android:id="@+id/arriveBtn"
@@ -86,7 +86,7 @@
 
     <include
         android:id="@+id/appBarLayoutBottom"
-        layout="@layout/logo_toolbar"
+        layout="@layout/toolbar"
         tools:layout_editor_absoluteX="0dp" />
 
     <androidx.constraintlayout.widget.Guideline

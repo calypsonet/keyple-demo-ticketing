@@ -16,23 +16,23 @@ import android.content.Intent
 import android.os.Bundle
 import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.control.databinding.ActivityHomeBinding
-import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
+import org.calypsonet.keyple.demo.control.databinding.ToolbarBinding
 
 @AndroidEntryPoint
 class HomeActivity : BaseActivity() {
 
   private lateinit var activityHomeBinding: ActivityHomeBinding
-  private lateinit var logoToolbarBinding: LogoToolbarBinding
+  private lateinit var toolbarBinding: ToolbarBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     activityHomeBinding = ActivityHomeBinding.inflate(layoutInflater)
-    logoToolbarBinding = activityHomeBinding.appBarLayout
+    toolbarBinding = activityHomeBinding.appBarLayout
     setContentView(activityHomeBinding.root)
-    setSupportActionBar(logoToolbarBinding.toolbar)
+    setSupportActionBar(toolbarBinding.toolbar)
     activityHomeBinding.locationSelected.text = appSettings.location.toString()
     activityHomeBinding.startBtn.setOnClickListener {
-      startActivity(Intent(this, ReaderActivity::class.java))
+      startActivity(Intent(this, CardReaderActivity::class.java))
     }
   }
 }

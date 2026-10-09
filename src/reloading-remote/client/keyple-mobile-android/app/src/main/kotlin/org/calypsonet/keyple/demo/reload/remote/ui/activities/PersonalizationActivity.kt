@@ -25,14 +25,14 @@ import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityPersonalizationBinding
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
+import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceType
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.eclipse.keypop.reader.CardReaderEvent
 import timber.log.Timber
 
 @AndroidEntryPoint
-class PersonalizationActivity : AbstractCardActivity() {
+class PersonalizationActivity : BaseCardActivity() {
   private lateinit var activityPersonalizationBinding: ActivityPersonalizationBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +44,7 @@ class PersonalizationActivity : AbstractCardActivity() {
 
   override fun initReaders() {
     try {
-      if (device == DeviceEnum.CONTACTLESS_CARD) {
+      if (device == DeviceType.CONTACTLESS_CARD) {
         showPresentNfcCardInstructions()
         initAndActivateCardReader()
       } else {
