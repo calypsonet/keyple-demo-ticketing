@@ -24,7 +24,6 @@ import org.calypsonet.keyple.demo.common.model.ContractStructure;
 import org.calypsonet.keyple.demo.common.model.EnvironmentHolderStructure;
 import org.calypsonet.keyple.demo.common.model.EventStructure;
 import org.calypsonet.keyple.demo.common.model.type.DateCompact;
-import org.calypsonet.keyple.demo.common.model.type.PriorityCode;
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber;
 import org.calypsonet.keyple.demo.common.parsers.*;
 import org.eclipse.keyple.card.calypso.CalypsoExtensionService;
@@ -238,7 +237,7 @@ public class CardRepository {
       cardTransactionManager.prepareUpdateRecord(
           CardConstants.SFI_EVENTS_LOG,
           1,
-          new EventStructureParser().generate(buildEvent(card.getEvent(), card.getContracts())));
+          new EventStructureParser().generate(buildEvent(card.getEvent())));
     }
 
     cardTransactionManager.prepareCloseSecureSession().processCommands(ChannelControl.KEEP_OPEN);
@@ -297,8 +296,7 @@ public class CardRepository {
               : CardConstants.SC_EVENT_FIRST_BLOCK;
       logger.info("Updating event on StorageCard at block {}", eventBlock);
       cardTransactionManager.prepareWriteBlocks(
-          eventBlock,
-          new ScEventStructureParser().generate(buildEvent(card.getEvent(), card.getContracts())));
+          eventBlock, new ScEventStructureParser().generate(buildEvent(card.getEvent())));
     }
 
     cardTransactionManager.processCommands(ChannelControl.KEEP_OPEN);
@@ -424,18 +422,22 @@ public class CardRepository {
         null);
   }
 
-  private EventStructure buildEvent(EventStructure oldEvent, List<ContractStructure> contracts) {
-    int contractCount = contracts.size();
+  /**
+   * Builds the event to write: the last event with the current version number, and its contract
+   * priorities. Only the priority of the loaded contract is updated (by the contract loading): the
+   * other priorities are kept (e.g. 31 for an expired or exhausted contract).
+   */
+  private EventStructure buildEvent(EventStructure event) {
     return new EventStructure(
         VersionNumber.CURRENT_VERSION,
-        oldEvent.getEventDateStamp(),
-        oldEvent.getEventTimeStamp(),
-        oldEvent.getEventLocation(),
-        oldEvent.getEventContractUsed(),
-        contracts.get(0).getContractTariff(),
-        contractCount >= 2 ? contracts.get(1).getContractTariff() : PriorityCode.FORBIDDEN,
-        contractCount >= 3 ? contracts.get(2).getContractTariff() : PriorityCode.FORBIDDEN,
-        contractCount >= 4 ? contracts.get(3).getContractTariff() : PriorityCode.FORBIDDEN);
+        event.getEventDateStamp(),
+        event.getEventTimeStamp(),
+        event.getEventLocation(),
+        event.getEventContractUsed(),
+        event.getContractPriority1(),
+        event.getContractPriority2(),
+        event.getContractPriority3(),
+        event.getContractPriority4());
   }
 
   private Card parse(CalypsoCard calypsoCard) {

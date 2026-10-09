@@ -165,9 +165,9 @@ public class CardService {
               .setStatus(SUCCESS)
               .setType(SECURED_READ)
               .setCardSerialNumber(HexUtil.toHex(calypsoCard.getApplicationSerialNumber())));
-      List<ContractStructure> validContracts = findValidContracts(card);
+      List<ContractStructure> presentContracts = findPresentContracts(card);
 
-      for (ContractStructure contractStructure : validContracts) {
+      for (ContractStructure contractStructure : presentContracts) {
         output.add(formatContractStructure(contractStructure));
       }
     } catch (CardNotPersonalizedException e) {
@@ -295,14 +295,14 @@ public class CardService {
     try {
       Card card = cardRepository.readCard(cardReader, calypsoCard, samResource);
       // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
-      List<ContractStructure> validContracts = findValidContracts(card);
+      List<ContractStructure> presentContracts = findPresentContracts(card);
       activityService.push(
           new Activity()
               .setPlugin(pluginType)
               .setStatus(SUCCESS)
               .setType(SECURED_READ)
               .setCardSerialNumber(appSerialNumber));
-      return new AnalyzeContractsOutputDto(validContracts, RemoteServiceStatus.SUCCESS.getCode());
+      return new AnalyzeContractsOutputDto(presentContracts, RemoteServiceStatus.SUCCESS.getCode());
     } catch (CardNotPersonalizedException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
       activityService.push(
@@ -371,14 +371,14 @@ public class CardService {
     try {
       Card card = cardRepository.readCard(cardReader, storageCard, samResource);
       // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
-      List<ContractStructure> validContracts = findValidContracts(card);
+      List<ContractStructure> presentContracts = findPresentContracts(card);
       activityService.push(
           new Activity()
               .setPlugin(pluginType)
               .setStatus(SUCCESS)
               .setType(READ)
               .setCardSerialNumber(cardUID));
-      return new AnalyzeContractsOutputDto(validContracts, RemoteServiceStatus.SUCCESS.getCode());
+      return new AnalyzeContractsOutputDto(presentContracts, RemoteServiceStatus.SUCCESS.getCode());
     } catch (CardNotPersonalizedException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
       activityService.push(
@@ -747,33 +747,17 @@ public class CardService {
                           contract.getCounterValue() != null && contract.getCounterValue() >= 1;
                       break;
                     case SEASON_PASS:
-                      name = "Season pass";
-                      description =
-                          "From\n"
-                              + contract.getContractSaleDate().getDate().format(dateTimeFormatter)
-                              + "\nto\n"
-                              + contract
-                                  .getContractValidityEndDate()
-                                  .getDate()
-                                  .format(dateTimeFormatter);
                       LocalDate now = LocalDate.now();
-                      isValid =
-                          (contract.getContractSaleDate().getDate().isBefore(now)
-                                  || contract.getContractSaleDate().getDate().isEqual(now))
-                              && (contract.getContractValidityEndDate().getDate().isAfter(now)
-                                  || contract.getContractValidityEndDate().getDate().isEqual(now));
-                      break;
-                    case EXPIRED:
-                      name = "Season pass - Expired";
+                      LocalDate saleDate = contract.getContractSaleDate().getDate();
+                      LocalDate validityEndDate = contract.getContractValidityEndDate().getDate();
+                      boolean isExpired = validityEndDate.isBefore(now);
+                      name = isExpired ? "Season pass - Expired" : "Season pass";
                       description =
                           "From\n"
-                              + contract.getContractSaleDate().getDate().format(dateTimeFormatter)
+                              + saleDate.format(dateTimeFormatter)
                               + "\nto\n"
-                              + contract
-                                  .getContractValidityEndDate()
-                                  .getDate()
-                                  .format(dateTimeFormatter);
-                      isValid = false;
+                              + validityEndDate.format(dateTimeFormatter);
+                      isValid = !saleDate.isAfter(now) && !isExpired;
                       break;
                     case FORBIDDEN:
                       name = "FORBIDDEN";
@@ -977,7 +961,12 @@ public class CardService {
     return new SelectAppAndPersonalizeCardOutputDto(statusCode, message);
   }
 
-  private List<ContractStructure> findValidContracts(Card card) {
+  /**
+   * Returns the contracts present in the card (ContractVersionNumber different from 0), as recorded
+   * in the card: their expiry is evaluated from their dates by the users of the result, the
+   * ContractTariff field keeping the type of the contract.
+   */
+  private List<ContractStructure> findPresentContracts(Card card) {
     // Check environment
     EnvironmentHolderStructure environment = card.getEnvironment();
     if (environment.getEnvVersionNumber() != VersionNumber.CURRENT_VERSION) {
@@ -997,7 +986,7 @@ public class CardService {
     }
     // Iterate through the contracts in the card session
     List<ContractStructure> contracts = card.getContracts();
-    List<ContractStructure> validContracts = new ArrayList<>();
+    List<ContractStructure> presentContracts = new ArrayList<>();
     int contractIndex = 1;
     for (ContractStructure contract : contracts) {
       logger.info(
@@ -1012,20 +1001,12 @@ public class CardService {
           logger.warn(CONTRACT_TARIFF_IS_NOT_VALID_FOR_THIS_CONTRACT);
         }
       } else {
-        // If ContractValidityEndDate points to a date in the past
-        if (contract.getContractValidityEndDate().getDate().isBefore(LocalDate.now())) {
-          // Update the associated ContractPriority field present in the persistent object to 31 and
-          // set the change flag to true.
-          contract.setContractTariff(PriorityCode.EXPIRED);
-          // Update contract
-          card.setContract(contractIndex - 1, contract);
-        }
-        validContracts.add(contract);
+        presentContracts.add(contract);
       }
       contractIndex++;
     }
-    logger.info(CONTRACTS, Arrays.deepToString(validContracts.toArray()));
-    return validContracts;
+    logger.info(CONTRACTS, Arrays.deepToString(presentContracts.toArray()));
+    return presentContracts;
   }
 
   private void insertNewContract(PriorityCode contractTariff, Integer tripsToLoad, Card card) {
@@ -1039,6 +1020,9 @@ public class CardService {
     EventStructure currentEvent = card.getEvent();
     ContractStructure newContract;
     int newContractNumber;
+
+    // Contract analysis: the priority of the expired contracts is set to 31 in the event to write
+    updateExpiredContractPriorities(contracts, currentEvent);
 
     // Single contract cards support only one contract (contracts.size() == 1)
     boolean isSingleContractCard = contracts.size() == 1;
@@ -1071,7 +1055,7 @@ public class CardService {
       }
     } else {
       // Calypso: Issuing new contract, find available position
-      newContractNumber = findAvailablePosition(contracts);
+      newContractNumber = findAvailablePosition(contracts, currentEvent);
       if (newContractNumber == 0) {
         // no available position, reject card
         return;
@@ -1083,25 +1067,56 @@ public class CardService {
         newContract = buildSeasonContract();
       }
     }
-    switch (newContractNumber) {
-      case 1:
-        currentEvent.setContractPriority1(newContract.getContractTariff());
-        break;
-      case 2:
-        currentEvent.setContractPriority2(newContract.getContractTariff());
-        break;
-      case 3:
-        currentEvent.setContractPriority3(newContract.getContractTariff());
-        break;
-      case 4:
-        currentEvent.setContractPriority4(newContract.getContractTariff());
-        break;
-      default:
-        throw new IllegalStateException(UNEXPECTED_CONTRACT_NUMBER + newContractNumber);
-    }
+    setContractPriority(currentEvent, newContractNumber, newContract.getContractTariff());
     // Update contract & Event
     card.setContract(newContractNumber - 1, newContract);
     card.setEvent(currentEvent);
+  }
+
+  /**
+   * Sets to 31 (EXPIRED) the priority of the contracts present in the card whose validity end date
+   * is in the past.
+   */
+  private void updateExpiredContractPriorities(
+      List<ContractStructure> contracts, EventStructure event) {
+    LocalDate today = LocalDate.now();
+    for (int i = 0; i < contracts.size(); i++) {
+      ContractStructure contract = contracts.get(i);
+      if (contract.getContractVersionNumber() != VersionNumber.UNDEFINED
+          && contract.getContractValidityEndDate().getDate().isBefore(today)) {
+        setContractPriority(event, i + 1, PriorityCode.EXPIRED);
+      }
+    }
+  }
+
+  /** Returns the contract priorities of the event, in the order of the contract records. */
+  private static List<PriorityCode> getContractPriorities(EventStructure event) {
+    return Arrays.asList(
+        event.getContractPriority1(),
+        event.getContractPriority2(),
+        event.getContractPriority3(),
+        event.getContractPriority4());
+  }
+
+  /** Sets the priority of the contract record having the provided number (1 to 4) in the event. */
+  private static void setContractPriority(
+      EventStructure event, int contractNumber, PriorityCode priority) {
+    switch (contractNumber) {
+      case 1:
+        event.setContractPriority1(priority);
+        break;
+      case 2:
+        event.setContractPriority2(priority);
+        break;
+      case 3:
+        event.setContractPriority3(priority);
+        break;
+      case 4:
+        event.setContractPriority4(priority);
+        break;
+      default:
+        throw new IllegalStateException(UNEXPECTED_CONTRACT_NUMBER + contractNumber);
+    }
   }
 
   private int getContractNumber(PriorityCode contractTariff, List<ContractStructure> contracts) {
@@ -1144,15 +1159,21 @@ public class CardService {
         null);
   }
 
-  private int findAvailablePosition(List<ContractStructure> contracts) {
+  /**
+   * Returns the number of the contract record where a new contract can be written: the first empty
+   * record (ContractPriority 0), otherwise the first record whose contract is expired or exhausted
+   * (ContractPriority 31), or 0 if there is none.
+   */
+  private int findAvailablePosition(List<ContractStructure> contracts, EventStructure event) {
     int contractCount = contracts.size();
+    List<PriorityCode> contractPriorities = getContractPriorities(event);
     for (int i = 0; i < contractCount; i++) {
-      if (PriorityCode.FORBIDDEN == contracts.get(i).getContractTariff()) {
+      if (PriorityCode.FORBIDDEN == contractPriorities.get(i)) {
         return i + 1;
       }
     }
     for (int i = 0; i < contractCount; i++) {
-      if (PriorityCode.EXPIRED == contracts.get(i).getContractTariff()) {
+      if (PriorityCode.EXPIRED == contractPriorities.get(i)) {
         return i + 1;
       }
     }

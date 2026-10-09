@@ -226,6 +226,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   reading) and the rejected card (reload, personalization) no longer leave the screen stuck on the loading animation.
 - When the card presented for the reload is not the one read before, the type of the presented card is displayed
   instead of "Undetermined card type".
+- An expired season pass is displayed as "Season pass - Expired" according to its validity end date, the server no
+  longer replacing its tariff by `31` (`EXPIRED`) in the contracts it returns.
 ### Reloading remote server
 #### Upgraded
 - Quarkus: `1.8.1.Final` -> `3.40.1` (LTS):
@@ -291,6 +293,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Dashboard: the transactions table could be corrupted (rows displayed several times) when two transactions had the
   same identifier, generated with only 4 hexadecimal characters (collisions after a few hundred transactions). The
   transactions now have a unique identifier (UUID), whose first 4 characters are displayed as before.
+- Contract priorities of the event written by the contract loading, now compliant with the loading procedure:
+  - the event keeps its contract priorities, only the priority of the loaded contract being updated: the priorities
+    were rebuilt from the contract tariffs, which removed the priority `31` set by the validation for an expired or
+    exhausted contract (and ignored the priorities computed by the loading);
+  - the priority of the contracts whose validity end date is in the past is set to `31` by the loading;
+  - a new contract is written in the first record whose priority is `0` (empty), otherwise `31` (expired or
+    exhausted): the expired records were never reused, being searched by their tariff, which is never `31`.
+- Contracts reading and analysis: the tariff of an expired contract is returned as recorded in the card, instead of
+  being replaced by `31` (`EXPIRED`) in the result, which lost the type of the contract. The "Season pass - Expired"
+  label returned to the KMP client is evaluated from the validity end date.
 ### Reloading remote KMP client
 #### Changed
 - The Android application is moved to a new `androidApp` module, the Android Gradle plugin 9 not supporting the Kotlin

@@ -30,5 +30,11 @@ fun ContractStructure.toContract(today: LocalDate): Contract {
         PriorityCode.SEASON_PASS -> !saleDate.isAfter(today) && !validityEndDate.isBefore(today)
         else -> false
       }
-  return Contract(contractTariff, counterValue, saleDate, validityEndDate, isValid)
+  return Contract(
+      contractTariff,
+      counterValue,
+      saleDate,
+      validityEndDate,
+      isValid,
+      isExpired = validityEndDate.isBefore(today))
 }

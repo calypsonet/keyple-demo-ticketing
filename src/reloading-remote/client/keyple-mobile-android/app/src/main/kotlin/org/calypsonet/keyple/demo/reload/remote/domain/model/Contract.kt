@@ -23,5 +23,7 @@ data class Contract(
     val saleDate: LocalDate,
     val validityEndDate: LocalDate,
     /** Indicates whether the contract can currently be used. */
-    val isValid: Boolean
+    val isValid: Boolean,
+    /** Indicates whether the validity end date of the contract is in the past. */
+    val isExpired: Boolean
 )

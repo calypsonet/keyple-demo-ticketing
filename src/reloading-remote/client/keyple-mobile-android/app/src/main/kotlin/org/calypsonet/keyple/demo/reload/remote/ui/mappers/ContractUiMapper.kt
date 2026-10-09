@@ -32,12 +32,9 @@ fun Contract.toUi(resources: Resources): UiContract =
               isValid)
       PriorityCode.SEASON_PASS ->
           UiContract(
-              resources.getString(R.string.contract_season_pass),
-              validityPeriod(resources),
-              isValid)
-      PriorityCode.EXPIRED ->
-          UiContract(
-              resources.getString(R.string.contract_season_pass_expired),
+              resources.getString(
+                  if (isExpired) R.string.contract_season_pass_expired
+                  else R.string.contract_season_pass),
               validityPeriod(resources),
               isValid)
       PriorityCode.FORBIDDEN ->
