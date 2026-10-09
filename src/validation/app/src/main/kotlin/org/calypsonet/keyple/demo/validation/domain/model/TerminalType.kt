@@ -10,10 +10,10 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.domain.model
+package org.calypsonet.keyple.demo.validation.domain.model
 
-enum class ReaderType {
+enum class TerminalType {
+  ARRIVE,
   BLUEBIRD,
-  FAMOCO,
-  NFC_TERMINAL
+  FAMOCO
 }

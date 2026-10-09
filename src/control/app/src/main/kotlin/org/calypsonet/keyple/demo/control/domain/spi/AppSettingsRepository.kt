@@ -13,13 +13,13 @@
 package org.calypsonet.keyple.demo.control.domain.spi
 
 import org.calypsonet.keyple.demo.common.model.Location
-import org.calypsonet.keyple.demo.control.domain.model.ReaderType
+import org.calypsonet.keyple.demo.control.domain.model.TerminalType
 
 /** Port giving access to the application settings chosen by the user. */
 interface AppSettingsRepository {
 
   /** The type of reader (terminal) the application runs on. */
-  var readerType: ReaderType
+  var terminalType: TerminalType
 
   /** The location where the control takes place. */
   var location: Location

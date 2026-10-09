@@ -12,8 +12,8 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.domain.spi
 
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceType
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceVisibility
+import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
+import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMediumVisibility
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ServerConfig
 
 /** Port giving access to the persisted application settings. */
@@ -22,15 +22,15 @@ interface AppSettingsRepository {
   /** Address of the reloading server. */
   var serverConfig: ServerConfig
 
-  /** Type of device (contactless card, SIM...) chosen by the user. */
-  var deviceType: DeviceType
+  /** Card medium (contactless card, SIM...) chosen by the user. */
+  var cardMedium: CardMedium
 
   /** Last known status of the server (true if the server and its SAM are ready). */
   var lastServerStatus: Boolean
 
-  /** Returns the visibility of the given device type in the home screen. */
-  fun getDeviceVisibility(device: DeviceType): DeviceVisibility
+  /** Returns the visibility of the given card medium in the home screen. */
+  fun getCardMediumVisibility(cardMedium: CardMedium): CardMediumVisibility
 
-  /** Sets the visibility of the given device type in the home screen. */
-  fun setDeviceVisibility(device: DeviceType, visibility: DeviceVisibility)
+  /** Sets the visibility of the given card medium in the home screen. */
+  fun setCardMediumVisibility(cardMedium: CardMedium, visibility: CardMediumVisibility)
 }

@@ -129,7 +129,7 @@ The ecosystem uses standardized data structures defined in the [Common Library](
 
 - **Environment Record**: Card metadata and validity information
 - **Event Log**: Transaction history and validation events
-- **Contract Records**: Transportation titles and their properties
+- **Contract Records**: Contracts (tickets) and their properties
 - **Counter Files**: Usage tracking for multi-trip tickets
 
 See [Common Library Documentation](src/common/README.md) for detailed specifications.
@@ -180,7 +180,7 @@ drive the user flow and call the domain directly.
   on Android (including the application resources `R`), Timber or the dependency injection framework (no Hilt, Dagger
   or `javax.inject` annotation), nor on the `data`, `ui` and `di` layers.
 - Everything the domain needs from the outside world is expressed as a port in `domain/spi` (e.g. `ReaderManager`,
-  `KeypopApiProvider`, `UiManager`, `AppSettingsRepository`, `Logger`, `UiContext`, `RemoteServiceManager`,
+  `KeypopApiProvider`, `UserFeedback`, `AppSettingsRepository`, `Logger`, `UiContext`, `RemoteServiceManager`,
   `ServerStatusProvider`) and implemented by an adapter in `data`, or in `ui/adapters` for the UI-bound ones.
 - The `ui` layer calls the use cases of the domain services, or the ports directly for simple accesses (e.g. settings).
   It never accesses the `data` layer, and does not handle the Keypop card types (`CalypsoCard`, `StorageCard`...).
@@ -216,7 +216,24 @@ bash .github/scripts/check-android-architecture.sh src/control
 - Layouts named after their activity (`activity_<name>.xml`), shared toolbar `toolbar.xml`.
 - Hilt modules named after what they provide (e.g. `AppSettingsModule`, `DomainModule`, `ReaderModule`), with
   `provide<Type>` methods.
-- Enums named without suffix (e.g. `ReaderType`, `CardProtocol`, `Status`).
+- Enums named without suffix (e.g. `TerminalType`, `CardProtocol`, `Status`).
+
+**Ticketing vocabulary**
+
+The code uses the same business terms in all the applications:
+
+| Term                                        | Meaning                                                                                  | Replaces                 |
+|---------------------------------------------|------------------------------------------------------------------------------------------|--------------------------|
+| `Contract`                                  | Right recorded in the card (contract record), e.g. a season pass or a multi-trip ticket   | "title"                  |
+| `Product`, `ProductType`                    | What the reloading client sells (type, price, quantity), loaded as a contract            | "title"                  |
+| `trip` (`remainingTrips`, `tripsToLoad`)    | Unit of the counter of a multi-trip contract                                             | "ticket", "nbTickets"    |
+| `TerminalType`                              | Terminal running the application (Bluebird, Famoco, Arrive, standard NFC terminal)      | "reader type"            |
+| `CardMedium`                                | Medium holding the card application (contactless card, SIM, wearable, embedded)         | "device"                 |
+| `UserFeedback`                              | Sounds and LEDs of the terminal                                                          | "UI manager"             |
+
+The texts displayed to the users use "ticket" for the contracts and products. The terms of the card data model
+(`EnvironmentHolder`, `Event`, `Contract`, `ContractTariff`, `ContractPriority`, `PriorityCode`) follow its
+specification (see the `common` library).
 
 **Differences between the applications**
 

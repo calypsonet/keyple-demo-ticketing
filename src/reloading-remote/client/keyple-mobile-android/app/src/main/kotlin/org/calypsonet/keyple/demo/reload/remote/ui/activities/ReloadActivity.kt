@@ -26,7 +26,7 @@ import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardReaderBinding
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceType
+import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.eclipse.keypop.reader.CardReaderEvent
@@ -45,7 +45,7 @@ class ReloadActivity : BaseCardActivity() {
 
   override fun initReaders() {
     try {
-      if (device == DeviceType.CONTACTLESS_CARD) {
+      if (cardMedium == CardMedium.CONTACTLESS_CARD) {
         showPresentNfcCardInstructions()
         initAndActivateCardReader()
       } else {
@@ -78,13 +78,13 @@ class ReloadActivity : BaseCardActivity() {
   private suspend fun remoteServiceExecution() {
     withContext(Dispatchers.IO) {
       try {
-        val ticketsToLoad = intent.getIntExtra(SelectTicketsActivity.TICKETS_NUMBER, 0)
+        val tripsToLoad = intent.getIntExtra(SelectTicketsActivity.TRIPS_TO_LOAD, 0)
         val result =
             ticketingService.reloadCard(
                 intent.getStringExtra(CARD_APPLICATION_NUMBER),
                 PriorityCode.findEnumByKey(
                     intent.getIntExtra(SelectTicketsActivity.SELECTED_TICKET_PRIORITY_CODE, 0)),
-                ticketsToLoad)
+                tripsToLoad)
         if (result.status == RemoteServiceStatus.SUCCESS) {
           runOnUiThread {
             changeDisplay(
@@ -114,7 +114,7 @@ class ReloadActivity : BaseCardActivity() {
     activityCardReaderBinding.loadingAnimation.cancelAnimation()
     activityCardReaderBinding.cardAnimation.cancelAnimation()
     val intent = Intent(this, ReloadResultActivity::class.java)
-    intent.putExtra(ReloadResultActivity.TICKETS_NUMBER, 0)
+    intent.putExtra(ReloadResultActivity.TRIPS_TO_LOAD, 0)
     intent.putExtra(ReloadResultActivity.STATUS, cardReaderResponse.status.name)
     intent.putExtra(ReloadResultActivity.MESSAGE, cardReaderResponse.errorMessage)
     intent.putExtra(CARD_CONTENT, cardReaderResponse)

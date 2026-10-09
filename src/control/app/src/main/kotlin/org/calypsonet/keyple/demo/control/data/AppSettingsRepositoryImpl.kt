@@ -14,12 +14,12 @@ package org.calypsonet.keyple.demo.control.data
 
 import javax.inject.Inject
 import org.calypsonet.keyple.demo.common.model.Location
-import org.calypsonet.keyple.demo.control.domain.model.ReaderType
+import org.calypsonet.keyple.demo.control.domain.model.TerminalType
 import org.calypsonet.keyple.demo.control.domain.spi.AppSettingsRepository
 
 /** In-memory implementation of the application settings (not persisted). */
 class AppSettingsRepositoryImpl @Inject constructor() : AppSettingsRepository {
-  override lateinit var readerType: ReaderType
+  override lateinit var terminalType: TerminalType
   override lateinit var location: Location
   override var validationPeriod: Int = 0
 }

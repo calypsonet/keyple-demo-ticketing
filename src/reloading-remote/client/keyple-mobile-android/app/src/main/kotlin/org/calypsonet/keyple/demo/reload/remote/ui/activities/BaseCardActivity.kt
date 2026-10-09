@@ -20,9 +20,9 @@ import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.domain.TicketingService
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardInfo
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceType
-import org.calypsonet.keyple.demo.reload.remote.domain.model.ReaderType
+import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
+import org.calypsonet.keyple.demo.reload.remote.domain.model.TerminalType
 import org.calypsonet.keyple.demo.reload.remote.ui.adapters.UiContextImpl
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
@@ -33,16 +33,16 @@ abstract class BaseCardActivity :
     BaseActivity(), CardReaderObserverSpi, CardReaderObservationExceptionHandlerSpi {
 
   @Inject lateinit var ticketingService: TicketingService
-  lateinit var device: DeviceType
+  lateinit var cardMedium: CardMedium
 
   val isBluebirdDevice = Build.MANUFACTURER?.lowercase()?.contains("bluebird") == true
 
-  private val readerType: ReaderType
-    get() = if (isBluebirdDevice) ReaderType.BLUEBIRD else ReaderType.NFC_TERMINAL
+  private val terminalType: TerminalType
+    get() = if (isBluebirdDevice) TerminalType.BLUEBIRD else TerminalType.NFC_TERMINAL
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    device = appSettings.deviceType
+    cardMedium = appSettings.cardMedium
   }
 
   override fun onResume() {
@@ -54,8 +54,8 @@ abstract class BaseCardActivity :
   @Throws(UnsupportedOperationException::class)
   fun initAndActivateCardReader() {
     ticketingService.init(
-        readerType,
-        device,
+        terminalType,
+        cardMedium,
         UiContextImpl(this@BaseCardActivity),
         this@BaseCardActivity,
         this@BaseCardActivity,
@@ -71,12 +71,12 @@ abstract class BaseCardActivity :
   @Throws(UnsupportedOperationException::class)
   fun initOmapiReader(callback: () -> Unit) {
     ticketingService.init(
-        readerType, device, UiContextImpl(this@BaseCardActivity), null, null, callback)
+        terminalType, cardMedium, UiContextImpl(this@BaseCardActivity), null, null, callback)
   }
 
   @Throws(UnsupportedOperationException::class)
   fun deactivateAndClearReader() {
-    if (device == DeviceType.CONTACTLESS_CARD) {
+    if (cardMedium == CardMedium.CONTACTLESS_CARD) {
       ticketingService.stopNfcDetection()
     }
     ticketingService.onDestroy(this@BaseCardActivity)
@@ -139,8 +139,8 @@ abstract class BaseCardActivity :
     }
   }
 
-  /** Only with NFC we can come back to the 'wait for device' screen after a result. */
-  protected fun isFinishActivityAfterResult(): Boolean = device != DeviceType.CONTACTLESS_CARD
+  /** Only with NFC we can come back to the 'present the card' screen after a result. */
+  protected fun isFinishActivityAfterResult(): Boolean = cardMedium != CardMedium.CONTACTLESS_CARD
 
   protected abstract fun changeDisplay(
       cardReaderResponse: UiCardReaderResponse,

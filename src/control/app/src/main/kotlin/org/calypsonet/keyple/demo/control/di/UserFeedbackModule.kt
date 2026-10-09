@@ -10,19 +10,20 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.domain.model
+package org.calypsonet.keyple.demo.control.di
 
-import java.util.Locale
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+import org.calypsonet.keyple.demo.control.data.UserFeedbackImpl
+import org.calypsonet.keyple.demo.control.domain.spi.UserFeedback
 
-enum class DeviceType {
-  CONTACTLESS_CARD,
-  SIM,
-  WEARABLE,
-  EMBEDDED;
+@Suppress("unused")
+@Module
+@InstallIn(SingletonComponent::class)
+class UserFeedbackModule {
 
-  companion object {
-    /** Returns the device type having the given name, or [CONTACTLESS_CARD] if it is unknown. */
-    fun fromName(name: String): DeviceType =
-        entries.firstOrNull { it.name == name.uppercase(Locale.ROOT) } ?: CONTACTLESS_CARD
-  }
+  @Provides @Singleton fun provideUserFeedback(): UserFeedback = UserFeedbackImpl()
 }

@@ -44,13 +44,14 @@ class CardContentActivity : BaseActivity() {
     val cardContent: UiControlResult =
         IntentCompat.getParcelableExtra(intent, CARD_CONTENT, UiControlResult::class.java)!!
     activityCardContentBinding.lastValidationList.layoutManager = LinearLayoutManager(this)
-    activityCardContentBinding.titlesList.layoutManager = LinearLayoutManager(this)
-    if (cardContent.titlesList.isNotEmpty()) {
-      activityCardContentBinding.titlesList.adapter = TitlesRecyclerAdapter(cardContent.titlesList)
-      activityCardContentBinding.titlesList.visibility = View.VISIBLE
+    activityCardContentBinding.contractsList.layoutManager = LinearLayoutManager(this)
+    if (cardContent.contractsList.isNotEmpty()) {
+      activityCardContentBinding.contractsList.adapter =
+          ContractsRecyclerAdapter(cardContent.contractsList)
+      activityCardContentBinding.contractsList.visibility = View.VISIBLE
       activityCardContentBinding.emptyContract.visibility = View.GONE
     } else {
-      activityCardContentBinding.titlesList.visibility = View.GONE
+      activityCardContentBinding.contractsList.visibility = View.GONE
       activityCardContentBinding.emptyContract.visibility = View.VISIBLE
     }
     if (cardContent.lastValidationsList != null) {

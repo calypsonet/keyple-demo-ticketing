@@ -14,9 +14,9 @@ package org.calypsonet.keyple.demo.reload.remote.data
 
 import android.app.Activity
 import javax.inject.Inject
+import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocol
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceType
-import org.calypsonet.keyple.demo.reload.remote.domain.model.ReaderType
+import org.calypsonet.keyple.demo.reload.remote.domain.model.TerminalType
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.ReaderManager
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.UiContext
@@ -45,9 +45,9 @@ import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
  */
 class ReaderManagerImpl @Inject constructor(private val logger: Logger) : ReaderManager {
 
-  private lateinit var readerType: ReaderType
+  private lateinit var terminalType: TerminalType
 
-  private lateinit var device: DeviceType
+  private lateinit var cardMedium: CardMedium
   // Card
   private lateinit var cardPluginName: String
   private lateinit var cardReaderName: String
@@ -55,15 +55,15 @@ class ReaderManagerImpl @Inject constructor(private val logger: Logger) : Reader
   private var cardReader: CardReader? = null
   private var isStorageCardSupported = false
 
-  private fun initReaderType(readerType: ReaderType) {
-    when (readerType) {
-      ReaderType.BLUEBIRD -> initBluebirdReader()
-      ReaderType.NFC_TERMINAL -> initNfcTerminalReader()
+  private fun initTerminalType(terminalType: TerminalType) {
+    when (terminalType) {
+      TerminalType.BLUEBIRD -> initBluebirdReader()
+      TerminalType.NFC_TERMINAL -> initNfcTerminalReader()
     }
   }
 
   private fun initBluebirdReader() {
-    readerType = ReaderType.BLUEBIRD
+    terminalType = TerminalType.BLUEBIRD
     cardPluginName = BluebirdConstants.PLUGIN_NAME
     cardReaderName = BluebirdConstants.CARD_READER_NAME
     cardReaderProtocols[BluebirdContactlessProtocols.ISO_14443_4_A.name] =
@@ -80,7 +80,7 @@ class ReaderManagerImpl @Inject constructor(private val logger: Logger) : Reader
   }
 
   private fun initNfcTerminalReader() {
-    readerType = ReaderType.NFC_TERMINAL
+    terminalType = TerminalType.NFC_TERMINAL
     cardPluginName = AndroidNfcConstants.PLUGIN_NAME
     cardReaderName = AndroidNfcConstants.READER_NAME
     cardReaderProtocols[AndroidNfcSupportedProtocols.ISO_14443_4.name] =
@@ -93,14 +93,14 @@ class ReaderManagerImpl @Inject constructor(private val logger: Logger) : Reader
 
   /** Register any keyple plugin */
   override fun registerPlugin(
-      readerType: ReaderType,
+      terminalType: TerminalType,
       uiContext: UiContext,
-      deviceType: DeviceType,
+      cardMedium: CardMedium,
       callback: (() -> Unit)?
   ) {
-    device = deviceType
+    this.cardMedium = cardMedium
     val activity = uiContext.adaptTo(Activity::class.java)
-    if (device != DeviceType.CONTACTLESS_CARD) {
+    if (cardMedium != CardMedium.CONTACTLESS_CARD) {
       // The OMAPI plugin factory is provided asynchronously, once the SE service is connected.
       AndroidOmapiPluginFactoryProvider(activity) { factory ->
         SmartCardServiceProvider.getService().registerPlugin(factory)
@@ -108,16 +108,16 @@ class ReaderManagerImpl @Inject constructor(private val logger: Logger) : Reader
       }
       return
     }
-    initReaderType(readerType)
+    initTerminalType(terminalType)
     val pluginFactory =
-        when (readerType) {
-          ReaderType.BLUEBIRD ->
+        when (terminalType) {
+          TerminalType.BLUEBIRD ->
               BluebirdPluginFactoryProvider.provideFactory(
                   activity,
                   ApduInterpreterFactoryProvider.provideFactory(),
                   MifareClassicKeyProviderImpl())
 
-          ReaderType.NFC_TERMINAL ->
+          TerminalType.NFC_TERMINAL ->
               AndroidNfcPluginFactoryProvider.provideFactory(
                   AndroidNfcConfig(
                       activity = activity,
@@ -132,7 +132,7 @@ class ReaderManagerImpl @Inject constructor(private val logger: Logger) : Reader
       readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi?
   ): CardReader? {
     // Only the contactless card reader is observed; the OMAPI readers are retrieved by name.
-    if (device != DeviceType.CONTACTLESS_CARD) {
+    if (cardMedium != CardMedium.CONTACTLESS_CARD) {
       return null
     }
     cardReader =
@@ -159,7 +159,7 @@ class ReaderManagerImpl @Inject constructor(private val logger: Logger) : Reader
       (cardReader as ConfigurableCardReader).deactivateProtocol(entry.key)
     }
 
-    if (device != DeviceType.CONTACTLESS_CARD) {
+    if (cardMedium != CardMedium.CONTACTLESS_CARD) {
       unregisterPlugin(AndroidOmapiPlugin.PLUGIN_NAME)
     }
   }
@@ -173,14 +173,14 @@ class ReaderManagerImpl @Inject constructor(private val logger: Logger) : Reader
     smartCardService.plugins.forEach { smartCardService.unregisterPlugin(it.name) }
   }
 
-  override fun getReaderName(readerType: ReaderType, deviceType: DeviceType): String =
-      when (deviceType) {
-        DeviceType.CONTACTLESS_CARD ->
-            if (readerType == ReaderType.BLUEBIRD) BluebirdConstants.CARD_READER_NAME
+  override fun getReaderName(terminalType: TerminalType, cardMedium: CardMedium): String =
+      when (cardMedium) {
+        CardMedium.CONTACTLESS_CARD ->
+            if (terminalType == TerminalType.BLUEBIRD) BluebirdConstants.CARD_READER_NAME
             else AndroidNfcConstants.READER_NAME
-        DeviceType.SIM -> AndroidOmapiReader.READER_NAME_SIM_1
-        DeviceType.WEARABLE -> "WEARABLE"
-        DeviceType.EMBEDDED -> "EMBEDDED"
+        CardMedium.SIM -> AndroidOmapiReader.READER_NAME_SIM_1
+        CardMedium.WEARABLE -> "WEARABLE"
+        CardMedium.EMBEDDED -> "EMBEDDED"
       }
 
   /** Unregister any keyple plugin */

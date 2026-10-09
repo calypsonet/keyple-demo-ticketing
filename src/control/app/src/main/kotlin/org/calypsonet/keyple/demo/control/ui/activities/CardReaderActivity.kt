@@ -71,7 +71,9 @@ class CardReaderActivity : BaseActivity() {
           try {
             cardReaderObserver = CardReaderObserver()
             ticketingService.init(
-                cardReaderObserver, appSettings.readerType, UiContextImpl(this@CardReaderActivity))
+                cardReaderObserver,
+                appSettings.terminalType,
+                UiContextImpl(this@CardReaderActivity))
             showToast(
                 getString(
                     if (ticketingService.isSamAvailable) R.string.sam_available
@@ -135,7 +137,7 @@ class CardReaderActivity : BaseActivity() {
               UiControlResult(
                   status = Status.INVALID_CARD,
                   authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
-                  titlesList = arrayListOf(),
+                  contractsList = arrayListOf(),
                   errorMessage = error))
           return
         }
@@ -194,7 +196,7 @@ class CardReaderActivity : BaseActivity() {
                     UiControlResult(
                         status = Status.ERROR,
                         authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
-                        titlesList = arrayListOf()))
+                        contractsList = arrayListOf()))
               } finally {
                 ticketingService.endCardProcessing()
               }
@@ -228,7 +230,7 @@ class CardReaderActivity : BaseActivity() {
       Status.ERROR,
       Status.INVALID_CARD -> {
         ticketingService.displayResultFailed()
-        val intent = Intent(this@CardReaderActivity, NetworkInvalidActivity::class.java)
+        val intent = Intent(this@CardReaderActivity, InvalidCardActivity::class.java)
         intent.putExtra(CARD_CONTENT, uiControlResult)
         startActivity(intent)
       }

@@ -277,7 +277,7 @@ class KeypleService(
   }
 
   suspend fun selectCardAndWriteContract(
-      ticketNumber: Int,
+      tripsToLoad: Int,
       code: PriorityCode
   ): KeypleResult<String> {
     return withContext(Dispatchers.IO) {
@@ -289,7 +289,7 @@ class KeypleService(
                 WriteContract(
                     applicationSerialNumber = cardRepository.getCardSerial(),
                     contractTariff = code,
-                    ticketToLoad = ticketNumber),
+                    tripsToLoad = tripsToLoad),
                 WriteContract.serializer())
         when (result) {
           is KeypleResult.Failure -> {

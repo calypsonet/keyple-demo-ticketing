@@ -16,17 +16,17 @@ import android.app.Activity
 import android.media.MediaPlayer
 import javax.inject.Inject
 import org.calypsonet.keyple.demo.control.R
-import org.calypsonet.keyple.demo.control.domain.model.ReaderType
+import org.calypsonet.keyple.demo.control.domain.model.TerminalType
 import org.calypsonet.keyple.demo.control.domain.spi.UiContext
-import org.calypsonet.keyple.demo.control.domain.spi.UiManager
+import org.calypsonet.keyple.demo.control.domain.spi.UserFeedback
 
 /** User feedback based on Android MediaPlayer (success/error sounds). */
-class UiManagerImpl @Inject constructor() : UiManager {
+class UserFeedbackImpl @Inject constructor() : UserFeedback {
 
   private var successMedia: MediaPlayer? = null
   private var errorMedia: MediaPlayer? = null
 
-  override fun init(readerType: ReaderType, uiContext: UiContext) {
+  override fun init(terminalType: TerminalType, uiContext: UiContext) {
     val activity = uiContext.adaptTo(Activity::class.java)
     successMedia = MediaPlayer.create(activity, R.raw.success)
     errorMedia = MediaPlayer.create(activity, R.raw.error)

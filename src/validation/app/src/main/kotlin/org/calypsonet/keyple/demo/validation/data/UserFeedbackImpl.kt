@@ -14,23 +14,23 @@ package org.calypsonet.keyple.demo.validation.data
 
 import android.app.Activity
 import javax.inject.Inject
-import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
+import org.calypsonet.keyple.demo.validation.domain.model.TerminalType
 import org.calypsonet.keyple.demo.validation.domain.spi.Logger
 import org.calypsonet.keyple.demo.validation.domain.spi.UiContext
-import org.calypsonet.keyple.demo.validation.domain.spi.UiManager
+import org.calypsonet.keyple.demo.validation.domain.spi.UserFeedback
 
 /**
- * User feedback of the terminal, delegated to the feedback device matching the reader type (Arrive
- * SDK for Arrive terminals, Android MediaPlayer for the others).
+ * User feedback of the terminal, delegated to the feedback device matching the terminal type
+ * (Arrive SDK for Arrive terminals, Android MediaPlayer for the others).
  */
-class UiManagerImpl @Inject constructor(private val logger: Logger) : UiManager {
+class UserFeedbackImpl @Inject constructor(private val logger: Logger) : UserFeedback {
 
   private var feedbackDevice: FeedbackDevice? = null
 
-  override fun init(readerType: ReaderType, uiContext: UiContext) {
+  override fun init(terminalType: TerminalType, uiContext: UiContext) {
     val activity = uiContext.adaptTo(Activity::class.java)
     feedbackDevice =
-        if (readerType == ReaderType.ARRIVE) {
+        if (terminalType == TerminalType.ARRIVE) {
           ArriveFeedbackDevice(activity, logger).also { it.init() }
         } else {
           AndroidFeedbackDevice(activity, logger).also { it.init() }

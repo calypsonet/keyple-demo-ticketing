@@ -20,6 +20,6 @@ fun ControlResult.toUi(): UiControlResult =
         status = status,
         authenticationMode = authenticationMode,
         lastValidationsList = lastValidationsList?.mapTo(ArrayList()) { it.toUi() },
-        titlesList = titlesList.mapTo(ArrayList()) { it.toUi() },
+        contractsList = contractsList.mapTo(ArrayList()) { it.toUi() },
         errorTitle = errorTitle,
         errorMessage = errorMessage)

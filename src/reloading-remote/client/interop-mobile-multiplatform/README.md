@@ -122,7 +122,7 @@ The application configuration is managed through:
 1. **Main Screen** → **Contactless Support**
 2. **Hold card** against device back (near NFC antenna)
 3. **View existing contracts** and their status
-4. **Select new title** to load if desired
+4. **Select a new ticket** to load if desired
 
 #### Contract Loading
 1. **Choose contract type** from available options
@@ -197,7 +197,7 @@ Multiplatform and Android application plugins in the same module.
 
 **Data Models**:
 - `CardRepository` - Manages card data (serial number, contracts)
-- `ContractInfo` - Contract information with title, description, and validity
+- `ContractInfo` - Contract information with name, description, and validity
 - `KeypleService` - Handles Keyple Interop API communication
 - `SimpleHttpNetworkClient` - HTTP client for server communication
 

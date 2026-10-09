@@ -37,7 +37,7 @@ class ValidationsRecyclerAdapter(private val validations: ArrayList<UiValidation
     fun bindItem(validation: UiValidation) {
       this.validation = validation
       val formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy\nHH:mm:ss", Locale.ENGLISH)
-      binding.titleLocation.text =
+      binding.validationLabel.text =
           String.format("%s\n%s", validation.name, validation.location.name)
       binding.date.text = validation.dateTime.format(formatter)
     }

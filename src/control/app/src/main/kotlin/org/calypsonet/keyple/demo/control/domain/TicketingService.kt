@@ -19,13 +19,13 @@ import org.calypsonet.keyple.demo.control.domain.managers.CalypsoCardControlMana
 import org.calypsonet.keyple.demo.control.domain.managers.StorageCardControlManager
 import org.calypsonet.keyple.demo.control.domain.model.CardProtocol
 import org.calypsonet.keyple.demo.control.domain.model.ControlResult
-import org.calypsonet.keyple.demo.control.domain.model.ReaderType
+import org.calypsonet.keyple.demo.control.domain.model.TerminalType
 import org.calypsonet.keyple.demo.control.domain.spi.AppSettingsRepository
 import org.calypsonet.keyple.demo.control.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.control.domain.spi.Logger
 import org.calypsonet.keyple.demo.control.domain.spi.ReaderManager
 import org.calypsonet.keyple.demo.control.domain.spi.UiContext
-import org.calypsonet.keyple.demo.control.domain.spi.UiManager
+import org.calypsonet.keyple.demo.control.domain.spi.UserFeedback
 import org.eclipse.keyple.core.util.HexUtil
 import org.eclipse.keypop.calypso.card.CalypsoCardApiFactory
 import org.eclipse.keypop.calypso.card.WriteAccessLevel
@@ -50,7 +50,7 @@ class TicketingService(
     private var keypopApiProvider: KeypopApiProvider,
     private var appSettings: AppSettingsRepository,
     private var readerManager: ReaderManager,
-    private var uiManager: UiManager,
+    private var userFeedback: UserFeedback,
     private var logger: Logger,
     private val calypsoCardControlManager: CalypsoCardControlManager,
     private val storageCardControlManager: StorageCardControlManager
@@ -98,21 +98,25 @@ class TicketingService(
    * Initializes the ticketing environment and selects a SAM if available.
    *
    * Steps:
-   * - Registers the appropriate reader plugin according to [readerType].
+   * - Registers the appropriate reader plugin according to [terminalType].
    * - Initializes the primary card reader and SAM reader(s).
    * - Attaches the optional [observer] to the card reader to receive detection events.
    * - Selects a SAM and prepares secured session capabilities.
    *
    * @param observer Optional reader observer to receive card detection notifications.
-   * @param readerType The target reader type to initialize (e.g., NFC).
+   * @param terminalType The target reader type to initialize (e.g., NFC).
    * @param uiContext Platform-specific context used to register plugins.
    * @throws IllegalStateException if no SAM reader is available or SAM selection fails.
    */
-  suspend fun init(observer: CardReaderObserverSpi?, readerType: ReaderType, uiContext: UiContext) {
+  suspend fun init(
+      observer: CardReaderObserverSpi?,
+      terminalType: TerminalType,
+      uiContext: UiContext
+  ) {
     // Register plugin
     try {
-      uiManager.init(readerType, uiContext)
-      readerManager.registerPlugin(readerType, uiContext)
+      userFeedback.init(terminalType, uiContext)
+      readerManager.registerPlugin(terminalType, uiContext)
     } catch (e: Exception) {
       logger.e("An error occurred while registering plugin ${e.message}")
       throw IllegalStateException(e.message)
@@ -166,7 +170,7 @@ class TicketingService(
   fun onDestroy(observer: CardReaderObserverSpi?) {
     readersInitialized = false
     readerManager.onDestroy(observer)
-    uiManager.release()
+    userFeedback.release()
   }
 
   fun endCardProcessing() {
@@ -179,12 +183,12 @@ class TicketingService(
   }
 
   fun displayResultSuccess(): Boolean {
-    uiManager.displayResultSuccess()
+    userFeedback.displayResultSuccess()
     return true
   }
 
   fun displayResultFailed(): Boolean {
-    uiManager.displayResultFailed()
+    userFeedback.displayResultFailed()
     return true
   }
 

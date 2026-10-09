@@ -19,8 +19,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.calypsonet.keyple.demo.reload.remote.KeypleService
-import org.calypsonet.keyple.demo.reload.remote.card.TitleType
-import org.calypsonet.keyple.demo.reload.remote.nav.WriteTitleCard
+import org.calypsonet.keyple.demo.reload.remote.card.ProductType
+import org.calypsonet.keyple.demo.reload.remote.nav.LoadContract
 import org.eclipse.keyple.interop.jsonapi.client.api.KeypleResult
 
 sealed class WriteCardScreenState {
@@ -35,7 +35,7 @@ sealed class WriteCardScreenState {
 
 class WriteCardScreenViewModel(
     private val keypleService: KeypleService,
-    private val title: WriteTitleCard,
+    private val route: LoadContract,
 ) : ViewModel() {
   private var _state = MutableStateFlow<WriteCardScreenState>(WriteCardScreenState.WaitForCard)
   val state = _state.asStateFlow()
@@ -56,7 +56,7 @@ class WriteCardScreenViewModel(
         val cardFound = keypleService.waitCard()
         if (cardFound) {
           keypleService.updateReaderMessage("Stay still...")
-          writeTitle(title)
+          loadContract(route)
         } else {
           _state.value = WriteCardScreenState.DisplayError("No card found")
         }
@@ -66,13 +66,13 @@ class WriteCardScreenViewModel(
     }
   }
 
-  private suspend fun writeTitle(title: WriteTitleCard) {
+  private suspend fun loadContract(route: LoadContract) {
     _state.value = WriteCardScreenState.WritingToCard
 
     try {
       val result =
-          if (title.type == TitleType.SEASON.ordinal) writePassTitle()
-          else writeMultiTripTitle(title.quantity)
+          if (route.type == ProductType.SEASON_PASS.ordinal) loadSeasonPass()
+          else loadMultiTrip(route.quantity)
       when (result) {
         is KeypleResult.Failure -> {
           _state.value = WriteCardScreenState.DisplayError(result.message)
@@ -87,13 +87,13 @@ class WriteCardScreenViewModel(
     }
   }
 
-  private suspend fun writePassTitle(): KeypleResult<String> {
+  private suspend fun loadSeasonPass(): KeypleResult<String> {
     return keypleService.selectCardAndWriteContract(
-        ticketNumber = 1, code = PriorityCode.SEASON_PASS)
+        tripsToLoad = 1, code = PriorityCode.SEASON_PASS)
   }
 
-  private suspend fun writeMultiTripTitle(nbUnits: Int): KeypleResult<String> {
+  private suspend fun loadMultiTrip(trips: Int): KeypleResult<String> {
     return keypleService.selectCardAndWriteContract(
-        ticketNumber = nbUnits, code = PriorityCode.MULTI_TRIP)
+        tripsToLoad = trips, code = PriorityCode.MULTI_TRIP)
   }
 }

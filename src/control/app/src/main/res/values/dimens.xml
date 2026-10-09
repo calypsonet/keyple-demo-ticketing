@@ -43,9 +43,9 @@
     <dimen name="content_top_margin">20dp</dimen>
     <dimen name="content_title_padding">30dp</dimen>
 
-    <dimen name="card_title_item_height">90dp</dimen>
-    <dimen name="card_title_image_margin_start">10dp</dimen>
-    <dimen name="card_title_margin_bottom">20dp</dimen>
+    <dimen name="contract_item_height">90dp</dimen>
+    <dimen name="contract_image_margin_start">10dp</dimen>
+    <dimen name="contract_item_margin_bottom">20dp</dimen>
 
     <dimen name="card_validation_height">32dp</dimen>
     <dimen name="card_validation_horizontal_margin">13dp</dimen>

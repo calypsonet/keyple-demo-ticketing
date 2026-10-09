@@ -23,5 +23,5 @@ data class Contract(
     val expired: Boolean,
     val contractValidityStartDate: LocalDate,
     val contractValidityEndDate: LocalDate,
-    val nbTicketsLeft: Int? = null
+    val remainingTrips: Int? = null
 )

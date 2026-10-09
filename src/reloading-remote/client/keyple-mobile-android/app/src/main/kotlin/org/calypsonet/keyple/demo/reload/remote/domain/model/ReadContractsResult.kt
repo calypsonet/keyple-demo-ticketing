@@ -19,5 +19,5 @@ data class ReadContractsResult(
     val card: CardInfo,
     val status: RemoteServiceStatus,
     /** Contracts of the card, empty if the status is not [RemoteServiceStatus.SUCCESS]. */
-    val titles: List<CardTitle>
+    val contracts: List<Contract>
 )

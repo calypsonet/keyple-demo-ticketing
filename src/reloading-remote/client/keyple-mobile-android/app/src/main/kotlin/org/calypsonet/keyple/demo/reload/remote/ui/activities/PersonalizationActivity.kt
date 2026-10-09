@@ -25,7 +25,7 @@ import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityPersonalizationBinding
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceType
+import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.eclipse.keypop.reader.CardReaderEvent
@@ -44,7 +44,7 @@ class PersonalizationActivity : BaseCardActivity() {
 
   override fun initReaders() {
     try {
-      if (device == DeviceType.CONTACTLESS_CARD) {
+      if (cardMedium == CardMedium.CONTACTLESS_CARD) {
         showPresentNfcCardInstructions()
         initAndActivateCardReader()
       } else {

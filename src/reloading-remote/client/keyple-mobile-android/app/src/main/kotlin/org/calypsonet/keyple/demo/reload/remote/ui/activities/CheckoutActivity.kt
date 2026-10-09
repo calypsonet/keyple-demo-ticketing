@@ -36,10 +36,10 @@ class CheckoutActivity : BaseActivity() {
         PriorityCode.findEnumByKey(
             intent.getIntExtra(
                 SelectTicketsActivity.SELECTED_TICKET_PRIORITY_CODE, PriorityCode.MULTI_TRIP.key))
-    val ticketNumberCount: Int = intent.getIntExtra(SelectTicketsActivity.TICKETS_NUMBER, 0)
+    val ticketNumberCount: Int = intent.getIntExtra(SelectTicketsActivity.TRIPS_TO_LOAD, 0)
 
     if (selectedTicketPriorityCode == PriorityCode.SEASON_PASS) {
-      activityCheckoutBinding.selectionLabel.text = getString(R.string.season_pass_title)
+      activityCheckoutBinding.selectionLabel.text = getString(R.string.season_pass_label)
       activityCheckoutBinding.selectionPrice.text = getString(R.string.ticket_price, 20)
     } else {
       activityCheckoutBinding.selectionLabel.text =

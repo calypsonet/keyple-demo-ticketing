@@ -33,8 +33,8 @@ import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 @AndroidEntryPoint
 class CardSummaryActivity : BaseActivity() {
 
-  private lateinit var titleLinearLayoutManager: LinearLayoutManager
-  private lateinit var titlesAdapter: TitlesRecyclerAdapter
+  private lateinit var contractsLayoutManager: LinearLayoutManager
+  private lateinit var contractsAdapter: ContractsRecyclerAdapter
   private lateinit var activityCardSummaryBinding: ActivityCardSummaryBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,11 +47,11 @@ class CardSummaryActivity : BaseActivity() {
         IntentCompat.getParcelableExtra(
             intent, BaseCardActivity.CARD_CONTENT, UiCardReaderResponse::class.java)!!
 
-    titleLinearLayoutManager = LinearLayoutManager(this)
-    activityCardSummaryBinding.titlesList.layoutManager = titleLinearLayoutManager
+    contractsLayoutManager = LinearLayoutManager(this)
+    activityCardSummaryBinding.contractsList.layoutManager = contractsLayoutManager
 
-    titlesAdapter = TitlesRecyclerAdapter(cardContent.titlesList)
-    activityCardSummaryBinding.titlesList.adapter = titlesAdapter
+    contractsAdapter = ContractsRecyclerAdapter(cardContent.contractsList)
+    activityCardSummaryBinding.contractsList.adapter = contractsAdapter
 
     when (cardContent.status) {
       Status.INVALID_CARD -> {
@@ -64,14 +64,14 @@ class CardSummaryActivity : BaseActivity() {
         activityCardSummaryBinding.smallDesc.setTextColor(
             ContextCompat.getColor(this, R.color.orange))
         activityCardSummaryBinding.buyBtn.visibility = View.INVISIBLE
-        activityCardSummaryBinding.titlesList.visibility = View.GONE
+        activityCardSummaryBinding.contractsList.visibility = View.GONE
         activityCardSummaryBinding.lastValidationContent.visibility = View.GONE
         activityCardSummaryBinding.contentTitle.visibility = View.GONE
         scheduleErrorAutoReturn(R.color.orange)
       }
       Status.TICKETS_FOUND,
       Status.SUCCESS -> {
-        activityCardSummaryBinding.titlesList.visibility = View.VISIBLE
+        activityCardSummaryBinding.contractsList.visibility = View.VISIBLE
         activityCardSummaryBinding.animation.visibility = View.GONE
         activityCardSummaryBinding.bigText.visibility = View.GONE
         activityCardSummaryBinding.smallDesc.visibility = View.INVISIBLE
@@ -88,7 +88,7 @@ class CardSummaryActivity : BaseActivity() {
         activityCardSummaryBinding.smallDesc.setTextColor(ContextCompat.getColor(this, R.color.red))
         activityCardSummaryBinding.smallDesc.text = getString(R.string.no_valid_desc)
         activityCardSummaryBinding.buyBtn.visibility = View.VISIBLE
-        activityCardSummaryBinding.titlesList.visibility = View.GONE
+        activityCardSummaryBinding.contractsList.visibility = View.GONE
         activityCardSummaryBinding.lastValidationContent.visibility = View.VISIBLE
         activityCardSummaryBinding.contentTitle.visibility = View.GONE
       }
@@ -101,7 +101,7 @@ class CardSummaryActivity : BaseActivity() {
         activityCardSummaryBinding.bigText.setTextColor(ContextCompat.getColor(this, R.color.red))
         activityCardSummaryBinding.smallDesc.visibility = View.INVISIBLE
         activityCardSummaryBinding.buyBtn.visibility = View.INVISIBLE
-        activityCardSummaryBinding.titlesList.visibility = View.GONE
+        activityCardSummaryBinding.contractsList.visibility = View.GONE
         activityCardSummaryBinding.lastValidationContent.visibility = View.GONE
         activityCardSummaryBinding.contentTitle.visibility = View.GONE
         scheduleErrorAutoReturn(R.color.red)
@@ -113,7 +113,7 @@ class CardSummaryActivity : BaseActivity() {
         activityCardSummaryBinding.bigText.setTextColor(ContextCompat.getColor(this, R.color.red))
         activityCardSummaryBinding.smallDesc.visibility = View.INVISIBLE
         activityCardSummaryBinding.buyBtn.visibility = View.INVISIBLE
-        activityCardSummaryBinding.titlesList.visibility = View.GONE
+        activityCardSummaryBinding.contractsList.visibility = View.GONE
         activityCardSummaryBinding.lastValidationContent.visibility = View.GONE
         activityCardSummaryBinding.contentTitle.visibility = View.GONE
         scheduleErrorAutoReturn(R.color.red)

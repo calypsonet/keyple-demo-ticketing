@@ -24,4 +24,4 @@ fun Contract.toUi(): UiContract =
         expired = expired,
         contractValidityStartDate = contractValidityStartDate,
         contractValidityEndDate = contractValidityEndDate,
-        nbTicketsLeft = nbTicketsLeft)
+        remainingTrips = remainingTrips)

@@ -26,7 +26,7 @@ import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardReaderBinding
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceType
+import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.activities.cardsummary.CardSummaryActivity
 import org.calypsonet.keyple.demo.reload.remote.ui.mappers.toUi
@@ -49,8 +49,8 @@ class CardReaderActivity : BaseCardActivity() {
 
   override fun initReaders() {
     try {
-      when (device) {
-        DeviceType.CONTACTLESS_CARD -> {
+      when (cardMedium) {
+        CardMedium.CONTACTLESS_CARD -> {
           if (!isBluebirdDevice) {
             val nfcManager = getSystemService(NFC_SERVICE) as NfcManager
             if (nfcManager.defaultAdapter?.isEnabled == true) {
@@ -66,16 +66,16 @@ class CardReaderActivity : BaseCardActivity() {
             initAndActivateCardReader()
           }
         }
-        DeviceType.SIM -> {
+        CardMedium.SIM -> {
           showNowLoadingInformation()
           initOmapiReader {
             lifecycleScope.launch(Dispatchers.Default) { remoteServiceExecution() }
           }
         }
-        DeviceType.WEARABLE -> {
+        CardMedium.WEARABLE -> {
           throw UnsupportedOperationException("Wearable")
         }
-        DeviceType.EMBEDDED -> {
+        CardMedium.EMBEDDED -> {
           throw UnsupportedOperationException("Embedded")
         }
       }
@@ -112,10 +112,11 @@ class CardReaderActivity : BaseCardActivity() {
         val result = ticketingService.readCardContracts()
         if (result.status == RemoteServiceStatus.SUCCESS) {
           runOnUiThread {
-            val status = if (result.titles.isNotEmpty()) Status.TICKETS_FOUND else Status.EMPTY_CARD
+            val status =
+                if (result.contracts.isNotEmpty()) Status.TICKETS_FOUND else Status.EMPTY_CARD
             changeDisplay(
                 UiCardReaderResponse(
-                    status, result.card.description, result.titles.map { it.toUi(resources) }),
+                    status, result.card.description, result.contracts.map { it.toUi(resources) }),
                 result.card.serialNumber,
                 isFinishActivityAfterResult())
           }

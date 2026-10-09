@@ -80,7 +80,7 @@ class StorageCardValidationManager(
     var status: Status = Status.PROCESSING
     var errorMessage: String? = null
     var passValidityEndDate: LocalDate? = null
-    var nbTicketsLeft: Int? = null
+    var remainingTrips: Int? = null
     var validationData: ValidationData? = null
 
     val storageCardApiFactory =
@@ -221,7 +221,7 @@ class StorageCardValidationManager(
             // Decrement counter
             val newCounterValue = counterValue - calculateDecrementAmount(contractPriority)
             contract.counterValue = newCounterValue
-            nbTicketsLeft = newCounterValue
+            remainingTrips = newCounterValue
 
             writeEvent = true
           }
@@ -285,7 +285,7 @@ class StorageCardValidationManager(
           status = Status.SUCCESS
           errorMessage = null
         } else {
-          errorMessage = ERROR_NO_VALID_TITLE_DETECTED
+          errorMessage = ERROR_NO_VALID_CONTRACT_DETECTED
         }
       } catch (e: ValidationException) {
         logger.w("Validation failed: ${e.status.name} - ${e.message}")
@@ -326,7 +326,7 @@ class StorageCardValidationManager(
     return ValidationResult(
         status = status,
         cardType = formatCardType(storageCard.productType),
-        nbTicketsLeft = nbTicketsLeft,
+        remainingTrips = remainingTrips,
         contract = EMPTY_CONTRACT,
         validationData = validationData,
         errorMessage = errorMessage,

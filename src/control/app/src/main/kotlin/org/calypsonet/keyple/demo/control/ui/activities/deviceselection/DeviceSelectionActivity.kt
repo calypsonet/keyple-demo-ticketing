@@ -24,7 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.control.BuildConfig
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.databinding.ActivityDeviceSelectionBinding
-import org.calypsonet.keyple.demo.control.domain.model.ReaderType
+import org.calypsonet.keyple.demo.control.domain.model.TerminalType
 import org.calypsonet.keyple.demo.control.ui.activities.BaseActivity
 import org.calypsonet.keyple.demo.control.ui.activities.SettingsActivity
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
@@ -47,7 +47,7 @@ class DeviceSelectionActivity : BaseActivity() {
       activityDeviceSelectionBinding.bluebirdBtn.setBackgroundColor(Color.GRAY)
     } else {
       activityDeviceSelectionBinding.bluebirdBtn.setOnClickListener {
-        appSettings.readerType = ReaderType.BLUEBIRD
+        appSettings.terminalType = TerminalType.BLUEBIRD
         val permissions = mutableListOf("com.bluebird.permission.SAM_DEVICE_ACCESS")
         // Storage permission refused without prompt since Android 13 (declared up to Android 12)
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
@@ -62,7 +62,7 @@ class DeviceSelectionActivity : BaseActivity() {
     }
     // Famoco
     activityDeviceSelectionBinding.famocoBtn.setOnClickListener {
-      appSettings.readerType = ReaderType.FAMOCO
+      appSettings.terminalType = TerminalType.FAMOCO
       startActivity(Intent(this, SettingsActivity::class.java))
       finish()
     }
@@ -70,7 +70,7 @@ class DeviceSelectionActivity : BaseActivity() {
     activityDeviceSelectionBinding.nfcTerminalBtn.setOnClickListener {
       val nfcManager = getSystemService(NFC_SERVICE) as NfcManager
       if (nfcManager.defaultAdapter?.isEnabled == true) {
-        appSettings.readerType = ReaderType.NFC_TERMINAL
+        appSettings.terminalType = TerminalType.NFC_TERMINAL
         startActivity(Intent(this, SettingsActivity::class.java))
         finish()
       } else {

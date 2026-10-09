@@ -120,7 +120,7 @@ Device Selection → Settings → Home → Reader Activity → Control Results
   - Priority assignments and usage history
 - **Compliance Status**: Clear indication of card validity
 
-**Invalid Card Screen (`NetworkInvalidActivity`)**:
+**Invalid Card Screen (`InvalidCardActivity`)**:
 - **Non-compliance Reason**: Specific issue detected
 - **Recommended Action**: Guidance for inspector response
 - **Supporting Evidence**: Technical details for documentation

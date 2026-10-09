@@ -23,7 +23,7 @@ object ContractMapper {
       contractValidated: Boolean,
       contractExpired: Boolean,
       validationDateTime: LocalDateTime?,
-      nbTicketsLeft: Int?
+      remainingTrips: Int?
   ): Contract {
     return Contract(
         name = contract.contractTariff.value,
@@ -33,6 +33,6 @@ object ContractMapper {
         expired = contractExpired,
         contractValidityStartDate = contract.contractSaleDate.getDate(),
         contractValidityEndDate = contract.contractValidityEndDate.getDate(),
-        nbTicketsLeft = nbTicketsLeft)
+        remainingTrips = remainingTrips)
   }
 }

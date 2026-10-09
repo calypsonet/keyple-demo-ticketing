@@ -26,9 +26,9 @@ data class SelectAppAndAnalyzeContractsOutputDto(
     var message: String
 ) {
   /**
-   * - title: Contract name.
+   * - name: Contract name.
    * - description: Contract details.
    * - isValid: Indicates if the contract is currently usable.
    */
-  data class ContractInfo(var title: String, var description: String, var isValid: Boolean)
+  data class ContractInfo(var name: String, var description: String, var isValid: Boolean)
 }

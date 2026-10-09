@@ -29,8 +29,8 @@
         </activity>
 
         <activity
-            android:name="org.calypsonet.keyple.demo.control.ui.activities.NetworkInvalidActivity"
-            android:label="@string/title_activity_network_invalid"
+            android:name="org.calypsonet.keyple.demo.control.ui.activities.InvalidCardActivity"
+            android:label="@string/title_activity_invalid_card"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:exported="false" />

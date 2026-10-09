@@ -17,7 +17,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.validation.domain.model.CardProtocol
-import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
+import org.calypsonet.keyple.demo.validation.domain.model.TerminalType
 import org.calypsonet.keyple.demo.validation.domain.spi.ReaderManager
 import org.calypsonet.keyple.demo.validation.domain.spi.UiContext
 import org.calypsonet.keyple.plugin.arrive.ArriveConstants
@@ -49,7 +49,7 @@ constructor(
     private val readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi
 ) : ReaderManager {
 
-  private lateinit var readerType: ReaderType
+  private lateinit var terminalType: TerminalType
   // Card
   private lateinit var cardPluginName: String
   private lateinit var cardReaderName: String
@@ -64,16 +64,16 @@ constructor(
   private var samReaderProtocolLogicalName: String? = null
   private var samReaders: MutableList<CardReader> = mutableListOf()
 
-  private fun initReaderType(readerType: ReaderType) {
-    when (readerType) {
-      ReaderType.ARRIVE -> initArriveReader()
-      ReaderType.BLUEBIRD -> initBluebirdReader()
-      ReaderType.FAMOCO -> initFamocoReader()
+  private fun initTerminalType(terminalType: TerminalType) {
+    when (terminalType) {
+      TerminalType.ARRIVE -> initArriveReader()
+      TerminalType.BLUEBIRD -> initBluebirdReader()
+      TerminalType.FAMOCO -> initFamocoReader()
     }
   }
 
   private fun initBluebirdReader() {
-    readerType = ReaderType.BLUEBIRD
+    terminalType = TerminalType.BLUEBIRD
     cardPluginName = BluebirdConstants.PLUGIN_NAME
     cardReaderName = BluebirdConstants.CARD_READER_NAME
     cardReaderProtocols[BluebirdContactlessProtocols.ISO_14443_4_A.name] =
@@ -95,7 +95,7 @@ constructor(
   }
 
   private fun initFamocoReader() {
-    readerType = ReaderType.FAMOCO
+    terminalType = TerminalType.FAMOCO
     cardPluginName = AndroidNfcConstants.PLUGIN_NAME
     cardReaderName = AndroidNfcConstants.READER_NAME
     cardReaderProtocols[AndroidNfcSupportedProtocols.ISO_14443_4.name] =
@@ -110,7 +110,7 @@ constructor(
   }
 
   private fun initArriveReader() {
-    readerType = ReaderType.ARRIVE
+    terminalType = TerminalType.ARRIVE
     cardPluginName = ArriveConstants.PLUGIN_NAME
     cardReaderName = ArriveConstants.CARD_READER_NAME
     cardReaderProtocols[ArriveContactlessProtocols.ISO_14443_4.name] =
@@ -123,22 +123,22 @@ constructor(
   }
 
   @Throws(KeyplePluginException::class)
-  override suspend fun registerPlugin(readerType: ReaderType, uiContext: UiContext) {
-    initReaderType(readerType)
+  override suspend fun registerPlugin(terminalType: TerminalType, uiContext: UiContext) {
+    initTerminalType(terminalType)
     val activity = uiContext.adaptTo(Activity::class.java)
     // Plugin
     val pluginFactory =
         withContext(Dispatchers.IO) {
-          when (readerType) {
-            ReaderType.ARRIVE -> {
+          when (terminalType) {
+            TerminalType.ARRIVE -> {
               ArrivePluginFactoryProvider.provideFactory(context = activity)
             }
-            ReaderType.BLUEBIRD ->
+            TerminalType.BLUEBIRD ->
                 BluebirdPluginFactoryProvider.provideFactory(
                     activity,
                     ApduInterpreterFactoryProvider.provideFactory(),
                     MifareClassicKeyProviderImpl())
-            ReaderType.FAMOCO ->
+            TerminalType.FAMOCO ->
                 AndroidNfcPluginFactoryProvider.provideFactory(
                     AndroidNfcConfig(
                         activity = activity,
@@ -148,7 +148,7 @@ constructor(
         }
     SmartCardServiceProvider.getService().registerPlugin(pluginFactory)
     // SAM plugin (if different of card plugin)
-    if (readerType == ReaderType.FAMOCO) {
+    if (terminalType == TerminalType.FAMOCO) {
       val samPluginFactory =
           withContext(Dispatchers.IO) { AndroidFamocoPluginFactoryProvider.getFactory() }
       SmartCardServiceProvider.getService().registerPlugin(samPluginFactory)
@@ -176,7 +176,7 @@ constructor(
   @Throws(KeyplePluginException::class)
   override fun initSamReaders(): List<CardReader> {
     samReaders =
-        if (readerType == ReaderType.FAMOCO) {
+        if (terminalType == TerminalType.FAMOCO) {
           SmartCardServiceProvider.getService()
               .getPlugin(samPluginName)
               ?.readers

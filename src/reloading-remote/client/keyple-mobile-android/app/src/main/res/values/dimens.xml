@@ -62,9 +62,9 @@
     <dimen name="main_btn_margin_bottom">20dp</dimen>
     <dimen name="main_btn_vertical_padding">32dp</dimen>
 
-    <dimen name="card_title_item_height">90dp</dimen>
-    <dimen name="card_title_text_width">120dp</dimen>
-    <dimen name="card_title_margin_bottom">20dp</dimen>
+    <dimen name="contract_item_height">90dp</dimen>
+    <dimen name="contract_text_width">120dp</dimen>
+    <dimen name="contract_item_margin_bottom">20dp</dimen>
     <dimen name="content_title_padding">42dp</dimen>
 
     <dimen name="reading_animation_size">150dp</dimen>

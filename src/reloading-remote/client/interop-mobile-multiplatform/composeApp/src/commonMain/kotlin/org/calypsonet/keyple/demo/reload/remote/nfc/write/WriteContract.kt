@@ -28,7 +28,7 @@ data class WriteContract(
     val applicationSerialNumber: String,
     val contractTariff: PriorityCode,
     val pluginType: String = "Android NFC",
-    val ticketToLoad: Int
+    val tripsToLoad: Int
 )
 
 @Serializable data class AnalyzeContracts(val pluginType: String = "Android NFC")

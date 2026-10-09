@@ -25,7 +25,7 @@ abstract class BaseValidationManager {
   companion object {
 
     // User error messages
-    const val ERROR_NO_VALID_TITLE_DETECTED = "No valid title detected"
+    const val ERROR_NO_VALID_CONTRACT_DETECTED = "No valid ticket detected"
     const val ERROR_MIFARE_CLASSIC_AUTH_FAILED =
         "Authentication failed. Please ensure the card is correctly positioned."
     const val ERROR_MIFARE_CLASSIC_TRANSACTION_FAILED = "Transaction failed. Please try again."
@@ -39,7 +39,7 @@ abstract class BaseValidationManager {
         "Contract Version Number error (!= CURRENT_VERSION)"
     const val EXCEPTION_CARD_ALREADY_TAPPED = "Card already tapped.\nPlease wait before retrying."
     const val EXCEPTION_RECOVER_BROKEN_SESSION = "Recover previous broken valid session"
-    const val EXCEPTION_EXPIRED_TITLE = "Expired title"
+    const val EXCEPTION_EXPIRED_CONTRACT = "Expired ticket"
     const val EXCEPTION_NO_TRIPS_LEFT = "No trips left"
     const val EXCEPTION_CONTRACT_FORBIDDEN_OR_EXPIRED = "Contract is forbidden or expired"
 
@@ -170,7 +170,7 @@ abstract class BaseValidationManager {
         // Valid, do nothing
       }
       VersionNumber.UNDEFINED -> {
-        throw ValidationException(ERROR_NO_VALID_TITLE_DETECTED, Status.EMPTY_CARD)
+        throw ValidationException(ERROR_NO_VALID_CONTRACT_DETECTED, Status.EMPTY_CARD)
       }
       else -> {
         throw ValidationException(EXCEPTION_EVENT_WRONG_VERSION, Status.INVALID_CARD)
@@ -199,7 +199,7 @@ abstract class BaseValidationManager {
    */
   fun validateContractDateOrThrow(contractValidityEndDate: LocalDate, validationDate: LocalDate) {
     if (contractValidityEndDate.isBefore(validationDate)) {
-      throw ValidationException(EXCEPTION_EXPIRED_TITLE, Status.EMPTY_CARD)
+      throw ValidationException(EXCEPTION_EXPIRED_CONTRACT, Status.EMPTY_CARD)
     }
   }
 
@@ -224,7 +224,7 @@ abstract class BaseValidationManager {
   fun validateHasValidContractsOrThrow(priorities: List<Pair<Int, PriorityCode>>) {
     val validPriorities = filterValidContractPriorities(priorities)
     if (validPriorities.isEmpty()) {
-      throw ValidationException(ERROR_NO_VALID_TITLE_DETECTED, Status.EMPTY_CARD)
+      throw ValidationException(ERROR_NO_VALID_CONTRACT_DETECTED, Status.EMPTY_CARD)
     }
   }
 

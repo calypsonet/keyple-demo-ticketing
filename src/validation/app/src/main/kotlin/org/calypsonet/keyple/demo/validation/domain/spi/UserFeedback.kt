@@ -10,26 +10,29 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.domain.spi
+package org.calypsonet.keyple.demo.validation.domain.spi
 
-import org.calypsonet.keyple.demo.control.domain.model.ReaderType
+import org.calypsonet.keyple.demo.validation.domain.model.TerminalType
 
 /** Port providing the user feedback of the terminal (sounds, LEDs...). */
-interface UiManager {
+interface UserFeedback {
 
   /**
    * Initializes the feedback resources for the given reader type.
    *
-   * @param readerType The type of reader (terminal) the application runs on.
+   * @param terminalType The type of reader (terminal) the application runs on.
    * @param uiContext Platform-specific context used to access the feedback facilities.
    */
-  fun init(readerType: ReaderType, uiContext: UiContext)
+  fun init(terminalType: TerminalType, uiContext: UiContext)
 
   /** Displays feedback for a successful result. */
   fun displayResultSuccess()
 
   /** Displays feedback for a failed result. */
   fun displayResultFailed()
+
+  /** Resets the feedback to the waiting-for-card state (e.g. turns off result LEDs). */
+  fun displayWaiting()
 
   /** Releases the feedback resources. */
   fun release()

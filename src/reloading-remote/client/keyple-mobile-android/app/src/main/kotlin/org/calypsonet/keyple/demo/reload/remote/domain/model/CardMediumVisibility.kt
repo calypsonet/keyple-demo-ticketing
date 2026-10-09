@@ -12,16 +12,12 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.domain.model
 
-import java.time.LocalDate
-import org.calypsonet.keyple.demo.common.model.type.PriorityCode
-
-/** Contract (title) present in the card. */
-data class CardTitle(
-    val contractTariff: PriorityCode,
-    /** Number of remaining trips of a multi-trip contract, null if there is no counter. */
-    val counterValue: Int?,
-    val saleDate: LocalDate,
-    val validityEndDate: LocalDate,
-    /** Indicates whether the contract can currently be used. */
-    val isValid: Boolean
-)
+/** Visibility of a card medium (contactless card, SIM...) in the home screen. */
+enum class CardMediumVisibility {
+  /** The card medium is displayed and can be selected. */
+  ENABLE,
+  /** The card medium is displayed but cannot be selected. */
+  DISABLE,
+  /** The card medium is not displayed. */
+  HIDE
+}

@@ -23,7 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.validation.BuildConfig
 import org.calypsonet.keyple.demo.validation.R
 import org.calypsonet.keyple.demo.validation.databinding.ActivityDeviceSelectionBinding
-import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
+import org.calypsonet.keyple.demo.validation.domain.model.TerminalType
 import org.calypsonet.keyple.demo.validation.ui.activities.BaseActivity
 import org.calypsonet.keyple.demo.validation.ui.activities.SettingsActivity
 import org.calypsonet.keyple.plugin.arrive.ArriveConstants
@@ -46,7 +46,7 @@ class DeviceSelectionActivity : BaseActivity() {
       activityDeviceSelectionBinding.bluebirdBtn.setBackgroundColor(Color.GRAY)
     } else {
       activityDeviceSelectionBinding.bluebirdBtn.setOnClickListener {
-        appSettings.readerType = ReaderType.BLUEBIRD
+        appSettings.terminalType = TerminalType.BLUEBIRD
         val permissions = mutableListOf("com.bluebird.permission.SAM_DEVICE_ACCESS")
         // Storage permission refused without prompt since Android 13 (declared up to Android 12)
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
@@ -62,7 +62,7 @@ class DeviceSelectionActivity : BaseActivity() {
 
     // Famoco
     activityDeviceSelectionBinding.famocoBtn.setOnClickListener {
-      appSettings.readerType = ReaderType.FAMOCO
+      appSettings.terminalType = TerminalType.FAMOCO
       startActivity(Intent(this, SettingsActivity::class.java))
       finish()
     }
@@ -72,7 +72,7 @@ class DeviceSelectionActivity : BaseActivity() {
       activityDeviceSelectionBinding.arriveBtn.setBackgroundColor(Color.GRAY)
     } else {
       activityDeviceSelectionBinding.arriveBtn.setOnClickListener {
-        appSettings.readerType = ReaderType.ARRIVE
+        appSettings.terminalType = TerminalType.ARRIVE
         startActivity(Intent(this, SettingsActivity::class.java))
         finish()
       }

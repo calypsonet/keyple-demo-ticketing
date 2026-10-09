@@ -16,12 +16,12 @@
     <string name="card_communication_error">Card communication error</string>
     <string name="server_error">Server error:\n%s</string>
     <string name="nfc_not_activated">NFC not activated</string>
-    <string name="transaction_cancelled_label">Title not loaded</string>
+    <string name="transaction_cancelled_label">Ticket not loaded</string>
 
     <string name="validation_confirmation_label">Payment validated</string>
-    <string name="charging_success_label">Title loaded</string>
-    <string name="no_valid_label">No title</string>
-    <string name="no_valid_desc">Please load a title</string>
+    <string name="charging_success_label">Ticket loaded</string>
+    <string name="no_valid_label">No ticket</string>
+    <string name="no_valid_desc">Please load a ticket</string>
     <string name="error_label">An error occurred</string>
     <string name="perso_success_label">Card personalized</string>
     <string name="perso_failed_label">Personalization failed</string>
@@ -34,12 +34,12 @@
 
     <string name="device_selection">Choose a device</string>
     <string name="to_be_personalized">to be personalized</string>
-    <string name="choose_trips">Choose a type of title</string>
+    <string name="choose_trips">Choose a type of ticket</string>
     <string name="try_again">Retry</string>
     <string name="try_again_countdown">Retry (%1$d)</string>
     <string name="cancel">Cancel</string>
-    <string name="buy_titles">Buy title</string>
-    <string name="load_card">Load title</string>
+    <string name="buy_tickets">Buy ticket</string>
+    <string name="load_card">Load ticket</string>
 
     <string name="checkout_title">Basket</string>
     <string name="credit_card_details">Credit card details</string>
@@ -55,7 +55,7 @@
 
     <string name="present_card_personalization">Please present the contactless support to be personalized</string>
 
-    <string name="season_pass_title">Monthly Season Pass</string>
+    <string name="season_pass_label">Monthly Season Pass</string>
     <string name="ticket_price">%d,00 €</string>
     <plurals name="x_tickets">
         <item quantity="one">%d trip</item>
@@ -90,18 +90,18 @@
 
     <!-- CardContent screen -->
     <string name="content_title">Content</string>
-    <string name="card_content_title_placeholder">Multi Trip</string>
+    <string name="contract_name_placeholder">Multi Trip</string>
     <string name="card_content_description_placeholder">From JJ Month YYYY to JJ Month YYYY</string>
     <string name="card_type">%1$s</string>
-    <string name="title_multi_trip">Multi trip</string>
+    <string name="contract_multi_trip">Multi trip</string>
     <plurals name="trips_left">
         <item quantity="one">%d trip left</item>
         <item quantity="other">%d trips left</item>
     </plurals>
     <string name="no_counter">No counter</string>
-    <string name="title_season_pass">Season pass</string>
-    <string name="title_season_pass_expired">Season pass - Expired</string>
-    <string name="title_forbidden">FORBIDDEN</string>
-    <string name="title_unknown">UNKNOWN</string>
+    <string name="contract_season_pass">Season pass</string>
+    <string name="contract_season_pass_expired">Season pass - Expired</string>
+    <string name="contract_forbidden">FORBIDDEN</string>
+    <string name="contract_unknown">UNKNOWN</string>
     <string name="validity_period">From %1$s to %2$s</string>
 </resources>

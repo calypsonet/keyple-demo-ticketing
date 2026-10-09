@@ -14,8 +14,8 @@ package org.calypsonet.keyple.demo.reload.remote.data
 
 import android.content.SharedPreferences
 import java.util.Locale
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceType
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceVisibility
+import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
+import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMediumVisibility
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ServerConfig
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.AppSettingsRepository
 
@@ -37,10 +37,10 @@ class AppSettingsRepositoryImpl(private val prefs: SharedPreferences) : AppSetti
           .apply()
     }
 
-  override var deviceType: DeviceType
-    get() = DeviceType.fromName(prefs.getString(DEVICE_TYPE, "") ?: "")
+  override var cardMedium: CardMedium
+    get() = CardMedium.fromName(prefs.getString(CARD_MEDIUM, "") ?: "")
     set(value) {
-      prefs.edit().putString(DEVICE_TYPE, value.toString()).apply()
+      prefs.edit().putString(CARD_MEDIUM, value.toString()).apply()
     }
 
   override var lastServerStatus: Boolean
@@ -49,31 +49,34 @@ class AppSettingsRepositoryImpl(private val prefs: SharedPreferences) : AppSetti
       prefs.edit().putBoolean(SETTING_SERVER_LAST_STATUS_UP, value).apply()
     }
 
-  override fun getDeviceVisibility(device: DeviceType): DeviceVisibility {
+  override fun getCardMediumVisibility(cardMedium: CardMedium): CardMediumVisibility {
     val defaultVisibility =
-        if (device == DeviceType.CONTACTLESS_CARD) DeviceVisibility.ENABLE
-        else DeviceVisibility.DISABLE
-    val value = prefs.getString(visibilityKey(device), null) ?: return defaultVisibility
-    return DeviceVisibility.valueOf(value.uppercase(Locale.ROOT))
+        if (cardMedium == CardMedium.CONTACTLESS_CARD) CardMediumVisibility.ENABLE
+        else CardMediumVisibility.DISABLE
+    val value = prefs.getString(visibilityKey(cardMedium), null) ?: return defaultVisibility
+    return CardMediumVisibility.valueOf(value.uppercase(Locale.ROOT))
   }
 
-  override fun setDeviceVisibility(device: DeviceType, visibility: DeviceVisibility) {
-    prefs.edit().putString(visibilityKey(device), visibility.name.lowercase(Locale.ROOT)).apply()
+  override fun setCardMediumVisibility(cardMedium: CardMedium, visibility: CardMediumVisibility) {
+    prefs
+        .edit()
+        .putString(visibilityKey(cardMedium), visibility.name.lowercase(Locale.ROOT))
+        .apply()
   }
 
-  private fun visibilityKey(device: DeviceType): String =
-      when (device) {
-        DeviceType.CONTACTLESS_CARD -> SETTING_CONTACTLESS_VISIBILITY
-        DeviceType.SIM -> SETTING_SIM_VISIBILITY
-        DeviceType.WEARABLE -> SETTING_WEARABLE_VISIBILITY
-        DeviceType.EMBEDDED -> SETTING_EMBEDDED_VISIBILITY
+  private fun visibilityKey(cardMedium: CardMedium): String =
+      when (cardMedium) {
+        CardMedium.CONTACTLESS_CARD -> SETTING_CONTACTLESS_VISIBILITY
+        CardMedium.SIM -> SETTING_SIM_VISIBILITY
+        CardMedium.WEARABLE -> SETTING_WEARABLE_VISIBILITY
+        CardMedium.EMBEDDED -> SETTING_EMBEDDED_VISIBILITY
       }
 
   companion object {
     private const val SERVER_IP_KEY = "server_ip_key"
     private const val SERVER_PORT_KEY = "server_port_key"
     private const val SERVER_PROTOCOL_KEY = "server_protocol_key"
-    private const val DEVICE_TYPE = "device_type"
+    private const val CARD_MEDIUM = "card_medium"
     private const val DEFAULT_SERVER_IP = "192.168.0.1"
     private const val DEFAULT_PORT = 8080
     private const val DEFAULT_PROTOCOL = "http://"

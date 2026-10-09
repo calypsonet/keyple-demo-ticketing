@@ -19,14 +19,14 @@ import org.calypsonet.keyple.demo.common.model.Location
 import org.calypsonet.keyple.demo.validation.domain.managers.CalypsoCardValidationManager
 import org.calypsonet.keyple.demo.validation.domain.managers.StorageCardValidationManager
 import org.calypsonet.keyple.demo.validation.domain.model.CardProtocol
-import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
+import org.calypsonet.keyple.demo.validation.domain.model.TerminalType
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
 import org.calypsonet.keyple.demo.validation.domain.spi.AppSettingsRepository
 import org.calypsonet.keyple.demo.validation.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.validation.domain.spi.Logger
 import org.calypsonet.keyple.demo.validation.domain.spi.ReaderManager
 import org.calypsonet.keyple.demo.validation.domain.spi.UiContext
-import org.calypsonet.keyple.demo.validation.domain.spi.UiManager
+import org.calypsonet.keyple.demo.validation.domain.spi.UserFeedback
 import org.eclipse.keyple.core.util.HexUtil
 import org.eclipse.keypop.calypso.card.CalypsoCardApiFactory
 import org.eclipse.keypop.calypso.card.WriteAccessLevel
@@ -65,7 +65,7 @@ class TicketingService(
     private var keypopApiProvider: KeypopApiProvider,
     private var appSettings: AppSettingsRepository,
     private var readerManager: ReaderManager,
-    private var uiManager: UiManager,
+    private var userFeedback: UserFeedback,
     private var logger: Logger,
     private val calypsoCardValidationManager: CalypsoCardValidationManager,
     private val storageCardValidationManager: StorageCardValidationManager
@@ -104,20 +104,24 @@ class TicketingService(
    * Initializes the ticketing environment and selects a SAM if available.
    *
    * Steps:
-   * - Registers the appropriate reader plugin according to [readerType].
+   * - Registers the appropriate reader plugin according to [terminalType].
    * - Initializes the primary card reader and SAM reader(s).
    * - Attaches the optional [observer] to the card reader to receive detection events.
    * - Selects a SAM and prepares secured session capabilities.
    *
    * @param observer Optional reader observer to receive card detection notifications.
-   * @param readerType The target reader type to initialize (e.g., NFC).
+   * @param terminalType The target reader type to initialize (e.g., NFC).
    * @param uiContext Platform-specific context used to register plugins.
    * @throws IllegalStateException if no SAM reader is available or SAM selection fails.
    */
-  suspend fun init(observer: CardReaderObserverSpi?, readerType: ReaderType, uiContext: UiContext) {
+  suspend fun init(
+      observer: CardReaderObserverSpi?,
+      terminalType: TerminalType,
+      uiContext: UiContext
+  ) {
     // Init user feedback and register plugin
-    uiManager.init(readerType, uiContext)
-    readerManager.registerPlugin(readerType, uiContext)
+    userFeedback.init(terminalType, uiContext)
+    readerManager.registerPlugin(terminalType, uiContext)
 
     // Init card reader
     val cardReader: CardReader? = readerManager.initCardReader()
@@ -162,7 +166,7 @@ class TicketingService(
   fun onDestroy(observer: CardReaderObserverSpi?) {
     areReadersInitialized = false
     readerManager.onDestroy(observer)
-    uiManager.release()
+    userFeedback.release()
   }
 
   fun endCardProcessing() {
@@ -180,7 +184,7 @@ class TicketingService(
    * @return true if handled by the UI, false otherwise.
    */
   fun displayResultSuccess(): Boolean {
-    uiManager.displayResultSuccess()
+    userFeedback.displayResultSuccess()
     return true
   }
 
@@ -190,12 +194,12 @@ class TicketingService(
    * @return true if handled by the UI, false otherwise.
    */
   fun displayResultFailed(): Boolean {
-    uiManager.displayResultFailed()
+    userFeedback.displayResultFailed()
     return true
   }
 
   /** Resets the UI feedback to the waiting-for-card state (e.g. turns off result LEDs). */
-  fun displayWaiting() = uiManager.displayWaiting()
+  fun displayWaiting() = userFeedback.displayWaiting()
 
   /** Returns the list of available locations used during validation. */
   fun getLocations(): List<Location> = LocationRepository.getLocations()

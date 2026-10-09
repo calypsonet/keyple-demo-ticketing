@@ -86,10 +86,10 @@ This procedure's main steps are as follows:
 
 ### Distribution / Loading Use Case
 
-This use case loads a new transport title, or reloads/extends an existing contract, while updating the contract priority
+This use case loads a new contract, or reloads/extends an existing contract, while updating the contract priority
 levels if necessary.
 
-Transport Titles can be period duration in which they are valid for a specific period or have an associated counter that
+Contracts can be period duration in which they are valid for a specific period or have an associated counter that
 represents the number of trips left.
 
 This use case must also contemplate the option of loading the contracts with traceability mode (thus adding an 

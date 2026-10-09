@@ -18,7 +18,7 @@ import java.time.LocalDateTime
 data class ValidationResult(
     val status: Status,
     val cardType: String,
-    val nbTicketsLeft: Int? = null,
+    val remainingTrips: Int? = null,
     val contract: String?,
     val validationData: ValidationData?,
     val eventDateTime: LocalDateTime? = null,

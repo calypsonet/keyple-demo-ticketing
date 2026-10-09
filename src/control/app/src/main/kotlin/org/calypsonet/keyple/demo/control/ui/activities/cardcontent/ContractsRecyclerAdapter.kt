@@ -19,26 +19,26 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.control.R
-import org.calypsonet.keyple.demo.control.databinding.TitleRecyclerRowBinding
+import org.calypsonet.keyple.demo.control.databinding.ContractRecyclerRowBinding
 import org.calypsonet.keyple.demo.control.ui.model.UiContract
 
-class TitlesRecyclerAdapter(private val titles: ArrayList<UiContract>) :
-    RecyclerView.Adapter<TitlesRecyclerAdapter.TitleHolder>() {
+class ContractsRecyclerAdapter(private val contracts: ArrayList<UiContract>) :
+    RecyclerView.Adapter<ContractsRecyclerAdapter.ContractHolder>() {
 
-  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TitleHolder {
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContractHolder {
     val binding =
-        TitleRecyclerRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-    return TitleHolder(binding)
+        ContractRecyclerRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+    return ContractHolder(binding)
   }
 
-  class TitleHolder(private val binding: TitleRecyclerRowBinding) :
+  class ContractHolder(private val binding: ContractRecyclerRowBinding) :
       RecyclerView.ViewHolder(binding.root) {
 
-    private var title: UiContract? = null
+    private var contract: UiContract? = null
 
     fun bindItem(contract: UiContract) {
       val context = binding.root.context
-      val titleDescription =
+      val contractDescription =
           if (contract.name == PriorityCode.SEASON_PASS.value) {
             val formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH)
             context.getString(
@@ -46,28 +46,28 @@ class TitlesRecyclerAdapter(private val titles: ArrayList<UiContract>) :
                 contract.contractValidityStartDate.format(formatter),
                 contract.contractValidityEndDate.format(formatter))
           } else {
-            when (val nbTicketsLeft = contract.nbTicketsLeft ?: 0) {
+            when (val remainingTrips = contract.remainingTrips ?: 0) {
               0 -> context.getString(R.string.card_content_description_multi_trip_zero)
               1 ->
                   context.getString(
-                      R.string.card_content_description_multi_trip_single, nbTicketsLeft)
+                      R.string.card_content_description_multi_trip_single, remainingTrips)
               else ->
                   context.getString(
-                      R.string.card_content_description_multi_trip_multiple, nbTicketsLeft)
+                      R.string.card_content_description_multi_trip_multiple, remainingTrips)
             }
           }
-      this.title = contract
-      binding.titleName.text = contract.name
-      binding.titleDescription.text = titleDescription
+      this.contract = contract
+      binding.contractName.text = contract.name
+      binding.contractDescription.text = contractDescription
       binding.validImg.setImageResource(
           if (contract.valid) R.drawable.ic_tick else R.drawable.ic_fail)
     }
   }
 
-  override fun getItemCount() = titles.size
+  override fun getItemCount() = contracts.size
 
-  override fun onBindViewHolder(holder: TitleHolder, position: Int) {
-    val titleItem = titles[position]
-    holder.bindItem(titleItem)
+  override fun onBindViewHolder(holder: ContractHolder, position: Int) {
+    val contractItem = contracts[position]
+    holder.bindItem(contractItem)
   }
 }

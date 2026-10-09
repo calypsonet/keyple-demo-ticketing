@@ -25,11 +25,11 @@ import org.calypsonet.keyple.demo.reload.remote.card.CardContentScreenViewModel
 import org.calypsonet.keyple.demo.reload.remote.nav.AppSuccess
 import org.calypsonet.keyple.demo.reload.remote.nav.Card
 import org.calypsonet.keyple.demo.reload.remote.nav.Home
+import org.calypsonet.keyple.demo.reload.remote.nav.LoadContract
 import org.calypsonet.keyple.demo.reload.remote.nav.PersonalizeCard
 import org.calypsonet.keyple.demo.reload.remote.nav.ReadCard
 import org.calypsonet.keyple.demo.reload.remote.nav.ServerConfig
 import org.calypsonet.keyple.demo.reload.remote.nav.Settings
-import org.calypsonet.keyple.demo.reload.remote.nav.WriteTitleCard
 import org.calypsonet.keyple.demo.reload.remote.nfc.personalize.PersonalizeCardScreen
 import org.calypsonet.keyple.demo.reload.remote.nfc.personalize.PersonalizeCardScreenViewModel
 import org.calypsonet.keyple.demo.reload.remote.nfc.read.ReadCardScreen
@@ -74,14 +74,14 @@ fun App(service: KeypleService, cardRepository: CardRepository) {
             appState = state.value)
       }
 
-      composable<WriteTitleCard> { backStackEntry ->
-        val route = backStackEntry.toRoute<WriteTitleCard>()
+      composable<LoadContract> { backStackEntry ->
+        val route = backStackEntry.toRoute<LoadContract>()
 
         WriteCardScreen(
             navController = navController,
             viewModel =
                 viewModel<WriteCardScreenViewModel> {
-                  WriteCardScreenViewModel(keypleService = service, title = route)
+                  WriteCardScreenViewModel(keypleService = service, route = route)
                 },
             appState = state.value)
       }

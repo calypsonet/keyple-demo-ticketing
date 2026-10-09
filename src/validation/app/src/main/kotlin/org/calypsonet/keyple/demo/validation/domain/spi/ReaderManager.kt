@@ -12,7 +12,7 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.validation.domain.spi
 
-import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
+import org.calypsonet.keyple.demo.validation.domain.model.TerminalType
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 
@@ -28,10 +28,10 @@ interface ReaderManager {
    * Registers the appropriate reader plugin(s) for the given reader type and UI context. Must be
    * called before initializing readers.
    *
-   * @param readerType The type of reader to use (e.g. contactless reader).
+   * @param terminalType The type of reader to use (e.g. contactless reader).
    * @param uiContext UI context used to access platform-specific facilities.
    */
-  suspend fun registerPlugin(readerType: ReaderType, uiContext: UiContext)
+  suspend fun registerPlugin(terminalType: TerminalType, uiContext: UiContext)
 
   /**
    * Initializes and returns the primary card reader (contactless). Returns null if not available.

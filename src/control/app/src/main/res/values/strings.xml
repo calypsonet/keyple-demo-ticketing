@@ -21,7 +21,7 @@
 
     <string name="title_activity_home">HomeActivity</string>
     <string name="title_activity_card_reader">CardReaderActivity</string>
-    <string name="title_activity_network_invalid">NetworkInvalidActivity</string>
+    <string name="title_activity_invalid_card">InvalidCardActivity</string>
     <string name="title_activity_card_content">CardContentActivity</string>
 
     <!-- Settings screen -->
@@ -73,7 +73,7 @@
     <string name="nfc_not_enabled">The NFC feature of the device does not seem to be available. Please activate the NFC function before continuing.</string>
 
     <!-- Test values-->
-    <string name="card_content_validation_title_placeholder">Multi Trip - Place de la Bastille</string>
-    <string name="card_content_title_placeholder">Multi Trip</string>
+    <string name="validation_label_placeholder">Multi Trip - Place de la Bastille</string>
+    <string name="contract_name_placeholder">Multi Trip</string>
     <string name="card_content_validation_date_placeholder">JJ Month YYYY, HH:MM:SS</string>
 </resources>

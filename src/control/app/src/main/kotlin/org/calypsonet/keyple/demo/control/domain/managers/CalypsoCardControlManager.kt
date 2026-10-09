@@ -259,7 +259,7 @@ class CalypsoCardControlManager(
 
           // Step 18 - If the ContractTariff value for the contract is 2, unpack the counter
           // associated with the contract to extract the counter-value.
-          val nbTicketsLeft =
+          val remainingTrips =
               if (contract.contractTariff == PriorityCode.MULTI_TRIP) {
                 efCounters.data.getContentAsCounterValue(record)
               } else {
@@ -274,7 +274,7 @@ class CalypsoCardControlManager(
                   contractExpired = contractExpired,
                   contractValidated = contractValidated,
                   validationDateTime = validationDateTime,
-                  nbTicketsLeft = nbTicketsLeft))
+                  remainingTrips = remainingTrips))
         }
       }
 
@@ -297,7 +297,7 @@ class CalypsoCardControlManager(
           status = status,
           authenticationMode = authenticationMode,
           lastValidationsList = validationList,
-          titlesList = displayedContract)
+          contractsList = displayedContract)
     } catch (e: Exception) {
       errorMessage = e.message
       logger.e("Control procedure error: $errorMessage")
@@ -320,7 +320,7 @@ class CalypsoCardControlManager(
     return ControlResult(
         status = status,
         authenticationMode = authenticationMode,
-        titlesList = arrayListOf(),
+        contractsList = arrayListOf(),
         errorTitle = errorTitle,
         errorMessage = errorMessage)
   }

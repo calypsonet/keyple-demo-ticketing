@@ -17,33 +17,35 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.reload.remote.R
-import org.calypsonet.keyple.demo.reload.remote.domain.model.CardTitle
-import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardTitle
+import org.calypsonet.keyple.demo.reload.remote.domain.model.Contract
+import org.calypsonet.keyple.demo.reload.remote.ui.model.UiContract
 
 private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)
 
-fun CardTitle.toUi(resources: Resources): UiCardTitle =
+fun Contract.toUi(resources: Resources): UiContract =
     when (contractTariff) {
       PriorityCode.MULTI_TRIP ->
-          UiCardTitle(
-              resources.getString(R.string.title_multi_trip),
+          UiContract(
+              resources.getString(R.string.contract_multi_trip),
               counterValue?.let { resources.getQuantityString(R.plurals.trips_left, it, it) }
                   ?: resources.getString(R.string.no_counter),
               isValid)
       PriorityCode.SEASON_PASS ->
-          UiCardTitle(
-              resources.getString(R.string.title_season_pass), validityPeriod(resources), isValid)
+          UiContract(
+              resources.getString(R.string.contract_season_pass),
+              validityPeriod(resources),
+              isValid)
       PriorityCode.EXPIRED ->
-          UiCardTitle(
-              resources.getString(R.string.title_season_pass_expired),
+          UiContract(
+              resources.getString(R.string.contract_season_pass_expired),
               validityPeriod(resources),
               isValid)
       PriorityCode.FORBIDDEN ->
-          UiCardTitle(resources.getString(R.string.title_forbidden), "", isValid)
-      else -> UiCardTitle(resources.getString(R.string.title_unknown), "", isValid)
+          UiContract(resources.getString(R.string.contract_forbidden), "", isValid)
+      else -> UiContract(resources.getString(R.string.contract_unknown), "", isValid)
     }
 
-private fun CardTitle.validityPeriod(resources: Resources): String =
+private fun Contract.validityPeriod(resources: Resources): String =
     resources.getString(
         R.string.validity_period,
         saleDate.format(dateFormatter),

@@ -60,7 +60,7 @@ Records validation events and transaction history.
 
 ### Contract Structure
 
-Defines transportation titles and their properties.
+Defines the contracts (tickets) and their properties.
 
 | Field Name              | Bits | Description                          |        Type         |  Status   |
 |:------------------------|-----:|:-------------------------------------|:-------------------:|:---------:|
@@ -135,7 +135,7 @@ Prepares cards for use by initializing data structures:
 
 ### Contract Loading Process
 
-Loads new transportation titles or extends existing contracts:
+Loads new contracts or extends existing ones:
 
 1. **Environment Validation**:
     - Verify version compatibility

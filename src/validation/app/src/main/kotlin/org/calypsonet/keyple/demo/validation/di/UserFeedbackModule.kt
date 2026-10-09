@@ -17,14 +17,16 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-import org.calypsonet.keyple.demo.validation.data.UiManagerImpl
+import org.calypsonet.keyple.demo.validation.data.UserFeedbackImpl
 import org.calypsonet.keyple.demo.validation.domain.spi.Logger
-import org.calypsonet.keyple.demo.validation.domain.spi.UiManager
+import org.calypsonet.keyple.demo.validation.domain.spi.UserFeedback
 
 @Suppress("unused")
 @Module
 @InstallIn(SingletonComponent::class)
-class UiManagerModule {
+class UserFeedbackModule {
 
-  @Provides @Singleton fun provideUiManager(logger: Logger): UiManager = UiManagerImpl(logger)
+  @Provides
+  @Singleton
+  fun provideUserFeedback(logger: Logger): UserFeedback = UserFeedbackImpl(logger)
 }

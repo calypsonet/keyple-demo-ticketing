@@ -122,7 +122,7 @@ class ReloadResultActivity : BaseActivity() {
   }
 
   companion object {
-    const val TICKETS_NUMBER = "ticketsNumber"
+    const val TRIPS_TO_LOAD = "ticketsNumber"
     const val STATUS = "status"
     const val MESSAGE = "message"
     const val IS_PERSONALIZATION_RESULT = "isPersonalizationResult"

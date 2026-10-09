@@ -22,7 +22,7 @@
 
     <dimen name="reading_animation_size">240dp</dimen>
 
-    <dimen name="card_title_image_margin_start">20dp</dimen>
+    <dimen name="contract_image_margin_start">20dp</dimen>
     <dimen name="card_validation_height">42dp</dimen>
 
 </resources>

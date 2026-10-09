@@ -1,9 +1,9 @@
 <resources>
-    <plurals name="basket_title_multi_title">
+    <plurals name="basket_multi_trip">
         <item quantity="one">%1$d trip</item>
         <item quantity="other">%1$d trips</item>
     </plurals>
-    <string name="basket_title_season_title">Season pass</string>
-    <string name="success_title_loaded">Title loaded</string>
+    <string name="basket_season_pass">Season pass</string>
+    <string name="success_ticket_loaded">Product loaded</string>
     <string name="card_empty">Card is empty</string>
 </resources>

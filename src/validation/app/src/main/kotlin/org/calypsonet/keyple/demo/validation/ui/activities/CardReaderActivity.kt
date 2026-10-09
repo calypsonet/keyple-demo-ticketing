@@ -32,8 +32,8 @@ import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.validation.R
 import org.calypsonet.keyple.demo.validation.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.validation.databinding.LayoutCardSummaryOverlayBinding
-import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
 import org.calypsonet.keyple.demo.validation.domain.model.Status
+import org.calypsonet.keyple.demo.validation.domain.model.TerminalType
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
 import org.calypsonet.keyple.demo.validation.ui.adapters.UiContextImpl
 import org.eclipse.keypop.reader.CardReaderEvent
@@ -109,7 +109,9 @@ class CardReaderActivity : BaseActivity() {
           try {
             cardReaderObserver = CardReaderObserver()
             ticketingService.init(
-                cardReaderObserver, appSettings.readerType, UiContextImpl(this@CardReaderActivity))
+                cardReaderObserver,
+                appSettings.terminalType,
+                UiContextImpl(this@CardReaderActivity))
             handleAppEvents(AppState.WAIT_CARD, null)
             ticketingService.startNfcDetection()
             ticketingService.displayWaiting()
@@ -273,13 +275,13 @@ class CardReaderActivity : BaseActivity() {
         b.locationTime.text =
             getString(
                 R.string.valid_location_time, result.validationData?.location?.name, eventDate)
-        val nbTickets = result.nbTicketsLeft
-        if (nbTickets != null) {
+        val remainingTrips = result.remainingTrips
+        if (remainingTrips != null) {
           b.smallDesc.text =
-              when (nbTickets) {
+              when (remainingTrips) {
                 0 -> getString(R.string.valid_trips_left_zero)
                 1 -> getString(R.string.valid_trips_left_single)
-                else -> getString(R.string.valid_trips_left_multiple, nbTickets)
+                else -> getString(R.string.valid_trips_left_multiple, remainingTrips)
               }
         } else if (result.passValidityEndDate != null) {
           val validityEndDate =
@@ -291,7 +293,7 @@ class CardReaderActivity : BaseActivity() {
         }
         b.mediumText.setText(R.string.valid_last_desc)
         b.mediumText.visibility = View.VISIBLE
-        if (result.nbTicketsLeft != null || result.passValidityEndDate != null) {
+        if (result.remainingTrips != null || result.passValidityEndDate != null) {
           b.smallDesc.visibility = View.VISIBLE
         }
       }
@@ -377,7 +379,7 @@ class CardReaderActivity : BaseActivity() {
    * (card at reader) with no ongoing CPU cost. On other terminals, loops indefinitely.
    */
   private fun playWaitingAnimation() {
-    if (appSettings.readerType != ReaderType.ARRIVE) {
+    if (appSettings.terminalType != TerminalType.ARRIVE) {
       activityCardReaderBinding.animation.repeatCount = LottieDrawable.INFINITE
       activityCardReaderBinding.animation.playAnimation()
     } else {

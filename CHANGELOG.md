@@ -48,12 +48,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     (`AbstractDemoActivity` and `AbstractCardActivity`);
   - toolbar layout `toolbar.xml` (`logo_toolbar.xml` in the control and validation apps), and reload result layout
     `activity_reload_result.xml` (`activity_charge_result.xml`) named after its activity;
-  - enums without the `Enum` suffix: `CardProtocol` (`CardProtocolEnum`) and, in the reloading client, `DeviceType`
+  - enums without the `Enum` suffix: `CardProtocol` (`CardProtocolEnum`) and, in the reloading client, `CardMedium`
     (`DeviceEnum`);
   - `Status` enums reduced to their values, the labels they carried being displayed nowhere (the reloading client
     passes the status name between its activities);
   - Hilt modules of the reloading client: `AppSettingsModule` (settings and shared preferences) instead of
     `DataModule`, the server status provider being provided by `RestModule` with the other network adapters.
+- All the applications: same ticketing vocabulary, documented in the README ("Ticketing vocabulary"):
+  - `Contract` instead of "title" (translation of the French "titre de transport") for the contracts of the card:
+    `ContractsRecyclerAdapter`, `contract_recycler_row.xml`, `contractsList`, and in the reloading Android client
+    `Contract`, `UiContract`, `ContractMapper` and `ContractUiMapper` (`CardTitle`, `UiCardTitle`...);
+  - `Product` and `ProductType` (values `MULTI_TRIP` and `SEASON_PASS`) for the products sold by the KMP client
+    (`Title`, `TitleType` with `SINGLE` and `SEASON`), loaded through the `LoadContract` route (`WriteTitleCard`);
+  - `remainingTrips` and `tripsToLoad` for the trips of a multi-trip contract (`nbTicketsLeft`, `ticketsToLoad`), also
+    in the JSON API (`tripsToLoad` instead of `ticketToLoad`) and `name` instead of `title` for the contracts
+    returned to the KMP client;
+  - `TerminalType` instead of `ReaderType` (terminal running the application), and in the reloading Android client
+    `CardMedium` and `CardMediumVisibility` instead of `DeviceType` and `DeviceVisibility` (contactless card, SIM...);
+    the card medium is saved under a new key of the settings (`card_medium`);
+  - `UserFeedback` instead of `UiManager` (sounds and LEDs of the terminal) in the control and validation apps;
+  - control app: invalid card screen `InvalidCardActivity` instead of `NetworkInvalidActivity`;
+  - texts displayed: "ticket" instead of "title" (e.g. "Buy ticket", "Ticket loaded", "No valid ticket detected").
 - Android applications: the empty `themes.xml` files are removed. The control app defines its `AppTheme` theme (same
   appearance), applied to the whole application instead of being repeated on each activity.
 - Android applications and KMP client: Jetifier is disabled, no library requiring it anymore (Dagger `2.25` and the
@@ -131,7 +146,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 #### Added
 - Anti-passback check for storage cards: a card presented again within the anti-passback delay is rejected.
 #### Changed
-- The user feedback (sounds, LEDs) is provided by the dedicated `UiManager` port instead of `ReaderManager`. The Arrive
+- The user feedback (sounds, LEDs) is provided by the dedicated `UserFeedback` port instead of `ReaderManager`. The Arrive
   and Android implementations are renamed `ArriveFeedbackDevice` and `AndroidFeedbackDevice`.
 - The settings are accessed through the `AppSettingsRepository` port instead of the global `AppSettings` object.
 - The UI uses the domain models directly (UI models removed, as no object is passed between activities).
@@ -154,7 +169,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The locations are provided by the `common` library (local `locations.json` file removed), and are displayed by their
   name only.
 - The SAM selection no longer filters the SAM on its power-on data (SAM C1).
-- The user feedback (sounds) is provided by the `UiManager` port, and the settings are accessed through the
+- The user feedback (sounds) is provided by the `UserFeedback` port, and the settings are accessed through the
   `AppSettingsRepository` port.
 - `ReaderManager.clear()` is no longer part of the port, being only used by its implementation (as in the other
   applications).
@@ -175,11 +190,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   management is moved from the activities to `ReaderManagerImpl`, and the remote services are called through the
   `RemoteServiceManager` port.
 - The business logic is moved from the activities to the domain: card selection (AIDs depending on the device),
-  interpretation of the server status codes, building of the card titles and check that the reloaded card is the one
+  interpretation of the server status codes, building of the contracts and check that the reloaded card is the one
   read before. The activities no longer handle the Keypop card types.
 - The settings and the server status are accessed through the `AppSettingsRepository` and `ServerStatusProvider` ports,
   instead of the shared preferences and the REST client.
-- The texts displayed by the activities (error messages, contract titles and descriptions, server settings checks) are
+- The texts displayed by the activities (error messages, contract names and descriptions, server settings checks) are
   defined as string resources instead of being hardcoded.
 - The REST client uses synchronous Retrofit calls instead of RxJava, and the server status indicator is updated by the
   coroutine requesting the status instead of an EventBus event.

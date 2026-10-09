@@ -10,20 +10,18 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.di
+package org.calypsonet.keyple.demo.reload.remote.domain.model
 
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
-import org.calypsonet.keyple.demo.control.data.UiManagerImpl
-import org.calypsonet.keyple.demo.control.domain.spi.UiManager
+import java.time.LocalDate
+import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 
-@Suppress("unused")
-@Module
-@InstallIn(SingletonComponent::class)
-class UiManagerModule {
-
-  @Provides @Singleton fun provideUiManager(): UiManager = UiManagerImpl()
-}
+/** Contract present in the card. */
+data class Contract(
+    val contractTariff: PriorityCode,
+    /** Number of remaining trips of a multi-trip contract, null if there is no counter. */
+    val counterValue: Int?,
+    val saleDate: LocalDate,
+    val validityEndDate: LocalDate,
+    /** Indicates whether the contract can currently be used. */
+    val isValid: Boolean
+)

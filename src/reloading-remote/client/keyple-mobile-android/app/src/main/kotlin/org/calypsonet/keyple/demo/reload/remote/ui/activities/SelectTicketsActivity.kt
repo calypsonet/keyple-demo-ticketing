@@ -66,7 +66,7 @@ class SelectTicketsActivity : BaseActivity() {
     val intent = Intent(this, CheckoutActivity::class.java)
     intent.putExtra(SELECTED_TICKET_PRIORITY_CODE, priorityCode.key)
     if (ticketNumber != null) {
-      intent.putExtra(TICKETS_NUMBER, ticketNumber)
+      intent.putExtra(TRIPS_TO_LOAD, ticketNumber)
     }
     getIntent().getStringExtra(BaseCardActivity.CARD_APPLICATION_NUMBER)?.let {
       intent.putExtra(BaseCardActivity.CARD_APPLICATION_NUMBER, it)
@@ -77,6 +77,6 @@ class SelectTicketsActivity : BaseActivity() {
 
   companion object {
     const val SELECTED_TICKET_PRIORITY_CODE = "SELECTED_TICKET_PRIORITY_CODE"
-    const val TICKETS_NUMBER = "TICKETS_NUMBER"
+    const val TRIPS_TO_LOAD = "TRIPS_TO_LOAD"
   }
 }

@@ -54,7 +54,7 @@ class CalypsoCardValidationManager(private val keypopApiProvider: KeypopApiProvi
     var errorMessage: String? = null
     val cardTransaction: SecureRegularModeTransactionManager?
     var passValidityEndDate: LocalDate? = null
-    var nbTicketsLeft: Int? = null
+    var remainingTrips: Int? = null
     var validationData: ValidationData? = null
 
     val calypsoCardApiFactory = keypopApiProvider.getCalypsoCardApiFactory()
@@ -233,7 +233,7 @@ class CalypsoCardValidationManager(private val keypopApiProvider: KeypopApiProvi
             val decrement = calculateDecrementAmount(contractPriority)
             if (decrement > 0) {
               cardTransaction.prepareDecreaseCounter(CardConstants.SFI_COUNTERS, record, decrement)
-              nbTicketsLeft = counterValue - decrement
+              remainingTrips = counterValue - decrement
             }
           } else if (contractPriority == PriorityCode.SEASON_PASS) {
             passValidityEndDate = contract.contractValidityEndDate.getDate()
@@ -285,7 +285,7 @@ class CalypsoCardValidationManager(private val keypopApiProvider: KeypopApiProvi
           cardTransaction.prepareUpdateRecord(CardConstants.SFI_EVENTS_LOG, 1, eventBytesToWrite)
         } else {
           if (errorMessage.isNullOrEmpty()) {
-            errorMessage = ERROR_NO_VALID_TITLE_DETECTED
+            errorMessage = ERROR_NO_VALID_CONTRACT_DETECTED
           }
         }
       } catch (e: ValidationException) {
@@ -324,7 +324,7 @@ class CalypsoCardValidationManager(private val keypopApiProvider: KeypopApiProvi
     return ValidationResult(
         status = status,
         cardType = CARD_TYPE_CALYPSO_PREFIX + HexUtil.toHex(calypsoCard.dfName),
-        nbTicketsLeft = nbTicketsLeft,
+        remainingTrips = remainingTrips,
         contract = EMPTY_CONTRACT,
         validationData = validationData,
         errorMessage = errorMessage,

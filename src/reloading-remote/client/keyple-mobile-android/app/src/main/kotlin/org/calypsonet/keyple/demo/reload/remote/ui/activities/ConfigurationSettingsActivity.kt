@@ -19,8 +19,8 @@ import androidx.core.content.ContextCompat
 import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityConfigurationSettingsBinding
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceType
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceVisibility
+import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
+import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMediumVisibility
 
 @AndroidEntryPoint
 class ConfigurationSettingsActivity : BaseActivity() {
@@ -37,53 +37,53 @@ class ConfigurationSettingsActivity : BaseActivity() {
       onBackPressedDispatcher.onBackPressed()
     }
 
-    DeviceType.values().forEach { updateRadioButtons(it) }
+    CardMedium.values().forEach { updateRadioButtons(it) }
   }
 
   fun onContactlessRadioButtonClicked(view: View) =
-      onRadioButtonClicked(view, DeviceType.CONTACTLESS_CARD)
+      onRadioButtonClicked(view, CardMedium.CONTACTLESS_CARD)
 
-  fun onSimRadioButtonClicked(view: View) = onRadioButtonClicked(view, DeviceType.SIM)
+  fun onSimRadioButtonClicked(view: View) = onRadioButtonClicked(view, CardMedium.SIM)
 
-  fun onWearableRadioButtonClicked(view: View) = onRadioButtonClicked(view, DeviceType.WEARABLE)
+  fun onWearableRadioButtonClicked(view: View) = onRadioButtonClicked(view, CardMedium.WEARABLE)
 
-  fun onEmbeddedRadioButtonClicked(view: View) = onRadioButtonClicked(view, DeviceType.EMBEDDED)
+  fun onEmbeddedRadioButtonClicked(view: View) = onRadioButtonClicked(view, CardMedium.EMBEDDED)
 
-  private fun onRadioButtonClicked(view: View, device: DeviceType) {
+  private fun onRadioButtonClicked(view: View, cardMedium: CardMedium) {
     if (view !is RadioButton) {
       return
     }
     if (view.isChecked) {
-      val (enableBtn, disableBtn, _) = radioButtons(device)
-      appSettings.setDeviceVisibility(
-          device,
+      val (enableBtn, disableBtn, _) = radioButtons(cardMedium)
+      appSettings.setCardMediumVisibility(
+          cardMedium,
           when (view) {
-            enableBtn -> DeviceVisibility.ENABLE
-            disableBtn -> DeviceVisibility.DISABLE
-            else -> DeviceVisibility.HIDE
+            enableBtn -> CardMediumVisibility.ENABLE
+            disableBtn -> CardMediumVisibility.DISABLE
+            else -> CardMediumVisibility.HIDE
           })
     }
-    updateRadioButtons(device)
+    updateRadioButtons(cardMedium)
   }
 
-  /** Returns the "enable", "disable" and "hide" radio buttons of the given device type. */
-  private fun radioButtons(device: DeviceType): Triple<RadioButton, RadioButton, RadioButton> =
+  /** Returns the "enable", "disable" and "hide" radio buttons of the given card medium. */
+  private fun radioButtons(cardMedium: CardMedium): Triple<RadioButton, RadioButton, RadioButton> =
       with(activityConfigurationSettingsBinding) {
-        when (device) {
-          DeviceType.CONTACTLESS_CARD ->
+        when (cardMedium) {
+          CardMedium.CONTACTLESS_CARD ->
               Triple(contactlessCardEnable, contactlessCardDisable, contactlessCardHide)
-          DeviceType.SIM -> Triple(simCardEnable, simCardDisable, simCardHide)
-          DeviceType.WEARABLE -> Triple(wearableCardEnable, wearableCardDisable, wearableCardHide)
-          DeviceType.EMBEDDED -> Triple(embeddedCardEnable, embeddedCardDisable, embeddedCardHide)
+          CardMedium.SIM -> Triple(simCardEnable, simCardDisable, simCardHide)
+          CardMedium.WEARABLE -> Triple(wearableCardEnable, wearableCardDisable, wearableCardHide)
+          CardMedium.EMBEDDED -> Triple(embeddedCardEnable, embeddedCardDisable, embeddedCardHide)
         }
       }
 
-  private fun updateRadioButtons(device: DeviceType) {
-    val visibility = appSettings.getDeviceVisibility(device)
-    val (enableBtn, disableBtn, hideBtn) = radioButtons(device)
-    setRadioButtonChecked(enableBtn, visibility == DeviceVisibility.ENABLE)
-    setRadioButtonChecked(disableBtn, visibility == DeviceVisibility.DISABLE)
-    setRadioButtonChecked(hideBtn, visibility == DeviceVisibility.HIDE)
+  private fun updateRadioButtons(cardMedium: CardMedium) {
+    val visibility = appSettings.getCardMediumVisibility(cardMedium)
+    val (enableBtn, disableBtn, hideBtn) = radioButtons(cardMedium)
+    setRadioButtonChecked(enableBtn, visibility == CardMediumVisibility.ENABLE)
+    setRadioButtonChecked(disableBtn, visibility == CardMediumVisibility.DISABLE)
+    setRadioButtonChecked(hideBtn, visibility == CardMediumVisibility.HIDE)
   }
 
   private fun setRadioButtonChecked(radioButton: RadioButton, checked: Boolean) {

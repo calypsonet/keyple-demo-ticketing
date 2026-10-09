@@ -22,8 +22,8 @@ import androidx.core.view.updatePadding
 import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityHomeBinding
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceType
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceVisibility
+import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
+import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMediumVisibility
 
 @AndroidEntryPoint
 class HomeActivity : BaseActivity() {
@@ -55,33 +55,33 @@ class HomeActivity : BaseActivity() {
 
   override fun onResume() {
     super.onResume()
-    setupBtn(activityHomeBinding.contactlessCardBtn, DeviceType.CONTACTLESS_CARD)
-    setupBtn(activityHomeBinding.simCardBtn, DeviceType.SIM)
-    setupBtn(activityHomeBinding.wearableBtn, DeviceType.WEARABLE)
-    setupBtn(activityHomeBinding.embeddedElemBtn, DeviceType.EMBEDDED)
+    setupBtn(activityHomeBinding.contactlessCardBtn, CardMedium.CONTACTLESS_CARD)
+    setupBtn(activityHomeBinding.simCardBtn, CardMedium.SIM)
+    setupBtn(activityHomeBinding.wearableBtn, CardMedium.WEARABLE)
+    setupBtn(activityHomeBinding.embeddedElemBtn, CardMedium.EMBEDDED)
   }
 
-  private fun setupBtn(btn: View, type: DeviceType) {
+  private fun setupBtn(btn: View, type: CardMedium) {
     btn.setOnClickListener {
-      appSettings.deviceType = type
+      appSettings.cardMedium = type
       if (intent.getBooleanExtra(CHOOSE_DEVICE_FOR_PERSO, false)) {
         intent.putExtras(intent)
         startActivity(Intent(this, PersonalizationActivity::class.java))
         this.finish()
       } else startActivity(Intent(this, CardReaderActivity::class.java))
     }
-    when (appSettings.getDeviceVisibility(type)) {
-      DeviceVisibility.ENABLE -> {
+    when (appSettings.getCardMediumVisibility(type)) {
+      CardMediumVisibility.ENABLE -> {
         btn.visibility = View.VISIBLE
         btn.background = ContextCompat.getDrawable(this, R.drawable.white_card)
         btn.isEnabled = true
       }
-      DeviceVisibility.DISABLE -> {
+      CardMediumVisibility.DISABLE -> {
         btn.visibility = View.VISIBLE
         btn.background = ContextCompat.getDrawable(this, R.drawable.grey_card)
         btn.isEnabled = false
       }
-      DeviceVisibility.HIDE -> {
+      CardMediumVisibility.HIDE -> {
         btn.visibility = View.GONE
       }
     }

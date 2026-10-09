@@ -452,7 +452,7 @@ public class CardService {
         appSerialNumber,
         calypsoCard.getProductType(),
         inputData.getContractTariff(),
-        inputData.getTicketToLoad());
+        inputData.getTripsToLoad());
 
     CardResource samResource =
         CardResourceServiceProvider.getService()
@@ -460,7 +460,7 @@ public class CardService {
     try {
       Card card = cardRepository.readCard(cardReader, calypsoCard, samResource);
       // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
-      insertNewContract(inputData.getContractTariff(), inputData.getTicketToLoad(), card);
+      insertNewContract(inputData.getContractTariff(), inputData.getTripsToLoad(), card);
       int statusCode = cardRepository.writeCard(cardReader, calypsoCard, samResource, card);
       activityService.push(
           new Activity()
@@ -470,8 +470,8 @@ public class CardService {
               .setCardSerialNumber(appSerialNumber)
               .setContractLoaded(
                   inputData.getContractTariff().toString().replace("_", " ")
-                      + ((inputData.getTicketToLoad() != 0)
-                          ? ": " + inputData.getTicketToLoad()
+                      + ((inputData.getTripsToLoad() != 0)
+                          ? ": " + inputData.getTripsToLoad()
                           : "")));
       return new WriteContractOutputDto(statusCode);
     } catch (CardCommunicationException e) {
@@ -511,7 +511,7 @@ public class CardService {
         cardUID,
         storageCard.getProductType(),
         inputData.getContractTariff(),
-        inputData.getTicketToLoad());
+        inputData.getTripsToLoad());
 
     // SAM is not currently used for Storage Cards but may be needed in the future
     // for crypto operations (contract verification, authentication, etc.)
@@ -522,7 +522,7 @@ public class CardService {
     try {
       Card card = cardRepository.readCard(cardReader, storageCard, samResource);
       // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
-      insertNewContract(inputData.getContractTariff(), inputData.getTicketToLoad(), card);
+      insertNewContract(inputData.getContractTariff(), inputData.getTripsToLoad(), card);
       int statusCode = cardRepository.writeCard(cardReader, storageCard, samResource, card);
       activityService.push(
           new Activity()
@@ -532,8 +532,8 @@ public class CardService {
               .setCardSerialNumber(cardUID)
               .setContractLoaded(
                   inputData.getContractTariff().toString().replace("_", " ")
-                      + ((inputData.getTicketToLoad() != 0)
-                          ? ": " + inputData.getTicketToLoad()
+                      + ((inputData.getTripsToLoad() != 0)
+                          ? ": " + inputData.getTripsToLoad()
                           : "")));
       return new WriteContractOutputDto(statusCode);
     } catch (CardCommunicationException e) {
@@ -733,12 +733,12 @@ public class CardService {
         outputData2.getValidContracts().stream()
             .map(
                 contract -> {
-                  String title;
+                  String name;
                   String description;
                   boolean isValid;
                   switch (contract.getContractTariff()) {
                     case MULTI_TRIP:
-                      title = "Multi trip";
+                      name = "Multi trip";
                       description =
                           contract.getCounterValue() != null
                               ? contract.getCounterValue() + " trip(s) left"
@@ -747,7 +747,7 @@ public class CardService {
                           contract.getCounterValue() != null && contract.getCounterValue() >= 1;
                       break;
                     case SEASON_PASS:
-                      title = "Season pass";
+                      name = "Season pass";
                       description =
                           "From\n"
                               + contract.getContractSaleDate().getDate().format(dateTimeFormatter)
@@ -764,7 +764,7 @@ public class CardService {
                                   || contract.getContractValidityEndDate().getDate().isEqual(now));
                       break;
                     case EXPIRED:
-                      title = "Season pass - Expired";
+                      name = "Season pass - Expired";
                       description =
                           "From\n"
                               + contract.getContractSaleDate().getDate().format(dateTimeFormatter)
@@ -776,18 +776,18 @@ public class CardService {
                       isValid = false;
                       break;
                     case FORBIDDEN:
-                      title = "FORBIDDEN";
+                      name = "FORBIDDEN";
                       description = "";
                       isValid = false;
                       break;
                     default:
-                      title = "UNKNOWN";
+                      name = "UNKNOWN";
                       description = "";
                       isValid = false;
                       break;
                   }
                   return new SelectAppAndAnalyzeContractsOutputDto.ContractInfo(
-                      title, description, isValid);
+                      name, description, isValid);
                 })
             .collect(Collectors.toList());
 
@@ -877,7 +877,7 @@ public class CardService {
     // Write contract
     WriteContractInputDto inputData2 =
         new WriteContractInputDto(
-            inputData.getContractTariff(), inputData.getTicketToLoad(), pluginType);
+            inputData.getContractTariff(), inputData.getTripsToLoad(), pluginType);
     WriteContractOutputDto outputData2 = writeContract(cardReader, calypsoCard, inputData2);
 
     // Build result
@@ -1028,7 +1028,7 @@ public class CardService {
     return validContracts;
   }
 
-  private void insertNewContract(PriorityCode contractTariff, Integer ticketToLoad, Card card) {
+  private void insertNewContract(PriorityCode contractTariff, Integer tripsToLoad, Card card) {
 
     if (contractTariff != PriorityCode.SEASON_PASS && contractTariff != PriorityCode.MULTI_TRIP) {
       throw new IllegalArgumentException(ONLY_SEASON_PASS_OR_MULTI_TRIP_TICKET_CAN_BE_LOADED);
@@ -1052,7 +1052,7 @@ public class CardService {
       if (PriorityCode.MULTI_TRIP == contractTariff) {
         newContract =
             buildMultiTripContract(
-                environment.getEnvEndDate(), currentContract.getCounterValue() + ticketToLoad);
+                environment.getEnvEndDate(), currentContract.getCounterValue() + tripsToLoad);
       } else {
         newContract = buildSeasonContract();
       }
@@ -1065,7 +1065,7 @@ public class CardService {
           contractTariff);
       // build new contract
       if (PriorityCode.MULTI_TRIP == contractTariff) {
-        newContract = buildMultiTripContract(environment.getEnvEndDate(), ticketToLoad);
+        newContract = buildMultiTripContract(environment.getEnvEndDate(), tripsToLoad);
       } else {
         newContract = buildSeasonContract();
       }
@@ -1078,7 +1078,7 @@ public class CardService {
       }
       // build new contract
       if (PriorityCode.MULTI_TRIP == contractTariff) {
-        newContract = buildMultiTripContract(environment.getEnvEndDate(), ticketToLoad);
+        newContract = buildMultiTripContract(environment.getEnvEndDate(), tripsToLoad);
       } else {
         newContract = buildSeasonContract();
       }

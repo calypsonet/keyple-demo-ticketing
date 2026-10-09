@@ -236,7 +236,7 @@ class StorageCardControlManager(
         }
 
         // Step 18 - If the ContractTariff value for the contract is 2, extract the counter-value.
-        val nbTicketsLeft =
+        val remainingTrips =
             if (contract.contractTariff == PriorityCode.MULTI_TRIP) {
               contract.counterValue
             } else {
@@ -251,7 +251,7 @@ class StorageCardControlManager(
                 contractExpired = contractExpired,
                 contractValidated = contractValidated,
                 validationDateTime = validationDateTime,
-                nbTicketsLeft = nbTicketsLeft))
+                remainingTrips = remainingTrips))
       }
 
       logger.i("Control procedure result: STATUS_OK")
@@ -270,7 +270,7 @@ class StorageCardControlManager(
           status = status,
           authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
           lastValidationsList = validationList,
-          titlesList = displayedContract)
+          contractsList = displayedContract)
     } catch (e: Exception) {
       logger.e("Error during control procedure: ${storageCard.productType.name}", e)
       errorMessage = e.message
@@ -307,7 +307,7 @@ class StorageCardControlManager(
     return ControlResult(
         status = status,
         authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
-        titlesList = arrayListOf(),
+        contractsList = arrayListOf(),
         errorTitle = errorTitle,
         errorMessage = errorMessage)
   }

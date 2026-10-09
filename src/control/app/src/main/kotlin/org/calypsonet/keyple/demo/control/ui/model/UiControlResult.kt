@@ -22,7 +22,7 @@ data class UiControlResult(
     val status: Status,
     val authenticationMode: AuthenticationMode,
     val lastValidationsList: ArrayList<UiValidation>? = null,
-    val titlesList: ArrayList<UiContract>,
+    val contractsList: ArrayList<UiContract>,
     val errorTitle: String? = null,
     val errorMessage: String? = null
 ) : Parcelable

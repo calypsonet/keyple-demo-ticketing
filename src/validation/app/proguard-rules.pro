@@ -36,7 +36,7 @@
 -dontwarn com.bluebird.payment.sam.SamInterface
 -dontwarn org.eclipse.keyple.core.plugin.storagecard.internal.KeyStorageType
 
-# Keep Parkeon SDK classes used by ArriveUiManager
+# Keep Parkeon SDK classes used by ArriveFeedbackDevice
 -keep class com.parkeon.app.ui.UiManager { *; }
 -keep interface com.parkeon.system.LedInterface { *; }
 -keep interface com.parkeon.sound.SoundManager { *; }

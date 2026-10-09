@@ -19,13 +19,13 @@ import org.calypsonet.keyple.demo.common.dto.CardIssuanceInputDto
 import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
 import org.calypsonet.keyple.demo.common.dto.WriteContractInputDto
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
-import org.calypsonet.keyple.demo.reload.remote.domain.mappers.toCardTitle
+import org.calypsonet.keyple.demo.reload.remote.domain.mappers.toContract
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardInfo
+import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardOperationResult
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocol
-import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceType
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ReadContractsResult
-import org.calypsonet.keyple.demo.reload.remote.domain.model.ReaderType
+import org.calypsonet.keyple.demo.reload.remote.domain.model.TerminalType
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.ReaderManager
@@ -44,7 +44,7 @@ import org.eclipse.keypop.storagecard.card.ProductType.ST25_SRT512
 import org.eclipse.keypop.storagecard.card.StorageCard
 
 /**
- * Entry point of the UI: manages the reader of the selected device, and executes the remote
+ * Entry point of the UI: manages the reader of the selected card medium, and executes the remote
  * ticketing services (contracts reading, reload, personalization) on the presented card.
  */
 class TicketingService(
@@ -72,10 +72,10 @@ class TicketingService(
   private var aids: List<ByteArray> = emptyList()
 
   /**
-   * Initializes the reader of the given device.
+   * Initializes the reader of the given card medium.
    *
-   * @param readerType The type of terminal.
-   * @param deviceType The type of device (contactless card, SIM...) to read.
+   * @param terminalType The type of terminal.
+   * @param cardMedium The card medium (contactless card, SIM...) to read.
    * @param uiContext Platform-specific context used to register the plugins.
    * @param observer Optional observer of the card reader events (contactless cards only).
    * @param readerObservationExceptionHandler Optional handler of the reader observation errors.
@@ -83,18 +83,18 @@ class TicketingService(
    *   registration of the OMAPI plugin).
    */
   fun init(
-      readerType: ReaderType,
-      deviceType: DeviceType,
+      terminalType: TerminalType,
+      cardMedium: CardMedium,
       uiContext: UiContext,
       observer: CardReaderObserverSpi?,
       readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi?,
       callback: (() -> Unit)?
   ) {
-    readerName = readerManager.getReaderName(readerType, deviceType)
-    pluginType = getPluginType(readerType, deviceType)
-    aids = getAids(deviceType)
+    readerName = readerManager.getReaderName(terminalType, cardMedium)
+    pluginType = getPluginType(terminalType, cardMedium)
+    aids = getAids(cardMedium)
 
-    readerManager.registerPlugin(readerType, uiContext, deviceType, callback)
+    readerManager.registerPlugin(terminalType, uiContext, cardMedium, callback)
     readerManager.initCardReader(observer, readerObservationExceptionHandler)
 
     areReadersInitialized = true
@@ -138,11 +138,11 @@ class TicketingService(
             readerName, smartCard, AnalyzeContractsInputDto(pluginType))
     val status = RemoteServiceStatus.fromCode(output.statusCode)
     val today = LocalDate.now()
-    val titles =
+    val contracts =
         if (status == RemoteServiceStatus.SUCCESS)
-            output.validContracts.map { it.toCardTitle(today) }
+            output.validContracts.map { it.toContract(today) }
         else emptyList()
-    return ReadContractsResult(smartCard.toCardInfo(), status, titles)
+    return ReadContractsResult(smartCard.toCardInfo(), status, contracts)
   }
 
   /**
@@ -150,7 +150,7 @@ class TicketingService(
    *
    * @param expectedSerialNumber Serial number of the card for which the contract has been bought.
    * @param contractTariff The contract to load.
-   * @param ticketsToLoad The number of trips to load (multi-trip contract).
+   * @param tripsToLoad The number of trips to load (multi-trip contract).
    * @return The result of the operation, with the status [RemoteServiceStatus.DIFFERENT_CARD] if
    *   the presented card is not the one for which the contract has been bought.
    * @throws IllegalStateException If no supported card is selected.
@@ -158,7 +158,7 @@ class TicketingService(
   fun reloadCard(
       expectedSerialNumber: String?,
       contractTariff: PriorityCode,
-      ticketsToLoad: Int
+      tripsToLoad: Int
   ): CardOperationResult {
     val smartCard = selectCard()
     val card = smartCard.toCardInfo()
@@ -171,7 +171,7 @@ class TicketingService(
         readerName, smartCard, AnalyzeContractsInputDto(pluginType))
     val output =
         remoteServiceManager.writeContract(
-            readerName, smartCard, WriteContractInputDto(contractTariff, ticketsToLoad, pluginType))
+            readerName, smartCard, WriteContractInputDto(contractTariff, tripsToLoad, pluginType))
     return CardOperationResult(card, RemoteServiceStatus.fromCode(output.statusCode))
   }
 
@@ -246,27 +246,29 @@ class TicketingService(
         else -> throw IllegalStateException("Unexpected card type")
       }
 
-  /** Returns the plugin type reported to the server, depending on the terminal and the device. */
-  private fun getPluginType(readerType: ReaderType, deviceType: DeviceType): String =
-      when (deviceType) {
-        DeviceType.CONTACTLESS_CARD ->
-            if (readerType == ReaderType.BLUEBIRD) "Bluebird" else "Android NFC"
-        DeviceType.SIM -> "Android OMAPI"
-        DeviceType.WEARABLE -> "Android WEARABLE"
-        DeviceType.EMBEDDED -> "Android EMBEDDED"
+  /**
+   * Returns the plugin type reported to the server, depending on the terminal and the card medium.
+   */
+  private fun getPluginType(terminalType: TerminalType, cardMedium: CardMedium): String =
+      when (cardMedium) {
+        CardMedium.CONTACTLESS_CARD ->
+            if (terminalType == TerminalType.BLUEBIRD) "Bluebird" else "Android NFC"
+        CardMedium.SIM -> "Android OMAPI"
+        CardMedium.WEARABLE -> "Android WEARABLE"
+        CardMedium.EMBEDDED -> "Android EMBEDDED"
       }
 
-  /** Returns the AIDs of the Calypso applications to select, depending on the device. */
-  private fun getAids(deviceType: DeviceType): List<ByteArray> =
-      when (deviceType) {
-        DeviceType.CONTACTLESS_CARD ->
+  /** Returns the AIDs of the Calypso applications to select, depending on the card medium. */
+  private fun getAids(cardMedium: CardMedium): List<ByteArray> =
+      when (cardMedium) {
+        CardMedium.CONTACTLESS_CARD ->
             listOf(
                 CardConstants.AID_KEYPLE_GENERIC,
                 CardConstants.AID_CD_LIGHT_GTML,
                 CardConstants.AID_CALYPSO_LIGHT,
                 CardConstants.AID_NORMALIZED_IDF)
-        DeviceType.SIM -> listOf(CardConstants.AID_CD_LIGHT_GTML, CardConstants.AID_NORMALIZED_IDF)
-        DeviceType.WEARABLE,
-        DeviceType.EMBEDDED -> listOf(CardConstants.AID_CD_LIGHT_GTML)
+        CardMedium.SIM -> listOf(CardConstants.AID_CD_LIGHT_GTML, CardConstants.AID_NORMALIZED_IDF)
+        CardMedium.WEARABLE,
+        CardMedium.EMBEDDED -> listOf(CardConstants.AID_CD_LIGHT_GTML)
       }
 }

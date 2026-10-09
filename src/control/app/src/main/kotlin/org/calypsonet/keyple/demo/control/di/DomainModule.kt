@@ -24,7 +24,7 @@ import org.calypsonet.keyple.demo.control.domain.spi.AppSettingsRepository
 import org.calypsonet.keyple.demo.control.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.control.domain.spi.Logger
 import org.calypsonet.keyple.demo.control.domain.spi.ReaderManager
-import org.calypsonet.keyple.demo.control.domain.spi.UiManager
+import org.calypsonet.keyple.demo.control.domain.spi.UserFeedback
 
 /** Provides the domain services, which carry no dependency injection annotation. */
 @Suppress("unused")
@@ -52,7 +52,7 @@ class DomainModule {
       keypopApiProvider: KeypopApiProvider,
       appSettings: AppSettingsRepository,
       readerManager: ReaderManager,
-      uiManager: UiManager,
+      userFeedback: UserFeedback,
       logger: Logger,
       calypsoCardControlManager: CalypsoCardControlManager,
       storageCardControlManager: StorageCardControlManager
@@ -61,7 +61,7 @@ class DomainModule {
           keypopApiProvider,
           appSettings,
           readerManager,
-          uiManager,
+          userFeedback,
           logger,
           calypsoCardControlManager,
           storageCardControlManager)
