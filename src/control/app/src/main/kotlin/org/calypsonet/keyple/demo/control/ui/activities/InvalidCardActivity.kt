@@ -36,7 +36,6 @@ class InvalidCardActivity : BaseActivity() {
     toolbarBinding.toolbarLogo.setImageResource(R.drawable.ic_logo_white)
     val cardContent: UiControlResult? =
         IntentCompat.getParcelableExtra(intent, CARD_CONTENT, UiControlResult::class.java)
-    cardContent?.errorTitle?.let { activityInvalidCardBinding.invalidTitle.text = it }
     activityInvalidCardBinding.invalidDescription.text = cardContent?.errorMessage
     activityInvalidCardBinding.presentBtn.setOnClickListener {
       onBackPressedDispatcher.onBackPressed()

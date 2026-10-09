@@ -88,7 +88,7 @@ class ReloadActivity : BaseCardActivity() {
         if (result.status == RemoteServiceStatus.SUCCESS) {
           runOnUiThread {
             changeDisplay(
-                UiCardReaderResponse(Status.SUCCESS, result.card.description, arrayListOf()),
+                UiCardReaderResponse(Status.SUCCESS, result.card.description, emptyList()),
                 finishActivity = true)
           }
         } else {

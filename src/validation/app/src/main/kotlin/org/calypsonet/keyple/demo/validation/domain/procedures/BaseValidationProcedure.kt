@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.domain.managers
+package org.calypsonet.keyple.demo.validation.domain.procedures
 
 import java.time.Duration
 import java.time.LocalDate
@@ -19,8 +19,8 @@ import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 import org.calypsonet.keyple.demo.validation.domain.model.Status
 
-/** Base class for card validation managers. */
-abstract class BaseValidationManager {
+/** Base class of the validation procedures, with the business rules common to them. */
+abstract class BaseValidationProcedure : ValidationProcedure {
 
   companion object {
 

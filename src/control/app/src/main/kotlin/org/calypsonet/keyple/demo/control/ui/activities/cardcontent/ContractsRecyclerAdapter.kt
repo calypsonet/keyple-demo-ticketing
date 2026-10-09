@@ -22,7 +22,7 @@ import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.databinding.ContractRecyclerRowBinding
 import org.calypsonet.keyple.demo.control.ui.model.UiContract
 
-class ContractsRecyclerAdapter(private val contracts: ArrayList<UiContract>) :
+class ContractsRecyclerAdapter(private val contracts: List<UiContract>) :
     RecyclerView.Adapter<ContractsRecyclerAdapter.ContractHolder>() {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContractHolder {

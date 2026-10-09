@@ -10,16 +10,14 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.domain.managers
+package org.calypsonet.keyple.demo.validation.domain.procedures
 
 import java.time.LocalDate
-import java.time.LocalDateTime
 import org.calypsonet.keyple.demo.common.codecs.CalypsoContractCodec
 import org.calypsonet.keyple.demo.common.codecs.CalypsoEnvironmentHolderCodec
 import org.calypsonet.keyple.demo.common.codecs.CalypsoEventCodec
 import org.calypsonet.keyple.demo.common.constants.CalypsoFiles
 import org.calypsonet.keyple.demo.common.model.EventStructure
-import org.calypsonet.keyple.demo.common.model.Location
 import org.calypsonet.keyple.demo.common.model.type.DateCompact
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.TimeCompact
@@ -33,22 +31,23 @@ import org.eclipse.keyple.core.util.HexUtil
 import org.eclipse.keypop.calypso.card.WriteAccessLevel
 import org.eclipse.keypop.calypso.card.card.CalypsoCard
 import org.eclipse.keypop.calypso.card.transaction.SecureRegularModeTransactionManager
-import org.eclipse.keypop.calypso.card.transaction.SymmetricCryptoSecuritySetting
 import org.eclipse.keypop.reader.CardCommunicationException
-import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ChannelControl
+import org.eclipse.keypop.reader.selection.spi.SmartCard
 
-class CalypsoCardValidationManager(private val keypopApiProvider: KeypopApiProvider) :
-    BaseValidationManager() {
+class CalypsoCardValidationProcedure(private val keypopApiProvider: KeypopApiProvider) :
+    BaseValidationProcedure() {
 
-  fun executeValidationProcedure(
-      validationDateTime: LocalDateTime,
-      cardReader: CardReader,
-      calypsoCard: CalypsoCard,
-      cardSecuritySettings: SymmetricCryptoSecuritySetting,
-      locations: List<Location>,
-      validationLocation: Location
-  ): ValidationResult {
+  override fun supports(card: SmartCard): Boolean = card is CalypsoCard
+
+  override fun execute(context: ValidationContext): ValidationResult {
+    val validationDateTime = context.dateTime
+    val cardReader = context.cardReader
+    val calypsoCard = context.card as CalypsoCard
+    val cardSecuritySettings =
+        checkNotNull(context.cardSecuritySetting) { "No SAM available for the Calypso cards" }
+    val locations = context.locations
+    val validationLocation = context.location
 
     var status: Status = Status.PROCESSING
     var errorMessage: String? = null

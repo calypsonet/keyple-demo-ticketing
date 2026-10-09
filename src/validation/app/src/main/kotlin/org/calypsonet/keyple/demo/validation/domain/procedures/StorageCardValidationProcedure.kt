@@ -10,17 +10,15 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.domain.managers
+package org.calypsonet.keyple.demo.validation.domain.procedures
 
 import java.time.LocalDate
-import java.time.LocalDateTime
 import org.calypsonet.keyple.demo.common.codecs.StorageCardContractCodec
 import org.calypsonet.keyple.demo.common.codecs.StorageCardEnvironmentHolderCodec
 import org.calypsonet.keyple.demo.common.codecs.StorageCardEventCodec
 import org.calypsonet.keyple.demo.common.constants.MifareClassicBlocks
 import org.calypsonet.keyple.demo.common.constants.StorageCardBlocks
 import org.calypsonet.keyple.demo.common.model.EventStructure
-import org.calypsonet.keyple.demo.common.model.Location
 import org.calypsonet.keyple.demo.common.model.type.DateCompact
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.TimeCompact
@@ -31,8 +29,8 @@ import org.calypsonet.keyple.demo.validation.domain.model.ValidationData
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
 import org.calypsonet.keyple.demo.validation.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.validation.domain.spi.Logger
-import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ChannelControl
+import org.eclipse.keypop.reader.selection.spi.SmartCard
 import org.eclipse.keypop.storagecard.MifareClassicKeyType
 import org.eclipse.keypop.storagecard.SCCardCommunicationException
 import org.eclipse.keypop.storagecard.card.ProductType
@@ -50,10 +48,12 @@ import org.eclipse.keypop.storagecard.card.StorageCard
  * - MIFARE Ultralight/ST25 SRT512: blocks 4-7 (Env), 8-11 (Contract), 12-15 (Event) [4 bytes each]
  * - Mifare Classic 1K: blocks 4 (Env), 5 (Contract), 6 (Event) [16 bytes each, sector 1]
  */
-class StorageCardValidationManager(
+class StorageCardValidationProcedure(
     private val keypopApiProvider: KeypopApiProvider,
     private val logger: Logger
-) : BaseValidationManager() {
+) : BaseValidationProcedure() {
+
+  override fun supports(card: SmartCard): Boolean = card is StorageCard
 
   /**
    * Formats the card ProductType for user display. Examples: MIFARE_CLASSIC_1K → "Mifare Classic
@@ -71,13 +71,12 @@ class StorageCardValidationManager(
     }
   }
 
-  fun executeValidationProcedure(
-      validationDateTime: LocalDateTime,
-      cardReader: CardReader,
-      storageCard: StorageCard,
-      locations: List<Location>,
-      validationLocation: Location
-  ): ValidationResult {
+  override fun execute(context: ValidationContext): ValidationResult {
+    val validationDateTime = context.dateTime
+    val cardReader = context.cardReader
+    val storageCard = context.card as StorageCard
+    val locations = context.locations
+    val validationLocation = context.location
     var status: Status = Status.PROCESSING
     var errorMessage: String? = null
     var passValidityEndDate: LocalDate? = null

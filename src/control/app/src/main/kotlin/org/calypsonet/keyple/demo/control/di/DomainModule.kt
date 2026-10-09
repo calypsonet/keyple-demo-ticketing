@@ -18,8 +18,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import org.calypsonet.keyple.demo.control.domain.TicketingService
-import org.calypsonet.keyple.demo.control.domain.managers.CalypsoCardControlManager
-import org.calypsonet.keyple.demo.control.domain.managers.StorageCardControlManager
+import org.calypsonet.keyple.demo.control.domain.procedures.CalypsoCardControlProcedure
+import org.calypsonet.keyple.demo.control.domain.procedures.StorageCardControlProcedure
 import org.calypsonet.keyple.demo.control.domain.spi.AppSettingsRepository
 import org.calypsonet.keyple.demo.control.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.control.domain.spi.Logger
@@ -34,28 +34,12 @@ class DomainModule {
 
   @Provides
   @Singleton
-  fun provideCalypsoCardControlManager(
-      keypopApiProvider: KeypopApiProvider,
-      logger: Logger
-  ): CalypsoCardControlManager = CalypsoCardControlManager(keypopApiProvider, logger)
-
-  @Provides
-  @Singleton
-  fun provideStorageCardControlManager(
-      keypopApiProvider: KeypopApiProvider,
-      logger: Logger
-  ): StorageCardControlManager = StorageCardControlManager(keypopApiProvider, logger)
-
-  @Provides
-  @Singleton
   fun provideTicketingService(
       keypopApiProvider: KeypopApiProvider,
       appSettings: AppSettingsRepository,
       readerManager: ReaderManager,
       userFeedback: UserFeedback,
-      logger: Logger,
-      calypsoCardControlManager: CalypsoCardControlManager,
-      storageCardControlManager: StorageCardControlManager
+      logger: Logger
   ): TicketingService =
       TicketingService(
           keypopApiProvider,
@@ -63,6 +47,8 @@ class DomainModule {
           readerManager,
           userFeedback,
           logger,
-          calypsoCardControlManager,
-          storageCardControlManager)
+          // Control procedures of the supported card technologies
+          listOf(
+              CalypsoCardControlProcedure(keypopApiProvider, logger),
+              StorageCardControlProcedure(keypopApiProvider, logger)))
 }

@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.domain.managers
+package org.calypsonet.keyple.demo.control.domain.procedures
 
 import java.time.LocalDateTime
 import org.calypsonet.keyple.demo.common.codecs.StorageCardContractCodec
@@ -19,7 +19,6 @@ import org.calypsonet.keyple.demo.common.codecs.StorageCardEventCodec
 import org.calypsonet.keyple.demo.common.constants.MifareClassicBlocks
 import org.calypsonet.keyple.demo.common.constants.StorageCardBlocks
 import org.calypsonet.keyple.demo.common.model.EventStructure
-import org.calypsonet.keyple.demo.common.model.Location
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 import org.calypsonet.keyple.demo.control.domain.mappers.ContractMapper
@@ -31,28 +30,28 @@ import org.calypsonet.keyple.demo.control.domain.model.Status
 import org.calypsonet.keyple.demo.control.domain.model.Validation
 import org.calypsonet.keyple.demo.control.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.control.domain.spi.Logger
-import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ChannelControl
+import org.eclipse.keypop.reader.selection.spi.SmartCard
 import org.eclipse.keypop.storagecard.MifareClassicKeyType
 import org.eclipse.keypop.storagecard.card.ProductType
 import org.eclipse.keypop.storagecard.card.StorageCard
 
-class StorageCardControlManager(
+class StorageCardControlProcedure(
     private val keypopApiProvider: KeypopApiProvider,
     private val logger: Logger
-) {
+) : ControlProcedure {
 
-  fun executeControlProcedure(
-      controlDateTime: LocalDateTime,
-      cardReader: CardReader,
-      storageCard: StorageCard,
-      locations: List<Location>,
-      controlLocation: Location,
-      validationPeriod: Int
-  ): ControlResult {
+  override fun supports(card: SmartCard): Boolean = card is StorageCard
+
+  override fun execute(context: ControlContext): ControlResult {
+    val controlDateTime = context.dateTime
+    val cardReader = context.cardReader
+    val storageCard = context.card as StorageCard
+    val locations = context.locations
+    val controlLocation = context.location
+    val validationPeriod = context.validationPeriod
 
     var errorMessage: String?
-    val errorTitle: String? = null
     var validation: Validation? = null
     var status: Status = Status.ERROR
 
@@ -202,7 +201,7 @@ class StorageCardControlManager(
         validation = ValidationMapper.map(event = event, contract = contract, locations = locations)
       }
 
-      val displayedContract = arrayListOf<Contract>()
+      val displayedContract = mutableListOf<Contract>()
       val record = 1 // Storage card has only one contract
       var contractExpired = false
       var contractValidated = false
@@ -262,9 +261,9 @@ class StorageCardControlManager(
       // Step 20 - Close the transaction
       cardTransaction.processCommands(ChannelControl.CLOSE_AFTER)
 
-      var validationList: ArrayList<Validation>? = null
+      var validationList: List<Validation>? = null
       if (validation != null) {
-        validationList = arrayListOf(validation)
+        validationList = listOf(validation)
       }
 
       // Step 21 - Return the status of the operation to the upper layer. <Exit process>
@@ -309,8 +308,7 @@ class StorageCardControlManager(
     return ControlResult(
         status = status,
         authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
-        contractsList = arrayListOf(),
-        errorTitle = errorTitle,
+        contractsList = emptyList(),
         errorMessage = errorMessage)
   }
 

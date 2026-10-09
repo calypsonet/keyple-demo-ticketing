@@ -18,11 +18,11 @@ import org.calypsonet.keyple.demo.common.constants.CalypsoFiles
 import org.calypsonet.keyple.demo.common.constants.DefaultKifs
 import org.calypsonet.keyple.demo.common.data.LocationRepository
 import org.calypsonet.keyple.demo.common.model.Location
-import org.calypsonet.keyple.demo.validation.domain.managers.CalypsoCardValidationManager
-import org.calypsonet.keyple.demo.validation.domain.managers.StorageCardValidationManager
 import org.calypsonet.keyple.demo.validation.domain.model.CardProtocol
 import org.calypsonet.keyple.demo.validation.domain.model.TerminalType
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
+import org.calypsonet.keyple.demo.validation.domain.procedures.ValidationContext
+import org.calypsonet.keyple.demo.validation.domain.procedures.ValidationProcedure
 import org.calypsonet.keyple.demo.validation.domain.spi.AppSettingsRepository
 import org.calypsonet.keyple.demo.validation.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.validation.domain.spi.Logger
@@ -69,8 +69,7 @@ class TicketingService(
     private var readerManager: ReaderManager,
     private var userFeedback: UserFeedback,
     private var logger: Logger,
-    private val calypsoCardValidationManager: CalypsoCardValidationManager,
-    private val storageCardValidationManager: StorageCardValidationManager
+    private val validationProcedures: List<ValidationProcedure>
 ) {
 
   /** Indicates whether readers have been successfully initialized via [init]. */
@@ -330,29 +329,21 @@ class TicketingService(
    * @return The validation result produced by the corresponding manager.
    * @throws IllegalStateException if the active card type is unsupported.
    */
+  /** Executes the validation procedure applying to the selected card. */
   fun executeValidationProcedure(): ValidationResult {
-    return when (smartCard) {
-      is CalypsoCard -> {
-        calypsoCardValidationManager.executeValidationProcedure(
-            validationDateTime = LocalDateTime.now(),
+    val card = smartCard
+    val procedure =
+        validationProcedures.firstOrNull { it.supports(card) }
+            ?: error("Unsupported card type: ${card.javaClass.simpleName}")
+    return procedure.execute(
+        ValidationContext(
             cardReader = readerManager.getCardReader()!!,
-            calypsoCard = smartCard as CalypsoCard,
-            cardSecuritySettings = cardSecuritySettings,
+            card = card,
+            dateTime = LocalDateTime.now(),
+            location = appSettings.location,
             locations = LocationRepository.getLocations(),
-            validationLocation = appSettings.location)
-      }
-      is StorageCard -> {
-        storageCardValidationManager.executeValidationProcedure(
-            validationDateTime = LocalDateTime.now(),
-            cardReader = readerManager.getCardReader()!!,
-            storageCard = smartCard as StorageCard,
-            locations = LocationRepository.getLocations(),
-            validationLocation = appSettings.location)
-      }
-      else -> {
-        error("Unsupported card type")
-      }
-    }
+            cardSecuritySetting =
+                if (::cardSecuritySettings.isInitialized) cardSecuritySettings else null))
   }
 
   fun initCryptoContextForNextTransaction() {

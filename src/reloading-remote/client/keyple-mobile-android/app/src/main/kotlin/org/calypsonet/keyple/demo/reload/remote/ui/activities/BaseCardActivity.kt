@@ -111,7 +111,7 @@ abstract class BaseCardActivity :
   fun launchInvalidCardResponse(cardType: String, message: String) {
     runOnUiThread {
       changeDisplay(
-          UiCardReaderResponse(Status.INVALID_CARD, cardType, arrayListOf(), message),
+          UiCardReaderResponse(Status.INVALID_CARD, cardType, emptyList(), message),
           finishActivity = isFinishActivityAfterResult())
     }
   }
@@ -120,7 +120,7 @@ abstract class BaseCardActivity :
     runOnUiThread {
       changeDisplay(
           UiCardReaderResponse(
-              Status.ERROR, "", arrayListOf(), getString(R.string.card_communication_error)),
+              Status.ERROR, "", emptyList(), getString(R.string.card_communication_error)),
           finishActivity = isFinishActivityAfterResult())
     }
   }
@@ -128,7 +128,7 @@ abstract class BaseCardActivity :
   fun launchServerErrorResponse() {
     runOnUiThread {
       changeDisplay(
-          UiCardReaderResponse(Status.ERROR, "", arrayListOf()),
+          UiCardReaderResponse(Status.ERROR, "", emptyList()),
           finishActivity = isFinishActivityAfterResult())
     }
   }
@@ -136,7 +136,7 @@ abstract class BaseCardActivity :
   fun launchExceptionResponse(e: Exception, finishActivity: Boolean? = false) {
     runOnUiThread {
       changeDisplay(
-          UiCardReaderResponse(Status.ERROR, "", arrayListOf(), e.message),
+          UiCardReaderResponse(Status.ERROR, "", emptyList(), e.message),
           finishActivity = finishActivity)
     }
   }

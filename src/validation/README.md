@@ -211,12 +211,12 @@ The `CardSummaryActivity` displays both success and failure results:
 - Provides UI feedback hooks (success/failure)
 - Implementation: `ReaderManagerImpl`
 
-**CalypsoCardValidationManager** (`domain/managers/CalypsoCardValidationManager.kt`)
+**CalypsoCardValidationProcedure** (`domain/procedures/CalypsoCardValidationProcedure.kt`)
 - Secure validation procedure for Calypso cards with SAM integration
 - Handles contract priority logic (Season Pass → Multi-trip)
 - Creates cryptographically verified validation events
 
-**StorageCardValidationManager** (`domain/managers/StorageCardValidationManager.kt`)
+**StorageCardValidationProcedure** (`domain/procedures/StorageCardValidationProcedure.kt`)
 - Simplified validation for storage cards (MIFARE Ultralight, ST25 SRT512)
 - Direct read/write operations without SAM requirements
 - Single contract processing per card
@@ -291,8 +291,8 @@ validation/app/
 │   │   ├── di/                          # Dependency injection (Hilt modules)
 │   │   ├── domain/                      # Business logic layer
 │   │   │   ├── builders/                # Data builders
-│   │   │   ├── managers/                # Validation managers (Calypso, Storage)
 │   │   │   ├── model/                   # Domain models
+│   │   │   ├── procedures/              # Validation procedures (Calypso, Storage)
 │   │   │   └── spi/                     # Service provider interfaces
 │   │   └── ui/                          # UI layer
 │   │       ├── activities/              # Android activities

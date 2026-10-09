@@ -10,15 +10,20 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.ui.mappers
+package org.calypsonet.keyple.demo.control.domain.procedures
 
 import org.calypsonet.keyple.demo.control.domain.model.ControlResult
-import org.calypsonet.keyple.demo.control.ui.model.UiControlResult
+import org.eclipse.keypop.reader.selection.spi.SmartCard
 
-fun ControlResult.toUi(): UiControlResult =
-    UiControlResult(
-        status = status,
-        authenticationMode = authenticationMode,
-        lastValidationsList = lastValidationsList?.map { it.toUi() },
-        contractsList = contractsList.map { it.toUi() },
-        errorMessage = errorMessage)
+/**
+ * Control procedure of a card technology: the procedure applying to the presented card is chosen
+ * among the available ones with [supports].
+ */
+interface ControlProcedure {
+
+  /** Indicates whether the procedure applies to the provided card. */
+  fun supports(card: SmartCard): Boolean
+
+  /** Executes the control procedure on the card of the provided context. */
+  fun execute(context: ControlContext): ControlResult
+}

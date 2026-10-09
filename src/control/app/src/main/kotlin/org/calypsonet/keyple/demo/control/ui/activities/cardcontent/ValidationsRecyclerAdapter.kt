@@ -20,7 +20,7 @@ import java.util.Locale
 import org.calypsonet.keyple.demo.control.databinding.ValidationRecyclerRowBinding
 import org.calypsonet.keyple.demo.control.ui.model.UiValidation
 
-class ValidationsRecyclerAdapter(private val validations: ArrayList<UiValidation>) :
+class ValidationsRecyclerAdapter(private val validations: List<UiValidation>) :
     RecyclerView.Adapter<ValidationsRecyclerAdapter.LastValidationHolder>() {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LastValidationHolder {

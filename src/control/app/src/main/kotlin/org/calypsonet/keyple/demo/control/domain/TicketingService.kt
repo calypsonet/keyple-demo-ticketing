@@ -17,11 +17,11 @@ import org.calypsonet.keyple.demo.common.constants.CalypsoAids
 import org.calypsonet.keyple.demo.common.constants.CalypsoFiles
 import org.calypsonet.keyple.demo.common.constants.DefaultKifs
 import org.calypsonet.keyple.demo.common.data.LocationRepository
-import org.calypsonet.keyple.demo.control.domain.managers.CalypsoCardControlManager
-import org.calypsonet.keyple.demo.control.domain.managers.StorageCardControlManager
 import org.calypsonet.keyple.demo.control.domain.model.CardProtocol
 import org.calypsonet.keyple.demo.control.domain.model.ControlResult
 import org.calypsonet.keyple.demo.control.domain.model.TerminalType
+import org.calypsonet.keyple.demo.control.domain.procedures.ControlContext
+import org.calypsonet.keyple.demo.control.domain.procedures.ControlProcedure
 import org.calypsonet.keyple.demo.control.domain.spi.AppSettingsRepository
 import org.calypsonet.keyple.demo.control.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.control.domain.spi.Logger
@@ -54,8 +54,7 @@ class TicketingService(
     private var readerManager: ReaderManager,
     private var userFeedback: UserFeedback,
     private var logger: Logger,
-    private val calypsoCardControlManager: CalypsoCardControlManager,
-    private val storageCardControlManager: StorageCardControlManager
+    private val controlProcedures: List<ControlProcedure>
 ) {
 
   private val readerApiFactory: ReaderApiFactory = keypopApiProvider.getReaderApiFactory()
@@ -305,32 +304,22 @@ class TicketingService(
     return null
   }
 
+  /** Executes the control procedure applying to the selected card. */
   fun executeControlProcedure(): ControlResult {
-    return when (smartCard) {
-      is CalypsoCard -> {
-        calypsoCardControlManager.executeControlProcedure(
+    val card = smartCard
+    val procedure =
+        controlProcedures.firstOrNull { it.supports(card) }
+            ?: error("Unsupported card type: ${card.javaClass.simpleName}")
+    return procedure.execute(
+        ControlContext(
             cardReader = readerManager.getCardReader()!!,
-            calypsoCard = smartCard as CalypsoCard,
+            card = card,
+            dateTime = LocalDateTime.now(),
+            location = appSettings.location,
+            locations = LocationRepository.getLocations(),
+            validationPeriod = appSettings.validationPeriod,
             symmetricCryptoSecuritySetting = symmetricCryptoSecuritySetting,
-            asymmetricCryptoSecuritySetting = asymmetricCryptoSecuritySettings,
-            locations = LocationRepository.getLocations(),
-            controlLocation = appSettings.location,
-            validationPeriod = appSettings.validationPeriod,
-            controlDateTime = LocalDateTime.now())
-      }
-      is StorageCard -> {
-        storageCardControlManager.executeControlProcedure(
-            cardReader = readerManager.getCardReader()!!,
-            storageCard = smartCard as StorageCard,
-            locations = LocationRepository.getLocations(),
-            controlLocation = appSettings.location,
-            validationPeriod = appSettings.validationPeriod,
-            controlDateTime = LocalDateTime.now())
-      }
-      else -> {
-        error("Unsupported card type")
-      }
-    }
+            asymmetricCryptoSecuritySetting = asymmetricCryptoSecuritySettings))
   }
 
   private fun getSymmetricCryptoSecuritySetting(): SymmetricCryptoSecuritySetting {

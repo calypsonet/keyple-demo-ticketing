@@ -21,8 +21,7 @@ import org.calypsonet.keyple.demo.control.domain.model.Status
 data class UiControlResult(
     val status: Status,
     val authenticationMode: AuthenticationMode,
-    val lastValidationsList: ArrayList<UiValidation>? = null,
-    val contractsList: ArrayList<UiContract>,
-    val errorTitle: String? = null,
+    val lastValidationsList: List<UiValidation>? = null,
+    val contractsList: List<UiContract>,
     val errorMessage: String? = null
 ) : Parcelable

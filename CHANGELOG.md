@@ -9,7 +9,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   Architecture") and checked by the CI (`.github/scripts/check-android-architecture.sh`) for the domain, data and ui
   layers. The domain layer no longer
   depends on Android, Timber or the dependency injection framework: the domain services are provided by a Hilt
-  `DomainModule`, and the card managers receive their dependencies through their constructor.
+  `DomainModule`, and the card procedures receive their dependencies through their constructor.
+- Control and validation apps: the procedures of each card technology (`CalypsoCardControlProcedure`,
+  `StorageCardControlProcedure`, `CalypsoCardValidationProcedure`, `StorageCardValidationProcedure`, previously
+  `...Manager` in the `managers` package) implement a common interface (`ControlProcedure`, `ValidationProcedure`), and
+  `TicketingService` executes the one supporting the selected card instead of testing the card type. The data of the
+  transaction is provided by a context object (`ControlContext`, `ValidationContext`) instead of 6 to 8 parameters.
+- Android applications: read-only `List` instead of `ArrayList` in the results and UI models; the `errorTitle` field
+  of the control result, never set, is removed.
 - Android applications: logging through the `Logger` port (same `d`/`i`/`w`/`e` interface in all applications) in the
   domain, data and di layers. Timber is only used by `LoggerImpl`, `Application` and the activities.
 - Android applications: card processing is now finalized with `ObservableCardReader.finalizeCardProcessing()` after

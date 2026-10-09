@@ -18,8 +18,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import org.calypsonet.keyple.demo.validation.domain.TicketingService
-import org.calypsonet.keyple.demo.validation.domain.managers.CalypsoCardValidationManager
-import org.calypsonet.keyple.demo.validation.domain.managers.StorageCardValidationManager
+import org.calypsonet.keyple.demo.validation.domain.procedures.CalypsoCardValidationProcedure
+import org.calypsonet.keyple.demo.validation.domain.procedures.StorageCardValidationProcedure
 import org.calypsonet.keyple.demo.validation.domain.spi.AppSettingsRepository
 import org.calypsonet.keyple.demo.validation.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.validation.domain.spi.Logger
@@ -34,27 +34,12 @@ class DomainModule {
 
   @Provides
   @Singleton
-  fun provideCalypsoCardValidationManager(
-      keypopApiProvider: KeypopApiProvider
-  ): CalypsoCardValidationManager = CalypsoCardValidationManager(keypopApiProvider)
-
-  @Provides
-  @Singleton
-  fun provideStorageCardValidationManager(
-      keypopApiProvider: KeypopApiProvider,
-      logger: Logger
-  ): StorageCardValidationManager = StorageCardValidationManager(keypopApiProvider, logger)
-
-  @Provides
-  @Singleton
   fun provideTicketingService(
       keypopApiProvider: KeypopApiProvider,
       appSettings: AppSettingsRepository,
       readerManager: ReaderManager,
       userFeedback: UserFeedback,
-      logger: Logger,
-      calypsoCardValidationManager: CalypsoCardValidationManager,
-      storageCardValidationManager: StorageCardValidationManager
+      logger: Logger
   ): TicketingService =
       TicketingService(
           keypopApiProvider,
@@ -62,6 +47,8 @@ class DomainModule {
           readerManager,
           userFeedback,
           logger,
-          calypsoCardValidationManager,
-          storageCardValidationManager)
+          // Validation procedures of the supported card technologies
+          listOf(
+              CalypsoCardValidationProcedure(keypopApiProvider),
+              StorageCardValidationProcedure(keypopApiProvider, logger)))
 }

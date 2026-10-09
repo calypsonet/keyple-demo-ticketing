@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.domain.managers
+package org.calypsonet.keyple.demo.control.domain.procedures
 
 import java.time.LocalDateTime
 import org.calypsonet.keyple.demo.common.codecs.CalypsoContractCodec
@@ -19,7 +19,6 @@ import org.calypsonet.keyple.demo.common.codecs.CalypsoEventCodec
 import org.calypsonet.keyple.demo.common.constants.CalypsoFiles
 import org.calypsonet.keyple.demo.common.model.ContractStructure
 import org.calypsonet.keyple.demo.common.model.EventStructure
-import org.calypsonet.keyple.demo.common.model.Location
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 import org.calypsonet.keyple.demo.control.domain.mappers.ContractMapper
@@ -33,32 +32,30 @@ import org.calypsonet.keyple.demo.control.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.control.domain.spi.Logger
 import org.eclipse.keypop.calypso.card.WriteAccessLevel
 import org.eclipse.keypop.calypso.card.card.CalypsoCard
-import org.eclipse.keypop.calypso.card.transaction.AsymmetricCryptoSecuritySetting
 import org.eclipse.keypop.calypso.card.transaction.SecurePkiModeTransactionManager
 import org.eclipse.keypop.calypso.card.transaction.SecureRegularModeTransactionManager
-import org.eclipse.keypop.calypso.card.transaction.SymmetricCryptoSecuritySetting
 import org.eclipse.keypop.calypso.card.transaction.TransactionManager
-import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ChannelControl
+import org.eclipse.keypop.reader.selection.spi.SmartCard
 
-class CalypsoCardControlManager(
+class CalypsoCardControlProcedure(
     private val keypopApiProvider: KeypopApiProvider,
     private val logger: Logger
-) {
+) : ControlProcedure {
 
-  fun executeControlProcedure(
-      controlDateTime: LocalDateTime,
-      cardReader: CardReader,
-      calypsoCard: CalypsoCard,
-      symmetricCryptoSecuritySetting: SymmetricCryptoSecuritySetting?,
-      asymmetricCryptoSecuritySetting: AsymmetricCryptoSecuritySetting,
-      locations: List<Location>,
-      controlLocation: Location,
-      validationPeriod: Int
-  ): ControlResult {
+  override fun supports(card: SmartCard): Boolean = card is CalypsoCard
+
+  override fun execute(context: ControlContext): ControlResult {
+    val controlDateTime = context.dateTime
+    val cardReader = context.cardReader
+    val calypsoCard = context.card as CalypsoCard
+    val symmetricCryptoSecuritySetting = context.symmetricCryptoSecuritySetting
+    val asymmetricCryptoSecuritySetting = context.asymmetricCryptoSecuritySetting
+    val locations = context.locations
+    val controlLocation = context.location
+    val validationPeriod = context.validationPeriod
 
     var errorMessage: String?
-    val errorTitle: String? = null
     var validation: Validation? = null
     var status: Status = Status.ERROR
 
@@ -213,7 +210,7 @@ class CalypsoCardControlManager(
             }
       }
 
-      val displayedContract = arrayListOf<Contract>()
+      val displayedContract = mutableListOf<Contract>()
       contracts.forEach {
         val record = it.key
         val contract = it.value
@@ -287,9 +284,9 @@ class CalypsoCardControlManager(
         cardTransaction.prepareCloseSecureSession().processCommands(ChannelControl.CLOSE_AFTER)
       }
 
-      var validationList: ArrayList<Validation>? = null
+      var validationList: List<Validation>? = null
       if (validation != null) {
-        validationList = arrayListOf(validation)
+        validationList = listOf(validation)
       }
 
       // Step 21 - Return the status of the operation to the upper layer. <Exit process>
@@ -320,8 +317,7 @@ class CalypsoCardControlManager(
     return ControlResult(
         status = status,
         authenticationMode = authenticationMode,
-        contractsList = arrayListOf(),
-        errorTitle = errorTitle,
+        contractsList = emptyList(),
         errorMessage = errorMessage)
   }
 

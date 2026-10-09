@@ -137,7 +137,7 @@ class CardReaderActivity : BaseActivity() {
               UiControlResult(
                   status = Status.INVALID_CARD,
                   authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
-                  contractsList = arrayListOf(),
+                  contractsList = emptyList(),
                   errorMessage = error))
           return
         }
@@ -196,7 +196,7 @@ class CardReaderActivity : BaseActivity() {
                     UiControlResult(
                         status = Status.ERROR,
                         authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
-                        contractsList = arrayListOf()))
+                        contractsList = emptyList()))
               } finally {
                 ticketingService.endCardProcessing()
               }

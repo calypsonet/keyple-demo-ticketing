@@ -169,7 +169,7 @@ drive the user flow and call the domain directly.
 
 | Package  | Content                                                                                               |
 |----------|-------------------------------------------------------------------------------------------------------|
-| `domain` | Business logic: `TicketingService` (entry point of the UI), `managers`, `model`, and the ports (`spi`) |
+| `domain` | Business logic: `TicketingService` (entry point of the UI), `procedures`, `model`, and the ports (`spi`) |
 | `data`   | Adapters implementing the ports (readers, Keypop API factories, user feedback, settings, logging...)  |
 | `ui`     | Activities, UI adapters (e.g. `UiContextImpl`), and UI models with their mappers when needed          |
 | `di`     | Hilt modules binding the adapters to the ports and providing the domain services                      |
@@ -186,8 +186,12 @@ drive the user flow and call the domain directly.
   It never accesses the `data` layer, and does not handle the Keypop card types (`CalypsoCard`, `StorageCard`...).
 - The `data` layer implements the ports and does not depend on the `ui` layer.
 - The `di` layer is the only place where adapters are bound to ports. The domain services (`TicketingService` and the
-  managers) carry no annotation and are provided by the `DomainModule`. The stable dependencies of the managers are
-  injected through their constructor; only the data of the current transaction is passed to their methods. The
+  procedures) carry no annotation and are provided by the `DomainModule`. The stable dependencies of the procedures are
+  injected through their constructor; only the data of the current transaction is passed to them (`ControlContext`,
+  `ValidationContext`).
+- The control and validation procedures implement a common interface (`ControlProcedure`, `ValidationProcedure`), one
+  implementation per card technology: `TicketingService` executes the procedure supporting the selected card, a new
+  card technology only requiring a new procedure. The
   bindings are application-wide singletons (`SingletonComponent`); the application is annotated `@HiltAndroidApp`, and
   each activity receiving dependencies (through its base activity) `@AndroidEntryPoint`.
 - The application settings are accessed through the `AppSettingsRepository` port, never through a global object.
