@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2022 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2026 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -10,11 +10,12 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.common.parsers
+package org.calypsonet.keyple.demo.common.codecs
 
-interface Parser<T> {
+import fr.devnied.bitlib.BitUtils
+import java.math.BigInteger
 
-  fun parse(content: ByteArray): T
-
-  fun generate(content: T): ByteArray
+/** Writes the provided integer value on the provided number of bits. */
+internal fun BitUtils.setNextValue(value: Int, size: Int) {
+  setNextByte(BigInteger.valueOf(value.toLong()).toByteArray(), size)
 }

@@ -13,7 +13,7 @@
 package org.calypsonet.keyple.demo.reload.remote.domain
 
 import java.time.LocalDate
-import org.calypsonet.keyple.demo.common.constants.CardConstants
+import org.calypsonet.keyple.demo.common.constants.CalypsoAids
 import org.calypsonet.keyple.demo.common.dto.AnalyzeContractsInputDto
 import org.calypsonet.keyple.demo.common.dto.CardIssuanceInputDto
 import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
@@ -262,12 +262,12 @@ class TicketingService(
       when (cardMedium) {
         CardMedium.CONTACTLESS_CARD ->
             listOf(
-                CardConstants.AID_KEYPLE_GENERIC,
-                CardConstants.AID_CD_LIGHT_GTML,
-                CardConstants.AID_CALYPSO_LIGHT,
-                CardConstants.AID_NORMALIZED_IDF)
-        CardMedium.SIM -> listOf(CardConstants.AID_CD_LIGHT_GTML, CardConstants.AID_NORMALIZED_IDF)
+                CalypsoAids.KEYPLE_GENERIC,
+                CalypsoAids.CD_LIGHT_GTML,
+                CalypsoAids.CALYPSO_LIGHT,
+                CalypsoAids.NORMALIZED_IDF)
+        CardMedium.SIM -> listOf(CalypsoAids.CD_LIGHT_GTML, CalypsoAids.NORMALIZED_IDF)
         CardMedium.WEARABLE,
-        CardMedium.EMBEDDED -> listOf(CardConstants.AID_CD_LIGHT_GTML)
+        CardMedium.EMBEDDED -> listOf(CalypsoAids.CD_LIGHT_GTML)
       }
 }

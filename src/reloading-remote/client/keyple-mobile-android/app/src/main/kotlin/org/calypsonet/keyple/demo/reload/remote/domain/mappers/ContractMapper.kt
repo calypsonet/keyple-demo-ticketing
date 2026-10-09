@@ -22,8 +22,8 @@ import org.calypsonet.keyple.demo.reload.remote.domain.model.Contract
  * date.
  */
 fun ContractStructure.toContract(today: LocalDate): Contract {
-  val saleDate = contractSaleDate.getDate()
-  val validityEndDate = contractValidityEndDate.getDate()
+  val saleDate = contractSaleDate.date
+  val validityEndDate = contractValidityEndDate.date
   val isValid =
       when (contractTariff) {
         PriorityCode.MULTI_TRIP -> (counterValue ?: 0) >= 1

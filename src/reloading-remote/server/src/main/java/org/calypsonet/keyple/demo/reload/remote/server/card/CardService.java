@@ -19,7 +19,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.Collections;
 import java.util.stream.Collectors;
-import org.calypsonet.keyple.demo.common.constants.CardConstants;
+import org.calypsonet.keyple.demo.common.constants.CalypsoFiles;
 import org.calypsonet.keyple.demo.common.dto.*;
 import org.calypsonet.keyple.demo.common.model.ContractStructure;
 import org.calypsonet.keyple.demo.common.model.EnvironmentHolderStructure;
@@ -68,7 +68,6 @@ public class CardService {
       "Contract tariff is not valid for this contract";
   private static final String ONLY_SEASON_PASS_OR_MULTI_TRIP_TICKET_CAN_BE_LOADED =
       "Only Season Pass or Multi Trip ticket can be loaded";
-  private static final String UNEXPECTED_CONTRACT_NUMBER = "Unexpected contract number: ";
   private static final String THE_CARD_IS_NOT_PERSONALIZED = "The card is not personalized";
   private static final String THE_ENVIRONMENT_HAS_EXPIRED = "The environment has expired";
   private static final String THE_CARD_IS_FULL =
@@ -290,8 +289,7 @@ public class CardService {
         calypsoCard.getProductType(),
         HexUtil.toHex(calypsoCard.getApplicationSubtype()));
 
-    if (!CardConstants.Companion.getALLOWED_FILE_STRUCTURES()
-        .contains(calypsoCard.getApplicationSubtype())) {
+    if (!CalypsoFiles.ALLOWED_FILE_STRUCTURES.contains(calypsoCard.getApplicationSubtype())) {
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.CARD_REJECTED.getCode());
     }
@@ -448,8 +446,7 @@ public class CardService {
     String pluginType = inputData.getPluginType();
     String appSerialNumber = HexUtil.toHex(calypsoCard.getApplicationSerialNumber());
 
-    if (!CardConstants.Companion.getALLOWED_FILE_STRUCTURES()
-        .contains(calypsoCard.getApplicationSubtype())) {
+    if (!CalypsoFiles.ALLOWED_FILE_STRUCTURES.contains(calypsoCard.getApplicationSubtype())) {
       return new WriteContractOutputDto(RemoteServiceStatus.CARD_REJECTED.getCode());
     }
 
@@ -611,8 +608,7 @@ public class CardService {
         appSerialNumber,
         calypsoCard.getProductType());
 
-    if (!CardConstants.Companion.getALLOWED_FILE_STRUCTURES()
-        .contains(calypsoCard.getApplicationSubtype())) {
+    if (!CalypsoFiles.ALLOWED_FILE_STRUCTURES.contains(calypsoCard.getApplicationSubtype())) {
       return new CardIssuanceOutputDto(RemoteServiceStatus.CARD_REJECTED.getCode());
     }
 
@@ -1052,7 +1048,7 @@ public class CardService {
     int newContractNumber;
 
     // Contract analysis: the priority of the expired contracts is set to 31 in the event to write
-    updateExpiredContractPriorities(contracts, currentEvent);
+    currentEvent = withExpiredContractPriorities(contracts, currentEvent);
 
     // Single contract cards support only one contract (contracts.size() == 1)
     boolean isSingleContractCard = contracts.size() == 1;
@@ -1097,56 +1093,29 @@ public class CardService {
         newContract = buildSeasonContract(null);
       }
     }
-    setContractPriority(currentEvent, newContractNumber, newContract.getContractTariff());
+    currentEvent =
+        currentEvent.withContractPriority(newContractNumber, newContract.getContractTariff());
     // Update contract & Event
     card.setContract(newContractNumber - 1, newContract);
     card.setEvent(currentEvent);
   }
 
   /**
-   * Sets to 31 (EXPIRED) the priority of the contracts present in the card whose validity end date
-   * is in the past.
+   * Returns the provided event with the priority set to 31 (EXPIRED) for the contracts present in
+   * the card whose validity end date is in the past.
    */
-  private void updateExpiredContractPriorities(
+  private EventStructure withExpiredContractPriorities(
       List<ContractStructure> contracts, EventStructure event) {
     LocalDate today = LocalDate.now();
+    EventStructure updatedEvent = event;
     for (int i = 0; i < contracts.size(); i++) {
       ContractStructure contract = contracts.get(i);
       if (contract.getContractVersionNumber() != VersionNumber.UNDEFINED
           && contract.getContractValidityEndDate().getDate().isBefore(today)) {
-        setContractPriority(event, i + 1, PriorityCode.EXPIRED);
+        updatedEvent = updatedEvent.withContractPriority(i + 1, PriorityCode.EXPIRED);
       }
     }
-  }
-
-  /** Returns the contract priorities of the event, in the order of the contract records. */
-  private static List<PriorityCode> getContractPriorities(EventStructure event) {
-    return Arrays.asList(
-        event.getContractPriority1(),
-        event.getContractPriority2(),
-        event.getContractPriority3(),
-        event.getContractPriority4());
-  }
-
-  /** Sets the priority of the contract record having the provided number (1 to 4) in the event. */
-  private static void setContractPriority(
-      EventStructure event, int contractNumber, PriorityCode priority) {
-    switch (contractNumber) {
-      case 1:
-        event.setContractPriority1(priority);
-        break;
-      case 2:
-        event.setContractPriority2(priority);
-        break;
-      case 3:
-        event.setContractPriority3(priority);
-        break;
-      case 4:
-        event.setContractPriority4(priority);
-        break;
-      default:
-        throw new IllegalStateException(UNEXPECTED_CONTRACT_NUMBER + contractNumber);
-    }
+    return updatedEvent;
   }
 
   private int getContractNumber(PriorityCode contractTariff, List<ContractStructure> contracts) {
@@ -1161,18 +1130,16 @@ public class CardService {
 
   private ContractStructure buildMultiTripContract(DateCompact envEndDate, Integer counterValue) {
     DateCompact contractSaleDate = new DateCompact(LocalDate.now());
-    ContractStructure contract =
-        new ContractStructure(
-            VersionNumber.CURRENT_VERSION,
-            PriorityCode.MULTI_TRIP,
-            contractSaleDate,
-            envEndDate,
-            null,
-            null,
-            null,
-            null);
-    contract.setCounterValue(counterValue);
-    return contract;
+    return new ContractStructure(
+        VersionNumber.CURRENT_VERSION,
+        PriorityCode.MULTI_TRIP,
+        contractSaleDate,
+        envEndDate,
+        null,
+        null,
+        null,
+        null,
+        counterValue);
   }
 
   /**
@@ -1207,7 +1174,7 @@ public class CardService {
    */
   private int findAvailablePosition(List<ContractStructure> contracts, EventStructure event) {
     int contractCount = contracts.size();
-    List<PriorityCode> contractPriorities = getContractPriorities(event);
+    List<PriorityCode> contractPriorities = event.getContractPriorities();
     for (int i = 0; i < contractCount; i++) {
       if (PriorityCode.FORBIDDEN == contractPriorities.get(i)) {
         return i + 1;

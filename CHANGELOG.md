@@ -139,9 +139,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   record nor expired or exhausted contract to replace.
 #### Changed
 - `Location.toString()` now returns the name of the location.
-- The test class `ContractInfoStructureParserTest` is renamed `ContractStructureParserTest`, after the tested class.
+- Immutable model (used by all the applications and the server):
+  - `EnvironmentHolderStructure`, `EventStructure` and `ContractStructure` are `data class` with read-only properties,
+    modified by copy (`copy()`, or `EventStructure.withContractPriority()` and `ContractStructure.withCounterValue()`,
+    also usable from Java);
+  - the counter value of a contract is a property of its constructor (it was declared apart, and ignored by `equals`);
+  - the four `contractPriority1..4` fields of the event are replaced by the `contractPriorities` list (4 elements,
+    checked at the creation), read with `getContractPriority(contractNumber)`; `eventDatetime` is computed on demand;
+  - `DateCompact` and `TimeCompact` are `data class` (instead of hand-written `equals` and `hashCode`), the date of a
+    `DateCompact` being provided by the `date` property (`getDate()` for Java);
+  - `PriorityCode` and `VersionNumber`: `code`, `label` and `fromCode()` instead of `key`, `value` and `findEnumByKey()`,
+    as in `RemoteServiceStatus`.
+- The parsers are replaced by codecs: the `RecordCodec` interface (`decode`, `encode`) instead of `Parser` (`parse`,
+  `generate`), implemented by one object per structure and card technology (`codecs` package):
+  `CalypsoEnvironmentHolderCodec`, `CalypsoEventCodec`, `CalypsoContractCodec`, and for the storage cards
+  `StorageCardEnvironmentHolderCodec`, `StorageCardEventCodec`, `StorageCardContractCodec` (the `Sc...Parser` classes).
+  The tests are renamed accordingly (`CalypsoContractCodecTest`...).
+- `CardConstants` is split into objects by theme: `CalypsoAids` (with `matches()` instead of `aidMatch()`),
+  `CalypsoFiles`, `DefaultKifs`, `StorageCardBlocks`, `MifareClassicBlocks` and `PkiTestCertificates`, accessed from
+  Java as static fields.
 - Documentation of the status codes of `AnalyzeContractsOutputDto`, `WriteContractOutputDto`, `CardIssuanceOutputDto`
   and of the `SelectAppAnd...OutputDto` aligned with the codes actually returned by the server.
+#### Removed
+- `java.io.Serializable` interface of the structures, not used (they are only transmitted as JSON).
 #### Upgraded
 - Kotlin: `1.7.22` -> `2.3.21` (same version as the other projects).
 - Java 17 as source and target level instead of Java 8, as the applications using the library: building it no

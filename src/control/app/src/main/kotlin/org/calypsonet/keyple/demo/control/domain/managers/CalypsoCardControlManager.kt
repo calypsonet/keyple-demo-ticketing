@@ -13,15 +13,15 @@
 package org.calypsonet.keyple.demo.control.domain.managers
 
 import java.time.LocalDateTime
-import org.calypsonet.keyple.demo.common.constants.CardConstants
+import org.calypsonet.keyple.demo.common.codecs.CalypsoContractCodec
+import org.calypsonet.keyple.demo.common.codecs.CalypsoEnvironmentHolderCodec
+import org.calypsonet.keyple.demo.common.codecs.CalypsoEventCodec
+import org.calypsonet.keyple.demo.common.constants.CalypsoFiles
 import org.calypsonet.keyple.demo.common.model.ContractStructure
 import org.calypsonet.keyple.demo.common.model.EventStructure
 import org.calypsonet.keyple.demo.common.model.Location
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
-import org.calypsonet.keyple.demo.common.parsers.ContractStructureParser
-import org.calypsonet.keyple.demo.common.parsers.EnvironmentHolderStructureParser
-import org.calypsonet.keyple.demo.common.parsers.EventStructureParser
 import org.calypsonet.keyple.demo.control.domain.mappers.ContractMapper
 import org.calypsonet.keyple.demo.control.domain.mappers.ValidationMapper
 import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
@@ -92,14 +92,14 @@ class CalypsoCardControlManager(
       // record.
       cardTransaction
           .prepareReadRecords(
-              CardConstants.SFI_ENVIRONMENT_AND_HOLDER,
+              CalypsoFiles.SFI_ENVIRONMENT_AND_HOLDER,
               1,
               1,
-              CardConstants.ENVIRONMENT_HOLDER_RECORD_SIZE_BYTES)
+              CalypsoFiles.ENVIRONMENT_HOLDER_RECORD_SIZE_BYTES)
           .processCommands(ChannelControl.KEEP_OPEN)
 
-      val efEnvironmentHolder = calypsoCard.getFileBySfi(CardConstants.SFI_ENVIRONMENT_AND_HOLDER)
-      val env = EnvironmentHolderStructureParser().parse(efEnvironmentHolder.data.content)
+      val efEnvironmentHolder = calypsoCard.getFileBySfi(CalypsoFiles.SFI_ENVIRONMENT_AND_HOLDER)
+      val env = CalypsoEnvironmentHolderCodec.decode(efEnvironmentHolder.data.content)
 
       // Step 3 - If EnvVersionNumber of the Environment structure is not the expected one (==1 for
       // the current version), reject the card.
@@ -114,7 +114,7 @@ class CalypsoCardControlManager(
 
       // Step 4 - If EnvEndDate points to a date in the past, reject the card.
       // <Abort Secure Session if any>
-      if (env.envEndDate.getDate().isBefore(controlDateTime.toLocalDate())) {
+      if (env.envEndDate.date.isBefore(controlDateTime.toLocalDate())) {
         if (cardTransaction is SecureRegularModeTransactionManager ||
             cardTransaction is SecurePkiModeTransactionManager) {
           cardTransaction.prepareCancelSecureSession().processCommands(ChannelControl.CLOSE_AFTER)
@@ -125,11 +125,11 @@ class CalypsoCardControlManager(
       // Step 5 - Read and unpack the last event record.
       cardTransaction
           .prepareReadRecords(
-              CardConstants.SFI_EVENTS_LOG, 1, 1, CardConstants.EVENT_RECORD_SIZE_BYTES)
+              CalypsoFiles.SFI_EVENTS_LOG, 1, 1, CalypsoFiles.EVENT_RECORD_SIZE_BYTES)
           .processCommands(ChannelControl.KEEP_OPEN)
 
-      val efEventLog = calypsoCard.getFileBySfi(CardConstants.SFI_EVENTS_LOG)
-      val event = EventStructureParser().parse(efEventLog.data.content)
+      val efEventLog = calypsoCard.getFileBySfi(CalypsoFiles.SFI_EVENTS_LOG)
+      val event = CalypsoEventCodec.decode(efEventLog.data.content)
 
       // Step 6 - If EventVersionNumber is not the expected one (==1 for the current version),
       // reject
@@ -181,22 +181,22 @@ class CalypsoCardControlManager(
       // Step 10 - CNT_READ: Read all contracts and the counter-file
       cardTransaction
           .prepareReadRecords(
-              CardConstants.SFI_CONTRACTS,
+              CalypsoFiles.SFI_CONTRACTS,
               1,
               nbContractRecords,
-              CardConstants.CONTRACT_RECORD_SIZE_BYTES)
-          .prepareReadCounter(CardConstants.SFI_COUNTERS, nbContractRecords)
+              CalypsoFiles.CONTRACT_RECORD_SIZE_BYTES)
+          .prepareReadCounter(CalypsoFiles.SFI_COUNTERS, nbContractRecords)
           .processCommands(ChannelControl.KEEP_OPEN)
 
-      val efCounters = calypsoCard.getFileBySfi(CardConstants.SFI_COUNTERS)
+      val efCounters = calypsoCard.getFileBySfi(CalypsoFiles.SFI_COUNTERS)
 
-      val efContracts = calypsoCard.getFileBySfi(CardConstants.SFI_CONTRACTS)
+      val efContracts = calypsoCard.getFileBySfi(CalypsoFiles.SFI_CONTRACTS)
       val contracts = mutableMapOf<Int, ContractStructure>()
 
       // Step 11 - For each contract:
       efContracts.data.allRecordsContent.forEach {
         // Step 12 - Unpack the contract
-        contracts[it.key] = ContractStructureParser().parse(it.value)
+        contracts[it.key] = CalypsoContractCodec.decode(it.value)
       }
 
       // Retrieve contract used for the last event
@@ -242,7 +242,7 @@ class CalypsoCardControlManager(
           }
           // Step 16 - If ContractValidityEndDate points to a date in the past mark contract as
           // expired.
-          if (contract.contractValidityEndDate.getDate().isBefore(controlDateTime.toLocalDate())) {
+          if (contract.contractValidityEndDate.date.isBefore(controlDateTime.toLocalDate())) {
             contractExpired = true
           }
 

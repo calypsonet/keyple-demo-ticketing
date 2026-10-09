@@ -82,7 +82,7 @@ class ReloadActivity : BaseCardActivity() {
         val result =
             ticketingService.reloadCard(
                 intent.getStringExtra(CARD_APPLICATION_NUMBER),
-                PriorityCode.findEnumByKey(
+                PriorityCode.fromCode(
                     intent.getIntExtra(SelectTicketsActivity.SELECTED_TICKET_PRIORITY_CODE, 0)),
                 tripsToLoad)
         if (result.status == RemoteServiceStatus.SUCCESS) {

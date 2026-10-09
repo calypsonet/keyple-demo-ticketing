@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.common.parsers
+package org.calypsonet.keyple.demo.common.codecs
 
 import fr.devnied.bitlib.BytesUtils
 import java.time.LocalDate
@@ -23,32 +23,30 @@ import org.calypsonet.keyple.demo.common.model.type.TimeCompact
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 import org.junit.jupiter.api.Test
 
-class EventStructureParserTest {
-
-  private val eventStructureParser = EventStructureParser()
+class CalypsoEventCodecTest {
 
   @Test
-  fun parseEvent1() {
+  fun decodeEvent1() {
     val content = BytesUtils.fromString(DATA_EVENT_1)
 
-    val event = eventStructureParser.parse(content)
+    val event = CalypsoEventCodec.decode(content)
 
     assertThat(event).isNotNull
     assertThat(event.eventVersionNumber).isEqualTo(VersionNumber.CURRENT_VERSION)
     assertThat(event.eventDateStamp.value).isEqualTo(4031)
     assertThat(event.eventTimeStamp.value).isEqualTo(840)
-    assertThat(event.eventDateStamp.getDate()).isEqualTo(LocalDate.of(2021, 1, 14))
+    assertThat(event.eventDateStamp.date).isEqualTo(LocalDate.of(2021, 1, 14))
     assertThat(event.eventDatetime).isEqualTo(LocalDateTime.of(2021, 1, 14, 14, 0, 0))
     assertThat(event.eventLocation).isEqualTo(1)
     assertThat(event.eventContractUsed).isEqualTo(1)
-    assertThat(event.contractPriority1).isEqualTo(PriorityCode.SEASON_PASS)
-    assertThat(event.contractPriority2).isEqualTo(PriorityCode.FORBIDDEN)
-    assertThat(event.contractPriority3).isEqualTo(PriorityCode.FORBIDDEN)
-    assertThat(event.contractPriority4).isEqualTo(PriorityCode.FORBIDDEN)
+    assertThat(event.getContractPriority(1)).isEqualTo(PriorityCode.SEASON_PASS)
+    assertThat(event.getContractPriority(2)).isEqualTo(PriorityCode.FORBIDDEN)
+    assertThat(event.getContractPriority(3)).isEqualTo(PriorityCode.FORBIDDEN)
+    assertThat(event.getContractPriority(4)).isEqualTo(PriorityCode.FORBIDDEN)
   }
 
   @Test
-  fun generateEvent1() {
+  fun encodeEvent1() {
     val eventDate = LocalDateTime.of(2021, 1, 14, 14, 0, 0)
 
     val eventStructure =
@@ -58,12 +56,14 @@ class EventStructureParserTest {
             eventTimeStamp = TimeCompact(eventDate),
             eventLocation = 1,
             eventContractUsed = 1,
-            contractPriority1 = PriorityCode.SEASON_PASS,
-            contractPriority2 = PriorityCode.FORBIDDEN,
-            contractPriority3 = PriorityCode.FORBIDDEN,
-            contractPriority4 = PriorityCode.FORBIDDEN)
+            contractPriorities =
+                listOf(
+                    PriorityCode.SEASON_PASS,
+                    PriorityCode.FORBIDDEN,
+                    PriorityCode.FORBIDDEN,
+                    PriorityCode.FORBIDDEN))
 
-    val content = EventStructureParser().generate(eventStructure)
+    val content = CalypsoEventCodec.encode(eventStructure)
 
     assertThat(BytesUtils.bytesToString(content)).isEqualTo(DATA_EVENT_1)
   }

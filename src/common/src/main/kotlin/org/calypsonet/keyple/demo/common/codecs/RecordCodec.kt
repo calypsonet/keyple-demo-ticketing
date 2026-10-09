@@ -10,15 +10,19 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.common.model.type
+package org.calypsonet.keyple.demo.common.codecs
 
-import java.time.LocalDateTime
+/**
+ * Encoding and decoding of a record of the card data model (environment and holder, event or
+ * contract), for a card technology.
+ *
+ * @param T The structure of the record.
+ */
+interface RecordCodec<T> {
 
-/** Time in minutes, value = hour * 60 + minute (0 to 1,439). */
-data class TimeCompact(val value: Int) {
+  /** Decodes the structure contained in the provided record content. */
+  fun decode(content: ByteArray): T
 
-  /** Creates the compact time of the time of the provided date and time. */
-  constructor(dateTime: LocalDateTime) : this(dateTime.hour * 60 + dateTime.minute)
-
-  override fun toString(): String = "$value"
+  /** Encodes the provided structure into a record content. */
+  fun encode(structure: T): ByteArray
 }

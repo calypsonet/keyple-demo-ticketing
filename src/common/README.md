@@ -9,7 +9,7 @@ for building interoperable ticketing applications.
 
 This library defines the common elements used across the Keyple Demo ecosystem:
 - Data model structures (EnvironmentHolderStructure, EventStructure, ContractStructure)
-- Structure parser utilities
+- Record codecs (decoding and encoding of the card records)
 - Priority codes and enumeration types
 - Date/time compact format types
 - Card application identifiers
@@ -174,12 +174,12 @@ val event = EventStructure(
     eventTimeStamp = TimeCompact(LocalDateTime.now()),
     eventLocation = validatorLocationId,
     eventContractUsed = selectedContractIndex,
-    contractPriority1 = PriorityCode.FORBIDDEN,
-    contractPriority2 = PriorityCode.FORBIDDEN,
-    contractPriority3 = PriorityCode.FORBIDDEN,
-    contractPriority4 = PriorityCode.FORBIDDEN
+    contractPriorities = List(EventStructure.CONTRACT_COUNT) { PriorityCode.FORBIDDEN }
 )
 ```
+
+The structures are immutable: a modified structure is a copy, e.g.
+`event.withContractPriority(1, PriorityCode.EXPIRED)` or `contract.withCounterValue(10)`.
 
 ### Working with Compact Date/Time
 
@@ -189,32 +189,37 @@ val dateCompact = DateCompact(LocalDate.now())
 val dateValue: Int = dateCompact.value
 
 // Convert back to LocalDate
-val localDate: LocalDate = dateCompact.getDate()
+val localDate: LocalDate = dateCompact.date
 
 // Create compact time from LocalDateTime
 val timeCompact = TimeCompact(LocalDateTime.now())
 val timeValue: Int = timeCompact.value
 ```
 
-## Structure Parsers
+## Record Codecs
 
-### EnvironmentHolderStructureParser
+The records of the card are decoded and encoded by codecs implementing `RecordCodec<T>` (`decode` and `encode`
+methods), one per structure and card technology:
 
-- Parses binary data to `EnvironmentHolderStructure`
-- Generates binary data from structure
-- Implements `Parser<EnvironmentHolderStructure>` interface
+| Structure                    | Calypso cards (29-byte records)  | Storage cards (16-byte records)     |
+|------------------------------|----------------------------------|-------------------------------------|
+| `EnvironmentHolderStructure` | `CalypsoEnvironmentHolderCodec`  | `StorageCardEnvironmentHolderCodec` |
+| `EventStructure`             | `CalypsoEventCodec`              | `StorageCardEventCodec`             |
+| `ContractStructure`          | `CalypsoContractCodec`           | `StorageCardContractCodec`          |
 
-### EventStructureParser
+The counter of a contract is stored in a separate file on the Calypso cards, and in the contract record on the storage
+cards.
 
-- Parses binary data to `EventStructure`
-- Generates binary data from structure
-- Implements `Parser<EventStructure>` interface
+## Card Constants
 
-### ContractStructureParser
-
-- Parses binary data to `ContractStructure`
-- Generates binary data from structure
-- Implements `Parser<ContractStructure>` interface
+| Object                | Content                                                                          |
+|-----------------------|----------------------------------------------------------------------------------|
+| `CalypsoAids`         | AIDs of the Calypso applications, and the DF name check (`matches`)              |
+| `CalypsoFiles`        | SFIs and record sizes of the Calypso files, supported file structures            |
+| `DefaultKifs`         | KIFs of the SAM keys used by the secure sessions                                 |
+| `StorageCardBlocks`   | Layout of the storage cards with 4-byte blocks (MIFARE Ultralight, ST25 SRT512)  |
+| `MifareClassicBlocks` | Layout of the MIFARE Classic 1K cards (sector 1)                                 |
+| `PkiTestCertificates` | Test certificates of the PKI                                                     |
 
 ## Version Compatibility
 

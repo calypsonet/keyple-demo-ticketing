@@ -13,7 +13,9 @@
 package org.calypsonet.keyple.demo.validation.domain
 
 import java.time.LocalDateTime
-import org.calypsonet.keyple.demo.common.constants.CardConstants
+import org.calypsonet.keyple.demo.common.constants.CalypsoAids
+import org.calypsonet.keyple.demo.common.constants.CalypsoFiles
+import org.calypsonet.keyple.demo.common.constants.DefaultKifs
 import org.calypsonet.keyple.demo.common.data.LocationRepository
 import org.calypsonet.keyple.demo.common.model.Location
 import org.calypsonet.keyple.demo.validation.domain.managers.CalypsoCardValidationManager
@@ -217,7 +219,7 @@ class TicketingService(
         cardSelectionManager.prepareSelection(
             readerApiFactory
                 .createIsoCardSelector()
-                .filterByDfName(CardConstants.AID_KEYPLE_GENERIC)
+                .filterByDfName(CalypsoAids.KEYPLE_GENERIC)
                 .filterByCardProtocol(CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
@@ -226,7 +228,7 @@ class TicketingService(
         cardSelectionManager.prepareSelection(
             readerApiFactory
                 .createIsoCardSelector()
-                .filterByDfName(CardConstants.AID_CD_LIGHT_GTML)
+                .filterByDfName(CalypsoAids.CD_LIGHT_GTML)
                 .filterByCardProtocol(CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
@@ -235,7 +237,7 @@ class TicketingService(
         cardSelectionManager.prepareSelection(
             readerApiFactory
                 .createIsoCardSelector()
-                .filterByDfName(CardConstants.AID_CALYPSO_LIGHT)
+                .filterByDfName(CalypsoAids.CALYPSO_LIGHT)
                 .filterByCardProtocol(CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
@@ -244,7 +246,7 @@ class TicketingService(
         cardSelectionManager.prepareSelection(
             readerApiFactory
                 .createIsoCardSelector()
-                .filterByDfName(CardConstants.AID_NORMALIZED_IDF)
+                .filterByDfName(CalypsoAids.NORMALIZED_IDF)
                 .filterByCardProtocol(CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
@@ -294,21 +296,20 @@ class TicketingService(
     when (smartCard) {
       is CalypsoCard -> { // check is the DF name is the expected one (Req. TL-SEL-AIDMATCH.1)
         if ((cardSelectionResult.activeSelectionIndex == indexOfKeypleGenericCardSelection &&
-            !CardConstants.aidMatch(
-                CardConstants.AID_KEYPLE_GENERIC, (smartCard as CalypsoCard).dfName)) ||
+            !CalypsoAids.matches(CalypsoAids.KEYPLE_GENERIC, (smartCard as CalypsoCard).dfName)) ||
             (cardSelectionResult.activeSelectionIndex == indexOfCdLightGtmlCardSelection &&
-                !CardConstants.aidMatch(
-                    CardConstants.AID_CD_LIGHT_GTML, (smartCard as CalypsoCard).dfName)) ||
+                !CalypsoAids.matches(
+                    CalypsoAids.CD_LIGHT_GTML, (smartCard as CalypsoCard).dfName)) ||
             (cardSelectionResult.activeSelectionIndex == indexOfCalypsoLightCardSelection &&
-                !CardConstants.aidMatch(
-                    CardConstants.AID_CALYPSO_LIGHT, (smartCard as CalypsoCard).dfName)) ||
+                !CalypsoAids.matches(
+                    CalypsoAids.CALYPSO_LIGHT, (smartCard as CalypsoCard).dfName)) ||
             (cardSelectionResult.activeSelectionIndex == indexOfNavigoIdfCardSelection &&
-                !CardConstants.aidMatch(
-                    CardConstants.AID_NORMALIZED_IDF, (smartCard as CalypsoCard).dfName))) {
+                !CalypsoAids.matches(
+                    CalypsoAids.NORMALIZED_IDF, (smartCard as CalypsoCard).dfName))) {
           return "Unexpected DF name"
         }
         if ((smartCard as CalypsoCard).applicationSubtype !in
-            CardConstants.ALLOWED_FILE_STRUCTURES) {
+            CalypsoFiles.ALLOWED_FILE_STRUCTURES) {
           return "Invalid card\nFile structure " +
               HexUtil.toHex((smartCard as CalypsoCard).applicationSubtype) +
               "h not supported"
@@ -367,10 +368,9 @@ class TicketingService(
                 .getLegacySamApiFactory()
                 .createSymmetricCryptoCardTransactionManagerFactory(
                     readerManager.getSamReader(), calypsoSam))
-        .assignDefaultKif(
-            WriteAccessLevel.PERSONALIZATION, CardConstants.DEFAULT_KIF_PERSONALIZATION)
-        .assignDefaultKif(WriteAccessLevel.LOAD, CardConstants.DEFAULT_KIF_LOAD)
-        .assignDefaultKif(WriteAccessLevel.DEBIT, CardConstants.DEFAULT_KIF_DEBIT)
+        .assignDefaultKif(WriteAccessLevel.PERSONALIZATION, DefaultKifs.PERSONALIZATION)
+        .assignDefaultKif(WriteAccessLevel.LOAD, DefaultKifs.LOAD)
+        .assignDefaultKif(WriteAccessLevel.DEBIT, DefaultKifs.DEBIT)
         .enableRatificationMechanism()
         .enableMultipleSession()
   }

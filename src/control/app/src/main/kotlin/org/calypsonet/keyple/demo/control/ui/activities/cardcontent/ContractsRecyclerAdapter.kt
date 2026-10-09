@@ -39,7 +39,7 @@ class ContractsRecyclerAdapter(private val contracts: ArrayList<UiContract>) :
     fun bindItem(contract: UiContract) {
       val context = binding.root.context
       val contractDescription =
-          if (contract.name == PriorityCode.SEASON_PASS.value) {
+          if (contract.name == PriorityCode.SEASON_PASS.label) {
             val formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH)
             context.getString(
                 R.string.card_content_description_season_pass,

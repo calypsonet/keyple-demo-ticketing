@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.common.parsers
+package org.calypsonet.keyple.demo.common.codecs
 
 import fr.devnied.bitlib.BytesUtils
 import java.time.LocalDate
@@ -21,23 +21,21 @@ import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 import org.junit.jupiter.api.Test
 
-class ContractStructureParserTest {
-
-  private val contractStructureParser = ContractStructureParser()
+class CalypsoContractCodecTest {
 
   @Test
-  fun parseContract1() {
+  fun decodeContract1() {
     val content = BytesUtils.fromString(DATA_CONTRACT_1)
 
-    val contract = contractStructureParser.parse(content)
+    val contract = CalypsoContractCodec.decode(content)
 
     assertThat(contract).isNotNull
     assertThat(contract.contractVersionNumber).isEqualTo(VersionNumber.CURRENT_VERSION)
     assertThat(contract.contractTariff).isEqualTo(PriorityCode.SEASON_PASS)
     assertThat(contract.contractSaleDate.value).isEqualTo(4031)
     assertThat(contract.contractValidityEndDate.value).isEqualTo(4061)
-    assertThat(contract.contractSaleDate.getDate()).isEqualTo(LocalDate.of(2021, 1, 14))
-    assertThat(contract.contractValidityEndDate.getDate()).isEqualTo(LocalDate.of(2021, 2, 13))
+    assertThat(contract.contractSaleDate.date).isEqualTo(LocalDate.of(2021, 1, 14))
+    assertThat(contract.contractValidityEndDate.date).isEqualTo(LocalDate.of(2021, 2, 13))
     assertThat(contract.contractSaleSam).isZero
     assertThat(contract.contractSaleCounter).isZero
     assertThat(contract.contractAuthKvc).isZero
@@ -45,7 +43,7 @@ class ContractStructureParserTest {
   }
 
   @Test
-  fun generateContract1() {
+  fun encodeContract1() {
     val contractSaleDate = LocalDate.of(2021, 1, 14)
     val contractValidityEndDate = LocalDate.of(2021, 2, 13)
 
@@ -60,7 +58,7 @@ class ContractStructureParserTest {
             contractAuthKvc = 0,
             contractAuthenticator = 0)
 
-    val content = ContractStructureParser().generate(contractStructure)
+    val content = CalypsoContractCodec.encode(contractStructure)
 
     assertThat(BytesUtils.bytesToString(content)).isEqualTo(DATA_CONTRACT_1)
   }

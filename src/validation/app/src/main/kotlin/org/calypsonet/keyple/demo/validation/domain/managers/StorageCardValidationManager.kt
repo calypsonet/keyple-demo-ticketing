@@ -14,16 +14,17 @@ package org.calypsonet.keyple.demo.validation.domain.managers
 
 import java.time.LocalDate
 import java.time.LocalDateTime
-import org.calypsonet.keyple.demo.common.constants.CardConstants
+import org.calypsonet.keyple.demo.common.codecs.StorageCardContractCodec
+import org.calypsonet.keyple.demo.common.codecs.StorageCardEnvironmentHolderCodec
+import org.calypsonet.keyple.demo.common.codecs.StorageCardEventCodec
+import org.calypsonet.keyple.demo.common.constants.MifareClassicBlocks
+import org.calypsonet.keyple.demo.common.constants.StorageCardBlocks
 import org.calypsonet.keyple.demo.common.model.EventStructure
 import org.calypsonet.keyple.demo.common.model.Location
 import org.calypsonet.keyple.demo.common.model.type.DateCompact
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.TimeCompact
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
-import org.calypsonet.keyple.demo.common.parsers.ScContractStructureParser
-import org.calypsonet.keyple.demo.common.parsers.ScEnvironmentHolderStructureParser
-import org.calypsonet.keyple.demo.common.parsers.ScEventStructureParser
 import org.calypsonet.keyple.demo.validation.domain.builders.ValidationDataBuilder
 import org.calypsonet.keyple.demo.validation.domain.model.Status
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationData
@@ -112,38 +113,39 @@ class StorageCardValidationManager(
         // ========= AUTHENTICATION PHASE (Mifare Classic only) =========
         if (requiresAuth) {
           logger.d(
-              "Authenticating sector 1 with KEY_A (keyNumber=${CardConstants.MC_DEFAULT_KEY_NUMBER})")
+              "Authenticating sector 1 with KEY_A (keyNumber=${MifareClassicBlocks.DEFAULT_KEY_NUMBER})")
           cardTransaction.prepareMifareClassicAuthenticate(
-              CardConstants.MC_SECTOR_1_AUTH_BLOCK,
+              MifareClassicBlocks.SECTOR_1_AUTH_BLOCK,
               MifareClassicKeyType.KEY_A,
-              CardConstants.MC_DEFAULT_KEY_NUMBER)
+              MifareClassicBlocks.DEFAULT_KEY_NUMBER)
         }
 
         // ========= READ DATA =========
         // Read environment, contract, and event based on card type
         if (isMifareClassic) {
           logger.d(
-              "Reading Mifare Classic blocks: ${CardConstants.MC_ENVIRONMENT_AND_HOLDER_BLOCK}, " +
-                  "${CardConstants.MC_CONTRACT_BLOCK}, ${CardConstants.MC_EVENT_BLOCK}")
+              "Reading Mifare Classic blocks: ${MifareClassicBlocks.ENVIRONMENT_AND_HOLDER_BLOCK}, " +
+                  "${MifareClassicBlocks.CONTRACT_BLOCK}, ${MifareClassicBlocks.EVENT_BLOCK}")
           // Mifare Classic: read individual 16-byte blocks
           cardTransaction
               .prepareReadBlocks(
-                  CardConstants.MC_ENVIRONMENT_AND_HOLDER_BLOCK,
-                  CardConstants.MC_ENVIRONMENT_AND_HOLDER_BLOCK)
-              .prepareReadBlocks(CardConstants.MC_CONTRACT_BLOCK, CardConstants.MC_CONTRACT_BLOCK)
-              .prepareReadBlocks(CardConstants.MC_EVENT_BLOCK, CardConstants.MC_EVENT_BLOCK)
+                  MifareClassicBlocks.ENVIRONMENT_AND_HOLDER_BLOCK,
+                  MifareClassicBlocks.ENVIRONMENT_AND_HOLDER_BLOCK)
+              .prepareReadBlocks(
+                  MifareClassicBlocks.CONTRACT_BLOCK, MifareClassicBlocks.CONTRACT_BLOCK)
+              .prepareReadBlocks(MifareClassicBlocks.EVENT_BLOCK, MifareClassicBlocks.EVENT_BLOCK)
               .processCommands(ChannelControl.KEEP_OPEN)
         } else {
           logger.d("Reading storage card block ranges...")
           // MIFARE Ultralight/ST25: read ranges of 4-byte blocks
           cardTransaction
               .prepareReadBlocks(
-                  CardConstants.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
-                  CardConstants.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK)
+                  StorageCardBlocks.ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
+                  StorageCardBlocks.ENVIRONMENT_AND_HOLDER_LAST_BLOCK)
               .prepareReadBlocks(
-                  CardConstants.SC_EVENT_FIRST_BLOCK, CardConstants.SC_EVENT_LAST_BLOCK)
+                  StorageCardBlocks.EVENT_FIRST_BLOCK, StorageCardBlocks.EVENT_LAST_BLOCK)
               .prepareReadBlocks(
-                  CardConstants.SC_CONTRACT_FIRST_BLOCK, CardConstants.SC_COUNTER_LAST_BLOCK)
+                  StorageCardBlocks.CONTRACT_FIRST_BLOCK, StorageCardBlocks.COUNTER_LAST_BLOCK)
               .processCommands(ChannelControl.KEEP_OPEN)
         }
 
@@ -152,30 +154,30 @@ class StorageCardValidationManager(
         // Step 2 - Unpack environment structure (16 bytes regardless of card type)
         val environmentContent =
             if (isMifareClassic) {
-              storageCard.getBlock(CardConstants.MC_ENVIRONMENT_AND_HOLDER_BLOCK)
+              storageCard.getBlock(MifareClassicBlocks.ENVIRONMENT_AND_HOLDER_BLOCK)
             } else {
               storageCard.getBlocks(
-                  CardConstants.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
-                  CardConstants.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK)
+                  StorageCardBlocks.ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
+                  StorageCardBlocks.ENVIRONMENT_AND_HOLDER_LAST_BLOCK)
             }
-        val environment = ScEnvironmentHolderStructureParser().parse(environmentContent)
+        val environment = StorageCardEnvironmentHolderCodec.decode(environmentContent)
 
         // Step 3 - Validate environment version
         validateEnvironmentVersionOrThrow(environment.envVersionNumber)
 
         // Step 4 - Validate environment end date
         validateEnvironmentDateOrThrow(
-            environment.envEndDate.getDate(), validationDateTime.toLocalDate())
+            environment.envEndDate.date, validationDateTime.toLocalDate())
 
         // Step 5 - Read and unpack the event record (16 bytes)
         val eventContent =
             if (isMifareClassic) {
-              storageCard.getBlock(CardConstants.MC_EVENT_BLOCK)
+              storageCard.getBlock(MifareClassicBlocks.EVENT_BLOCK)
             } else {
               storageCard.getBlocks(
-                  CardConstants.SC_EVENT_FIRST_BLOCK, CardConstants.SC_EVENT_LAST_BLOCK)
+                  StorageCardBlocks.EVENT_FIRST_BLOCK, StorageCardBlocks.EVENT_LAST_BLOCK)
             }
-        val event = ScEventStructureParser().parse(eventContent)
+        val event = StorageCardEventCodec.decode(eventContent)
 
         // Step 6 - Validate the event version
         validateEventVersionOrThrow(event.eventVersionNumber)
@@ -185,12 +187,12 @@ class StorageCardValidationManager(
         // Step 7 - Read and unpack the contract record (16 bytes)
         val contractContent =
             if (isMifareClassic) {
-              storageCard.getBlock(CardConstants.MC_CONTRACT_BLOCK)
+              storageCard.getBlock(MifareClassicBlocks.CONTRACT_BLOCK)
             } else {
               storageCard.getBlocks(
-                  CardConstants.SC_CONTRACT_FIRST_BLOCK, CardConstants.SC_COUNTER_LAST_BLOCK)
+                  StorageCardBlocks.CONTRACT_FIRST_BLOCK, StorageCardBlocks.COUNTER_LAST_BLOCK)
             }
-        val contract = ScContractStructureParser().parse(contractContent)
+        val contract = StorageCardContractCodec.decode(contractContent)
 
         // Validate contract version
         validateContractVersionOrThrow(contract.contractVersionNumber)
@@ -198,7 +200,7 @@ class StorageCardValidationManager(
         // Check contract validity
         try {
           validateContractDateOrThrow(
-              contract.contractValidityEndDate.getDate(), validationDateTime.toLocalDate())
+              contract.contractValidityEndDate.date, validationDateTime.toLocalDate())
         } catch (e: ValidationException) {
           status = e.status
           errorMessage = e.message
@@ -211,6 +213,8 @@ class StorageCardValidationManager(
 
         var writeEvent: Boolean
         val contractUsed = 1 // For storage card, we only have one contract
+        // Contract to write, updated by the validation (counter of a multi-trip contract)
+        var contractToWrite = contract
 
         when (contractPriority) {
           PriorityCode.MULTI_TRIP -> {
@@ -220,13 +224,13 @@ class StorageCardValidationManager(
 
             // Decrement counter
             val newCounterValue = counterValue - calculateDecrementAmount(contractPriority)
-            contract.counterValue = newCounterValue
+            contractToWrite = contract.withCounterValue(newCounterValue)
             remainingTrips = newCounterValue
 
             writeEvent = true
           }
           PriorityCode.SEASON_PASS -> {
-            passValidityEndDate = contract.contractValidityEndDate.getDate()
+            passValidityEndDate = contract.contractValidityEndDate.date
             writeEvent = true
           }
           PriorityCode.FORBIDDEN,
@@ -246,10 +250,12 @@ class StorageCardValidationManager(
                   eventTimeStamp = TimeCompact(validationDateTime),
                   eventLocation = validationLocation.id,
                   eventContractUsed = contractUsed,
-                  contractPriority1 = contractPriority,
-                  contractPriority2 = PriorityCode.FORBIDDEN,
-                  contractPriority3 = PriorityCode.FORBIDDEN,
-                  contractPriority4 = PriorityCode.FORBIDDEN)
+                  contractPriorities =
+                      listOf(
+                          contractPriority,
+                          PriorityCode.FORBIDDEN,
+                          PriorityCode.FORBIDDEN,
+                          PriorityCode.FORBIDDEN))
 
           validationData = ValidationDataBuilder.buildFrom(eventToWrite, locations)
 
@@ -257,26 +263,26 @@ class StorageCardValidationManager(
           if (requiresAuth) {
             logger.d("Re-authenticating before write operation")
             cardTransaction.prepareMifareClassicAuthenticate(
-                CardConstants.MC_SECTOR_1_AUTH_BLOCK,
+                MifareClassicBlocks.SECTOR_1_AUTH_BLOCK,
                 MifareClassicKeyType.KEY_A,
-                CardConstants.MC_DEFAULT_KEY_NUMBER)
+                MifareClassicBlocks.DEFAULT_KEY_NUMBER)
           }
 
           logger.d("Writing updated contract and event to card")
           // Prepare write operations based on card type
-          val updatedContractContent = ScContractStructureParser().generate(contract)
-          val eventBytesToWrite = ScEventStructureParser().generate(eventToWrite)
+          val updatedContractContent = StorageCardContractCodec.encode(contractToWrite)
+          val eventBytesToWrite = StorageCardEventCodec.encode(eventToWrite)
 
           if (isMifareClassic) {
             // Mifare Classic: write individual blocks
             cardTransaction
-                .prepareWriteBlocks(CardConstants.MC_CONTRACT_BLOCK, updatedContractContent)
-                .prepareWriteBlocks(CardConstants.MC_EVENT_BLOCK, eventBytesToWrite)
+                .prepareWriteBlocks(MifareClassicBlocks.CONTRACT_BLOCK, updatedContractContent)
+                .prepareWriteBlocks(MifareClassicBlocks.EVENT_BLOCK, eventBytesToWrite)
           } else {
             // MIFARE Ultralight/ST25: write block ranges
             cardTransaction
-                .prepareWriteBlocks(CardConstants.SC_CONTRACT_FIRST_BLOCK, updatedContractContent)
-                .prepareWriteBlocks(CardConstants.SC_EVENT_FIRST_BLOCK, eventBytesToWrite)
+                .prepareWriteBlocks(StorageCardBlocks.CONTRACT_FIRST_BLOCK, updatedContractContent)
+                .prepareWriteBlocks(StorageCardBlocks.EVENT_FIRST_BLOCK, eventBytesToWrite)
           }
 
           cardTransaction.processCommands(ChannelControl.CLOSE_AFTER)

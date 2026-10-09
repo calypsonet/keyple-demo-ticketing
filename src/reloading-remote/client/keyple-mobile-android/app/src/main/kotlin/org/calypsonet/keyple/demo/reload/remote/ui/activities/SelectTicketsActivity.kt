@@ -64,7 +64,7 @@ class SelectTicketsActivity : BaseActivity() {
 
   private fun startCheckoutActivity(priorityCode: PriorityCode, ticketNumber: Int? = null) {
     val intent = Intent(this, CheckoutActivity::class.java)
-    intent.putExtra(SELECTED_TICKET_PRIORITY_CODE, priorityCode.key)
+    intent.putExtra(SELECTED_TICKET_PRIORITY_CODE, priorityCode.code)
     if (ticketNumber != null) {
       intent.putExtra(TRIPS_TO_LOAD, ticketNumber)
     }

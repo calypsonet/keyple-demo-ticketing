@@ -13,7 +13,7 @@
 package org.calypsonet.keyple.demo.control.data
 
 import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService
-import org.calypsonet.keyple.demo.common.constants.CardConstants
+import org.calypsonet.keyple.demo.common.constants.PkiTestCertificates
 import org.calypsonet.keyple.demo.control.domain.spi.KeypopApiProvider
 import org.eclipse.keyple.card.calypso.CalypsoExtensionService
 import org.eclipse.keyple.card.calypso.crypto.legacysam.LegacySamExtensionService
@@ -55,8 +55,9 @@ class KeypopApiProviderImpl : KeypopApiProvider {
     asymmetricCryptoSecuritySetting
         .addPcaCertificate(
             pkiExtensionService.createPcaCertificate(
-                CardConstants.PCA_PUBLIC_KEY_REFERENCE, CardConstants.PCA_PUBLIC_KEY))
-        .addCaCertificate(pkiExtensionService.createCaCertificate(CardConstants.CA_CERTIFICATE))
+                PkiTestCertificates.PCA_PUBLIC_KEY_REFERENCE, PkiTestCertificates.PCA_PUBLIC_KEY))
+        .addCaCertificate(
+            pkiExtensionService.createCaCertificate(PkiTestCertificates.CA_CERTIFICATE))
         .addCaCertificateParser(
             pkiExtensionService.createCaCertificateParser(CertificateType.CALYPSO_LEGACY))
         .addCardCertificateParser(

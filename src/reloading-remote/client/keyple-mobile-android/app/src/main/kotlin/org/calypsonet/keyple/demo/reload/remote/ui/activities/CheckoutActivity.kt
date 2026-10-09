@@ -33,9 +33,9 @@ class CheckoutActivity : BaseActivity() {
     setContentView(activityCheckoutBinding.root)
 
     val selectedTicketPriorityCode =
-        PriorityCode.findEnumByKey(
+        PriorityCode.fromCode(
             intent.getIntExtra(
-                SelectTicketsActivity.SELECTED_TICKET_PRIORITY_CODE, PriorityCode.MULTI_TRIP.key))
+                SelectTicketsActivity.SELECTED_TICKET_PRIORITY_CODE, PriorityCode.MULTI_TRIP.code))
     val ticketNumberCount: Int = intent.getIntExtra(SelectTicketsActivity.TRIPS_TO_LOAD, 0)
 
     if (selectedTicketPriorityCode == PriorityCode.SEASON_PASS) {

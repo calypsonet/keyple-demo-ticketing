@@ -26,13 +26,13 @@ object ContractMapper {
       remainingTrips: Int?
   ): Contract {
     return Contract(
-        name = contract.contractTariff.value,
+        name = contract.contractTariff.label,
         valid = contractValidated,
         record = record,
         validationDateTime = validationDateTime,
         expired = contractExpired,
-        contractValidityStartDate = contract.contractSaleDate.getDate(),
-        contractValidityEndDate = contract.contractValidityEndDate.getDate(),
+        contractValidityStartDate = contract.contractSaleDate.date,
+        contractValidityEndDate = contract.contractValidityEndDate.date,
         remainingTrips = remainingTrips)
   }
 }

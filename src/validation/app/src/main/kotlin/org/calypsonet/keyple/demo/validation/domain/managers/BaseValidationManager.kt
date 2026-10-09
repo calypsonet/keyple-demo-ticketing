@@ -93,7 +93,7 @@ abstract class BaseValidationManager {
   fun sortContractPrioritiesByPriority(
       priorities: List<Pair<Int, PriorityCode>>
   ): List<Pair<Int, PriorityCode>> {
-    return priorities.sortedBy { it.second.key }
+    return priorities.sortedBy { it.second.code }
   }
 
   /**

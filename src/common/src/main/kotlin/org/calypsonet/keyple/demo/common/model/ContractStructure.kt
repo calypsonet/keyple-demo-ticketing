@@ -12,20 +12,30 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.common.model
 
-import java.io.Serializable
 import org.calypsonet.keyple.demo.common.model.type.DateCompact
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 
-data class ContractStructure(
-    var contractVersionNumber: VersionNumber,
-    var contractTariff: PriorityCode,
-    var contractSaleDate: DateCompact,
-    var contractValidityEndDate: DateCompact,
-    var contractSaleSam: Int?,
-    var contractSaleCounter: Int?,
-    var contractAuthKvc: Int?,
-    var contractAuthenticator: Int?
-) : Serializable {
-  var counterValue: Int? = null
+/**
+ * Contract record of the card (see the data model in the README), with the value of its counter.
+ *
+ * @property counterValue The value of the counter associated with the contract (number of trips
+ *   left), null if it has not been read.
+ */
+data class ContractStructure
+@JvmOverloads
+constructor(
+    val contractVersionNumber: VersionNumber,
+    val contractTariff: PriorityCode,
+    val contractSaleDate: DateCompact,
+    val contractValidityEndDate: DateCompact,
+    val contractSaleSam: Int?,
+    val contractSaleCounter: Int?,
+    val contractAuthKvc: Int?,
+    val contractAuthenticator: Int?,
+    val counterValue: Int? = null
+) {
+
+  /** Returns a copy of this contract with the provided counter value. */
+  fun withCounterValue(counterValue: Int?): ContractStructure = copy(counterValue = counterValue)
 }

@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2022 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2026 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -10,15 +10,11 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.common.model.type
+package org.calypsonet.keyple.demo.common.constants
 
-import java.time.LocalDateTime
-
-/** Time in minutes, value = hour * 60 + minute (0 to 1,439). */
-data class TimeCompact(val value: Int) {
-
-  /** Creates the compact time of the time of the provided date and time. */
-  constructor(dateTime: LocalDateTime) : this(dateTime.hour * 60 + dateTime.minute)
-
-  override fun toString(): String = "$value"
+/** Default KIFs of the SAM keys used by the secure sessions of the demo. */
+object DefaultKifs {
+  const val PERSONALIZATION = 0x21.toByte()
+  const val LOAD = 0x27.toByte()
+  const val DEBIT = 0x30.toByte()
 }

@@ -23,7 +23,7 @@ object ValidationMapper {
       contract: ContractStructure?,
       locations: List<Location>
   ): Validation {
-    val name = contract?.contractTariff?.value ?: "Event"
+    val name = contract?.contractTariff?.label ?: "Event"
     return Validation(
         name = name,
         dateTime = event.eventDatetime,

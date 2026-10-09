@@ -13,14 +13,15 @@
 package org.calypsonet.keyple.demo.control.domain.managers
 
 import java.time.LocalDateTime
-import org.calypsonet.keyple.demo.common.constants.CardConstants
+import org.calypsonet.keyple.demo.common.codecs.StorageCardContractCodec
+import org.calypsonet.keyple.demo.common.codecs.StorageCardEnvironmentHolderCodec
+import org.calypsonet.keyple.demo.common.codecs.StorageCardEventCodec
+import org.calypsonet.keyple.demo.common.constants.MifareClassicBlocks
+import org.calypsonet.keyple.demo.common.constants.StorageCardBlocks
 import org.calypsonet.keyple.demo.common.model.EventStructure
 import org.calypsonet.keyple.demo.common.model.Location
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
-import org.calypsonet.keyple.demo.common.parsers.ScContractStructureParser
-import org.calypsonet.keyple.demo.common.parsers.ScEnvironmentHolderStructureParser
-import org.calypsonet.keyple.demo.common.parsers.ScEventStructureParser
 import org.calypsonet.keyple.demo.control.domain.mappers.ContractMapper
 import org.calypsonet.keyple.demo.control.domain.mappers.ValidationMapper
 import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
@@ -81,38 +82,39 @@ class StorageCardControlManager(
       // ========= AUTHENTICATION PHASE (Mifare Classic only) =========
       if (requiresAuth) {
         logger.d(
-            "Authenticating sector 1 with KEY_A (keyNumber=${CardConstants.MC_DEFAULT_KEY_NUMBER})")
+            "Authenticating sector 1 with KEY_A (keyNumber=${MifareClassicBlocks.DEFAULT_KEY_NUMBER})")
         cardTransaction.prepareMifareClassicAuthenticate(
-            CardConstants.MC_SECTOR_1_AUTH_BLOCK,
+            MifareClassicBlocks.SECTOR_1_AUTH_BLOCK,
             MifareClassicKeyType.KEY_A,
-            CardConstants.MC_DEFAULT_KEY_NUMBER)
+            MifareClassicBlocks.DEFAULT_KEY_NUMBER)
       }
 
       // ========= READ DATA =========
       // Step 2 - Read environment, event and contract structures based on card type
       if (isMifareClassic) {
         logger.d(
-            "Reading Mifare Classic blocks: ${CardConstants.MC_ENVIRONMENT_AND_HOLDER_BLOCK}, " +
-                "${CardConstants.MC_CONTRACT_BLOCK}, ${CardConstants.MC_EVENT_BLOCK}")
+            "Reading Mifare Classic blocks: ${MifareClassicBlocks.ENVIRONMENT_AND_HOLDER_BLOCK}, " +
+                "${MifareClassicBlocks.CONTRACT_BLOCK}, ${MifareClassicBlocks.EVENT_BLOCK}")
         // Mifare Classic: read individual 16-byte blocks
         cardTransaction
             .prepareReadBlocks(
-                CardConstants.MC_ENVIRONMENT_AND_HOLDER_BLOCK,
-                CardConstants.MC_ENVIRONMENT_AND_HOLDER_BLOCK)
-            .prepareReadBlocks(CardConstants.MC_CONTRACT_BLOCK, CardConstants.MC_CONTRACT_BLOCK)
-            .prepareReadBlocks(CardConstants.MC_EVENT_BLOCK, CardConstants.MC_EVENT_BLOCK)
+                MifareClassicBlocks.ENVIRONMENT_AND_HOLDER_BLOCK,
+                MifareClassicBlocks.ENVIRONMENT_AND_HOLDER_BLOCK)
+            .prepareReadBlocks(
+                MifareClassicBlocks.CONTRACT_BLOCK, MifareClassicBlocks.CONTRACT_BLOCK)
+            .prepareReadBlocks(MifareClassicBlocks.EVENT_BLOCK, MifareClassicBlocks.EVENT_BLOCK)
             .processCommands(ChannelControl.KEEP_OPEN)
       } else {
         logger.d("Reading storage card block ranges...")
         // MIFARE Ultralight/ST25: read ranges of 4-byte blocks
         cardTransaction
             .prepareReadBlocks(
-                CardConstants.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
-                CardConstants.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK)
+                StorageCardBlocks.ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
+                StorageCardBlocks.ENVIRONMENT_AND_HOLDER_LAST_BLOCK)
             .prepareReadBlocks(
-                CardConstants.SC_EVENT_FIRST_BLOCK, CardConstants.SC_EVENT_LAST_BLOCK)
+                StorageCardBlocks.EVENT_FIRST_BLOCK, StorageCardBlocks.EVENT_LAST_BLOCK)
             .prepareReadBlocks(
-                CardConstants.SC_CONTRACT_FIRST_BLOCK, CardConstants.SC_COUNTER_LAST_BLOCK)
+                StorageCardBlocks.CONTRACT_FIRST_BLOCK, StorageCardBlocks.COUNTER_LAST_BLOCK)
             .processCommands(ChannelControl.KEEP_OPEN)
       }
 
@@ -121,13 +123,13 @@ class StorageCardControlManager(
       // Step 2 - Unpack environment structure
       val environmentContent =
           if (isMifareClassic) {
-            storageCard.getBlock(CardConstants.MC_ENVIRONMENT_AND_HOLDER_BLOCK)
+            storageCard.getBlock(MifareClassicBlocks.ENVIRONMENT_AND_HOLDER_BLOCK)
           } else {
             storageCard.getBlocks(
-                CardConstants.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
-                CardConstants.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK)
+                StorageCardBlocks.ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
+                StorageCardBlocks.ENVIRONMENT_AND_HOLDER_LAST_BLOCK)
           }
-      val env = ScEnvironmentHolderStructureParser().parse(environmentContent)
+      val env = StorageCardEnvironmentHolderCodec.decode(environmentContent)
 
       // Step 3 - If EnvVersionNumber of the Environment structure is not the expected one (==1 for
       // the current version), reject the card.
@@ -136,19 +138,19 @@ class StorageCardControlManager(
       }
 
       // Step 4 - If EnvEndDate points to a date in the past, reject the card.
-      if (env.envEndDate.getDate().isBefore(controlDateTime.toLocalDate())) {
+      if (env.envEndDate.date.isBefore(controlDateTime.toLocalDate())) {
         throw EnvironmentException("End date expired")
       }
 
       // Step 5 - Read and unpack the event record
       val eventContent =
           if (isMifareClassic) {
-            storageCard.getBlock(CardConstants.MC_EVENT_BLOCK)
+            storageCard.getBlock(MifareClassicBlocks.EVENT_BLOCK)
           } else {
             storageCard.getBlocks(
-                CardConstants.SC_EVENT_FIRST_BLOCK, CardConstants.SC_EVENT_LAST_BLOCK)
+                StorageCardBlocks.EVENT_FIRST_BLOCK, StorageCardBlocks.EVENT_LAST_BLOCK)
           }
-      val event = ScEventStructureParser().parse(eventContent)
+      val event = StorageCardEventCodec.decode(eventContent)
 
       // Step 6 - If EventVersionNumber is not the expected one (==1 for the current version),
       // reject
@@ -188,12 +190,12 @@ class StorageCardControlManager(
       // Step 10 - CNT_READ: Read contract data (already read above)
       val contractContent =
           if (isMifareClassic) {
-            storageCard.getBlock(CardConstants.MC_CONTRACT_BLOCK)
+            storageCard.getBlock(MifareClassicBlocks.CONTRACT_BLOCK)
           } else {
             storageCard.getBlocks(
-                CardConstants.SC_CONTRACT_FIRST_BLOCK, CardConstants.SC_COUNTER_LAST_BLOCK)
+                StorageCardBlocks.CONTRACT_FIRST_BLOCK, StorageCardBlocks.COUNTER_LAST_BLOCK)
           }
-      val contract = ScContractStructureParser().parse(contractContent)
+      val contract = StorageCardContractCodec.decode(contractContent)
 
       // Create validation if the event is valid
       if (isValidEvent(event)) {
@@ -220,7 +222,7 @@ class StorageCardControlManager(
 
         // Step 16 - If ContractValidityEndDate points to a date in the past mark contract as
         // expired.
-        if (contract.contractValidityEndDate.getDate().isBefore(controlDateTime.toLocalDate())) {
+        if (contract.contractValidityEndDate.date.isBefore(controlDateTime.toLocalDate())) {
           contractExpired = true
         }
 
