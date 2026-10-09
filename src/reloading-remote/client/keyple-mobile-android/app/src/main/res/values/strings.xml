@@ -12,6 +12,7 @@
     <string name="card_not_personalized">Environment error: wrong version number</string>
     <string name="expired_environment">Environment error: end date expired</string>
     <string name="not_the_same_card">Not the same card</string>
+    <string name="card_full">No space left on the card for a new ticket</string>
     <string name="undetermined_card_type">Undetermined card type</string>
     <string name="card_communication_error">Card communication error</string>
     <string name="server_error">Server error:\n%s</string>

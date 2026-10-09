@@ -132,7 +132,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 #### Added
 - `RemoteServiceStatus` enum defining the status codes of the remote services (`statusCode` field of
   `AnalyzeContractsOutputDto`, `WriteContractOutputDto`, `CardIssuanceOutputDto` and of the `SelectAppAnd...OutputDto`
-  of the Server JSON API, still transmitted as an integer).
+  of the Server JSON API, still transmitted as an integer), with the new `CARD_FULL` status (`7`): no empty contract
+  record nor expired or exhausted contract to replace.
 #### Changed
 - `Location.toString()` now returns the name of the location.
 - The test class `ContractInfoStructureParserTest` is renamed `ContractStructureParserTest`, after the tested class.
@@ -228,6 +229,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   instead of "Undetermined card type".
 - An expired season pass is displayed as "Season pass - Expired" according to its validity end date, the server no
   longer replacing its tariff by `31` (`EXPIRED`) in the contracts it returns.
+- A card without space for a new contract displays "No space left on the card for a new ticket" (`CARD_FULL` status).
 ### Reloading remote server
 #### Upgraded
 - Quarkus: `1.8.1.Final` -> `3.40.1` (LTS):
@@ -303,6 +305,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Contracts reading and analysis: the tariff of an expired contract is returned as recorded in the card, instead of
   being replaced by `31` (`EXPIRED`) in the result, which lost the type of the contract. The "Season pass - Expired"
   label returned to the KMP client is evaluated from the validity end date.
+- Season pass reload: the validity of a season pass not expired is extended by 30 days from its validity end date, as
+  required by the loading procedure (it was reset to 30 days from the reload date, losing the remaining days).
+- A card without empty contract record nor expired or exhausted contract to replace is rejected with the new
+  `CARD_FULL` status (`7`): the loading returned a success without writing the contract.
 ### Reloading remote KMP client
 #### Changed
 - The Android application is moved to a new `androidApp` module, the Android Gradle plugin 9 not supporting the Kotlin

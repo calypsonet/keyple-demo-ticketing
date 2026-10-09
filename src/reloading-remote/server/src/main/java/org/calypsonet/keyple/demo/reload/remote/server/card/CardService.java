@@ -71,11 +71,14 @@ public class CardService {
   private static final String UNEXPECTED_CONTRACT_NUMBER = "Unexpected contract number: ";
   private static final String THE_CARD_IS_NOT_PERSONALIZED = "The card is not personalized";
   private static final String THE_ENVIRONMENT_HAS_EXPIRED = "The environment has expired";
+  private static final String THE_CARD_IS_FULL =
+      "No empty contract record nor expired or exhausted contract to replace, reject card";
   private static final String CONTRACT_AT_INDEX = "Contract at index {}: {} {}";
   private static final String CONTRACTS = "Contracts {}";
   private static final String CUSTOM_PLUGIN = "Non Keyple plugin";
   private static final String CARD_NOT_PERSONALIZED = "Card not personalized.";
   private static final String ENVIRONMENT_EXPIRED = "Environment expired.";
+  private static final String CARD_FULL = "No space left on the card for a new ticket.";
   private static final String RUNTIME_EXCEPTION = "Runtime exception: ";
   private static final String CARD_COMMUNICATION_ERROR = "Card communication error: ";
   private static final String PROCESSED_CARD_SELECTION_SCENARIO_JSON_STRING =
@@ -228,6 +231,10 @@ public class CardService {
               .setContractLoaded("MULTI TRIP: " + inputData.getCounterIncrement()));
       insertNewContract(PriorityCode.MULTI_TRIP, inputData.getCounterIncrement(), card);
       statusCode = cardRepository.writeCard(cardReader, calypsoCard, samResource, card);
+    } catch (CardFullException e) {
+      statusCode = RemoteServiceStatus.CARD_FULL.getCode();
+      message = CARD_FULL;
+      logger.error(AN_ERROR_OCCURRED_WHILE_INCREASING_THE_CONTRACT_COUNTER, e.getMessage());
     } catch (CardNotPersonalizedException e) {
       statusCode = RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode();
       message = CARD_NOT_PERSONALIZED;
@@ -474,6 +481,16 @@ public class CardService {
                           ? ": " + inputData.getTripsToLoad()
                           : "")));
       return new WriteContractOutputDto(statusCode);
+    } catch (CardFullException e) {
+      logger.error(AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT, e.getMessage());
+      activityService.push(
+          new Activity()
+              .setPlugin(pluginType)
+              .setStatus(FAIL)
+              .setType(RELOAD)
+              .setCardSerialNumber(appSerialNumber)
+              .setContractLoaded(""));
+      return new WriteContractOutputDto(RemoteServiceStatus.CARD_FULL.getCode());
     } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT, e.getMessage(), e);
       activityService.push(
@@ -536,6 +553,16 @@ public class CardService {
                           ? ": " + inputData.getTripsToLoad()
                           : "")));
       return new WriteContractOutputDto(statusCode);
+    } catch (CardFullException e) {
+      logger.error(AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT, e.getMessage());
+      activityService.push(
+          new Activity()
+              .setPlugin(pluginType)
+              .setStatus(FAIL)
+              .setType(RELOAD)
+              .setCardSerialNumber(cardUID)
+              .setContractLoaded(""));
+      return new WriteContractOutputDto(RemoteServiceStatus.CARD_FULL.getCode());
     } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT, e.getMessage(), e);
       activityService.push(
@@ -884,6 +911,9 @@ public class CardService {
                 + HexUtil.toHex(calypsoCard.getApplicationSubtype())
                 + "h not supported";
         break;
+      case CARD_FULL:
+        message = CARD_FULL;
+        break;
       default:
         message = "";
     }
@@ -1038,7 +1068,7 @@ public class CardService {
             buildMultiTripContract(
                 environment.getEnvEndDate(), currentContract.getCounterValue() + tripsToLoad);
       } else {
-        newContract = buildSeasonContract();
+        newContract = buildSeasonContract(currentContract);
       }
     } else if (isSingleContractCard) {
       // Single contract card: new contract type replaces existing one at position 1
@@ -1051,20 +1081,20 @@ public class CardService {
       if (PriorityCode.MULTI_TRIP == contractTariff) {
         newContract = buildMultiTripContract(environment.getEnvEndDate(), tripsToLoad);
       } else {
-        newContract = buildSeasonContract();
+        newContract = buildSeasonContract(null);
       }
     } else {
       // Calypso: Issuing new contract, find available position
       newContractNumber = findAvailablePosition(contracts, currentEvent);
       if (newContractNumber == 0) {
-        // no available position, reject card
-        return;
+        logger.warn(THE_CARD_IS_FULL);
+        throw new CardFullException();
       }
       // build new contract
       if (PriorityCode.MULTI_TRIP == contractTariff) {
         newContract = buildMultiTripContract(environment.getEnvEndDate(), tripsToLoad);
       } else {
-        newContract = buildSeasonContract();
+        newContract = buildSeasonContract(null);
       }
     }
     setContractPriority(currentEvent, newContractNumber, newContract.getContractTariff());
@@ -1145,9 +1175,20 @@ public class CardService {
     return contract;
   }
 
-  private ContractStructure buildSeasonContract() {
+  /**
+   * Builds a season pass valid for 30 days: from today for a new season pass, or from the validity
+   * end date of the reloaded season pass when it has not expired (the reload extends its validity).
+   *
+   * @param reloadedContract The season pass reloaded, null for a new season pass.
+   */
+  private ContractStructure buildSeasonContract(ContractStructure reloadedContract) {
     DateCompact contractSaleDate = new DateCompact(LocalDate.now());
-    DateCompact contractValidityEndDate = new DateCompact(contractSaleDate.getValue() + 30);
+    DateCompact validityStartDate = contractSaleDate;
+    if (reloadedContract != null
+        && !reloadedContract.getContractValidityEndDate().getDate().isBefore(LocalDate.now())) {
+      validityStartDate = reloadedContract.getContractValidityEndDate();
+    }
+    DateCompact contractValidityEndDate = new DateCompact(validityStartDate.getValue() + 30);
     return new ContractStructure(
         VersionNumber.CURRENT_VERSION,
         PriorityCode.SEASON_PASS,
@@ -1189,6 +1230,12 @@ public class CardService {
   private static class ExpiredEnvironmentException extends RuntimeException {
     ExpiredEnvironmentException() {
       super(THE_ENVIRONMENT_HAS_EXPIRED);
+    }
+  }
+
+  private static class CardFullException extends RuntimeException {
+    CardFullException() {
+      super(THE_CARD_IS_FULL);
     }
   }
 }

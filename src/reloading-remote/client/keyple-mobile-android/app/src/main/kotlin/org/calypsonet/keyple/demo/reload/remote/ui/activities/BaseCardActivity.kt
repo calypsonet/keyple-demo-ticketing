@@ -100,6 +100,8 @@ abstract class BaseCardActivity :
           launchInvalidCardResponse(card.description, getString(R.string.expired_environment))
       RemoteServiceStatus.DIFFERENT_CARD ->
           launchInvalidCardResponse(card.description, getString(R.string.not_the_same_card))
+      RemoteServiceStatus.CARD_FULL ->
+          launchInvalidCardResponse(card.description, getString(R.string.card_full))
       RemoteServiceStatus.SUCCESS -> {
         // Not an error
       }

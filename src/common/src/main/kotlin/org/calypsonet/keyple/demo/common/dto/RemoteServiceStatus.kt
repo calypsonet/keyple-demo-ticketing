@@ -34,7 +34,12 @@ enum class RemoteServiceStatus(val code: Int) {
   /** The environment of the card has expired. */
   EXPIRED_ENVIRONMENT(5),
   /** The presented card is not the one read before the contract loading. */
-  DIFFERENT_CARD(6);
+  DIFFERENT_CARD(6),
+  /**
+   * The contract cannot be loaded: the card has no empty contract record nor expired or exhausted
+   * contract to replace.
+   */
+  CARD_FULL(7);
 
   companion object {
     /**

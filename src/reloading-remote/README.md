@@ -144,7 +144,7 @@ This procedure's main steps are as follows:
     - `ContractVersionNumber` = 1.
     - `ContractTariff` = Value provided by upper layer.
     - `ContractSaleDate` = Current Date converted to `DateCompact`.
-    - If the operation is a reload of the `ContractTariff` == 1,  set `ContractValidityEndDate` = original `ContractValidityEndDate` + 30
+    - If the operation is a reload of the `ContractTariff` == 1 and the original `ContractValidityEndDate` is not in the past, set `ContractValidityEndDate` = original `ContractValidityEndDate` + 30
     - Else `ContractValidityEndDate` = (`ContractSaleDate` + 30 if `ContractTariff` == 1) or (`EnvEndDate` if `ContractTariff` == 2)
   - Pack the Contract structure to write into the contract record.
   - If the operation is a reload use the index of the original contract to update the information.
