@@ -29,7 +29,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - the APK files are named through `base.archivesName` instead of an internal Android Gradle plugin API
     (`ApkVariantOutputImpl`). The debug APK keeps its name; the unsigned release APK is now suffixed
     `-release-unsigned`;
-  - `packagingOptions` is replaced by `packaging`;
+  - `packagingOptions` is replaced by `packaging`, with the same structure in all the applications;
+  - the properties are read with `project.property()`, which fails with an explicit message when a property is
+    missing, instead of `findProperty()`;
   - the Android and Kotlin Gradle plugins are declared once in the root project, instead of being loaded separately by
     the application and the common module.
 - Android applications: dependency injection with Hilt instead of Dagger `2.25` and dagger-android (deprecated), and
@@ -45,11 +47,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   longer share the outputs of the common library with their own build state: the library is no longer rebuilt by each
   build (e.g. when opening the projects in the IDE), and the Kotlin JVM plugin is no longer declared in the root
   projects of the Android applications. The library is referenced by its coordinates (`demoCommon` in the version
-  catalog).
+  catalog). Its checks (code format, unit tests), no longer run by the builds of the applications, are run by the
+  `check` task of the server, and therefore by its CI job.
 - CI/CD workflows: GitHub actions `checkout`, `setup-java`, `setup-node` and `setup-dotnet` upgraded from v4 to v5,
   .NET upgraded from 7.0 to 10.0, and Node.js upgraded from 20 (end of life) to 24.
 - The changelogs of the archived repositories, no longer maintained, are moved from the modules to `docs/history/`.
-- Versions in the READMEs aligned with the build: JDK 17 to build, Java 11+ for the KMP desktop client, Kotlin 2.3,
+- Versions in the READMEs aligned with the build: JDK 17 to build, Java 17+ for the KMP desktop client, Kotlin 2.3,
   Android 8.0+ and iOS 15.3+ for the KMP client.
 ### Upgraded
 - `keyple-java-bom`: `2026.03.19` -> `2026.09.29`
@@ -101,6 +104,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   of the Server JSON API, still transmitted as an integer).
 #### Changed
 - `Location.toString()` now returns the name of the location.
+- The test class `ContractInfoStructureParserTest` is renamed `ContractStructureParserTest`, after the tested class.
 - Documentation of the status codes of `AnalyzeContractsOutputDto`, `WriteContractOutputDto`, `CardIssuanceOutputDto`
   and of the `SelectAppAnd...OutputDto` aligned with the codes actually returned by the server.
 #### Upgraded
@@ -113,7 +117,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   and Android implementations are renamed `ArriveFeedbackDevice` and `AndroidFeedbackDevice`.
 - The settings are accessed through the `AppSettingsRepository` port instead of the global `AppSettings` object.
 - The UI uses the domain models directly (UI models removed, as no object is passed between activities).
+- Only the main activity is exported (launched by the launcher and the Arrive terminal): the other activities are no
+  longer accessible to the other applications, and the reader activity loses its unused `VIEW` intent filter.
 #### Removed
+- ProGuard rule keeping the `Location` class, which is not accessed by reflection.
 - Unused `CardSummaryActivity` and its layouts (replaced by the summary overlay of the reader screen).
 #### Fixed
 - Crash at startup when the storage card library is mocked.
@@ -128,6 +135,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The SAM selection no longer filters the SAM on its power-on data (SAM C1).
 - The user feedback (sounds) is provided by the `UiManager` port, and the settings are accessed through the
   `AppSettingsRepository` port.
+#### Removed
+- Gson dependency, not used by the application (still provided to the Keyple libraries by their own dependencies), as
+  in the validation app.
 #### Fixed
 - The waiting indicator is now hidden when the control procedure fails, instead of staying displayed when returning to
   the reader screen.
@@ -264,9 +274,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The background tasks of `KeypleService` (server ping, card selection scenario) and the tones of the desktop buzzer
   are launched in a scope owned by their class instead of `GlobalScope`.
 - The `expect`/`actual` classes (beta feature of Kotlin) are explicitly enabled (`-Xexpect-actual-classes`), removing
-  the related compilation warnings.
+  the related compilation warnings (and the related `@Suppress` annotations).
+- Android: Java 17 as source and target level instead of Java 11, as in the other Android applications. The desktop
+  application was already compiled for Java 17 (Kotlin toolchain).
+- The platform specific files of `DataStorePathProducer` are suffixed by their platform (`Datastore.android.kt`,
+  `Datastore.desktop.kt`, `Datastore.ios.kt`), as the other `actual` files.
 #### Removed
 - Koin dependencies (`koin-core`, `koin-compose`, `koin-android`, `koin-androidx-compose`), declared but not used.
+- Ktor dependencies declared twice, the toolchain repeated in the desktop target, and the `android.nonTransitiveRClass`
+  property (default value since the Android Gradle plugin 8).
 - Unused error screen (`ErrorScreen`, `AppError` route), never displayed and showing a fixed message, and its two
   animations (`anim_warning.json`, `anim_error_white.json`).
 - Material icons extended (`material-icons-extended`, no longer updated, about 8 MB of the debug APK): the only icon

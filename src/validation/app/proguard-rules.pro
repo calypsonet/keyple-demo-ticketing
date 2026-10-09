@@ -8,9 +8,6 @@
     public boolean isDebugEnabled() return false;
 }
 
-# Keep demo app classes
--keep class org.calypsonet.keyple.demo.common.model.Location { *; }
-
 # Keep Bluebird NFC library classes
 -keep class com.bluebird.extnfc.** { *; }
 -keep interface com.bluebird.extnfc.** { *; }

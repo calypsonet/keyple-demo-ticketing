@@ -53,7 +53,7 @@ kotlin {
     // Packages the Compose Multiplatform resources (composeResources) in the Android library
     androidResources { enable = true }
   }
-  jvm("desktop") { kotlin { jvmToolchain(jvmToolchainVersion.toInt()) } }
+  jvm("desktop")
   sourceSets {
     commonMain.dependencies {
       // Keyple BOM
@@ -82,8 +82,6 @@ kotlin {
       implementation(libs.ktorClientContentNegotiation)
       implementation(libs.ktorClientLogging)
       implementation(libs.ktorClientAuth)
-      implementation(libs.ktorClientContentNegotiation)
-      implementation(libs.ktorSerializationKotlinxJson)
       implementation(libs.napier)
     }
     if (System.getProperty("os.name").lowercase().contains("mac")) {

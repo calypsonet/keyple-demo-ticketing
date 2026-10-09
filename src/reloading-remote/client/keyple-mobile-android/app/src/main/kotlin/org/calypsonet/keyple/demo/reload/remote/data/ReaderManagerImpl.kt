@@ -14,8 +14,6 @@ package org.calypsonet.keyple.demo.reload.remote.data
 
 import android.app.Activity
 import javax.inject.Inject
-import kotlin.collections.set
-import kotlin.jvm.Throws
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocolEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.model.DeviceEnum
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ReaderType

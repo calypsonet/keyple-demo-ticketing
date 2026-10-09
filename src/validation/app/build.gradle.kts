@@ -159,14 +159,14 @@ val javaSourceLevel = project.property("javaSourceLevel") as String
 val javaTargetLevel = project.property("javaTargetLevel") as String
 
 android {
-  namespace = project.findProperty("androidAppNamespace") as String
-  compileSdk = (project.findProperty("androidCompileSdk") as String).toInt()
+  namespace = project.property("androidAppNamespace") as String
+  compileSdk = (project.property("androidCompileSdk") as String).toInt()
   defaultConfig {
-    applicationId = project.findProperty("androidAppId") as String
-    minSdk = (project.findProperty("androidMinSdk") as String).toInt()
-    targetSdk = (project.findProperty("androidTargetSdk") as String).toInt()
-    versionCode = (project.findProperty("androidAppVersionCode") as String).toInt()
-    versionName = project.findProperty("androidAppVersionName") as String
+    applicationId = project.property("androidAppId") as String
+    minSdk = (project.property("androidMinSdk") as String).toInt()
+    targetSdk = (project.property("androidTargetSdk") as String).toInt()
+    versionCode = (project.property("androidAppVersionCode") as String).toInt()
+    versionName = project.property("androidAppVersionName") as String
     buildConfigField("Boolean", "HAS_ARRIVE_SDK", "$hasArriveSdk")
   }
   buildFeatures {
@@ -202,9 +202,10 @@ android {
         if (hasArriveSdk) "src/arrive/kotlin" else "src/arrive-mock/kotlin"
   }
   packaging {
-    // Exclude 'META-INF/NOTICE.md' to resolve the conflict that occurs when multiple dependencies
-    // include this file
-    resources.excludes.add("META-INF/NOTICE.md")
+    resources {
+      // Files included by several dependencies, conflicting when packaged in the APK
+      excludes.add("META-INF/NOTICE.md")
+    }
   }
   lint { abortOnError = false }
 }

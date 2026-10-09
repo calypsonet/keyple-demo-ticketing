@@ -23,7 +23,7 @@ This innovative client showcases the power of Kotlin Multiplatform by providing 
 ### Development Environment
 - **Android Studio** with Kotlin Multiplatform plugin
 - **Xcode** (for iOS development on macOS)
-- **JDK 17** to build the project (the desktop application runs on Java 11+)
+- **JDK 17** to build the project (the desktop application runs on Java 17+)
 - **Kotlin 2.3** with multiplatform support (provided by the Gradle build)
 
 ### Platform-Specific Requirements

@@ -119,7 +119,12 @@ tasks.register<Exec>("startServer") {
 
 tasks {
   clean { delete("dashboard-app/build") }
-  check { dependsOn(lintDashboard) }
+  check {
+    dependsOn(lintDashboard)
+    // The common library being an included build, its checks (code format, unit tests) are not run
+    // by the builds of the applications: they are run with those of the server (e.g. by the CI)
+    dependsOn(gradle.includedBuild("common").task(":check"))
+  }
   // The dashboard is served by Quarkus as static resources (META-INF/resources)
   processResources {
     dependsOn(buildDashboard)

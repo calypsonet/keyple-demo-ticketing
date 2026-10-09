@@ -108,9 +108,6 @@ dependencies {
   // Lottie
   implementation(libs.lottie)
 
-  // Google GSON
-  implementation(libs.gson)
-
   // Devnied - Byte Utils
   implementation(libs.bitLib4j) {
     // Logging dependencies declared but not used by the library (log4j 1.x is end of life)
@@ -137,14 +134,14 @@ val javaSourceLevel = project.property("javaSourceLevel") as String
 val javaTargetLevel = project.property("javaTargetLevel") as String
 
 android {
-  namespace = project.findProperty("androidAppNamespace") as String
-  compileSdk = (project.findProperty("androidCompileSdk") as String).toInt()
+  namespace = project.property("androidAppNamespace") as String
+  compileSdk = (project.property("androidCompileSdk") as String).toInt()
   defaultConfig {
-    applicationId = project.findProperty("androidAppId") as String
-    minSdk = (project.findProperty("androidMinSdk") as String).toInt()
-    targetSdk = (project.findProperty("androidTargetSdk") as String).toInt()
-    versionCode = (project.findProperty("androidAppVersionCode") as String).toInt()
-    versionName = project.findProperty("androidAppVersionName") as String
+    applicationId = project.property("androidAppId") as String
+    minSdk = (project.property("androidMinSdk") as String).toInt()
+    targetSdk = (project.property("androidTargetSdk") as String).toInt()
+    versionCode = (project.property("androidAppVersionCode") as String).toInt()
+    versionName = project.property("androidAppVersionName") as String
   }
   buildFeatures {
     viewBinding = true
@@ -175,8 +172,10 @@ android {
   }
   packaging {
     resources {
-      excludes.add("META-INF/versions/9/OSGI-INF/MANIFEST.MF")
+      // Files included by several dependencies, conflicting when packaged in the APK (e.g. the
+      // OSGi manifest of the Bouncy Castle JARs, used by the PKI extension)
       excludes.add("META-INF/NOTICE.md")
+      excludes.add("META-INF/versions/9/OSGI-INF/MANIFEST.MF")
     }
   }
   lint { abortOnError = false }

@@ -64,8 +64,6 @@ constructor(
   private var samReaderProtocolLogicalName: String? = null
   private var samReaders: MutableList<CardReader> = mutableListOf()
 
-  // IHM
-
   private fun initReaderType(readerType: ReaderType) {
     when (readerType) {
       ReaderType.ARRIVE -> initArriveReader()
