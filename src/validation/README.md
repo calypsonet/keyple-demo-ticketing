@@ -16,7 +16,7 @@ This Android application simulates validation terminals found at transportation 
 
 **Role in Ecosystem**: Second step in the ticketing workflow - validates loaded contracts and grants/denies access to transportation networks.
 
-**Validation Flow**: Season Pass → Multi-trip Ticket → Stored Value (in order of priority)
+**Validation Flow**: Season Pass → Multi-trip Ticket (in order of priority)
 
 ## Prerequisites
 
@@ -57,7 +57,6 @@ cd keyple-demo-ticketing/src/validation
 1. Launch application
 2. Select device type from **Device Selection** screen:
   - **Famoco FX205**: Enterprise terminal with dual readers
-  - **Coppernic C-One 2**: Rugged Android terminal
   - **Standard NFC**: Consumer Android device
   - Proprietary terminals (grayed out by default)
 
@@ -72,7 +71,6 @@ cd keyple-demo-ticketing/src/validation
 
 **Operational Settings**:
 - **Battery Powered**: Enable for portable terminals (shows Home screen)
-- **Validation Amount**: Cost for stored value contracts (default: 1 unit)
 - **Auto-validation**: Immediate validation on card detection
 
 **Security Settings**:
@@ -102,7 +100,7 @@ Device Selection → Settings → Reader Activity → Validation Result
 
 **Settings (`SettingsActivity`)**
 - Configure location identifier and operational parameters
-- Set battery mode and validation amounts
+- Set battery mode
 - Access diagnostic and debug options
 
 **Home (`HomeActivity`)** _(Battery-powered mode only)_
@@ -110,7 +108,7 @@ Device Selection → Settings → Reader Activity → Validation Result
 - Quick access to settings and diagnostics
 - Manual trigger for card detection phase
 
-**Reader Activity (`ReaderActivity`)**
+**Reader Activity (`CardReaderActivity`)**
 - Initializes selected Keyple plugin and SAM integration
 - Displays "Present Card" message to user
 - Shows real-time status during card processing
@@ -118,21 +116,23 @@ Device Selection → Settings → Reader Activity → Validation Result
 
 **Validation Results (`CardSummaryActivity`)**
 
-The `CardSummaryActivity` displays both success and failure results:
+The summary overlay of the reader screen (`CardReaderActivity`) displays both success and failure results
+(`ValidationResult`):
 
-**Success Screen** (Status.SUCCESS):
+**Success Screen** (`ValidationResult.Accepted`):
 - **Location**: Where validation occurred
 - **Date/Time**: When validation was processed
 - **Contract Details**:
   - Season Pass: Shows validity end date
   - Multi-trip: Shows remaining ticket count
-  - Stored Value: Shows remaining balance
 - **Visual Feedback**: Green background with success animation
 
 **Failure Screens**:
-- **Invalid Card** (Status.INVALID_CARD): Orange background with error details
-- **Empty Card** (Status.EMPTY_CARD): Red background showing no tickets available
-- **Other Errors**: Red background with specific error message
+- **Invalid Card** (`ValidationResult.Rejected`, card data refused: environment, versions, already validated): Orange
+  background with the reason of the refusal
+- **No Ticket** (`ValidationResult.Rejected`, no contract to use: no valid contract, expired contract, no trips left):
+  Red background with the reason of the refusal
+- **Other Errors** (`ValidationResult.Failed`): Red background with the error message
 - **Visual Feedback**: Error animation with sound/haptic feedback
 
 ### Validation Scenarios
@@ -151,18 +151,11 @@ The `CardSummaryActivity` displays both success and failure results:
 - Access granted
 - Remaining count displayed
 
-**Stored Value Validation**:
-- Card detected with sufficient balance
-- Balance decremented by validation amount
-- Access granted
-- Remaining balance displayed
-
 #### Failed Validations
 
-**Insufficient Funds/Trips**:
+**No Trips Left**:
 - Multi-trip counter = 0
-- Stored value < validation amount
-- Access denied with balance information
+- Access denied
 
 **Expired Contracts**:
 - Season Pass validity date passed
@@ -221,12 +214,12 @@ The `CardSummaryActivity` displays both success and failure results:
 - Provides UI feedback hooks (success/failure)
 - Implementation: `ReaderManagerImpl`
 
-**CalypsoCardValidationManager** (`domain/managers/CalypsoCardValidationManager.kt`)
+**CalypsoCardValidationProcedure** (`domain/procedures/CalypsoCardValidationProcedure.kt`)
 - Secure validation procedure for Calypso cards with SAM integration
-- Handles contract priority logic (Season Pass → Multi-trip → Stored Value)
+- Handles contract priority logic (Season Pass → Multi-trip)
 - Creates cryptographically verified validation events
 
-**StorageCardValidationManager** (`domain/managers/StorageCardValidationManager.kt`)
+**StorageCardValidationProcedure** (`domain/procedures/StorageCardValidationProcedure.kt`)
 - Simplified validation for storage cards (MIFARE Ultralight, ST25 SRT512)
 - Direct read/write operations without SAM requirements
 - Single contract processing per card
@@ -241,8 +234,8 @@ The validation procedure processes contracts in priority order:
 |:---------|:--------------|:-----------------------------------|
 | 1        | Season Pass   | Check validity date only           |
 | 2        | Multi-trip    | Check counter > 0, decrement       |
-| 3        | Stored Value  | Check balance >= amount, decrement |
 | 31       | Expired       | Skip (automatic marking)           |
+| Other    | Unknown       | Skip (never validated)             |
 
 #### Best Contract Search Algorithm
 
@@ -272,11 +265,6 @@ The validation procedure processes contracts in priority order:
 - **Features**: Enterprise-grade security, robust construction
 - **Use Case**: Fixed terminal installations
 
-**Coppernic C-One 2**
-- **Plugin**: [Coppernic Plugin](https://github.com/calypsonet/keyple-android-plugin-coppernic)
-- **Features**: Rugged design, multiple connectivity options
-- **Use Case**: Mobile validation scenarios
-
 **Standard NFC Smartphones**
 - **Plugin**: [Android NFC Plugin](https://keyple.org/components/standard-reader-plugins/keyple-plugin-android-nfc-lib/)
 - **Limitations**: No SAM support (Storage Cards only)
@@ -303,12 +291,11 @@ validation/app/
 ├── src/main/
 │   ├── kotlin/org/calypsonet/keyple/demo/validation/
 │   │   ├── data/                        # Data layer implementations
-│   │   ├── di/                          # Dependency injection (Dagger)
-│   │   │   └── scope/                   # DI scopes
+│   │   ├── di/                          # Dependency injection (Hilt modules)
 │   │   ├── domain/                      # Business logic layer
 │   │   │   ├── builders/                # Data builders
-│   │   │   ├── managers/                # Validation managers (Calypso, Storage)
 │   │   │   ├── model/                   # Domain models
+│   │   │   ├── procedures/              # Validation procedures (Calypso, Storage)
 │   │   │   └── spi/                     # Service provider interfaces
 │   │   └── ui/                          # UI layer
 │   │       ├── activities/              # Android activities
@@ -344,7 +331,7 @@ validation/app/
 - Check card has valid contracts loaded via Reload Demo
 - Verify card AID is supported by application
 - Ensure contract validity dates are current
-- Check sufficient balance/trips for validation
+- Check trips left for validation
 
 **"NFC detection not working"**
 - Enable NFC in Android system settings

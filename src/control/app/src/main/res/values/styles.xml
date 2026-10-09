@@ -13,6 +13,9 @@
 
 <resources>
 
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar" />
+
     <style name="mediumBoldBlue">
         <item name="fontFamily">@font/worksans_bold</item>
         <item name="android:textSize">@dimen/medium_text_size</item>
@@ -49,11 +52,6 @@
         <item name="android:textColor">@color/blue</item>
     </style>
 
-    <style name="smallestRegularBlue">
-        <item name="fontFamily">@font/worksans_regular</item>
-        <item name="android:textSize">@dimen/smallest_text_size</item>
-        <item name="android:textColor">@color/blue</item>
-    </style>
 
     <style name="smallBoldBlack">
         <item name="fontFamily">@font/worksans_bold</item>

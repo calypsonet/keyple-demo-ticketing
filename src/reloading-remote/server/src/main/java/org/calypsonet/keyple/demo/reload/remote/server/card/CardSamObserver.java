@@ -12,13 +12,12 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.server.card;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import java.util.regex.Pattern;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import org.eclipse.keyple.core.service.ObservablePlugin;
 import org.eclipse.keyple.core.service.Plugin;
 import org.eclipse.keyple.core.service.PluginEvent;
-import org.eclipse.keyple.core.service.SmartCardServiceProvider;
 import org.eclipse.keyple.core.service.spi.PluginObservationExceptionHandlerSpi;
 import org.eclipse.keyple.core.service.spi.PluginObserverSpi;
 import org.eclipse.keypop.reader.CardReader;
@@ -84,17 +83,25 @@ public class CardSamObserver
     return isSamAvailable;
   }
 
-  void startMonitoring() {
-    logger.info("Start SAM plugin and reader monitoring");
-    isSamAvailable = false;
-    reader = searchReader();
-    if (reader == null) {
-      throw new IllegalStateException("SAM reader not found");
-    }
+  /**
+   * Starts the monitoring of the SAM plugin (connection and disconnection of the readers) and, if
+   * it is already connected, of the SAM reader (insertion and removal of the SAM). If the SAM
+   * reader is not connected yet, its monitoring starts as soon as it is connected.
+   *
+   * @param samPlugin The PC/SC plugin of the SAM reader.
+   */
+  void startMonitoring(ObservablePlugin samPlugin) {
     logger.info(
-        "Starting SAM plugin monitoring (only once at server startup): {}", plugin.getName());
+        "Starting SAM plugin monitoring (only once at server startup): {}", samPlugin.getName());
+    isSamAvailable = false;
+    plugin = samPlugin;
     plugin.setPluginObservationExceptionHandler(this);
     plugin.addObserver(this);
+    reader = searchReader(plugin);
+    if (reader == null) {
+      logger.warn("SAM reader not connected: its monitoring starts as soon as it is connected");
+      return;
+    }
     startReaderMonitoring();
   }
 
@@ -119,18 +126,6 @@ public class CardSamObserver
     reader.setReaderObservationExceptionHandler(this);
     reader.addObserver(this);
     reader.startCardDetection(ObservableCardReader.DetectionMode.REPEATING);
-  }
-
-  private ObservableCardReader searchReader() {
-    logger.info("Search SAM plugin and reader using filter: {}", samReaderFilter);
-    for (Plugin plugin : SmartCardServiceProvider.getService().getPlugins()) {
-      reader = searchReader(plugin);
-      if (reader != null) {
-        this.plugin = (ObservablePlugin) plugin;
-        return reader;
-      }
-    }
-    return null;
   }
 
   private ObservableCardReader searchReader(Plugin plugin) {

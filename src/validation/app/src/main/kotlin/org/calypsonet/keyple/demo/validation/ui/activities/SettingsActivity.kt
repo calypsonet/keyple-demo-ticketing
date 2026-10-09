@@ -16,40 +16,41 @@ import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.ArrayAdapter
+import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.common.model.Location
 import org.calypsonet.keyple.demo.validation.BuildConfig
 import org.calypsonet.keyple.demo.validation.R
 import org.calypsonet.keyple.demo.validation.databinding.ActivitySettingsBinding
-import org.calypsonet.keyple.demo.validation.databinding.LogoToolbarBinding
-import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
+import org.calypsonet.keyple.demo.validation.databinding.ToolbarBinding
 
+@AndroidEntryPoint
 class SettingsActivity : BaseActivity() {
 
   private lateinit var activitySettingsBinding: ActivitySettingsBinding
-  private lateinit var logoToolbarBinding: LogoToolbarBinding
+  private lateinit var toolbarBinding: ToolbarBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     activitySettingsBinding = ActivitySettingsBinding.inflate(layoutInflater)
-    logoToolbarBinding = activitySettingsBinding.appBarLayout
+    toolbarBinding = activitySettingsBinding.appBarLayout
     setContentView(activitySettingsBinding.root)
-    setSupportActionBar(logoToolbarBinding.toolbar)
+    setSupportActionBar(toolbarBinding.toolbar)
     // Init location spinner
     val locations = ticketingService.getLocations()
     val locationsAdapter =
         ArrayAdapter(this, R.layout.spinner_item_location, R.id.spinner_item_text, locations)
     activitySettingsBinding.spinnerLocationList.adapter = locationsAdapter
     activitySettingsBinding.timeBtn.setOnClickListener {
-      startActivityForResult(Intent(Settings.ACTION_DATE_SETTINGS), 0)
+      startActivity(Intent(Settings.ACTION_DATE_SETTINGS))
     }
     activitySettingsBinding.startBtn.setOnClickListener {
-      AppSettings.location = activitySettingsBinding.spinnerLocationList.selectedItem as Location
-      AppSettings.batteryPowered = activitySettingsBinding.batteryPoweredBox.isChecked
-      if (AppSettings.batteryPowered) {
+      appSettings.location = activitySettingsBinding.spinnerLocationList.selectedItem as Location
+      appSettings.batteryPowered = activitySettingsBinding.batteryPoweredBox.isChecked
+      if (appSettings.batteryPowered) {
         startActivity(Intent(this, HomeActivity::class.java))
         finish()
       } else {
-        startActivity(Intent(this, ReaderActivity::class.java))
+        startActivity(Intent(this, CardReaderActivity::class.java))
       }
     }
     activitySettingsBinding.appVersion.text = getString(R.string.version, BuildConfig.VERSION_NAME)

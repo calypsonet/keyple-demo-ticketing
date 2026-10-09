@@ -13,31 +13,14 @@
 package org.calypsonet.keyple.demo.reload.remote.nav
 
 import kotlinx.serialization.Serializable
-import org.calypsonet.keyple.demo.reload.remote.card.Title
+import org.calypsonet.keyple.demo.reload.remote.card.Product
 
 @Serializable data object Home
 
 @Serializable data object Settings
 
-fun String.toScanNavArgs(): ScanNavArgs {
-  return when (this) {
-    "read-contracts" -> ScanNavArgs.READ_CONTRACTS
-    "personalize-card" -> ScanNavArgs.PERSONALIZE_CARD
-    "write-title" -> ScanNavArgs.WRITE_TITLE
-    else -> throw IllegalArgumentException()
-  }
-}
-
-enum class ScanNavArgs(val value: String) {
-  READ_CONTRACTS("read-contracts"),
-  PERSONALIZE_CARD("personalize-card"),
-  WRITE_TITLE("write-title")
-}
-
-@Serializable data class Scan(val action: String = ScanNavArgs.READ_CONTRACTS.value)
-
 @Serializable
-data class WriteTitleCard(
+data class LoadContract(
     val type: Int,
     val price: Int,
     val quantity: Int = 1,
@@ -45,8 +28,9 @@ data class WriteTitleCard(
     val cardSerial: String
 ) {
   companion object {
-    operator fun invoke(title: Title, cardSerial: String = ""): WriteTitleCard {
-      return WriteTitleCard(title.type.ordinal, title.price, title.quantity, title.date, cardSerial)
+    operator fun invoke(product: Product, cardSerial: String = ""): LoadContract {
+      return LoadContract(
+          product.type.ordinal, product.price, product.quantity, product.date, cardSerial)
     }
   }
 }
@@ -56,8 +40,6 @@ data class WriteTitleCard(
 @Serializable data object ReadCard
 
 @Serializable data object Card
-
-@Serializable data object AppError
 
 @Serializable data object AppSuccess
 

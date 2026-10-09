@@ -13,7 +13,7 @@
 package org.calypsonet.keyple.demo.common.dto
 
 /**
- * - statusCode: 0 (successful), 1 (card communication error), 2 (server is not ready), 3 (card
- *   rejected), 4 (please present the same card).
+ * - statusCode: code of the [RemoteServiceStatus]: 0 (successful), 1 (card communication error), 2
+ *   (server error), 3 (card rejected, Calypso cards only), 7 (card full).
  */
 data class WriteContractOutputDto(var statusCode: Int)

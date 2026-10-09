@@ -12,94 +12,262 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.domain
 
-import java.lang.IllegalStateException
-import java.util.*
-import javax.inject.Inject
-import kotlin.jvm.Throws
-import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService
-import org.calypsonet.keyple.demo.reload.remote.data.ReaderRepository
-import org.calypsonet.keyple.demo.reload.remote.data.model.CardProtocolEnum
-import org.calypsonet.keyple.demo.reload.remote.di.scopes.AppScoped
-import org.eclipse.keyple.card.calypso.CalypsoExtensionService
-import org.eclipse.keyple.core.service.SmartCardServiceProvider
+import java.time.LocalDate
+import org.calypsonet.keyple.demo.common.constants.CalypsoAids
+import org.calypsonet.keyple.demo.common.dto.AnalyzeContractsInputDto
+import org.calypsonet.keyple.demo.common.dto.CardIssuanceInputDto
+import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
+import org.calypsonet.keyple.demo.common.dto.WriteContractInputDto
+import org.calypsonet.keyple.demo.common.model.type.PriorityCode
+import org.calypsonet.keyple.demo.reload.remote.domain.mappers.toContract
+import org.calypsonet.keyple.demo.reload.remote.domain.model.CardInfo
+import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
+import org.calypsonet.keyple.demo.reload.remote.domain.model.CardOperationResult
+import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocol
+import org.calypsonet.keyple.demo.reload.remote.domain.model.ReadContractsResult
+import org.calypsonet.keyple.demo.reload.remote.domain.model.TerminalType
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.KeypopApiProvider
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.ReaderManager
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.RemoteServiceManager
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.UiContext
+import org.eclipse.keyple.core.util.HexUtil
+import org.eclipse.keypop.calypso.card.card.CalypsoCard
+import org.eclipse.keypop.reader.ObservableCardReader
 import org.eclipse.keypop.reader.selection.spi.SmartCard
+import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
+import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
+import org.eclipse.keypop.storagecard.StorageCardApiFactory
 import org.eclipse.keypop.storagecard.card.ProductType.MIFARE_CLASSIC_1K
 import org.eclipse.keypop.storagecard.card.ProductType.MIFARE_ULTRALIGHT
 import org.eclipse.keypop.storagecard.card.ProductType.ST25_SRT512
+import org.eclipse.keypop.storagecard.card.StorageCard
 
-@AppScoped
-class TicketingService @Inject constructor(private var readerRepository: ReaderRepository) {
+/**
+ * Entry point of the UI: manages the reader of the selected card medium, and executes the remote
+ * ticketing services (contracts reading, reload, personalization) on the presented card.
+ */
+class TicketingService(
+    private var keypopApiProvider: KeypopApiProvider,
+    private var readerManager: ReaderManager,
+    private var logger: Logger,
+    private var remoteServiceManager: RemoteServiceManager
+) {
 
-  /** Select the card and retrieve the active card */
-  @Throws(IllegalStateException::class, Exception::class)
-  fun getSmartCard(readerName: String, aidEnums: ArrayList<ByteArray>): SmartCard {
-    with(ReaderRepository.getReader(readerName)) {
-      val smartCardService = SmartCardServiceProvider.getService()
+  private val storageCardApiFactory: StorageCardApiFactory? =
+      keypopApiProvider.getStorageCardApiFactory()
 
-      val readerApiFactory = smartCardService.readerApiFactory
-
-      val reader = ReaderRepository.getReader(readerName)
-
-      /** Get the Calypso card extension service */
-      val calypsoExtension = CalypsoExtensionService.getInstance()
-
-      /** Get the Storage card extension service */
-      val storageCardExtension = StorageCardExtensionService.getInstance()
-
-      /** Verify that the extension's API level is consistent with the current service. */
-      smartCardService.checkCardExtension(calypsoExtension)
-
-      val cardSelectionManager = readerApiFactory.createCardSelectionManager()
-
-      aidEnums.forEach {
-        /**
-         * Generic selection: configures a CardSelector with all the desired attributes to perform
-         * the selection and read additional information afterward
-         */
-        val calypsoCardSelector =
-            readerApiFactory
-                .createIsoCardSelector()
-                .filterByCardProtocol(CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name)
-                .filterByDfName(it)
-        cardSelectionManager.prepareSelection(
-            calypsoCardSelector,
-            calypsoExtension.calypsoCardApiFactory.createCalypsoCardSelectionExtension())
-      }
-      if (storageCardExtension != null) {
-        cardSelectionManager.prepareSelection(
-            readerApiFactory
-                .createBasicCardSelector()
-                .filterByCardProtocol(CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name),
-            storageCardExtension.storageCardApiFactory.createStorageCardSelectionExtension(
-                MIFARE_ULTRALIGHT))
-        cardSelectionManager.prepareSelection(
-            readerApiFactory
-                .createBasicCardSelector()
-                .filterByCardProtocol(CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name),
-            storageCardExtension.storageCardApiFactory.createStorageCardSelectionExtension(
-                ST25_SRT512))
-        cardSelectionManager.prepareSelection(
-            readerApiFactory
-                .createBasicCardSelector()
-                .filterByCardProtocol(CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name),
-            storageCardExtension.storageCardApiFactory.createStorageCardSelectionExtension(
-                MIFARE_CLASSIC_1K))
-      }
-
-      val selectionResult = cardSelectionManager.processCardSelectionScenario(reader)
-      val smartCard = selectionResult.activeSmartCard
-      if (smartCard != null) {
-        // TODO move this code to the calling method
-        //          val calypsoCard = selectionResult.activeSmartCard as CalypsoCard
-        //          // check is the DF name is the expected one (Req. TL-SEL-AIDMATCH.1)
-        //          if (!CardConstants.aidMatch(
-        //              aidEnums[selectionResult.activeSelectionIndex], calypsoCard.dfName)) {
-        //            throw IllegalStateException("Unexpected DF name")
-        //          }
-        return smartCard
-      } else {
-        throw IllegalStateException("Matching smartcard not found")
-      }
+  init {
+    if (storageCardApiFactory == null) {
+      logger.w("Storage card extension not available: storage cards are not supported")
     }
   }
+
+  /** Indicates whether readers have been successfully initialized via [init]. */
+  var areReadersInitialized = false
+    private set
+
+  private lateinit var readerName: String
+  private lateinit var pluginType: String
+  private var aids: List<ByteArray> = emptyList()
+
+  /**
+   * Initializes the reader of the given card medium.
+   *
+   * @param terminalType The type of terminal.
+   * @param cardMedium The card medium (contactless card, SIM...) to read.
+   * @param uiContext Platform-specific context used to register the plugins.
+   * @param observer Optional observer of the card reader events (contactless cards only).
+   * @param readerObservationExceptionHandler Optional handler of the reader observation errors.
+   * @param callback Optional callback invoked once the plugin is registered (asynchronous
+   *   registration of the OMAPI plugin).
+   */
+  fun init(
+      terminalType: TerminalType,
+      cardMedium: CardMedium,
+      uiContext: UiContext,
+      observer: CardReaderObserverSpi?,
+      readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi?,
+      callback: (() -> Unit)?
+  ) {
+    readerName = readerManager.getReaderName(terminalType, cardMedium)
+    pluginType = getPluginType(terminalType, cardMedium)
+    aids = getAids(cardMedium)
+
+    readerManager.registerPlugin(terminalType, uiContext, cardMedium, callback)
+    readerManager.initCardReader(observer, readerObservationExceptionHandler)
+
+    areReadersInitialized = true
+  }
+
+  fun onDestroy(observer: CardReaderObserverSpi?) {
+    areReadersInitialized = false
+    readerManager.onDestroy(observer)
+  }
+
+  fun startNfcDetection() {
+    (readerManager.getReader(readerName) as ObservableCardReader).startCardDetection(
+        ObservableCardReader.DetectionMode.REPEATING)
+  }
+
+  fun stopNfcDetection() {
+    if (!areReadersInitialized) {
+      return
+    }
+    (readerManager.getReader(readerName) as ObservableCardReader).stopCardDetection()
+  }
+
+  fun endCardProcessing() {
+    try {
+      logger.i("endCardProcessing")
+      (readerManager.getCardReader() as ObservableCardReader).finalizeCardProcessing()
+    } catch (e: Exception) {
+      logger.i("cannot end card processing: $e")
+    }
+  }
+
+  /**
+   * Selects the presented card and asks the server to read and analyze its contracts.
+   *
+   * @throws IllegalStateException If no supported card is selected.
+   */
+  fun readCardContracts(): ReadContractsResult {
+    val smartCard = selectCard()
+    val output =
+        remoteServiceManager.analyzeContracts(
+            readerName, smartCard, AnalyzeContractsInputDto(pluginType))
+    val status = RemoteServiceStatus.fromCode(output.statusCode)
+    val today = LocalDate.now()
+    val contracts =
+        if (status == RemoteServiceStatus.SUCCESS) output.contracts.map { it.toContract(today) }
+        else emptyList()
+    return ReadContractsResult(smartCard.toCardInfo(), status, contracts)
+  }
+
+  /**
+   * Selects the presented card and asks the server to load the given contract.
+   *
+   * @param expectedSerialNumber Serial number of the card for which the contract has been bought.
+   * @param contractTariff The contract to load.
+   * @param tripsToLoad The number of trips to load (multi-trip contract).
+   * @return The result of the operation, with the status [RemoteServiceStatus.DIFFERENT_CARD] if
+   *   the presented card is not the one for which the contract has been bought.
+   * @throws IllegalStateException If no supported card is selected.
+   */
+  fun reloadCard(
+      expectedSerialNumber: String?,
+      contractTariff: PriorityCode,
+      tripsToLoad: Int
+  ): CardOperationResult {
+    val smartCard = selectCard()
+    val card = smartCard.toCardInfo()
+    if (card.serialNumber != expectedSerialNumber) {
+      // The contract has been bought for the card read at the first step: the reload must be done
+      // on the same card.
+      return CardOperationResult(card, RemoteServiceStatus.DIFFERENT_CARD)
+    }
+    remoteServiceManager.analyzeContracts(
+        readerName, smartCard, AnalyzeContractsInputDto(pluginType))
+    val output =
+        remoteServiceManager.writeContract(
+            readerName, smartCard, WriteContractInputDto(contractTariff, tripsToLoad, pluginType))
+    return CardOperationResult(card, RemoteServiceStatus.fromCode(output.statusCode))
+  }
+
+  /**
+   * Selects the presented card and asks the server to personalize it.
+   *
+   * @throws IllegalStateException If no supported card is selected.
+   */
+  fun personalizeCard(): CardOperationResult {
+    val smartCard = selectCard()
+    val output =
+        remoteServiceManager.personalizeCard(
+            readerName, smartCard, CardIssuanceInputDto(pluginType))
+    return CardOperationResult(
+        smartCard.toCardInfo(), RemoteServiceStatus.fromCode(output.statusCode))
+  }
+
+  /** Selects the presented card among the supported AIDs and storage card types. */
+  private fun selectCard(): SmartCard {
+    val readerApiFactory = keypopApiProvider.getReaderApiFactory()
+    val reader = readerManager.getReader(readerName)
+    val cardSelectionManager = readerApiFactory.createCardSelectionManager()
+
+    aids.forEach {
+      // Generic selection: configures a CardSelector with all the desired attributes to perform
+      // the selection and read additional information afterward
+      val calypsoCardSelector =
+          readerApiFactory
+              .createIsoCardSelector()
+              .filterByCardProtocol(CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name)
+              .filterByDfName(it)
+      cardSelectionManager.prepareSelection(
+          calypsoCardSelector,
+          keypopApiProvider.getCalypsoCardApiFactory().createCalypsoCardSelectionExtension())
+    }
+
+    if (storageCardApiFactory != null) {
+      cardSelectionManager.prepareSelection(
+          readerApiFactory
+              .createBasicCardSelector()
+              .filterByCardProtocol(CardProtocol.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name),
+          storageCardApiFactory.createStorageCardSelectionExtension(MIFARE_ULTRALIGHT))
+      cardSelectionManager.prepareSelection(
+          readerApiFactory
+              .createBasicCardSelector()
+              .filterByCardProtocol(CardProtocol.ST25_SRT512_LOGICAL_PROTOCOL.name),
+          storageCardApiFactory.createStorageCardSelectionExtension(ST25_SRT512))
+      cardSelectionManager.prepareSelection(
+          readerApiFactory
+              .createBasicCardSelector()
+              .filterByCardProtocol(CardProtocol.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name),
+          storageCardApiFactory.createStorageCardSelectionExtension(MIFARE_CLASSIC_1K))
+    }
+
+    return cardSelectionManager.processCardSelectionScenario(reader).activeSmartCard
+        ?: throw IllegalStateException("Matching smartcard not found")
+  }
+
+  private fun SmartCard.toCardInfo(): CardInfo =
+      when (this) {
+        is CalypsoCard ->
+            CardInfo(
+                description = "CALYPSO: DF name " + HexUtil.toHex(dfName),
+                serialNumber = HexUtil.toHex(applicationSerialNumber),
+                isStorageCard = false,
+                applicationSubtype = HexUtil.toHex(applicationSubtype))
+        is StorageCard ->
+            CardInfo(
+                description = productType.name,
+                serialNumber = HexUtil.toHex(uid),
+                isStorageCard = true)
+        else -> throw IllegalStateException("Unexpected card type")
+      }
+
+  /**
+   * Returns the plugin type reported to the server, depending on the terminal and the card medium.
+   */
+  private fun getPluginType(terminalType: TerminalType, cardMedium: CardMedium): String =
+      when (cardMedium) {
+        CardMedium.CONTACTLESS_CARD ->
+            if (terminalType == TerminalType.BLUEBIRD) "Bluebird" else "Android NFC"
+        CardMedium.SIM -> "Android OMAPI"
+        CardMedium.WEARABLE -> "Android WEARABLE"
+        CardMedium.EMBEDDED -> "Android EMBEDDED"
+      }
+
+  /** Returns the AIDs of the Calypso applications to select, depending on the card medium. */
+  private fun getAids(cardMedium: CardMedium): List<ByteArray> =
+      when (cardMedium) {
+        CardMedium.CONTACTLESS_CARD ->
+            listOf(
+                CalypsoAids.KEYPLE_GENERIC,
+                CalypsoAids.CD_LIGHT_GTML,
+                CalypsoAids.CALYPSO_LIGHT,
+                CalypsoAids.NORMALIZED_IDF)
+        CardMedium.SIM -> listOf(CalypsoAids.CD_LIGHT_GTML, CalypsoAids.NORMALIZED_IDF)
+        CardMedium.WEARABLE,
+        CardMedium.EMBEDDED -> listOf(CalypsoAids.CD_LIGHT_GTML)
+      }
 }

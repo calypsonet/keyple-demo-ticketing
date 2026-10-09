@@ -19,7 +19,6 @@ import okio.Path.Companion.toPath
 
 internal const val dataStoreFileName = "keyple_client.preferences_pb"
 
-@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 expect class DataStorePathProducer {
   fun producePath(): String
 }

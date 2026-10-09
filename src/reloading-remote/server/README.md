@@ -1,7 +1,7 @@
 # Keyple Reload Demo - Java Server
 
-[![Java](https://img.shields.io/badge/java-11%2B-orange.svg)](https://openjdk.java.net/)
-[![Quarkus](https://img.shields.io/badge/quarkus-2.x-blue.svg)](https://quarkus.io/)
+[![Java](https://img.shields.io/badge/java-17%2B-orange.svg)](https://openjdk.java.net/)
+[![Quarkus](https://img.shields.io/badge/quarkus-3.40-blue.svg)](https://quarkus.io/)
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../../LICENSE)
 
 The server component of the Keyple Reload Demo, providing distributed ticketing services with web-based monitoring and
@@ -42,8 +42,8 @@ This Java server implements the business logic for the Keyple Demo ecosystem, ma
 - USB connection for reader
 
 ### Software Requirements
-- **JDK 11+** (OpenJDK recommended)
-- **Node.js 18+** (for dashboard development)
+- **JDK 17+** (OpenJDK recommended)
+- **Node.js 20.19+ or 22.12+** (for dashboard development, as required by Vite)
 - **Compatible PC/SC reader drivers**
 
 ### Tested Readers
@@ -96,10 +96,11 @@ The server uses the following default configuration in `application.properties`:
 
 ```properties
 # CORS Configuration (for web clients)
-quarkus.http.cors=true
+quarkus.http.cors.enabled=true
+quarkus.http.cors.origins=/.*/
 
 # Package Configuration
-quarkus.package.type=uber-jar
+quarkus.package.jar.type=uber-jar
 quarkus.package.runner-suffix=-full
 
 # Logging Configuration
@@ -149,6 +150,13 @@ cd ..
 ./gradlew quarkusDev
 ```
 > The React dashboard is **not rebuilt** in this mode. Use this for Java development only.
+
+**Dashboard development** (Vite development server with hot reload, the server must be running on port 8080):
+```bash
+cd dashboard-app
+npm start
+```
+> Opens the dashboard at `http://localhost:3000`. The API calls (`/activity`, `/card`) are forwarded to the server.
 
 **Run the packaged JAR** (requires step 3):
 ```bash
@@ -214,23 +222,23 @@ GET  /card/sam-status
 ### Activity Monitoring
 
 ```http
-GET  /activity/events
-GET  /activity/events/wait
+GET  /activity/events    # all the transactions (JSON)
+GET  /activity/stream    # new transactions (Server-Sent Events, one JSON transaction per event)
 ```
 
 ## Troubleshooting
 
 ### Common Issues
 
-**"No PC/SC reader found"**
-- Verify reader is connected and drivers installed
-- Check reader filter pattern matches your device name
-- Test with `pcsc_scan` on Linux/macOS or Device Manager on Windows
+**"SAM Resource is not available" in the dashboard**
 
-**"SAM not detected"**
+The server starts even if no SAM reader is connected or no SAM is inserted, and the dashboard displays this message
+until a SAM is detected (no restart needed once the reader is connected and the SAM inserted). If the message persists:
+- Verify reader is connected and drivers installed
+- Check reader filter pattern (`sam.pcsc.reader.filter`) matches your device name
+- Test with `pcsc_scan` on Linux/macOS or Device Manager on Windows
 - Ensure SAM is properly inserted in reader
 - Verify SAM is compatible with your cards (Test vs Production keys)
-- Check SAM status in dashboard
 
 **"Port already in use"**
 - Kill existing process: `lsof -ti:8080 | xargs kill -9` (Linux/macOS) or check Task Manager (Windows)

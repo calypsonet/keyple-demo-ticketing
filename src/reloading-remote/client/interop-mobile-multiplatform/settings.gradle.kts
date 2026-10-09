@@ -1,6 +1,9 @@
 rootProject.name = "kdt-reloading-multiplatform-app"
 
+// Kotlin Multiplatform library (shared code, desktop and iOS applications) and Android application
 include(":composeApp")
+
+include(":androidApp")
 
 pluginManagement {
   repositories {

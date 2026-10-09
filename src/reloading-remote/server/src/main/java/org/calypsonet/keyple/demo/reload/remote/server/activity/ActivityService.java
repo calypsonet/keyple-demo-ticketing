@@ -12,63 +12,60 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.server.activity;
 
+import io.smallrye.mutiny.Multi;
+import io.smallrye.mutiny.operators.multi.processors.BroadcastProcessor;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
-import javax.enterprise.context.ApplicationScoped;
-import javax.validation.constraints.NotNull;
+import java.util.concurrent.CopyOnWriteArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Store transaction logs and allow a (unique) subscriber to receive push notification */
+/**
+ * Stores the transactions and broadcasts each new transaction to all the subscribers (e.g. the
+ * dashboards).
+ */
 @ApplicationScoped
 public class ActivityService {
 
   private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
 
-  List<Activity> activities; // list of all transactions
-  BlockingQueue<Activity> activityQueue; // queue for the subscriber
+  private static final int SUBSCRIBER_BUFFER_SIZE = 100;
 
-  ActivityService() {
-    activities = new ArrayList<>();
-    activityQueue = new ArrayBlockingQueue<>(1);
-  }
+  // All the transactions, added by the card processing threads and read by the HTTP threads
+  private final List<Activity> activities = new CopyOnWriteArrayList<>();
 
+  // Broadcasts the new transactions, the transactions being pushed from several threads
+  private final BroadcastProcessor<Activity> broadcaster = BroadcastProcessor.create();
+
+  /**
+   * Returns all the transactions, in their order of arrival.
+   *
+   * @return A not null list.
+   */
   public List<Activity> list() {
-    return (List<Activity>) ((ArrayList<Activity>) activities).clone();
+    return new ArrayList<>(activities);
   }
 
   /**
-   * Pushes a new transaction to a subscriber.
+   * Stores a new transaction and broadcasts it to all the subscribers.
    *
    * @param t Transaction object to push.
    */
-  public void push(@NotNull Activity t) {
-    // store the new transaction
+  public void push(Activity t) {
     activities.add(t);
-    // make it available in the queue
-    if (!activityQueue.isEmpty()) {
-      activityQueue.clear();
+    synchronized (broadcaster) {
+      broadcaster.onNext(t);
     }
-    if (activityQueue.offer(t)) {
-      logger.trace("A new transaction is available in the queue");
-    }
+    logger.trace("New transaction broadcast: {}", t.getId());
   }
 
   /**
-   * Blocking call, waits for a new transaction to be published. Timeout of 10 seconds.
+   * Returns the stream of the new transactions, from the subscription onwards.
    *
-   * @return Transaction when published, or null if no transaction were published.
+   * @return A not null stream.
    */
-  public Activity waitForNew() {
-    try {
-      return activityQueue.poll(10, TimeUnit.SECONDS);
-    } catch (InterruptedException e) {
-      // Restore interrupted state...
-      Thread.currentThread().interrupt();
-      return null;
-    }
+  public Multi<Activity> stream() {
+    return broadcaster.onOverflow().buffer(SUBSCRIBER_BUFFER_SIZE);
   }
 }

@@ -12,9 +12,10 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.server.card;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import java.util.Properties;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService;
 import org.calypsonet.keyple.demo.common.constants.RemoteServiceId;
 import org.calypsonet.keyple.demo.common.dto.*;
 import org.eclipse.keyple.card.calypso.crypto.legacysam.LegacySamExtensionService;
@@ -53,8 +54,21 @@ public class CardConfigurator {
   @Inject CardService cardService;
 
   public void init() {
+    registerCardExtensions();
     initSamPlugin();
     initCardPlugin();
+  }
+
+  private void registerCardExtensions() {
+    // Card extensions outside the "org.eclipse.keyple" package must be registered so that the
+    // types they provide (e.g. the initial card content) can be rebuilt from JSON data.
+    StorageCardExtensionService storageCardExtension = StorageCardExtensionService.getInstance();
+    if (storageCardExtension == null) {
+      // E.g. mocked storage card library
+      logger.warn("Storage card extension not available: storage cards are not supported");
+      return;
+    }
+    SmartCardServiceProvider.getService().checkCardExtension(storageCardExtension);
   }
 
   private void initSamPlugin() {
@@ -62,14 +76,15 @@ public class CardConfigurator {
     SmartCardService smartCardService = SmartCardServiceProvider.getService();
     Plugin plugin = smartCardService.registerPlugin(PcscPluginFactoryBuilder.builder().build());
     if (plugin.getReaders().isEmpty()) {
-      throw new IllegalStateException(
-          "For the matter of this demo, we expect at least one PCSC reader to be connected");
+      // The server starts anyway: the SAM reader is taken into account as soon as it is connected,
+      // the dashboard showing meanwhile that the SAM is not available.
+      logger.warn("No PC/SC reader connected: waiting for the SAM reader to be connected");
     }
     // Set up the associated card resource service
     setupCardResourceService(plugin);
 
-    // Start monitoring the SAM reader
-    cardSamObserver.startMonitoring();
+    // Start monitoring the SAM plugin (reader connection) and reader (SAM insertion)
+    cardSamObserver.startMonitoring((ObservablePlugin) plugin);
   }
 
   private void setupCardResourceService(Plugin plugin) {
@@ -110,10 +125,14 @@ public class CardConfigurator {
     // verify the resource availability
     CardResource cardResource = cardResourceService.getCardResource(SAM_RESOURCE_PROFILE_NAME);
     if (cardResource == null) {
-      throw new IllegalStateException(
-          String.format(
-              "Unable to retrieve a SAM card resource for profile '%s' from reader '%s' in plugin '%s'",
-              SAM_RESOURCE_PROFILE_NAME, samReaderFilter, plugin.getName()));
+      // E.g. no reader connected or no SAM inserted: the card resource service monitors the plugin
+      // and its readers, so the SAM resource becomes available as soon as a SAM is detected.
+      logger.warn(
+          "No SAM card resource available yet for profile '{}' from reader '{}' in plugin '{}'",
+          SAM_RESOURCE_PROFILE_NAME,
+          samReaderFilter,
+          plugin.getName());
+      return;
     }
     cardResourceService.releaseCardResource(cardResource);
   }
@@ -217,7 +236,7 @@ public class CardConfigurator {
         // Execute service
         outputData =
             cardService.analyzeContracts(
-                reader, (SmartCard) readerExtension.getInitialCardContent(), inputData);
+                reader, readerExtension.getInitialCardContent(SmartCard.class), inputData);
 
       } else if (RemoteServiceId.READ_CARD_AND_WRITE_CONTRACT.name().equals(serviceId)) {
 
@@ -227,7 +246,7 @@ public class CardConfigurator {
         // Execute service
         outputData =
             cardService.writeContract(
-                reader, (SmartCard) readerExtension.getInitialCardContent(), inputData);
+                reader, readerExtension.getInitialCardContent(SmartCard.class), inputData);
 
       } else if (RemoteServiceId.PERSONALIZE_CARD.name().equals(serviceId)) {
 
@@ -237,7 +256,7 @@ public class CardConfigurator {
         // Execute service
         outputData =
             cardService.initCard(
-                reader, (SmartCard) readerExtension.getInitialCardContent(), inputData);
+                reader, readerExtension.getInitialCardContent(SmartCard.class), inputData);
 
       } else if (RemoteServiceId.SELECT_APP_AND_ANALYZE_CONTRACTS.name().equals(serviceId)) {
 
@@ -246,7 +265,7 @@ public class CardConfigurator {
             readerExtension.getInputData(SelectAppAndAnalyzeContractsInputDto.class);
 
         // Get the eventually processed selection scenario
-        Properties properties = (Properties) readerExtension.getInitialCardContent();
+        Properties properties = readerExtension.getInitialCardContent(Properties.class);
 
         // Execute service
         outputData = cardService.selectAppAndAnalyzeContracts(reader, inputData, properties);
@@ -258,7 +277,7 @@ public class CardConfigurator {
             readerExtension.getInputData(SelectAppAndLoadContractInputDto.class);
 
         // Get the eventually processed selection scenario
-        Properties properties = (Properties) readerExtension.getInitialCardContent();
+        Properties properties = readerExtension.getInitialCardContent(Properties.class);
 
         // Execute service
         outputData = cardService.selectAppAndLoadContract(reader, inputData, properties);
@@ -270,7 +289,7 @@ public class CardConfigurator {
             readerExtension.getInputData(SelectAppAndPersonalizeCardInputDto.class);
 
         // Get the eventually processed selection scenario
-        Properties properties = (Properties) readerExtension.getInitialCardContent();
+        Properties properties = readerExtension.getInitialCardContent(Properties.class);
 
         // Execute service
         outputData = cardService.selectAppAndPersonalizeCard(reader, inputData, properties);

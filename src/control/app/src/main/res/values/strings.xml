@@ -13,7 +13,6 @@
 <resources>
     <string name="app_name">Keyple Demo - Control</string>
 
-    <string name="action_settings">Settings</string>
 
     <string name="please_wait">Please wait</string>
     <string name="error_title">Error</string>
@@ -21,13 +20,12 @@
     <string name="version">version %s</string>
 
     <string name="title_activity_home">HomeActivity</string>
-    <string name="title_activity_card_reader">ReaderActivity</string>
-    <string name="title_activity_network_invalid">NetworkInvalidActivity</string>
+    <string name="title_activity_card_reader">CardReaderActivity</string>
+    <string name="title_activity_invalid_card">InvalidCardActivity</string>
     <string name="title_activity_card_content">CardContentActivity</string>
 
     <!-- Settings screen -->
     <string name="location_label">Set location</string>
-    <string name="location_hint">E.g. Paris, Venise</string>
     <string name="validation_period_label">Validation period (min)</string>
     <string name="validation_period_hint">E.g. 10 min</string>
     <string name="time_label">Set time and date</string>
@@ -39,7 +37,6 @@
     <!-- Device selector screen -->
     <string name="device_title">What type of terminal is it?</string>
     <string name="device_bluebird">BLUEBIRD</string>
-    <string name="device_coppernic">COPPERNIC</string>
     <string name="device_famoco">FAMOCO</string>
     <string name="device_nfc_terminal">NFC TERMINAL</string>
 
@@ -50,8 +47,6 @@
 
     <!-- Present screen -->
     <string name="present_support_label">Please present a contactless support to be controlled</string>
-    <string name="valid">Valid</string>
-    <string name="invalid">Invalid</string>
 
     <!-- CardContent screen -->
     <string name="sam_available">SAM available and enabled</string>
@@ -72,15 +67,22 @@
     <!-- NetworkInvalid screen -->
     <string name="card_invalid_title">Not valid on this network</string>
     <string name="card_invalid_aid">Selection error: card not recognized.</string>
-    <string name="card_invalid_structure">Selection error: Unknown structure.</string>
-    <string name="card_invalid_default">Invalid card</string>
 
     <!--    Dialog-->
     <string name="permission_denied_message">You must accept the requested permissions to continue. Please relaunch the app.</string>
     <string name="nfc_not_enabled">The NFC feature of the device does not seem to be available. Please activate the NFC function before continuing.</string>
 
     <!-- Test values-->
-    <string name="card_content_validation_title_placeholder">Multi Trip - Place de la Bastille</string>
-    <string name="card_content_title_placeholder">Multi Trip</string>
+    <string name="validation_label_placeholder">Multi Trip - Place de la Bastille</string>
+    <string name="contract_name_placeholder">Multi Trip</string>
     <string name="card_content_validation_date_placeholder">JJ Month YYYY, HH:MM:SS</string>
+
+    <!-- Results of the control -->
+    <string name="rejection_environment_wrong_version">Environment error: wrong version number</string>
+    <string name="rejection_environment_expired">Environment error: end date expired</string>
+    <string name="rejection_event_wrong_version">Event error: wrong version number</string>
+    <string name="rejection_contract_wrong_version">Contract error: wrong version number</string>
+    <string name="error_mifare_classic_authentication">Authentication failed. Please ensure the card is correctly positioned.</string>
+    <string name="error_mifare_classic_reading">Failed to read Mifare Classic card. Please try again.</string>
+    <string name="error_card_reading">An error occurred while reading the card.</string>
 </resources>

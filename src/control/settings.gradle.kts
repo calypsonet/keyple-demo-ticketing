@@ -2,9 +2,9 @@ rootProject.name = "kdt-control-app"
 
 include(":app")
 
-include(":common")
-
-project(":common").projectDir = file("../common")
+// Common library of the demo: its own build, included instead of being shared as a subproject
+// (one build state for all the applications, its outputs remaining up to date between builds)
+includeBuild("../common")
 
 pluginManagement {
   repositories {
@@ -19,7 +19,6 @@ dependencyResolutionManagement {
   repositories {
     mavenLocal()
     mavenCentral()
-    maven(url = "https://nexus.coppernic.fr/repository/libs-release")
     google()
     maven(url = "https://central.sonatype.com/repository/maven-snapshots")
   }

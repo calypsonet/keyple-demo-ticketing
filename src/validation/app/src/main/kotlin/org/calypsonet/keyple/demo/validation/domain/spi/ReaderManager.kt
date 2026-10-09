@@ -12,7 +12,7 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.validation.domain.spi
 
-import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
+import org.calypsonet.keyple.demo.validation.domain.model.TerminalType
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 
@@ -28,10 +28,10 @@ interface ReaderManager {
    * Registers the appropriate reader plugin(s) for the given reader type and UI context. Must be
    * called before initializing readers.
    *
-   * @param readerType The type of reader to use (e.g. contactless reader).
+   * @param terminalType The type of reader to use (e.g. contactless reader).
    * @param uiContext UI context used to access platform-specific facilities.
    */
-  fun registerPlugin(readerType: ReaderType, uiContext: UiContext)
+  suspend fun registerPlugin(terminalType: TerminalType, uiContext: UiContext)
 
   /**
    * Initializes and returns the primary card reader (contactless). Returns null if not available.
@@ -59,21 +59,4 @@ interface ReaderManager {
    * @param observer Optional observer previously registered on the reader.
    */
   fun onDestroy(observer: CardReaderObserverSpi?)
-
-  /**
-   * Triggers a success feedback in the UI (sound, vibration, message...).
-   *
-   * @return true if the feedback was handled by the UI layer, false otherwise.
-   */
-  fun displayResultSuccess(): Boolean
-
-  /**
-   * Triggers a failure feedback in the UI (sound, vibration, message...).
-   *
-   * @return true if the feedback was handled by the UI layer, false otherwise.
-   */
-  fun displayResultFailed(): Boolean
-
-  /** Resets the UI feedback to the waiting-for-card state (e.g. turns off result LEDs). */
-  fun displayWaiting()
 }

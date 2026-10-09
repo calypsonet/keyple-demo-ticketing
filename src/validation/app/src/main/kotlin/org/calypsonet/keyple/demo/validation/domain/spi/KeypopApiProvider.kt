@@ -34,6 +34,9 @@ interface KeypopApiProvider {
   /** Returns the factory for legacy SAM APIs used to secure Calypso transactions. */
   fun getLegacySamApiFactory(): LegacySamApiFactory
 
-  /** Returns the factory for storage card APIs (e.g., MIFARE Ultralight, ST25...). */
-  fun getStorageCardApiFactory(): StorageCardApiFactory
+  /**
+   * Returns the factory for storage card APIs (e.g., MIFARE Ultralight, ST25...), or null if the
+   * storage card extension is not available (e.g. mocked library).
+   */
+  fun getStorageCardApiFactory(): StorageCardApiFactory?
 }

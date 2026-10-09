@@ -14,36 +14,42 @@ package org.calypsonet.keyple.demo.reload.remote.di
 
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.calypsonet.keyple.demo.reload.remote.data.SharedPrefDataRepository
+import org.calypsonet.keyple.demo.reload.remote.BuildConfig
 import org.calypsonet.keyple.demo.reload.remote.data.network.KeypleSyncEndPointClient
-import org.calypsonet.keyple.demo.reload.remote.data.network.RestClient
-import org.calypsonet.keyple.demo.reload.remote.di.scopes.AppScoped
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
-import timber.log.Timber
+import org.calypsonet.keyple.demo.reload.remote.data.network.ServerStatusProviderImpl
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.AppSettingsRepository
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.ServerStatusProvider
 
 @Suppress("unused")
 @Module
+@InstallIn(SingletonComponent::class)
 class RestModule {
 
   @Provides
-  @AppScoped
+  @Singleton
   fun provideKeypleSyncEndpointClient(
-      prefData: SharedPrefDataRepository
+      appSettings: AppSettingsRepository,
+      logger: Logger
   ): KeypleSyncEndPointClient {
-    val serverUrl =
-        prefData.loadServerProtocol() + prefData.loadServerIP() + ":" + prefData.loadServerPort()
-    Timber.i("Loaded Rest client with URL: $serverUrl")
+    // Logs the exchanges with the server (messages of the remote plugin) in the debug builds only
+    val loggingInterceptor =
+        HttpLoggingInterceptor { message -> logger.d(message) }
+            .setLevel(
+                if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
+                else HttpLoggingInterceptor.Level.NONE)
     return KeypleSyncEndPointClient(
-        Retrofit.Builder()
-            .baseUrl(serverUrl)
-            .client(OkHttpClient.Builder().addNetworkInterceptor(HttpLoggingInterceptor()).build())
-            .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .build()
-            .create(RestClient::class.java))
+        appSettings,
+        OkHttpClient.Builder().addNetworkInterceptor(loggingInterceptor).build(),
+        logger)
   }
+
+  @Provides
+  @Singleton
+  fun provideServerStatusProvider(): ServerStatusProvider = ServerStatusProviderImpl()
 }

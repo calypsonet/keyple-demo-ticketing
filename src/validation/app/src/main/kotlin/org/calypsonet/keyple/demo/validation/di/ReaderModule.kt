@@ -14,26 +14,31 @@ package org.calypsonet.keyple.demo.validation.di
 
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 import org.calypsonet.keyple.demo.validation.data.ReaderManagerImpl
-import org.calypsonet.keyple.demo.validation.di.scope.AppScoped
+import org.calypsonet.keyple.demo.validation.domain.spi.Logger
 import org.calypsonet.keyple.demo.validation.domain.spi.ReaderManager
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
-import timber.log.Timber
 
 @Suppress("unused")
 @Module
+@InstallIn(SingletonComponent::class)
 class ReaderModule {
 
   @Provides
-  @AppScoped
+  @Singleton
   fun provideReaderManager(
       cardReaderObservationExceptionHandlerSpi: CardReaderObservationExceptionHandlerSpi
   ): ReaderManager = ReaderManagerImpl(cardReaderObservationExceptionHandlerSpi)
 
   @Provides
-  @AppScoped
-  fun provideCardReaderObservationExceptionHandlerSpi(): CardReaderObservationExceptionHandlerSpi =
+  @Singleton
+  fun provideCardReaderObservationExceptionHandlerSpi(
+      logger: Logger
+  ): CardReaderObservationExceptionHandlerSpi =
       CardReaderObservationExceptionHandlerSpi { pluginName, readerName, e ->
-        Timber.e("An unexpected reader error occurred: $pluginName:$readerName: $e")
+        logger.e("An unexpected reader error occurred: $pluginName:$readerName", e)
       }
 }

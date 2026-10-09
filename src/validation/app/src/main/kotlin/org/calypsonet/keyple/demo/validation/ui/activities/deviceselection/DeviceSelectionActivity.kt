@@ -17,17 +17,19 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
+import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.validation.BuildConfig
 import org.calypsonet.keyple.demo.validation.R
 import org.calypsonet.keyple.demo.validation.databinding.ActivityDeviceSelectionBinding
-import org.calypsonet.keyple.demo.validation.domain.model.AppSettings
-import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
+import org.calypsonet.keyple.demo.validation.domain.model.TerminalType
 import org.calypsonet.keyple.demo.validation.ui.activities.BaseActivity
 import org.calypsonet.keyple.demo.validation.ui.activities.SettingsActivity
 import org.calypsonet.keyple.plugin.arrive.ArriveConstants
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
 
+@AndroidEntryPoint
 class DeviceSelectionActivity : BaseActivity() {
 
   private val mock: String = "Mock"
@@ -44,11 +46,12 @@ class DeviceSelectionActivity : BaseActivity() {
       activityDeviceSelectionBinding.bluebirdBtn.setBackgroundColor(Color.GRAY)
     } else {
       activityDeviceSelectionBinding.bluebirdBtn.setOnClickListener {
-        AppSettings.readerType = ReaderType.BLUEBIRD
-        val permissions: MutableList<String> =
-            mutableListOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                "com.bluebird.permission.SAM_DEVICE_ACCESS")
+        appSettings.terminalType = TerminalType.BLUEBIRD
+        val permissions = mutableListOf("com.bluebird.permission.SAM_DEVICE_ACCESS")
+        // Storage permission refused without prompt since Android 13 (declared up to Android 12)
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+          permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
         val granted = PermissionHelper.checkPermission(this, permissions.toTypedArray())
         if (granted) {
           startActivity(Intent(this, SettingsActivity::class.java))
@@ -57,16 +60,9 @@ class DeviceSelectionActivity : BaseActivity() {
       }
     }
 
-    // Coppernic
-    activityDeviceSelectionBinding.coppernicBtn.setOnClickListener {
-      AppSettings.readerType = ReaderType.COPPERNIC
-      startActivity(Intent(this, SettingsActivity::class.java))
-      finish()
-    }
-
     // Famoco
     activityDeviceSelectionBinding.famocoBtn.setOnClickListener {
-      AppSettings.readerType = ReaderType.FAMOCO
+      appSettings.terminalType = TerminalType.FAMOCO
       startActivity(Intent(this, SettingsActivity::class.java))
       finish()
     }
@@ -76,7 +72,7 @@ class DeviceSelectionActivity : BaseActivity() {
       activityDeviceSelectionBinding.arriveBtn.setBackgroundColor(Color.GRAY)
     } else {
       activityDeviceSelectionBinding.arriveBtn.setOnClickListener {
-        AppSettings.readerType = ReaderType.ARRIVE
+        appSettings.terminalType = TerminalType.ARRIVE
         startActivity(Intent(this, SettingsActivity::class.java))
         finish()
       }

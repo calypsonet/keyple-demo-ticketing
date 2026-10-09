@@ -25,10 +25,11 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.request.get
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -61,10 +62,7 @@ private val SERVER_PROTOCOL_KEY = stringPreferencesKey("server_protocol_key")
 private val SERVER_ENDPOINT_KEY = stringPreferencesKey("server_endpoint_key")
 private val SERVER_BASIC_AUTH = stringPreferencesKey("server_basicauth_key")
 
-data class KeypleServiceState(
-    val serverReachable: Boolean = false,
-    val outputData: OutputData? = null
-)
+data class KeypleServiceState(val serverReachable: Boolean = false)
 
 private const val TAG = "KeypleService"
 
@@ -98,6 +96,9 @@ class KeypleService(
     expectSuccess = true
     followRedirects = true
   }
+  // Background tasks of the service (server ping, card selection scenario), living as long as the
+  // service: a failing task does not cancel the others
+  private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
   private var pingJob: Job? = null
 
   fun start() {
@@ -150,7 +151,7 @@ class KeypleService(
     pingJob?.cancel()
     pingJob =
         remoteService?.let {
-          GlobalScope.launch {
+          scope.launch {
             while (true) {
               try {
                 val response = pingServer()
@@ -168,7 +169,7 @@ class KeypleService(
 
   private fun launchGetCardSelectionScenarioJob() {
     remoteService?.let {
-      GlobalScope.launch {
+      scope.launch {
         try {
           val scenarioJsonString = retrieveSelectionScenarioJson()
           Napier.d("Card Selection Scenario retrieved: $scenarioJsonString")
@@ -239,8 +240,14 @@ class KeypleService(
             return@withContext result
           }
           is KeypleResult.Success -> {
+            if (result.data.statusCode != 0) {
+              Napier.i(tag = TAG, message = "Output = ${result.data.message}")
+              return@withContext KeypleResult.Failure(
+                  status = Status.SERVER_ERROR,
+                  message = "Server side error: ${result.data.statusCode} / ${result.data.message}")
+            }
             cardRepository.saveCardSerial(result.data.applicationSerialNumber)
-            cardRepository.saveCardContracts(result.data.validContracts)
+            cardRepository.saveCardContracts(result.data.contracts)
             return@withContext KeypleResult.Success(result.data)
           }
         }
@@ -270,7 +277,7 @@ class KeypleService(
   }
 
   suspend fun selectCardAndWriteContract(
-      ticketNumber: Int,
+      tripsToLoad: Int,
       code: PriorityCode
   ): KeypleResult<String> {
     return withContext(Dispatchers.IO) {
@@ -282,7 +289,7 @@ class KeypleService(
                 WriteContract(
                     applicationSerialNumber = cardRepository.getCardSerial(),
                     contractTariff = code,
-                    ticketToLoad = ticketNumber),
+                    tripsToLoad = tripsToLoad),
                 WriteContract.serializer())
         when (result) {
           is KeypleResult.Failure -> {

@@ -38,6 +38,8 @@ import org.calypsonet.keyple.composeapp.generated.resources.Res
 import org.calypsonet.keyple.composeapp.generated.resources.ic_logo_calypso
 import org.calypsonet.keyple.composeapp.generated.resources.keyple_background
 import org.calypsonet.keyple.demo.reload.remote.AppState
+import org.calypsonet.keyple.demo.reload.remote.ui.AutoReturn
+import org.calypsonet.keyple.demo.reload.remote.ui.AutoReturnProgress
 import org.calypsonet.keyple.demo.reload.remote.ui.KeypleTopAppBar
 import org.calypsonet.keyple.demo.reload.remote.ui.ScreenAnimByPlatform
 import org.calypsonet.keyple.demo.reload.remote.ui.blue
@@ -51,6 +53,7 @@ fun ScanScreen(
     modifier: Modifier = Modifier,
     appState: AppState,
     onBack: () -> Unit = { navController.popBackStack() },
+    autoReturn: AutoReturn? = null,
     content: @Composable () -> Unit,
 ) {
   Scaffold(
@@ -94,6 +97,14 @@ fun ScanScreen(
               contentDescription = "Keyple logo",
               modifier = Modifier.padding(bottom = 4.dp))
         }
+      }
+      // Automatic return after a result: same action as the back arrow
+      autoReturn?.let {
+        AutoReturnProgress(
+            delayMs = it.delayMs,
+            color = it.color,
+            onReturn = onBack,
+            modifier = Modifier.align(Alignment.BottomCenter))
       }
     }
   }

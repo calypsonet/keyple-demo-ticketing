@@ -24,7 +24,11 @@ dependencies {
   implementation(platform(libs.keypleJavaBom))
   implementation(libs.keypleUtilJavaLib)
 
-  implementation(libs.bitLib4j) { exclude(group = "org.slf4j") }
+  implementation(libs.bitLib4j) {
+    // Logging dependencies declared but not used by the library (log4j 1.x is end of life)
+    exclude(group = "org.slf4j")
+    exclude(group = "log4j")
+  }
 
   testImplementation(libs.kotlinTest)
   testImplementation(libs.assertjCore)
@@ -32,12 +36,12 @@ dependencies {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// STANDARD CONFIGURATION FOR KOTLIN APP-TYPE PROJECTS
+// STANDARD CONFIGURATION FOR KOTLIN LIB-TYPE PROJECTS
 ///////////////////////////////////////////////////////////////////////////////
 
-val jvmToolchainVersion: String by project
-val javaSourceLevel: String by project
-val javaTargetLevel: String by project
+val jvmToolchainVersion = project.property("jvmToolchainVersion") as String
+val javaSourceLevel = project.property("javaSourceLevel") as String
+val javaTargetLevel = project.property("javaTargetLevel") as String
 
 kotlin { jvmToolchain(jvmToolchainVersion.toInt()) }
 

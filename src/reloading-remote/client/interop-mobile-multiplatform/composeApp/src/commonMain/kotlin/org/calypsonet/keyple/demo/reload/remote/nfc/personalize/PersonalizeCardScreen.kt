@@ -28,7 +28,12 @@ import org.calypsonet.keyple.demo.reload.remote.nfc.ui.PresentCardAnimation
 import org.calypsonet.keyple.demo.reload.remote.nfc.ui.ReadingError
 import org.calypsonet.keyple.demo.reload.remote.nfc.ui.ScanCardAnimation
 import org.calypsonet.keyple.demo.reload.remote.nfc.ui.ScanScreen
+import org.calypsonet.keyple.demo.reload.remote.ui.AutoReturn
+import org.calypsonet.keyple.demo.reload.remote.ui.ERROR_RETURN_DELAY_MS
+import org.calypsonet.keyple.demo.reload.remote.ui.SUCCESS_RETURN_DELAY_MS
 import org.calypsonet.keyple.demo.reload.remote.ui.blue
+import org.calypsonet.keyple.demo.reload.remote.ui.green
+import org.calypsonet.keyple.demo.reload.remote.ui.red
 
 @Composable
 fun PersonalizeCardScreen(
@@ -54,7 +59,13 @@ internal fun PersonalizeCardScreen(
       navController = navController,
       modifier = modifier,
       appState = appState,
-      onBack = { navController.navigate(Home) { popUpTo(Home) { inclusive = true } } }) {
+      onBack = { navController.navigate(Home) { popUpTo(Home) { inclusive = true } } },
+      autoReturn =
+          when (state) {
+            is PersonalizeCardScreenState.DisplayError -> AutoReturn(ERROR_RETURN_DELAY_MS, red)
+            PersonalizeCardScreenState.DisplaySuccess -> AutoReturn(SUCCESS_RETURN_DELAY_MS, green)
+            else -> null
+          }) {
         when (state) {
           PersonalizeCardScreenState.WaitForCard -> {
             PresentCardAnimation()

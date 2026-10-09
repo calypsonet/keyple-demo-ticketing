@@ -14,6 +14,7 @@ package org.calypsonet.keyple.demo.reload.remote.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -23,18 +24,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import io.github.alexzhirkevich.compottie.LottieComposition
 import io.github.alexzhirkevich.compottie.LottieCompositionSpec
 import io.github.alexzhirkevich.compottie.animateLottieCompositionAsState
 import io.github.alexzhirkevich.compottie.rememberLottieComposition
 import org.calypsonet.keyple.composeapp.generated.resources.Res
-import org.calypsonet.keyple.composeapp.generated.resources.success_title_loaded
+import org.calypsonet.keyple.composeapp.generated.resources.success_ticket_loaded
 import org.calypsonet.keyple.demo.reload.remote.AppState
 import org.calypsonet.keyple.demo.reload.remote.nav.Home
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Preview
 @Composable
@@ -43,40 +44,44 @@ fun SuccessScreen(
     modifier: Modifier = Modifier,
     appState: AppState,
 ) {
+  // Back to the home screen, replacing the screens of the transaction (back arrow or automatic)
+  val goHome = { navController.navigate(Home) { popUpTo(Home) { inclusive = true } } }
 
   Scaffold(
       topBar = {
-        KeypleTopAppBar(
-            navController = navController,
-            appState = appState,
-            onBack = { navController.navigate(Home) })
+        KeypleTopAppBar(navController = navController, appState = appState, onBack = goHome)
       },
       modifier = modifier,
   ) { innerPadding ->
-    Column(
-        Modifier.padding(innerPadding).fillMaxSize().background(green),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-      DisplaySuccess(
-          ErrorDetails("anim_tick_white.json", stringResource(Res.string.success_title_loaded), ""))
+    Box(Modifier.padding(innerPadding).fillMaxSize().background(green)) {
+      Column(
+          Modifier.fillMaxSize(),
+          horizontalAlignment = Alignment.CenterHorizontally,
+          verticalArrangement = Arrangement.Center,
+      ) {
+        DisplaySuccess("anim_tick_white.json", stringResource(Res.string.success_ticket_loaded))
+      }
+      AutoReturnProgress(
+          delayMs = SUCCESS_RETURN_DELAY_MS,
+          color = white,
+          onReturn = goHome,
+          modifier = Modifier.align(Alignment.BottomCenter))
     }
   }
 }
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-internal fun DisplaySuccess(details: ErrorDetails, modifier: Modifier = Modifier) {
+internal fun DisplaySuccess(animationFileName: String, message: String) {
   val composition by rememberLottieComposition {
-    LottieCompositionSpec.JsonString(
-        Res.readBytes("files/${details.animationFileName}").decodeToString())
+    LottieCompositionSpec.JsonString(Res.readBytes("files/$animationFileName").decodeToString())
   }
   val progress by
       animateLottieCompositionAsState(
           composition,
       )
 
-  ScreenAnimByPlatform(details.message, white, composition, progress, infinite = false)
+  ScreenAnimByPlatform(message, white, composition, progress, infinite = false)
 }
 
 @Composable

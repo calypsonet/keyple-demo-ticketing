@@ -46,13 +46,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import kotlinx.serialization.Serializable
 import org.calypsonet.keyple.composeapp.generated.resources.Res
-import org.calypsonet.keyple.composeapp.generated.resources.basket_title_multi_title
-import org.calypsonet.keyple.composeapp.generated.resources.basket_title_season_title
+import org.calypsonet.keyple.composeapp.generated.resources.basket_multi_trip
+import org.calypsonet.keyple.composeapp.generated.resources.basket_season_pass
 import org.calypsonet.keyple.composeapp.generated.resources.card_empty
 import org.calypsonet.keyple.demo.reload.remote.AppState
 import org.calypsonet.keyple.demo.reload.remote.ContractInfo
 import org.calypsonet.keyple.demo.reload.remote.nav.Home
-import org.calypsonet.keyple.demo.reload.remote.nav.WriteTitleCard
+import org.calypsonet.keyple.demo.reload.remote.nav.LoadContract
 import org.calypsonet.keyple.demo.reload.remote.ui.KeypleTopAppBar
 import org.calypsonet.keyple.demo.reload.remote.ui.blue
 import org.calypsonet.keyple.demo.reload.remote.ui.grey
@@ -61,14 +61,14 @@ import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
 @Serializable
-enum class TitleType {
-  SINGLE,
-  SEASON
+enum class ProductType {
+  MULTI_TRIP,
+  SEASON_PASS
 }
 
 @Serializable
-data class Title(
-    val type: TitleType,
+data class Product(
+    val type: ProductType,
     val price: Int,
     val quantity: Int = 1,
     val date: String? = null
@@ -91,8 +91,8 @@ fun CardContentScreen(
             onBack = {
               when (state.value) {
                 is CardContentScreenState.DisplayContent -> navController.navigate(Home)
-                is CardContentScreenState.ChooseTitle -> viewModel.displayContent()
-                is CardContentScreenState.DisplayBasket -> viewModel.chooseTitle()
+                is CardContentScreenState.ChooseProduct -> viewModel.displayContent()
+                is CardContentScreenState.DisplayBasket -> viewModel.chooseProduct()
               }
             })
       },
@@ -115,19 +115,19 @@ fun CardContentScreen(
           CardContent(
               contracts = (state.value as CardContentScreenState.DisplayContent).contracts,
               modifier = modifier,
-              chooseTitle = { viewModel.chooseTitle() })
+              chooseProduct = { viewModel.chooseProduct() })
         }
-        is CardContentScreenState.ChooseTitle -> {
-          TitleList(
-              titles = (state.value as CardContentScreenState.ChooseTitle).titles,
+        is CardContentScreenState.ChooseProduct -> {
+          ProductList(
+              products = (state.value as CardContentScreenState.ChooseProduct).products,
               addToBasket = viewModel::addToBasket)
         }
         is CardContentScreenState.DisplayBasket -> {
           Basket(
-              title = (state.value as CardContentScreenState.DisplayBasket).selectedTitle!!,
+              product = (state.value as CardContentScreenState.DisplayBasket).selectedProduct!!,
               onPay = {
                 navController.navigate(
-                    WriteTitleCard(title = it, cardSerial = viewModel.getCardSerial()))
+                    LoadContract(product = it, cardSerial = viewModel.getCardSerial()))
               })
         }
       }
@@ -138,7 +138,7 @@ fun CardContentScreen(
 @Composable
 internal fun ColumnScope.CardContent(
     contracts: List<ContractInfo>,
-    chooseTitle: () -> Unit,
+    chooseProduct: () -> Unit,
     modifier: Modifier = Modifier
 ) {
   if (contracts.isEmpty()) {
@@ -160,7 +160,7 @@ internal fun ColumnScope.CardContent(
       ) {
         Column {
           Text(
-              text = contract.title,
+              text = contract.name,
               modifier = Modifier.padding(10.dp).fillMaxWidth(),
               color = blue,
               fontWeight = FontWeight.Bold,
@@ -181,12 +181,12 @@ internal fun ColumnScope.CardContent(
   Spacer(modifier = Modifier.weight(1f))
 
   Button(
-      onClick = { chooseTitle() },
+      onClick = { chooseProduct() },
       modifier = Modifier.sizeIn(maxWidth = 400.dp, minHeight = 100.dp).padding(16.dp),
       colors = ButtonDefaults.buttonColors(containerColor = blue),
       shape = RoundedCornerShape(4.dp)) {
         Text(
-            "BUY TITLE",
+            "BUY TICKET",
             modifier = Modifier.fillMaxWidth(),
             color = Color.White,
             fontWeight = FontWeight.Bold,
@@ -197,8 +197,8 @@ internal fun ColumnScope.CardContent(
 }
 
 @Composable
-internal fun ColumnScope.Basket(title: Title, onPay: (title: Title) -> Unit) {
-  TitleCard(title = title, modifier = Modifier.padding(vertical = 48.dp), onTitleClick = {})
+internal fun ColumnScope.Basket(product: Product, onPay: (product: Product) -> Unit) {
+  ProductCard(product = product, modifier = Modifier.padding(vertical = 48.dp), onProductClick = {})
 
   Box(
       modifier = Modifier.fillMaxWidth().weight(1f).padding(4.dp).background(lightBlue),
@@ -210,7 +210,7 @@ internal fun ColumnScope.Basket(title: Title, onPay: (title: Title) -> Unit) {
       CreditCardDetails()
 
       Button(
-          onClick = { onPay(title) },
+          onClick = { onPay(product) },
           modifier = Modifier.sizeIn(maxWidth = 400.dp, minHeight = 100.dp).padding(16.dp),
           colors = ButtonDefaults.buttonColors(containerColor = blue),
           shape = RoundedCornerShape(4.dp)) {
@@ -286,29 +286,29 @@ internal fun CreditCardDetails() {
 }
 
 @Composable
-internal fun TitleList(
-    titles: List<Title>,
+internal fun ProductList(
+    products: List<Product>,
     modifier: Modifier = Modifier,
-    addToBasket: (Title) -> Unit
+    addToBasket: (Product) -> Unit
 ) {
   LazyColumn(
       modifier = modifier.fillMaxSize(),
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center) {
-        items(titles) { title -> TitleCard(title = title, onTitleClick = addToBasket) }
+        items(products) { product -> ProductCard(product = product, onProductClick = addToBasket) }
       }
 }
 
 @Composable
-internal fun TitleCard(
-    title: Title,
+internal fun ProductCard(
+    product: Product,
     modifier: Modifier = Modifier,
-    onTitleClick: (title: Title) -> Unit
+    onProductClick: (product: Product) -> Unit
 ) {
   Card(
       modifier =
           modifier.padding(16.dp).sizeIn(maxWidth = 300.dp, minHeight = 100.dp).clickable {
-            onTitleClick(title)
+            onProductClick(product)
           },
       elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
       colors = CardDefaults.cardColors(containerColor = lightBlue),
@@ -319,13 +319,13 @@ internal fun TitleCard(
             verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
         ) {
           Text(
-              text = getShopTitleDisplayName(title),
+              text = getProductDisplayName(product),
               color = blue,
               fontWeight = FontWeight.Bold,
               textAlign = TextAlign.Center,
           )
           Text(
-              text = "${title.price},00 €",
+              text = "${product.price},00 €",
               color = blue,
               textAlign = TextAlign.Center,
           )
@@ -334,10 +334,9 @@ internal fun TitleCard(
 }
 
 @Composable
-fun getShopTitleDisplayName(title: Title): String {
-  if (title.type == TitleType.SINGLE) {
-    return pluralStringResource(
-        Res.plurals.basket_title_multi_title, title.quantity, title.quantity)
+fun getProductDisplayName(product: Product): String {
+  if (product.type == ProductType.MULTI_TRIP) {
+    return pluralStringResource(Res.plurals.basket_multi_trip, product.quantity, product.quantity)
   }
-  return stringResource(Res.string.basket_title_season_title)
+  return stringResource(Res.string.basket_season_pass)
 }

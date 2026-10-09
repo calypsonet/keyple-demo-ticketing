@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 ///////////////////////////////////////////////////////////////////////////////
 // GRADLE CONFIGURATION
 ///////////////////////////////////////////////////////////////////////////////
@@ -14,9 +12,9 @@ if (project.hasProperty("releaseTag")) {
 
 plugins {
   alias(libs.plugins.androidApplication)
-  alias(libs.plugins.kotlinAndroid)
   alias(libs.plugins.kotlinParcelize)
-  alias(libs.plugins.kotlinKapt)
+  alias(libs.plugins.ksp)
+  alias(libs.plugins.hilt)
   alias(libs.plugins.spotless)
 }
 
@@ -35,12 +33,12 @@ if (hasArriveSdk) {
 
 dependencies {
   // Demo common
-  implementation(project(":common"))
+  implementation(libs.demoCommon)
 
   // Proprietary libs
   // Storage card specific components
   // Conditional dependency for the storage card library
-  val storageCardLibName = "keyple-card-cna-storagecard-java-lib-2.3.0"
+  val storageCardLibName = "keyple-card-cna-storagecard-java-lib-2.3.1"
   val storageCardLibFile = file("../../../libs/${storageCardLibName}.jar")
   if (storageCardLibFile.exists()) {
     println("Using private storage card library: ${storageCardLibFile.name}")
@@ -51,7 +49,7 @@ dependencies {
   }
 
   // Conditional dependency for the storage card plugin library
-  val pluginStorageCardLibName = "keyple-plugin-cna-storagecard-java-lib-1.1.0"
+  val pluginStorageCardLibName = "keyple-plugin-cna-storagecard-java-lib-1.1.1"
   val pluginStorageCardLibFile = file("../../../libs/${pluginStorageCardLibName}.jar")
   if (pluginStorageCardLibFile.exists()) {
     println("Using private storage card plugin library: ${pluginStorageCardLibFile.name}")
@@ -83,7 +81,8 @@ dependencies {
     implementation(files("../../../libs/${arrivePluginLibName}-mock.aar"))
   }
 
-  // Arrive/Parkeon SDK (UI: LEDs, sounds) — optional, enables ArriveUiManager real implementation
+  // Arrive/Parkeon SDK (UI: LEDs, sounds) — optional, enables ArriveFeedbackDevice real
+  // implementation
   if (hasArriveSdk) {
     implementation(files(parkeonSdkFile))
   }
@@ -107,8 +106,11 @@ dependencies {
   implementation(libs.keyplePluginAndroidNfcLib)
 
   // Other Keyple plugins
-  implementation(libs.keyplePluginCnaCoppernicCone2Lib)
-  implementation(libs.keyplePluginCnaFamocoSeCommunicationLib)
+  implementation(libs.keyplePluginCnaFamocoSeCommunicationLib) {
+    // Runtime of the obsolete "kotlin-android-extensions" plugin, declared but not used by the
+    // plugin, and duplicating the classes of the Parcelize runtime
+    exclude(group = "org.jetbrains.kotlin", module = "kotlin-android-extensions-runtime")
+  }
 
   // Android components
   implementation(libs.androidxAppcompat)
@@ -116,31 +118,27 @@ dependencies {
   implementation(libs.androidxConstraintLayout)
   implementation(libs.androidxActivity)
   implementation(libs.androidxFragment)
-  implementation(libs.androidxMultidex)
 
-  // Kotlin
+  // Kotlin (the Kotlin standard library is added by the Kotlin Gradle plugin)
   implementation(libs.androidxCore)
-  implementation(libs.kotlinStdlibJdk8)
 
   // Coroutines
   implementation(libs.kotlinxCoroutinesCore)
   implementation(libs.kotlinxCoroutinesAndroid)
 
-  // Dagger
-  implementation(libs.dagger)
-  implementation(libs.daggerAndroid)
-  implementation(libs.daggerAndroidSupport)
-  kapt(libs.daggerCompiler)
-  kapt(libs.daggerAndroidProcessor)
-  annotationProcessor(libs.daggerCompiler)
-  annotationProcessor(libs.daggerAndroidProcessor)
-  compileOnly(libs.glassfishAnnotations)
+  // Hilt (dependency injection)
+  implementation(libs.hiltAndroid)
+  ksp(libs.hiltCompiler)
 
   // Lottie
   implementation(libs.lottie)
 
   // Devnied - Byte Utils
-  implementation(libs.bitLib4j) { exclude(group = "org.slf4j") }
+  implementation(libs.bitLib4j) {
+    // Logging dependencies declared but not used by the library (log4j 1.x is end of life)
+    exclude(group = "org.slf4j")
+    exclude(group = "log4j")
+  }
 
   // Logging libraries used in the project:
   // - SLF4J API provides a common logging interface for the app and third-party libraries (e.g.,
@@ -157,18 +155,18 @@ dependencies {
 // STANDARD CONFIGURATION FOR ANDROID KOTLIN-BASED APP-TYPE PROJECTS
 ///////////////////////////////////////////////////////////////////////////////
 
-val javaSourceLevel: String by project
-val javaTargetLevel: String by project
+val javaSourceLevel = project.property("javaSourceLevel") as String
+val javaTargetLevel = project.property("javaTargetLevel") as String
 
 android {
-  namespace = project.findProperty("androidAppNamespace") as String
-  compileSdk = (project.findProperty("androidCompileSdk") as String).toInt()
+  namespace = project.property("androidAppNamespace") as String
+  compileSdk = (project.property("androidCompileSdk") as String).toInt()
   defaultConfig {
-    applicationId = project.findProperty("androidAppId") as String
-    minSdk = (project.findProperty("androidMinSdk") as String).toInt()
-    targetSdk = (project.findProperty("androidCompileSdk") as String).toInt()
-    versionCode = (project.findProperty("androidAppVersionCode") as String).toInt()
-    versionName = project.findProperty("androidAppVersionName") as String
+    applicationId = project.property("androidAppId") as String
+    minSdk = (project.property("androidMinSdk") as String).toInt()
+    targetSdk = (project.property("androidTargetSdk") as String).toInt()
+    versionCode = (project.property("androidAppVersionCode") as String).toInt()
+    versionName = project.property("androidAppVersionName") as String
     buildConfigField("Boolean", "HAS_ARRIVE_SDK", "$hasArriveSdk")
   }
   buildFeatures {
@@ -177,9 +175,12 @@ android {
   }
   buildTypes {
     // Configuration for the debug build variant:
-    // - Minification, resource shrinking, and ProGuard rules are enabled here as an example
-    //   to test release-like performance and optimizations during development.
-    // - To see full, unoptimized logs during debug, this block can be commented out or adjusted.
+    // - Code and resource shrinking are enabled with the ProGuard rules of the release build, to
+    //   detect the missing keep rules during development (e.g. classes used by reflection, such as
+    //   the DTOs serialized with Gson).
+    // - The build being debuggable, R8 neither optimizes nor obfuscates the code: the stack traces
+    //   and the debug logs are kept, and the effects of the optimizations (e.g. the
+    //   "-assumenosideeffects" rules) can only be observed with the release build.
     getByName("debug") {
       isMinifyEnabled = true
       isShrinkResources = true
@@ -195,31 +196,22 @@ android {
     sourceCompatibility = JavaVersion.toVersion(javaSourceLevel)
     targetCompatibility = JavaVersion.toVersion(javaTargetLevel)
   }
-  kotlin { compilerOptions { jvmTarget.set(JvmTarget.fromTarget(javaTargetLevel)) } }
   sourceSets {
-    getByName("main").java.srcDirs("src/main/kotlin")
-    getByName("debug").java.srcDirs("src/debug/kotlin")
-    // ArriveUiManager: real impl (Parkeon SDK) or no-op stub, mutually exclusive source sets
-    getByName("main")
-        .java
-        .srcDir(if (hasArriveSdk) "src/arrive/kotlin" else "src/arrive-mock/kotlin")
+    // ArriveFeedbackDevice: real impl (Parkeon SDK) or no-op stub, mutually exclusive source sets
+    getByName("main").kotlin.directories +=
+        if (hasArriveSdk) "src/arrive/kotlin" else "src/arrive-mock/kotlin"
   }
-  packagingOptions {
-    // Exclude 'META-INF/NOTICE.md' to resolve the conflict that occurs when multiple dependencies
-    // include this file
-    resources.excludes.add("META-INF/NOTICE.md")
-  }
-  applicationVariants.all {
-    outputs.all {
-      val outputImpl = this as com.android.build.gradle.internal.api.ApkVariantOutputImpl
-      val variantName = name
-      val versionName = project.version.toString()
-      val newName = "${rootProject.name}-$versionName-$variantName.apk"
-      outputImpl.outputFileName = newName
+  packaging {
+    resources {
+      // Files included by several dependencies, conflicting when packaged in the APK
+      excludes.add("META-INF/NOTICE.md")
     }
   }
   lint { abortOnError = false }
 }
+
+// Name of the APK files: <root project name>-<version>-<variant>.apk
+base { archivesName.set("${rootProject.name}-${project.version}") }
 
 tasks.withType<AbstractArchiveTask>().configureEach { archiveBaseName.set(rootProject.name) }
 

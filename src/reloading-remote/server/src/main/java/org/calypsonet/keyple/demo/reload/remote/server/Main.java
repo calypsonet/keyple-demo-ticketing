@@ -15,9 +15,9 @@ package org.calypsonet.keyple.demo.reload.remote.server;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.QuarkusApplication;
 import io.quarkus.runtime.annotations.QuarkusMain;
+import jakarta.inject.Inject;
 import java.awt.*;
 import java.net.URI;
-import javax.inject.Inject;
 import org.calypsonet.keyple.demo.reload.remote.server.card.CardConfigurator;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
@@ -27,14 +27,16 @@ import org.slf4j.LoggerFactory;
 @QuarkusMain
 public class Main {
 
-  private static final Logger logger = LoggerFactory.getLogger(Main.class);
-
   public static void main(String... args) {
     Quarkus.run(AppServer.class, args);
   }
 
   /** Main class of the Demo Application. */
   public static class AppServer implements QuarkusApplication {
+
+    // Must not be initialized in Main: it would load the JUL LogManager before Quarkus sets
+    // "java.util.logging.manager" to the JBoss LogManager.
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     @ConfigProperty(name = "quarkus.http.port")
     Integer assignedPort;

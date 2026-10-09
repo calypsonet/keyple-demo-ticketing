@@ -147,7 +147,7 @@ Main Screen → Card Reader → Card Summary → Select Tickets → Checkout →
 - Abstracts reader-specific operations
 - Provides consistent API for different reader types
 
-**AbstractCardActivity**
+**BaseCardActivity**
 - Base class for card-related activities
 - Implements `CardReaderObserverSpi` from Keyple middleware
 - Responds to card insertion/removal events
@@ -231,7 +231,6 @@ To integrate additional reader types:
 **"Loading failed"**
 - Ensure server has SAM properly configured
 - Check card has available contract slots
-- Verify sufficient balance for stored value operations
 
 ### Debug Mode
 

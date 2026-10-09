@@ -13,20 +13,22 @@
 package org.calypsonet.keyple.demo.validation.domain
 
 import java.time.LocalDateTime
-import javax.inject.Inject
-import org.calypsonet.keyple.demo.common.constants.CardConstants
+import org.calypsonet.keyple.demo.common.constants.CalypsoAids
+import org.calypsonet.keyple.demo.common.constants.CalypsoFiles
+import org.calypsonet.keyple.demo.common.constants.DefaultKifs
 import org.calypsonet.keyple.demo.common.data.LocationRepository
 import org.calypsonet.keyple.demo.common.model.Location
-import org.calypsonet.keyple.demo.validation.di.scope.AppScoped
-import org.calypsonet.keyple.demo.validation.domain.managers.CalypsoCardValidationManager
-import org.calypsonet.keyple.demo.validation.domain.managers.StorageCardValidationManager
-import org.calypsonet.keyple.demo.validation.domain.model.CardProtocolEnum
-import org.calypsonet.keyple.demo.validation.domain.model.ReaderType
+import org.calypsonet.keyple.demo.validation.domain.model.CardProtocol
+import org.calypsonet.keyple.demo.validation.domain.model.TerminalType
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
+import org.calypsonet.keyple.demo.validation.domain.procedures.ValidationContext
+import org.calypsonet.keyple.demo.validation.domain.procedures.ValidationProcedure
+import org.calypsonet.keyple.demo.validation.domain.spi.AppSettingsRepository
 import org.calypsonet.keyple.demo.validation.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.validation.domain.spi.Logger
 import org.calypsonet.keyple.demo.validation.domain.spi.ReaderManager
 import org.calypsonet.keyple.demo.validation.domain.spi.UiContext
+import org.calypsonet.keyple.demo.validation.domain.spi.UserFeedback
 import org.eclipse.keyple.core.util.HexUtil
 import org.eclipse.keypop.calypso.card.CalypsoCardApiFactory
 import org.eclipse.keypop.calypso.card.WriteAccessLevel
@@ -41,6 +43,7 @@ import org.eclipse.keypop.reader.selection.CardSelectionResult
 import org.eclipse.keypop.reader.selection.ScheduledCardSelectionsResponse
 import org.eclipse.keypop.reader.selection.spi.SmartCard
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
+import org.eclipse.keypop.storagecard.StorageCardApiFactory
 import org.eclipse.keypop.storagecard.card.ProductType.MIFARE_CLASSIC_1K
 import org.eclipse.keypop.storagecard.card.ProductType.MIFARE_ULTRALIGHT
 import org.eclipse.keypop.storagecard.card.ProductType.ST25_SRT512
@@ -60,13 +63,13 @@ import org.eclipse.keypop.storagecard.card.StorageCard
  * Thread-safety: instances are designed to be used on the UI thread / main scope coordinating
  * reader events; no internal synchronization is provided.
  */
-@AppScoped
-class TicketingService
-@Inject
-constructor(
+class TicketingService(
     private var keypopApiProvider: KeypopApiProvider,
+    private var appSettings: AppSettingsRepository,
     private var readerManager: ReaderManager,
-    private var logger: Logger
+    private var userFeedback: UserFeedback,
+    private var logger: Logger,
+    private val validationProcedures: List<ValidationProcedure>
 ) {
 
   /** Indicates whether readers have been successfully initialized via [init]. */
@@ -76,7 +79,14 @@ constructor(
   private val readerApiFactory: ReaderApiFactory = keypopApiProvider.getReaderApiFactory()
   private val calypsoCardApiFactory: CalypsoCardApiFactory =
       keypopApiProvider.getCalypsoCardApiFactory()
-  private val storageCardApiFactory = keypopApiProvider.getStorageCardApiFactory()
+  private val storageCardApiFactory: StorageCardApiFactory? =
+      keypopApiProvider.getStorageCardApiFactory()
+
+  init {
+    if (storageCardApiFactory == null) {
+      logger.w("Storage card extension not available: storage cards are not supported")
+    }
+  }
 
   private lateinit var calypsoSam: LegacySam
   private lateinit var smartCard: SmartCard
@@ -95,19 +105,24 @@ constructor(
    * Initializes the ticketing environment and selects a SAM if available.
    *
    * Steps:
-   * - Registers the appropriate reader plugin according to [readerType].
+   * - Registers the appropriate reader plugin according to [terminalType].
    * - Initializes the primary card reader and SAM reader(s).
    * - Attaches the optional [observer] to the card reader to receive detection events.
    * - Selects a SAM and prepares secured session capabilities.
    *
    * @param observer Optional reader observer to receive card detection notifications.
-   * @param readerType The target reader type to initialize (e.g., NFC).
+   * @param terminalType The target reader type to initialize (e.g., NFC).
    * @param uiContext Platform-specific context used to register plugins.
    * @throws IllegalStateException if no SAM reader is available or SAM selection fails.
    */
-  fun init(observer: CardReaderObserverSpi?, readerType: ReaderType, uiContext: UiContext) {
-    // Register plugin
-    readerManager.registerPlugin(readerType, uiContext)
+  suspend fun init(
+      observer: CardReaderObserverSpi?,
+      terminalType: TerminalType,
+      uiContext: UiContext
+  ) {
+    // Init user feedback and register plugin
+    userFeedback.init(terminalType, uiContext)
+    readerManager.registerPlugin(terminalType, uiContext)
 
     // Init card reader
     val cardReader: CardReader? = readerManager.initCardReader()
@@ -152,6 +167,16 @@ constructor(
   fun onDestroy(observer: CardReaderObserverSpi?) {
     areReadersInitialized = false
     readerManager.onDestroy(observer)
+    userFeedback.release()
+  }
+
+  fun endCardProcessing() {
+    try {
+      logger.i("endCardProcessing")
+      (readerManager.getCardReader() as ObservableCardReader).finalizeCardProcessing()
+    } catch (e: Exception) {
+      logger.e("Cannot end card processing: $e")
+    }
   }
 
   /**
@@ -159,17 +184,23 @@ constructor(
    *
    * @return true if handled by the UI, false otherwise.
    */
-  fun displayResultSuccess(): Boolean = readerManager.displayResultSuccess()
+  fun displayResultSuccess(): Boolean {
+    userFeedback.displayResultSuccess()
+    return true
+  }
 
   /**
    * Asks the UI layer to display a failure feedback (sound, haptics, message...).
    *
    * @return true if handled by the UI, false otherwise.
    */
-  fun displayResultFailed(): Boolean = readerManager.displayResultFailed()
+  fun displayResultFailed(): Boolean {
+    userFeedback.displayResultFailed()
+    return true
+  }
 
   /** Resets the UI feedback to the waiting-for-card state (e.g. turns off result LEDs). */
-  fun displayWaiting() = readerManager.displayWaiting()
+  fun displayWaiting() = userFeedback.displayWaiting()
 
   /** Returns the list of available locations used during validation. */
   fun getLocations(): List<Location> = LocationRepository.getLocations()
@@ -187,8 +218,8 @@ constructor(
         cardSelectionManager.prepareSelection(
             readerApiFactory
                 .createIsoCardSelector()
-                .filterByDfName(CardConstants.AID_KEYPLE_GENERIC)
-                .filterByCardProtocol(CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name),
+                .filterByDfName(CalypsoAids.KEYPLE_GENERIC)
+                .filterByCardProtocol(CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
     // Prepare card selection case #2: CD LIGHT/GTML
@@ -196,8 +227,8 @@ constructor(
         cardSelectionManager.prepareSelection(
             readerApiFactory
                 .createIsoCardSelector()
-                .filterByDfName(CardConstants.AID_CD_LIGHT_GTML)
-                .filterByCardProtocol(CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name),
+                .filterByDfName(CalypsoAids.CD_LIGHT_GTML)
+                .filterByCardProtocol(CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
     // Prepare card selection case #3: CALYPSO LIGHT
@@ -205,8 +236,8 @@ constructor(
         cardSelectionManager.prepareSelection(
             readerApiFactory
                 .createIsoCardSelector()
-                .filterByDfName(CardConstants.AID_CALYPSO_LIGHT)
-                .filterByCardProtocol(CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name),
+                .filterByDfName(CalypsoAids.CALYPSO_LIGHT)
+                .filterByCardProtocol(CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
     // Prepare card selection case #4: Navigo IDF
@@ -214,28 +245,28 @@ constructor(
         cardSelectionManager.prepareSelection(
             readerApiFactory
                 .createIsoCardSelector()
-                .filterByDfName(CardConstants.AID_NORMALIZED_IDF)
-                .filterByCardProtocol(CardProtocolEnum.ISO_14443_4_LOGICAL_PROTOCOL.name),
+                .filterByDfName(CalypsoAids.NORMALIZED_IDF)
+                .filterByCardProtocol(CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
-    if (readerManager.isStorageCardSupported()) {
+    if (storageCardApiFactory != null && readerManager.isStorageCardSupported()) {
       indexOfMifareCardSelection =
           cardSelectionManager.prepareSelection(
               readerApiFactory
                   .createBasicCardSelector()
-                  .filterByCardProtocol(CardProtocolEnum.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name),
+                  .filterByCardProtocol(CardProtocol.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name),
               storageCardApiFactory.createStorageCardSelectionExtension(MIFARE_ULTRALIGHT))
       indexOfST25CardSelection =
           cardSelectionManager.prepareSelection(
               readerApiFactory
                   .createBasicCardSelector()
-                  .filterByCardProtocol(CardProtocolEnum.ST25_SRT512_LOGICAL_PROTOCOL.name),
+                  .filterByCardProtocol(CardProtocol.ST25_SRT512_LOGICAL_PROTOCOL.name),
               storageCardApiFactory.createStorageCardSelectionExtension(ST25_SRT512))
       indexOfMifareClassic1KCardSelection =
           cardSelectionManager.prepareSelection(
               readerApiFactory
                   .createBasicCardSelector()
-                  .filterByCardProtocol(CardProtocolEnum.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name),
+                  .filterByCardProtocol(CardProtocol.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name),
               storageCardApiFactory.createStorageCardSelectionExtension(MIFARE_CLASSIC_1K))
     }
 
@@ -264,21 +295,20 @@ constructor(
     when (smartCard) {
       is CalypsoCard -> { // check is the DF name is the expected one (Req. TL-SEL-AIDMATCH.1)
         if ((cardSelectionResult.activeSelectionIndex == indexOfKeypleGenericCardSelection &&
-            !CardConstants.aidMatch(
-                CardConstants.AID_KEYPLE_GENERIC, (smartCard as CalypsoCard).dfName)) ||
+            !CalypsoAids.matches(CalypsoAids.KEYPLE_GENERIC, (smartCard as CalypsoCard).dfName)) ||
             (cardSelectionResult.activeSelectionIndex == indexOfCdLightGtmlCardSelection &&
-                !CardConstants.aidMatch(
-                    CardConstants.AID_CD_LIGHT_GTML, (smartCard as CalypsoCard).dfName)) ||
+                !CalypsoAids.matches(
+                    CalypsoAids.CD_LIGHT_GTML, (smartCard as CalypsoCard).dfName)) ||
             (cardSelectionResult.activeSelectionIndex == indexOfCalypsoLightCardSelection &&
-                !CardConstants.aidMatch(
-                    CardConstants.AID_CALYPSO_LIGHT, (smartCard as CalypsoCard).dfName)) ||
+                !CalypsoAids.matches(
+                    CalypsoAids.CALYPSO_LIGHT, (smartCard as CalypsoCard).dfName)) ||
             (cardSelectionResult.activeSelectionIndex == indexOfNavigoIdfCardSelection &&
-                !CardConstants.aidMatch(
-                    CardConstants.AID_NORMALIZED_IDF, (smartCard as CalypsoCard).dfName))) {
+                !CalypsoAids.matches(
+                    CalypsoAids.NORMALIZED_IDF, (smartCard as CalypsoCard).dfName))) {
           return "Unexpected DF name"
         }
         if ((smartCard as CalypsoCard).applicationSubtype !in
-            CardConstants.ALLOWED_FILE_STRUCTURES) {
+            CalypsoFiles.ALLOWED_FILE_STRUCTURES) {
           return "Invalid card\nFile structure " +
               HexUtil.toHex((smartCard as CalypsoCard).applicationSubtype) +
               "h not supported"
@@ -299,33 +329,21 @@ constructor(
    * @return The validation result produced by the corresponding manager.
    * @throws IllegalStateException if the active card type is unsupported.
    */
+  /** Executes the validation procedure applying to the selected card. */
   fun executeValidationProcedure(): ValidationResult {
-    return when (smartCard) {
-      is CalypsoCard -> {
-        CalypsoCardValidationManager()
-            .executeValidationProcedure(
-                validationDateTime = LocalDateTime.now(),
-                validationAmount = 1,
-                cardReader = readerManager.getCardReader()!!,
-                calypsoCard = smartCard as CalypsoCard,
-                cardSecuritySettings = cardSecuritySettings,
-                locations = LocationRepository.getLocations(),
-                keypopApiProvider = keypopApiProvider)
-      }
-      is StorageCard -> {
-        StorageCardValidationManager()
-            .executeValidationProcedure(
-                validationDateTime = LocalDateTime.now(),
-                validationAmount = 1,
-                cardReader = readerManager.getCardReader()!!,
-                storageCard = smartCard as StorageCard,
-                locations = LocationRepository.getLocations(),
-                keypopApiProvider = keypopApiProvider)
-      }
-      else -> {
-        error("Unsupported card type")
-      }
-    }
+    val card = smartCard
+    val procedure =
+        validationProcedures.firstOrNull { it.supports(card) }
+            ?: error("Unsupported card type: ${card.javaClass.simpleName}")
+    return procedure.execute(
+        ValidationContext(
+            cardReader = readerManager.getCardReader()!!,
+            card = card,
+            dateTime = LocalDateTime.now(),
+            location = appSettings.location,
+            locations = LocationRepository.getLocations(),
+            cardSecuritySetting =
+                if (::cardSecuritySettings.isInitialized) cardSecuritySettings else null))
   }
 
   fun initCryptoContextForNextTransaction() {
@@ -341,10 +359,9 @@ constructor(
                 .getLegacySamApiFactory()
                 .createSymmetricCryptoCardTransactionManagerFactory(
                     readerManager.getSamReader(), calypsoSam))
-        .assignDefaultKif(
-            WriteAccessLevel.PERSONALIZATION, CardConstants.DEFAULT_KIF_PERSONALIZATION)
-        .assignDefaultKif(WriteAccessLevel.LOAD, CardConstants.DEFAULT_KIF_LOAD)
-        .assignDefaultKif(WriteAccessLevel.DEBIT, CardConstants.DEFAULT_KIF_DEBIT)
+        .assignDefaultKif(WriteAccessLevel.PERSONALIZATION, DefaultKifs.PERSONALIZATION)
+        .assignDefaultKif(WriteAccessLevel.LOAD, DefaultKifs.LOAD)
+        .assignDefaultKif(WriteAccessLevel.DEBIT, DefaultKifs.DEBIT)
         .enableRatificationMechanism()
         .enableMultipleSession()
   }

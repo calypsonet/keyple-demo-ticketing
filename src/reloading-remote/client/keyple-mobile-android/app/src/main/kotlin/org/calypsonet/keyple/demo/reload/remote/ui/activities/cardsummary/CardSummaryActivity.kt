@@ -1,0 +1,154 @@
+/* ******************************************************************************
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
+ *
+ * See the NOTICE file(s) distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the BSD 3-Clause License which is available at
+ * https://opensource.org/licenses/BSD-3-Clause.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ ****************************************************************************** */
+package org.calypsonet.keyple.demo.reload.remote.ui.activities.cardsummary
+
+import android.content.Intent
+import android.content.res.ColorStateList
+import android.media.MediaPlayer
+import android.os.Bundle
+import android.view.View
+import androidx.annotation.ColorRes
+import androidx.core.content.ContextCompat
+import androidx.core.content.IntentCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import dagger.hilt.android.AndroidEntryPoint
+import org.calypsonet.keyple.demo.reload.remote.R
+import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardSummaryBinding
+import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
+import org.calypsonet.keyple.demo.reload.remote.ui.activities.BaseActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.activities.BaseCardActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.activities.SelectTicketsActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
+
+@AndroidEntryPoint
+class CardSummaryActivity : BaseActivity() {
+
+  private lateinit var contractsLayoutManager: LinearLayoutManager
+  private lateinit var contractsAdapter: ContractsRecyclerAdapter
+  private lateinit var activityCardSummaryBinding: ActivityCardSummaryBinding
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    activityCardSummaryBinding = ActivityCardSummaryBinding.inflate(layoutInflater)
+    toolbarBinding = activityCardSummaryBinding.appBarLayout
+    setContentView(activityCardSummaryBinding.root)
+
+    val cardContent: UiCardReaderResponse =
+        IntentCompat.getParcelableExtra(
+            intent, BaseCardActivity.CARD_CONTENT, UiCardReaderResponse::class.java)!!
+
+    contractsLayoutManager = LinearLayoutManager(this)
+    activityCardSummaryBinding.contractsList.layoutManager = contractsLayoutManager
+
+    contractsAdapter = ContractsRecyclerAdapter(cardContent.contractsList)
+    activityCardSummaryBinding.contractsList.adapter = contractsAdapter
+
+    when (cardContent.status) {
+      Status.INVALID_CARD -> {
+        activityCardSummaryBinding.animation.setAnimation("error_orange_anim.json")
+        activityCardSummaryBinding.animation.playAnimation()
+        activityCardSummaryBinding.bigText.setText(R.string.card_invalid_label)
+        activityCardSummaryBinding.bigText.setTextColor(
+            ContextCompat.getColor(this, R.color.orange))
+        activityCardSummaryBinding.smallDesc.text = cardContent.errorMessage
+        activityCardSummaryBinding.smallDesc.setTextColor(
+            ContextCompat.getColor(this, R.color.orange))
+        activityCardSummaryBinding.buyBtn.visibility = View.INVISIBLE
+        activityCardSummaryBinding.contractsList.visibility = View.GONE
+        activityCardSummaryBinding.lastValidationContent.visibility = View.GONE
+        activityCardSummaryBinding.contentTitle.visibility = View.GONE
+        scheduleErrorAutoReturn(R.color.orange)
+      }
+      Status.TICKETS_FOUND,
+      Status.SUCCESS -> {
+        activityCardSummaryBinding.contractsList.visibility = View.VISIBLE
+        activityCardSummaryBinding.animation.visibility = View.GONE
+        activityCardSummaryBinding.bigText.visibility = View.GONE
+        activityCardSummaryBinding.smallDesc.visibility = View.INVISIBLE
+        activityCardSummaryBinding.buyBtn.visibility = View.VISIBLE
+        activityCardSummaryBinding.lastValidationContent.visibility = View.VISIBLE
+        activityCardSummaryBinding.contentTitle.visibility = View.VISIBLE
+      }
+      Status.EMPTY_CARD -> {
+        activityCardSummaryBinding.animation.setAnimation("error_anim.json")
+        activityCardSummaryBinding.animation.playAnimation()
+        activityCardSummaryBinding.bigText.text = getString(R.string.no_valid_label)
+        activityCardSummaryBinding.bigText.setTextColor(ContextCompat.getColor(this, R.color.red))
+        activityCardSummaryBinding.smallDesc.visibility = View.VISIBLE
+        activityCardSummaryBinding.smallDesc.setTextColor(ContextCompat.getColor(this, R.color.red))
+        activityCardSummaryBinding.smallDesc.text = getString(R.string.no_valid_desc)
+        activityCardSummaryBinding.buyBtn.visibility = View.VISIBLE
+        activityCardSummaryBinding.contractsList.visibility = View.GONE
+        activityCardSummaryBinding.lastValidationContent.visibility = View.VISIBLE
+        activityCardSummaryBinding.contentTitle.visibility = View.GONE
+      }
+      Status.ERROR -> {
+        activityCardSummaryBinding.animation.setAnimation("error_anim.json")
+        activityCardSummaryBinding.animation.playAnimation()
+        if (cardContent.errorMessage != null)
+            activityCardSummaryBinding.bigText.text = cardContent.errorMessage
+        else activityCardSummaryBinding.bigText.setText(R.string.error_label)
+        activityCardSummaryBinding.bigText.setTextColor(ContextCompat.getColor(this, R.color.red))
+        activityCardSummaryBinding.smallDesc.visibility = View.INVISIBLE
+        activityCardSummaryBinding.buyBtn.visibility = View.INVISIBLE
+        activityCardSummaryBinding.contractsList.visibility = View.GONE
+        activityCardSummaryBinding.lastValidationContent.visibility = View.GONE
+        activityCardSummaryBinding.contentTitle.visibility = View.GONE
+        scheduleErrorAutoReturn(R.color.red)
+      }
+      else -> {
+        activityCardSummaryBinding.animation.setAnimation("error_anim.json")
+        activityCardSummaryBinding.animation.playAnimation()
+        activityCardSummaryBinding.bigText.setText(R.string.error_label)
+        activityCardSummaryBinding.bigText.setTextColor(ContextCompat.getColor(this, R.color.red))
+        activityCardSummaryBinding.smallDesc.visibility = View.INVISIBLE
+        activityCardSummaryBinding.buyBtn.visibility = View.INVISIBLE
+        activityCardSummaryBinding.contractsList.visibility = View.GONE
+        activityCardSummaryBinding.lastValidationContent.visibility = View.GONE
+        activityCardSummaryBinding.contentTitle.visibility = View.GONE
+        scheduleErrorAutoReturn(R.color.red)
+      }
+    }
+
+    if (!cardContent.cardType.isNullOrBlank()) {
+      activityCardSummaryBinding.cardTypeLabel.visibility = View.VISIBLE
+      activityCardSummaryBinding.cardTypeLabel.text =
+          getString(R.string.card_type, cardContent.cardType)
+    }
+
+    activityCardSummaryBinding.animation.playAnimation()
+
+    // Play sound
+    val mp: MediaPlayer = MediaPlayer.create(this, R.raw.reading_sound)
+    mp.start()
+    activityCardSummaryBinding.buyBtn.setOnClickListener {
+      val intent = Intent(this, SelectTicketsActivity::class.java)
+      getIntent().getStringExtra(BaseCardActivity.CARD_APPLICATION_NUMBER)?.let {
+        intent.putExtra(BaseCardActivity.CARD_APPLICATION_NUMBER, it)
+      }
+      startActivity(intent)
+      this@CardSummaryActivity.finish()
+    }
+  }
+
+  /**
+   * Returns to the card presentation screen (or the home screen) to try again after the error
+   * display duration, the remaining time being shown by a bar of the color of the message.
+   */
+  private fun scheduleErrorAutoReturn(@ColorRes color: Int) {
+    val tint = ColorStateList.valueOf(ContextCompat.getColor(this, color))
+    activityCardSummaryBinding.autoReturnProgress.progressTintList = tint
+    activityCardSummaryBinding.autoReturnProgress.progressBackgroundTintList = tint
+    scheduleAutoReturn(ERROR_RETURN_DELAY_MS, activityCardSummaryBinding.autoReturnProgress)
+  }
+}

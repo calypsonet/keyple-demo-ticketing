@@ -21,7 +21,6 @@
     <dimen name="medium_text_size">20sp</dimen>
     <dimen name="small_text_size">17.3sp</dimen>
     <dimen name="smaller_text_size">12sp</dimen>
-    <dimen name="smallest_text_size">10sp</dimen>
 
     <dimen name="settings_horizontal_padding">47dp</dimen>
     <dimen name="settings_edit_margin_bottom">20dp</dimen>
@@ -29,7 +28,6 @@
     
     <dimen name="home_text_width">220dp</dimen>
     <dimen name="home_control_width">220dp</dimen>
-    <dimen name="home_text_top_margin">10dp</dimen>
     <dimen name="home_element_margin">20dp</dimen>
     <dimen name="home_start_btn_width">100dp</dimen>
 
@@ -45,12 +43,10 @@
     <dimen name="content_top_margin">20dp</dimen>
     <dimen name="content_title_padding">30dp</dimen>
 
-    <dimen name="card_title_item_height">90dp</dimen>
-    <dimen name="card_title_image_margin_start">10dp</dimen>
-    <dimen name="card_title_text_width">120dp</dimen>
-    <dimen name="card_title_margin_bottom">20dp</dimen>
+    <dimen name="contract_item_height">90dp</dimen>
+    <dimen name="contract_image_margin_start">10dp</dimen>
+    <dimen name="contract_item_margin_bottom">20dp</dimen>
 
     <dimen name="card_validation_height">32dp</dimen>
     <dimen name="card_validation_horizontal_margin">13dp</dimen>
-    <dimen name="card_validation_title_left_margin">13dp</dimen>
 </resources>

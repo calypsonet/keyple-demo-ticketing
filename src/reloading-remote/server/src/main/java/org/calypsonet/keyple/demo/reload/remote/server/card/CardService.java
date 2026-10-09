@@ -12,14 +12,14 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.server.card;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.Collections;
 import java.util.stream.Collectors;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import org.calypsonet.keyple.demo.common.constants.CardConstants;
+import org.calypsonet.keyple.demo.common.constants.CalypsoFiles;
 import org.calypsonet.keyple.demo.common.dto.*;
 import org.calypsonet.keyple.demo.common.model.ContractStructure;
 import org.calypsonet.keyple.demo.common.model.EnvironmentHolderStructure;
@@ -68,15 +68,18 @@ public class CardService {
       "Contract tariff is not valid for this contract";
   private static final String ONLY_SEASON_PASS_OR_MULTI_TRIP_TICKET_CAN_BE_LOADED =
       "Only Season Pass or Multi Trip ticket can be loaded";
-  private static final String UNEXPECTED_CONTRACT_NUMBER = "Unexpected contract number: ";
   private static final String THE_CARD_IS_NOT_PERSONALIZED = "The card is not personalized";
   private static final String THE_ENVIRONMENT_HAS_EXPIRED = "The environment has expired";
+  private static final String THE_CARD_IS_FULL =
+      "No empty contract record nor expired or exhausted contract to replace, reject card";
   private static final String CONTRACT_AT_INDEX = "Contract at index {}: {} {}";
   private static final String CONTRACTS = "Contracts {}";
   private static final String CUSTOM_PLUGIN = "Non Keyple plugin";
   private static final String CARD_NOT_PERSONALIZED = "Card not personalized.";
   private static final String ENVIRONMENT_EXPIRED = "Environment expired.";
+  private static final String CARD_FULL = "No space left on the card for a new ticket.";
   private static final String RUNTIME_EXCEPTION = "Runtime exception: ";
+  private static final String CARD_COMMUNICATION_ERROR = "Card communication error: ";
   private static final String PROCESSED_CARD_SELECTION_SCENARIO_JSON_STRING =
       "processedCardSelectionScenarioJsonString";
 
@@ -145,7 +148,7 @@ public class CardService {
 
     CalypsoCard calypsoCard = null;
     List<String> output = new ArrayList<>();
-    int statusCode = 0;
+    int statusCode = RemoteServiceStatus.SUCCESS.getCode();
     String message = "Success.";
     CardResource samResource = null;
 
@@ -164,21 +167,25 @@ public class CardService {
               .setStatus(SUCCESS)
               .setType(SECURED_READ)
               .setCardSerialNumber(HexUtil.toHex(calypsoCard.getApplicationSerialNumber())));
-      List<ContractStructure> validContracts = findValidContracts(card);
+      List<ContractStructure> presentContracts = findPresentContracts(card);
 
-      for (ContractStructure contractStructure : validContracts) {
+      for (ContractStructure contractStructure : presentContracts) {
         output.add(formatContractStructure(contractStructure));
       }
     } catch (CardNotPersonalizedException e) {
-      statusCode = 3;
+      statusCode = RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode();
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
       message = CARD_NOT_PERSONALIZED;
     } catch (ExpiredEnvironmentException e) {
-      statusCode = 4;
+      statusCode = RemoteServiceStatus.EXPIRED_ENVIRONMENT.getCode();
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
       message = ENVIRONMENT_EXPIRED;
+    } catch (CardCommunicationException e) {
+      statusCode = RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode();
+      logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
+      message = CARD_COMMUNICATION_ERROR + e.getMessage();
     } catch (RuntimeException e) {
-      statusCode = 1;
+      statusCode = RemoteServiceStatus.SERVER_ERROR.getCode();
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
       message = RUNTIME_EXCEPTION + e.getMessage();
     } finally {
@@ -203,7 +210,7 @@ public class CardService {
 
     CalypsoCard calypsoCard = null;
     CardResource samResource = null;
-    int statusCode = 0;
+    int statusCode = RemoteServiceStatus.SUCCESS.getCode();
     String message = "Success.";
     try {
       calypsoCard = cardRepository.selectCard(cardReader);
@@ -223,16 +230,24 @@ public class CardService {
               .setContractLoaded("MULTI TRIP: " + inputData.getCounterIncrement()));
       insertNewContract(PriorityCode.MULTI_TRIP, inputData.getCounterIncrement(), card);
       statusCode = cardRepository.writeCard(cardReader, calypsoCard, samResource, card);
+    } catch (CardFullException e) {
+      statusCode = RemoteServiceStatus.CARD_FULL.getCode();
+      message = CARD_FULL;
+      logger.error(AN_ERROR_OCCURRED_WHILE_INCREASING_THE_CONTRACT_COUNTER, e.getMessage());
     } catch (CardNotPersonalizedException e) {
-      statusCode = 3;
+      statusCode = RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode();
       message = CARD_NOT_PERSONALIZED;
       logger.error(AN_ERROR_OCCURRED_WHILE_INCREASING_THE_CONTRACT_COUNTER, e.getMessage());
     } catch (ExpiredEnvironmentException e) {
-      statusCode = 4;
+      statusCode = RemoteServiceStatus.EXPIRED_ENVIRONMENT.getCode();
       message = ENVIRONMENT_EXPIRED;
       logger.error(AN_ERROR_OCCURRED_WHILE_INCREASING_THE_CONTRACT_COUNTER, e.getMessage());
+    } catch (CardCommunicationException e) {
+      statusCode = RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode();
+      message = CARD_COMMUNICATION_ERROR + e.getMessage();
+      logger.error(AN_ERROR_OCCURRED_WHILE_INCREASING_THE_CONTRACT_COUNTER, e.getMessage(), e);
     } catch (RuntimeException e) {
-      statusCode = 1;
+      statusCode = RemoteServiceStatus.SERVER_ERROR.getCode();
       message = RUNTIME_EXCEPTION + e.getMessage();
       logger.error(AN_ERROR_OCCURRED_WHILE_INCREASING_THE_CONTRACT_COUNTER, e.getMessage(), e);
     } finally {
@@ -274,9 +289,9 @@ public class CardService {
         calypsoCard.getProductType(),
         HexUtil.toHex(calypsoCard.getApplicationSubtype()));
 
-    if (!CardConstants.Companion.getALLOWED_FILE_STRUCTURES()
-        .contains(calypsoCard.getApplicationSubtype())) {
-      return new AnalyzeContractsOutputDto(Collections.emptyList(), 3);
+    if (!CalypsoFiles.ALLOWED_FILE_STRUCTURES.contains(calypsoCard.getApplicationSubtype())) {
+      return new AnalyzeContractsOutputDto(
+          Collections.emptyList(), RemoteServiceStatus.CARD_REJECTED.getCode());
     }
 
     CardResource samResource =
@@ -285,14 +300,14 @@ public class CardService {
     try {
       Card card = cardRepository.readCard(cardReader, calypsoCard, samResource);
       // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
-      List<ContractStructure> validContracts = findValidContracts(card);
+      List<ContractStructure> presentContracts = findPresentContracts(card);
       activityService.push(
           new Activity()
               .setPlugin(pluginType)
               .setStatus(SUCCESS)
               .setType(SECURED_READ)
               .setCardSerialNumber(appSerialNumber));
-      return new AnalyzeContractsOutputDto(validContracts, 0);
+      return new AnalyzeContractsOutputDto(presentContracts, RemoteServiceStatus.SUCCESS.getCode());
     } catch (CardNotPersonalizedException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
       activityService.push(
@@ -301,7 +316,8 @@ public class CardService {
               .setStatus(FAIL)
               .setType(SECURED_READ)
               .setCardSerialNumber(appSerialNumber));
-      return new AnalyzeContractsOutputDto(Collections.emptyList(), 4);
+      return new AnalyzeContractsOutputDto(
+          Collections.emptyList(), RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode());
     } catch (ExpiredEnvironmentException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
       activityService.push(
@@ -310,7 +326,8 @@ public class CardService {
               .setStatus(FAIL)
               .setType(SECURED_READ)
               .setCardSerialNumber(appSerialNumber));
-      return new AnalyzeContractsOutputDto(Collections.emptyList(), 5);
+      return new AnalyzeContractsOutputDto(
+          Collections.emptyList(), RemoteServiceStatus.EXPIRED_ENVIRONMENT.getCode());
     } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
       activityService.push(
@@ -319,7 +336,8 @@ public class CardService {
               .setStatus(FAIL)
               .setType(SECURED_READ)
               .setCardSerialNumber(appSerialNumber));
-      return new AnalyzeContractsOutputDto(Collections.emptyList(), 1);
+      return new AnalyzeContractsOutputDto(
+          Collections.emptyList(), RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
       activityService.push(
@@ -328,7 +346,8 @@ public class CardService {
               .setStatus(FAIL)
               .setType(SECURED_READ)
               .setCardSerialNumber(appSerialNumber));
-      return new AnalyzeContractsOutputDto(Collections.emptyList(), 2);
+      return new AnalyzeContractsOutputDto(
+          Collections.emptyList(), RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
       CardResourceServiceProvider.getService().releaseCardResource(samResource);
     }
@@ -357,14 +376,14 @@ public class CardService {
     try {
       Card card = cardRepository.readCard(cardReader, storageCard, samResource);
       // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
-      List<ContractStructure> validContracts = findValidContracts(card);
+      List<ContractStructure> presentContracts = findPresentContracts(card);
       activityService.push(
           new Activity()
               .setPlugin(pluginType)
               .setStatus(SUCCESS)
               .setType(READ)
               .setCardSerialNumber(cardUID));
-      return new AnalyzeContractsOutputDto(validContracts, 0);
+      return new AnalyzeContractsOutputDto(presentContracts, RemoteServiceStatus.SUCCESS.getCode());
     } catch (CardNotPersonalizedException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
       activityService.push(
@@ -373,7 +392,8 @@ public class CardService {
               .setStatus(FAIL)
               .setType(READ)
               .setCardSerialNumber(cardUID));
-      return new AnalyzeContractsOutputDto(Collections.emptyList(), 4);
+      return new AnalyzeContractsOutputDto(
+          Collections.emptyList(), RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode());
     } catch (ExpiredEnvironmentException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
       activityService.push(
@@ -382,7 +402,8 @@ public class CardService {
               .setStatus(FAIL)
               .setType(READ)
               .setCardSerialNumber(cardUID));
-      return new AnalyzeContractsOutputDto(Collections.emptyList(), 5);
+      return new AnalyzeContractsOutputDto(
+          Collections.emptyList(), RemoteServiceStatus.EXPIRED_ENVIRONMENT.getCode());
     } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
       activityService.push(
@@ -391,7 +412,8 @@ public class CardService {
               .setStatus(FAIL)
               .setType(READ)
               .setCardSerialNumber(cardUID));
-      return new AnalyzeContractsOutputDto(Collections.emptyList(), 1);
+      return new AnalyzeContractsOutputDto(
+          Collections.emptyList(), RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
       activityService.push(
@@ -400,7 +422,8 @@ public class CardService {
               .setStatus(FAIL)
               .setType(READ)
               .setCardSerialNumber(cardUID));
-      return new AnalyzeContractsOutputDto(Collections.emptyList(), 2);
+      return new AnalyzeContractsOutputDto(
+          Collections.emptyList(), RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
       if (samResource != null) {
         CardResourceServiceProvider.getService().releaseCardResource(samResource);
@@ -423,9 +446,8 @@ public class CardService {
     String pluginType = inputData.getPluginType();
     String appSerialNumber = HexUtil.toHex(calypsoCard.getApplicationSerialNumber());
 
-    if (!CardConstants.Companion.getALLOWED_FILE_STRUCTURES()
-        .contains(calypsoCard.getApplicationSubtype())) {
-      return new WriteContractOutputDto(3);
+    if (!CalypsoFiles.ALLOWED_FILE_STRUCTURES.contains(calypsoCard.getApplicationSubtype())) {
+      return new WriteContractOutputDto(RemoteServiceStatus.CARD_REJECTED.getCode());
     }
 
     logger.info(
@@ -434,19 +456,15 @@ public class CardService {
         appSerialNumber,
         calypsoCard.getProductType(),
         inputData.getContractTariff(),
-        inputData.getTicketToLoad());
+        inputData.getTripsToLoad());
 
     CardResource samResource =
         CardResourceServiceProvider.getService()
             .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
     try {
       Card card = cardRepository.readCard(cardReader, calypsoCard, samResource);
-      if (card == null) {
-        // If the card has not been read previously, throw error
-        return new WriteContractOutputDto(4);
-      }
       // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
-      insertNewContract(inputData.getContractTariff(), inputData.getTicketToLoad(), card);
+      insertNewContract(inputData.getContractTariff(), inputData.getTripsToLoad(), card);
       int statusCode = cardRepository.writeCard(cardReader, calypsoCard, samResource, card);
       activityService.push(
           new Activity()
@@ -456,10 +474,20 @@ public class CardService {
               .setCardSerialNumber(appSerialNumber)
               .setContractLoaded(
                   inputData.getContractTariff().toString().replace("_", " ")
-                      + ((inputData.getTicketToLoad() != 0)
-                          ? ": " + inputData.getTicketToLoad()
+                      + ((inputData.getTripsToLoad() != 0)
+                          ? ": " + inputData.getTripsToLoad()
                           : "")));
       return new WriteContractOutputDto(statusCode);
+    } catch (CardFullException e) {
+      logger.error(AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT, e.getMessage());
+      activityService.push(
+          new Activity()
+              .setPlugin(pluginType)
+              .setStatus(FAIL)
+              .setType(RELOAD)
+              .setCardSerialNumber(appSerialNumber)
+              .setContractLoaded(""));
+      return new WriteContractOutputDto(RemoteServiceStatus.CARD_FULL.getCode());
     } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT, e.getMessage(), e);
       activityService.push(
@@ -469,7 +497,7 @@ public class CardService {
               .setType(RELOAD)
               .setCardSerialNumber(appSerialNumber)
               .setContractLoaded(""));
-      return new WriteContractOutputDto(1);
+      return new WriteContractOutputDto(RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT, e.getMessage(), e);
       activityService.push(
@@ -479,7 +507,7 @@ public class CardService {
               .setType(RELOAD)
               .setCardSerialNumber(appSerialNumber)
               .setContractLoaded(""));
-      return new WriteContractOutputDto(2);
+      return new WriteContractOutputDto(RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
       CardResourceServiceProvider.getService().releaseCardResource(samResource);
     }
@@ -497,7 +525,7 @@ public class CardService {
         cardUID,
         storageCard.getProductType(),
         inputData.getContractTariff(),
-        inputData.getTicketToLoad());
+        inputData.getTripsToLoad());
 
     // SAM is not currently used for Storage Cards but may be needed in the future
     // for crypto operations (contract verification, authentication, etc.)
@@ -507,12 +535,8 @@ public class CardService {
     CardResource samResource = null;
     try {
       Card card = cardRepository.readCard(cardReader, storageCard, samResource);
-      if (card == null) {
-        // If the card has not been read previously, throw error
-        return new WriteContractOutputDto(4);
-      }
       // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
-      insertNewContract(inputData.getContractTariff(), inputData.getTicketToLoad(), card);
+      insertNewContract(inputData.getContractTariff(), inputData.getTripsToLoad(), card);
       int statusCode = cardRepository.writeCard(cardReader, storageCard, samResource, card);
       activityService.push(
           new Activity()
@@ -522,10 +546,20 @@ public class CardService {
               .setCardSerialNumber(cardUID)
               .setContractLoaded(
                   inputData.getContractTariff().toString().replace("_", " ")
-                      + ((inputData.getTicketToLoad() != 0)
-                          ? ": " + inputData.getTicketToLoad()
+                      + ((inputData.getTripsToLoad() != 0)
+                          ? ": " + inputData.getTripsToLoad()
                           : "")));
       return new WriteContractOutputDto(statusCode);
+    } catch (CardFullException e) {
+      logger.error(AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT, e.getMessage());
+      activityService.push(
+          new Activity()
+              .setPlugin(pluginType)
+              .setStatus(FAIL)
+              .setType(RELOAD)
+              .setCardSerialNumber(cardUID)
+              .setContractLoaded(""));
+      return new WriteContractOutputDto(RemoteServiceStatus.CARD_FULL.getCode());
     } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT, e.getMessage(), e);
       activityService.push(
@@ -535,7 +569,7 @@ public class CardService {
               .setType(RELOAD)
               .setCardSerialNumber(cardUID)
               .setContractLoaded(""));
-      return new WriteContractOutputDto(1);
+      return new WriteContractOutputDto(RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT, e.getMessage(), e);
       activityService.push(
@@ -545,7 +579,7 @@ public class CardService {
               .setType(RELOAD)
               .setCardSerialNumber(cardUID)
               .setContractLoaded(""));
-      return new WriteContractOutputDto(2);
+      return new WriteContractOutputDto(RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
       if (samResource != null) {
         CardResourceServiceProvider.getService().releaseCardResource(samResource);
@@ -574,9 +608,8 @@ public class CardService {
         appSerialNumber,
         calypsoCard.getProductType());
 
-    if (!CardConstants.Companion.getALLOWED_FILE_STRUCTURES()
-        .contains(calypsoCard.getApplicationSubtype())) {
-      return new CardIssuanceOutputDto(3);
+    if (!CalypsoFiles.ALLOWED_FILE_STRUCTURES.contains(calypsoCard.getApplicationSubtype())) {
+      return new CardIssuanceOutputDto(RemoteServiceStatus.CARD_REJECTED.getCode());
     }
 
     CardResource samResource =
@@ -590,7 +623,7 @@ public class CardService {
               .setStatus(SUCCESS)
               .setType(ISSUANCE)
               .setCardSerialNumber(appSerialNumber));
-      return new CardIssuanceOutputDto(0);
+      return new CardIssuanceOutputDto(RemoteServiceStatus.SUCCESS.getCode());
     } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_INITIALIZING_THE_CARD, e.getMessage(), e);
       activityService.push(
@@ -599,7 +632,7 @@ public class CardService {
               .setStatus(FAIL)
               .setType(ISSUANCE)
               .setCardSerialNumber(appSerialNumber));
-      return new CardIssuanceOutputDto(1);
+      return new CardIssuanceOutputDto(RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_INITIALIZING_THE_CARD, e.getMessage(), e);
       activityService.push(
@@ -608,7 +641,7 @@ public class CardService {
               .setStatus(FAIL)
               .setType(ISSUANCE)
               .setCardSerialNumber(appSerialNumber));
-      return new CardIssuanceOutputDto(2);
+      return new CardIssuanceOutputDto(RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
       CardResourceServiceProvider.getService().releaseCardResource(samResource);
     }
@@ -640,7 +673,7 @@ public class CardService {
               .setStatus(SUCCESS)
               .setType(ISSUANCE)
               .setCardSerialNumber(cardUID));
-      return new CardIssuanceOutputDto(0);
+      return new CardIssuanceOutputDto(RemoteServiceStatus.SUCCESS.getCode());
     } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_INITIALIZING_THE_CARD, e.getMessage(), e);
       activityService.push(
@@ -649,7 +682,7 @@ public class CardService {
               .setStatus(FAIL)
               .setType(ISSUANCE)
               .setCardSerialNumber(cardUID));
-      return new CardIssuanceOutputDto(1);
+      return new CardIssuanceOutputDto(RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_INITIALIZING_THE_CARD, e.getMessage(), e);
       activityService.push(
@@ -658,7 +691,7 @@ public class CardService {
               .setStatus(FAIL)
               .setType(ISSUANCE)
               .setCardSerialNumber(cardUID));
-      return new CardIssuanceOutputDto(2);
+      return new CardIssuanceOutputDto(RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
       if (samResource != null) {
         CardResourceServiceProvider.getService().releaseCardResource(samResource);
@@ -696,7 +729,10 @@ public class CardService {
               .setType(SECURED_READ)
               .setCardSerialNumber(""));
       return new SelectAppAndAnalyzeContractsOutputDto(
-          "", Collections.emptyList(), 1, e.getMessage());
+          "",
+          Collections.emptyList(),
+          RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode(),
+          e.getMessage());
     } catch (RuntimeException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
       activityService.push(
@@ -706,7 +742,7 @@ public class CardService {
               .setType(SECURED_READ)
               .setCardSerialNumber(""));
       return new SelectAppAndAnalyzeContractsOutputDto(
-          "", Collections.emptyList(), 2, e.getMessage());
+          "", Collections.emptyList(), RemoteServiceStatus.SERVER_ERROR.getCode(), e.getMessage());
     }
 
     // Analyze contracts
@@ -716,16 +752,16 @@ public class CardService {
     // Build result
     String appSerialNumber = HexUtil.toHex(calypsoCard.getApplicationSerialNumber());
 
-    List<SelectAppAndAnalyzeContractsOutputDto.ContractInfo> validContracts =
-        outputData2.getValidContracts().stream()
+    List<SelectAppAndAnalyzeContractsOutputDto.ContractInfo> contracts =
+        outputData2.getContracts().stream()
             .map(
                 contract -> {
-                  String title;
+                  String name;
                   String description;
                   boolean isValid;
                   switch (contract.getContractTariff()) {
                     case MULTI_TRIP:
-                      title = "Multi trip";
+                      name = "Multi trip";
                       description =
                           contract.getCounterValue() != null
                               ? contract.getCounterValue() + " trip(s) left"
@@ -734,85 +770,64 @@ public class CardService {
                           contract.getCounterValue() != null && contract.getCounterValue() >= 1;
                       break;
                     case SEASON_PASS:
-                      title = "Season pass";
-                      description =
-                          "From\n"
-                              + contract.getContractSaleDate().getDate().format(dateTimeFormatter)
-                              + "\nto\n"
-                              + contract
-                                  .getContractValidityEndDate()
-                                  .getDate()
-                                  .format(dateTimeFormatter);
                       LocalDate now = LocalDate.now();
-                      isValid =
-                          (contract.getContractSaleDate().getDate().isBefore(now)
-                                  || contract.getContractSaleDate().getDate().isEqual(now))
-                              && (contract.getContractValidityEndDate().getDate().isAfter(now)
-                                  || contract.getContractValidityEndDate().getDate().isEqual(now));
-                      break;
-                    case EXPIRED:
-                      title = "Season pass - Expired";
+                      LocalDate saleDate = contract.getContractSaleDate().getDate();
+                      LocalDate validityEndDate = contract.getContractValidityEndDate().getDate();
+                      boolean isExpired = validityEndDate.isBefore(now);
+                      name = isExpired ? "Season pass - Expired" : "Season pass";
                       description =
                           "From\n"
-                              + contract.getContractSaleDate().getDate().format(dateTimeFormatter)
+                              + saleDate.format(dateTimeFormatter)
                               + "\nto\n"
-                              + contract
-                                  .getContractValidityEndDate()
-                                  .getDate()
-                                  .format(dateTimeFormatter);
-                      isValid = false;
+                              + validityEndDate.format(dateTimeFormatter);
+                      isValid = !saleDate.isAfter(now) && !isExpired;
                       break;
                     case FORBIDDEN:
-                      title = "FORBIDDEN";
-                      description = "";
-                      isValid = false;
-                      break;
-                    case STORED_VALUE:
-                      title = "STORED_VALUE";
+                      name = "FORBIDDEN";
                       description = "";
                       isValid = false;
                       break;
                     default:
-                      title = "UNKNOWN";
+                      name = "UNKNOWN";
                       description = "";
                       isValid = false;
                       break;
                   }
                   return new SelectAppAndAnalyzeContractsOutputDto.ContractInfo(
-                      title, description, isValid);
+                      name, description, isValid);
                 })
             .collect(Collectors.toList());
 
     int statusCode = outputData2.getStatusCode();
 
     String message;
-    switch (statusCode) {
-      case 0:
+    switch (RemoteServiceStatus.fromCode(statusCode)) {
+      case SUCCESS:
         message = "Success";
         break;
-      case 1:
+      case CARD_COMMUNICATION_ERROR:
         message = "Card communication error";
         break;
-      case 2:
+      case SERVER_ERROR:
         message = "Server error";
         break;
-      case 3:
+      case CARD_REJECTED:
         message =
             "Invalid card\nFile structure "
                 + HexUtil.toHex(calypsoCard.getApplicationSubtype())
                 + "h not supported";
         break;
-      case 4:
+      case CARD_NOT_PERSONALIZED:
         message = "Environment error: wrong version number";
         break;
-      case 5:
+      case EXPIRED_ENVIRONMENT:
         message = "Environment error: end date expired";
         break;
       default:
         message = "";
     }
     return new SelectAppAndAnalyzeContractsOutputDto(
-        appSerialNumber, validContracts, statusCode, message);
+        appSerialNumber, contracts, statusCode, message);
   }
 
   SelectAppAndLoadContractOutputDto selectAppAndLoadContract(
@@ -842,7 +857,8 @@ public class CardService {
               .setStatus(FAIL)
               .setType(SECURED_READ)
               .setCardSerialNumber(""));
-      return new SelectAppAndLoadContractOutputDto(1, e.getMessage());
+      return new SelectAppAndLoadContractOutputDto(
+          RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode(), e.getMessage());
     } catch (RuntimeException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT, e.getMessage(), e);
       activityService.push(
@@ -851,7 +867,8 @@ public class CardService {
               .setStatus(FAIL)
               .setType(SECURED_READ)
               .setCardSerialNumber(""));
-      return new SelectAppAndLoadContractOutputDto(2, e.getMessage());
+      return new SelectAppAndLoadContractOutputDto(
+          RemoteServiceStatus.SERVER_ERROR.getCode(), e.getMessage());
     }
 
     String selectedApplicationSerialNumber =
@@ -860,34 +877,38 @@ public class CardService {
     if (!selectedApplicationSerialNumber.equals(expectedApplicationSerialNumber)) {
       // Ticket would have been bought for the Card read at step one.
       // To avoid swapping, we check that loading is done on the same card
-      return new SelectAppAndLoadContractOutputDto(2, "Not the same card");
+      return new SelectAppAndLoadContractOutputDto(
+          RemoteServiceStatus.DIFFERENT_CARD.getCode(), "Not the same card");
     }
 
     // Write contract
     WriteContractInputDto inputData2 =
         new WriteContractInputDto(
-            inputData.getContractTariff(), inputData.getTicketToLoad(), pluginType);
+            inputData.getContractTariff(), inputData.getTripsToLoad(), pluginType);
     WriteContractOutputDto outputData2 = writeContract(cardReader, calypsoCard, inputData2);
 
     // Build result
     int statusCode = outputData2.getStatusCode();
 
     String message;
-    switch (statusCode) {
-      case 0:
+    switch (RemoteServiceStatus.fromCode(statusCode)) {
+      case SUCCESS:
         message = "Success";
         break;
-      case 1:
+      case CARD_COMMUNICATION_ERROR:
         message = "Card communication error";
         break;
-      case 2:
+      case SERVER_ERROR:
         message = "Server error";
         break;
-      case 3:
+      case CARD_REJECTED:
         message =
             "Invalid card\nFile structure "
                 + HexUtil.toHex(calypsoCard.getApplicationSubtype())
                 + "h not supported";
+        break;
+      case CARD_FULL:
+        message = CARD_FULL;
         break;
       default:
         message = "";
@@ -922,7 +943,8 @@ public class CardService {
               .setStatus(FAIL)
               .setType(SECURED_READ)
               .setCardSerialNumber(""));
-      return new SelectAppAndPersonalizeCardOutputDto(1, e.getMessage());
+      return new SelectAppAndPersonalizeCardOutputDto(
+          RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode(), e.getMessage());
     } catch (RuntimeException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_INITIALIZING_THE_CARD, e.getMessage(), e);
       activityService.push(
@@ -931,7 +953,8 @@ public class CardService {
               .setStatus(FAIL)
               .setType(SECURED_READ)
               .setCardSerialNumber(""));
-      return new SelectAppAndPersonalizeCardOutputDto(2, e.getMessage());
+      return new SelectAppAndPersonalizeCardOutputDto(
+          RemoteServiceStatus.SERVER_ERROR.getCode(), e.getMessage());
     }
 
     // Init card
@@ -942,17 +965,17 @@ public class CardService {
     int statusCode = outputData2.getStatusCode();
 
     String message;
-    switch (statusCode) {
-      case 0:
+    switch (RemoteServiceStatus.fromCode(statusCode)) {
+      case SUCCESS:
         message = "Success";
         break;
-      case 1:
+      case CARD_COMMUNICATION_ERROR:
         message = "Card communication error";
         break;
-      case 2:
+      case SERVER_ERROR:
         message = "Server error";
         break;
-      case 3:
+      case CARD_REJECTED:
         message =
             "Invalid card\nFile structure "
                 + HexUtil.toHex(calypsoCard.getApplicationSubtype())
@@ -964,7 +987,12 @@ public class CardService {
     return new SelectAppAndPersonalizeCardOutputDto(statusCode, message);
   }
 
-  private List<ContractStructure> findValidContracts(Card card) {
+  /**
+   * Returns the contracts present in the card (ContractVersionNumber different from 0), as recorded
+   * in the card: their expiry is evaluated from their dates by the users of the result, the
+   * ContractTariff field keeping the type of the contract.
+   */
+  private List<ContractStructure> findPresentContracts(Card card) {
     // Check environment
     EnvironmentHolderStructure environment = card.getEnvironment();
     if (environment.getEnvVersionNumber() != VersionNumber.CURRENT_VERSION) {
@@ -984,7 +1012,7 @@ public class CardService {
     }
     // Iterate through the contracts in the card session
     List<ContractStructure> contracts = card.getContracts();
-    List<ContractStructure> validContracts = new ArrayList<>();
+    List<ContractStructure> presentContracts = new ArrayList<>();
     int contractIndex = 1;
     for (ContractStructure contract : contracts) {
       logger.info(
@@ -999,23 +1027,15 @@ public class CardService {
           logger.warn(CONTRACT_TARIFF_IS_NOT_VALID_FOR_THIS_CONTRACT);
         }
       } else {
-        // If ContractValidityEndDate points to a date in the past
-        if (contract.getContractValidityEndDate().getDate().isBefore(LocalDate.now())) {
-          // Update the associated ContractPriority field present in the persistent object to 31 and
-          // set the change flag to true.
-          contract.setContractTariff(PriorityCode.EXPIRED);
-          // Update contract
-          card.setContract(contractIndex - 1, contract);
-        }
-        validContracts.add(contract);
+        presentContracts.add(contract);
       }
       contractIndex++;
     }
-    logger.info(CONTRACTS, Arrays.deepToString(validContracts.toArray()));
-    return validContracts;
+    logger.info(CONTRACTS, Arrays.deepToString(presentContracts.toArray()));
+    return presentContracts;
   }
 
-  private void insertNewContract(PriorityCode contractTariff, Integer ticketToLoad, Card card) {
+  private void insertNewContract(PriorityCode contractTariff, Integer tripsToLoad, Card card) {
 
     if (contractTariff != PriorityCode.SEASON_PASS && contractTariff != PriorityCode.MULTI_TRIP) {
       throw new IllegalArgumentException(ONLY_SEASON_PASS_OR_MULTI_TRIP_TICKET_CAN_BE_LOADED);
@@ -1026,6 +1046,9 @@ public class CardService {
     EventStructure currentEvent = card.getEvent();
     ContractStructure newContract;
     int newContractNumber;
+
+    // Contract analysis: the priority of the expired contracts is set to 31 in the event to write
+    currentEvent = withExpiredContractPriorities(contracts, currentEvent);
 
     // Single contract cards support only one contract (contracts.size() == 1)
     boolean isSingleContractCard = contracts.size() == 1;
@@ -1039,9 +1062,9 @@ public class CardService {
       if (PriorityCode.MULTI_TRIP == contractTariff) {
         newContract =
             buildMultiTripContract(
-                environment.getEnvEndDate(), currentContract.getCounterValue() + ticketToLoad);
+                environment.getEnvEndDate(), currentContract.getCounterValue() + tripsToLoad);
       } else {
-        newContract = buildSeasonContract();
+        newContract = buildSeasonContract(currentContract);
       }
     } else if (isSingleContractCard) {
       // Single contract card: new contract type replaces existing one at position 1
@@ -1052,43 +1075,47 @@ public class CardService {
           contractTariff);
       // build new contract
       if (PriorityCode.MULTI_TRIP == contractTariff) {
-        newContract = buildMultiTripContract(environment.getEnvEndDate(), ticketToLoad);
+        newContract = buildMultiTripContract(environment.getEnvEndDate(), tripsToLoad);
       } else {
-        newContract = buildSeasonContract();
+        newContract = buildSeasonContract(null);
       }
     } else {
       // Calypso: Issuing new contract, find available position
-      newContractNumber = findAvailablePosition(contracts);
+      newContractNumber = findAvailablePosition(contracts, currentEvent);
       if (newContractNumber == 0) {
-        // no available position, reject card
-        return;
+        logger.warn(THE_CARD_IS_FULL);
+        throw new CardFullException();
       }
       // build new contract
       if (PriorityCode.MULTI_TRIP == contractTariff) {
-        newContract = buildMultiTripContract(environment.getEnvEndDate(), ticketToLoad);
+        newContract = buildMultiTripContract(environment.getEnvEndDate(), tripsToLoad);
       } else {
-        newContract = buildSeasonContract();
+        newContract = buildSeasonContract(null);
       }
     }
-    switch (newContractNumber) {
-      case 1:
-        currentEvent.setContractPriority1(newContract.getContractTariff());
-        break;
-      case 2:
-        currentEvent.setContractPriority2(newContract.getContractTariff());
-        break;
-      case 3:
-        currentEvent.setContractPriority3(newContract.getContractTariff());
-        break;
-      case 4:
-        currentEvent.setContractPriority4(newContract.getContractTariff());
-        break;
-      default:
-        throw new IllegalStateException(UNEXPECTED_CONTRACT_NUMBER + newContractNumber);
-    }
+    currentEvent =
+        currentEvent.withContractPriority(newContractNumber, newContract.getContractTariff());
     // Update contract & Event
     card.setContract(newContractNumber - 1, newContract);
     card.setEvent(currentEvent);
+  }
+
+  /**
+   * Returns the provided event with the priority set to 31 (EXPIRED) for the contracts present in
+   * the card whose validity end date is in the past.
+   */
+  private EventStructure withExpiredContractPriorities(
+      List<ContractStructure> contracts, EventStructure event) {
+    LocalDate today = LocalDate.now();
+    EventStructure updatedEvent = event;
+    for (int i = 0; i < contracts.size(); i++) {
+      ContractStructure contract = contracts.get(i);
+      if (contract.getContractVersionNumber() != VersionNumber.UNDEFINED
+          && contract.getContractValidityEndDate().getDate().isBefore(today)) {
+        updatedEvent = updatedEvent.withContractPriority(i + 1, PriorityCode.EXPIRED);
+      }
+    }
+    return updatedEvent;
   }
 
   private int getContractNumber(PriorityCode contractTariff, List<ContractStructure> contracts) {
@@ -1103,23 +1130,32 @@ public class CardService {
 
   private ContractStructure buildMultiTripContract(DateCompact envEndDate, Integer counterValue) {
     DateCompact contractSaleDate = new DateCompact(LocalDate.now());
-    ContractStructure contract =
-        new ContractStructure(
-            VersionNumber.CURRENT_VERSION,
-            PriorityCode.MULTI_TRIP,
-            contractSaleDate,
-            envEndDate,
-            null,
-            null,
-            null,
-            null);
-    contract.setCounterValue(counterValue);
-    return contract;
+    return new ContractStructure(
+        VersionNumber.CURRENT_VERSION,
+        PriorityCode.MULTI_TRIP,
+        contractSaleDate,
+        envEndDate,
+        null,
+        null,
+        null,
+        null,
+        counterValue);
   }
 
-  private ContractStructure buildSeasonContract() {
+  /**
+   * Builds a season pass valid for 30 days: from today for a new season pass, or from the validity
+   * end date of the reloaded season pass when it has not expired (the reload extends its validity).
+   *
+   * @param reloadedContract The season pass reloaded, null for a new season pass.
+   */
+  private ContractStructure buildSeasonContract(ContractStructure reloadedContract) {
     DateCompact contractSaleDate = new DateCompact(LocalDate.now());
-    DateCompact contractValidityEndDate = new DateCompact(contractSaleDate.getValue() + 30);
+    DateCompact validityStartDate = contractSaleDate;
+    if (reloadedContract != null
+        && !reloadedContract.getContractValidityEndDate().getDate().isBefore(LocalDate.now())) {
+      validityStartDate = reloadedContract.getContractValidityEndDate();
+    }
+    DateCompact contractValidityEndDate = new DateCompact(validityStartDate.getValue() + 30);
     return new ContractStructure(
         VersionNumber.CURRENT_VERSION,
         PriorityCode.SEASON_PASS,
@@ -1131,15 +1167,21 @@ public class CardService {
         null);
   }
 
-  private int findAvailablePosition(List<ContractStructure> contracts) {
+  /**
+   * Returns the number of the contract record where a new contract can be written: the first empty
+   * record (ContractPriority 0), otherwise the first record whose contract is expired or exhausted
+   * (ContractPriority 31), or 0 if there is none.
+   */
+  private int findAvailablePosition(List<ContractStructure> contracts, EventStructure event) {
     int contractCount = contracts.size();
+    List<PriorityCode> contractPriorities = event.getContractPriorities();
     for (int i = 0; i < contractCount; i++) {
-      if (PriorityCode.FORBIDDEN == contracts.get(i).getContractTariff()) {
+      if (PriorityCode.FORBIDDEN == contractPriorities.get(i)) {
         return i + 1;
       }
     }
     for (int i = 0; i < contractCount; i++) {
-      if (PriorityCode.EXPIRED == contracts.get(i).getContractTariff()) {
+      if (PriorityCode.EXPIRED == contractPriorities.get(i)) {
         return i + 1;
       }
     }
@@ -1155,6 +1197,12 @@ public class CardService {
   private static class ExpiredEnvironmentException extends RuntimeException {
     ExpiredEnvironmentException() {
       super(THE_ENVIRONMENT_HAS_EXPIRED);
+    }
+  }
+
+  private static class CardFullException extends RuntimeException {
+    CardFullException() {
+      super(THE_CARD_IS_FULL);
     }
   }
 }

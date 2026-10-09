@@ -84,13 +84,6 @@ namespace App.infrastructure.pcscreader
         }
 
         /// <inheritdoc/>
-        public bool IsCardPresent()
-        {
-            // Implement the logic to check if a card is present using the PC/SC library
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc/>
         public bool WaitForCardPresent()
         {
             try
@@ -120,48 +113,6 @@ namespace App.infrastructure.pcscreader
                         // Error occurred, handle it accordingly
                         break;
                     }
-                }
-            }
-            catch (Exception)
-            {
-                // Handle exceptions if necessary
-            }
-            return false;
-        }
-
-        /// <inheritdoc/>
-        public bool WaitForCardAbsent()
-        {
-            try
-            {
-                SCardReaderState[] readerStates = new[]
-                {
-                    new SCardReaderState { ReaderName = _readerName, CurrentState = SCRState.Unknown }
-                };
-
-                while (true)
-                {
-                    SCardError sc = _context.GetStatusChange(timeout: 1000, readerStates);
-                    if (sc == SCardError.Success)
-                    {
-                        if ((readerStates[0].EventState & SCRState.Empty) == SCRState.Empty)
-                        {
-                            return true;
-                        }
-                    }
-                    else if (sc == SCardError.Timeout)
-                    {
-                        // Timeout occurred, you can break the loop if you want to stop waiting
-                        // or continue to wait for the card to be removed
-                    }
-                    else
-                    {
-                        // Error occurred, handle it accordingly
-                        break;
-                    }
-
-                    // Update the current state for the next iteration
-                    readerStates[0].CurrentState = readerStates[0].EventState;
                 }
             }
             catch (Exception)

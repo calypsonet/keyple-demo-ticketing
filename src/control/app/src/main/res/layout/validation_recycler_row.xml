@@ -17,7 +17,7 @@
     android:layout_height="@dimen/card_validation_height">
 
     <TextView
-        android:id="@+id/titleLocation"
+        android:id="@+id/validationLabel"
         style="@style/smallerRegularBlue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -26,7 +26,7 @@
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/card_content_validation_title_placeholder" />
+        tools:text="@string/validation_label_placeholder" />
 
     <TextView
         android:id="@+id/date"
@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/titleLocation"
+        app:layout_constraintStart_toEndOf="@id/validationLabel"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@string/card_content_validation_date_placeholder" />
 

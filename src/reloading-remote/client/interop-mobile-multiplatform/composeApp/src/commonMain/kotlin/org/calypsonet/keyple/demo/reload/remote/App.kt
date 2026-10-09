@@ -14,6 +14,7 @@ package org.calypsonet.keyple.demo.reload.remote
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -21,15 +22,14 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import org.calypsonet.keyple.demo.reload.remote.card.CardContentScreen
 import org.calypsonet.keyple.demo.reload.remote.card.CardContentScreenViewModel
-import org.calypsonet.keyple.demo.reload.remote.nav.AppError
 import org.calypsonet.keyple.demo.reload.remote.nav.AppSuccess
 import org.calypsonet.keyple.demo.reload.remote.nav.Card
 import org.calypsonet.keyple.demo.reload.remote.nav.Home
+import org.calypsonet.keyple.demo.reload.remote.nav.LoadContract
 import org.calypsonet.keyple.demo.reload.remote.nav.PersonalizeCard
 import org.calypsonet.keyple.demo.reload.remote.nav.ReadCard
 import org.calypsonet.keyple.demo.reload.remote.nav.ServerConfig
 import org.calypsonet.keyple.demo.reload.remote.nav.Settings
-import org.calypsonet.keyple.demo.reload.remote.nav.WriteTitleCard
 import org.calypsonet.keyple.demo.reload.remote.nfc.personalize.PersonalizeCardScreen
 import org.calypsonet.keyple.demo.reload.remote.nfc.personalize.PersonalizeCardScreenViewModel
 import org.calypsonet.keyple.demo.reload.remote.nfc.read.ReadCardScreen
@@ -39,11 +39,9 @@ import org.calypsonet.keyple.demo.reload.remote.nfc.write.WriteCardScreenViewMod
 import org.calypsonet.keyple.demo.reload.remote.settings.ServerConfigScreen
 import org.calypsonet.keyple.demo.reload.remote.settings.ServerConfigScreenViewModel
 import org.calypsonet.keyple.demo.reload.remote.settings.SettingsScreen
-import org.calypsonet.keyple.demo.reload.remote.ui.ErrorScreen
 import org.calypsonet.keyple.demo.reload.remote.ui.HomeScreen
 import org.calypsonet.keyple.demo.reload.remote.ui.KeypleTheme
 import org.calypsonet.keyple.demo.reload.remote.ui.SuccessScreen
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
@@ -76,14 +74,14 @@ fun App(service: KeypleService, cardRepository: CardRepository) {
             appState = state.value)
       }
 
-      composable<WriteTitleCard> { backStackEntry ->
-        val route = backStackEntry.toRoute<WriteTitleCard>()
+      composable<LoadContract> { backStackEntry ->
+        val route = backStackEntry.toRoute<LoadContract>()
 
         WriteCardScreen(
             navController = navController,
             viewModel =
                 viewModel<WriteCardScreenViewModel> {
-                  WriteCardScreenViewModel(keypleService = service, title = route)
+                  WriteCardScreenViewModel(keypleService = service, route = route)
                 },
             appState = state.value)
       }
@@ -109,8 +107,6 @@ fun App(service: KeypleService, cardRepository: CardRepository) {
                   CardContentScreenViewModel(cardRepository = cardRepository)
                 })
       }
-
-      composable<AppError> { ErrorScreen(navController = navController, appState = state.value) }
 
       composable<AppSuccess> {
         SuccessScreen(navController = navController, appState = state.value)

@@ -9,7 +9,7 @@
     android:background="@drawable/ic_img_bg_valideur"
     tools:context="org.calypsonet.keyple.demo.validation.ui.activities.SettingsActivity">
 
-    <include layout="@layout/logo_toolbar" android:id="@+id/appBarLayout"/>
+    <include layout="@layout/toolbar" android:id="@+id/appBarLayout"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineTop"

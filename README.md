@@ -1,7 +1,7 @@
 # Keyple Demo Ticketing Ecosystem
 
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](LICENSE)
-[![Java](https://img.shields.io/badge/java-8%2B-orange.svg)](https://openjdk.java.net/)
+[![Java](https://img.shields.io/badge/java-17%2B-orange.svg)](https://openjdk.java.net/)
 [![Android](https://img.shields.io/badge/android-8.0%2B-green.svg)](https://developer.android.com/)
 
 A comprehensive open source ticketing ecosystem demonstrating the [Eclipse Keyple middleware](https://keyple.org) in
@@ -70,13 +70,13 @@ management.
 **Client Applications:**
 
 - Android 8.0+ (Native and KMP)
-- iOS 14+ (KMP)
-- Windows Desktop (.NET 7.0)
+- iOS 15.3+ (KMP)
+- Windows Desktop (.NET 10.0)
 - JVM Desktop (Kotlin Multiplatform)
 
 **Server Requirements:**
 
-- Java 8+ with PC/SC reader
+- Java 17+ with PC/SC reader
 - SAM (Security Access Module) for Calypso cards
 - Web dashboard for monitoring
 
@@ -113,7 +113,6 @@ Use any client application's personalization feature to initialize cards with:
 ### Tested Terminals
 
 - **Famoco FX205** - Enterprise NFC terminal
-- **Coppernic C-One 2** - Rugged Android terminal
 - **Standard NFC Smartphones** - Consumer devices
 - **PC/SC Readers** - Desktop integration
 
@@ -130,8 +129,8 @@ The ecosystem uses standardized data structures defined in the [Common Library](
 
 - **Environment Record**: Card metadata and validity information
 - **Event Log**: Transaction history and validation events
-- **Contract Records**: Transportation titles and their properties
-- **Counter Files**: Usage tracking for multi-trip and stored value
+- **Contract Records**: Contracts (tickets) and their properties
+- **Counter Files**: Usage tracking for multi-trip tickets
 
 See [Common Library Documentation](src/common/README.md) for detailed specifications.
 
@@ -139,7 +138,7 @@ See [Common Library Documentation](src/common/README.md) for detailed specificat
 
 ### Prerequisites
 
-- JDK 8+ for server components
+- JDK 17 to build the Java and Kotlin components (Android apps, KMP client, server)
 - Android Studio for mobile development
 - Node.js for web dashboard
 - PC/SC compatible readers for testing
@@ -149,6 +148,8 @@ See [Common Library Documentation](src/common/README.md) for detailed specificat
 ```
 keyple-demo-ticketing/
 ├── README.md                               # This file
+├── CHANGELOG.md                            # Changes of the demo since the repository merge
+├── docs/history/                           # Changelogs of the archived repositories (before the merge)
 ├── src/common/                             # Shared data structures and utilities
 ├── src/reloading-remote/                   # Remote reload clients and server
 │   ├── server/                             # Java server application
@@ -159,6 +160,106 @@ keyple-demo-ticketing/
 ├── src/validation/                         # Android validation terminal
 └── src/control/                            # Android control terminal
 ```
+
+### Android Application Architecture
+
+The Android applications (`validation`, `control` and `reloading-remote/client/keyple-mobile-android`) follow a
+**layered architecture with ports and adapters** (hexagonal style). They do not use the MVVM pattern: the activities
+drive the user flow and call the domain directly.
+
+| Package  | Content                                                                                               |
+|----------|-------------------------------------------------------------------------------------------------------|
+| `domain` | Business logic: `TicketingService` (entry point of the UI), `procedures`, `model`, and the ports (`spi`) |
+| `data`   | Adapters implementing the ports (readers, Keypop API factories, user feedback, settings, logging...)  |
+| `ui`     | Activities, UI adapters (e.g. `UiContextImpl`), and UI models with their mappers when needed          |
+| `di`     | Hilt modules binding the adapters to the ports and providing the domain services                      |
+
+**Dependency rules**
+
+- The `domain` layer only depends on the `common` library, the Keypop APIs and the Keyple utilities. It depends neither
+  on Android (including the application resources `R`), Timber or the dependency injection framework (no Hilt, Dagger
+  or `javax.inject` annotation), nor on the `data`, `ui` and `di` layers.
+- Everything the domain needs from the outside world is expressed as a port in `domain/spi` (e.g. `ReaderManager`,
+  `KeypopApiProvider`, `UserFeedback`, `AppSettingsRepository`, `Logger`, `UiContext`, `RemoteServiceManager`,
+  `ServerStatusProvider`) and implemented by an adapter in `data`, or in `ui/adapters` for the UI-bound ones.
+- The `ui` layer calls the use cases of the domain services, or the ports directly for simple accesses (e.g. settings).
+  It never accesses the `data` layer, and does not handle the Keypop card types (`CalypsoCard`, `StorageCard`...).
+- The `data` layer implements the ports and does not depend on the `ui` layer.
+- The `di` layer is the only place where adapters are bound to ports. The domain services (`TicketingService` and the
+  procedures) carry no annotation and are provided by the `DomainModule`. The stable dependencies of the procedures are
+  injected through their constructor; only the data of the current transaction is passed to them (`ControlContext`,
+  `ValidationContext`).
+- The control and validation procedures implement a common interface (`ControlProcedure`, `ValidationProcedure`), one
+  implementation per card technology: `TicketingService` executes the procedure supporting the selected card, a new
+  card technology only requiring a new procedure. The
+  bindings are application-wide singletons (`SingletonComponent`); the application is annotated `@HiltAndroidApp`, and
+  each activity receiving dependencies (through its base activity) `@AndroidEntryPoint`.
+- The application settings are accessed through the `AppSettingsRepository` port, never through a global object.
+
+**Logging**
+
+- `domain`, `data` and `di` log through the `Logger` port. Timber is only used by its implementation (`data/LoggerImpl`),
+  by `DemoApplication` (Timber initialization) and by the activities.
+
+**UI models**
+
+- A UI model (`ui/model`, `Parcelable`) is only created when an object must be passed between activities through an
+  `Intent`. Otherwise, the UI uses the domain models directly. When a UI model has a domain counterpart, the mapping
+  from the domain model to the UI model is done in `ui/mappers`.
+
+**Results**
+
+- The domain produces no text displayed to the users. The procedures return typed results (`sealed interface`, e.g.
+  `ValidationResult.Accepted`, `Rejected(reason)` or `Failed(error)`), and the UI translates them into the texts of
+  `strings.xml`, as the reloading client does with the status codes of the server (`RemoteServiceStatus`).
+- The refusal of a card by a business rule is a result (`RejectionReason`), not an exception: the exceptions are kept
+  for the technical errors (card communication...).
+
+These rules are checked by the CI (`.github/scripts/check-android-architecture.sh`), which can also be run locally:
+
+```sh
+bash .github/scripts/check-android-architecture.sh src/control
+```
+
+**Naming conventions**
+
+- Application class `DemoApplication`, base activity `BaseActivity` (and `BaseCardActivity` for the card screens of
+  the reloading client), card presentation screen `CardReaderActivity`.
+- Layouts named after their activity (`activity_<name>.xml`), shared toolbar `toolbar.xml`.
+- Hilt modules named after what they provide (e.g. `AppSettingsModule`, `DomainModule`, `ReaderModule`), with
+  `provide<Type>` methods.
+- Enums named without suffix (e.g. `TerminalType`, `CardProtocol`, `Status`).
+
+**Ticketing vocabulary**
+
+The code uses the same business terms in all the applications:
+
+| Term                                        | Meaning                                                                                  | Replaces                 |
+|---------------------------------------------|------------------------------------------------------------------------------------------|--------------------------|
+| `Contract`                                  | Right recorded in the card (contract record), e.g. a season pass or a multi-trip ticket   | "title"                  |
+| `Product`, `ProductType`                    | What the reloading client sells (type, price, quantity), loaded as a contract            | "title"                  |
+| `trip` (`remainingTrips`, `tripsToLoad`)    | Unit of the counter of a multi-trip contract                                             | "ticket", "nbTickets"    |
+| `TerminalType`                              | Terminal running the application (Bluebird, Famoco, Arrive, standard NFC terminal)      | "reader type"            |
+| `CardMedium`                                | Medium holding the card application (contactless card, SIM, wearable, embedded)         | "device"                 |
+| `UserFeedback`                              | Sounds and LEDs of the terminal                                                          | "UI manager"             |
+
+The texts displayed to the users use "ticket" for the contracts and products. The terms of the card data model
+(`EnvironmentHolder`, `Event`, `Contract`, `ContractTariff`, `ContractPriority`, `PriorityCode`) follow its
+specification (see the `common` library).
+
+**Differences between the applications**
+
+The applications share these conventions, except for the following deliberate differences:
+
+| Difference                                                                                                         | Reason                                                                                                                                  |
+|--------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| Validation app: free orientation, `arrive`/`arrive-mock` source sets and `com.parkeon.app.customer` action          | Arrive (Parkeon) terminal: landscape screen, optional proprietary SDK, application launched by the terminal                             |
+| Reloading Android client: reader detected from the device, no device selection screen                             | Only the Bluebird terminals use a specific reader; the other devices use the Android NFC reader                                         |
+| Reloading Android client: settings persisted (`SharedPreferences`), in memory in the control and validation apps   | The server address must survive a restart; the control and validation apps ask for the terminal at each startup                         |
+| Reloading Android client: no local SAM, but NFC and OMAPI (SIM) readers                                            | The SAM is managed by the server (Keyple Distributed)                                                                                   |
+| KMP client: organized by feature (no `domain`/`data`/`ui` layers), without Hilt nor the `common` library           | Compose code shared by Android, desktop and iOS; the `common` library relies on Java libraries (bit-lib4j, Keyple utilities) unavailable on iOS |
+| KMP client: Android APK suffixed `-android-`                                                                       | The same project name is used by the desktop packages                                                                                   |
+| Directory and project names (`reloading-remote`, `keyple-mobile-android`, `kdt-...`) differing from the packages   | Referenced by the CI, the names of the released artifacts and the existing links                                                        |
 
 ### Building from Source
 

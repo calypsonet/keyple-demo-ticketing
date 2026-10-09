@@ -1,6 +1,6 @@
 # Keyple Reload Demo - Kotlin Multiplatform Client
 
-[![Kotlin](https://img.shields.io/badge/kotlin-1.9+-blue.svg)](https://kotlinlang.org/)
+[![Kotlin](https://img.shields.io/badge/kotlin-2.2-blue.svg)](https://kotlinlang.org/)
 [![KMP](https://img.shields.io/badge/multiplatform-android%20%7C%20ios%20%7C%20desktop-green.svg)](https://www.jetbrains.com/kotlin-multiplatform/)
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../../../LICENSE)
 
@@ -14,8 +14,8 @@ desktop platforms using Keyple Distributed Client KMP libraries for seamless cro
 This innovative client showcases the power of Kotlin Multiplatform by providing a single codebase that runs natively on multiple platforms while maintaining full functionality with the Keyple server ecosystem. It demonstrates modern cross-platform development practices for contactless card applications.
 
 **Supported Platforms**:
-- **Android 7.0+** (API 24+) with native NFC support
-- **iOS 14+** with Core NFC integration
+- **Android 8.0+** (API 26+) with native NFC support
+- **iOS 15.3+** with Core NFC integration
 - **JVM Desktop** (Windows/macOS/Linux) with PC/SC readers
 
 ## Prerequisites
@@ -23,8 +23,8 @@ This innovative client showcases the power of Kotlin Multiplatform by providing 
 ### Development Environment
 - **Android Studio** with Kotlin Multiplatform plugin
 - **Xcode** (for iOS development on macOS)
-- **JDK 11+** for desktop targets
-- **Kotlin 1.9+** with multiplatform support
+- **JDK 17** to build the project (the desktop application runs on Java 17+)
+- **Kotlin 2.3** with multiplatform support (provided by the Gradle build)
 
 ### Platform-Specific Requirements
 
@@ -32,10 +32,11 @@ This innovative client showcases the power of Kotlin Multiplatform by providing 
 - Device with NFC capability
 - Android 8.0+ (API level 26+)
 - NFC enabled in system settings
+- Android SDK installed locally, with a `local.properties` file at the project root pointing to it (see [Building the Project](#building-the-project))
 
 #### iOS
 - iPhone with NFC support (iPhone 7+)
-- iOS 14.0 or later
+- iOS 15.3 or later
 - Core NFC entitlements configured
 - Apple Developer account for device deployment
 
@@ -60,11 +61,22 @@ cd keyple-demo-ticketing/src/reloading-remote/client/interop-mobile-multiplatfor
 ```
 
 #### Android App
+
+Before building for Android, create a `local.properties` file at the root of this project (`interop-mobile-multiplatform/local.properties`) pointing to your local Android SDK installation. This file is not committed to the repository, so each developer must create their own:
+
+```properties
+sdk.dir=/path/to/your/Android/Sdk
+```
+
+On Windows, escape backslashes in the path, e.g. `sdk.dir=C\:\\Users\\<user>\\AppData\\Local\\Android\\Sdk`.
+
+Without this file, Gradle fails with `SDK location not found`.
+
 ```bash
-./gradlew :composeApp:assembleDebug
+./gradlew :androidApp:assembleDebug
 
 # Install on connected device
-./gradlew :composeApp:installDebug
+./gradlew :androidApp:installDebug
 ```
 
 #### iOS App
@@ -110,7 +122,7 @@ The application configuration is managed through:
 1. **Main Screen** → **Contactless Support**
 2. **Hold card** against device back (near NFC antenna)
 3. **View existing contracts** and their status
-4. **Select new title** to load if desired
+4. **Select a new ticket** to load if desired
 
 #### Contract Loading
 1. **Choose contract type** from available options
@@ -162,7 +174,7 @@ The application uses Compose Multiplatform for consistent UI across all platform
 ### Multiplatform Structure
 
 ```
-composeApp/src/
+composeApp/src/                   # Kotlin Multiplatform library, desktop and iOS applications
 ├── commonMain/                    # Shared business logic
 │   └── kotlin/
 │       ├── card/                 # Card content screens
@@ -170,10 +182,14 @@ composeApp/src/
 │       ├── network/              # Server communication
 │       ├── settings/             # Settings screens
 │       └── ui/                   # Common UI components
-├── androidMain/                  # Android-specific code
+├── androidMain/                  # Android-specific implementations (buzzer, data store...)
 ├── iosMain/                      # iOS-specific code
 └── desktopMain/                  # Desktop-specific code
+androidApp/src/main/              # Android application (activity, manifest, launcher icons)
 ```
+
+The Android application is a separate module: the Android Gradle plugin 9 does not support the Kotlin
+Multiplatform and Android application plugins in the same module.
 
 ### Key Components
 
@@ -181,7 +197,7 @@ composeApp/src/
 
 **Data Models**:
 - `CardRepository` - Manages card data (serial number, contracts)
-- `ContractInfo` - Contract information with title, description, and validity
+- `ContractInfo` - Contract information with name, description, and validity
 - `KeypleService` - Handles Keyple Interop API communication
 - `SimpleHttpNetworkClient` - HTTP client for server communication
 
@@ -205,10 +221,10 @@ Each platform provides:
 #### Android Development
 ```bash
 # Debug build
-./gradlew :composeApp:assembleDebug
+./gradlew :androidApp:assembleDebug
 
 # Run on connected device
-./gradlew :composeApp:installDebug
+./gradlew :androidApp:installDebug
 ```
 
 #### iOS Development
@@ -286,7 +302,7 @@ Each platform provides:
 ### Android
 ```bash
 # Generate signed APK
-./gradlew :composeApp:assembleRelease
+./gradlew :androidApp:assembleRelease
 
 # Upload to Google Play Console
 # Or distribute via Firebase App Distribution

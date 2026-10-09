@@ -24,6 +24,9 @@ import org.calypsonet.keyple.demo.reload.remote.nfc.ui.PresentCardAnimation
 import org.calypsonet.keyple.demo.reload.remote.nfc.ui.ReadingError
 import org.calypsonet.keyple.demo.reload.remote.nfc.ui.ScanCardAnimation
 import org.calypsonet.keyple.demo.reload.remote.nfc.ui.ScanScreen
+import org.calypsonet.keyple.demo.reload.remote.ui.AutoReturn
+import org.calypsonet.keyple.demo.reload.remote.ui.ERROR_RETURN_DELAY_MS
+import org.calypsonet.keyple.demo.reload.remote.ui.red
 
 @Composable
 fun ReadCardScreen(
@@ -51,20 +54,26 @@ internal fun ReadCardScreen(
     modifier: Modifier = Modifier,
     appState: AppState
 ) {
-  ScanScreen(navController = navController, modifier = modifier, appState = appState) {
-    when (state) {
-      ReadCardScreenState.WaitForCard -> {
-        PresentCardAnimation()
+  ScanScreen(
+      navController = navController,
+      modifier = modifier,
+      appState = appState,
+      autoReturn =
+          if (state is ReadCardScreenState.DisplayError) AutoReturn(ERROR_RETURN_DELAY_MS, red)
+          else null) {
+        when (state) {
+          ReadCardScreenState.WaitForCard -> {
+            PresentCardAnimation()
+          }
+          ReadCardScreenState.ReadingCard -> {
+            ScanCardAnimation()
+          }
+          is ReadCardScreenState.DisplayError -> {
+            ReadingError(state.message)
+          }
+          ReadCardScreenState.ShowCardContent -> {
+            // no-op
+          }
+        }
       }
-      ReadCardScreenState.ReadingCard -> {
-        ScanCardAnimation()
-      }
-      is ReadCardScreenState.DisplayError -> {
-        ReadingError(state.message)
-      }
-      ReadCardScreenState.ShowCardContent -> {
-        // no-op
-      }
-    }
-  }
 }

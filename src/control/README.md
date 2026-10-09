@@ -55,7 +55,6 @@ cd keyple-demo-ticketing/src/control
 1. Launch application
 2. Select device type from **Device Selection** screen:
   - **Famoco FX205**: Enterprise terminal with SAM reader
-  - **Coppernic C-One 2**: Rugged Android terminal
   - **Standard NFC**: Consumer Android device (No card authentication)
   - Proprietary terminals (grayed out by default)
 
@@ -102,7 +101,7 @@ Device Selection → Settings → Home → Reader Activity → Control Results
 - Quick access to settings and help documentation
 - Statistics on recent control operations
 
-**Reader Activity (`ReaderActivity`)**
+**Reader Activity (`CardReaderActivity`)**
 - Initializes selected Keyple plugin and optional SAM integration
 - Displays "Present Card for Control" message
 - Shows real-time analysis during card processing
@@ -117,11 +116,11 @@ Device Selection → Settings → Home → Reader Activity → Control Results
   - Validation status (valid/expired/insufficient)
 - **Contract Analysis**:
   - List of all contracts with current status
-  - Validity periods and remaining balances
+  - Validity periods and remaining trips
   - Priority assignments and usage history
 - **Compliance Status**: Clear indication of card validity
 
-**Invalid Card Screen (`NetworkInvalidActivity`)**:
+**Invalid Card Screen (`InvalidCardActivity`)**:
 - **Non-compliance Reason**: Specific issue detected
 - **Recommended Action**: Guidance for inspector response
 - **Supporting Evidence**: Technical details for documentation
@@ -162,11 +161,6 @@ Device Selection → Settings → Home → Reader Activity → Control Results
 - Validation attempted with expired contract
 - System should have rejected but may indicate tampering
 - **Action**: Detailed inspection and possible citation
-
-**Insufficient Balance**:
-- Stored value validation with insufficient funds
-- May indicate payment system bypass
-- **Action**: Verify payment and request top-up
 
 ## Technical Architecture
 
@@ -274,7 +268,7 @@ Device Selection → Settings → Home → Reader Activity → Control Results
 | **Validated**    | Used in recent valid validation                    | ✅ Accept                 |
 | **Valid Unused** | Available for use but not recently validated       | ℹ️ Informational         |
 | **Expired**      | Past validity date                                 | ❌ Cannot be used         |
-| **Insufficient** | Multi-trip (0 trips) or Stored Value (low balance) | ❌ Requires reload        |
+| **Insufficient** | Multi-trip (0 trips)                               | ❌ Requires reload        |
 | **Unknown**      | Unrecognized contract type                         | ⚠️ Manual review         |
 | **Blank**        | Empty contract slot                                | ℹ️ Available for loading |
 
@@ -289,12 +283,6 @@ Device Selection → Settings → Home → Reader Activity → Control Results
 - **Plugins**: [Famoco Plugin](https://github.com/calypsonet/keyple-famoco) + [Android NFC](https://keyple.org/components/standard-reader-plugins/keyple-plugin-android-nfc-lib/)
 - **Advantages**: Enterprise security, robust construction, integrated SAM
 - **Use Case**: Fixed inspection points, high-security environments
-
-**Coppernic C-One 2**
-- **Configuration**: Integrated NFC reader
-- **Plugin**: [Coppernic Plugin](https://github.com/calypsonet/keyple-android-plugin-coppernic)
-- **Advantages**: Rugged design, mobile form factor, long battery life
-- **Use Case**: Mobile inspectors, field operations
 
 **Standard NFC Smartphones**
 - **Configuration**: Built-in NFC radio
@@ -327,8 +315,7 @@ control/app/
 │   │   ├── data/                            # Data layer
 │   │   │   └── model/                       # Data models
 │   │   │       └── mappers/                 # Data mappers
-│   │   ├── di/                              # Dependency injection
-│   │   │   └── scope/                       # DI scopes
+│   │   ├── di/                              # Dependency injection (Hilt modules)
 │   │   ├── domain/                          # Business logic
 │   │   └── ui/                              # UI layer
 │   │       ├── cardcontent/                 # Card display components
@@ -420,7 +407,7 @@ control/app/
 - No further action required
 
 **Yellow Status (Warning)**:
-- Minor issues detected (e.g., low balance, near expiration)
+- Minor issues detected (e.g., few trips left, near expiration)
 - Inform passenger of status
 - Suggest remedial action (reload, renewal)
 

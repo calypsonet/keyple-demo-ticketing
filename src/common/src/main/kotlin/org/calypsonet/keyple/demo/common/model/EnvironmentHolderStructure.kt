@@ -12,15 +12,15 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.common.model
 
-import java.io.Serializable
 import org.calypsonet.keyple.demo.common.model.type.DateCompact
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 
+/** Environment and holder record of the card (see the data model in the README). */
 data class EnvironmentHolderStructure(
-    var envVersionNumber: VersionNumber,
-    var envApplicationNumber: Int,
-    var envIssuingDate: DateCompact,
-    var envEndDate: DateCompact,
-    var holderCompany: Int?,
-    var holderIdNumber: Int?
-) : Serializable
+    val envVersionNumber: VersionNumber,
+    val envApplicationNumber: Int,
+    val envIssuingDate: DateCompact,
+    val envEndDate: DateCompact,
+    val holderCompany: Int?,
+    val holderIdNumber: Int?
+)

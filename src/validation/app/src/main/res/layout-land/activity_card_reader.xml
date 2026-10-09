@@ -21,7 +21,7 @@
 
     <include
         android:id="@+id/appBarLayout"
-        layout="@layout/logo_toolbar" />
+        layout="@layout/toolbar" />
 
     <TextView
         android:id="@+id/homeDescription"

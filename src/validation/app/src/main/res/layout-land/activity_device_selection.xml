@@ -10,7 +10,7 @@
 
     <include
         android:id="@+id/appBarLayout"
-        layout="@layout/logo_toolbar" />
+        layout="@layout/toolbar" />
 
     <Button
         android:id="@+id/arriveBtn"
@@ -25,18 +25,6 @@
         app:layout_constraintTop_toTopOf="@+id/guidelineTop" />
 
     <Button
-        android:id="@+id/coppernicBtn"
-        style="@style/whiteBtnText"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/btn_blue"
-        android:text="@string/device_coppernic"
-        android:textSize="@dimen/medium_text_size"
-        app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
-        app:layout_constraintTop_toBottomOf="@+id/bluebirdBtn" />
-
-    <Button
         android:id="@+id/famocoBtn"
         style="@style/whiteBtnText"
         android:layout_width="200dp"
@@ -46,7 +34,7 @@
         android:text="@string/device_famoco"
         android:textSize="@dimen/medium_text_size"
         app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
-        app:layout_constraintTop_toBottomOf="@+id/coppernicBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/bluebirdBtn" />
 
     <Button
         android:id="@+id/bluebirdBtn"
@@ -98,7 +86,7 @@
 
     <include
         android:id="@+id/appBarLayoutBottom"
-        layout="@layout/logo_toolbar"
+        layout="@layout/toolbar"
         tools:layout_editor_absoluteX="0dp" />
 
     <androidx.constraintlayout.widget.Guideline

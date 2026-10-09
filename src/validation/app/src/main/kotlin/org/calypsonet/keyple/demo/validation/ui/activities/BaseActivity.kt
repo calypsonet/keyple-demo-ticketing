@@ -12,16 +12,13 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.validation.ui.activities
 
-import android.widget.Toast
-import dagger.android.support.DaggerAppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import javax.inject.Inject
 import org.calypsonet.keyple.demo.validation.domain.TicketingService
+import org.calypsonet.keyple.demo.validation.domain.spi.AppSettingsRepository
 
-abstract class BaseActivity : DaggerAppCompatActivity() {
+abstract class BaseActivity : AppCompatActivity() {
 
   @Inject lateinit var ticketingService: TicketingService
-
-  fun showToast(message: String) {
-    runOnUiThread { Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show() }
-  }
+  @Inject lateinit var appSettings: AppSettingsRepository
 }

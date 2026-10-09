@@ -24,10 +24,10 @@ sealed class CardContentScreenState(val screenTitle: String) {
   data class DisplayContent(val contracts: List<ContractInfo> = emptyList()) :
       CardContentScreenState("Content")
 
-  data class ChooseTitle(val titles: List<Title> = emptyList()) :
-      CardContentScreenState("Choose a title")
+  data class ChooseProduct(val products: List<Product> = emptyList()) :
+      CardContentScreenState("Choose a ticket")
 
-  data class DisplayBasket(val selectedTitle: Title?) : CardContentScreenState("Basket")
+  data class DisplayBasket(val selectedProduct: Product?) : CardContentScreenState("Basket")
 }
 
 class CardContentScreenViewModel(private val cardRepository: CardRepository) : ViewModel() {
@@ -47,20 +47,21 @@ class CardContentScreenViewModel(private val cardRepository: CardRepository) : V
     _state.value = CardContentScreenState.DisplayContent(contracts)
   }
 
-  fun chooseTitle() {
+  fun chooseProduct() {
     _state.value =
-        CardContentScreenState.ChooseTitle(
+        CardContentScreenState.ChooseProduct(
             listOf(
-                Title(type = TitleType.SINGLE, price = 1, quantity = 1),
-                Title(type = TitleType.SINGLE, price = 2, quantity = 2),
-                Title(type = TitleType.SINGLE, price = 3, quantity = 3),
-                Title(type = TitleType.SINGLE, price = 4, quantity = 4),
-                Title(type = TitleType.SEASON, price = 20, quantity = 1, date = "12/12/24"),
+                Product(type = ProductType.MULTI_TRIP, price = 1, quantity = 1),
+                Product(type = ProductType.MULTI_TRIP, price = 2, quantity = 2),
+                Product(type = ProductType.MULTI_TRIP, price = 3, quantity = 3),
+                Product(type = ProductType.MULTI_TRIP, price = 4, quantity = 4),
+                Product(
+                    type = ProductType.SEASON_PASS, price = 20, quantity = 1, date = "12/12/24"),
             ))
   }
 
-  fun addToBasket(title: Title) {
-    _state.value = CardContentScreenState.DisplayBasket(title)
+  fun addToBasket(product: Product) {
+    _state.value = CardContentScreenState.DisplayBasket(product)
   }
 
   fun getCardSerial(): String {

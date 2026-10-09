@@ -14,11 +14,13 @@ package org.calypsonet.keyple.demo.validation.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.Timer
 import java.util.TimerTask
 import org.calypsonet.keyple.demo.validation.databinding.ActivityMainBinding
 import org.calypsonet.keyple.demo.validation.ui.activities.deviceselection.DeviceSelectionActivity
 
+@AndroidEntryPoint
 class MainActivity : BaseActivity() {
 
   private lateinit var activityMainBinding: ActivityMainBinding

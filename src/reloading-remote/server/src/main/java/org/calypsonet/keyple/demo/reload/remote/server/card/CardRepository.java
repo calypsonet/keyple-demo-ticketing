@@ -12,21 +12,28 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.server.card;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
-import javax.enterprise.context.ApplicationScoped;
 import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService;
-import org.calypsonet.keyple.demo.common.constants.CardConstants;
+import org.calypsonet.keyple.demo.common.codecs.CalypsoContractCodec;
+import org.calypsonet.keyple.demo.common.codecs.CalypsoEnvironmentHolderCodec;
+import org.calypsonet.keyple.demo.common.codecs.CalypsoEventCodec;
+import org.calypsonet.keyple.demo.common.codecs.StorageCardContractCodec;
+import org.calypsonet.keyple.demo.common.codecs.StorageCardEnvironmentHolderCodec;
+import org.calypsonet.keyple.demo.common.codecs.StorageCardEventCodec;
+import org.calypsonet.keyple.demo.common.constants.CalypsoAids;
+import org.calypsonet.keyple.demo.common.constants.CalypsoFiles;
+import org.calypsonet.keyple.demo.common.constants.DefaultKifs;
+import org.calypsonet.keyple.demo.common.constants.StorageCardBlocks;
 import org.calypsonet.keyple.demo.common.model.ContractStructure;
 import org.calypsonet.keyple.demo.common.model.EnvironmentHolderStructure;
 import org.calypsonet.keyple.demo.common.model.EventStructure;
 import org.calypsonet.keyple.demo.common.model.type.DateCompact;
-import org.calypsonet.keyple.demo.common.model.type.PriorityCode;
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber;
-import org.calypsonet.keyple.demo.common.parsers.*;
 import org.eclipse.keyple.card.calypso.CalypsoExtensionService;
 import org.eclipse.keyple.card.calypso.crypto.legacysam.LegacySamExtensionService;
 import org.eclipse.keyple.core.service.SmartCardServiceProvider;
@@ -66,27 +73,19 @@ public class CardRepository {
         CalypsoExtensionService.getInstance().getCalypsoCardApiFactory();
 
     cardSelectionManager.prepareSelection(
-        readerApiFactory
-            .createIsoCardSelector()
-            .filterByDfName(CardConstants.Companion.getAID_KEYPLE_GENERIC()),
+        readerApiFactory.createIsoCardSelector().filterByDfName(CalypsoAids.KEYPLE_GENERIC),
         calypsoCardApiFactory.createCalypsoCardSelectionExtension().acceptInvalidatedCard());
 
     cardSelectionManager.prepareSelection(
-        readerApiFactory
-            .createIsoCardSelector()
-            .filterByDfName(CardConstants.Companion.getAID_CALYPSO_LIGHT()),
+        readerApiFactory.createIsoCardSelector().filterByDfName(CalypsoAids.CALYPSO_LIGHT),
         calypsoCardApiFactory.createCalypsoCardSelectionExtension().acceptInvalidatedCard());
 
     cardSelectionManager.prepareSelection(
-        readerApiFactory
-            .createIsoCardSelector()
-            .filterByDfName(CardConstants.Companion.getAID_CD_LIGHT_GTML()),
+        readerApiFactory.createIsoCardSelector().filterByDfName(CalypsoAids.CD_LIGHT_GTML),
         calypsoCardApiFactory.createCalypsoCardSelectionExtension().acceptInvalidatedCard());
 
     cardSelectionManager.prepareSelection(
-        readerApiFactory
-            .createIsoCardSelector()
-            .filterByDfName(CardConstants.Companion.getAID_NORMALIZED_IDF()),
+        readerApiFactory.createIsoCardSelector().filterByDfName(CalypsoAids.NORMALIZED_IDF),
         calypsoCardApiFactory.createCalypsoCardSelectionExtension().acceptInvalidatedCard());
     return cardSelectionManager;
   }
@@ -142,15 +141,14 @@ public class CardRepository {
     cardTransactionManager
         .prepareOpenSecureSession(WriteAccessLevel.LOAD)
         .prepareReadRecords(
-            CardConstants.SFI_ENVIRONMENT_AND_HOLDER,
+            CalypsoFiles.SFI_ENVIRONMENT_AND_HOLDER,
             1,
             1,
-            CardConstants.ENVIRONMENT_HOLDER_RECORD_SIZE_BYTES)
+            CalypsoFiles.ENVIRONMENT_HOLDER_RECORD_SIZE_BYTES)
+        .prepareReadRecords(CalypsoFiles.SFI_EVENTS_LOG, 1, 1, CalypsoFiles.EVENT_RECORD_SIZE_BYTES)
         .prepareReadRecords(
-            CardConstants.SFI_EVENTS_LOG, 1, 1, CardConstants.EVENT_RECORD_SIZE_BYTES)
-        .prepareReadRecords(
-            CardConstants.SFI_CONTRACTS, 1, contractCount, CardConstants.CONTRACT_RECORD_SIZE_BYTES)
-        .prepareReadCounter(CardConstants.SFI_COUNTERS, contractCount)
+            CalypsoFiles.SFI_CONTRACTS, 1, contractCount, CalypsoFiles.CONTRACT_RECORD_SIZE_BYTES)
+        .prepareReadCounter(CalypsoFiles.SFI_COUNTERS, contractCount)
         .prepareCloseSecureSession()
         .processCommands(ChannelControl.KEEP_OPEN);
     logger.info(CALYPSO_SESSION_CLOSED);
@@ -222,13 +220,13 @@ public class CardRepository {
         if (card.getUpdatedContracts().contains(contract)) {
           // update contract
           cardTransactionManager.prepareUpdateRecord(
-              CardConstants.SFI_CONTRACTS,
+              CalypsoFiles.SFI_CONTRACTS,
               contractNumber,
-              new ContractStructureParser().generate(contract));
+              CalypsoContractCodec.INSTANCE.encode(contract));
           // update counter
           if (contract.getCounterValue() != null) {
             cardTransactionManager.prepareSetCounter(
-                CardConstants.SFI_COUNTERS, contractNumber, contract.getCounterValue());
+                CalypsoFiles.SFI_COUNTERS, contractNumber, contract.getCounterValue());
           }
         }
       }
@@ -236,9 +234,9 @@ public class CardRepository {
     /* Update event */
     if (Boolean.TRUE.equals(card.isEventUpdated())) {
       cardTransactionManager.prepareUpdateRecord(
-          CardConstants.SFI_EVENTS_LOG,
+          CalypsoFiles.SFI_EVENTS_LOG,
           1,
-          new EventStructureParser().generate(buildEvent(card.getEvent(), card.getContracts())));
+          CalypsoEventCodec.INSTANCE.encode(buildEvent(card.getEvent())));
     }
 
     cardTransactionManager.prepareCloseSecureSession().processCommands(ChannelControl.KEEP_OPEN);
@@ -280,10 +278,10 @@ public class CardRepository {
           int contractBlock =
               (storageCard.getProductType() == ProductType.MIFARE_CLASSIC_1K)
                   ? 5
-                  : CardConstants.SC_CONTRACT_FIRST_BLOCK;
+                  : StorageCardBlocks.CONTRACT_FIRST_BLOCK;
           logger.info("Updating contract on StorageCard at block {}", contractBlock);
           cardTransactionManager.prepareWriteBlocks(
-              contractBlock, new ScContractStructureParser().generate(contract));
+              contractBlock, StorageCardContractCodec.INSTANCE.encode(contract));
         }
       }
     }
@@ -294,11 +292,10 @@ public class CardRepository {
       int eventBlock =
           (storageCard.getProductType() == ProductType.MIFARE_CLASSIC_1K)
               ? 6
-              : CardConstants.SC_EVENT_FIRST_BLOCK;
+              : StorageCardBlocks.EVENT_FIRST_BLOCK;
       logger.info("Updating event on StorageCard at block {}", eventBlock);
       cardTransactionManager.prepareWriteBlocks(
-          eventBlock,
-          new ScEventStructureParser().generate(buildEvent(card.getEvent(), card.getContracts())));
+          eventBlock, StorageCardEventCodec.INSTANCE.encode(buildEvent(card.getEvent())));
     }
 
     cardTransactionManager.processCommands(ChannelControl.KEEP_OPEN);
@@ -316,24 +313,24 @@ public class CardRepository {
 
     // Fill the environment structure with predefined values
     cardTransactionManager.prepareUpdateRecord(
-        CardConstants.SFI_ENVIRONMENT_AND_HOLDER,
+        CalypsoFiles.SFI_ENVIRONMENT_AND_HOLDER,
         1,
-        new EnvironmentHolderStructureParser().generate(buildEnvironmentHolderStructure()));
+        CalypsoEnvironmentHolderCodec.INSTANCE.encode(buildEnvironmentHolderStructure()));
 
     // Clear the first event (update with a byte array filled with 0 s).
     cardTransactionManager.prepareUpdateRecord(
-        CardConstants.SFI_EVENTS_LOG, 1, new byte[CardConstants.EVENT_RECORD_SIZE_BYTES]);
+        CalypsoFiles.SFI_EVENTS_LOG, 1, new byte[CalypsoFiles.EVENT_RECORD_SIZE_BYTES]);
 
     // Clear all contracts (update with a byte array filled with 0 s).
     int contractCount = getContractCount(calypsoCard);
     for (int i = 1; i <= contractCount; i++) {
       cardTransactionManager.prepareUpdateRecord(
-          CardConstants.SFI_CONTRACTS, i, new byte[CardConstants.CONTRACT_RECORD_SIZE_BYTES]);
+          CalypsoFiles.SFI_CONTRACTS, i, new byte[CalypsoFiles.CONTRACT_RECORD_SIZE_BYTES]);
     }
 
     // Clear the counter-file (update with a byte array filled with 0 s).
     cardTransactionManager.prepareUpdateRecord(
-        CardConstants.SFI_COUNTERS, 1, new byte[contractCount * 3]);
+        CalypsoFiles.SFI_COUNTERS, 1, new byte[contractCount * 3]);
 
     cardTransactionManager.prepareCloseSecureSession().processCommands(ChannelControl.KEEP_OPEN);
     logger.info(CALYPSO_SESSION_CLOSED);
@@ -363,25 +360,25 @@ public class CardRepository {
     // For other cards, use multi-block layout (blocks 4-7, 8-11, 12-15)
     boolean isMifareClassic = storageCard.getProductType() == ProductType.MIFARE_CLASSIC_1K;
     int environmentBlock =
-        isMifareClassic ? 4 : CardConstants.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK;
-    int contractBlock = isMifareClassic ? 5 : CardConstants.SC_CONTRACT_FIRST_BLOCK;
-    int eventBlock = isMifareClassic ? 6 : CardConstants.SC_EVENT_FIRST_BLOCK;
+        isMifareClassic ? 4 : StorageCardBlocks.ENVIRONMENT_AND_HOLDER_FIRST_BLOCK;
+    int contractBlock = isMifareClassic ? 5 : StorageCardBlocks.CONTRACT_FIRST_BLOCK;
+    int eventBlock = isMifareClassic ? 6 : StorageCardBlocks.EVENT_FIRST_BLOCK;
 
     // Fill the environment structure with predefined values
     logger.info("Writing environment structure at block {}", environmentBlock);
     cardTransactionManager.prepareWriteBlocks(
         environmentBlock,
-        new ScEnvironmentHolderStructureParser().generate(buildEnvironmentHolderStructure()));
+        StorageCardEnvironmentHolderCodec.INSTANCE.encode(buildEnvironmentHolderStructure()));
 
     // Clear the first event (update with a byte array filled with 0 s).
     logger.info("Clearing event at block {}", eventBlock);
     cardTransactionManager.prepareWriteBlocks(
-        eventBlock, new byte[CardConstants.SC_EVENT_RECORD_SIZE_BYTES]);
+        eventBlock, new byte[StorageCardBlocks.EVENT_RECORD_SIZE_BYTES]);
 
     // Clear all contracts (update with a byte array filled with 0 s).
     logger.info("Clearing contract at block {}", contractBlock);
     cardTransactionManager.prepareWriteBlocks(
-        contractBlock, new byte[CardConstants.SC_CONTRACT_RECORD_SIZE_BYTES]);
+        contractBlock, new byte[StorageCardBlocks.CONTRACT_RECORD_SIZE_BYTES]);
 
     cardTransactionManager.processCommands(ChannelControl.KEEP_OPEN);
     logger.info("StorageCard initialization completed successfully");
@@ -400,10 +397,9 @@ public class CardRepository {
                     .createSymmetricCryptoCardTransactionManagerFactory(
                         samResource.getReader(), (LegacySam) samResource.getSmartCard()))
             .enableMultipleSession()
-            .assignDefaultKif(
-                WriteAccessLevel.PERSONALIZATION, CardConstants.DEFAULT_KIF_PERSONALIZATION)
-            .assignDefaultKif(WriteAccessLevel.LOAD, CardConstants.DEFAULT_KIF_LOAD)
-            .assignDefaultKif(WriteAccessLevel.DEBIT, CardConstants.DEFAULT_KIF_DEBIT);
+            .assignDefaultKif(WriteAccessLevel.PERSONALIZATION, DefaultKifs.PERSONALIZATION)
+            .assignDefaultKif(WriteAccessLevel.LOAD, DefaultKifs.LOAD)
+            .assignDefaultKif(WriteAccessLevel.DEBIT, DefaultKifs.DEBIT);
 
     return calypsoCardApiFactory.createSecureRegularModeTransactionManager(
         cardReader, calypsoCard, cardSecuritySetting);
@@ -424,50 +420,51 @@ public class CardRepository {
         null);
   }
 
-  private EventStructure buildEvent(EventStructure oldEvent, List<ContractStructure> contracts) {
-    int contractCount = contracts.size();
+  /**
+   * Builds the event to write: the last event with the current version number, and its contract
+   * priorities. Only the priority of the loaded contract is updated (by the contract loading): the
+   * other priorities are kept (e.g. 31 for an expired or exhausted contract).
+   */
+  private EventStructure buildEvent(EventStructure event) {
     return new EventStructure(
         VersionNumber.CURRENT_VERSION,
-        oldEvent.getEventDateStamp(),
-        oldEvent.getEventTimeStamp(),
-        oldEvent.getEventLocation(),
-        oldEvent.getEventContractUsed(),
-        contracts.get(0).getContractTariff(),
-        contractCount >= 2 ? contracts.get(1).getContractTariff() : PriorityCode.FORBIDDEN,
-        contractCount >= 3 ? contracts.get(2).getContractTariff() : PriorityCode.FORBIDDEN,
-        contractCount >= 4 ? contracts.get(3).getContractTariff() : PriorityCode.FORBIDDEN);
+        event.getEventDateStamp(),
+        event.getEventTimeStamp(),
+        event.getEventLocation(),
+        event.getEventContractUsed(),
+        event.getContractPriorities());
   }
 
   private Card parse(CalypsoCard calypsoCard) {
     // Parse environment
     EnvironmentHolderStructure environment =
-        new EnvironmentHolderStructureParser()
-            .parse(
-                calypsoCard
-                    .getFileBySfi(CardConstants.SFI_ENVIRONMENT_AND_HOLDER)
-                    .getData()
-                    .getContent());
+        CalypsoEnvironmentHolderCodec.INSTANCE.decode(
+            calypsoCard
+                .getFileBySfi(CalypsoFiles.SFI_ENVIRONMENT_AND_HOLDER)
+                .getData()
+                .getContent());
     // parse contracts
     List<ContractStructure> contracts = new ArrayList<>();
-    FileData fileData = calypsoCard.getFileBySfi(CardConstants.SFI_CONTRACTS).getData();
+    FileData fileData = calypsoCard.getFileBySfi(CalypsoFiles.SFI_CONTRACTS).getData();
     if (fileData != null) {
       int contractCount = getContractCount(calypsoCard);
       for (int i = 1; i < contractCount + 1; i++) {
-        ContractStructure contract = new ContractStructureParser().parse(fileData.getContent(i));
-        contracts.add(contract);
-        // update counter tied to contract
+        // contract, with the counter tied to it
         int counterValue =
             calypsoCard
-                .getFileBySfi(CardConstants.SFI_COUNTERS)
+                .getFileBySfi(CalypsoFiles.SFI_COUNTERS)
                 .getData()
                 .getContentAsCounterValue(i);
-        contract.setCounterValue(counterValue);
+        contracts.add(
+            CalypsoContractCodec.INSTANCE
+                .decode(fileData.getContent(i))
+                .withCounterValue(counterValue));
       }
     }
     // parse event
     EventStructure event =
-        new EventStructureParser()
-            .parse(calypsoCard.getFileBySfi(CardConstants.SFI_EVENTS_LOG).getData().getContent());
+        CalypsoEventCodec.INSTANCE.decode(
+            calypsoCard.getFileBySfi(CalypsoFiles.SFI_EVENTS_LOG).getData().getContent());
     return new Card(environment, contracts, event);
   }
 
@@ -492,48 +489,45 @@ public class CardRepository {
           "Parsing Mifare Classic 1K data: Using single-block layout (block 4=Environment, 5=Contract, 6=Event)");
 
       // Parse environment from block 4 (16 bytes)
-      environment = new ScEnvironmentHolderStructureParser().parse(storageCard.getBlock(4));
+      environment = StorageCardEnvironmentHolderCodec.INSTANCE.decode(storageCard.getBlock(4));
 
       // Parse contract from block 5 (16 bytes)
-      contracts.add(new ScContractStructureParser().parse(storageCard.getBlock(5)));
+      contracts.add(StorageCardContractCodec.INSTANCE.decode(storageCard.getBlock(5)));
 
       // Parse event from block 6 (16 bytes)
-      event = new ScEventStructureParser().parse(storageCard.getBlock(6));
+      event = StorageCardEventCodec.INSTANCE.decode(storageCard.getBlock(6));
 
     } else {
       // MIFARE Ultralight and ST25 SRT512 use multi-block layout
       logger.info(
           "Parsing StorageCard data: ProductType={}, Reading blocks {}-{} for environment",
           storageCard.getProductType(),
-          CardConstants.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
-          CardConstants.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK);
+          StorageCardBlocks.ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
+          StorageCardBlocks.ENVIRONMENT_AND_HOLDER_LAST_BLOCK);
 
       // Parse environment from blocks 4-7 (4 blocks × 4 bytes = 16 bytes)
       environment =
-          new ScEnvironmentHolderStructureParser()
-              .parse(
-                  storageCard.getBlocks(
-                      CardConstants.SC_ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
-                      CardConstants.SC_ENVIRONMENT_AND_HOLDER_LAST_BLOCK));
+          StorageCardEnvironmentHolderCodec.INSTANCE.decode(
+              storageCard.getBlocks(
+                  StorageCardBlocks.ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
+                  StorageCardBlocks.ENVIRONMENT_AND_HOLDER_LAST_BLOCK));
 
       logger.info(
           "Parsing contract from blocks {}-{}",
-          CardConstants.SC_CONTRACT_FIRST_BLOCK,
-          CardConstants.SC_COUNTER_LAST_BLOCK);
+          StorageCardBlocks.CONTRACT_FIRST_BLOCK,
+          StorageCardBlocks.COUNTER_LAST_BLOCK);
 
       // Parse contract from blocks 8-11 (4 blocks × 4 bytes = 16 bytes)
       contracts.add(
-          new ScContractStructureParser()
-              .parse(
-                  storageCard.getBlocks(
-                      CardConstants.SC_CONTRACT_FIRST_BLOCK, CardConstants.SC_COUNTER_LAST_BLOCK)));
+          StorageCardContractCodec.INSTANCE.decode(
+              storageCard.getBlocks(
+                  StorageCardBlocks.CONTRACT_FIRST_BLOCK, StorageCardBlocks.COUNTER_LAST_BLOCK)));
 
       // Parse event from blocks 12-15 (4 blocks × 4 bytes = 16 bytes)
       event =
-          new ScEventStructureParser()
-              .parse(
-                  storageCard.getBlocks(
-                      CardConstants.SC_EVENT_FIRST_BLOCK, CardConstants.SC_EVENT_LAST_BLOCK));
+          StorageCardEventCodec.INSTANCE.decode(
+              storageCard.getBlocks(
+                  StorageCardBlocks.EVENT_FIRST_BLOCK, StorageCardBlocks.EVENT_LAST_BLOCK));
     }
 
     return new Card(environment, contracts, event);

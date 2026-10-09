@@ -26,12 +26,12 @@ plugins {
 
 dependencies {
   // Demo common
-  implementation(project(":common"))
+  implementation(libs.demoCommon)
 
   // Proprietary libs
   // Storage card specific components
   // Conditional dependency for the storage card library
-  val storageCardLibName = "keyple-card-cna-storagecard-java-lib-2.3.0"
+  val storageCardLibName = "keyple-card-cna-storagecard-java-lib-2.3.1"
   val storageCardLibFile = file("../../../libs/${storageCardLibName}.jar")
   if (storageCardLibFile.exists()) {
     println("Using private storage card library: ${storageCardLibFile.name}")
@@ -63,71 +63,81 @@ dependencies {
 
   // Quarkus
   implementation(enforcedPlatform(libs.quarkusBom))
-  implementation(libs.quarkusResteasy)
-  implementation(libs.quarkusResteasyJsonb)
+  implementation(libs.quarkusRest)
+  implementation(libs.quarkusRestJsonb)
 
   // Google GSON
   implementation(libs.gson)
 
-  // Logging libraries used in the project:
-  // - SLF4J API provides a common logging interface for the server and third-party libraries
-  //   (e.g., Keyple).
-  // - slf4j-simple is used as the SLF4J implementation for Java/Quarkus server applications.
+  // Logging: SLF4J API used by the server and third-party libraries (e.g., Keyple). The SLF4J
+  // implementation is provided by Quarkus (JBoss Log Manager), configured by the "quarkus.log.*"
+  // properties.
   implementation(libs.slf4jApi)
-  implementation(libs.slf4jSimple)
 }
 
-val syncPackageVersion by
-    tasks.registering {
+val syncPackageVersion =
+    tasks.register("syncPackageVersion") {
       group = "versioning"
       description = "Synchronize version in package.json with Gradle project version"
       val packageJsonFile = file("dashboard-app/package.json")
+      // Read at configuration time: the project must not be accessed when the task is executed
+      val projectVersion = project.version.toString()
       inputs.file(packageJsonFile)
+      inputs.property("version", projectVersion)
       outputs.file(packageJsonFile)
       doLast {
         val jsonText = packageJsonFile.readText()
         @Suppress("UNCHECKED_CAST")
         val json = JsonSlurper().parseText(jsonText) as MutableMap<String, Any>
-        json["version"] = project.version
+        json["version"] = projectVersion
         val updatedJsonText = JsonOutput.prettyPrint(JsonOutput.toJson(json))
-        packageJsonFile.writeText(updatedJsonText)
-        println("Updated package.json version to ${project.version}")
+        // Keep the final newline written by npm
+        packageJsonFile.writeText(updatedJsonText + "\n")
+        println("Updated package.json version to $projectVersion")
       }
     }
-val buildDashboard by
-    tasks.creating(Exec::class) {
-      dependsOn.add("syncPackageVersion")
-      workingDir = File("dashboard-app")
-      var npm = "npm"
-      if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-        npm = "npm.cmd"
-      }
+val npm = if (Os.isFamily(Os.FAMILY_WINDOWS)) "npm.cmd" else "npm"
+val buildDashboard =
+    tasks.register<Exec>("buildDashboard") {
+      dependsOn(syncPackageVersion)
+      workingDir = file("dashboard-app")
       commandLine(npm, "run", "build")
     }
-val copyDashboard by
-    tasks.creating(Copy::class) {
-      from("dashboard-app/build")
-      into("build/resources/main/META-INF/resources")
-      dependsOn.add("buildDashboard")
+val lintDashboard =
+    tasks.register<Exec>("lintDashboard") {
+      group = "verification"
+      description = "Checks the dashboard source code with ESLint"
+      workingDir = file("dashboard-app")
+      commandLine(npm, "run", "lint")
     }
-val startServer by
-    tasks.creating(Exec::class) {
-      group = "server"
-      workingDir = File("build")
-      commandLine("java", "-jar", "${quarkus.finalName()}-full.jar")
-    }
+
+tasks.register<Exec>("startServer") {
+  group = "server"
+  workingDir = file("build")
+  commandLine("java", "-jar", "${quarkus.finalName()}-full.jar")
+}
 
 tasks {
   clean { delete("dashboard-app/build") }
-  jar { dependsOn.add("copyDashboard") }
+  check {
+    dependsOn(lintDashboard)
+    // The common library being an included build, its checks (code format, unit tests) are not run
+    // by the builds of the applications: they are run with those of the server (e.g. by the CI)
+    dependsOn(gradle.includedBuild("common").task(":check"))
+  }
+  // The dashboard is served by Quarkus as static resources (META-INF/resources)
+  processResources {
+    dependsOn(buildDashboard)
+    from("dashboard-app/build") { into("META-INF/resources") }
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // STANDARD CONFIGURATION FOR JAVA APP-TYPE PROJECTS
 ///////////////////////////////////////////////////////////////////////////////
 
-val javaSourceLevel: String by project
-val javaTargetLevel: String by project
+val javaSourceLevel = project.property("javaSourceLevel") as String
+val javaTargetLevel = project.property("javaTargetLevel") as String
 
 java {
   sourceCompatibility = JavaVersion.toVersion(javaSourceLevel)

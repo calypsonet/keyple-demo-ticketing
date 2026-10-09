@@ -14,25 +14,31 @@ package org.calypsonet.keyple.demo.control.di
 
 import dagger.Module
 import dagger.Provides
-import org.calypsonet.keyple.demo.control.data.ReaderRepository
-import org.calypsonet.keyple.demo.control.di.scope.AppScoped
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+import org.calypsonet.keyple.demo.control.data.ReaderManagerImpl
+import org.calypsonet.keyple.demo.control.domain.spi.Logger
+import org.calypsonet.keyple.demo.control.domain.spi.ReaderManager
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
-import timber.log.Timber
 
 @Suppress("unused")
 @Module
+@InstallIn(SingletonComponent::class)
 class ReaderModule {
 
   @Provides
-  @AppScoped
-  fun provideReaderRepository(
+  @Singleton
+  fun provideReaderManager(
       cardReaderObservationExceptionHandlerSpi: CardReaderObservationExceptionHandlerSpi
-  ): ReaderRepository = ReaderRepository(cardReaderObservationExceptionHandlerSpi)
+  ): ReaderManager = ReaderManagerImpl(cardReaderObservationExceptionHandlerSpi)
 
   @Provides
-  @AppScoped
-  fun provideCardReaderObservationExceptionHandlerSpi(): CardReaderObservationExceptionHandlerSpi =
+  @Singleton
+  fun provideCardReaderObservationExceptionHandlerSpi(
+      logger: Logger
+  ): CardReaderObservationExceptionHandlerSpi =
       CardReaderObservationExceptionHandlerSpi { pluginName, readerName, e ->
-        Timber.e("An unexpected reader error occurred: $pluginName:$readerName: $e")
+        logger.e("An unexpected reader error occurred: $pluginName:$readerName", e)
       }
 }

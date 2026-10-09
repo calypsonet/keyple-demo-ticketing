@@ -22,12 +22,12 @@ jobs:
     runs-on: ${{ inputs.target-os }}
     steps:
       - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           lfs: true
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -35,6 +35,11 @@ jobs:
       - name: Update permissions for ${{ inputs.component-name }}
         working-directory: .
         run: chmod +x ${{ inputs.working-directory }}/gradlew
+
+      - name: Check architecture rules of ${{ inputs.component-name }}
+        working-directory: .
+        shell: bash
+        run: bash .github/scripts/check-android-architecture.sh ${{ inputs.working-directory }}
 
       - name: Build ${{ inputs.component-name }} artifacts
         working-directory: ${{ inputs.working-directory }}
