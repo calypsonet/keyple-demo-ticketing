@@ -251,6 +251,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Compottie (Lottie animations): `2.0.0` -> `2.2.4` (`2.3.0`+ requires Kotlin 2.4).
 - Navigation Compose: `2.9.0-rc01` -> `2.9.2` (stable), Lifecycle ViewModel Compose: `2.9.2` -> `2.10.0` (`2.11`+
   requires compileSdk 37).
+- The result screens return automatically, as in the Android client: to the home screen 5 seconds after a successful
+  reload or personalization, and to the previous screen 8 seconds after an error (same action as the back arrow), the
+  remaining time being shown by a bar emptied at the bottom of the screen. The back arrow of the success screen now
+  replaces the screens of the transaction with the home screen instead of adding it on top of them.
 - iOS: the Intel simulator target (`iosX64`) is removed, no longer supported by Compose Multiplatform 1.11 and
   Compottie: the application targets the iOS devices (`iosArm64`) and the Apple Silicon simulator
   (`iosSimulatorArm64`), and the related CI job is removed.
@@ -263,6 +267,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   the related compilation warnings.
 #### Removed
 - Koin dependencies (`koin-core`, `koin-compose`, `koin-android`, `koin-androidx-compose`), declared but not used.
+- Unused error screen (`ErrorScreen`, `AppError` route), never displayed and showing a fixed message, and its two
+  animations (`anim_warning.json`, `anim_error_white.json`).
 - Material icons extended (`material-icons-extended`, no longer updated, about 8 MB of the debug APK): the only icon
   used, the back arrow, is now the Material Symbols `arrow_back` vector, provided as a Compose resource.
 #### Fixed

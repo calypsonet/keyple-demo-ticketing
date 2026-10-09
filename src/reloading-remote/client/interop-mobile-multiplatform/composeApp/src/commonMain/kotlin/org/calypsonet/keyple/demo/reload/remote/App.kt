@@ -22,7 +22,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import org.calypsonet.keyple.demo.reload.remote.card.CardContentScreen
 import org.calypsonet.keyple.demo.reload.remote.card.CardContentScreenViewModel
-import org.calypsonet.keyple.demo.reload.remote.nav.AppError
 import org.calypsonet.keyple.demo.reload.remote.nav.AppSuccess
 import org.calypsonet.keyple.demo.reload.remote.nav.Card
 import org.calypsonet.keyple.demo.reload.remote.nav.Home
@@ -40,7 +39,6 @@ import org.calypsonet.keyple.demo.reload.remote.nfc.write.WriteCardScreenViewMod
 import org.calypsonet.keyple.demo.reload.remote.settings.ServerConfigScreen
 import org.calypsonet.keyple.demo.reload.remote.settings.ServerConfigScreenViewModel
 import org.calypsonet.keyple.demo.reload.remote.settings.SettingsScreen
-import org.calypsonet.keyple.demo.reload.remote.ui.ErrorScreen
 import org.calypsonet.keyple.demo.reload.remote.ui.HomeScreen
 import org.calypsonet.keyple.demo.reload.remote.ui.KeypleTheme
 import org.calypsonet.keyple.demo.reload.remote.ui.SuccessScreen
@@ -109,8 +107,6 @@ fun App(service: KeypleService, cardRepository: CardRepository) {
                   CardContentScreenViewModel(cardRepository = cardRepository)
                 })
       }
-
-      composable<AppError> { ErrorScreen(navController = navController, appState = state.value) }
 
       composable<AppSuccess> {
         SuccessScreen(navController = navController, appState = state.value)

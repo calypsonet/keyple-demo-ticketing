@@ -48,8 +48,6 @@ data class WriteTitleCard(
 
 @Serializable data object Card
 
-@Serializable data object AppError
-
 @Serializable data object AppSuccess
 
 @Serializable data object ServerConfig
