@@ -63,6 +63,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `remainingTrips` and `tripsToLoad` for the trips of a multi-trip contract (`nbTicketsLeft`, `ticketsToLoad`), also
     in the JSON API (`tripsToLoad` instead of `ticketToLoad`) and `name` instead of `title` for the contracts
     returned to the KMP client;
+  - `contracts` instead of `validContracts` for the contracts returned by the contracts analysis (JSON API and
+    Keyple distributed DTOs), which also include the expired contracts;
   - `TerminalType` instead of `ReaderType` (terminal running the application), and in the reloading Android client
     `CardMedium` and `CardMediumVisibility` instead of `DeviceType` and `DeviceVisibility` (contactless card, SIM...);
     the card medium is saved under a new key of the settings (`card_medium`);
@@ -122,7 +124,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     `FragmentScoped` annotation and extension functions, and duplicated sounds in the control app assets.
   - Reloading remote Android client: unused "last validations" display (`UiValidation`, related fields of
     `UiCardReaderResponse`, layout and resources).
-  - Reloading remote KMP client: unused Compose resources (images, animation, strings), colors and navigation helper.
+  - Reloading remote KMP client: unused Compose resources (images, animation, strings), colors and navigation helper,
+    and the unused `Scan` route with its `ScanNavArgs` arguments.
   - Reloading remote .NET client: unused `MessageDto` setters, unused `WaitForCardAbsent()` and `IsCardPresent()`
     methods of the PC/SC reader adapter, and unused `Serilog.Sinks.Console` and
     `Microsoft.Extensions.Logging.Abstractions` packages.

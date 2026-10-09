@@ -247,7 +247,7 @@ class KeypleService(
                   message = "Server side error: ${result.data.statusCode} / ${result.data.message}")
             }
             cardRepository.saveCardSerial(result.data.applicationSerialNumber)
-            cardRepository.saveCardContracts(result.data.validContracts)
+            cardRepository.saveCardContracts(result.data.contracts)
             return@withContext KeypleResult.Success(result.data)
           }
         }

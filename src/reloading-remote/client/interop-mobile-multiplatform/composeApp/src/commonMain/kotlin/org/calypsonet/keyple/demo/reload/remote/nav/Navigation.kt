@@ -19,14 +19,6 @@ import org.calypsonet.keyple.demo.reload.remote.card.Product
 
 @Serializable data object Settings
 
-enum class ScanNavArgs(val value: String) {
-  READ_CONTRACTS("read-contracts"),
-  PERSONALIZE_CARD("personalize-card"),
-  LOAD_CONTRACT("load-contract")
-}
-
-@Serializable data class Scan(val action: String = ScanNavArgs.READ_CONTRACTS.value)
-
 @Serializable
 data class LoadContract(
     val type: Int,

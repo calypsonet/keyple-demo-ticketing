@@ -756,8 +756,8 @@ public class CardService {
     // Build result
     String appSerialNumber = HexUtil.toHex(calypsoCard.getApplicationSerialNumber());
 
-    List<SelectAppAndAnalyzeContractsOutputDto.ContractInfo> validContracts =
-        outputData2.getValidContracts().stream()
+    List<SelectAppAndAnalyzeContractsOutputDto.ContractInfo> contracts =
+        outputData2.getContracts().stream()
             .map(
                 contract -> {
                   String name;
@@ -831,7 +831,7 @@ public class CardService {
         message = "";
     }
     return new SelectAppAndAnalyzeContractsOutputDto(
-        appSerialNumber, validContracts, statusCode, message);
+        appSerialNumber, contracts, statusCode, message);
   }
 
   SelectAppAndLoadContractOutputDto selectAppAndLoadContract(

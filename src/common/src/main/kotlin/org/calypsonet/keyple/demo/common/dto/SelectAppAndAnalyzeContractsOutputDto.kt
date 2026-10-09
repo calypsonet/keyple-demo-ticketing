@@ -13,15 +13,15 @@
 package org.calypsonet.keyple.demo.common.dto
 
 /**
- * - validContracts: List of contracts present in the card. Each contract is tied to a counter by
- *   its index.
+ * - contracts: List of contracts present in the card. Each contract is tied to a counter by its
+ *   index.
  * - statusCode: code of the [RemoteServiceStatus]: 0 (successful), 1 (card communication error), 2
  *   (server error), 3 (card rejected), 4 (card not personalized), 5 (expired environment).
  * - message: Status message.
  */
 data class SelectAppAndAnalyzeContractsOutputDto(
     var applicationSerialNumber: String,
-    var validContracts: List<ContractInfo>,
+    var contracts: List<ContractInfo>,
     var statusCode: Int,
     var message: String
 ) {

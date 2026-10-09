@@ -139,8 +139,7 @@ class TicketingService(
     val status = RemoteServiceStatus.fromCode(output.statusCode)
     val today = LocalDate.now()
     val contracts =
-        if (status == RemoteServiceStatus.SUCCESS)
-            output.validContracts.map { it.toContract(today) }
+        if (status == RemoteServiceStatus.SUCCESS) output.contracts.map { it.toContract(today) }
         else emptyList()
     return ReadContractsResult(smartCard.toCardInfo(), status, contracts)
   }

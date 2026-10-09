@@ -23,7 +23,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SelectAppAndAnalyzeContractsOutputDto(
     val applicationSerialNumber: String,
-    val validContracts: List<ContractInfo>,
+    val contracts: List<ContractInfo>,
     val message: String,
     val statusCode: Int,
 )
