@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2026 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -12,11 +12,12 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.validation.domain.model
 
-enum class Status {
-  PROCESSING,
-  SUCCESS,
-  INVALID_CARD,
-  EMPTY_CARD,
-  ERROR,
-  CARD_LOST
+/** Description of the presented card, displayed with the result of the validation. */
+sealed interface CardDescription {
+
+  /** Calypso card, identified by the DF name of its application, in hexadecimal. */
+  data class Calypso(val dfName: String) : CardDescription
+
+  /** Storage card, identified by the name of its product type (e.g. MIFARE_ULTRALIGHT). */
+  data class Storage(val productType: String) : CardDescription
 }

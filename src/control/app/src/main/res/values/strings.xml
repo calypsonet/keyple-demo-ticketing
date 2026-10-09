@@ -76,4 +76,13 @@
     <string name="validation_label_placeholder">Multi Trip - Place de la Bastille</string>
     <string name="contract_name_placeholder">Multi Trip</string>
     <string name="card_content_validation_date_placeholder">JJ Month YYYY, HH:MM:SS</string>
+
+    <!-- Results of the control -->
+    <string name="rejection_environment_wrong_version">Environment error: wrong version number</string>
+    <string name="rejection_environment_expired">Environment error: end date expired</string>
+    <string name="rejection_event_wrong_version">Event error: wrong version number</string>
+    <string name="rejection_contract_wrong_version">Contract error: wrong version number</string>
+    <string name="error_mifare_classic_authentication">Authentication failed. Please ensure the card is correctly positioned.</string>
+    <string name="error_mifare_classic_reading">Failed to read Mifare Classic card. Please try again.</string>
+    <string name="error_card_reading">An error occurred while reading the card.</string>
 </resources>

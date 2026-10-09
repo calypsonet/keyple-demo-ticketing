@@ -116,9 +116,10 @@ Device Selection → Settings → Reader Activity → Validation Result
 
 **Validation Results (`CardSummaryActivity`)**
 
-The `CardSummaryActivity` displays both success and failure results:
+The summary overlay of the reader screen (`CardReaderActivity`) displays both success and failure results
+(`ValidationResult`):
 
-**Success Screen** (Status.SUCCESS):
+**Success Screen** (`ValidationResult.Accepted`):
 - **Location**: Where validation occurred
 - **Date/Time**: When validation was processed
 - **Contract Details**:
@@ -127,9 +128,11 @@ The `CardSummaryActivity` displays both success and failure results:
 - **Visual Feedback**: Green background with success animation
 
 **Failure Screens**:
-- **Invalid Card** (Status.INVALID_CARD): Orange background with error details
-- **Empty Card** (Status.EMPTY_CARD): Red background showing no tickets available
-- **Other Errors**: Red background with specific error message
+- **Invalid Card** (`ValidationResult.Rejected`, card data refused: environment, versions, already validated): Orange
+  background with the reason of the refusal
+- **No Ticket** (`ValidationResult.Rejected`, no contract to use: no valid contract, expired contract, no trips left):
+  Red background with the reason of the refusal
+- **Other Errors** (`ValidationResult.Failed`): Red background with the error message
 - **Visual Feedback**: Error animation with sound/haptic feedback
 
 ### Validation Scenarios

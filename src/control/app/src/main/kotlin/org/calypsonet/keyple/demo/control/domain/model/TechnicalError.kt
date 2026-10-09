@@ -10,16 +10,14 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.ui.model
+package org.calypsonet.keyple.demo.control.domain.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
-
-/** Control result displayed by the UI, passed to the screen displaying it. */
-@Parcelize
-data class UiControlResult(
-    val status: Status,
-    val lastValidationsList: List<UiValidation>? = null,
-    val contractsList: List<UiContract>,
-    val errorMessage: String? = null
-) : Parcelable
+/** Technical error preventing the control of a card. */
+enum class TechnicalError {
+  /** The authentication of the MIFARE Classic sector failed. */
+  MIFARE_CLASSIC_AUTHENTICATION_FAILED,
+  /** The reading of the MIFARE Classic card failed. */
+  MIFARE_CLASSIC_READING_FAILED,
+  /** Unexpected error (card, reader or SAM). */
+  UNEXPECTED
+}

@@ -42,8 +42,24 @@
 
     <!-- Mifare Classic specific errors -->
 
-    <!-- Card type labels (for reference, currently using formatCardType() in code) -->
-
     <!--    Dialog-->
     <string name="permission_denied_message">You must accept the requested permissions to continue. Please relaunch the app.</string>
+
+    <!-- Card types and results of the validation -->
+    <string name="card_type_calypso">CALYPSO: DF name %1$s</string>
+    <string name="card_type_mifare_classic_1k">Mifare Classic 1K</string>
+    <string name="card_type_mifare_classic_4k">Mifare Classic 4K</string>
+    <string name="card_type_mifare_ultralight">Mifare Ultralight</string>
+    <string name="card_type_st25_srt512">ST25 SRT512</string>
+    <string name="rejection_environment_wrong_version">Environment error: wrong version number</string>
+    <string name="rejection_environment_expired">Environment error: end date expired</string>
+    <string name="rejection_event_wrong_version">Event error: wrong version number</string>
+    <string name="rejection_contract_wrong_version">Contract error: wrong version number</string>
+    <string name="rejection_already_validated">Card already tapped.\nPlease wait before retrying.</string>
+    <string name="rejection_no_valid_contract">No valid ticket detected</string>
+    <string name="rejection_expired_contract">Expired ticket</string>
+    <string name="rejection_no_trips_left">No trips left</string>
+    <string name="rejection_contract_forbidden_or_expired">Contract is forbidden or expired</string>
+    <string name="error_mifare_classic_authentication">Authentication failed. Please ensure the card is correctly positioned.</string>
+    <string name="error_mifare_classic_transaction">Transaction failed. Please try again.</string>
 </resources>

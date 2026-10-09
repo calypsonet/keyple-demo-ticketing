@@ -26,7 +26,8 @@ import org.calypsonet.keyple.demo.control.domain.mappers.ValidationMapper
 import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
 import org.calypsonet.keyple.demo.control.domain.model.Contract
 import org.calypsonet.keyple.demo.control.domain.model.ControlResult
-import org.calypsonet.keyple.demo.control.domain.model.Status
+import org.calypsonet.keyple.demo.control.domain.model.RejectionReason
+import org.calypsonet.keyple.demo.control.domain.model.TechnicalError
 import org.calypsonet.keyple.demo.control.domain.model.Validation
 import org.calypsonet.keyple.demo.control.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.control.domain.spi.Logger
@@ -55,9 +56,7 @@ class CalypsoCardControlProcedure(
     val controlLocation = context.location
     val validationPeriod = context.validationPeriod
 
-    var errorMessage: String?
     var validation: Validation? = null
-    var status: Status = Status.ERROR
 
     val calypsoCardApiFactory = keypopApiProvider.getCalypsoCardApiFactory()
 
@@ -102,21 +101,15 @@ class CalypsoCardControlProcedure(
       // the current version), reject the card.
       // <Abort Secure Session if any>
       if (env.envVersionNumber != VersionNumber.CURRENT_VERSION) {
-        if (cardTransaction is SecureRegularModeTransactionManager ||
-            cardTransaction is SecurePkiModeTransactionManager) {
-          cardTransaction.prepareCancelSecureSession().processCommands(ChannelControl.CLOSE_AFTER)
-        }
-        throw EnvironmentException("wrong version number")
+        cancelSecureSession(cardTransaction)
+        return ControlResult.Rejected(RejectionReason.ENVIRONMENT_WRONG_VERSION)
       }
 
       // Step 4 - If EnvEndDate points to a date in the past, reject the card.
       // <Abort Secure Session if any>
       if (env.envEndDate.date.isBefore(controlDateTime.toLocalDate())) {
-        if (cardTransaction is SecureRegularModeTransactionManager ||
-            cardTransaction is SecurePkiModeTransactionManager) {
-          cardTransaction.prepareCancelSecureSession().processCommands(ChannelControl.CLOSE_AFTER)
-        }
-        throw EnvironmentException("End date expired")
+        cancelSecureSession(cardTransaction)
+        return ControlResult.Rejected(RejectionReason.ENVIRONMENT_EXPIRED)
       }
 
       // Step 5 - Read and unpack the last event record.
@@ -134,14 +127,11 @@ class CalypsoCardControlProcedure(
       // <Abort Secure Session if any>
       val eventVersionNumber = event.eventVersionNumber
       if (eventVersionNumber != VersionNumber.CURRENT_VERSION) {
-        if (cardTransaction is SecureRegularModeTransactionManager ||
-            cardTransaction is SecurePkiModeTransactionManager) {
-          cardTransaction.prepareCancelSecureSession().processCommands(ChannelControl.CLOSE_AFTER)
-        }
-        if (eventVersionNumber == VersionNumber.UNDEFINED) {
-          throw EventCleanCardException()
+        cancelSecureSession(cardTransaction)
+        return if (eventVersionNumber == VersionNumber.UNDEFINED) {
+          ControlResult.EmptyCard
         } else {
-          throw EventWrongVersionNumberException()
+          ControlResult.Rejected(RejectionReason.EVENT_WRONG_VERSION)
         }
       }
 
@@ -276,7 +266,6 @@ class CalypsoCardControlProcedure(
       }
 
       logger.i("Control procedure result: STATUS_OK")
-      status = Status.TICKETS_FOUND
 
       // Step 20 - If a session is open, Close the session
       if (cardTransaction is SecureRegularModeTransactionManager ||
@@ -284,41 +273,20 @@ class CalypsoCardControlProcedure(
         cardTransaction.prepareCloseSecureSession().processCommands(ChannelControl.CLOSE_AFTER)
       }
 
-      var validationList: List<Validation>? = null
-      if (validation != null) {
-        validationList = listOf(validation)
-      }
-
       // Step 21 - Return the status of the operation to the upper layer. <Exit process>
-      return ControlResult(
-          status = status,
-          authenticationMode = authenticationMode,
-          lastValidationsList = validationList,
-          contractsList = displayedContract)
+      return ControlResult.CardContent(authenticationMode, displayedContract, validation)
     } catch (e: Exception) {
-      errorMessage = e.message
-      logger.e("Control procedure error: $errorMessage")
-      when (e) {
-        is EnvironmentException -> {
-          errorMessage = "Environment error: $errorMessage"
-        }
-        is EventCleanCardException -> {
-          status = Status.EMPTY_CARD
-        }
-        is EventWrongVersionNumberException -> {
-          status = Status.ERROR
-        }
-        else -> {
-          status = Status.ERROR
-        }
-      }
+      logger.e("Control procedure error: ${e.message}")
+      return ControlResult.Failed(TechnicalError.UNEXPECTED, e.message)
     }
+  }
 
-    return ControlResult(
-        status = status,
-        authenticationMode = authenticationMode,
-        contractsList = emptyList(),
-        errorMessage = errorMessage)
+  /** Cancels the secure session of the provided transaction, if any (rejected card). */
+  private fun cancelSecureSession(cardTransaction: TransactionManager<*>) {
+    if (cardTransaction is SecureRegularModeTransactionManager ||
+        cardTransaction is SecurePkiModeTransactionManager) {
+      cardTransaction.prepareCancelSecureSession().processCommands(ChannelControl.CLOSE_AFTER)
+    }
   }
 
   /**
@@ -328,10 +296,4 @@ class CalypsoCardControlProcedure(
   private fun isValidEvent(event: EventStructure): Boolean {
     return event.eventTimeStamp.value != 0 || event.eventDateStamp.value != 0
   }
-
-  private class EnvironmentException(message: String) : RuntimeException(message)
-
-  private class EventCleanCardException : RuntimeException("clean card")
-
-  private class EventWrongVersionNumberException : RuntimeException("wrong version number")
 }

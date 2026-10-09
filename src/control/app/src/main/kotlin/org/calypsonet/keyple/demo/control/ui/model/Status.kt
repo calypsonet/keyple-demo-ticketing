@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2026 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -12,14 +12,10 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.control.ui.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
-
-/** Control result displayed by the UI, passed to the screen displaying it. */
-@Parcelize
-data class UiControlResult(
-    val status: Status,
-    val lastValidationsList: List<UiValidation>? = null,
-    val contractsList: List<UiContract>,
-    val errorMessage: String? = null
-) : Parcelable
+/** Status of a control result, choosing the screen displaying it. */
+enum class Status {
+  ERROR,
+  TICKETS_FOUND,
+  INVALID_CARD,
+  EMPTY_CARD
+}

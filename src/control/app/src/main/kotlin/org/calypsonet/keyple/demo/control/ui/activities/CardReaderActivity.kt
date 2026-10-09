@@ -27,10 +27,11 @@ import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.control.databinding.ToolbarBinding
 import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
-import org.calypsonet.keyple.demo.control.domain.model.Status
+import org.calypsonet.keyple.demo.control.domain.model.ControlResult
 import org.calypsonet.keyple.demo.control.ui.activities.cardcontent.CardContentActivity
 import org.calypsonet.keyple.demo.control.ui.adapters.UiContextImpl
 import org.calypsonet.keyple.demo.control.ui.mappers.toUi
+import org.calypsonet.keyple.demo.control.ui.model.Status
 import org.calypsonet.keyple.demo.control.ui.model.UiControlResult
 import org.eclipse.keypop.reader.CardReaderEvent
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
@@ -135,10 +136,7 @@ class CardReaderActivity : BaseActivity() {
           Timber.e("Card not selected: %s", error)
           displayResult(
               UiControlResult(
-                  status = Status.INVALID_CARD,
-                  authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
-                  contractsList = emptyList(),
-                  errorMessage = error))
+                  status = Status.INVALID_CARD, contractsList = emptyList(), errorMessage = error))
           return
         }
         Timber.i("A Calypso Card selection succeeded.")
@@ -168,10 +166,7 @@ class CardReaderActivity : BaseActivity() {
                 val cardReaderResponse =
                     withContext(Dispatchers.IO) { ticketingService.executeControlProcedure() }
                 withContext(Dispatchers.Main) {
-                  if (cardReaderResponse.status == Status.EMPTY_CARD ||
-                      cardReaderResponse.status == Status.ERROR) {
-                    ticketingService.displayResultFailed()
-                  } else {
+                  if (cardReaderResponse is ControlResult.CardContent) {
                     when (cardReaderResponse.authenticationMode) {
                       AuthenticationMode.SAM ->
                           showToast(getString(R.string.authentication_mode_sam))
@@ -180,10 +175,9 @@ class CardReaderActivity : BaseActivity() {
                       AuthenticationMode.NO_AUTHENTICATION ->
                           showToast(getString(R.string.authentication_mode_no_authentication))
                     }
-                    ticketingService.displayResultSuccess()
                   }
                   dismissProgress()
-                  displayResult(cardReaderResponse.toUi())
+                  displayResult(cardReaderResponse.toUi(resources))
                 }
               } catch (e: CancellationException) {
                 // The activity has been destroyed
@@ -192,11 +186,7 @@ class CardReaderActivity : BaseActivity() {
                 Timber.e(e)
                 Timber.e("Load ERROR page after exception = ${e.message}")
                 withContext(Dispatchers.Main) { dismissProgress() }
-                displayResult(
-                    UiControlResult(
-                        status = Status.ERROR,
-                        authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
-                        contractsList = emptyList()))
+                displayResult(UiControlResult(status = Status.ERROR, contractsList = emptyList()))
               } finally {
                 ticketingService.endCardProcessing()
               }
@@ -220,6 +210,12 @@ class CardReaderActivity : BaseActivity() {
     }
 
     runOnUiThread { activityCardReaderBinding.loadingAnimation.cancelAnimation() }
+    // User feedback (sound, LEDs) of the result, given once
+    if (uiControlResult.status == Status.TICKETS_FOUND) {
+      ticketingService.displayResultSuccess()
+    } else {
+      ticketingService.displayResultFailed()
+    }
     when (uiControlResult.status) {
       Status.TICKETS_FOUND,
       Status.EMPTY_CARD -> {
@@ -229,7 +225,6 @@ class CardReaderActivity : BaseActivity() {
       }
       Status.ERROR,
       Status.INVALID_CARD -> {
-        ticketingService.displayResultFailed()
         val intent = Intent(this@CardReaderActivity, InvalidCardActivity::class.java)
         intent.putExtra(CARD_CONTENT, uiControlResult)
         startActivity(intent)

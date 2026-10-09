@@ -32,7 +32,9 @@ import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.validation.R
 import org.calypsonet.keyple.demo.validation.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.validation.databinding.LayoutCardSummaryOverlayBinding
-import org.calypsonet.keyple.demo.validation.domain.model.Status
+import org.calypsonet.keyple.demo.validation.domain.model.CardDescription
+import org.calypsonet.keyple.demo.validation.domain.model.RejectionReason
+import org.calypsonet.keyple.demo.validation.domain.model.TechnicalError
 import org.calypsonet.keyple.demo.validation.domain.model.TerminalType
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
 import org.calypsonet.keyple.demo.validation.ui.adapters.UiContextImpl
@@ -190,7 +192,15 @@ class CardReaderActivity : BaseActivity() {
           return
         }
         cardInsertedAt = System.currentTimeMillis()
-        ticketingService.analyseSelectionResult(readerEvent.scheduledCardSelectionsResponse)
+        val selectionError =
+            ticketingService.analyseSelectionResult(readerEvent.scheduledCardSelectionsResponse)
+        if (selectionError != null) {
+          // Card not selected (unknown or unsupported card): refused without validation
+          Timber.e("Card not selected: %s", selectionError)
+          activityCardReaderBinding.animation.cancelAnimation()
+          showSelectionError(selectionError)
+          return
+        }
         newAppState = AppState.CARD_STATUS
       }
       CardReaderEvent.Type.CARD_REMOVED -> {
@@ -214,7 +224,7 @@ class CardReaderActivity : BaseActivity() {
               activityCardReaderBinding.animation.cancelAnimation()
               val validationResult =
                   withContext(Dispatchers.IO) { ticketingService.executeValidationProcedure() }
-              if (validationResult.status == Status.CARD_LOST) {
+              if (validationResult is ValidationResult.CardLost) {
                 // Card removed during transaction: silent reset, no display, no sound
                 Timber.i("Card removed during transaction")
                 currentAppState = AppState.WAIT_CARD
@@ -233,44 +243,87 @@ class CardReaderActivity : BaseActivity() {
     }
   }
 
-  private fun changeDisplay(validationResult: ValidationResult?) {
-    if (validationResult != null) {
-      if (validationResult.status === Status.PROCESSING) {
-        activityCardReaderBinding.presentCardTv.visibility = View.GONE
-        activityCardReaderBinding.mainView.setBackgroundColor(
-            ContextCompat.getColor(this, R.color.turquoise))
-        supportActionBar?.show()
-        playWaitingAnimation()
-      } else {
-        activityCardReaderBinding.animation.cancelAnimation()
-        showSummaryOverlay(validationResult)
-      }
-    } else {
-      activityCardReaderBinding.presentCardTv.visibility = View.VISIBLE
-    }
+  private fun changeDisplay(validationResult: ValidationResult) {
+    activityCardReaderBinding.animation.cancelAnimation()
+    showSummaryOverlay(validationResult)
   }
+
+  /** Returns the label of the presented card. */
+  private fun cardTypeLabel(card: CardDescription): String =
+      when (card) {
+        is CardDescription.Calypso -> getString(R.string.card_type_calypso, card.dfName)
+        is CardDescription.Storage ->
+            when (card.productType) {
+              "MIFARE_CLASSIC_1K" -> getString(R.string.card_type_mifare_classic_1k)
+              "MIFARE_CLASSIC_4K" -> getString(R.string.card_type_mifare_classic_4k)
+              "MIFARE_ULTRALIGHT" -> getString(R.string.card_type_mifare_ultralight)
+              "ST25_SRT512" -> getString(R.string.card_type_st25_srt512)
+              else -> card.productType.replace('_', ' ')
+            }
+      }
+
+  /**
+   * Indicates whether the card is refused because of its data (displayed as an invalid card),
+   * instead of having no ticket to use.
+   */
+  private fun isInvalidCard(reason: RejectionReason): Boolean =
+      when (reason) {
+        RejectionReason.ENVIRONMENT_WRONG_VERSION,
+        RejectionReason.ENVIRONMENT_EXPIRED,
+        RejectionReason.EVENT_WRONG_VERSION,
+        RejectionReason.CONTRACT_WRONG_VERSION,
+        RejectionReason.ALREADY_VALIDATED -> true
+        RejectionReason.NO_VALID_CONTRACT,
+        RejectionReason.EXPIRED_CONTRACT,
+        RejectionReason.NO_TRIPS_LEFT,
+        RejectionReason.CONTRACT_FORBIDDEN_OR_EXPIRED -> false
+      }
+
+  /** Returns the message displayed for the provided rejection reason. */
+  private fun rejectionMessage(reason: RejectionReason): String =
+      getString(
+          when (reason) {
+            RejectionReason.ENVIRONMENT_WRONG_VERSION ->
+                R.string.rejection_environment_wrong_version
+            RejectionReason.ENVIRONMENT_EXPIRED -> R.string.rejection_environment_expired
+            RejectionReason.EVENT_WRONG_VERSION -> R.string.rejection_event_wrong_version
+            RejectionReason.CONTRACT_WRONG_VERSION -> R.string.rejection_contract_wrong_version
+            RejectionReason.ALREADY_VALIDATED -> R.string.rejection_already_validated
+            RejectionReason.NO_VALID_CONTRACT -> R.string.rejection_no_valid_contract
+            RejectionReason.EXPIRED_CONTRACT -> R.string.rejection_expired_contract
+            RejectionReason.NO_TRIPS_LEFT -> R.string.rejection_no_trips_left
+            RejectionReason.CONTRACT_FORBIDDEN_OR_EXPIRED ->
+                R.string.rejection_contract_forbidden_or_expired
+          })
+
+  /** Returns the message displayed for the provided technical error. */
+  private fun errorMessage(result: ValidationResult.Failed): String? =
+      when (result.error) {
+        TechnicalError.MIFARE_CLASSIC_AUTHENTICATION_FAILED ->
+            getString(R.string.error_mifare_classic_authentication)
+        TechnicalError.MIFARE_CLASSIC_TRANSACTION_FAILED ->
+            getString(R.string.error_mifare_classic_transaction)
+        TechnicalError.UNEXPECTED -> result.detail
+      }
 
   private fun showSummaryOverlay(result: ValidationResult) {
     val b = summaryBinding!!
 
     // Card type label + transaction time
     val elapsedMs = System.currentTimeMillis() - cardInsertedAt
-    if (result.cardType.isNotBlank()) {
-      b.cardTypeLabel.visibility = View.VISIBLE
-      b.cardTypeLabel.text = getString(R.string.card_type, result.cardType) + " • ${elapsedMs} ms"
-    } else {
-      b.cardTypeLabel.visibility = View.GONE
-    }
+    b.cardTypeLabel.visibility = View.VISIBLE
+    b.cardTypeLabel.text =
+        getString(R.string.card_type, cardTypeLabel(result.card)) + " • ${elapsedMs} ms"
 
     val animationFile: String
-    when (result.status) {
-      Status.SUCCESS -> {
+    when (result) {
+      is ValidationResult.Accepted -> {
         ticketingService.displayResultSuccess()
         animationFile = "tick_white.json"
         b.summaryMainView.setBackgroundColor(ContextCompat.getColor(this, R.color.green))
         b.bigText.setText(R.string.valid_main_desc)
         val eventDate =
-            result.eventDateTime!!.format(
+            result.dateTime.format(
                 DateTimeFormatter.ofPattern("dd MMMM yyyy, HH:mm", Locale.ENGLISH))
         b.locationTime.text =
             getString(
@@ -297,42 +350,63 @@ class CardReaderActivity : BaseActivity() {
           b.smallDesc.visibility = View.VISIBLE
         }
       }
-      Status.INVALID_CARD -> {
+      is ValidationResult.Rejected -> {
         ticketingService.displayResultFailed()
         animationFile = "error_white.json"
-        b.summaryMainView.setBackgroundColor(ContextCompat.getColor(this, R.color.orange))
-        b.bigText.setText(R.string.card_invalid_main_desc)
-        b.locationTime.text = result.errorMessage
+        if (isInvalidCard(result.reason)) {
+          // Card refused (card data)
+          b.summaryMainView.setBackgroundColor(ContextCompat.getColor(this, R.color.orange))
+          b.bigText.setText(R.string.card_invalid_main_desc)
+          b.locationTime.text = rejectionMessage(result.reason)
+        } else {
+          // No ticket to use
+          b.summaryMainView.setBackgroundColor(ContextCompat.getColor(this, R.color.red))
+          b.bigText.text = rejectionMessage(result.reason)
+          b.locationTime.setText(R.string.no_tickets_small_desc)
+        }
         b.mediumText.visibility = View.INVISIBLE
         b.smallDesc.visibility = View.INVISIBLE
       }
-      Status.EMPTY_CARD -> {
-        ticketingService.displayResultFailed()
-        animationFile = "error_white.json"
-        b.summaryMainView.setBackgroundColor(ContextCompat.getColor(this, R.color.red))
-        b.bigText.text = result.errorMessage
-        b.locationTime.setText(R.string.no_tickets_small_desc)
-        b.mediumText.visibility = View.INVISIBLE
-        b.smallDesc.visibility = View.INVISIBLE
-      }
-      else -> {
+      is ValidationResult.Failed,
+      is ValidationResult.CardLost -> {
         ticketingService.displayResultFailed()
         animationFile = "error_white.json"
         b.summaryMainView.setBackgroundColor(ContextCompat.getColor(this, R.color.red))
         b.bigText.setText(R.string.error_main_desc)
-        b.locationTime.text = result.errorMessage ?: getString(R.string.error_small_desc)
+        b.locationTime.text =
+            (result as? ValidationResult.Failed)?.let { errorMessage(it) }
+                ?: getString(R.string.error_small_desc)
         b.mediumText.visibility = View.INVISIBLE
         b.smallDesc.visibility = View.INVISIBLE
       }
     }
 
-    b.summaryMainView.visibility = View.VISIBLE
-    b.animation.setAnimation(animationFile)
-    b.animation.playAnimation()
-
     // The preparation of the next transaction is performed asynchronously after the end of the
     // previous transaction so that the time spent is not added to the user time.
     lifecycleScope.launch(Dispatchers.IO) { ticketingService.initCryptoContextForNextTransaction() }
+
+    displaySummary(animationFile)
+  }
+
+  /** Displays the refusal of a card that could not be selected (unknown or unsupported card). */
+  private fun showSelectionError(message: String) {
+    val b = summaryBinding!!
+    ticketingService.displayResultFailed()
+    b.cardTypeLabel.visibility = View.GONE
+    b.summaryMainView.setBackgroundColor(ContextCompat.getColor(this, R.color.orange))
+    b.bigText.setText(R.string.card_invalid_main_desc)
+    b.locationTime.text = message
+    b.mediumText.visibility = View.INVISIBLE
+    b.smallDesc.visibility = View.INVISIBLE
+    displaySummary("error_white.json")
+  }
+
+  /** Shows the summary overlay with the provided animation, hidden after a delay. */
+  private fun displaySummary(animationFile: String) {
+    val b = summaryBinding!!
+    b.summaryMainView.visibility = View.VISIBLE
+    b.animation.setAnimation(animationFile)
+    b.animation.playAnimation()
 
     summaryTimer = Timer()
     summaryTimer!!.schedule(

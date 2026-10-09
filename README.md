@@ -207,6 +207,14 @@ drive the user flow and call the domain directly.
   `Intent`. Otherwise, the UI uses the domain models directly. When a UI model has a domain counterpart, the mapping
   from the domain model to the UI model is done in `ui/mappers`.
 
+**Results**
+
+- The domain produces no text displayed to the users. The procedures return typed results (`sealed interface`, e.g.
+  `ValidationResult.Accepted`, `Rejected(reason)` or `Failed(error)`), and the UI translates them into the texts of
+  `strings.xml`, as the reloading client does with the status codes of the server (`RemoteServiceStatus`).
+- The refusal of a card by a business rule is a result (`RejectionReason`), not an exception: the exceptions are kept
+  for the technical errors (card communication...).
+
 These rules are checked by the CI (`.github/scripts/check-android-architecture.sh`), which can also be run locally:
 
 ```sh

@@ -17,6 +17,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   transaction is provided by a context object (`ControlContext`, `ValidationContext`) instead of 6 to 8 parameters.
 - Android applications: read-only `List` instead of `ArrayList` in the results and UI models; the `errorTitle` field
   of the control result, never set, is removed.
+- Control and validation apps: typed results of the procedures, translated into texts by the UI:
+  - `ControlResult` and `ValidationResult` are sealed interfaces (`CardContent`/`Accepted`, `EmptyCard`, `Rejected`,
+    `Failed` and, for the validation, `CardLost`), instead of a status with an error message built by the domain;
+  - the refusals of a card are expressed by a `RejectionReason` enum and the technical errors by a `TechnicalError`
+    enum, displayed with the texts of `strings.xml` (the 13 messages of `BaseValidationManager` and the messages of the
+    control procedures are removed from the domain);
+  - the business rules no longer throw exceptions to refuse a card (`ValidationException`, and the
+    `EnvironmentException`, `EventCleanCardException` and `EventWrongVersionNumberException` duplicated in the two
+    control procedures, are removed), the procedures returning their result at each step; the recovery of a validation
+    interrupted by the removal of the card is no longer reported by an exception carrying a success status;
+  - validation: the presented card is described by a `CardDescription` (DF name of a Calypso card, product type of a
+    storage card), formatted by the UI; the unused `contract` field of the result is removed, as well as the
+    `Status` enum (the UI handles the result types);
+  - control: the `Status` enum, only used to choose the screen displaying a result, moves to the UI model, and the
+    `authenticationMode` field, never read, is removed from `UiControlResult`;
+  - texts slightly harmonized: "Event error: wrong version number" and "Contract error: wrong version number" in both
+    applications, and "An error occurred while reading the card." when a control error has no message.
 - Android applications: logging through the `Logger` port (same `d`/`i`/`w`/`e` interface in all applications) in the
   domain, data and di layers. Timber is only used by `LoggerImpl`, `Application` and the activities.
 - Android applications: card processing is now finalized with `ObservableCardReader.finalizeCardProcessing()` after
@@ -188,6 +205,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Unused `CardSummaryActivity` and its layouts (replaced by the summary overlay of the reader screen).
 #### Fixed
 - Crash at startup when the storage card library is mocked.
+- Calypso cards: when no contract can be used, the priority `31` set to the expired or exhausted contracts is now
+  written in the event (the secure session was cancelled, the card being refused), so that the next validations no
+  longer analyze these contracts.
+- A card that cannot be selected (unknown AID, unexpected DF name, unsupported file structure) is refused with the
+  selection error, instead of executing the validation procedure anyway (on the previous card when no application was
+  found).
 - Bluebird terminals running Android 13 or later: the Bluebird reader can be selected again. The storage permission,
   requested with the SAM access and refused without prompt since Android 13, is only declared and requested up to
   Android 12. The unused `WRITE_EXTERNAL_STORAGE` permission is removed.
@@ -210,6 +233,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Gson dependency, not used by the application (still provided to the Keyple libraries by their own dependencies), as
   in the validation app.
 #### Fixed
+- The failure feedback (sound) of a refused card or of an error is given once (it was given twice).
 - Bluebird terminals running Android 13 or later: the Bluebird reader can be selected again. The storage permission,
   requested with the SAM access and refused without prompt since Android 13, is only declared and requested up to
   Android 12. The unused `WRITE_EXTERNAL_STORAGE` permission is removed.

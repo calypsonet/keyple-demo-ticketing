@@ -15,13 +15,44 @@ package org.calypsonet.keyple.demo.validation.domain.model
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-data class ValidationResult(
-    val status: Status,
-    val cardType: String,
-    val remainingTrips: Int? = null,
-    val contract: String?,
-    val validationData: ValidationData?,
-    val eventDateTime: LocalDateTime? = null,
-    val passValidityEndDate: LocalDate? = null,
-    val errorMessage: String? = null
-)
+/** Result of the validation procedure, translated into texts by the UI. */
+sealed interface ValidationResult {
+
+  /** The presented card. */
+  val card: CardDescription
+
+  /**
+   * The card is validated.
+   *
+   * @property dateTime The date and time of the validation.
+   * @property validationData The validation event written in the card, null when a validation
+   *   interrupted by the removal of the card has been recovered.
+   * @property remainingTrips The trips left of the multi-trip contract used, null otherwise.
+   * @property passValidityEndDate The validity end date of the season pass used, null otherwise.
+   */
+  data class Accepted(
+      override val card: CardDescription,
+      val dateTime: LocalDateTime,
+      val validationData: ValidationData?,
+      val remainingTrips: Int? = null,
+      val passValidityEndDate: LocalDate? = null
+  ) : ValidationResult
+
+  /** The card is refused for the provided reason. */
+  data class Rejected(override val card: CardDescription, val reason: RejectionReason) :
+      ValidationResult
+
+  /** The card has been removed during the transaction. */
+  data class CardLost(override val card: CardDescription) : ValidationResult
+
+  /**
+   * A technical error prevented the validation.
+   *
+   * @property detail The message of the error, if any.
+   */
+  data class Failed(
+      override val card: CardDescription,
+      val error: TechnicalError,
+      val detail: String? = null
+  ) : ValidationResult
+}

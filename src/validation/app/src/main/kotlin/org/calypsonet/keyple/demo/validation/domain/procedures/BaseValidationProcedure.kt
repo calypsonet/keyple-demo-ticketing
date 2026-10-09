@@ -17,41 +17,14 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
-import org.calypsonet.keyple.demo.validation.domain.model.Status
+import org.calypsonet.keyple.demo.validation.domain.model.RejectionReason
 
 /** Base class of the validation procedures, with the business rules common to them. */
 abstract class BaseValidationProcedure : ValidationProcedure {
 
-  companion object {
-
-    // User error messages
-    const val ERROR_NO_VALID_CONTRACT_DETECTED = "No valid ticket detected"
-    const val ERROR_MIFARE_CLASSIC_AUTH_FAILED =
-        "Authentication failed. Please ensure the card is correctly positioned."
-    const val ERROR_MIFARE_CLASSIC_TRANSACTION_FAILED = "Transaction failed. Please try again."
-    const val ERROR_GENERIC_TRANSACTION_FAILED = "An error occurred during validation."
-
-    // Exception messages
-    const val EXCEPTION_ENVIRONMENT_WRONG_VERSION = "Environment error: wrong version number"
-    const val EXCEPTION_ENVIRONMENT_END_DATE_EXPIRED = "Environment error: end date expired"
-    const val EXCEPTION_EVENT_WRONG_VERSION = "Event error: wrong version number"
-    const val EXCEPTION_CONTRACT_VERSION_ERROR =
-        "Contract Version Number error (!= CURRENT_VERSION)"
-    const val EXCEPTION_CARD_ALREADY_TAPPED = "Card already tapped.\nPlease wait before retrying."
-    const val EXCEPTION_RECOVER_BROKEN_SESSION = "Recover previous broken valid session"
-    const val EXCEPTION_EXPIRED_CONTRACT = "Expired ticket"
-    const val EXCEPTION_NO_TRIPS_LEFT = "No trips left"
-    const val EXCEPTION_CONTRACT_FORBIDDEN_OR_EXPIRED = "Contract is forbidden or expired"
-
-    // Card type prefix
-    const val CARD_TYPE_CALYPSO_PREFIX = "CALYPSO: DF name "
-
-    // Empty contract value
-    const val EMPTY_CONTRACT = ""
-
-    // Internal constants
-    private const val SINGLE_VALIDATION_AMOUNT = 1
-    private const val ANTI_PASSBACK_DELAY_MINUTES = 1L
+  private companion object {
+    const val SINGLE_VALIDATION_AMOUNT = 1
+    const val ANTI_PASSBACK_DELAY_MINUTES = 1L
   }
 
   /**
@@ -106,135 +79,61 @@ abstract class BaseValidationProcedure : ValidationProcedure {
     return priority == PriorityCode.MULTI_TRIP
   }
 
-  // ========== Validation methods that throw ValidationException ==========
+  // ========== Business rules, returning the reason of the refusal of the card ==========
 
   /**
-   * Validates anti-passback rule and throws if violated.
+   * Checks the environment: its version number must be the current one, and its end date must not
+   * be in the past.
    *
-   * @param lastEventDateTime The date/time of the last event
-   * @param validationDateTime The current validation date/time
-   * @param isDfRatified Whether the card's DF is ratified
-   * @throws ValidationException with `Status.INVALID_CARD` if card already tapped and ratified,
-   *   `Status.SUCCESS` if recovering from broken session
+   * @return The reason why the card is refused, null if the environment is valid.
    */
-  fun validateAntiPassbackOrThrow(
+  fun checkEnvironment(
+      envVersionNumber: VersionNumber,
+      envEndDate: LocalDate,
+      validationDate: LocalDate
+  ): RejectionReason? =
+      when {
+        envVersionNumber != VersionNumber.CURRENT_VERSION ->
+            RejectionReason.ENVIRONMENT_WRONG_VERSION
+        envEndDate.isBefore(validationDate) -> RejectionReason.ENVIRONMENT_EXPIRED
+        else -> null
+      }
+
+  /**
+   * Checks the version number of the last event: an undefined version means that the card has never
+   * been loaded.
+   *
+   * @return The reason why the card is refused, null if the version is the current one.
+   */
+  fun checkEventVersion(eventVersionNumber: VersionNumber): RejectionReason? =
+      when (eventVersionNumber) {
+        VersionNumber.CURRENT_VERSION -> null
+        VersionNumber.UNDEFINED -> RejectionReason.NO_VALID_CONTRACT
+        else -> RejectionReason.EVENT_WRONG_VERSION
+      }
+
+  /** Indicates whether the last event is within the anti-passback delay. */
+  fun isWithinAntiPassbackDelay(
       lastEventDateTime: LocalDateTime,
-      validationDateTime: LocalDateTime,
-      isDfRatified: Boolean
-  ) {
-    if (Duration.between(lastEventDateTime, validationDateTime).toMinutes() <
-        ANTI_PASSBACK_DELAY_MINUTES) {
-      if (isDfRatified) {
-        throw ValidationException(EXCEPTION_CARD_ALREADY_TAPPED, Status.INVALID_CARD)
-      } else {
-        throw ValidationException(EXCEPTION_RECOVER_BROKEN_SESSION, Status.SUCCESS)
-      }
-    }
-  }
+      validationDateTime: LocalDateTime
+  ): Boolean =
+      Duration.between(lastEventDateTime, validationDateTime).toMinutes() <
+          ANTI_PASSBACK_DELAY_MINUTES
 
   /**
-   * Validates the environment version and throws if invalid.
+   * Checks the version number of a contract.
    *
-   * @param envVersionNumber The environment version number to validate
-   * @throws ValidationException with `Status.INVALID_CARD` if the version is invalid
+   * @return The reason why the card is refused, null if the version is the current one.
    */
-  fun validateEnvironmentVersionOrThrow(envVersionNumber: VersionNumber) {
-    if (envVersionNumber != VersionNumber.CURRENT_VERSION) {
-      throw ValidationException(EXCEPTION_ENVIRONMENT_WRONG_VERSION, Status.INVALID_CARD)
-    }
-  }
+  fun checkContractVersion(contractVersionNumber: VersionNumber): RejectionReason? =
+      if (contractVersionNumber != VersionNumber.CURRENT_VERSION)
+          RejectionReason.CONTRACT_WRONG_VERSION
+      else null
 
-  /**
-   * Validates environment date and throws if expired.
-   *
-   * @param envEndDate The environment end date
-   * @param validationDate The current validation date
-   * @throws ValidationException with `Status.INVALID_CARD` if environment date is expired
-   */
-  fun validateEnvironmentDateOrThrow(envEndDate: LocalDate, validationDate: LocalDate) {
-    if (envEndDate.isBefore(validationDate)) {
-      throw ValidationException(EXCEPTION_ENVIRONMENT_END_DATE_EXPIRED, Status.INVALID_CARD)
-    }
-  }
+  /** Indicates whether the validity end date of a contract is in the past. */
+  fun isContractExpired(contractValidityEndDate: LocalDate, validationDate: LocalDate): Boolean =
+      contractValidityEndDate.isBefore(validationDate)
 
-  /**
-   * Validates the event version and throws if invalid or undefined.
-   *
-   * @param eventVersionNumber The event version number to validate
-   * @throws ValidationException with `Status.EMPTY_CARD` if undefined, `Status.INVALID_CARD` if
-   *   invalid
-   */
-  fun validateEventVersionOrThrow(eventVersionNumber: VersionNumber) {
-    when (eventVersionNumber) {
-      VersionNumber.CURRENT_VERSION -> {
-        // Valid, do nothing
-      }
-      VersionNumber.UNDEFINED -> {
-        throw ValidationException(ERROR_NO_VALID_CONTRACT_DETECTED, Status.EMPTY_CARD)
-      }
-      else -> {
-        throw ValidationException(EXCEPTION_EVENT_WRONG_VERSION, Status.INVALID_CARD)
-      }
-    }
-  }
-
-  /**
-   * Validates the contract version and throws if invalid.
-   *
-   * @param contractVersionNumber The contract version number to validate
-   * @throws ValidationException with `Status.INVALID_CARD` if the version is invalid
-   */
-  fun validateContractVersionOrThrow(contractVersionNumber: VersionNumber) {
-    if (contractVersionNumber != VersionNumber.CURRENT_VERSION) {
-      throw ValidationException(EXCEPTION_CONTRACT_VERSION_ERROR, Status.INVALID_CARD)
-    }
-  }
-
-  /**
-   * Validates contract date and throws if expired.
-   *
-   * @param contractValidityEndDate The contract validity end date
-   * @param validationDate The current validation date
-   * @throws ValidationException with `Status.EMPTY_CARD` if the contract date is expired
-   */
-  fun validateContractDateOrThrow(contractValidityEndDate: LocalDate, validationDate: LocalDate) {
-    if (contractValidityEndDate.isBefore(validationDate)) {
-      throw ValidationException(EXCEPTION_EXPIRED_CONTRACT, Status.EMPTY_CARD)
-    }
-  }
-
-  /**
-   * Validates that trips are available and throws if not.
-   *
-   * @param counterValue The current counter-value
-   * @throws ValidationException with `Status.EMPTY_CARD` if no trips available
-   */
-  fun validateTripsAvailableOrThrow(counterValue: Int) {
-    if (counterValue <= 0) {
-      throw ValidationException(EXCEPTION_NO_TRIPS_LEFT, Status.EMPTY_CARD)
-    }
-  }
-
-  /**
-   * Validates that valid contracts exist and throws if none found.
-   *
-   * @param priorities List of contract priorities
-   * @throws ValidationException with `Status.EMPTY_CARD` if no valid contracts
-   */
-  fun validateHasValidContractsOrThrow(priorities: List<Pair<Int, PriorityCode>>) {
-    val validPriorities = filterValidContractPriorities(priorities)
-    if (validPriorities.isEmpty()) {
-      throw ValidationException(ERROR_NO_VALID_CONTRACT_DETECTED, Status.EMPTY_CARD)
-    }
-  }
-
-  /**
-   * Exception for validation business rule violations.
-   *
-   * Carries the appropriate [Status] to set when the exception is caught in the repository layer.
-   *
-   * @param message The error message describing the validation failure
-   * @param status The status to set when this validation exception is caught
-   */
-  class ValidationException(message: String, val status: Status) : RuntimeException(message)
+  /** Indicates whether a multi-trip contract has trips left. */
+  fun hasTripsLeft(counterValue: Int): Boolean = counterValue > 0
 }

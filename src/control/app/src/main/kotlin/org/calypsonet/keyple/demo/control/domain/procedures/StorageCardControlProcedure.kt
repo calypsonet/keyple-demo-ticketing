@@ -26,7 +26,8 @@ import org.calypsonet.keyple.demo.control.domain.mappers.ValidationMapper
 import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
 import org.calypsonet.keyple.demo.control.domain.model.Contract
 import org.calypsonet.keyple.demo.control.domain.model.ControlResult
-import org.calypsonet.keyple.demo.control.domain.model.Status
+import org.calypsonet.keyple.demo.control.domain.model.RejectionReason
+import org.calypsonet.keyple.demo.control.domain.model.TechnicalError
 import org.calypsonet.keyple.demo.control.domain.model.Validation
 import org.calypsonet.keyple.demo.control.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.control.domain.spi.Logger
@@ -51,9 +52,7 @@ class StorageCardControlProcedure(
     val controlLocation = context.location
     val validationPeriod = context.validationPeriod
 
-    var errorMessage: String?
     var validation: Validation? = null
-    var status: Status = Status.ERROR
 
     val storageCardApiFactory =
         checkNotNull(keypopApiProvider.getStorageCardApiFactory()) {
@@ -133,12 +132,12 @@ class StorageCardControlProcedure(
       // Step 3 - If EnvVersionNumber of the Environment structure is not the expected one (==1 for
       // the current version), reject the card.
       if (env.envVersionNumber != VersionNumber.CURRENT_VERSION) {
-        throw EnvironmentException("wrong version number")
+        return ControlResult.Rejected(RejectionReason.ENVIRONMENT_WRONG_VERSION)
       }
 
       // Step 4 - If EnvEndDate points to a date in the past, reject the card.
       if (env.envEndDate.date.isBefore(controlDateTime.toLocalDate())) {
-        throw EnvironmentException("End date expired")
+        return ControlResult.Rejected(RejectionReason.ENVIRONMENT_EXPIRED)
       }
 
       // Step 5 - Read and unpack the event record
@@ -156,10 +155,10 @@ class StorageCardControlProcedure(
       // the card (if ==0 return error status indicating clean card).
       val eventVersionNumber = event.eventVersionNumber
       if (eventVersionNumber != VersionNumber.CURRENT_VERSION) {
-        if (eventVersionNumber == VersionNumber.UNDEFINED) {
-          throw EventCleanCardException()
+        return if (eventVersionNumber == VersionNumber.UNDEFINED) {
+          ControlResult.EmptyCard
         } else {
-          throw EventWrongVersionNumberException()
+          ControlResult.Rejected(RejectionReason.EVENT_WRONG_VERSION)
         }
       }
 
@@ -211,7 +210,7 @@ class StorageCardControlProcedure(
       } else if (contract.contractVersionNumber != VersionNumber.CURRENT_VERSION) {
         // Step 14 - If ContractVersionNumber is not the expected one (==1 for the current
         // version), reject the card.
-        throw RuntimeException("Contract Version Number error (!= CURRENT_VERSION)")
+        return ControlResult.Rejected(RejectionReason.CONTRACT_WRONG_VERSION)
       } else {
         // Step 15 - If ContractAuthenticator is not 0, perform the verification
         @Suppress("ControlFlowWithEmptyBody")
@@ -256,61 +255,28 @@ class StorageCardControlProcedure(
       }
 
       logger.i("Control procedure result: STATUS_OK")
-      status = Status.TICKETS_FOUND
 
       // Step 20 - Close the transaction
       cardTransaction.processCommands(ChannelControl.CLOSE_AFTER)
 
-      var validationList: List<Validation>? = null
-      if (validation != null) {
-        validationList = listOf(validation)
-      }
-
       // Step 21 - Return the status of the operation to the upper layer. <Exit process>
-      return ControlResult(
-          status = status,
-          authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
-          lastValidationsList = validationList,
-          contractsList = displayedContract)
+      return ControlResult.CardContent(
+          AuthenticationMode.NO_AUTHENTICATION, displayedContract, validation)
     } catch (e: Exception) {
       logger.e("Error during control procedure: ${storageCard.productType.name}", e)
-      errorMessage = e.message
-      when (e) {
-        is EnvironmentException -> {
-          errorMessage = "Environment error: $errorMessage"
-          status = Status.ERROR
-        }
-        is EventCleanCardException -> {
-          status = Status.EMPTY_CARD
-        }
-        is EventWrongVersionNumberException -> {
-          status = Status.ERROR
-        }
-        else -> {
-          // Specific error handling for Mifare Classic authentication failures
-          errorMessage =
-              when {
-                storageCard.productType.hasAuthentication() &&
-                    (e.message?.contains("authentication", ignoreCase = true) == true ||
-                        e.message?.contains("auth", ignoreCase = true) == true) -> {
-                  "Authentication failed. Please ensure the card is correctly positioned."
-                }
-                storageCard.productType.hasAuthentication() -> {
-                  "Failed to read Mifare Classic card. Please try again."
-                }
-                else -> e.message ?: "An error occurred while reading the card."
-              }
-          status = Status.ERROR
-        }
-      }
+      return ControlResult.Failed(technicalError(storageCard.productType, e), e.message)
     }
-
-    return ControlResult(
-        status = status,
-        authenticationMode = AuthenticationMode.NO_AUTHENTICATION,
-        contractsList = emptyList(),
-        errorMessage = errorMessage)
   }
+
+  /** Returns the technical error corresponding to the provided exception. */
+  private fun technicalError(productType: ProductType, e: Exception): TechnicalError =
+      when {
+        // Specific error handling for Mifare Classic authentication failures
+        productType.hasAuthentication() && e.message?.contains("auth", ignoreCase = true) == true ->
+            TechnicalError.MIFARE_CLASSIC_AUTHENTICATION_FAILED
+        productType.hasAuthentication() -> TechnicalError.MIFARE_CLASSIC_READING_FAILED
+        else -> TechnicalError.UNEXPECTED
+      }
 
   /**
    * An event is considered valid for display if an eventTimeStamp or an eventDateStamp has been set
@@ -319,10 +285,4 @@ class StorageCardControlProcedure(
   private fun isValidEvent(event: EventStructure): Boolean {
     return event.eventTimeStamp.value != 0 || event.eventDateStamp.value != 0
   }
-
-  private class EnvironmentException(message: String) : RuntimeException(message)
-
-  private class EventCleanCardException : RuntimeException("clean card")
-
-  private class EventWrongVersionNumberException : RuntimeException("wrong version number")
 }
