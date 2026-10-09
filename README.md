@@ -203,6 +203,12 @@ drive the user flow and call the domain directly.
   `Intent`. Otherwise, the UI uses the domain models directly. When a UI model has a domain counterpart, the mapping
   from the domain model to the UI model is done in `ui/mappers`.
 
+These rules are checked by the CI (`.github/scripts/check-android-architecture.sh`), which can also be run locally:
+
+```sh
+bash .github/scripts/check-android-architecture.sh src/control
+```
+
 **Naming conventions**
 
 - Application class `DemoApplication`, base activity `BaseActivity` (and `BaseCardActivity` for the card screens of
@@ -212,11 +218,19 @@ drive the user flow and call the domain directly.
   `provide<Type>` methods.
 - Enums named without suffix (e.g. `ReaderType`, `CardProtocol`, `Status`).
 
-These rules are checked by the CI (`.github/scripts/check-android-architecture.sh`), which can also be run locally:
+**Differences between the applications**
 
-```sh
-bash .github/scripts/check-android-architecture.sh src/control
-```
+The applications share these conventions, except for the following deliberate differences:
+
+| Difference                                                                                                         | Reason                                                                                                                                  |
+|--------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| Validation app: free orientation, `arrive`/`arrive-mock` source sets and `com.parkeon.app.customer` action          | Arrive (Parkeon) terminal: landscape screen, optional proprietary SDK, application launched by the terminal                             |
+| Reloading Android client: reader detected from the device, no device selection screen                             | Only the Bluebird terminals use a specific reader; the other devices use the Android NFC reader                                         |
+| Reloading Android client: settings persisted (`SharedPreferences`), in memory in the control and validation apps   | The server address must survive a restart; the control and validation apps ask for the terminal at each startup                         |
+| Reloading Android client: no local SAM, but NFC and OMAPI (SIM) readers                                            | The SAM is managed by the server (Keyple Distributed)                                                                                   |
+| KMP client: organized by feature (no `domain`/`data`/`ui` layers), without Hilt nor the `common` library           | Compose code shared by Android, desktop and iOS; the `common` library relies on Java libraries (bit-lib4j, Keyple utilities) unavailable on iOS |
+| KMP client: Android APK suffixed `-android-`                                                                       | The same project name is used by the desktop packages                                                                                   |
+| Directory and project names (`reloading-remote`, `keyple-mobile-android`, `kdt-...`) differing from the packages   | Referenced by the CI, the names of the released artifacts and the existing links                                                        |
 
 ### Building from Source
 

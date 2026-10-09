@@ -22,7 +22,8 @@ This library defines the common elements used across the Keyple Demo ecosystem:
 
 ## Installation
 
-This library is automatically referenced by the various demos.
+This library is included in the builds of the applications using it (Gradle included build, `includeBuild` in their
+`settings.gradle.kts`): it is built with them and does not need to be installed.
 
 ## Data Structures
 
@@ -217,11 +218,9 @@ val timeValue: Int = timeCompact.value
 
 ## Version Compatibility
 
-| Library Version | Demo Applications | Keyple Middleware | Notes                    |
-|:----------------|:------------------|:------------------|:-------------------------|
-| 1.0.x           | 1.0.x             | 2.x               | Initial release          |
-| 1.1.x           | 1.1.x             | 2.x               | Enhanced Storage Card    |
-| 2.0.x           | 2.0.x             | 3.x               | Breaking changes         |
+The library is not published on its own: it is versioned and released with the demo applications (`project` version
+of the `libs.versions.toml` version catalog, replaced by the release tag), and uses the Keyple components of the same
+Keyple Java BOM (`keypleJavaBom` version of the catalog). It targets Java 17, as the applications using it.
 
 ## Contributing
 
