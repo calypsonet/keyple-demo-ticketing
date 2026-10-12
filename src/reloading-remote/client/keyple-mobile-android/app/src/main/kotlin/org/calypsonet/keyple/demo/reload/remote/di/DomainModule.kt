@@ -18,6 +18,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import org.calypsonet.keyple.demo.reload.remote.domain.CardReaderSession
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.Clock
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.ReaderManager
@@ -44,8 +45,9 @@ class DomainModule {
   @Singleton
   fun provideReadContracts(
       cardReaderSession: CardReaderSession,
-      remoteServiceManager: RemoteServiceManager
-  ): ReadContracts = ReadContracts(cardReaderSession, remoteServiceManager)
+      remoteServiceManager: RemoteServiceManager,
+      clock: Clock
+  ): ReadContracts = ReadContracts(cardReaderSession, remoteServiceManager, clock)
 
   @Provides
   @Singleton

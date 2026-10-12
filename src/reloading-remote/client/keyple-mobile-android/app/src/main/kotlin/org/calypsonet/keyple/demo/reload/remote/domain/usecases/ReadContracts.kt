@@ -12,19 +12,20 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.domain.usecases
 
-import java.time.LocalDate
 import org.calypsonet.keyple.demo.common.dto.AnalyzeContractsInputDto
 import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
 import org.calypsonet.keyple.demo.reload.remote.domain.CardReaderSession
 import org.calypsonet.keyple.demo.reload.remote.domain.mappers.toCardInfo
 import org.calypsonet.keyple.demo.reload.remote.domain.mappers.toContract
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ReadContractsResult
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.Clock
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.RemoteServiceManager
 
 /** Reading of the contracts of the presented card, analyzed by the server. */
 class ReadContracts(
     private val cardReaderSession: CardReaderSession,
-    private val remoteServiceManager: RemoteServiceManager
+    private val remoteServiceManager: RemoteServiceManager,
+    private val clock: Clock
 ) {
 
   /**
@@ -40,7 +41,7 @@ class ReadContracts(
             smartCard,
             AnalyzeContractsInputDto(cardReaderSession.pluginType))
     val status = RemoteServiceStatus.fromCode(output.statusCode)
-    val today = LocalDate.now()
+    val today = clock.now().toLocalDate()
     val contracts =
         if (status == RemoteServiceStatus.SUCCESS) output.contracts.map { it.toContract(today) }
         else emptyList()

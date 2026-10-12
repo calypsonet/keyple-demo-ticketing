@@ -7,9 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Android applications: layered architecture with ports and adapters, documented in the README ("Android Application
   Architecture") and checked by the CI (`.github/scripts/check-android-architecture.sh`) for the domain, data and ui
-  layers. The domain layer no longer
-  depends on Android, Timber or the dependency injection framework: the domain services are provided by a Hilt
-  `DomainModule`, and the card procedures receive their dependencies through their constructor.
+  layers. The domain layer no longer depends on Android, Timber or the dependency injection framework: the domain
+  services are provided by a Hilt `DomainModule`, and the card procedures receive their dependencies through their
+  constructor.
+- Android applications: the domain layer is designed to be transposable to another language (e.g. C++ or Rust). The
+  current date and time are provided by a `Clock` port (`JavaTimeClock` adapter) instead of being read from the
+  system clock by the use cases, and `java.util.Locale` is no longer used. The architecture check of the domain is
+  an allowlist of imports: Kotlin standard library, `java.time`, Keypop APIs, Keyple utilities, `common` library and
+  the domain itself.
 - Control and validation apps: the procedures of each card technology (`CalypsoCardControlProcedure`,
   `StorageCardControlProcedure`, `CalypsoCardValidationProcedure`, `StorageCardValidationProcedure`, previously
   `...Manager` in the `managers` package) implement a common interface (`ControlProcedure`, `ValidationProcedure`), and

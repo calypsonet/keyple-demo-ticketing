@@ -21,6 +21,7 @@ import org.calypsonet.keyple.demo.validation.domain.CardReaderSession
 import org.calypsonet.keyple.demo.validation.domain.procedures.CalypsoCardValidationProcedure
 import org.calypsonet.keyple.demo.validation.domain.procedures.StorageCardValidationProcedure
 import org.calypsonet.keyple.demo.validation.domain.spi.AppSettingsRepository
+import org.calypsonet.keyple.demo.validation.domain.spi.Clock
 import org.calypsonet.keyple.demo.validation.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.validation.domain.spi.Logger
 import org.calypsonet.keyple.demo.validation.domain.spi.ReaderManager
@@ -48,12 +49,14 @@ class DomainModule {
       cardReaderSession: CardReaderSession,
       keypopApiProvider: KeypopApiProvider,
       appSettings: AppSettingsRepository,
+      clock: Clock,
       userFeedback: UserFeedback,
       logger: Logger
   ): ValidateCard =
       ValidateCard(
           cardReaderSession,
           appSettings,
+          clock,
           userFeedback,
           logger,
           // Validation procedures of the supported card technologies

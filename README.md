@@ -167,21 +167,26 @@ The Android applications (`validation`, `control` and `reloading-remote/client/k
 **layered architecture with ports and adapters** (hexagonal style). They do not use the MVVM pattern: the activities
 drive the user flow and call the domain directly.
 
+The `domain` layer is designed to be easily transposed to another language (e.g. C++ or Rust): only the `ui` and
+`data` layers are specific to the target language and platform.
+
 | Package  | Content                                                                                               |
 |----------|-------------------------------------------------------------------------------------------------------|
 | `domain` | Business logic: `CardReaderSession` and `usecases` (entry points of the UI), `procedures`, `model`, and the ports (`spi`) |
-| `data`   | Adapters implementing the ports (readers, Keypop API factories, user feedback, settings, logging...)  |
+| `data`   | Adapters implementing the ports (readers, Keypop API factories, user feedback, settings, clock, logging...) |
 | `ui`     | Activities, UI-bound adapters (`ActivityUiContext`), and UI models with their mappers when needed     |
 | `di`     | Hilt modules binding the adapters to the ports and providing the domain services                      |
 
 **Dependency rules**
 
-- The `domain` layer only depends on the `common` library, the Keypop APIs and the Keyple utilities. It depends neither
-  on Android (including the application resources `R`), Timber or the dependency injection framework (no Hilt, Dagger
-  or `javax.inject` annotation), nor on the `data`, `ui` and `di` layers.
+- The `domain` layer only depends on the Kotlin standard library, the `java.time` date types (`LocalDate`,
+  `LocalDateTime`, which have an equivalent in any language), the Keypop APIs, the Keyple utilities and the `common`
+  library. It depends neither on Android (including the application resources `R`), Timber, the dependency injection
+  framework (no Hilt, Dagger or `javax.inject` annotation) or any other JVM-specific API, nor on the `data`, `ui` and
+  `di` layers. The platform services, including the system clock, are accessed through ports.
 - Everything the domain needs from the outside world is expressed as a port in `domain/spi` (e.g. `ReaderManager`,
-  `KeypopApiProvider`, `UserFeedback`, `AppSettingsRepository`, `Logger`, `UiContext`, `RemoteServiceManager`,
-  `ServerStatusProvider`) and implemented by an adapter in `data`, or in `ui` for the UI-bound ones.
+  `KeypopApiProvider`, `UserFeedback`, `AppSettingsRepository`, `Clock`, `Logger`, `UiContext`,
+  `RemoteServiceManager`, `ServerStatusProvider`) and implemented by an adapter in `data`, or in `ui` for the UI-bound ones.
 - An adapter is named after the technology it relies on, followed by the name of its port (e.g.
   `KeypleReaderManager`, `InMemoryAppSettingsRepository`, `SharedPreferencesAppSettingsRepository`, `TimberLogger`,
   `ActivityUiContext`). The `Impl` suffix is not used.

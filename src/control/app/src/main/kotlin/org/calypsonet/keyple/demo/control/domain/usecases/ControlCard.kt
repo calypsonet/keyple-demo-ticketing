@@ -12,7 +12,6 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.control.domain.usecases
 
-import java.time.LocalDateTime
 import org.calypsonet.keyple.demo.common.data.LocationRepository
 import org.calypsonet.keyple.demo.control.domain.CardReaderSession
 import org.calypsonet.keyple.demo.control.domain.CardReaderSession.CardSelection
@@ -21,6 +20,7 @@ import org.calypsonet.keyple.demo.control.domain.model.TechnicalError
 import org.calypsonet.keyple.demo.control.domain.procedures.ControlContext
 import org.calypsonet.keyple.demo.control.domain.procedures.ControlProcedure
 import org.calypsonet.keyple.demo.control.domain.spi.AppSettingsRepository
+import org.calypsonet.keyple.demo.control.domain.spi.Clock
 import org.calypsonet.keyple.demo.control.domain.spi.Logger
 import org.calypsonet.keyple.demo.control.domain.spi.UserFeedback
 import org.eclipse.keypop.reader.selection.ScheduledCardSelectionsResponse
@@ -32,6 +32,7 @@ import org.eclipse.keypop.reader.selection.ScheduledCardSelectionsResponse
 class ControlCard(
     private val cardReaderSession: CardReaderSession,
     private val appSettings: AppSettingsRepository,
+    private val clock: Clock,
     private val userFeedback: UserFeedback,
     private val logger: Logger,
     private val controlProcedures: List<ControlProcedure>
@@ -63,7 +64,7 @@ class ControlCard(
           ControlContext(
               cardReader = cardReaderSession.cardReader,
               card = card,
-              dateTime = LocalDateTime.now(),
+              dateTime = clock.now(),
               location = appSettings.location,
               locations = LocationRepository.getLocations(),
               validationPeriod = appSettings.validationPeriod,

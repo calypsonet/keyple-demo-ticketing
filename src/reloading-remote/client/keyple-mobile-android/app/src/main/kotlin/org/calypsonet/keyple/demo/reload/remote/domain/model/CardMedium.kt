@@ -12,8 +12,6 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.domain.model
 
-import java.util.Locale
-
 enum class CardMedium {
   CONTACTLESS_CARD,
   SIM,
@@ -23,6 +21,6 @@ enum class CardMedium {
   companion object {
     /** Returns the card medium having the given name, or [CONTACTLESS_CARD] if it is unknown. */
     fun fromName(name: String): CardMedium =
-        entries.firstOrNull { it.name == name.uppercase(Locale.ROOT) } ?: CONTACTLESS_CARD
+        entries.firstOrNull { it.name == name.uppercase() } ?: CONTACTLESS_CARD
   }
 }

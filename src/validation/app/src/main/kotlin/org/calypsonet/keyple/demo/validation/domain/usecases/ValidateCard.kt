@@ -12,7 +12,6 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.validation.domain.usecases
 
-import java.time.LocalDateTime
 import org.calypsonet.keyple.demo.common.data.LocationRepository
 import org.calypsonet.keyple.demo.validation.domain.CardReaderSession
 import org.calypsonet.keyple.demo.validation.domain.CardReaderSession.CardSelection
@@ -21,6 +20,7 @@ import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
 import org.calypsonet.keyple.demo.validation.domain.procedures.ValidationContext
 import org.calypsonet.keyple.demo.validation.domain.procedures.ValidationProcedure
 import org.calypsonet.keyple.demo.validation.domain.spi.AppSettingsRepository
+import org.calypsonet.keyple.demo.validation.domain.spi.Clock
 import org.calypsonet.keyple.demo.validation.domain.spi.Logger
 import org.calypsonet.keyple.demo.validation.domain.spi.UserFeedback
 import org.eclipse.keypop.reader.selection.ScheduledCardSelectionsResponse
@@ -32,6 +32,7 @@ import org.eclipse.keypop.reader.selection.ScheduledCardSelectionsResponse
 class ValidateCard(
     private val cardReaderSession: CardReaderSession,
     private val appSettings: AppSettingsRepository,
+    private val clock: Clock,
     private val userFeedback: UserFeedback,
     private val logger: Logger,
     private val validationProcedures: List<ValidationProcedure>
@@ -65,7 +66,7 @@ class ValidateCard(
           ValidationContext(
               cardReader = cardReaderSession.cardReader,
               card = card,
-              dateTime = LocalDateTime.now(),
+              dateTime = clock.now(),
               location = appSettings.location,
               locations = LocationRepository.getLocations(),
               cardSecuritySetting = cardReaderSession.cardSecuritySetting))

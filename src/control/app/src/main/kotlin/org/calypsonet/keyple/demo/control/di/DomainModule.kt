@@ -21,6 +21,7 @@ import org.calypsonet.keyple.demo.control.domain.CardReaderSession
 import org.calypsonet.keyple.demo.control.domain.procedures.CalypsoCardControlProcedure
 import org.calypsonet.keyple.demo.control.domain.procedures.StorageCardControlProcedure
 import org.calypsonet.keyple.demo.control.domain.spi.AppSettingsRepository
+import org.calypsonet.keyple.demo.control.domain.spi.Clock
 import org.calypsonet.keyple.demo.control.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.control.domain.spi.Logger
 import org.calypsonet.keyple.demo.control.domain.spi.ReaderManager
@@ -48,12 +49,14 @@ class DomainModule {
       cardReaderSession: CardReaderSession,
       keypopApiProvider: KeypopApiProvider,
       appSettings: AppSettingsRepository,
+      clock: Clock,
       userFeedback: UserFeedback,
       logger: Logger
   ): ControlCard =
       ControlCard(
           cardReaderSession,
           appSettings,
+          clock,
           userFeedback,
           logger,
           // Control procedures of the supported card technologies

@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Checks the layering rules of the Android applications (see "Android Application Architecture" in README.md):
-# - the domain layer depends neither on Android (including the application resources), Timber or the dependency
-#   injection framework, nor on the data, ui and di layers of the application;
+# - the domain layer, meant to be transposable to another language, only imports the Kotlin standard library, the
+#   java.time date types, the Keypop APIs, the Keyple utilities, the common library and its own packages (allowlist):
+#   no Android, Timber, dependency injection, coroutines or JVM-specific API, and no data, ui or di layer;
 # - the data layer logs through the Logger port: Timber is only used by its implementation (TimberLogger);
 # - the ui layer neither accesses the data layer nor handles the Keypop card types.
 #
@@ -27,13 +28,9 @@ report() {
 
 while IFS= read -r dir; do
   domain_count=$((domain_count + 1))
-  report "Domain layer must not depend on Android, Timber or dependency injection ($dir)" \
-    "$(grep -rnE --include='*.kt' '^import (android|androidx|timber|dagger|javax\.inject)\.' "$dir" || true)"
-  report "Domain layer must not depend on the Android resources, BuildConfig or view bindings ($dir)" \
-    "$(grep -rnE --include='*.kt' '^import org\.calypsonet\.keyple\.demo\.[a-z.]+\.(R|BuildConfig|databinding)(\.|$)' "$dir" || true)"
-  report "Domain layer must not depend on the data, ui or di layers ($dir)" \
-    "$(grep -rnE --include='*.kt' '^import org\.calypsonet\.keyple\.demo\.[a-z.]+\.(data|ui|di)\.' "$dir" \
-      | grep -v 'org\.calypsonet\.keyple\.demo\.common\.' || true)"
+  report "Domain layer may only depend on the Kotlin standard library, java.time, the Keypop APIs, the Keyple utilities, the common library and itself ($dir)" \
+    "$(grep -rnE --include='*.kt' '^import ' "$dir" \
+      | grep -vE ':import (kotlin\.|java\.time\.|org\.eclipse\.keypop\.|org\.eclipse\.keyple\.core\.util\.|org\.calypsonet\.keyple\.demo\.common\.|org\.calypsonet\.keyple\.demo\.[a-z.]+\.domain\.)' || true)"
 done < <(find "$project_dir" -type d -name domain -path '*/src/*' -not -path '*/build/*')
 
 while IFS= read -r dir; do
