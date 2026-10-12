@@ -14,10 +14,7 @@ package org.calypsonet.keyple.demo.reload.remote.server.card;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import java.util.Properties;
 import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService;
-import org.calypsonet.keyple.demo.common.constants.RemoteServiceId;
-import org.calypsonet.keyple.demo.common.dto.*;
 import org.eclipse.keyple.card.calypso.crypto.legacysam.LegacySamExtensionService;
 import org.eclipse.keyple.card.calypso.crypto.legacysam.LegacySamUtil;
 import org.eclipse.keyple.core.service.*;
@@ -33,12 +30,16 @@ import org.eclipse.keyple.plugin.pcsc.PcscPluginFactoryBuilder;
 import org.eclipse.keyple.plugin.pcsc.PcscReader;
 import org.eclipse.keypop.calypso.crypto.legacysam.sam.LegacySam;
 import org.eclipse.keypop.reader.CardReader;
-import org.eclipse.keypop.reader.selection.spi.SmartCard;
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Set up of the Keyple infrastructure of the server: card extensions, PC/SC plugin and card
+ * resource service of the SAM, and remote plugin receiving the requests of the clients, whose
+ * remote services are executed by the {@link RemoteServiceDispatcher}.
+ */
 @ApplicationScoped
 public class CardConfigurator {
 
@@ -51,7 +52,7 @@ public class CardConfigurator {
   String samReaderFilter;
 
   @Inject CardSamObserver cardSamObserver;
-  @Inject CardService cardService;
+  @Inject RemoteServiceDispatcher remoteServiceDispatcher;
 
   public void init() {
     registerCardExtensions();
@@ -207,96 +208,8 @@ public class CardConfigurator {
       CardReader reader = plugin.getReader(readerName);
       RemoteReaderServer readerExtension =
           plugin.getReaderExtension(RemoteReaderServer.class, reader.getName());
-      // Analyses the Service ID contains in the reader to find which business service to execute.
-      // The client specifies the Service ID when executing the remote service.
-      Object outputData;
-      String serviceId = readerExtension.getServiceId();
-
-      if (RemoteServiceId.SELECT_APP_AND_READ_CONTRACTS.name().equals(serviceId)) {
-
-        // Execute service
-        outputData = cardService.selectAppAndReadContracts(reader);
-
-      } else if (RemoteServiceId.SELECT_APP_AND_INCREASE_CONTRACT_COUNTER
-          .name()
-          .equals(serviceId)) {
-
-        SelectAppAndIncreaseContractCounterInputDto inputData =
-            readerExtension.getInputData(SelectAppAndIncreaseContractCounterInputDto.class);
-
-        // Execute service
-        outputData = cardService.selectAppAndIncreaseContractCounter(reader, inputData);
-
-      } else if (RemoteServiceId.READ_CARD_AND_ANALYZE_CONTRACTS.name().equals(serviceId)) {
-
-        // Get input data
-        AnalyzeContractsInputDto inputData =
-            readerExtension.getInputData(AnalyzeContractsInputDto.class);
-
-        // Execute service
-        outputData =
-            cardService.analyzeContracts(
-                reader, readerExtension.getInitialCardContent(SmartCard.class), inputData);
-
-      } else if (RemoteServiceId.READ_CARD_AND_WRITE_CONTRACT.name().equals(serviceId)) {
-
-        // Get input data
-        WriteContractInputDto inputData = readerExtension.getInputData(WriteContractInputDto.class);
-
-        // Execute service
-        outputData =
-            cardService.writeContract(
-                reader, readerExtension.getInitialCardContent(SmartCard.class), inputData);
-
-      } else if (RemoteServiceId.PERSONALIZE_CARD.name().equals(serviceId)) {
-
-        // Get input data
-        CardIssuanceInputDto inputData = readerExtension.getInputData(CardIssuanceInputDto.class);
-
-        // Execute service
-        outputData =
-            cardService.initCard(
-                reader, readerExtension.getInitialCardContent(SmartCard.class), inputData);
-
-      } else if (RemoteServiceId.SELECT_APP_AND_ANALYZE_CONTRACTS.name().equals(serviceId)) {
-
-        // Get input data
-        SelectAppAndAnalyzeContractsInputDto inputData =
-            readerExtension.getInputData(SelectAppAndAnalyzeContractsInputDto.class);
-
-        // Get the eventually processed selection scenario
-        Properties properties = readerExtension.getInitialCardContent(Properties.class);
-
-        // Execute service
-        outputData = cardService.selectAppAndAnalyzeContracts(reader, inputData, properties);
-
-      } else if (RemoteServiceId.SELECT_APP_AND_LOAD_CONTRACT.name().equals(serviceId)) {
-
-        // Get input data
-        SelectAppAndLoadContractInputDto inputData =
-            readerExtension.getInputData(SelectAppAndLoadContractInputDto.class);
-
-        // Get the eventually processed selection scenario
-        Properties properties = readerExtension.getInitialCardContent(Properties.class);
-
-        // Execute service
-        outputData = cardService.selectAppAndLoadContract(reader, inputData, properties);
-
-      } else if (RemoteServiceId.SELECT_APP_AND_PERSONALIZE_CARD.name().equals(serviceId)) {
-
-        // Get input data
-        SelectAppAndPersonalizeCardInputDto inputData =
-            readerExtension.getInputData(SelectAppAndPersonalizeCardInputDto.class);
-
-        // Get the eventually processed selection scenario
-        Properties properties = readerExtension.getInitialCardContent(Properties.class);
-
-        // Execute service
-        outputData = cardService.selectAppAndPersonalizeCard(reader, inputData, properties);
-
-      } else {
-        throw new IllegalArgumentException("Service ID not recognized");
-      }
+      // Executes the business service matching the Service ID specified by the client.
+      Object outputData = remoteServiceDispatcher.execute(reader, readerExtension);
 
       // Terminates the business service by providing the reader name and the optional output data.
       pluginExtension.endRemoteService(readerName, outputData);

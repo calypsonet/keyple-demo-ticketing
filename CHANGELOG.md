@@ -372,6 +372,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   of `4`) for an expired environment, and distinguish the card communication errors (`1`) from the other errors (`2`)
   instead of returning `1` for all errors. `SELECT_APP_AND_LOAD_CONTRACT` now returns the dedicated code `6` (instead
   of `2`) when the presented card is not the one read before.
+- The card processing is split by business operation instead of a single `CardService` class:
+  `ContractAnalysisService`, `ContractLoadingService` and `CardPersonalizationService` (Keyple clients),
+  `CardSelectionApi` (JSON API: selection of the application by the server, then delegation to the previous services)
+  and `ContractCounterService` (.NET client). The remote services are dispatched by `RemoteServiceDispatcher` with a
+  `switch` on `RemoteServiceId` (`CardConfigurator` only setting up the Keyple infrastructure), the transactions of the dashboard are recorded by `ActivityRecorder`, and the selection of the
+  application and the result messages of the JSON API are written once instead of three times. No functional change.
 #### Removed
 - Unreachable "card not read" status code (`4`) of the contract writing.
 #### Fixed

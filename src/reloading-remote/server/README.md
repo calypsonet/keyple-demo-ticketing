@@ -34,6 +34,25 @@ This Java server implements the business logic for the Keyple Demo ecosystem, ma
                         └───────────────────┘
 ```
 
+### Code Organization
+
+The card processing (`card` package) is split by business operation, `RemoteServiceDispatcher` dispatching each
+remote service (`RemoteServiceId`) to the service handling it:
+
+| Class | Remote services | Clients |
+|-------|-----------------|---------|
+| `ContractAnalysisService` | `READ_CARD_AND_ANALYZE_CONTRACTS` | Android (Keyple) |
+| `ContractLoadingService` | `READ_CARD_AND_WRITE_CONTRACT` | Android (Keyple) |
+| `CardPersonalizationService` | `PERSONALIZE_CARD` | Android (Keyple) |
+| `CardSelectionApi` | `SELECT_APP_AND_ANALYZE_CONTRACTS`, `SELECT_APP_AND_LOAD_CONTRACT`, `SELECT_APP_AND_PERSONALIZE_CARD` | Multiplatform (JSON API) |
+| `ContractCounterService` | `SELECT_APP_AND_READ_CONTRACTS`, `SELECT_APP_AND_INCREASE_CONTRACT_COUNTER` | .NET |
+
+- With the Keyple clients, the client selects the application of the card. With the other clients, the server
+  selects it: `CardSelectionApi` selects the application, then delegates to the analysis, loading or
+  personalization service and converts the result into a message ready to be displayed.
+- `CardRepository` reads and writes the card files, `ActivityRecorder` records the transactions displayed by the
+  dashboard, and `CardConfigurator` sets up the Keyple infrastructure (SAM and remote plugins).
+
 ## Prerequisites
 
 ### Hardware Requirements
