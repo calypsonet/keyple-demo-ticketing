@@ -64,6 +64,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `TicketingServer` (remote services of the server, formerly `RemoteServiceManager`). The readers are released by
   `release` instead of `onDestroy` (Android vocabulary), and `unregisterPlugin` is no longer part of the port of the
   reloading client, being only used by its implementation.
+- Android applications: the values of `CardProtocol` are named without the redundant `_LOGICAL_PROTOCOL` suffix
+  (e.g. `ISO_14443_4`), the enum being documented as the logical protocols of the cards.
+- Android applications: each application stays standalone (no shared Android module), and the technical files
+  duplicated between the applications which must stay identical are checked by the CI
+  (`.github/scripts/check-android-twin-files.sh`).
 - Android applications: the messages logged through the `Logger` port are tagged in Logcat with the name of the
   calling class (they were all tagged `LoggerImpl`).
 - Android applications: card processing is now finalized with `ObservableCardReader.finalizeCardProcessing()` after

@@ -76,20 +76,20 @@ constructor(
     cardPluginName = BluebirdConstants.PLUGIN_NAME
     cardReaderName = BluebirdConstants.CARD_READER_NAME
     cardReaderProtocols[BluebirdContactlessProtocols.ISO_14443_4_A.name] =
-        CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name
+        CardProtocol.ISO_14443_4.name
     cardReaderProtocols[BluebirdContactlessProtocols.ISO_14443_4_B.name] =
-        CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name
+        CardProtocol.ISO_14443_4.name
     cardReaderProtocols[BluebirdContactlessProtocols.MIFARE_ULTRALIGHT.name] =
-        CardProtocol.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name
+        CardProtocol.MIFARE_ULTRALIGHT.name
     cardReaderProtocols[BluebirdContactlessProtocols.ST25_SRT512.name] =
-        CardProtocol.ST25_SRT512_LOGICAL_PROTOCOL.name
+        CardProtocol.ST25_SRT512.name
     cardReaderProtocols[BluebirdContactlessProtocols.MIFARE_CLASSIC.name] =
-        CardProtocol.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name
+        CardProtocol.MIFARE_CLASSIC.name
     samPluginName = BluebirdConstants.PLUGIN_NAME
     samReaderNameRegex = ".*ContactReader"
     samReaderName = BluebirdConstants.SAM_READER_NAME
     samReaderProtocolPhysicalName = ContactCardCommonProtocols.ISO_7816_3.name
-    samReaderProtocolLogicalName = CardProtocol.ISO_7816_LOGICAL_PROTOCOL.name
+    samReaderProtocolLogicalName = CardProtocol.ISO_7816.name
     isStorageCardSupported = true
   }
 
@@ -98,22 +98,21 @@ constructor(
     cardPluginName = AndroidNfcConstants.PLUGIN_NAME
     cardReaderName = AndroidNfcConstants.READER_NAME
     cardReaderProtocols[AndroidNfcSupportedProtocols.ISO_14443_4.name] =
-        CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name
+        CardProtocol.ISO_14443_4.name
     cardReaderProtocols[AndroidNfcSupportedProtocols.MIFARE_CLASSIC_1K.name] =
-        CardProtocol.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name
+        CardProtocol.MIFARE_CLASSIC.name
     samPluginName = AndroidFamocoPlugin.PLUGIN_NAME
     samReaderNameRegex = ".*FamocoReader"
     samReaderName = AndroidFamocoReader.READER_NAME
     samReaderProtocolPhysicalName = ContactCardCommonProtocols.ISO_7816_3.name
-    samReaderProtocolLogicalName = CardProtocol.ISO_7816_LOGICAL_PROTOCOL.name
+    samReaderProtocolLogicalName = CardProtocol.ISO_7816.name
   }
 
   private fun initArriveReader() {
     terminalType = TerminalType.ARRIVE
     cardPluginName = ArriveConstants.PLUGIN_NAME
     cardReaderName = ArriveConstants.CARD_READER_NAME
-    cardReaderProtocols[ArriveContactlessProtocols.ISO_14443_4.name] =
-        CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name
+    cardReaderProtocols[ArriveContactlessProtocols.ISO_14443_4.name] = CardProtocol.ISO_14443_4.name
     samPluginName = ArriveConstants.PLUGIN_NAME
     samReaderNameRegex = ".*SAM.*"
     samReaderName = ArriveConstants.SAM.SAM_1.readerName

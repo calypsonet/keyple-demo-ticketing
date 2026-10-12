@@ -12,9 +12,14 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.domain.model
 
+/**
+ * Logical protocols of the cards, in the sense of Keyple: they are associated with the physical
+ * protocols of the reader plugins when the protocols are activated, and used as filter by the card
+ * selection.
+ */
 enum class CardProtocol {
-  ISO_14443_4_LOGICAL_PROTOCOL,
-  MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL,
-  ST25_SRT512_LOGICAL_PROTOCOL,
-  MIFARE_CLASSIC_LOGICAL_PROTOCOL
+  ISO_14443_4,
+  MIFARE_ULTRALIGHT,
+  ST25_SRT512,
+  MIFARE_CLASSIC
 }

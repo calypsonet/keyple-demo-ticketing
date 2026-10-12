@@ -137,7 +137,7 @@ class CardReaderSession(
       val calypsoCardSelector =
           readerApiFactory
               .createIsoCardSelector()
-              .filterByCardProtocol(CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name)
+              .filterByCardProtocol(CardProtocol.ISO_14443_4.name)
               .filterByDfName(it)
       cardSelectionManager.prepareSelection(
           calypsoCardSelector,
@@ -148,17 +148,17 @@ class CardReaderSession(
       cardSelectionManager.prepareSelection(
           readerApiFactory
               .createBasicCardSelector()
-              .filterByCardProtocol(CardProtocol.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name),
+              .filterByCardProtocol(CardProtocol.MIFARE_ULTRALIGHT.name),
           storageCardApiFactory.createStorageCardSelectionExtension(MIFARE_ULTRALIGHT))
       cardSelectionManager.prepareSelection(
           readerApiFactory
               .createBasicCardSelector()
-              .filterByCardProtocol(CardProtocol.ST25_SRT512_LOGICAL_PROTOCOL.name),
+              .filterByCardProtocol(CardProtocol.ST25_SRT512.name),
           storageCardApiFactory.createStorageCardSelectionExtension(ST25_SRT512))
       cardSelectionManager.prepareSelection(
           readerApiFactory
               .createBasicCardSelector()
-              .filterByCardProtocol(CardProtocol.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name),
+              .filterByCardProtocol(CardProtocol.MIFARE_CLASSIC.name),
           storageCardApiFactory.createStorageCardSelectionExtension(MIFARE_CLASSIC_1K))
     }
 

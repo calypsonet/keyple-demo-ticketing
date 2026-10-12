@@ -67,15 +67,15 @@ class KeypleTerminalReaders @Inject constructor(private val logger: Logger) : Te
     cardPluginName = BluebirdConstants.PLUGIN_NAME
     cardReaderName = BluebirdConstants.CARD_READER_NAME
     cardReaderProtocols[BluebirdContactlessProtocols.ISO_14443_4_A.name] =
-        CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name
+        CardProtocol.ISO_14443_4.name
     cardReaderProtocols[BluebirdContactlessProtocols.ISO_14443_4_B.name] =
-        CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name
+        CardProtocol.ISO_14443_4.name
     cardReaderProtocols[BluebirdContactlessProtocols.MIFARE_ULTRALIGHT.name] =
-        CardProtocol.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name
+        CardProtocol.MIFARE_ULTRALIGHT.name
     cardReaderProtocols[BluebirdContactlessProtocols.ST25_SRT512.name] =
-        CardProtocol.ST25_SRT512_LOGICAL_PROTOCOL.name
+        CardProtocol.ST25_SRT512.name
     cardReaderProtocols[BluebirdContactlessProtocols.MIFARE_CLASSIC.name] =
-        CardProtocol.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name
+        CardProtocol.MIFARE_CLASSIC.name
     isStorageCardSupported = true
   }
 
@@ -84,11 +84,11 @@ class KeypleTerminalReaders @Inject constructor(private val logger: Logger) : Te
     cardPluginName = AndroidNfcConstants.PLUGIN_NAME
     cardReaderName = AndroidNfcConstants.READER_NAME
     cardReaderProtocols[AndroidNfcSupportedProtocols.ISO_14443_4.name] =
-        CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name
+        CardProtocol.ISO_14443_4.name
     cardReaderProtocols[AndroidNfcSupportedProtocols.MIFARE_ULTRALIGHT.name] =
-        CardProtocol.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name
+        CardProtocol.MIFARE_ULTRALIGHT.name
     cardReaderProtocols[AndroidNfcSupportedProtocols.MIFARE_CLASSIC_1K.name] =
-        CardProtocol.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name
+        CardProtocol.MIFARE_CLASSIC.name
   }
 
   /** Register any keyple plugin */

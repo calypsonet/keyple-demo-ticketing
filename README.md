@@ -170,6 +170,12 @@ drive the user flow and call the domain directly.
 The `domain` layer is designed to be easily transposed to another language (e.g. C++ or Rust): only the `ui` and
 `data` layers are specific to the target language and platform.
 
+Each application is standalone and can be read, built or copied on its own: no module is shared between the Android
+applications apart from the `common` library. The duplication of some technical files (ports and adapters of the
+platform, terminal configuration, permissions...) is assumed. The files which must stay identical are checked by
+the CI (`.github/scripts/check-android-twin-files.sh`): a change of one of them must be reported in each
+application.
+
 | Package  | Content                                                                                               |
 |----------|-------------------------------------------------------------------------------------------------------|
 | `domain` | Business logic: `CardReaderSession` and `usecases` (entry points of the UI), `procedures`, `model`, and the ports (`spi`) |
@@ -238,10 +244,12 @@ The `domain` layer is designed to be easily transposed to another language (e.g.
 - The refusal of a card by a business rule is a result (`RejectionReason`), not an exception: the exceptions are kept
   for the technical errors (card communication...).
 
-These rules are checked by the CI (`.github/scripts/check-android-architecture.sh`), which can also be run locally:
+These rules are checked by the CI (`.github/scripts/check-android-architecture.sh`, and
+`.github/scripts/check-android-twin-files.sh` for the twin files), which can also be run locally:
 
 ```sh
 bash .github/scripts/check-android-architecture.sh src/control
+bash .github/scripts/check-android-twin-files.sh
 ```
 
 **Naming conventions**
