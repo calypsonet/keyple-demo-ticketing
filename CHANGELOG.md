@@ -426,6 +426,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Android target SDK defined by its own `androidTargetSdk` property (still `35`) instead of `androidCompileSdk`.
 - The background tasks of `KeypleService` (server ping, card selection scenario) and the tones of the desktop buzzer
   are launched in a scope owned by their class instead of `GlobalScope`.
+- Code organized in packages by role: `dto` (DTOs of the JSON API), `service` (`KeypleService`, `CardRepository`,
+  `ServerConfigRepository`) and `platform` (buzzer and data store, with their `expect`/`actual` declarations), `App`
+  and `AppViewModel` staying in the root package.
+- The DTOs of the JSON API are named as in the `common` library which they mirror (e.g.
+  `SelectAppAndLoadContractInputDto` instead of `WriteContract`, `SelectAppAndPersonalizeCardInputDto` and
+  `SelectAppAndAnalyzeContractsInputDto` instead of `GenericSelectAppInputDto`), and the outputs of the
+  personalization and of the loading are read with their own DTO instead of a generic `OutputData`. The unused
+  `InputData` and `InputDataIncreaseCounter` DTOs are removed. The exchanged JSON is unchanged.
+- The server configuration (address, endpoint, basic authentication) is read and saved by a dedicated
+  `ServerConfigRepository` instead of `KeypleService`, and is loaded without blocking the main thread
+  (`KeypleService.start()` is a suspend function instead of using `runBlocking`).
 - The `expect`/`actual` classes (beta feature of Kotlin) are explicitly enabled (`-Xexpect-actual-classes`), removing
   the related compilation warnings (and the related `@Suppress` annotations).
 - Android: Java 17 as source and target level instead of Java 11, as in the other Android applications. The desktop

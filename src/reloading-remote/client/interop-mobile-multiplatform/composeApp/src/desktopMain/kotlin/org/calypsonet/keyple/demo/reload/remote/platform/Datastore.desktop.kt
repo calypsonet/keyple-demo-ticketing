@@ -10,25 +10,10 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.nfc.write
+package org.calypsonet.keyple.demo.reload.remote.platform
 
-import kotlinx.serialization.Serializable
-
-@Serializable
-enum class PriorityCode {
-  FORBIDDEN,
-  SEASON_PASS,
-  MULTI_TRIP,
-  EXPIRED,
-  UNKNOWN
+actual class DataStorePathProducer {
+  actual fun producePath(): String {
+    return dataStoreFileName
+  }
 }
-
-@Serializable
-data class WriteContract(
-    val applicationSerialNumber: String,
-    val contractTariff: PriorityCode,
-    val pluginType: String = "Android NFC",
-    val tripsToLoad: Int
-)
-
-@Serializable data class AnalyzeContracts(val pluginType: String = "Android NFC")

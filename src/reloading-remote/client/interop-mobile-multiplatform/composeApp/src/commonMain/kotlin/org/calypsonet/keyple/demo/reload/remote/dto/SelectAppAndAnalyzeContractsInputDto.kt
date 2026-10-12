@@ -10,18 +10,16 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote
+package org.calypsonet.keyple.demo.reload.remote.dto
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
-import androidx.datastore.preferences.core.Preferences
-import okio.Path.Companion.toPath
+import kotlinx.serialization.Serializable
 
-internal const val dataStoreFileName = "keyple_client.preferences_pb"
-
-expect class DataStorePathProducer {
-  fun producePath(): String
-}
-
-fun createDataStore(pathProducer: DataStorePathProducer): DataStore<Preferences> =
-    PreferenceDataStoreFactory.createWithPath(produceFile = { pathProducer.producePath().toPath() })
+/**
+ * Input of the service analyzing the contracts of the card.
+ *
+ * Mirror of `org.calypsonet.keyple.demo.common.dto.SelectAppAndAnalyzeContractsInputDto` (JSON API
+ * of the server): the `common` library being JVM only, the DTOs are declared again for the
+ * multiplatform client.
+ */
+@Serializable
+data class SelectAppAndAnalyzeContractsInputDto(val pluginType: String = "Android NFC")

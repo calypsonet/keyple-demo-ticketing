@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2024 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2025 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -10,12 +10,15 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote
+package org.calypsonet.keyple.demo.reload.remote.platform
 
-import android.content.Context
+import platform.AudioToolbox.AudioServicesPlaySystemSound
+import platform.AudioToolbox.kSystemSoundID_Vibrate
 
-actual class DataStorePathProducer(private val context: Context) {
-  actual fun producePath(): String {
-    return context.filesDir.resolve(dataStoreFileName).absolutePath
+actual class PlatformBuzzer {
+  actual fun vibrate() {
+    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
   }
+
+  actual fun beep() {}
 }

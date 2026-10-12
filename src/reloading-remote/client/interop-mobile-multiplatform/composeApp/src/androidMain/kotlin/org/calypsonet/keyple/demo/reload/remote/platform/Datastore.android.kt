@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2025 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2024 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -10,25 +10,12 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote
+package org.calypsonet.keyple.demo.reload.remote.platform
 
-class Buzzer(val buzzer: PlatformBuzzer) {
-  fun vibrate() {
-    buzzer.vibrate()
+import android.content.Context
+
+actual class DataStorePathProducer(private val context: Context) {
+  actual fun producePath(): String {
+    return context.filesDir.resolve(dataStoreFileName).absolutePath
   }
-
-  fun beep() {
-    buzzer.beep()
-  }
-
-  fun beepAndVibrate() {
-    vibrate()
-    beep()
-  }
-}
-
-expect class PlatformBuzzer {
-  fun vibrate()
-
-  fun beep()
 }

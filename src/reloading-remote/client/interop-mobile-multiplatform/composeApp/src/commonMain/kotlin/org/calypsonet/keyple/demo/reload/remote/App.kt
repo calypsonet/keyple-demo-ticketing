@@ -36,6 +36,9 @@ import org.calypsonet.keyple.demo.reload.remote.nfc.read.ReadCardScreen
 import org.calypsonet.keyple.demo.reload.remote.nfc.read.ReadCardScreenViewModel
 import org.calypsonet.keyple.demo.reload.remote.nfc.write.WriteCardScreen
 import org.calypsonet.keyple.demo.reload.remote.nfc.write.WriteCardScreenViewModel
+import org.calypsonet.keyple.demo.reload.remote.service.CardRepository
+import org.calypsonet.keyple.demo.reload.remote.service.KeypleService
+import org.calypsonet.keyple.demo.reload.remote.service.ServerConfigRepository
 import org.calypsonet.keyple.demo.reload.remote.settings.ServerConfigScreen
 import org.calypsonet.keyple.demo.reload.remote.settings.ServerConfigScreenViewModel
 import org.calypsonet.keyple.demo.reload.remote.settings.SettingsScreen
@@ -45,11 +48,16 @@ import org.calypsonet.keyple.demo.reload.remote.ui.SuccessScreen
 
 @Composable
 @Preview
-fun App(service: KeypleService, cardRepository: CardRepository) {
+fun App(
+    service: KeypleService,
+    cardRepository: CardRepository,
+    serverConfigRepository: ServerConfigRepository
+) {
   val vm = viewModel<AppViewModel> { AppViewModel(keypleService = service) }
   val serverConfigVm =
       viewModel<ServerConfigScreenViewModel> {
-        ServerConfigScreenViewModel(keypleService = service)
+        ServerConfigScreenViewModel(
+            keypleService = service, serverConfigRepository = serverConfigRepository)
       }
 
   val navController = rememberNavController()

@@ -10,34 +10,21 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote
+package org.calypsonet.keyple.demo.reload.remote.dto
 
 import kotlinx.serialization.Serializable
 
-@Serializable data class InputDataIncreaseCounter(val counterIncrement: String = "1")
-
-@Serializable class InputData
-
-@Serializable data class GenericSelectAppInputDto(val pluginType: String = "Android NFC")
-
+/**
+ * Input of the service loading a contract in the card.
+ *
+ * Mirror of `org.calypsonet.keyple.demo.common.dto.SelectAppAndLoadContractInputDto` (JSON API of
+ * the server): the `common` library being JVM only, the DTOs are declared again for the
+ * multiplatform client.
+ */
 @Serializable
-data class SelectAppAndAnalyzeContractsOutputDto(
+data class SelectAppAndLoadContractInputDto(
     val applicationSerialNumber: String,
-    val contracts: List<ContractInfo>,
-    val message: String,
-    val statusCode: Int,
-)
-
-@Serializable
-data class OutputData(
-    val items: List<String>?,
-    val statusCode: Int,
-    val message: String,
-)
-
-@Serializable
-data class ContractInfo(
-    val name: String,
-    val description: String,
-    val isValid: Boolean,
+    val contractTariff: PriorityCode,
+    val pluginType: String = "Android NFC",
+    val tripsToLoad: Int
 )

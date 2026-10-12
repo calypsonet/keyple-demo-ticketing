@@ -17,8 +17,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
-import org.calypsonet.keyple.demo.reload.remote.CardRepository
-import org.calypsonet.keyple.demo.reload.remote.ContractInfo
+import org.calypsonet.keyple.demo.reload.remote.dto.SelectAppAndAnalyzeContractsOutputDto.ContractInfo
+import org.calypsonet.keyple.demo.reload.remote.service.CardRepository
 
 sealed class CardContentScreenState(val screenTitle: String) {
   data class DisplayContent(val contracts: List<ContractInfo> = emptyList()) :

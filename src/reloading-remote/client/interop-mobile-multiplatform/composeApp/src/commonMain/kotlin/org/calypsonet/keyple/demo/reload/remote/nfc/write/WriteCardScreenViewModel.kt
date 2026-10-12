@@ -18,9 +18,10 @@ import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import org.calypsonet.keyple.demo.reload.remote.KeypleService
 import org.calypsonet.keyple.demo.reload.remote.card.ProductType
+import org.calypsonet.keyple.demo.reload.remote.dto.PriorityCode
 import org.calypsonet.keyple.demo.reload.remote.nav.LoadContract
+import org.calypsonet.keyple.demo.reload.remote.service.KeypleService
 import org.eclipse.keyple.interop.jsonapi.client.api.KeypleResult
 
 sealed class WriteCardScreenState {

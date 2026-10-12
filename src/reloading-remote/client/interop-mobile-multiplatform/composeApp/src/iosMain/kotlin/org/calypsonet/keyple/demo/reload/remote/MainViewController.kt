@@ -15,10 +15,17 @@ package org.calypsonet.keyple.demo.reload.remote
 import androidx.compose.ui.window.ComposeUIViewController
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
+import org.calypsonet.keyple.demo.reload.remote.platform.Buzzer
+import org.calypsonet.keyple.demo.reload.remote.platform.DataStorePathProducer
+import org.calypsonet.keyple.demo.reload.remote.platform.PlatformBuzzer
+import org.calypsonet.keyple.demo.reload.remote.platform.createDataStore
+import org.calypsonet.keyple.demo.reload.remote.service.CardRepository
+import org.calypsonet.keyple.demo.reload.remote.service.KeypleService
+import org.calypsonet.keyple.demo.reload.remote.service.ServerConfigRepository
 import org.eclipse.keyple.interop.localreader.nfcmobile.api.*
 import platform.UIKit.UIDevice
 
-val dataStore = createDataStore(DataStorePathProducer())
+val serverConfigRepository = ServerConfigRepository(createDataStore(DataStorePathProducer()))
 
 val cardRepository = CardRepository()
 
@@ -31,9 +38,11 @@ val remoteService =
                 }),
         clientId = UIDevice.currentDevice.identifierForVendor?.UUIDString() ?: "anon",
         cardRepository = cardRepository,
-        dataStore = dataStore,
+        serverConfigRepository = serverConfigRepository,
         buzzer = Buzzer(PlatformBuzzer()))
 
 val logger = Napier.base(DebugAntilog())
 
-fun MainViewController() = ComposeUIViewController { App(remoteService, cardRepository) }
+fun MainViewController() = ComposeUIViewController {
+  App(remoteService, cardRepository, serverConfigRepository)
+}

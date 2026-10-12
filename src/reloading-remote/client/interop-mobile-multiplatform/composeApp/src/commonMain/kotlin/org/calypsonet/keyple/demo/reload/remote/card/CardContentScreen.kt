@@ -50,7 +50,7 @@ import org.calypsonet.keyple.composeapp.generated.resources.basket_multi_trip
 import org.calypsonet.keyple.composeapp.generated.resources.basket_season_pass
 import org.calypsonet.keyple.composeapp.generated.resources.card_empty
 import org.calypsonet.keyple.demo.reload.remote.AppState
-import org.calypsonet.keyple.demo.reload.remote.ContractInfo
+import org.calypsonet.keyple.demo.reload.remote.dto.SelectAppAndAnalyzeContractsOutputDto.ContractInfo
 import org.calypsonet.keyple.demo.reload.remote.nav.Home
 import org.calypsonet.keyple.demo.reload.remote.nav.LoadContract
 import org.calypsonet.keyple.demo.reload.remote.ui.KeypleTopAppBar

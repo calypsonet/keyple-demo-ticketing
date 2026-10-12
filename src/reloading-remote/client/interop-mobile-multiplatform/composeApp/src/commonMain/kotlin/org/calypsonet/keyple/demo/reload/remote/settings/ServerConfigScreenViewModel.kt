@@ -18,7 +18,8 @@ import io.ktor.http.Url
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import org.calypsonet.keyple.demo.reload.remote.KeypleService
+import org.calypsonet.keyple.demo.reload.remote.service.KeypleService
+import org.calypsonet.keyple.demo.reload.remote.service.ServerConfigRepository
 
 data class ServerConfigScreenState(
     val serverHost: String = "",
@@ -27,13 +28,16 @@ data class ServerConfigScreenState(
     val endpoint: String = ""
 )
 
-class ServerConfigScreenViewModel(private val keypleService: KeypleService) : ViewModel() {
+class ServerConfigScreenViewModel(
+    private val keypleService: KeypleService,
+    private val serverConfigRepository: ServerConfigRepository
+) : ViewModel() {
   private var _state = MutableStateFlow(ServerConfigScreenState())
   val state = _state.asStateFlow()
 
   init {
     viewModelScope.launch {
-      keypleService.observeServerConfig().collect {
+      serverConfigRepository.observe().collect {
         val hostUrl = Url(it.host)
         _state.value =
             ServerConfigScreenState(
@@ -47,7 +51,7 @@ class ServerConfigScreenViewModel(private val keypleService: KeypleService) : Vi
 
   fun restartServer() {
     viewModelScope.launch {
-      keypleService.updateServerConfig(
+      serverConfigRepository.update(
           host = state.value.serverHost,
           port = state.value.serverPort,
           protocol = state.value.protocol,

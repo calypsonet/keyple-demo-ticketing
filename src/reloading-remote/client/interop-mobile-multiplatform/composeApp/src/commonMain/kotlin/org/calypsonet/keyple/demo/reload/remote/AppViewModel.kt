@@ -17,6 +17,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.calypsonet.keyple.demo.reload.remote.service.KeypleService
 
 data class AppState(val serverOnline: Boolean = false)
 

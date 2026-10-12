@@ -17,6 +17,13 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import org.calypsonet.keyple.demo.reload.remote.platform.Buzzer
+import org.calypsonet.keyple.demo.reload.remote.platform.DataStorePathProducer
+import org.calypsonet.keyple.demo.reload.remote.platform.PlatformBuzzer
+import org.calypsonet.keyple.demo.reload.remote.platform.createDataStore
+import org.calypsonet.keyple.demo.reload.remote.service.CardRepository
+import org.calypsonet.keyple.demo.reload.remote.service.KeypleService
+import org.calypsonet.keyple.demo.reload.remote.service.ServerConfigRepository
 import org.eclipse.keyple.interop.localreader.nfcmobile.api.LocalNfcReader
 import org.eclipse.keyple.interop.localreader.nfcmobile.api.MultiplatformNfcReader
 
@@ -26,14 +33,16 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
 
     val cardRepository = CardRepository()
+    val serverConfigRepository =
+        ServerConfigRepository(createDataStore(DataStorePathProducer(applicationContext)))
     val keypleService =
         KeypleService(
             reader = MultiplatformNfcReader(LocalNfcReader(this)),
             clientId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID),
-            dataStore = createDataStore(DataStorePathProducer(applicationContext)),
+            serverConfigRepository = serverConfigRepository,
             cardRepository = cardRepository,
             buzzer = Buzzer(PlatformBuzzer(applicationContext)))
 
-    setContent { App(keypleService, cardRepository) }
+    setContent { App(keypleService, cardRepository, serverConfigRepository) }
   }
 }

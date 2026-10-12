@@ -10,7 +10,9 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote
+package org.calypsonet.keyple.demo.reload.remote.service
+
+import org.calypsonet.keyple.demo.reload.remote.dto.SelectAppAndAnalyzeContractsOutputDto.ContractInfo
 
 class CardRepository {
   private var cardContracts: List<ContractInfo>? = null

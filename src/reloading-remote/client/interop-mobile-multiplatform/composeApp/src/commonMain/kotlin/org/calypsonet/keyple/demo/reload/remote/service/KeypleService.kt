@@ -10,13 +10,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote
+package org.calypsonet.keyple.demo.reload.remote.service
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -30,37 +25,33 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.calypsonet.keyple.demo.reload.remote.dto.PriorityCode
+import org.calypsonet.keyple.demo.reload.remote.dto.RemoteServiceOutputDto
+import org.calypsonet.keyple.demo.reload.remote.dto.SelectAppAndAnalyzeContractsInputDto
+import org.calypsonet.keyple.demo.reload.remote.dto.SelectAppAndAnalyzeContractsOutputDto
+import org.calypsonet.keyple.demo.reload.remote.dto.SelectAppAndLoadContractInputDto
+import org.calypsonet.keyple.demo.reload.remote.dto.SelectAppAndLoadContractOutputDto
+import org.calypsonet.keyple.demo.reload.remote.dto.SelectAppAndPersonalizeCardInputDto
+import org.calypsonet.keyple.demo.reload.remote.dto.SelectAppAndPersonalizeCardOutputDto
 import org.calypsonet.keyple.demo.reload.remote.network.KeypleServerConfig
 import org.calypsonet.keyple.demo.reload.remote.network.SimpleHttpNetworkClient
 import org.calypsonet.keyple.demo.reload.remote.network.buildHttpClient
-import org.calypsonet.keyple.demo.reload.remote.nfc.write.PriorityCode
-import org.calypsonet.keyple.demo.reload.remote.nfc.write.WriteContract
+import org.calypsonet.keyple.demo.reload.remote.platform.Buzzer
 import org.eclipse.keyple.interop.jsonapi.client.api.KeypleResult
 import org.eclipse.keyple.interop.jsonapi.client.api.KeypleTerminal
 import org.eclipse.keyple.interop.jsonapi.client.api.ServerIOException
 import org.eclipse.keyple.interop.jsonapi.client.api.Status
 import org.eclipse.keyple.interop.jsonapi.client.spi.LocalReader
 
-const val SELECT_APP_AND_PERSONALIZE_CARD = "SELECT_APP_AND_PERSONALIZE_CARD"
-const val SELECT_APP_AND_ANALYZE_CONTRACTS = "SELECT_APP_AND_ANALYZE_CONTRACTS"
-const val SELECT_APP_AND_LOAD_CONTRACT = "SELECT_APP_AND_LOAD_CONTRACT"
-
-private val SERVER_IP_KEY = stringPreferencesKey("server_ip_key")
-private val SERVER_PORT_KEY = intPreferencesKey("server_port_key")
-private val SERVER_PROTOCOL_KEY = stringPreferencesKey("server_protocol_key")
-private val SERVER_ENDPOINT_KEY = stringPreferencesKey("server_endpoint_key")
-private val SERVER_BASIC_AUTH = stringPreferencesKey("server_basicauth_key")
+private const val SELECT_APP_AND_PERSONALIZE_CARD = "SELECT_APP_AND_PERSONALIZE_CARD"
+private const val SELECT_APP_AND_ANALYZE_CONTRACTS = "SELECT_APP_AND_ANALYZE_CONTRACTS"
+private const val SELECT_APP_AND_LOAD_CONTRACT = "SELECT_APP_AND_LOAD_CONTRACT"
 
 data class KeypleServiceState(val serverReachable: Boolean = false)
 
@@ -69,7 +60,7 @@ private const val TAG = "KeypleService"
 class KeypleService(
     private val reader: LocalReader,
     private val clientId: String,
-    private val dataStore: DataStore<Preferences>,
+    private val serverConfigRepository: ServerConfigRepository,
     private val cardRepository: CardRepository,
     private val buzzer: Buzzer
 ) {
@@ -101,8 +92,8 @@ class KeypleService(
   private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
   private var pingJob: Job? = null
 
-  fun start() {
-    loadServerConfig()
+  suspend fun start() {
+    serverConfig = serverConfigRepository.load()
 
     val server = SimpleHttpNetworkClient(serverConfig!!, buildHttpClient(LogLevel.ALL))
 
@@ -110,41 +101,6 @@ class KeypleService(
 
     launchPingJob()
     launchGetCardSelectionScenarioJob()
-  }
-
-  private fun loadServerConfig() {
-    runBlocking {
-      val preferences = dataStore.data.first()
-      val serverIp = preferences[SERVER_IP_KEY] ?: "82.96.147.205"
-      val serverPort = preferences[SERVER_PORT_KEY] ?: 42080
-      val serverProtocol = preferences[SERVER_PROTOCOL_KEY] ?: "http"
-      val serverEndpoint = preferences[SERVER_ENDPOINT_KEY] ?: "/card/remote-plugin"
-      val basicAuth = preferences[SERVER_BASIC_AUTH] ?: ""
-
-      serverConfig =
-          KeypleServerConfig(
-              "$serverProtocol://$serverIp", serverPort, serverEndpoint, basicAuth = basicAuth)
-    }
-  }
-
-  fun observeServerConfig(): Flow<KeypleServerConfig> {
-    return dataStore.data.map { preferences ->
-      val serverIp = preferences[SERVER_IP_KEY] ?: "82.96.147.205"
-      val serverPort = preferences[SERVER_PORT_KEY] ?: 42080
-      val serverProtocol = preferences[SERVER_PROTOCOL_KEY] ?: "http"
-      val serverEndpoint = preferences[SERVER_ENDPOINT_KEY] ?: "/card/remote-plugin"
-
-      KeypleServerConfig("$serverProtocol://$serverIp", serverPort, serverEndpoint)
-    }
-  }
-
-  suspend fun updateServerConfig(host: String, port: Int, protocol: String, endpoint: String) {
-    dataStore.edit { preferences ->
-      preferences[SERVER_IP_KEY] = host
-      preferences[SERVER_PORT_KEY] = port
-      preferences[SERVER_PROTOCOL_KEY] = protocol
-      preferences[SERVER_ENDPOINT_KEY] = endpoint
-    }
   }
 
   private fun launchPingJob() {
@@ -231,8 +187,8 @@ class KeypleService(
             executeService(
                 service,
                 SELECT_APP_AND_ANALYZE_CONTRACTS,
-                GenericSelectAppInputDto(),
-                GenericSelectAppInputDto.serializer(),
+                SelectAppAndAnalyzeContractsInputDto(),
+                SelectAppAndAnalyzeContractsInputDto.serializer(),
                 SelectAppAndAnalyzeContractsOutputDto.serializer())
 
         when (result) {
@@ -259,11 +215,12 @@ class KeypleService(
     return withContext(Dispatchers.IO) {
       remoteService?.let {
         val result =
-            executeServiceWithGenericOutput(
+            executeServiceWithStatusOutput(
                 it,
                 SELECT_APP_AND_PERSONALIZE_CARD,
-                GenericSelectAppInputDto(),
-                GenericSelectAppInputDto.serializer())
+                SelectAppAndPersonalizeCardInputDto(),
+                SelectAppAndPersonalizeCardInputDto.serializer(),
+                SelectAppAndPersonalizeCardOutputDto.serializer())
         when (result) {
           is KeypleResult.Failure -> {
             return@withContext result
@@ -283,14 +240,15 @@ class KeypleService(
     return withContext(Dispatchers.IO) {
       remoteService?.let {
         val result =
-            executeServiceWithGenericOutput(
+            executeServiceWithStatusOutput(
                 it,
                 SELECT_APP_AND_LOAD_CONTRACT,
-                WriteContract(
+                SelectAppAndLoadContractInputDto(
                     applicationSerialNumber = cardRepository.getCardSerial(),
                     contractTariff = code,
                     tripsToLoad = tripsToLoad),
-                WriteContract.serializer())
+                SelectAppAndLoadContractInputDto.serializer(),
+                SelectAppAndLoadContractOutputDto.serializer())
         when (result) {
           is KeypleResult.Failure -> {
             return@withContext result
@@ -303,14 +261,19 @@ class KeypleService(
     }
   }
 
-  private suspend fun <T> executeServiceWithGenericOutput(
+  /**
+   * Executes a remote service whose output only carries a status, and returns its message on
+   * success.
+   */
+  private suspend fun <T, R : RemoteServiceOutputDto> executeServiceWithStatusOutput(
       remote: KeypleTerminal,
       service: String,
       inputData: T? = null,
       inputSerializer: KSerializer<T>,
+      outputSerializer: KSerializer<R>,
   ): KeypleResult<String> {
     when (val result =
-        remote.executeRemoteService(service, inputData, inputSerializer, OutputData.serializer())) {
+        remote.executeRemoteService(service, inputData, inputSerializer, outputSerializer)) {
       is KeypleResult.Failure -> {
         Napier.e(
             tag = TAG,
@@ -329,9 +292,8 @@ class KeypleService(
                 message =
                     "Server side error: ${result.data!!.statusCode} / ${result.data!!.message}")
           } else {
-            val res = Json.encodeToString(result.data?.items ?: emptyList())
-            Napier.i(tag = TAG, message = "Output = $res")
-            return KeypleResult.Success(res)
+            Napier.i(tag = TAG, message = "Output = ${result.data!!.message}")
+            return KeypleResult.Success(result.data!!.message)
           }
         } else {
           return KeypleResult.Success("")

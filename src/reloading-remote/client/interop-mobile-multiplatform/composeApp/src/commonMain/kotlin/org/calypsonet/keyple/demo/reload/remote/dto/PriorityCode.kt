@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2025 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2024 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -10,15 +10,20 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote
+package org.calypsonet.keyple.demo.reload.remote.dto
 
-import platform.AudioToolbox.AudioServicesPlaySystemSound
-import platform.AudioToolbox.kSystemSoundID_Vibrate
+import kotlinx.serialization.Serializable
 
-actual class PlatformBuzzer {
-  actual fun vibrate() {
-    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
-  }
-
-  actual fun beep() {}
+/**
+ * Tariff of a contract (`PriorityCode` of the ticketing data model), exchanged by name.
+ *
+ * Mirror of `org.calypsonet.keyple.demo.common.model.type.PriorityCode`.
+ */
+@Serializable
+enum class PriorityCode {
+  FORBIDDEN,
+  SEASON_PASS,
+  MULTI_TRIP,
+  EXPIRED,
+  UNKNOWN
 }
