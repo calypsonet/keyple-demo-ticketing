@@ -214,7 +214,7 @@ The summary overlay of the reader screen (`CardReaderActivity`) displays both su
 - Interface for managing card and SAM readers
 - Handles plugin registration and reader initialization
 - Provides UI feedback hooks (success/failure)
-- Implementation: `ReaderManagerImpl`
+- Implementation: `KeypleReaderManager`
 
 **CalypsoCardValidationProcedure** (`domain/procedures/CalypsoCardValidationProcedure.kt`)
 - Secure validation procedure for Calypso cards with SAM integration
@@ -298,13 +298,11 @@ validation/app/
 │   │   │   ├── builders/                # Data builders
 │   │   │   ├── model/                   # Domain models
 │   │   │   ├── procedures/              # Validation procedures (Calypso, Storage)
-│   │   │   └── spi/                     # Service provider interfaces
+│   │   │   ├── spi/                     # Ports
+│   │   │   └── usecases/                # Use cases invoked by the UI
 │   │   └── ui/                          # UI layer
-│   │       ├── activities/              # Android activities
-│   │       │   └── deviceselection/     # Device selection screens
-│   │       ├── adapters/                # UI adapters
-│   │       ├── mappers/                 # Domain to UI mappers
-│   │       └── model/                   # UI models
+│   │       └── activities/              # Android activities
+│   │           └── deviceselection/     # Device selection screens
 │   ├── res/                             # Android resources
 │   └── AndroidManifest.xml              # App configuration
 ├── build.gradle.kts                     # Build configuration (Kotlin DSL)

@@ -46,7 +46,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - texts slightly harmonized: "Event error: wrong version number" and "Contract error: wrong version number" in both
     applications, and "An error occurred while reading the card." when a control error has no message.
 - Android applications: logging through the `Logger` port (same `d`/`i`/`w`/`e` interface in all applications) in the
-  domain, data and di layers. Timber is only used by `LoggerImpl`, `Application` and the activities.
+  domain, data and di layers. Timber is only used by `TimberLogger`, `Application` and the activities.
+- Android applications: the adapters are named after the technology they rely on instead of the `Impl` suffix
+  (`KeypleReaderManager`, `KeypleKeypopApiProvider`, `InMemoryAppSettingsRepository` and
+  `SharedPreferencesAppSettingsRepository`, `MediaPlayerUserFeedback` and `TerminalUserFeedback`,
+  `KeypleRemoteServiceManager`, `RestServerStatusProvider`, `DemoMifareClassicKeyProvider`, `TimberLogger`).
+  `UiContextImpl` is renamed `ActivityUiContext` and moves from `ui/adapters` to `ui`, the `adapters` package being
+  confusing with the RecyclerView adapters.
+- Android applications: the messages logged through the `Logger` port are tagged in Logcat with the name of the
+  calling class (they were all tagged `LoggerImpl`).
 - Android applications: card processing is now finalized with `ObservableCardReader.finalizeCardProcessing()` after
   each card.
 - Android applications: when the storage card extension is not available (e.g. mocked library), the storage cards are
@@ -253,7 +261,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Reloading remote Android client
 #### Changed
 - Major architectural refactoring to apply the layered architecture with ports and adapters: the plugins and readers
-  management is moved from the activities to `ReaderManagerImpl`, and the remote services are called through the
+  management is moved from the activities to `KeypleReaderManager`, and the remote services are called through the
   `RemoteServiceManager` port.
 - The business logic is moved from the activities to the domain: card selection (AIDs depending on the device),
   interpretation of the server status codes, building of the contracts and check that the reloaded card is the one

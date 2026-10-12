@@ -43,7 +43,7 @@ import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
  * Manager provided to encapsulate slight differences between readers provides methods to improve
  * code readability.
  */
-class ReaderManagerImpl @Inject constructor(private val logger: Logger) : ReaderManager {
+class KeypleReaderManager @Inject constructor(private val logger: Logger) : ReaderManager {
 
   private lateinit var terminalType: TerminalType
 
@@ -115,14 +115,14 @@ class ReaderManagerImpl @Inject constructor(private val logger: Logger) : Reader
               BluebirdPluginFactoryProvider.provideFactory(
                   activity,
                   ApduInterpreterFactoryProvider.provideFactory(),
-                  MifareClassicKeyProviderImpl())
+                  DemoMifareClassicKeyProvider())
 
           TerminalType.NFC_TERMINAL ->
               AndroidNfcPluginFactoryProvider.provideFactory(
                   AndroidNfcConfig(
                       activity = activity,
                       apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
-                      keyProvider = MifareClassicKeyProviderImpl()))
+                      keyProvider = DemoMifareClassicKeyProvider()))
         }
     SmartCardServiceProvider.getService().registerPlugin(pluginFactory)
   }

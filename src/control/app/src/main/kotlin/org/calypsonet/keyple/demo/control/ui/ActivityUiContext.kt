@@ -10,12 +10,12 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.ui.adapters
+package org.calypsonet.keyple.demo.control.ui
 
 import android.app.Activity
-import org.calypsonet.keyple.demo.reload.remote.domain.spi.UiContext
+import org.calypsonet.keyple.demo.control.domain.spi.UiContext
 
-class UiContextImpl(private val activity: Activity) : UiContext {
+class ActivityUiContext(private val activity: Activity) : UiContext {
 
   override fun <T> adaptTo(adapter: Class<T>): T {
     if (adapter.isAssignableFrom(Activity::class.java)) {

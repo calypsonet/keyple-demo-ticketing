@@ -17,7 +17,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-import org.calypsonet.keyple.demo.validation.data.AppSettingsRepositoryImpl
+import org.calypsonet.keyple.demo.validation.data.InMemoryAppSettingsRepository
 import org.calypsonet.keyple.demo.validation.domain.spi.AppSettingsRepository
 
 @Suppress("unused")
@@ -27,5 +27,5 @@ class AppSettingsModule {
 
   @Provides
   @Singleton
-  fun provideAppSettingsRepository(): AppSettingsRepository = AppSettingsRepositoryImpl()
+  fun provideAppSettingsRepository(): AppSettingsRepository = InMemoryAppSettingsRepository()
 }

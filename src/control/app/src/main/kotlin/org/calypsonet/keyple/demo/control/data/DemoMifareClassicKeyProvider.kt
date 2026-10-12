@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.data
+package org.calypsonet.keyple.demo.control.data
 
 import org.eclipse.keyple.core.util.HexUtil
 
@@ -21,7 +21,7 @@ import org.eclipse.keyple.core.util.HexUtil
  * In production, this should be replaced with a secure key management system using Android KeyStore
  * or a similar secure storage mechanism.
  */
-class MifareClassicKeyProviderImpl :
+class DemoMifareClassicKeyProvider :
     org.eclipse.keyple.plugin.android.nfc.spi.KeyProvider,
     org.calypsonet.keyple.plugin.bluebird.spi.KeyProvider {
   override fun getKey(keyNumber: Int): ByteArray? {

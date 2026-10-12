@@ -10,19 +10,16 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.data
+package org.calypsonet.keyple.demo.control.data
 
 import android.app.Activity
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.calypsonet.keyple.demo.validation.domain.model.CardProtocol
-import org.calypsonet.keyple.demo.validation.domain.model.TerminalType
-import org.calypsonet.keyple.demo.validation.domain.spi.ReaderManager
-import org.calypsonet.keyple.demo.validation.domain.spi.UiContext
-import org.calypsonet.keyple.plugin.arrive.ArriveConstants
-import org.calypsonet.keyple.plugin.arrive.ArriveContactlessProtocols
-import org.calypsonet.keyple.plugin.arrive.ArrivePluginFactoryProvider
+import org.calypsonet.keyple.demo.control.domain.model.CardProtocol
+import org.calypsonet.keyple.demo.control.domain.model.TerminalType
+import org.calypsonet.keyple.demo.control.domain.spi.ReaderManager
+import org.calypsonet.keyple.demo.control.domain.spi.UiContext
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
 import org.calypsonet.keyple.plugin.bluebird.BluebirdContactlessProtocols
 import org.calypsonet.keyple.plugin.bluebird.BluebirdPluginFactoryProvider
@@ -43,7 +40,7 @@ import org.eclipse.keypop.reader.ObservableCardReader
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 
-class ReaderManagerImpl
+class KeypleReaderManager
 @Inject
 constructor(
     private val readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi
@@ -66,9 +63,9 @@ constructor(
 
   private fun initTerminalType(terminalType: TerminalType) {
     when (terminalType) {
-      TerminalType.ARRIVE -> initArriveReader()
       TerminalType.BLUEBIRD -> initBluebirdReader()
       TerminalType.FAMOCO -> initFamocoReader()
+      TerminalType.NFC_TERMINAL -> initNfcTerminalReader()
     }
   }
 
@@ -107,19 +104,20 @@ constructor(
     samReaderName = AndroidFamocoReader.READER_NAME
     samReaderProtocolPhysicalName = ContactCardCommonProtocols.ISO_7816_3.name
     samReaderProtocolLogicalName = CardProtocol.ISO_7816_LOGICAL_PROTOCOL.name
+    isStorageCardSupported = true
   }
 
-  private fun initArriveReader() {
-    terminalType = TerminalType.ARRIVE
-    cardPluginName = ArriveConstants.PLUGIN_NAME
-    cardReaderName = ArriveConstants.CARD_READER_NAME
-    cardReaderProtocols[ArriveContactlessProtocols.ISO_14443_4.name] =
+  private fun initNfcTerminalReader() {
+    terminalType = TerminalType.NFC_TERMINAL
+    cardPluginName = AndroidNfcConstants.PLUGIN_NAME
+    cardReaderName = AndroidNfcConstants.READER_NAME
+    cardReaderProtocols[AndroidNfcSupportedProtocols.ISO_14443_4.name] =
         CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name
-    samPluginName = ArriveConstants.PLUGIN_NAME
-    samReaderNameRegex = ".*SAM.*"
-    samReaderName = ArriveConstants.SAM.SAM_1.readerName
-    samReaderProtocolPhysicalName = null
-    samReaderProtocolLogicalName = null
+    samPluginName = ""
+    samReaderNameRegex = ""
+    samReaderName = ""
+    samReaderProtocolPhysicalName = ""
+    samReaderProtocolLogicalName = ""
   }
 
   @Throws(KeyplePluginException::class)
@@ -130,20 +128,23 @@ constructor(
     val pluginFactory =
         withContext(Dispatchers.IO) {
           when (terminalType) {
-            TerminalType.ARRIVE -> {
-              ArrivePluginFactoryProvider.provideFactory(context = activity)
-            }
             TerminalType.BLUEBIRD ->
                 BluebirdPluginFactoryProvider.provideFactory(
                     activity,
                     ApduInterpreterFactoryProvider.provideFactory(),
-                    MifareClassicKeyProviderImpl())
+                    DemoMifareClassicKeyProvider())
             TerminalType.FAMOCO ->
                 AndroidNfcPluginFactoryProvider.provideFactory(
                     AndroidNfcConfig(
                         activity = activity,
                         apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
-                        keyProvider = MifareClassicKeyProviderImpl()))
+                        keyProvider = DemoMifareClassicKeyProvider()))
+            TerminalType.NFC_TERMINAL ->
+                AndroidNfcPluginFactoryProvider.provideFactory(
+                    AndroidNfcConfig(
+                        activity = activity,
+                        apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
+                        keyProvider = DemoMifareClassicKeyProvider()))
           }
         }
     SmartCardServiceProvider.getService().registerPlugin(pluginFactory)

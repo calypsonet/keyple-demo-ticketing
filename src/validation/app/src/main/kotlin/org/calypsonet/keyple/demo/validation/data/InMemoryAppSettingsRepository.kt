@@ -10,18 +10,16 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.ui.adapters
+package org.calypsonet.keyple.demo.validation.data
 
-import android.app.Activity
-import org.calypsonet.keyple.demo.control.domain.spi.UiContext
+import javax.inject.Inject
+import org.calypsonet.keyple.demo.common.model.Location
+import org.calypsonet.keyple.demo.validation.domain.model.TerminalType
+import org.calypsonet.keyple.demo.validation.domain.spi.AppSettingsRepository
 
-class UiContextImpl(private val activity: Activity) : UiContext {
-
-  override fun <T> adaptTo(adapter: Class<T>): T {
-    if (adapter.isAssignableFrom(Activity::class.java)) {
-      @Suppress("UNCHECKED_CAST")
-      return activity as T
-    }
-    throw IllegalArgumentException("Unsupported adapter type: $adapter")
-  }
+/** In-memory implementation of the application settings (not persisted). */
+class InMemoryAppSettingsRepository @Inject constructor() : AppSettingsRepository {
+  override lateinit var terminalType: TerminalType
+  override lateinit var location: Location
+  override var batteryPowered: Boolean = true
 }

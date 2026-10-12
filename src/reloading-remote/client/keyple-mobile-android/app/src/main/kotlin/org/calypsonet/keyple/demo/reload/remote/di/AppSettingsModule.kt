@@ -20,7 +20,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-import org.calypsonet.keyple.demo.reload.remote.data.AppSettingsRepositoryImpl
+import org.calypsonet.keyple.demo.reload.remote.data.SharedPreferencesAppSettingsRepository
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.AppSettingsRepository
 
 @Suppress("unused")
@@ -37,5 +37,5 @@ class AppSettingsModule {
   @Provides
   @Singleton
   fun provideAppSettingsRepository(prefs: SharedPreferences): AppSettingsRepository =
-      AppSettingsRepositoryImpl(prefs)
+      SharedPreferencesAppSettingsRepository(prefs)
 }

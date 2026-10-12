@@ -21,7 +21,7 @@ import org.calypsonet.keyple.demo.control.domain.spi.UiContext
 import org.calypsonet.keyple.demo.control.domain.spi.UserFeedback
 
 /** User feedback based on Android MediaPlayer (success/error sounds). */
-class UserFeedbackImpl @Inject constructor() : UserFeedback {
+class MediaPlayerUserFeedback @Inject constructor() : UserFeedback {
 
   private var successMedia: MediaPlayer? = null
   private var errorMedia: MediaPlayer? = null

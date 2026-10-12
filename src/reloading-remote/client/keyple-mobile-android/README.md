@@ -206,7 +206,7 @@ The application supports multiple reader plugins:
 To integrate additional reader types:
 
 1. Add plugin dependency to `build.gradle`
-2. Implement reader-specific initialization in `ReaderManagerImpl`
+2. Implement reader-specific initialization in `KeypleReaderManager`
 3. Add UI selection option in device selection screen
 4. Test with target hardware platform
 

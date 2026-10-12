@@ -316,18 +316,24 @@ Without SAM:
 control/app/
 ├── src/main/
 │   ├── kotlin/org/calypsonet/keyple/demo/control/
-│   │   ├── data/                            # Data layer
-│   │   │   └── model/                       # Data models
-│   │   │       └── mappers/                 # Data mappers
+│   │   ├── data/                            # Adapters (readers, Keypop API, sounds, settings, logging)
 │   │   ├── di/                              # Dependency injection (Hilt modules)
 │   │   ├── domain/                          # Business logic
+│   │   │   ├── mappers/                     # Card data to domain models mappers
+│   │   │   ├── model/                       # Domain models
+│   │   │   ├── procedures/                  # Control procedures (Calypso, Storage)
+│   │   │   ├── spi/                         # Ports
+│   │   │   └── usecases/                    # Use cases invoked by the UI
 │   │   └── ui/                              # UI layer
-│   │       ├── cardcontent/                 # Card display components
-│   │       └── deviceselection/             # Device selectionon
+│   │       ├── activities/                  # Android activities
+│   │       │   ├── cardcontent/             # Card content screen
+│   │       │   └── deviceselection/         # Device selection screen
+│   │       ├── mappers/                     # Domain to UI mappers
+│   │       └── model/                       # UI models
 │   ├── res/                                 # Android resources
 │   └── AndroidManifest.xml                  # Application configuration
-├── build.gradle                             # Build configuration
-└── proguard-rules.pro                      # Code obfuscation rules
+├── build.gradle.kts                         # Build configuration (Kotlin DSL)
+└── proguard-rules.pro                       # Code obfuscation rules
 ```
 
 ### Building and Testing

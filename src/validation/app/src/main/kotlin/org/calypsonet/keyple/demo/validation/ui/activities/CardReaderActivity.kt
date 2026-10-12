@@ -40,7 +40,7 @@ import org.calypsonet.keyple.demo.validation.domain.model.TechnicalError
 import org.calypsonet.keyple.demo.validation.domain.model.TerminalType
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
 import org.calypsonet.keyple.demo.validation.domain.usecases.ValidateCard
-import org.calypsonet.keyple.demo.validation.ui.adapters.UiContextImpl
+import org.calypsonet.keyple.demo.validation.ui.ActivityUiContext
 import org.eclipse.keypop.reader.CardReaderEvent
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 import timber.log.Timber
@@ -118,7 +118,7 @@ class CardReaderActivity : BaseActivity() {
             cardReaderSession.init(
                 cardReaderObserver,
                 appSettings.terminalType,
-                UiContextImpl(this@CardReaderActivity))
+                ActivityUiContext(this@CardReaderActivity))
             handleAppEvents(AppState.WAIT_CARD, null)
             cardReaderSession.startCardDetection()
           } catch (e: Exception) {

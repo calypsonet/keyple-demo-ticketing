@@ -27,7 +27,7 @@ import org.eclipse.keypop.calypso.crypto.legacysam.LegacySamApiFactory
 import org.eclipse.keypop.reader.ReaderApiFactory
 import org.eclipse.keypop.storagecard.StorageCardApiFactory
 
-class KeypopApiProviderImpl : KeypopApiProvider {
+class KeypleKeypopApiProvider : KeypopApiProvider {
 
   override fun getReaderApiFactory(): ReaderApiFactory {
     return SmartCardServiceProvider.getService().readerApiFactory

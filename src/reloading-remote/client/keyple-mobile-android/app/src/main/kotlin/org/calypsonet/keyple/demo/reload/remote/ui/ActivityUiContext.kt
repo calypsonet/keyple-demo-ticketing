@@ -10,26 +10,18 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.data
+package org.calypsonet.keyple.demo.reload.remote.ui
 
-import org.calypsonet.keyple.demo.control.domain.spi.Logger
-import timber.log.Timber
+import android.app.Activity
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.UiContext
 
-class LoggerImpl : Logger {
+class ActivityUiContext(private val activity: Activity) : UiContext {
 
-  override fun d(message: String) {
-    Timber.d(message)
-  }
-
-  override fun i(message: String) {
-    Timber.i(message)
-  }
-
-  override fun e(message: String, throwable: Throwable?) {
-    Timber.e(throwable, message)
-  }
-
-  override fun w(message: String, throwable: Throwable?) {
-    Timber.w(throwable, message)
+  override fun <T> adaptTo(adapter: Class<T>): T {
+    if (adapter.isAssignableFrom(Activity::class.java)) {
+      @Suppress("UNCHECKED_CAST")
+      return activity as T
+    }
+    throw IllegalArgumentException("Unsupported adapter type: $adapter")
   }
 }

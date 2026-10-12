@@ -24,7 +24,7 @@ import org.calypsonet.keyple.demo.reload.remote.domain.spi.RemoteServiceManager
 import org.eclipse.keyple.distributed.LocalServiceClient
 import org.eclipse.keypop.reader.selection.spi.SmartCard
 
-class RemoteServiceManagerImpl
+class KeypleRemoteServiceManager
 @Inject
 constructor(private val localServiceClient: LocalServiceClient) : RemoteServiceManager {
 

@@ -171,7 +171,7 @@ drive the user flow and call the domain directly.
 |----------|-------------------------------------------------------------------------------------------------------|
 | `domain` | Business logic: `CardReaderSession` and `usecases` (entry points of the UI), `procedures`, `model`, and the ports (`spi`) |
 | `data`   | Adapters implementing the ports (readers, Keypop API factories, user feedback, settings, logging...)  |
-| `ui`     | Activities, UI adapters (e.g. `UiContextImpl`), and UI models with their mappers when needed          |
+| `ui`     | Activities, UI-bound adapters (`ActivityUiContext`), and UI models with their mappers when needed     |
 | `di`     | Hilt modules binding the adapters to the ports and providing the domain services                      |
 
 **Dependency rules**
@@ -181,7 +181,10 @@ drive the user flow and call the domain directly.
   or `javax.inject` annotation), nor on the `data`, `ui` and `di` layers.
 - Everything the domain needs from the outside world is expressed as a port in `domain/spi` (e.g. `ReaderManager`,
   `KeypopApiProvider`, `UserFeedback`, `AppSettingsRepository`, `Logger`, `UiContext`, `RemoteServiceManager`,
-  `ServerStatusProvider`) and implemented by an adapter in `data`, or in `ui/adapters` for the UI-bound ones.
+  `ServerStatusProvider`) and implemented by an adapter in `data`, or in `ui` for the UI-bound ones.
+- An adapter is named after the technology it relies on, followed by the name of its port (e.g.
+  `KeypleReaderManager`, `InMemoryAppSettingsRepository`, `SharedPreferencesAppSettingsRepository`, `TimberLogger`,
+  `ActivityUiContext`). The `Impl` suffix is not used.
 - The `ui` layer calls the use cases of the domain services, or the ports directly for simple accesses (e.g. settings).
   It never accesses the `data` layer, and does not handle the Keypop card types (`CalypsoCard`, `StorageCard`...).
 - The `data` layer implements the ports and does not depend on the `ui` layer.
@@ -206,8 +209,9 @@ drive the user flow and call the domain directly.
 
 **Logging**
 
-- `domain`, `data` and `di` log through the `Logger` port. Timber is only used by its implementation (`data/LoggerImpl`),
-  by `DemoApplication` (Timber initialization) and by the activities.
+- `domain`, `data` and `di` log through the `Logger` port. Timber is only used by its implementation
+  (`data/TimberLogger`, which tags each message with the name of the calling class), by `DemoApplication` (Timber
+  initialization) and by the activities.
 
 **UI models**
 

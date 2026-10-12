@@ -17,7 +17,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-import org.calypsonet.keyple.demo.validation.data.LoggerImpl
+import org.calypsonet.keyple.demo.validation.data.TimberLogger
 import org.calypsonet.keyple.demo.validation.domain.spi.Logger
 
 @Suppress("unused")
@@ -25,5 +25,5 @@ import org.calypsonet.keyple.demo.validation.domain.spi.Logger
 @InstallIn(SingletonComponent::class)
 class LoggerModule {
 
-  @Provides @Singleton fun provideLogger(): Logger = LoggerImpl()
+  @Provides @Singleton fun provideLogger(): Logger = TimberLogger()
 }

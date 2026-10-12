@@ -20,7 +20,8 @@ import org.calypsonet.keyple.demo.reload.remote.domain.model.ServerConfig
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.AppSettingsRepository
 
 /** Application settings persisted in the shared preferences. */
-class AppSettingsRepositoryImpl(private val prefs: SharedPreferences) : AppSettingsRepository {
+class SharedPreferencesAppSettingsRepository(private val prefs: SharedPreferences) :
+    AppSettingsRepository {
 
   override var serverConfig: ServerConfig
     get() =

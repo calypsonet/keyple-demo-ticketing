@@ -30,8 +30,8 @@ import org.calypsonet.keyple.demo.control.databinding.ToolbarBinding
 import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
 import org.calypsonet.keyple.demo.control.domain.model.ControlResult
 import org.calypsonet.keyple.demo.control.domain.usecases.ControlCard
+import org.calypsonet.keyple.demo.control.ui.ActivityUiContext
 import org.calypsonet.keyple.demo.control.ui.activities.cardcontent.CardContentActivity
-import org.calypsonet.keyple.demo.control.ui.adapters.UiContextImpl
 import org.calypsonet.keyple.demo.control.ui.mappers.toUi
 import org.calypsonet.keyple.demo.control.ui.model.Status
 import org.calypsonet.keyple.demo.control.ui.model.UiControlResult
@@ -78,7 +78,7 @@ class CardReaderActivity : BaseActivity() {
             cardReaderSession.init(
                 cardReaderObserver,
                 appSettings.terminalType,
-                UiContextImpl(this@CardReaderActivity))
+                ActivityUiContext(this@CardReaderActivity))
             showToast(
                 getString(
                     if (cardReaderSession.isSamAvailable) R.string.sam_available

@@ -23,7 +23,7 @@ import org.calypsonet.keyple.demo.reload.remote.domain.model.CardInfo
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.domain.model.TerminalType
-import org.calypsonet.keyple.demo.reload.remote.ui.adapters.UiContextImpl
+import org.calypsonet.keyple.demo.reload.remote.ui.ActivityUiContext
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
@@ -56,7 +56,7 @@ abstract class BaseCardActivity :
     cardReaderSession.init(
         terminalType,
         cardMedium,
-        UiContextImpl(this@BaseCardActivity),
+        ActivityUiContext(this@BaseCardActivity),
         this@BaseCardActivity,
         this@BaseCardActivity,
         null)
@@ -71,7 +71,7 @@ abstract class BaseCardActivity :
   @Throws(UnsupportedOperationException::class)
   fun initOmapiReader(callback: () -> Unit) {
     cardReaderSession.init(
-        terminalType, cardMedium, UiContextImpl(this@BaseCardActivity), null, null, callback)
+        terminalType, cardMedium, ActivityUiContext(this@BaseCardActivity), null, null, callback)
   }
 
   @Throws(UnsupportedOperationException::class)

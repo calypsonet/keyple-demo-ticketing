@@ -2,7 +2,7 @@
 # Checks the layering rules of the Android applications (see "Android Application Architecture" in README.md):
 # - the domain layer depends neither on Android (including the application resources), Timber or the dependency
 #   injection framework, nor on the data, ui and di layers of the application;
-# - the data layer logs through the Logger port: Timber is only used by its implementation (LoggerImpl);
+# - the data layer logs through the Logger port: Timber is only used by its implementation (TimberLogger);
 # - the ui layer neither accesses the data layer nor handles the Keypop card types.
 #
 # Compatible with bash 3.2 (default shell of the macOS runners): no mapfile, no arrays.
@@ -38,8 +38,8 @@ done < <(find "$project_dir" -type d -name domain -path '*/src/*' -not -path '*/
 
 while IFS= read -r dir; do
   data_count=$((data_count + 1))
-  report "Data layer must log through the Logger port, Timber is reserved to LoggerImpl ($dir)" \
-    "$(grep -rnE --include='*.kt' '^import timber\.' "$dir" | grep -v '/LoggerImpl\.kt:' || true)"
+  report "Data layer must log through the Logger port, Timber is reserved to TimberLogger ($dir)" \
+    "$(grep -rnE --include='*.kt' '^import timber\.' "$dir" | grep -v '/TimberLogger\.kt:' || true)"
 done < <(find "$project_dir" -type d -name data -path '*/src/*' -not -path '*/build/*')
 
 while IFS= read -r dir; do

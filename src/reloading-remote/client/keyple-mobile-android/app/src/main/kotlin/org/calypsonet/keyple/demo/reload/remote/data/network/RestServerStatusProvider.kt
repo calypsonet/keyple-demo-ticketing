@@ -24,7 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory
  * The client is built at each request, the server address being provided by the caller (e.g. an
  * address being entered in the settings).
  */
-class ServerStatusProviderImpl : ServerStatusProvider {
+class RestServerStatusProvider : ServerStatusProvider {
 
   override fun isSamReady(serverConfig: ServerConfig): Boolean {
     val client =

@@ -17,7 +17,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-import org.calypsonet.keyple.demo.validation.data.UserFeedbackImpl
+import org.calypsonet.keyple.demo.validation.data.TerminalUserFeedback
 import org.calypsonet.keyple.demo.validation.domain.spi.Logger
 import org.calypsonet.keyple.demo.validation.domain.spi.UserFeedback
 
@@ -28,5 +28,5 @@ class UserFeedbackModule {
 
   @Provides
   @Singleton
-  fun provideUserFeedback(logger: Logger): UserFeedback = UserFeedbackImpl(logger)
+  fun provideUserFeedback(logger: Logger): UserFeedback = TerminalUserFeedback(logger)
 }

@@ -17,8 +17,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-import org.calypsonet.keyple.demo.reload.remote.data.ReaderManagerImpl
-import org.calypsonet.keyple.demo.reload.remote.data.RemoteServiceManagerImpl
+import org.calypsonet.keyple.demo.reload.remote.data.KeypleReaderManager
+import org.calypsonet.keyple.demo.reload.remote.data.KeypleRemoteServiceManager
 import org.calypsonet.keyple.demo.reload.remote.data.network.KeypleSyncEndPointClient
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.ReaderManager
@@ -50,12 +50,12 @@ class ReaderModule {
   @Provides
   @Singleton
   fun provideReaderManager(logger: Logger): ReaderManager {
-    return ReaderManagerImpl(logger)
+    return KeypleReaderManager(logger)
   }
 
   @Provides
   @Singleton
   fun provideRemoteServiceManager(localServiceClient: LocalServiceClient): RemoteServiceManager {
-    return RemoteServiceManagerImpl(localServiceClient)
+    return KeypleRemoteServiceManager(localServiceClient)
   }
 }
