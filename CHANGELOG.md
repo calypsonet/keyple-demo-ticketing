@@ -12,9 +12,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   constructor.
 - Android applications: the domain layer is designed to be transposable to another language (e.g. C++ or Rust). The
   current date and time are provided by a `Clock` port (`JavaTimeClock` adapter) instead of being read from the
-  system clock by the use cases, and `java.util.Locale` is no longer used. The architecture check of the domain is
-  an allowlist of imports: Kotlin standard library, `java.time`, Keypop APIs, Keyple utilities, `common` library and
-  the domain itself.
+  system clock by the use cases, and `java.util.Locale` and `javaClass` are no longer used. The domain is
+  synchronous (no `suspend` function), the threads being chosen by the UI. The architecture check of the domain is
+  an allowlist of imports (Kotlin standard library, `java.time`, Keypop APIs, Keyple utilities, `common` library and
+  the domain itself) and rejects the `suspend` functions.
 - Control and validation apps: the procedures of each card technology (`CalypsoCardControlProcedure`,
   `StorageCardControlProcedure`, `CalypsoCardValidationProcedure`, `StorageCardValidationProcedure`, previously
   `...Manager` in the `managers` package) implement a common interface (`ControlProcedure`, `ValidationProcedure`), and
@@ -67,8 +68,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Android applications: the coroutines launched by the activities are bound to their lifecycle (`lifecycleScope`
   instead of `GlobalScope`), and deprecated Android APIs are replaced (`ProgressDialog`, `startActivityForResult`,
   `onBackPressed`, `Resources.getColor`, `Intent.getParcelableExtra`).
-- Control and validation apps: the plugin registration is a suspend function instead of using `runBlocking`. Reloading
-  Android client: the plugins are registered directly, as before the refactoring.
+- Control and validation apps: the plugins are registered by a blocking call made on the IO thread of the activity,
+  instead of wrapping the whole registration in `runBlocking`. Only the Arrive plugin factory, provided by a suspend
+  function, is awaited with `runBlocking` in the adapter. Reloading Android client: the plugins are registered
+  directly, as before the refactoring.
 - Android applications: Java 17 as source and target level instead of Java 8. No impact on the supported devices: the
   bytecode is converted for the minimum SDK by the Android build.
 - Android applications: target SDK defined by its own `androidTargetSdk` property (still `35`) instead of

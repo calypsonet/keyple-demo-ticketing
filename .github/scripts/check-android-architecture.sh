@@ -3,6 +3,7 @@
 # - the domain layer, meant to be transposable to another language, only imports the Kotlin standard library, the
 #   java.time date types, the Keypop APIs, the Keyple utilities, the common library and its own packages (allowlist):
 #   no Android, Timber, dependency injection, coroutines or JVM-specific API, and no data, ui or di layer;
+# - the domain layer is synchronous: no suspend function;
 # - the data layer logs through the Logger port: Timber is only used by its implementation (TimberLogger);
 # - the ui layer neither accesses the data layer nor handles the Keypop card types.
 #
@@ -31,6 +32,9 @@ while IFS= read -r dir; do
   report "Domain layer may only depend on the Kotlin standard library, java.time, the Keypop APIs, the Keyple utilities, the common library and itself ($dir)" \
     "$(grep -rnE --include='*.kt' '^import ' "$dir" \
       | grep -vE ':import (kotlin\.|java\.time\.|org\.eclipse\.keypop\.|org\.eclipse\.keyple\.core\.util\.|org\.calypsonet\.keyple\.demo\.common\.|org\.calypsonet\.keyple\.demo\.[a-z.]+\.domain\.)' || true)"
+  report "Domain layer must be synchronous: no suspend function, the threads being chosen by the UI ($dir)" \
+    "$(grep -rnE --include='*.kt' '(^|[^[:alnum:]_])suspend (fun|\()' "$dir" \
+      | grep -vE ':[0-9]+:[[:space:]]*(\*|//|/\*)' || true)"
 done < <(find "$project_dir" -type d -name domain -path '*/src/*' -not -path '*/build/*')
 
 while IFS= read -r dir; do

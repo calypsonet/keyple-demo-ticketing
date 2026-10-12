@@ -19,12 +19,13 @@ import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 interface ReaderManager {
   /**
    * Registers the appropriate reader plugin(s) for the given reader type and activity. Must be
-   * called before initializing readers.
+   * called before initializing readers. Blocking call (creation and registration of the plugins),
+   * to be made outside of the main thread.
    *
    * @param terminalType The type of reader to use (e.g. contactless reader).
    * @param uiContext UI context used to access platform-specific facilities.
    */
-  suspend fun registerPlugin(terminalType: TerminalType, uiContext: UiContext)
+  fun registerPlugin(terminalType: TerminalType, uiContext: UiContext)
 
   fun initCardReader(): CardReader?
 

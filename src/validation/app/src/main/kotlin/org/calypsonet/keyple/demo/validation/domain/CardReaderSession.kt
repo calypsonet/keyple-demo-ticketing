@@ -47,8 +47,8 @@ import org.eclipse.keypop.storagecard.card.StorageCard
  * Session of the card reader of the terminal: initialization of the readers, of the SAM and of the
  * user feedback devices, detection and selection of the presented cards.
  *
- * Thread-safety: instances are designed to be used on the UI thread / main scope coordinating
- * reader events; no internal synchronization is provided.
+ * The operations are blocking calls, made by the UI outside of the main thread (the choice of the
+ * threads belongs to the UI), one operation at a time: no internal synchronization is provided.
  */
 class CardReaderSession(
     private val keypopApiProvider: KeypopApiProvider,
@@ -126,11 +126,7 @@ class CardReaderSession(
    * @param uiContext Platform-specific context used to register plugins.
    * @throws IllegalStateException if no SAM reader is available or SAM selection fails.
    */
-  suspend fun init(
-      observer: CardReaderObserverSpi?,
-      terminalType: TerminalType,
-      uiContext: UiContext
-  ) {
+  fun init(observer: CardReaderObserverSpi?, terminalType: TerminalType, uiContext: UiContext) {
     // Init user feedback and register plugin
     userFeedback.init(terminalType, uiContext)
     readerManager.registerPlugin(terminalType, uiContext)

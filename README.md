@@ -184,6 +184,10 @@ The `domain` layer is designed to be easily transposed to another language (e.g.
   library. It depends neither on Android (including the application resources `R`), Timber, the dependency injection
   framework (no Hilt, Dagger or `javax.inject` annotation) or any other JVM-specific API, nor on the `data`, `ui` and
   `di` layers. The platform services, including the system clock, are accessed through ports.
+- The `domain` layer is synchronous: its operations are blocking calls (no `suspend` function), the choice of the
+  threads belonging to the `ui` layer (coroutines bound to the activity lifecycle). An asynchronous operation of the
+  platform is either awaited by the adapter, the call being blocking (e.g. creation of the Arrive plugin factory), or
+  expressed in the port by a callback (e.g. registration of the OMAPI plugin).
 - Everything the domain needs from the outside world is expressed as a port in `domain/spi` (e.g. `ReaderManager`,
   `KeypopApiProvider`, `UserFeedback`, `AppSettingsRepository`, `Clock`, `Logger`, `UiContext`,
   `RemoteServiceManager`, `ServerStatusProvider`) and implemented by an adapter in `data`, or in `ui` for the UI-bound ones.

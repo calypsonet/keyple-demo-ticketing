@@ -59,7 +59,7 @@ class ControlCard(
     return try {
       val procedure =
           controlProcedures.firstOrNull { it.supports(card) }
-              ?: error("Unsupported card type: ${card.javaClass.simpleName}")
+              ?: error("Unsupported card type: ${card::class.simpleName}")
       procedure.execute(
           ControlContext(
               cardReader = cardReaderSession.cardReader,

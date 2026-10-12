@@ -14,8 +14,6 @@ package org.calypsonet.keyple.demo.control.data
 
 import android.app.Activity
 import javax.inject.Inject
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.control.domain.model.CardProtocol
 import org.calypsonet.keyple.demo.control.domain.model.TerminalType
 import org.calypsonet.keyple.demo.control.domain.spi.ReaderManager
@@ -121,37 +119,34 @@ constructor(
   }
 
   @Throws(KeyplePluginException::class)
-  override suspend fun registerPlugin(terminalType: TerminalType, uiContext: UiContext) {
+  override fun registerPlugin(terminalType: TerminalType, uiContext: UiContext) {
     initTerminalType(terminalType)
     val activity = uiContext.adaptTo(Activity::class.java)
     // Plugin
     val pluginFactory =
-        withContext(Dispatchers.IO) {
-          when (terminalType) {
-            TerminalType.BLUEBIRD ->
-                BluebirdPluginFactoryProvider.provideFactory(
-                    activity,
-                    ApduInterpreterFactoryProvider.provideFactory(),
-                    DemoMifareClassicKeyProvider())
-            TerminalType.FAMOCO ->
-                AndroidNfcPluginFactoryProvider.provideFactory(
-                    AndroidNfcConfig(
-                        activity = activity,
-                        apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
-                        keyProvider = DemoMifareClassicKeyProvider()))
-            TerminalType.NFC_TERMINAL ->
-                AndroidNfcPluginFactoryProvider.provideFactory(
-                    AndroidNfcConfig(
-                        activity = activity,
-                        apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
-                        keyProvider = DemoMifareClassicKeyProvider()))
-          }
+        when (terminalType) {
+          TerminalType.BLUEBIRD ->
+              BluebirdPluginFactoryProvider.provideFactory(
+                  activity,
+                  ApduInterpreterFactoryProvider.provideFactory(),
+                  DemoMifareClassicKeyProvider())
+          TerminalType.FAMOCO ->
+              AndroidNfcPluginFactoryProvider.provideFactory(
+                  AndroidNfcConfig(
+                      activity = activity,
+                      apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
+                      keyProvider = DemoMifareClassicKeyProvider()))
+          TerminalType.NFC_TERMINAL ->
+              AndroidNfcPluginFactoryProvider.provideFactory(
+                  AndroidNfcConfig(
+                      activity = activity,
+                      apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
+                      keyProvider = DemoMifareClassicKeyProvider()))
         }
     SmartCardServiceProvider.getService().registerPlugin(pluginFactory)
     // SAM plugin (if different of card plugin)
     if (terminalType == TerminalType.FAMOCO) {
-      val samPluginFactory =
-          withContext(Dispatchers.IO) { AndroidFamocoPluginFactoryProvider.getFactory() }
+      val samPluginFactory = AndroidFamocoPluginFactoryProvider.getFactory()
       SmartCardServiceProvider.getService().registerPlugin(samPluginFactory)
     }
   }
