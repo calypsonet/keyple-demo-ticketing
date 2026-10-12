@@ -31,6 +31,15 @@ sealed interface ControlResult {
   /** The card has never been loaded (clean card). */
   data object EmptyCard : ControlResult
 
+  /**
+   * The presented card cannot be selected (unknown or unsupported card).
+   *
+   * @property fileStructure The file structure of the Calypso application, in hexadecimal, when it
+   *   is not supported.
+   */
+  data class NotSelected(val error: SelectionError, val fileStructure: String? = null) :
+      ControlResult
+
   /** The card is refused for the provided reason. */
   data class Rejected(val reason: RejectionReason) : ControlResult
 

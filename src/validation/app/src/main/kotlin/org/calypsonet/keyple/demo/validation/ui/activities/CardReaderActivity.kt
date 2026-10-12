@@ -26,6 +26,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -34,9 +35,11 @@ import org.calypsonet.keyple.demo.validation.databinding.ActivityCardReaderBindi
 import org.calypsonet.keyple.demo.validation.databinding.LayoutCardSummaryOverlayBinding
 import org.calypsonet.keyple.demo.validation.domain.model.CardDescription
 import org.calypsonet.keyple.demo.validation.domain.model.RejectionReason
+import org.calypsonet.keyple.demo.validation.domain.model.SelectionError
 import org.calypsonet.keyple.demo.validation.domain.model.TechnicalError
 import org.calypsonet.keyple.demo.validation.domain.model.TerminalType
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
+import org.calypsonet.keyple.demo.validation.domain.usecases.ValidateCard
 import org.calypsonet.keyple.demo.validation.ui.adapters.UiContextImpl
 import org.eclipse.keypop.reader.CardReaderEvent
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
@@ -44,6 +47,8 @@ import timber.log.Timber
 
 @AndroidEntryPoint
 class CardReaderActivity : BaseActivity() {
+
+  @Inject lateinit var validateCard: ValidateCard
 
   private lateinit var activityCardReaderBinding: ActivityCardReaderBinding
 
@@ -104,19 +109,18 @@ class CardReaderActivity : BaseActivity() {
 
     playWaitingAnimation()
 
-    if (!ticketingService.areReadersInitialized) {
+    if (!cardReaderSession.isInitialized) {
       lifecycleScope.launch {
         withContext(Dispatchers.Main) { showProgress() }
         withContext(Dispatchers.IO) {
           try {
             cardReaderObserver = CardReaderObserver()
-            ticketingService.init(
+            cardReaderSession.init(
                 cardReaderObserver,
                 appSettings.terminalType,
                 UiContextImpl(this@CardReaderActivity))
             handleAppEvents(AppState.WAIT_CARD, null)
-            ticketingService.startNfcDetection()
-            ticketingService.displayWaiting()
+            cardReaderSession.startCardDetection()
           } catch (e: Exception) {
             Timber.e(e)
             withContext(Dispatchers.Main) {
@@ -125,13 +129,12 @@ class CardReaderActivity : BaseActivity() {
             }
           }
         }
-        if (ticketingService.areReadersInitialized) {
+        if (cardReaderSession.isInitialized) {
           withContext(Dispatchers.Main) { dismissProgress() }
         }
       }
     } else {
-      ticketingService.displayWaiting()
-      ticketingService.startNfcDetection()
+      cardReaderSession.startCardDetection()
     }
     if (appSettings.batteryPowered) {
       timer = Timer() // Need to reinit timer after cancel
@@ -151,15 +154,15 @@ class CardReaderActivity : BaseActivity() {
     timer.cancel()
     summaryTimer?.cancel()
     summaryTimer = null
-    if (ticketingService.areReadersInitialized) {
-      ticketingService.stopNfcDetection()
-      Timber.d("stopNfcDetection")
+    if (cardReaderSession.isInitialized) {
+      cardReaderSession.stopCardDetection()
+      Timber.d("stopCardDetection")
     }
   }
 
   override fun onDestroy() {
     timer.cancel()
-    ticketingService.onDestroy(cardReaderObserver)
+    cardReaderSession.release(cardReaderObserver)
     cardReaderObserver = null
     super.onDestroy()
   }
@@ -192,15 +195,6 @@ class CardReaderActivity : BaseActivity() {
           return
         }
         cardInsertedAt = System.currentTimeMillis()
-        val selectionError =
-            ticketingService.analyseSelectionResult(readerEvent.scheduledCardSelectionsResponse)
-        if (selectionError != null) {
-          // Card not selected (unknown or unsupported card): refused without validation
-          Timber.e("Card not selected: %s", selectionError)
-          activityCardReaderBinding.animation.cancelAnimation()
-          showSelectionError(selectionError)
-          return
-        }
         newAppState = AppState.CARD_STATUS
       }
       CardReaderEvent.Type.CARD_REMOVED -> {
@@ -223,12 +217,14 @@ class CardReaderActivity : BaseActivity() {
             lifecycleScope.launch {
               activityCardReaderBinding.animation.cancelAnimation()
               val validationResult =
-                  withContext(Dispatchers.IO) { ticketingService.executeValidationProcedure() }
+                  withContext(Dispatchers.IO) {
+                    validateCard(readerEvent.scheduledCardSelectionsResponse)
+                  }
               if (validationResult is ValidationResult.CardLost) {
                 // Card removed during transaction: silent reset, no display, no sound
                 Timber.i("Card removed during transaction")
                 currentAppState = AppState.WAIT_CARD
-                ticketingService.endCardProcessing()
+                cardReaderSession.endCardProcessing()
                 playWaitingAnimation()
               } else {
                 changeDisplay(validationResult)
@@ -311,14 +307,18 @@ class CardReaderActivity : BaseActivity() {
 
     // Card type label + transaction time
     val elapsedMs = System.currentTimeMillis() - cardInsertedAt
-    b.cardTypeLabel.visibility = View.VISIBLE
-    b.cardTypeLabel.text =
-        getString(R.string.card_type, cardTypeLabel(result.card)) + " • ${elapsedMs} ms"
+    val card = result.card
+    if (card != null) {
+      b.cardTypeLabel.visibility = View.VISIBLE
+      b.cardTypeLabel.text =
+          getString(R.string.card_type, cardTypeLabel(card)) + " • ${elapsedMs} ms"
+    } else {
+      b.cardTypeLabel.visibility = View.GONE
+    }
 
     val animationFile: String
     when (result) {
       is ValidationResult.Accepted -> {
-        ticketingService.displayResultSuccess()
         animationFile = "tick_white.json"
         b.summaryMainView.setBackgroundColor(ContextCompat.getColor(this, R.color.green))
         b.bigText.setText(R.string.valid_main_desc)
@@ -350,8 +350,16 @@ class CardReaderActivity : BaseActivity() {
           b.smallDesc.visibility = View.VISIBLE
         }
       }
+      is ValidationResult.NotSelected -> {
+        // Card not selected (unknown or unsupported card): refused without validation
+        animationFile = "error_white.json"
+        b.summaryMainView.setBackgroundColor(ContextCompat.getColor(this, R.color.orange))
+        b.bigText.setText(R.string.card_invalid_main_desc)
+        b.locationTime.text = selectionErrorMessage(result)
+        b.mediumText.visibility = View.INVISIBLE
+        b.smallDesc.visibility = View.INVISIBLE
+      }
       is ValidationResult.Rejected -> {
-        ticketingService.displayResultFailed()
         animationFile = "error_white.json"
         if (isInvalidCard(result.reason)) {
           // Card refused (card data)
@@ -369,7 +377,6 @@ class CardReaderActivity : BaseActivity() {
       }
       is ValidationResult.Failed,
       is ValidationResult.CardLost -> {
-        ticketingService.displayResultFailed()
         animationFile = "error_white.json"
         b.summaryMainView.setBackgroundColor(ContextCompat.getColor(this, R.color.red))
         b.bigText.setText(R.string.error_main_desc)
@@ -383,23 +390,21 @@ class CardReaderActivity : BaseActivity() {
 
     // The preparation of the next transaction is performed asynchronously after the end of the
     // previous transaction so that the time spent is not added to the user time.
-    lifecycleScope.launch(Dispatchers.IO) { ticketingService.initCryptoContextForNextTransaction() }
+    if (result !is ValidationResult.NotSelected) {
+      lifecycleScope.launch(Dispatchers.IO) { cardReaderSession.prepareNextTransaction() }
+    }
 
     displaySummary(animationFile)
   }
 
-  /** Displays the refusal of a card that could not be selected (unknown or unsupported card). */
-  private fun showSelectionError(message: String) {
-    val b = summaryBinding!!
-    ticketingService.displayResultFailed()
-    b.cardTypeLabel.visibility = View.GONE
-    b.summaryMainView.setBackgroundColor(ContextCompat.getColor(this, R.color.orange))
-    b.bigText.setText(R.string.card_invalid_main_desc)
-    b.locationTime.text = message
-    b.mediumText.visibility = View.INVISIBLE
-    b.smallDesc.visibility = View.INVISIBLE
-    displaySummary("error_white.json")
-  }
+  /** Returns the message displayed when the presented card cannot be selected. */
+  private fun selectionErrorMessage(result: ValidationResult.NotSelected): String =
+      when (result.error) {
+        SelectionError.CARD_NOT_RECOGNIZED -> getString(R.string.selection_card_not_recognized)
+        SelectionError.UNEXPECTED_DF_NAME -> getString(R.string.selection_unexpected_df_name)
+        SelectionError.UNSUPPORTED_FILE_STRUCTURE ->
+            getString(R.string.selection_unsupported_file_structure, result.fileStructure)
+      }
 
   /** Shows the summary overlay with the provided animation, hidden after a delay. */
   private fun displaySummary(animationFile: String) {
@@ -426,8 +431,7 @@ class CardReaderActivity : BaseActivity() {
     activityCardReaderBinding.mainView.setBackgroundResource(R.drawable.ic_img_bg_valideur)
     activityCardReaderBinding.presentCardTv.visibility = View.VISIBLE
     playWaitingAnimation()
-    ticketingService.displayWaiting()
-    ticketingService.endCardProcessing()
+    cardReaderSession.endCardProcessing()
   }
 
   private fun showNoProxyReaderDialog(t: Throwable) {

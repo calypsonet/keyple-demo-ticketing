@@ -18,8 +18,8 @@ import java.time.LocalDateTime
 /** Result of the validation procedure, translated into texts by the UI. */
 sealed interface ValidationResult {
 
-  /** The presented card. */
-  val card: CardDescription
+  /** The presented card, null if it is unknown. */
+  val card: CardDescription?
 
   /**
    * The card is validated.
@@ -38,6 +38,18 @@ sealed interface ValidationResult {
       val passValidityEndDate: LocalDate? = null
   ) : ValidationResult
 
+  /**
+   * The presented card cannot be selected (unknown or unsupported card).
+   *
+   * @property fileStructure The file structure of the Calypso application, in hexadecimal, when it
+   *   is not supported.
+   */
+  data class NotSelected(val error: SelectionError, val fileStructure: String? = null) :
+      ValidationResult {
+    override val card: CardDescription?
+      get() = null
+  }
+
   /** The card is refused for the provided reason. */
   data class Rejected(override val card: CardDescription, val reason: RejectionReason) :
       ValidationResult
@@ -51,7 +63,7 @@ sealed interface ValidationResult {
    * @property detail The message of the error, if any.
    */
   data class Failed(
-      override val card: CardDescription,
+      override val card: CardDescription?,
       val error: TechnicalError,
       val detail: String? = null
   ) : ValidationResult

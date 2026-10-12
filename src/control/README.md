@@ -197,15 +197,19 @@ Device Selection → Settings → Home → Reader Activity → Control Results
 
 ### Key Classes
 
-**TicketingService**
-- **Purpose**: Orchestrates control process lifecycle
+**CardReaderSession** (`domain/CardReaderSession.kt`)
+- **Purpose**: Manages the readers of the terminal
 - **Responsibilities**:
-  - Plugin management and initialization
-  - Card detection and selection handling
-  - Control procedure coordination and result processing
+  - Plugin, reader and SAM initialization
+  - Card detection and selection
 - **Integration**: Works with both SAM-enabled and SAM-less configurations
 
-**ReaderRepository**
+**ControlCard** (`domain/usecases/ControlCard.kt`)
+- **Purpose**: Controls the presented card
+- **Responsibilities**: Selection of the card, execution of the control procedure supporting it
+  (`CalypsoCardControlProcedure`, `StorageCardControlProcedure`) and user feedback of the result (`ControlResult`)
+
+**ReaderManager**
 - **Purpose**: Hardware abstraction and reader management
 - **Functions**:
   - Reader discovery and connection management

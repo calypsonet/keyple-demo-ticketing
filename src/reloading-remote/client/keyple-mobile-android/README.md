@@ -136,13 +136,14 @@ Main Screen → Card Reader → Card Summary → Select Tickets → Checkout →
 
 ### Key Classes
 
-**TicketingService**
-- Orchestrates the ticketing process lifecycle
+**CardReaderSession**
 - Manages Keyple plugin initialization and cleanup
-- Handles NFC detection start/stop
-- Coordinates with server for card operations
+- Handles NFC detection start/stop and card selection
 
-**ReaderRepository**
+**ReadContracts**, **ReloadCard**, **PersonalizeCard** (use cases)
+- Coordinate with server for card operations on the selected card
+
+**ReaderManager**
 - Interface between business layer and card reader
 - Abstracts reader-specific operations
 - Provides consistent API for different reader types
@@ -205,7 +206,7 @@ The application supports multiple reader plugins:
 To integrate additional reader types:
 
 1. Add plugin dependency to `build.gradle`
-2. Implement reader-specific initialization in `TicketingService`
+2. Implement reader-specific initialization in `ReaderManagerImpl`
 3. Add UI selection option in device selection screen
 4. Test with target hardware platform
 

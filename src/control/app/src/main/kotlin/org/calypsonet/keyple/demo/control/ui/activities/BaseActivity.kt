@@ -15,12 +15,12 @@ package org.calypsonet.keyple.demo.control.ui.activities
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import javax.inject.Inject
-import org.calypsonet.keyple.demo.control.domain.TicketingService
+import org.calypsonet.keyple.demo.control.domain.CardReaderSession
 import org.calypsonet.keyple.demo.control.domain.spi.AppSettingsRepository
 
 abstract class BaseActivity : AppCompatActivity() {
 
-  @Inject lateinit var ticketingService: TicketingService
+  @Inject lateinit var cardReaderSession: CardReaderSession
   @Inject lateinit var appSettings: AppSettingsRepository
 
   fun showToast(message: String) {

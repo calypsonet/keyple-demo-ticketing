@@ -14,11 +14,11 @@ package org.calypsonet.keyple.demo.validation.ui.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import javax.inject.Inject
-import org.calypsonet.keyple.demo.validation.domain.TicketingService
+import org.calypsonet.keyple.demo.validation.domain.CardReaderSession
 import org.calypsonet.keyple.demo.validation.domain.spi.AppSettingsRepository
 
 abstract class BaseActivity : AppCompatActivity() {
 
-  @Inject lateinit var ticketingService: TicketingService
+  @Inject lateinit var cardReaderSession: CardReaderSession
   @Inject lateinit var appSettings: AppSettingsRepository
 }

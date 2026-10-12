@@ -169,7 +169,7 @@ drive the user flow and call the domain directly.
 
 | Package  | Content                                                                                               |
 |----------|-------------------------------------------------------------------------------------------------------|
-| `domain` | Business logic: `TicketingService` (entry point of the UI), `procedures`, `model`, and the ports (`spi`) |
+| `domain` | Business logic: `CardReaderSession` and `usecases` (entry points of the UI), `procedures`, `model`, and the ports (`spi`) |
 | `data`   | Adapters implementing the ports (readers, Keypop API factories, user feedback, settings, logging...)  |
 | `ui`     | Activities, UI adapters (e.g. `UiContextImpl`), and UI models with their mappers when needed          |
 | `di`     | Hilt modules binding the adapters to the ports and providing the domain services                      |
@@ -185,15 +185,23 @@ drive the user flow and call the domain directly.
 - The `ui` layer calls the use cases of the domain services, or the ports directly for simple accesses (e.g. settings).
   It never accesses the `data` layer, and does not handle the Keypop card types (`CalypsoCard`, `StorageCard`...).
 - The `data` layer implements the ports and does not depend on the `ui` layer.
-- The `di` layer is the only place where adapters are bound to ports. The domain services (`TicketingService` and the
-  procedures) carry no annotation and are provided by the `DomainModule`. The stable dependencies of the procedures are
-  injected through their constructor; only the data of the current transaction is passed to them (`ControlContext`,
-  `ValidationContext`).
+- The `di` layer is the only place where adapters are bound to ports. The domain services (`CardReaderSession`, the
+  use cases and the procedures) carry no annotation and are provided by the `DomainModule`. The stable dependencies of
+  the procedures are injected through their constructor; only the data of the current transaction is passed to them
+  (`ControlContext`, `ValidationContext`). The bindings are application-wide singletons (`SingletonComponent`); the
+  application is annotated `@HiltAndroidApp`, and each activity receiving dependencies `@AndroidEntryPoint`.
+
+**Domain services**
+
+- `CardReaderSession` manages the readers of the terminal: initialization of the readers and of the SAM (and of the
+  user feedback devices), detection of the cards, selection of the presented card, end of its processing.
+- One use case per user operation (`domain/usecases`), invoked by the UI: `ControlCard` (control app), `ValidateCard`
+  (validation app), `ReadContracts`, `ReloadCard` and `PersonalizeCard` (reloading client). The use cases of the
+  control and validation apps select the card, execute the procedure supporting it and give the user feedback (sound,
+  LEDs) of the result.
 - The control and validation procedures implement a common interface (`ControlProcedure`, `ValidationProcedure`), one
-  implementation per card technology: `TicketingService` executes the procedure supporting the selected card, a new
-  card technology only requiring a new procedure. The
-  bindings are application-wide singletons (`SingletonComponent`); the application is annotated `@HiltAndroidApp`, and
-  each activity receiving dependencies (through its base activity) `@AndroidEntryPoint`.
+  implementation per card technology: the use case executes the procedure supporting the selected card, a new card
+  technology only requiring a new procedure.
 - The application settings are accessed through the `AppSettingsRepository` port, never through a global object.
 
 **Logging**

@@ -19,6 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.Exception
 import java.lang.IllegalStateException
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -27,12 +28,15 @@ import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityPersonalizationBinding
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
+import org.calypsonet.keyple.demo.reload.remote.domain.usecases.PersonalizeCard
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.eclipse.keypop.reader.CardReaderEvent
 import timber.log.Timber
 
 @AndroidEntryPoint
 class PersonalizationActivity : BaseCardActivity() {
+
+  @Inject lateinit var personalizeCard: PersonalizeCard
   private lateinit var activityPersonalizationBinding: ActivityPersonalizationBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,7 +115,7 @@ class PersonalizationActivity : BaseCardActivity() {
   private suspend fun remoteServiceExecution() {
     withContext(Dispatchers.IO) {
       try {
-        val result = ticketingService.personalizeCard()
+        val result = personalizeCard()
         if (result.status == RemoteServiceStatus.SUCCESS) {
           runOnUiThread {
             changeDisplay(
@@ -129,7 +133,7 @@ class PersonalizationActivity : BaseCardActivity() {
         Timber.e(e)
         launchExceptionResponse(e)
       } finally {
-        ticketingService.endCardProcessing()
+        cardReaderSession.endCardProcessing()
       }
     }
   }

@@ -19,6 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.Exception
 import java.lang.IllegalStateException
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -28,12 +29,15 @@ import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
+import org.calypsonet.keyple.demo.reload.remote.domain.usecases.ReloadCard
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.eclipse.keypop.reader.CardReaderEvent
 import timber.log.Timber
 
 @AndroidEntryPoint
 class ReloadActivity : BaseCardActivity() {
+
+  @Inject lateinit var reloadCard: ReloadCard
   private lateinit var activityCardReaderBinding: ActivityCardReaderBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,7 +84,7 @@ class ReloadActivity : BaseCardActivity() {
       try {
         val tripsToLoad = intent.getIntExtra(SelectTicketsActivity.TRIPS_TO_LOAD, 0)
         val result =
-            ticketingService.reloadCard(
+            reloadCard(
                 intent.getStringExtra(CARD_APPLICATION_NUMBER),
                 PriorityCode.fromCode(
                     intent.getIntExtra(SelectTicketsActivity.SELECTED_TICKET_PRIORITY_CODE, 0)),
@@ -101,7 +105,7 @@ class ReloadActivity : BaseCardActivity() {
         Timber.e(e)
         launchExceptionResponse(e)
       } finally {
-        ticketingService.endCardProcessing()
+        cardReaderSession.endCardProcessing()
       }
     }
   }

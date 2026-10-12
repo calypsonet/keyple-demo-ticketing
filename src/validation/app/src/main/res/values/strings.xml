@@ -46,6 +46,9 @@
     <string name="permission_denied_message">You must accept the requested permissions to continue. Please relaunch the app.</string>
 
     <!-- Card types and results of the validation -->
+    <string name="selection_card_not_recognized">Selection error: card not recognized</string>
+    <string name="selection_unexpected_df_name">Selection error: unexpected DF name</string>
+    <string name="selection_unsupported_file_structure">Invalid card\nFile structure %1$sh not supported</string>
     <string name="card_type_calypso">CALYPSO: DF name %1$s</string>
     <string name="card_type_mifare_classic_1k">Mifare Classic 1K</string>
     <string name="card_type_mifare_classic_4k">Mifare Classic 4K</string>

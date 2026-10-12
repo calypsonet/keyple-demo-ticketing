@@ -17,7 +17,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-import org.calypsonet.keyple.demo.control.domain.TicketingService
+import org.calypsonet.keyple.demo.control.domain.CardReaderSession
 import org.calypsonet.keyple.demo.control.domain.procedures.CalypsoCardControlProcedure
 import org.calypsonet.keyple.demo.control.domain.procedures.StorageCardControlProcedure
 import org.calypsonet.keyple.demo.control.domain.spi.AppSettingsRepository
@@ -25,6 +25,7 @@ import org.calypsonet.keyple.demo.control.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.control.domain.spi.Logger
 import org.calypsonet.keyple.demo.control.domain.spi.ReaderManager
 import org.calypsonet.keyple.demo.control.domain.spi.UserFeedback
+import org.calypsonet.keyple.demo.control.domain.usecases.ControlCard
 
 /** Provides the domain services, which carry no dependency injection annotation. */
 @Suppress("unused")
@@ -34,17 +35,25 @@ class DomainModule {
 
   @Provides
   @Singleton
-  fun provideTicketingService(
+  fun provideCardReaderSession(
       keypopApiProvider: KeypopApiProvider,
-      appSettings: AppSettingsRepository,
       readerManager: ReaderManager,
       userFeedback: UserFeedback,
       logger: Logger
-  ): TicketingService =
-      TicketingService(
-          keypopApiProvider,
+  ): CardReaderSession = CardReaderSession(keypopApiProvider, readerManager, userFeedback, logger)
+
+  @Provides
+  @Singleton
+  fun provideControlCard(
+      cardReaderSession: CardReaderSession,
+      keypopApiProvider: KeypopApiProvider,
+      appSettings: AppSettingsRepository,
+      userFeedback: UserFeedback,
+      logger: Logger
+  ): ControlCard =
+      ControlCard(
+          cardReaderSession,
           appSettings,
-          readerManager,
           userFeedback,
           logger,
           // Control procedures of the supported card technologies

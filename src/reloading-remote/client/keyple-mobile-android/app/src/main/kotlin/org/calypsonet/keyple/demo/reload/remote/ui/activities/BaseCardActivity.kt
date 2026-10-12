@@ -18,7 +18,7 @@ import javax.inject.Inject
 import kotlin.jvm.Throws
 import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
 import org.calypsonet.keyple.demo.reload.remote.R
-import org.calypsonet.keyple.demo.reload.remote.domain.TicketingService
+import org.calypsonet.keyple.demo.reload.remote.domain.CardReaderSession
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardInfo
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
@@ -32,7 +32,7 @@ import timber.log.Timber
 abstract class BaseCardActivity :
     BaseActivity(), CardReaderObserverSpi, CardReaderObservationExceptionHandlerSpi {
 
-  @Inject lateinit var ticketingService: TicketingService
+  @Inject lateinit var cardReaderSession: CardReaderSession
   lateinit var cardMedium: CardMedium
 
   val isBluebirdDevice = Build.MANUFACTURER?.lowercase()?.contains("bluebird") == true
@@ -53,7 +53,7 @@ abstract class BaseCardActivity :
   /** Android NFC Reader is strongly dependent and Android Activity component. */
   @Throws(UnsupportedOperationException::class)
   fun initAndActivateCardReader() {
-    ticketingService.init(
+    cardReaderSession.init(
         terminalType,
         cardMedium,
         UiContextImpl(this@BaseCardActivity),
@@ -61,7 +61,7 @@ abstract class BaseCardActivity :
         this@BaseCardActivity,
         null)
 
-    ticketingService.startNfcDetection()
+    cardReaderSession.startCardDetection()
   }
 
   /**
@@ -70,16 +70,16 @@ abstract class BaseCardActivity :
    */
   @Throws(UnsupportedOperationException::class)
   fun initOmapiReader(callback: () -> Unit) {
-    ticketingService.init(
+    cardReaderSession.init(
         terminalType, cardMedium, UiContextImpl(this@BaseCardActivity), null, null, callback)
   }
 
   @Throws(UnsupportedOperationException::class)
   fun deactivateAndClearReader() {
     if (cardMedium == CardMedium.CONTACTLESS_CARD) {
-      ticketingService.stopNfcDetection()
+      cardReaderSession.stopCardDetection()
     }
-    ticketingService.onDestroy(this@BaseCardActivity)
+    cardReaderSession.release(this@BaseCardActivity)
   }
 
   /** Displays the error corresponding to the status returned by the server for the given card. */

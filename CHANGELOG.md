@@ -13,8 +13,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Control and validation apps: the procedures of each card technology (`CalypsoCardControlProcedure`,
   `StorageCardControlProcedure`, `CalypsoCardValidationProcedure`, `StorageCardValidationProcedure`, previously
   `...Manager` in the `managers` package) implement a common interface (`ControlProcedure`, `ValidationProcedure`), and
-  `TicketingService` executes the one supporting the selected card instead of testing the card type. The data of the
+  the use case executes the one supporting the selected card instead of testing the card type. The data of the
   transaction is provided by a context object (`ControlContext`, `ValidationContext`) instead of 6 to 8 parameters.
+- Android applications: `TicketingService` is split into a `CardReaderSession` (initialization of the readers, of the
+  SAM and of the user feedback devices, detection and selection of the cards) and one use case per user operation
+  (`domain/usecases`): `ControlCard`, `ValidateCard`, and in the reloading client `ReadContracts`, `ReloadCard` and
+  `PersonalizeCard`:
+  - the control and validation use cases select the card, execute the procedure supporting it and give the user
+    feedback (sound, LEDs) of the result, the UI only displaying it;
+  - the selection errors are typed (`SelectionError`, `NotSelected` result) instead of texts built by the domain, the
+    texts being slightly harmonized ("Selection error: card not recognized", "Selection error: unexpected DF name");
+  - an unexpected error of the control or validation procedure is returned as a `Failed` result, instead of an exception
+    to be handled by the UI (the validation app stopped);
+  - the reader of a control app card is also released (end of card processing) after a selection error.
 - Android applications: read-only `List` instead of `ArrayList` in the results and UI models; the `errorTitle` field
   of the control result, never set, is removed.
 - Control and validation apps: typed results of the procedures, translated into texts by the UI:

@@ -78,6 +78,9 @@
     <string name="card_content_validation_date_placeholder">JJ Month YYYY, HH:MM:SS</string>
 
     <!-- Results of the control -->
+    <string name="selection_card_not_recognized">Selection error: card not recognized</string>
+    <string name="selection_unexpected_df_name">Selection error: unexpected DF name</string>
+    <string name="selection_unsupported_file_structure">Invalid card\nFile structure %1$sh not supported</string>
     <string name="rejection_environment_wrong_version">Environment error: wrong version number</string>
     <string name="rejection_environment_expired">Environment error: end date expired</string>
     <string name="rejection_event_wrong_version">Event error: wrong version number</string>

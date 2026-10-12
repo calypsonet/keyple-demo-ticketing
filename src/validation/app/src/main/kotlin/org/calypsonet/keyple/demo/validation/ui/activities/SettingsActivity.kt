@@ -17,6 +17,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.widget.ArrayAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import org.calypsonet.keyple.demo.common.data.LocationRepository
 import org.calypsonet.keyple.demo.common.model.Location
 import org.calypsonet.keyple.demo.validation.BuildConfig
 import org.calypsonet.keyple.demo.validation.R
@@ -36,7 +37,7 @@ class SettingsActivity : BaseActivity() {
     setContentView(activitySettingsBinding.root)
     setSupportActionBar(toolbarBinding.toolbar)
     // Init location spinner
-    val locations = ticketingService.getLocations()
+    val locations = LocationRepository.getLocations()
     val locationsAdapter =
         ArrayAdapter(this, R.layout.spinner_item_location, R.id.spinner_item_text, locations)
     activitySettingsBinding.spinnerLocationList.adapter = locationsAdapter

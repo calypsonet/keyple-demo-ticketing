@@ -19,6 +19,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -28,6 +29,7 @@ import org.calypsonet.keyple.demo.control.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.control.databinding.ToolbarBinding
 import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
 import org.calypsonet.keyple.demo.control.domain.model.ControlResult
+import org.calypsonet.keyple.demo.control.domain.usecases.ControlCard
 import org.calypsonet.keyple.demo.control.ui.activities.cardcontent.CardContentActivity
 import org.calypsonet.keyple.demo.control.ui.adapters.UiContextImpl
 import org.calypsonet.keyple.demo.control.ui.mappers.toUi
@@ -39,6 +41,8 @@ import timber.log.Timber
 
 @AndroidEntryPoint
 class CardReaderActivity : BaseActivity() {
+
+  @Inject lateinit var controlCard: ControlCard
 
   private lateinit var activityCardReaderBinding: ActivityCardReaderBinding
   private lateinit var toolbarBinding: ToolbarBinding
@@ -65,22 +69,22 @@ class CardReaderActivity : BaseActivity() {
   override fun onResume() {
     super.onResume()
     activityCardReaderBinding.loadingAnimation.playAnimation()
-    if (!ticketingService.readersInitialized) {
+    if (!cardReaderSession.isInitialized) {
       lifecycleScope.launch(Dispatchers.Default) {
         withContext(Dispatchers.Main) { showProgress() }
         withContext(Dispatchers.IO) {
           try {
             cardReaderObserver = CardReaderObserver()
-            ticketingService.init(
+            cardReaderSession.init(
                 cardReaderObserver,
                 appSettings.terminalType,
                 UiContextImpl(this@CardReaderActivity))
             showToast(
                 getString(
-                    if (ticketingService.isSamAvailable) R.string.sam_available
+                    if (cardReaderSession.isSamAvailable) R.string.sam_available
                     else R.string.sam_not_available))
             handleAppEvents(AppState.WAIT_CARD, null)
-            ticketingService.startNfcDetection()
+            cardReaderSession.startCardDetection()
           } catch (e: Exception) {
             Timber.e(e)
             withContext(Dispatchers.Main) {
@@ -89,26 +93,26 @@ class CardReaderActivity : BaseActivity() {
             }
           }
         }
-        if (ticketingService.readersInitialized) {
+        if (cardReaderSession.isInitialized) {
           withContext(Dispatchers.Main) { dismissProgress() }
         }
       }
     } else {
-      ticketingService.startNfcDetection()
+      cardReaderSession.startCardDetection()
     }
   }
 
   override fun onPause() {
     super.onPause()
     activityCardReaderBinding.loadingAnimation.cancelAnimation()
-    if (ticketingService.readersInitialized) {
-      ticketingService.stopNfcDetection()
-      Timber.d("stopNfcDetection")
+    if (cardReaderSession.isInitialized) {
+      cardReaderSession.stopCardDetection()
+      Timber.d("stopCardDetection")
     }
   }
 
   override fun onDestroy() {
-    ticketingService.onDestroy(cardReaderObserver)
+    cardReaderSession.release(cardReaderObserver)
     cardReaderObserver = null
     super.onDestroy()
   }
@@ -129,17 +133,7 @@ class CardReaderActivity : BaseActivity() {
         if (newAppState == AppState.WAIT_SYSTEM_READY) {
           return
         }
-        Timber.i("Process the selection result...")
-        val error =
-            ticketingService.analyseSelectionResult(readerEvent.scheduledCardSelectionsResponse)
-        if (error != null) {
-          Timber.e("Card not selected: %s", error)
-          displayResult(
-              UiControlResult(
-                  status = Status.INVALID_CARD, contractsList = emptyList(), errorMessage = error))
-          return
-        }
-        Timber.i("A Calypso Card selection succeeded.")
+        Timber.i("Card presented")
         newAppState = AppState.CARD_STATUS
       }
       CardReaderEvent.Type.CARD_REMOVED -> {
@@ -161,10 +155,12 @@ class CardReaderActivity : BaseActivity() {
           CardReaderEvent.Type.CARD_MATCHED -> {
             lifecycleScope.launch(Dispatchers.Default) {
               try {
-                // Launch the control procedure
+                // Select and control the card
                 withContext(Dispatchers.Main) { showProgress() }
                 val cardReaderResponse =
-                    withContext(Dispatchers.IO) { ticketingService.executeControlProcedure() }
+                    withContext(Dispatchers.IO) {
+                      controlCard(readerEvent.scheduledCardSelectionsResponse)
+                    }
                 withContext(Dispatchers.Main) {
                   if (cardReaderResponse is ControlResult.CardContent) {
                     when (cardReaderResponse.authenticationMode) {
@@ -188,7 +184,7 @@ class CardReaderActivity : BaseActivity() {
                 withContext(Dispatchers.Main) { dismissProgress() }
                 displayResult(UiControlResult(status = Status.ERROR, contractsList = emptyList()))
               } finally {
-                ticketingService.endCardProcessing()
+                cardReaderSession.endCardProcessing()
               }
             }
           }
@@ -210,12 +206,6 @@ class CardReaderActivity : BaseActivity() {
     }
 
     runOnUiThread { activityCardReaderBinding.loadingAnimation.cancelAnimation() }
-    // User feedback (sound, LEDs) of the result, given once
-    if (uiControlResult.status == Status.TICKETS_FOUND) {
-      ticketingService.displayResultSuccess()
-    } else {
-      ticketingService.displayResultFailed()
-    }
     when (uiControlResult.status) {
       Status.TICKETS_FOUND,
       Status.EMPTY_CARD -> {

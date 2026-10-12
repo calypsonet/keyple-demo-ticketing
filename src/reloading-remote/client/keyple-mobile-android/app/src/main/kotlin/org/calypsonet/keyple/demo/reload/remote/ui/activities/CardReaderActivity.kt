@@ -19,6 +19,7 @@ import android.view.View
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.IllegalStateException
+import javax.inject.Inject
 import kotlin.Exception
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -28,6 +29,7 @@ import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
 import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
+import org.calypsonet.keyple.demo.reload.remote.domain.usecases.ReadContracts
 import org.calypsonet.keyple.demo.reload.remote.ui.activities.cardsummary.CardSummaryActivity
 import org.calypsonet.keyple.demo.reload.remote.ui.mappers.toUi
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
@@ -37,6 +39,8 @@ import timber.log.Timber
 
 @AndroidEntryPoint
 class CardReaderActivity : BaseCardActivity() {
+
+  @Inject lateinit var readContracts: ReadContracts
 
   private lateinit var activityCardReaderBinding: ActivityCardReaderBinding
 
@@ -109,7 +113,7 @@ class CardReaderActivity : BaseCardActivity() {
   private suspend fun remoteServiceExecution() {
     withContext(Dispatchers.IO) {
       try {
-        val result = ticketingService.readCardContracts()
+        val result = readContracts()
         if (result.status == RemoteServiceStatus.SUCCESS) {
           runOnUiThread {
             val status =
@@ -132,7 +136,7 @@ class CardReaderActivity : BaseCardActivity() {
             IllegalStateException(getString(R.string.server_error, e.message)),
             isFinishActivityAfterResult())
       } finally {
-        ticketingService.endCardProcessing()
+        cardReaderSession.endCardProcessing()
       }
     }
   }

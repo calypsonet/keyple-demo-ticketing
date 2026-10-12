@@ -202,11 +202,13 @@ The summary overlay of the reader screen (`CardReaderActivity`) displays both su
 
 ### Key Classes
 
-**TicketingService** (`domain/TicketingService.kt`)
-- Orchestrates reader initialization, card selection and validation flows
-- Manages card and SAM reader lifecycle
-- Schedules card selection scenarios for supported cards
-- Executes validation procedures based on detected card type
+**CardReaderSession** (`domain/CardReaderSession.kt`)
+- Manages card and SAM reader lifecycle, and the user feedback devices
+- Schedules card selection scenarios for supported cards, and selects the presented card
+
+**ValidateCard** (`domain/usecases/ValidateCard.kt`)
+- Validates the presented card: selection, execution of the validation procedure supporting it and user feedback of
+  the result (`ValidationResult`)
 
 **ReaderManager** (`domain/spi/ReaderManager.kt`)
 - Interface for managing card and SAM readers

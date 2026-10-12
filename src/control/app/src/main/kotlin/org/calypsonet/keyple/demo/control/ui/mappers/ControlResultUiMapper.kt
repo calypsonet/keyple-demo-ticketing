@@ -16,6 +16,7 @@ import android.content.res.Resources
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.domain.model.ControlResult
 import org.calypsonet.keyple.demo.control.domain.model.RejectionReason
+import org.calypsonet.keyple.demo.control.domain.model.SelectionError
 import org.calypsonet.keyple.demo.control.domain.model.TechnicalError
 import org.calypsonet.keyple.demo.control.ui.model.Status
 import org.calypsonet.keyple.demo.control.ui.model.UiControlResult
@@ -28,6 +29,20 @@ fun ControlResult.toUi(resources: Resources): UiControlResult =
               status = Status.TICKETS_FOUND,
               lastValidationsList = lastValidation?.let { listOf(it.toUi()) },
               contractsList = contracts.map { it.toUi() })
+      is ControlResult.NotSelected ->
+          UiControlResult(
+              status = Status.INVALID_CARD,
+              contractsList = emptyList(),
+              errorMessage =
+                  when (error) {
+                    SelectionError.CARD_NOT_RECOGNIZED ->
+                        resources.getString(R.string.selection_card_not_recognized)
+                    SelectionError.UNEXPECTED_DF_NAME ->
+                        resources.getString(R.string.selection_unexpected_df_name)
+                    SelectionError.UNSUPPORTED_FILE_STRUCTURE ->
+                        resources.getString(
+                            R.string.selection_unsupported_file_structure, fileStructure)
+                  })
       ControlResult.EmptyCard ->
           UiControlResult(status = Status.EMPTY_CARD, contractsList = emptyList())
       is ControlResult.Rejected ->

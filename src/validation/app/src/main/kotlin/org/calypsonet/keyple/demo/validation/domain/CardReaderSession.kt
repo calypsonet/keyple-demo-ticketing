@@ -10,31 +10,24 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.domain
+package org.calypsonet.keyple.demo.validation.domain
 
-import java.time.LocalDateTime
 import org.calypsonet.keyple.demo.common.constants.CalypsoAids
 import org.calypsonet.keyple.demo.common.constants.CalypsoFiles
 import org.calypsonet.keyple.demo.common.constants.DefaultKifs
-import org.calypsonet.keyple.demo.common.data.LocationRepository
-import org.calypsonet.keyple.demo.control.domain.model.CardProtocol
-import org.calypsonet.keyple.demo.control.domain.model.ControlResult
-import org.calypsonet.keyple.demo.control.domain.model.TerminalType
-import org.calypsonet.keyple.demo.control.domain.procedures.ControlContext
-import org.calypsonet.keyple.demo.control.domain.procedures.ControlProcedure
-import org.calypsonet.keyple.demo.control.domain.spi.AppSettingsRepository
-import org.calypsonet.keyple.demo.control.domain.spi.KeypopApiProvider
-import org.calypsonet.keyple.demo.control.domain.spi.Logger
-import org.calypsonet.keyple.demo.control.domain.spi.ReaderManager
-import org.calypsonet.keyple.demo.control.domain.spi.UiContext
-import org.calypsonet.keyple.demo.control.domain.spi.UserFeedback
+import org.calypsonet.keyple.demo.validation.domain.model.CardProtocol
+import org.calypsonet.keyple.demo.validation.domain.model.SelectionError
+import org.calypsonet.keyple.demo.validation.domain.model.TerminalType
+import org.calypsonet.keyple.demo.validation.domain.spi.KeypopApiProvider
+import org.calypsonet.keyple.demo.validation.domain.spi.Logger
+import org.calypsonet.keyple.demo.validation.domain.spi.ReaderManager
+import org.calypsonet.keyple.demo.validation.domain.spi.UiContext
+import org.calypsonet.keyple.demo.validation.domain.spi.UserFeedback
 import org.eclipse.keyple.core.util.HexUtil
 import org.eclipse.keypop.calypso.card.CalypsoCardApiFactory
 import org.eclipse.keypop.calypso.card.WriteAccessLevel
 import org.eclipse.keypop.calypso.card.card.CalypsoCard
-import org.eclipse.keypop.calypso.card.transaction.AsymmetricCryptoSecuritySetting
 import org.eclipse.keypop.calypso.card.transaction.SymmetricCryptoSecuritySetting
-import org.eclipse.keypop.calypso.crypto.legacysam.LegacySamApiFactory
 import org.eclipse.keypop.calypso.crypto.legacysam.sam.LegacySam
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ObservableCardReader
@@ -45,29 +38,48 @@ import org.eclipse.keypop.reader.selection.ScheduledCardSelectionsResponse
 import org.eclipse.keypop.reader.selection.spi.SmartCard
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 import org.eclipse.keypop.storagecard.StorageCardApiFactory
-import org.eclipse.keypop.storagecard.card.ProductType
+import org.eclipse.keypop.storagecard.card.ProductType.MIFARE_CLASSIC_1K
+import org.eclipse.keypop.storagecard.card.ProductType.MIFARE_ULTRALIGHT
+import org.eclipse.keypop.storagecard.card.ProductType.ST25_SRT512
 import org.eclipse.keypop.storagecard.card.StorageCard
 
-class TicketingService(
-    private var keypopApiProvider: KeypopApiProvider,
-    private var appSettings: AppSettingsRepository,
-    private var readerManager: ReaderManager,
-    private var userFeedback: UserFeedback,
-    private var logger: Logger,
-    private val controlProcedures: List<ControlProcedure>
+/**
+ * Session of the card reader of the terminal: initialization of the readers, of the SAM and of the
+ * user feedback devices, detection and selection of the presented cards.
+ *
+ * Thread-safety: instances are designed to be used on the UI thread / main scope coordinating
+ * reader events; no internal synchronization is provided.
+ */
+class CardReaderSession(
+    private val keypopApiProvider: KeypopApiProvider,
+    private val readerManager: ReaderManager,
+    private val userFeedback: UserFeedback,
+    private val logger: Logger
 ) {
 
-  private val readerApiFactory: ReaderApiFactory = keypopApiProvider.getReaderApiFactory()
+  /** Result of the selection of the presented card. */
+  sealed interface CardSelection {
 
+    /** The card is selected. */
+    data class Selected(val card: SmartCard) : CardSelection
+
+    /**
+     * The card cannot be selected.
+     *
+     * @property fileStructure The file structure of the Calypso application, in hexadecimal, when
+     *   it is not supported.
+     */
+    data class NotSelected(val error: SelectionError, val fileStructure: String? = null) :
+        CardSelection
+  }
+
+  /** Indicates whether the readers have been initialized by [init]. */
+  var isInitialized = false
+    private set
+
+  private val readerApiFactory: ReaderApiFactory = keypopApiProvider.getReaderApiFactory()
   private val calypsoCardApiFactory: CalypsoCardApiFactory =
       keypopApiProvider.getCalypsoCardApiFactory()
-
-  private val asymmetricCryptoSecuritySettings: AsymmetricCryptoSecuritySetting =
-      keypopApiProvider.getAsymmetricCryptoSecuritySetting()
-  private var symmetricCryptoSecuritySetting: SymmetricCryptoSecuritySetting? = null
-
-  private var legacySamApiFactory: LegacySamApiFactory = keypopApiProvider.getLegacySamApiFactory()
-
   private val storageCardApiFactory: StorageCardApiFactory? =
       keypopApiProvider.getStorageCardApiFactory()
 
@@ -77,15 +89,12 @@ class TicketingService(
     }
   }
 
-  private lateinit var legacySam: LegacySam
-  private lateinit var smartCard: SmartCard
+  private lateinit var calypsoSam: LegacySam
   private lateinit var cardSelectionManager: CardSelectionManager
+  private lateinit var cardSecuritySettings: SymmetricCryptoSecuritySetting
 
-  var readersInitialized = false
-    private set
-
-  var isSamAvailable: Boolean = false
-    private set
+  /** The last card selected. */
+  private var selectedCard: SmartCard? = null
 
   private var indexOfKeypleGenericCardSelection = 0
   private var indexOfCdLightGtmlCardSelection = 0
@@ -95,8 +104,16 @@ class TicketingService(
   private var indexOfST25CardSelection = 0
   private var indexOfMifareClassic1KCardSelection = 0
 
+  /** The reader of the presented cards. */
+  val cardReader: CardReader
+    get() = checkNotNull(readerManager.getCardReader()) { "Card reader not initialized" }
+
+  /** Security setting of the Calypso secure sessions, null if no SAM is available. */
+  val cardSecuritySetting: SymmetricCryptoSecuritySetting?
+    get() = if (::cardSecuritySettings.isInitialized) cardSecuritySettings else null
+
   /**
-   * Initializes the ticketing environment and selects a SAM if available.
+   * Initializes the user feedback, the card reader and the SAM.
    *
    * Steps:
    * - Registers the appropriate reader plugin according to [terminalType].
@@ -105,7 +122,7 @@ class TicketingService(
    * - Selects a SAM and prepares secured session capabilities.
    *
    * @param observer Optional reader observer to receive card detection notifications.
-   * @param terminalType The target reader type to initialize (e.g., NFC).
+   * @param terminalType The type of terminal.
    * @param uiContext Platform-specific context used to register plugins.
    * @throws IllegalStateException if no SAM reader is available or SAM selection fails.
    */
@@ -114,66 +131,64 @@ class TicketingService(
       terminalType: TerminalType,
       uiContext: UiContext
   ) {
-    // Register plugin
-    try {
-      userFeedback.init(terminalType, uiContext)
-      readerManager.registerPlugin(terminalType, uiContext)
-    } catch (e: Exception) {
-      logger.e("An error occurred while registering plugin ${e.message}")
-      throw IllegalStateException(e.message)
-    }
+    // Init user feedback and register plugin
+    userFeedback.init(terminalType, uiContext)
+    readerManager.registerPlugin(terminalType, uiContext)
+
     // Init card reader
-    val cardReader: CardReader?
-    try {
-      cardReader = readerManager.initCardReader()
-    } catch (e: Exception) {
-      logger.e("An error occurred while init card reader ${e.message}")
-      throw IllegalStateException(e.message)
-    }
+    val cardReader: CardReader? = readerManager.initCardReader()
+
     // Init SAM reader
-    var samReaders: List<CardReader>? = null
-    try {
-      samReaders = readerManager.initSamReaders()
-    } catch (e: Exception) {
-      logger.e("An error occurred while init sam reader ${e.message}")
-    }
-    if (samReaders.isNullOrEmpty()) {
-      logger.w("No SAM reader available")
-    }
+    val samReaders = readerManager.initSamReaders()
+    check(samReaders.isNotEmpty()) { "No SAM reader available" }
+
     // Register a card event observer and init the ticketing session
     cardReader?.let { reader ->
       (reader as ObservableCardReader).addObserver(observer)
-      // attempts to select a SAM if any, sets the isSamAvailable flag accordingly
+      // attempts to select a SAM, if any, sets the isSecureSessionMode flag accordingly
       val samReader = readerManager.getSamReader()
-      isSamAvailable = samReader != null && selectSam(samReader)
+      if (samReader == null || !selectSam(samReader)) {
+        throw IllegalStateException("SAM reader or SAM not available")
+      }
+      cardSecuritySettings = createSecuritySettings()
+      cardSecuritySettings.initCryptoContextForNextTransaction()
     }
-    symmetricCryptoSecuritySetting =
-        if (isSamAvailable) getSymmetricCryptoSecuritySetting() else null
-    readersInitialized = true
+    isInitialized = true
   }
 
-  fun startNfcDetection() {
+  /**
+   * Starts the repeated detection of the cards, with the selection scenario of the cards, the user
+   * feedback signaling that the terminal waits for a card.
+   */
+  fun startCardDetection() {
     // Provide the CardReader with the selection operation to be processed when a Card is inserted.
     prepareAndScheduleCardSelectionScenario()
     (readerManager.getCardReader() as ObservableCardReader).startCardDetection(
         ObservableCardReader.DetectionMode.REPEATING)
+    userFeedback.displayWaiting()
   }
 
-  fun stopNfcDetection() {
+  /** Stops the detection of the cards. Swallows exceptions silently. */
+  fun stopCardDetection() {
     try {
-      // notify the reader that se detection has been switched off
+      // notify reader that se detection has been switched off
       (readerManager.getCardReader() as ObservableCardReader).stopCardDetection()
     } catch (e: Exception) {
-      logger.e("An error occurred while stopping nfc detection ${e.message}")
+      // NOP
     }
   }
 
-  fun onDestroy(observer: CardReaderObserverSpi?) {
-    readersInitialized = false
+  /** Releases the readers and the user feedback, detaching the given [observer] from the reader. */
+  fun release(observer: CardReaderObserverSpi?) {
+    isInitialized = false
     readerManager.onDestroy(observer)
     userFeedback.release()
   }
 
+  /**
+   * Ends the processing of the presented card, the reader waiting for its removal, and the user
+   * feedback signaling that the terminal waits for a card.
+   */
   fun endCardProcessing() {
     try {
       logger.i("endCardProcessing")
@@ -181,20 +196,24 @@ class TicketingService(
     } catch (e: Exception) {
       logger.e("Cannot end card processing: $e")
     }
+    userFeedback.displayWaiting()
   }
 
-  fun displayResultSuccess(): Boolean {
-    userFeedback.displayResultSuccess()
-    return true
+  /**
+   * Prepares the cryptographic context of the next Calypso transaction, after the end of the
+   * previous one, so that the time spent is not added to the user time.
+   */
+  fun prepareNextTransaction() {
+    if (selectedCard is CalypsoCard) {
+      cardSecuritySettings.initCryptoContextForNextTransaction()
+    }
   }
 
-  fun displayResultFailed(): Boolean {
-    userFeedback.displayResultFailed()
-    return true
-  }
-
-  fun prepareAndScheduleCardSelectionScenario() {
-
+  /**
+   * Prepares the card selection scenario for supported AIDs and product types, then schedules it to
+   * run automatically upon card presentation.
+   */
+  private fun prepareAndScheduleCardSelectionScenario() {
     // Get a new card selection manager
     cardSelectionManager = readerApiFactory.createCardSelectionManager()
 
@@ -240,101 +259,81 @@ class TicketingService(
               readerApiFactory
                   .createBasicCardSelector()
                   .filterByCardProtocol(CardProtocol.MIFARE_ULTRALIGHT_LOGICAL_PROTOCOL.name),
-              storageCardApiFactory.createStorageCardSelectionExtension(
-                  ProductType.MIFARE_ULTRALIGHT))
+              storageCardApiFactory.createStorageCardSelectionExtension(MIFARE_ULTRALIGHT))
       indexOfST25CardSelection =
           cardSelectionManager.prepareSelection(
               readerApiFactory
                   .createBasicCardSelector()
                   .filterByCardProtocol(CardProtocol.ST25_SRT512_LOGICAL_PROTOCOL.name),
-              storageCardApiFactory.createStorageCardSelectionExtension(ProductType.ST25_SRT512))
+              storageCardApiFactory.createStorageCardSelectionExtension(ST25_SRT512))
       indexOfMifareClassic1KCardSelection =
           cardSelectionManager.prepareSelection(
               readerApiFactory
                   .createBasicCardSelector()
                   .filterByCardProtocol(CardProtocol.MIFARE_CLASSIC_LOGICAL_PROTOCOL.name),
-              storageCardApiFactory.createStorageCardSelectionExtension(
-                  ProductType.MIFARE_CLASSIC_1K))
+              storageCardApiFactory.createStorageCardSelectionExtension(MIFARE_CLASSIC_1K))
     }
 
     // Schedule the execution of the prepared card selection scenario as soon as a card is presented
     cardSelectionManager.scheduleCardSelectionScenario(
         readerManager.getCardReader() as ObservableCardReader,
-        ObservableCardReader.NotificationMode.ALWAYS)
+        ObservableCardReader.NotificationMode.MATCHED_ONLY)
   }
 
-  fun analyseSelectionResult(
-      scheduledCardSelectionsResponse: ScheduledCardSelectionsResponse
-  ): String? {
-    logger.i("selectionResponse = $scheduledCardSelectionsResponse")
+  /**
+   * Analyses the result of the selection scenario executed when a card has been presented, and
+   * checks the selected Calypso application (DF name and file structure).
+   */
+  fun selectCard(scheduledCardSelectionsResponse: ScheduledCardSelectionsResponse): CardSelection {
     val cardSelectionResult: CardSelectionResult =
         cardSelectionManager.parseScheduledCardSelectionsResponse(scheduledCardSelectionsResponse)
     if (cardSelectionResult.activeSelectionIndex == -1) {
-      return "Selection error: card not recognized."
+      selectedCard = null
+      return CardSelection.NotSelected(SelectionError.CARD_NOT_RECOGNIZED)
     }
-    smartCard = cardSelectionResult.activeSmartCard
+    val smartCard = cardSelectionResult.activeSmartCard
+    selectedCard = smartCard
     when (smartCard) {
       is CalypsoCard -> { // check is the DF name is the expected one (Req. TL-SEL-AIDMATCH.1)
         if ((cardSelectionResult.activeSelectionIndex == indexOfKeypleGenericCardSelection &&
-            !CalypsoAids.matches(CalypsoAids.KEYPLE_GENERIC, (smartCard as CalypsoCard).dfName)) ||
+            !CalypsoAids.matches(CalypsoAids.KEYPLE_GENERIC, smartCard.dfName)) ||
             (cardSelectionResult.activeSelectionIndex == indexOfCdLightGtmlCardSelection &&
-                !CalypsoAids.matches(
-                    CalypsoAids.CD_LIGHT_GTML, (smartCard as CalypsoCard).dfName)) ||
+                !CalypsoAids.matches(CalypsoAids.CD_LIGHT_GTML, smartCard.dfName)) ||
             (cardSelectionResult.activeSelectionIndex == indexOfCalypsoLightCardSelection &&
-                !CalypsoAids.matches(
-                    CalypsoAids.CALYPSO_LIGHT, (smartCard as CalypsoCard).dfName)) ||
+                !CalypsoAids.matches(CalypsoAids.CALYPSO_LIGHT, smartCard.dfName)) ||
             (cardSelectionResult.activeSelectionIndex == indexOfNavigoIdfCardSelection &&
-                !CalypsoAids.matches(
-                    CalypsoAids.NORMALIZED_IDF, (smartCard as CalypsoCard).dfName))) {
-          return "Unexpected DF name"
+                !CalypsoAids.matches(CalypsoAids.NORMALIZED_IDF, smartCard.dfName))) {
+          return CardSelection.NotSelected(SelectionError.UNEXPECTED_DF_NAME)
         }
-        if ((smartCard as CalypsoCard).applicationSubtype !in
-            CalypsoFiles.ALLOWED_FILE_STRUCTURES) {
-          return "Invalid card\nFile structure " +
-              HexUtil.toHex((smartCard as CalypsoCard).applicationSubtype) +
-              "h not supported"
+        if (smartCard.applicationSubtype !in CalypsoFiles.ALLOWED_FILE_STRUCTURES) {
+          return CardSelection.NotSelected(
+              SelectionError.UNSUPPORTED_FILE_STRUCTURE,
+              HexUtil.toHex(smartCard.applicationSubtype))
         }
-        logger.i("Card DF Name = ${HexUtil.toHex((smartCard as CalypsoCard).dfName)}")
+        logger.i("Card DF Name = ${HexUtil.toHex(smartCard.dfName)}")
       }
       is StorageCard -> {
-        logger.i(
-            "${(smartCard as StorageCard).productType.name} Card UID = ${HexUtil.toHex((smartCard as StorageCard).uid)}")
+        logger.i("${smartCard.productType.name} Card UID = ${HexUtil.toHex(smartCard.uid)}")
       }
     }
-    return null
+    return CardSelection.Selected(smartCard)
   }
 
-  /** Executes the control procedure applying to the selected card. */
-  fun executeControlProcedure(): ControlResult {
-    val card = smartCard
-    val procedure =
-        controlProcedures.firstOrNull { it.supports(card) }
-            ?: error("Unsupported card type: ${card.javaClass.simpleName}")
-    return procedure.execute(
-        ControlContext(
-            cardReader = readerManager.getCardReader()!!,
-            card = card,
-            dateTime = LocalDateTime.now(),
-            location = appSettings.location,
-            locations = LocationRepository.getLocations(),
-            validationPeriod = appSettings.validationPeriod,
-            symmetricCryptoSecuritySetting = symmetricCryptoSecuritySetting,
-            asymmetricCryptoSecuritySetting = asymmetricCryptoSecuritySettings))
-  }
-
-  private fun getSymmetricCryptoSecuritySetting(): SymmetricCryptoSecuritySetting {
+  private fun createSecuritySettings(): SymmetricCryptoSecuritySetting {
     return calypsoCardApiFactory
         .createSymmetricCryptoSecuritySetting(
-            legacySamApiFactory.createSymmetricCryptoCardTransactionManagerFactory(
-                readerManager.getSamReader(), legacySam))
+            keypopApiProvider
+                .getLegacySamApiFactory()
+                .createSymmetricCryptoCardTransactionManagerFactory(
+                    readerManager.getSamReader(), calypsoSam))
         .assignDefaultKif(WriteAccessLevel.PERSONALIZATION, DefaultKifs.PERSONALIZATION)
         .assignDefaultKif(WriteAccessLevel.LOAD, DefaultKifs.LOAD)
         .assignDefaultKif(WriteAccessLevel.DEBIT, DefaultKifs.DEBIT)
+        .enableRatificationMechanism()
         .enableMultipleSession()
   }
 
   private fun selectSam(samReader: CardReader): Boolean {
-
     // Create a SAM selection manager.
     val samSelectionManager: CardSelectionManager = readerApiFactory.createCardSelectionManager()
 
@@ -347,10 +346,10 @@ class TicketingService(
       val samSelectionResult = samSelectionManager.processCardSelectionScenario(samReader)
 
       // Get the Calypso SAM SmartCard resulting of the selection.
-      legacySam = samSelectionResult.activeSmartCard!! as LegacySam
+      calypsoSam = samSelectionResult.activeSmartCard!! as LegacySam
       return true
     } catch (e: Exception) {
-      logger.e("An exception occurred while selecting the SAM.  ${e.message}")
+      logger.e("An exception occurred while selecting the SAM. ${e.message}", e)
     }
     return false
   }

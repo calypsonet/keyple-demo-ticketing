@@ -66,9 +66,9 @@ class CardContentActivity : BaseActivity() {
 
   override fun onResume() {
     super.onResume()
-    if (ticketingService.readersInitialized) {
-      ticketingService.stopNfcDetection()
-      Timber.d("stopNfcDetection")
+    if (cardReaderSession.isInitialized) {
+      cardReaderSession.stopCardDetection()
+      Timber.d("stopCardDetection")
     }
   }
 }
