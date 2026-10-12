@@ -432,9 +432,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Android target SDK defined by its own `androidTargetSdk` property (still `35`) instead of `androidCompileSdk`.
 - The background tasks of `KeypleService` (server ping, card selection scenario) and the tones of the desktop buzzer
   are launched in a scope owned by their class instead of `GlobalScope`.
-- Code organized in packages by role: `dto` (DTOs of the JSON API), `service` (`KeypleService`, `CardRepository`,
-  `ServerConfigRepository`) and `platform` (buzzer and data store, with their `expect`/`actual` declarations), `App`
-  and `AppViewModel` staying in the root package.
+- Code organized in two packages, as in the Android applications: `ui`, with one package per screen (`home`, `card`,
+  `read`, `load`, `personalize`, `success`, `settings`) and the shared elements (`components`, `theme`, `nav`,
+  `model`), and `data` for everything else: `dto` (DTOs of the JSON API), `service` (`KeypleService`,
+  `CardRepository`, `ServerConfigRepository`), `network` and `platform` (buzzer and data store, with their
+  `expect`/`actual` declarations). `App` and `AppViewModel` stay in the root package. The `nfc` package (wrong name on
+  desktop, where the cards are read through PC/SC) is removed, and the `Product` and `ProductType` models move out of
+  the card content screen.
+- The contract loading screen and its view model are named `LoadContractScreen` and `LoadContractScreenViewModel`
+  (instead of `WriteCardScreen...`), and `KeypleService.selectCardAndWriteContract` is renamed
+  `selectCardAndLoadContract`, as the `LoadContract` route and the `SELECT_APP_AND_LOAD_CONTRACT` service.
 - The DTOs of the JSON API are named as in the `common` library which they mirror (e.g.
   `SelectAppAndLoadContractInputDto` instead of `WriteContract`, `SelectAppAndPersonalizeCardInputDto` and
   `SelectAppAndAnalyzeContractsInputDto` instead of `GenericSelectAppInputDto`), and the outputs of the

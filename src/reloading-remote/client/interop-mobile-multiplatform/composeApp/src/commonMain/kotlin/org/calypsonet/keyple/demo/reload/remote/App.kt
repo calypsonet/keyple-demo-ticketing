@@ -20,31 +20,31 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import org.calypsonet.keyple.demo.reload.remote.card.CardContentScreen
-import org.calypsonet.keyple.demo.reload.remote.card.CardContentScreenViewModel
-import org.calypsonet.keyple.demo.reload.remote.nav.AppSuccess
-import org.calypsonet.keyple.demo.reload.remote.nav.Card
-import org.calypsonet.keyple.demo.reload.remote.nav.Home
-import org.calypsonet.keyple.demo.reload.remote.nav.LoadContract
-import org.calypsonet.keyple.demo.reload.remote.nav.PersonalizeCard
-import org.calypsonet.keyple.demo.reload.remote.nav.ReadCard
-import org.calypsonet.keyple.demo.reload.remote.nav.ServerConfig
-import org.calypsonet.keyple.demo.reload.remote.nav.Settings
-import org.calypsonet.keyple.demo.reload.remote.nfc.personalize.PersonalizeCardScreen
-import org.calypsonet.keyple.demo.reload.remote.nfc.personalize.PersonalizeCardScreenViewModel
-import org.calypsonet.keyple.demo.reload.remote.nfc.read.ReadCardScreen
-import org.calypsonet.keyple.demo.reload.remote.nfc.read.ReadCardScreenViewModel
-import org.calypsonet.keyple.demo.reload.remote.nfc.write.WriteCardScreen
-import org.calypsonet.keyple.demo.reload.remote.nfc.write.WriteCardScreenViewModel
-import org.calypsonet.keyple.demo.reload.remote.service.CardRepository
-import org.calypsonet.keyple.demo.reload.remote.service.KeypleService
-import org.calypsonet.keyple.demo.reload.remote.service.ServerConfigRepository
-import org.calypsonet.keyple.demo.reload.remote.settings.ServerConfigScreen
-import org.calypsonet.keyple.demo.reload.remote.settings.ServerConfigScreenViewModel
-import org.calypsonet.keyple.demo.reload.remote.settings.SettingsScreen
-import org.calypsonet.keyple.demo.reload.remote.ui.HomeScreen
-import org.calypsonet.keyple.demo.reload.remote.ui.KeypleTheme
-import org.calypsonet.keyple.demo.reload.remote.ui.SuccessScreen
+import org.calypsonet.keyple.demo.reload.remote.data.service.CardRepository
+import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleService
+import org.calypsonet.keyple.demo.reload.remote.data.service.ServerConfigRepository
+import org.calypsonet.keyple.demo.reload.remote.ui.card.CardContentScreen
+import org.calypsonet.keyple.demo.reload.remote.ui.card.CardContentScreenViewModel
+import org.calypsonet.keyple.demo.reload.remote.ui.home.HomeScreen
+import org.calypsonet.keyple.demo.reload.remote.ui.load.LoadContractScreen
+import org.calypsonet.keyple.demo.reload.remote.ui.load.LoadContractScreenViewModel
+import org.calypsonet.keyple.demo.reload.remote.ui.nav.AppSuccess
+import org.calypsonet.keyple.demo.reload.remote.ui.nav.Card
+import org.calypsonet.keyple.demo.reload.remote.ui.nav.Home
+import org.calypsonet.keyple.demo.reload.remote.ui.nav.LoadContract
+import org.calypsonet.keyple.demo.reload.remote.ui.nav.PersonalizeCard
+import org.calypsonet.keyple.demo.reload.remote.ui.nav.ReadCard
+import org.calypsonet.keyple.demo.reload.remote.ui.nav.ServerConfig
+import org.calypsonet.keyple.demo.reload.remote.ui.nav.Settings
+import org.calypsonet.keyple.demo.reload.remote.ui.personalize.PersonalizeCardScreen
+import org.calypsonet.keyple.demo.reload.remote.ui.personalize.PersonalizeCardScreenViewModel
+import org.calypsonet.keyple.demo.reload.remote.ui.read.ReadCardScreen
+import org.calypsonet.keyple.demo.reload.remote.ui.read.ReadCardScreenViewModel
+import org.calypsonet.keyple.demo.reload.remote.ui.settings.ServerConfigScreen
+import org.calypsonet.keyple.demo.reload.remote.ui.settings.ServerConfigScreenViewModel
+import org.calypsonet.keyple.demo.reload.remote.ui.settings.SettingsScreen
+import org.calypsonet.keyple.demo.reload.remote.ui.success.SuccessScreen
+import org.calypsonet.keyple.demo.reload.remote.ui.theme.KeypleTheme
 
 @Composable
 @Preview
@@ -85,11 +85,11 @@ fun App(
       composable<LoadContract> { backStackEntry ->
         val route = backStackEntry.toRoute<LoadContract>()
 
-        WriteCardScreen(
+        LoadContractScreen(
             navController = navController,
             viewModel =
-                viewModel<WriteCardScreenViewModel> {
-                  WriteCardScreenViewModel(keypleService = service, route = route)
+                viewModel<LoadContractScreenViewModel> {
+                  LoadContractScreenViewModel(keypleService = service, route = route)
                 },
             appState = state.value)
       }

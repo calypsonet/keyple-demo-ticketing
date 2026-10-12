@@ -15,13 +15,13 @@ package org.calypsonet.keyple.demo.reload.remote
 import androidx.compose.ui.window.ComposeUIViewController
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
-import org.calypsonet.keyple.demo.reload.remote.platform.Buzzer
-import org.calypsonet.keyple.demo.reload.remote.platform.DataStorePathProducer
-import org.calypsonet.keyple.demo.reload.remote.platform.PlatformBuzzer
-import org.calypsonet.keyple.demo.reload.remote.platform.createDataStore
-import org.calypsonet.keyple.demo.reload.remote.service.CardRepository
-import org.calypsonet.keyple.demo.reload.remote.service.KeypleService
-import org.calypsonet.keyple.demo.reload.remote.service.ServerConfigRepository
+import org.calypsonet.keyple.demo.reload.remote.data.platform.Buzzer
+import org.calypsonet.keyple.demo.reload.remote.data.platform.DataStorePathProducer
+import org.calypsonet.keyple.demo.reload.remote.data.platform.PlatformBuzzer
+import org.calypsonet.keyple.demo.reload.remote.data.platform.createDataStore
+import org.calypsonet.keyple.demo.reload.remote.data.service.CardRepository
+import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleService
+import org.calypsonet.keyple.demo.reload.remote.data.service.ServerConfigRepository
 import org.eclipse.keyple.interop.localreader.nfcmobile.api.*
 import platform.UIKit.UIDevice
 

@@ -176,17 +176,25 @@ The application uses Compose Multiplatform for consistent UI across all platform
 ```
 composeApp/src/                   # Kotlin Multiplatform library, desktop and iOS applications
 ├── commonMain/                    # Shared business logic
-│   └── kotlin/                   # App and AppViewModel (entry point of the shared UI)
-│       ├── card/                 # Card content screens
-│       ├── dto/                  # DTOs of the JSON API of the server (mirror of the common library)
-│       ├── nav/                  # Navigation routes
-│       ├── network/              # Server communication (HTTP client, server configuration)
-│       ├── nfc/                  # NFC operation screens
-│       ├── platform/             # Platform services (buzzer, data store), expect declarations
-│       ├── service/              # KeypleService, CardRepository, ServerConfigRepository
-│       ├── settings/             # Settings screens
-│       └── ui/                   # Common UI components
-├── androidMain/                  # Android-specific implementations (platform package: buzzer, data store...)
+│   └── kotlin/                   # App and AppViewModel (composition root of the shared UI)
+│       ├── data/                 # Everything which is not UI
+│       │   ├── dto/              # DTOs of the JSON API of the server (mirror of the common library)
+│       │   ├── network/          # Server communication (HTTP client, server configuration)
+│       │   ├── platform/         # Platform services (buzzer, data store), expect declarations
+│       │   └── service/          # KeypleService, CardRepository, ServerConfigRepository
+│       └── ui/                   # Screens (one package per screen) and shared UI elements
+│           ├── card/             # Card content and basket
+│           ├── components/       # Shared components (top bar, scan screen, automatic return)
+│           ├── home/             # Home screen
+│           ├── load/             # Loading of a contract
+│           ├── model/            # UI models (products proposed for sale)
+│           ├── nav/              # Navigation routes
+│           ├── personalize/      # Personalization of the card
+│           ├── read/             # Reading of the card
+│           ├── settings/         # Settings and server configuration
+│           ├── success/          # Success screen (animation by platform)
+│           └── theme/            # Theme and colors
+├── androidMain/                  # Android-specific implementations (buzzer, data store, success animation)
 ├── iosMain/                      # iOS-specific code
 └── desktopMain/                  # Desktop-specific code
 androidApp/src/main/              # Android application (activity, manifest, launcher icons)
@@ -199,23 +207,23 @@ Multiplatform and Android application plugins in the same module.
 
 #### Shared Business Logic (`commonMain`)
 
-**Services** (`service`):
+**Services** (`data/service`):
 - `KeypleService` - Handles Keyple Interop API communication (server status, card selection scenario, remote
   services)
 - `CardRepository` - Manages card data (serial number, contracts)
 - `ServerConfigRepository` - Server configuration persisted in the data store (address, endpoint, basic
   authentication)
-- `SimpleHttpNetworkClient` (`network`) - HTTP client for server communication
+- `SimpleHttpNetworkClient` (`data/network`) - HTTP client for server communication
 
-**DTOs** (`dto`):
+**DTOs** (`data/dto`):
 - Inputs and outputs of the remote services of the JSON API (`SelectAppAndAnalyzeContracts...`,
   `SelectAppAndLoadContract...`, `SelectAppAndPersonalizeCard...`), named as in the `common` library which they
   mirror: `common` is a JVM library, which the multiplatform client cannot use
 - `ContractInfo` - Contract information with name, description, and validity
 
-**UI Components**:
+**Screens** (`ui`):
 - `ReadCardScreen` - Screen for reading card content
-- `WriteCardScreen` - Screen for loading contracts
+- `LoadContractScreen` - Screen for loading contracts
 - `PersonalizeCardScreen` - Screen for card initialization
 - `ServerConfigScreen` - Server configuration UI
 
