@@ -19,12 +19,12 @@ import org.calypsonet.keyple.demo.reload.remote.domain.mappers.toCardInfo
 import org.calypsonet.keyple.demo.reload.remote.domain.mappers.toContract
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ReadContractsResult
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.Clock
-import org.calypsonet.keyple.demo.reload.remote.domain.spi.RemoteServiceManager
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.TicketingServer
 
 /** Reading of the contracts of the presented card, analyzed by the server. */
 class ReadContracts(
     private val cardReaderSession: CardReaderSession,
-    private val remoteServiceManager: RemoteServiceManager,
+    private val ticketingServer: TicketingServer,
     private val clock: Clock
 ) {
 
@@ -36,7 +36,7 @@ class ReadContracts(
   operator fun invoke(): ReadContractsResult {
     val smartCard = cardReaderSession.selectCard()
     val output =
-        remoteServiceManager.analyzeContracts(
+        ticketingServer.analyzeContracts(
             cardReaderSession.readerName,
             smartCard,
             AnalyzeContractsInputDto(cardReaderSession.pluginType))

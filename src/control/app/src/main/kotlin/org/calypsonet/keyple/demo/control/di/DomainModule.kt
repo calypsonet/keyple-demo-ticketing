@@ -24,7 +24,7 @@ import org.calypsonet.keyple.demo.control.domain.spi.AppSettingsRepository
 import org.calypsonet.keyple.demo.control.domain.spi.Clock
 import org.calypsonet.keyple.demo.control.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.control.domain.spi.Logger
-import org.calypsonet.keyple.demo.control.domain.spi.ReaderManager
+import org.calypsonet.keyple.demo.control.domain.spi.TerminalReaders
 import org.calypsonet.keyple.demo.control.domain.spi.UserFeedback
 import org.calypsonet.keyple.demo.control.domain.usecases.ControlCard
 
@@ -38,10 +38,10 @@ class DomainModule {
   @Singleton
   fun provideCardReaderSession(
       keypopApiProvider: KeypopApiProvider,
-      readerManager: ReaderManager,
+      terminalReaders: TerminalReaders,
       userFeedback: UserFeedback,
       logger: Logger
-  ): CardReaderSession = CardReaderSession(keypopApiProvider, readerManager, userFeedback, logger)
+  ): CardReaderSession = CardReaderSession(keypopApiProvider, terminalReaders, userFeedback, logger)
 
   @Provides
   @Singleton

@@ -20,16 +20,25 @@ import javax.inject.Singleton
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.calypsonet.keyple.demo.reload.remote.BuildConfig
+import org.calypsonet.keyple.demo.reload.remote.data.KeypleTicketingServer
 import org.calypsonet.keyple.demo.reload.remote.data.network.KeypleSyncEndPointClient
 import org.calypsonet.keyple.demo.reload.remote.data.network.RestServerStatusProvider
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.AppSettingsRepository
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.ServerStatusProvider
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.TicketingServer
+import org.eclipse.keyple.core.service.SmartCardServiceProvider
+import org.eclipse.keyple.distributed.LocalServiceClient
+import org.eclipse.keyple.distributed.LocalServiceClientFactoryBuilder
 
+/**
+ * Communication with the server: Keyple Distributed local service and ticketing server (remote
+ * services), SAM status of the server (REST API).
+ */
 @Suppress("unused")
 @Module
 @InstallIn(SingletonComponent::class)
-class RestModule {
+class ServerModule {
 
   @Provides
   @Singleton
@@ -48,6 +57,26 @@ class RestModule {
         OkHttpClient.Builder().addNetworkInterceptor(loggingInterceptor).build(),
         logger)
   }
+
+  @Provides
+  @Singleton
+  fun provideLocalServiceClient(
+      keypleSyncEndPointClient: KeypleSyncEndPointClient
+  ): LocalServiceClient {
+    val smartCardService = SmartCardServiceProvider.getService()
+    val localService =
+        smartCardService.getDistributedLocalService("localService")
+            ?: smartCardService.registerDistributedLocalService(
+                LocalServiceClientFactoryBuilder.builder("localService")
+                    .withSyncNode(keypleSyncEndPointClient)
+                    .build())
+    return localService.getExtension(LocalServiceClient::class.java)
+  }
+
+  @Provides
+  @Singleton
+  fun provideTicketingServer(localServiceClient: LocalServiceClient): TicketingServer =
+      KeypleTicketingServer(localServiceClient)
 
   @Provides
   @Singleton

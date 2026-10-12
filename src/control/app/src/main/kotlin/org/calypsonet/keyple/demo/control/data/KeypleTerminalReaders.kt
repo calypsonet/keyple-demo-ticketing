@@ -16,7 +16,7 @@ import android.app.Activity
 import javax.inject.Inject
 import org.calypsonet.keyple.demo.control.domain.model.CardProtocol
 import org.calypsonet.keyple.demo.control.domain.model.TerminalType
-import org.calypsonet.keyple.demo.control.domain.spi.ReaderManager
+import org.calypsonet.keyple.demo.control.domain.spi.TerminalReaders
 import org.calypsonet.keyple.demo.control.domain.spi.UiContext
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
 import org.calypsonet.keyple.plugin.bluebird.BluebirdContactlessProtocols
@@ -38,11 +38,11 @@ import org.eclipse.keypop.reader.ObservableCardReader
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 
-class KeypleReaderManager
+class KeypleTerminalReaders
 @Inject
 constructor(
     private val readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi
-) : ReaderManager {
+) : TerminalReaders {
 
   private lateinit var terminalType: TerminalType
   // Card
@@ -221,7 +221,7 @@ constructor(
     }
   }
 
-  override fun onDestroy(observer: CardReaderObserverSpi?) {
+  override fun release(observer: CardReaderObserverSpi?) {
     clear()
     if (observer != null && cardReader != null) {
       (cardReader as ObservableCardReader).removeObserver(observer)

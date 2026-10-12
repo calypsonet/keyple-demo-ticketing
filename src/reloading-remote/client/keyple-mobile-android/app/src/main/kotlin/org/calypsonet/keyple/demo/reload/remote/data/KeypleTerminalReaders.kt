@@ -18,7 +18,7 @@ import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocol
 import org.calypsonet.keyple.demo.reload.remote.domain.model.TerminalType
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
-import org.calypsonet.keyple.demo.reload.remote.domain.spi.ReaderManager
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.TerminalReaders
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.UiContext
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
 import org.calypsonet.keyple.plugin.bluebird.BluebirdContactlessProtocols
@@ -43,7 +43,7 @@ import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
  * Manager provided to encapsulate slight differences between readers provides methods to improve
  * code readability.
  */
-class KeypleReaderManager @Inject constructor(private val logger: Logger) : ReaderManager {
+class KeypleTerminalReaders @Inject constructor(private val logger: Logger) : TerminalReaders {
 
   private lateinit var terminalType: TerminalType
 
@@ -164,7 +164,7 @@ class KeypleReaderManager @Inject constructor(private val logger: Logger) : Read
     }
   }
 
-  override fun onDestroy(observer: CardReaderObserverSpi?) {
+  override fun release(observer: CardReaderObserverSpi?) {
     clear()
     if (observer != null && cardReader != null) {
       (cardReader as ObservableCardReader).removeObserver(observer)
@@ -183,8 +183,8 @@ class KeypleReaderManager @Inject constructor(private val logger: Logger) : Read
         CardMedium.EMBEDDED -> "EMBEDDED"
       }
 
-  /** Unregister any keyple plugin */
-  override fun unregisterPlugin(pluginName: String) {
+  /** Unregisters the given Keyple plugin, logging the failure. */
+  private fun unregisterPlugin(pluginName: String) {
     try {
       SmartCardServiceProvider.getService().unregisterPlugin(pluginName)
     } catch (e: Exception) {

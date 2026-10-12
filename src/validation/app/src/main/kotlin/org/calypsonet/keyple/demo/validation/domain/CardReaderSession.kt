@@ -20,7 +20,7 @@ import org.calypsonet.keyple.demo.validation.domain.model.SelectionError
 import org.calypsonet.keyple.demo.validation.domain.model.TerminalType
 import org.calypsonet.keyple.demo.validation.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.validation.domain.spi.Logger
-import org.calypsonet.keyple.demo.validation.domain.spi.ReaderManager
+import org.calypsonet.keyple.demo.validation.domain.spi.TerminalReaders
 import org.calypsonet.keyple.demo.validation.domain.spi.UiContext
 import org.calypsonet.keyple.demo.validation.domain.spi.UserFeedback
 import org.eclipse.keyple.core.util.HexUtil
@@ -52,7 +52,7 @@ import org.eclipse.keypop.storagecard.card.StorageCard
  */
 class CardReaderSession(
     private val keypopApiProvider: KeypopApiProvider,
-    private val readerManager: ReaderManager,
+    private val terminalReaders: TerminalReaders,
     private val userFeedback: UserFeedback,
     private val logger: Logger
 ) {
@@ -106,7 +106,7 @@ class CardReaderSession(
 
   /** The reader of the presented cards. */
   val cardReader: CardReader
-    get() = checkNotNull(readerManager.getCardReader()) { "Card reader not initialized" }
+    get() = checkNotNull(terminalReaders.getCardReader()) { "Card reader not initialized" }
 
   /** Security setting of the Calypso secure sessions, null if no SAM is available. */
   val cardSecuritySetting: SymmetricCryptoSecuritySetting?
@@ -129,20 +129,20 @@ class CardReaderSession(
   fun init(observer: CardReaderObserverSpi?, terminalType: TerminalType, uiContext: UiContext) {
     // Init user feedback and register plugin
     userFeedback.init(terminalType, uiContext)
-    readerManager.registerPlugin(terminalType, uiContext)
+    terminalReaders.registerPlugin(terminalType, uiContext)
 
     // Init card reader
-    val cardReader: CardReader? = readerManager.initCardReader()
+    val cardReader: CardReader? = terminalReaders.initCardReader()
 
     // Init SAM reader
-    val samReaders = readerManager.initSamReaders()
+    val samReaders = terminalReaders.initSamReaders()
     check(samReaders.isNotEmpty()) { "No SAM reader available" }
 
     // Register a card event observer and init the ticketing session
     cardReader?.let { reader ->
       (reader as ObservableCardReader).addObserver(observer)
       // attempts to select a SAM, if any, sets the isSecureSessionMode flag accordingly
-      val samReader = readerManager.getSamReader()
+      val samReader = terminalReaders.getSamReader()
       if (samReader == null || !selectSam(samReader)) {
         throw IllegalStateException("SAM reader or SAM not available")
       }
@@ -159,7 +159,7 @@ class CardReaderSession(
   fun startCardDetection() {
     // Provide the CardReader with the selection operation to be processed when a Card is inserted.
     prepareAndScheduleCardSelectionScenario()
-    (readerManager.getCardReader() as ObservableCardReader).startCardDetection(
+    (terminalReaders.getCardReader() as ObservableCardReader).startCardDetection(
         ObservableCardReader.DetectionMode.REPEATING)
     userFeedback.displayWaiting()
   }
@@ -168,7 +168,7 @@ class CardReaderSession(
   fun stopCardDetection() {
     try {
       // notify reader that se detection has been switched off
-      (readerManager.getCardReader() as ObservableCardReader).stopCardDetection()
+      (terminalReaders.getCardReader() as ObservableCardReader).stopCardDetection()
     } catch (e: Exception) {
       // NOP
     }
@@ -177,7 +177,7 @@ class CardReaderSession(
   /** Releases the readers and the user feedback, detaching the given [observer] from the reader. */
   fun release(observer: CardReaderObserverSpi?) {
     isInitialized = false
-    readerManager.onDestroy(observer)
+    terminalReaders.release(observer)
     userFeedback.release()
   }
 
@@ -188,7 +188,7 @@ class CardReaderSession(
   fun endCardProcessing() {
     try {
       logger.i("endCardProcessing")
-      (readerManager.getCardReader() as ObservableCardReader).finalizeCardProcessing()
+      (terminalReaders.getCardReader() as ObservableCardReader).finalizeCardProcessing()
     } catch (e: Exception) {
       logger.e("Cannot end card processing: $e")
     }
@@ -249,7 +249,7 @@ class CardReaderSession(
                 .filterByCardProtocol(CardProtocol.ISO_14443_4_LOGICAL_PROTOCOL.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
-    if (storageCardApiFactory != null && readerManager.isStorageCardSupported()) {
+    if (storageCardApiFactory != null && terminalReaders.isStorageCardSupported()) {
       indexOfMifareCardSelection =
           cardSelectionManager.prepareSelection(
               readerApiFactory
@@ -272,7 +272,7 @@ class CardReaderSession(
 
     // Schedule the execution of the prepared card selection scenario as soon as a card is presented
     cardSelectionManager.scheduleCardSelectionScenario(
-        readerManager.getCardReader() as ObservableCardReader,
+        terminalReaders.getCardReader() as ObservableCardReader,
         ObservableCardReader.NotificationMode.MATCHED_ONLY)
   }
 
@@ -321,7 +321,7 @@ class CardReaderSession(
             keypopApiProvider
                 .getLegacySamApiFactory()
                 .createSymmetricCryptoCardTransactionManagerFactory(
-                    readerManager.getSamReader(), calypsoSam))
+                    terminalReaders.getSamReader(), calypsoSam))
         .assignDefaultKif(WriteAccessLevel.PERSONALIZATION, DefaultKifs.PERSONALIZATION)
         .assignDefaultKif(WriteAccessLevel.LOAD, DefaultKifs.LOAD)
         .assignDefaultKif(WriteAccessLevel.DEBIT, DefaultKifs.DEBIT)

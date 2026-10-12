@@ -209,13 +209,10 @@ Device Selection → Settings → Home → Reader Activity → Control Results
 - **Responsibilities**: Selection of the card, execution of the control procedure supporting it
   (`CalypsoCardControlProcedure`, `StorageCardControlProcedure`) and user feedback of the result (`ControlResult`)
 
-**ReaderManager**
-- **Purpose**: Hardware abstraction and reader management
-- **Functions**:
-  - Reader discovery and connection management
-  - Plugin-specific configuration and optimization
-  - Error handling and recovery procedures
-  - Status monitoring for operational reliability
+**TerminalReaders** (`domain/spi/TerminalReaders.kt`)
+- Port giving access to the readers of the terminal
+- Registers the reader plugins of the terminal type, then provides the card reader and the SAM reader
+- Implementation: `KeypleTerminalReaders`
 
 **Card Repository Implementations**
 

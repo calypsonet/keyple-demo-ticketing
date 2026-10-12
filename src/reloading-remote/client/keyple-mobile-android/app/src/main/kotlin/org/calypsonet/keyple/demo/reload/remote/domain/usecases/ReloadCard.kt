@@ -19,12 +19,12 @@ import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.reload.remote.domain.CardReaderSession
 import org.calypsonet.keyple.demo.reload.remote.domain.mappers.toCardInfo
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardOperationResult
-import org.calypsonet.keyple.demo.reload.remote.domain.spi.RemoteServiceManager
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.TicketingServer
 
 /** Reload of the presented card with the contract bought, by the server. */
 class ReloadCard(
     private val cardReaderSession: CardReaderSession,
-    private val remoteServiceManager: RemoteServiceManager
+    private val ticketingServer: TicketingServer
 ) {
 
   /**
@@ -51,10 +51,9 @@ class ReloadCard(
     }
     val readerName = cardReaderSession.readerName
     val pluginType = cardReaderSession.pluginType
-    remoteServiceManager.analyzeContracts(
-        readerName, smartCard, AnalyzeContractsInputDto(pluginType))
+    ticketingServer.analyzeContracts(readerName, smartCard, AnalyzeContractsInputDto(pluginType))
     val output =
-        remoteServiceManager.writeContract(
+        ticketingServer.writeContract(
             readerName, smartCard, WriteContractInputDto(contractTariff, tripsToLoad, pluginType))
     return CardOperationResult(card, RemoteServiceStatus.fromCode(output.statusCode))
   }

@@ -18,7 +18,14 @@ import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 
-interface ReaderManager {
+/**
+ * Readers of the terminal: registration of the reader plugins of the platform, then access to the
+ * reader of the card medium (contactless reader or OMAPI reader).
+ *
+ * The readers are driven (card detection, selection and processing) by the `CardReaderSession` of
+ * the domain.
+ */
+interface TerminalReaders {
   /**
    * Returns the name of the reader to use for the given reader type and device.
    *
@@ -34,8 +41,6 @@ interface ReaderManager {
       callback: (() -> Unit)?
   )
 
-  fun unregisterPlugin(pluginName: String)
-
   fun initCardReader(
       observer: CardReaderObserverSpi?,
       readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi?
@@ -45,5 +50,5 @@ interface ReaderManager {
 
   fun getCardReader(): CardReader?
 
-  fun onDestroy(observer: CardReaderObserverSpi?)
+  fun release(observer: CardReaderObserverSpi?)
 }

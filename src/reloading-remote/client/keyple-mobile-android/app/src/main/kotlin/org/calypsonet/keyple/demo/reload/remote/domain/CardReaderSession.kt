@@ -18,7 +18,7 @@ import org.calypsonet.keyple.demo.reload.remote.domain.model.CardProtocol
 import org.calypsonet.keyple.demo.reload.remote.domain.model.TerminalType
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
-import org.calypsonet.keyple.demo.reload.remote.domain.spi.ReaderManager
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.TerminalReaders
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.UiContext
 import org.eclipse.keypop.reader.ObservableCardReader
 import org.eclipse.keypop.reader.selection.spi.SmartCard
@@ -35,7 +35,7 @@ import org.eclipse.keypop.storagecard.card.ProductType.ST25_SRT512
  */
 class CardReaderSession(
     private val keypopApiProvider: KeypopApiProvider,
-    private val readerManager: ReaderManager,
+    private val terminalReaders: TerminalReaders,
     private val logger: Logger
 ) {
 
@@ -81,12 +81,12 @@ class CardReaderSession(
       readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi?,
       callback: (() -> Unit)?
   ) {
-    readerName = readerManager.getReaderName(terminalType, cardMedium)
+    readerName = terminalReaders.getReaderName(terminalType, cardMedium)
     pluginType = getPluginType(terminalType, cardMedium)
     aids = getAids(cardMedium)
 
-    readerManager.registerPlugin(terminalType, uiContext, cardMedium, callback)
-    readerManager.initCardReader(observer, readerObservationExceptionHandler)
+    terminalReaders.registerPlugin(terminalType, uiContext, cardMedium, callback)
+    terminalReaders.initCardReader(observer, readerObservationExceptionHandler)
 
     isInitialized = true
   }
@@ -94,12 +94,12 @@ class CardReaderSession(
   /** Releases the reader, detaching the given [observer] from it. */
   fun release(observer: CardReaderObserverSpi?) {
     isInitialized = false
-    readerManager.onDestroy(observer)
+    terminalReaders.release(observer)
   }
 
   /** Starts the repeated detection of the cards. */
   fun startCardDetection() {
-    (readerManager.getReader(readerName) as ObservableCardReader).startCardDetection(
+    (terminalReaders.getReader(readerName) as ObservableCardReader).startCardDetection(
         ObservableCardReader.DetectionMode.REPEATING)
   }
 
@@ -108,14 +108,14 @@ class CardReaderSession(
     if (!isInitialized) {
       return
     }
-    (readerManager.getReader(readerName) as ObservableCardReader).stopCardDetection()
+    (terminalReaders.getReader(readerName) as ObservableCardReader).stopCardDetection()
   }
 
   /** Ends the processing of the presented card, the reader waiting for its removal. */
   fun endCardProcessing() {
     try {
       logger.i("endCardProcessing")
-      (readerManager.getCardReader() as ObservableCardReader).finalizeCardProcessing()
+      (terminalReaders.getCardReader() as ObservableCardReader).finalizeCardProcessing()
     } catch (e: Exception) {
       logger.i("cannot end card processing: $e")
     }
@@ -128,7 +128,7 @@ class CardReaderSession(
    */
   fun selectCard(): SmartCard {
     val readerApiFactory = keypopApiProvider.getReaderApiFactory()
-    val reader = readerManager.getReader(readerName)
+    val reader = terminalReaders.getReader(readerName)
     val cardSelectionManager = readerApiFactory.createCardSelectionManager()
 
     aids.forEach {

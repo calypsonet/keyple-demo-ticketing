@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2026 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -10,15 +10,23 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.domain.spi
+package org.calypsonet.keyple.demo.validation.domain.spi
 
-import org.calypsonet.keyple.demo.control.domain.model.TerminalType
+import org.calypsonet.keyple.demo.validation.domain.model.TerminalType
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 
-interface ReaderManager {
+/**
+ * Readers of the terminal: registration of the reader plugins of the platform, then access to the
+ * card reader and to the SAM reader.
+ *
+ * The readers are driven (card detection, selection and processing) by the `CardReaderSession` of
+ * the domain.
+ */
+interface TerminalReaders {
+
   /**
-   * Registers the appropriate reader plugin(s) for the given reader type and activity. Must be
+   * Registers the appropriate reader plugin(s) for the given reader type and UI context. Must be
    * called before initializing readers. Blocking call (creation and registration of the plugins),
    * to be made outside of the main thread.
    *
@@ -27,14 +35,24 @@ interface ReaderManager {
    */
   fun registerPlugin(terminalType: TerminalType, uiContext: UiContext)
 
+  /**
+   * Initializes and returns the primary card reader (contactless). Returns null if not available.
+   */
   fun initCardReader(): CardReader?
 
+  /** Returns the previously initialized primary card reader or null if not available. */
   fun getCardReader(): CardReader?
 
+  /**
+   * Initializes and returns the list of available SAM readers. The first reader is typically used
+   * for SAM access.
+   */
   fun initSamReaders(): List<CardReader>
 
+  /** Returns the selected SAM reader, if any. */
   fun getSamReader(): CardReader?
 
+  /** Indicates whether storage cards (e.g., MIFARE Ultralight, ST25 SRT512) are supported. */
   fun isStorageCardSupported(): Boolean
 
   /**
@@ -42,5 +60,5 @@ interface ReaderManager {
    *
    * @param observer Optional observer previously registered on the reader.
    */
-  fun onDestroy(observer: CardReaderObserverSpi?)
+  fun release(observer: CardReaderObserverSpi?)
 }

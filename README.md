@@ -188,11 +188,13 @@ The `domain` layer is designed to be easily transposed to another language (e.g.
   threads belonging to the `ui` layer (coroutines bound to the activity lifecycle). An asynchronous operation of the
   platform is either awaited by the adapter, the call being blocking (e.g. creation of the Arrive plugin factory), or
   expressed in the port by a callback (e.g. registration of the OMAPI plugin).
-- Everything the domain needs from the outside world is expressed as a port in `domain/spi` (e.g. `ReaderManager`,
-  `KeypopApiProvider`, `UserFeedback`, `AppSettingsRepository`, `Clock`, `Logger`, `UiContext`,
-  `RemoteServiceManager`, `ServerStatusProvider`) and implemented by an adapter in `data`, or in `ui` for the UI-bound ones.
+- Everything the domain needs from the outside world is expressed as a port in `domain/spi` (e.g. `TerminalReaders`,
+  `KeypopApiProvider`, `UserFeedback`, `AppSettingsRepository`, `Clock`, `Logger`, `UiContext`, `TicketingServer`,
+  `ServerStatusProvider`) and implemented by an adapter in `data`, or in `ui` for the UI-bound ones.
+- A port is named after what it represents or provides (e.g. `TerminalReaders`, `TicketingServer`, `Clock`), not with
+  a vague suffix such as `Manager`, and uses a platform-neutral vocabulary (e.g. `release` rather than `onDestroy`).
 - An adapter is named after the technology it relies on, followed by the name of its port (e.g.
-  `KeypleReaderManager`, `InMemoryAppSettingsRepository`, `SharedPreferencesAppSettingsRepository`, `TimberLogger`,
+  `KeypleTerminalReaders`, `InMemoryAppSettingsRepository`, `SharedPreferencesAppSettingsRepository`, `TimberLogger`,
   `ActivityUiContext`). The `Impl` suffix is not used.
 - The `ui` layer calls the use cases of the domain services, or the ports directly for simple accesses (e.g. settings).
   It never accesses the `data` layer, and does not handle the Keypop card types (`CalypsoCard`, `StorageCard`...).

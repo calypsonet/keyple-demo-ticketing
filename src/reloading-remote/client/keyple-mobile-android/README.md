@@ -143,10 +143,15 @@ Main Screen → Card Reader → Card Summary → Select Tickets → Checkout →
 **ReadContracts**, **ReloadCard**, **PersonalizeCard** (use cases)
 - Coordinate with server for card operations on the selected card
 
-**ReaderManager**
-- Interface between business layer and card reader
-- Abstracts reader-specific operations
-- Provides consistent API for different reader types
+**TerminalReaders** (`domain/spi/TerminalReaders.kt`)
+- Port giving access to the readers of the terminal
+- Registers the reader plugins of the card medium (NFC, Bluebird or OMAPI), then provides its reader
+- Implementation: `KeypleTerminalReaders`
+
+**TicketingServer** (`domain/spi/TicketingServer.kt`)
+- Port giving access to the remote services of the server (analysis of the contracts, personalization, writing
+  of a contract)
+- Implementation: `KeypleTicketingServer` (Keyple Distributed)
 
 **BaseCardActivity**
 - Base class for card-related activities
@@ -206,7 +211,7 @@ The application supports multiple reader plugins:
 To integrate additional reader types:
 
 1. Add plugin dependency to `build.gradle`
-2. Implement reader-specific initialization in `KeypleReaderManager`
+2. Implement reader-specific initialization in `KeypleTerminalReaders`
 3. Add UI selection option in device selection screen
 4. Test with target hardware platform
 

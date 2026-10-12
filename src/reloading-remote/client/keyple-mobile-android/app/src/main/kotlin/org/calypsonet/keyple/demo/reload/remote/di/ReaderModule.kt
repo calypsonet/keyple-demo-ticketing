@@ -17,15 +17,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-import org.calypsonet.keyple.demo.reload.remote.data.KeypleReaderManager
-import org.calypsonet.keyple.demo.reload.remote.data.KeypleRemoteServiceManager
-import org.calypsonet.keyple.demo.reload.remote.data.network.KeypleSyncEndPointClient
+import org.calypsonet.keyple.demo.reload.remote.data.KeypleTerminalReaders
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
-import org.calypsonet.keyple.demo.reload.remote.domain.spi.ReaderManager
-import org.calypsonet.keyple.demo.reload.remote.domain.spi.RemoteServiceManager
-import org.eclipse.keyple.core.service.SmartCardServiceProvider
-import org.eclipse.keyple.distributed.LocalServiceClient
-import org.eclipse.keyple.distributed.LocalServiceClientFactoryBuilder
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.TerminalReaders
 
 @Suppress("unused")
 @Module
@@ -34,28 +28,7 @@ class ReaderModule {
 
   @Provides
   @Singleton
-  fun provideLocalServiceClient(
-      keypleSyncEndPointClient: KeypleSyncEndPointClient
-  ): LocalServiceClient {
-    val smartCardService = SmartCardServiceProvider.getService()
-    val localService =
-        smartCardService.getDistributedLocalService("localService")
-            ?: smartCardService.registerDistributedLocalService(
-                LocalServiceClientFactoryBuilder.builder("localService")
-                    .withSyncNode(keypleSyncEndPointClient)
-                    .build())
-    return localService.getExtension(LocalServiceClient::class.java)
-  }
-
-  @Provides
-  @Singleton
-  fun provideReaderManager(logger: Logger): ReaderManager {
-    return KeypleReaderManager(logger)
-  }
-
-  @Provides
-  @Singleton
-  fun provideRemoteServiceManager(localServiceClient: LocalServiceClient): RemoteServiceManager {
-    return KeypleRemoteServiceManager(localServiceClient)
+  fun provideTerminalReaders(logger: Logger): TerminalReaders {
+    return KeypleTerminalReaders(logger)
   }
 }

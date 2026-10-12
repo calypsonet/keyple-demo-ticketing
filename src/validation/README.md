@@ -210,11 +210,10 @@ The summary overlay of the reader screen (`CardReaderActivity`) displays both su
 - Validates the presented card: selection, execution of the validation procedure supporting it and user feedback of
   the result (`ValidationResult`)
 
-**ReaderManager** (`domain/spi/ReaderManager.kt`)
-- Interface for managing card and SAM readers
-- Handles plugin registration and reader initialization
-- Provides UI feedback hooks (success/failure)
-- Implementation: `KeypleReaderManager`
+**TerminalReaders** (`domain/spi/TerminalReaders.kt`)
+- Port giving access to the readers of the terminal
+- Registers the reader plugins of the terminal type, then provides the card reader and the SAM reader
+- Implementation: `KeypleTerminalReaders`
 
 **CalypsoCardValidationProcedure** (`domain/procedures/CalypsoCardValidationProcedure.kt`)
 - Secure validation procedure for Calypso cards with SAM integration

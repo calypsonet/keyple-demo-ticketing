@@ -21,8 +21,8 @@ import org.calypsonet.keyple.demo.reload.remote.domain.CardReaderSession
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.Clock
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
-import org.calypsonet.keyple.demo.reload.remote.domain.spi.ReaderManager
-import org.calypsonet.keyple.demo.reload.remote.domain.spi.RemoteServiceManager
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.TerminalReaders
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.TicketingServer
 import org.calypsonet.keyple.demo.reload.remote.domain.usecases.PersonalizeCard
 import org.calypsonet.keyple.demo.reload.remote.domain.usecases.ReadContracts
 import org.calypsonet.keyple.demo.reload.remote.domain.usecases.ReloadCard
@@ -37,29 +37,29 @@ class DomainModule {
   @Singleton
   fun provideCardReaderSession(
       keypopApiProvider: KeypopApiProvider,
-      readerManager: ReaderManager,
+      terminalReaders: TerminalReaders,
       logger: Logger
-  ): CardReaderSession = CardReaderSession(keypopApiProvider, readerManager, logger)
+  ): CardReaderSession = CardReaderSession(keypopApiProvider, terminalReaders, logger)
 
   @Provides
   @Singleton
   fun provideReadContracts(
       cardReaderSession: CardReaderSession,
-      remoteServiceManager: RemoteServiceManager,
+      ticketingServer: TicketingServer,
       clock: Clock
-  ): ReadContracts = ReadContracts(cardReaderSession, remoteServiceManager, clock)
+  ): ReadContracts = ReadContracts(cardReaderSession, ticketingServer, clock)
 
   @Provides
   @Singleton
   fun provideReloadCard(
       cardReaderSession: CardReaderSession,
-      remoteServiceManager: RemoteServiceManager
-  ): ReloadCard = ReloadCard(cardReaderSession, remoteServiceManager)
+      ticketingServer: TicketingServer
+  ): ReloadCard = ReloadCard(cardReaderSession, ticketingServer)
 
   @Provides
   @Singleton
   fun providePersonalizeCard(
       cardReaderSession: CardReaderSession,
-      remoteServiceManager: RemoteServiceManager
-  ): PersonalizeCard = PersonalizeCard(cardReaderSession, remoteServiceManager)
+      ticketingServer: TicketingServer
+  ): PersonalizeCard = PersonalizeCard(cardReaderSession, ticketingServer)
 }

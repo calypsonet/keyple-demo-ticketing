@@ -20,13 +20,13 @@ import org.calypsonet.keyple.demo.common.dto.CardIssuanceInputDto
 import org.calypsonet.keyple.demo.common.dto.CardIssuanceOutputDto
 import org.calypsonet.keyple.demo.common.dto.WriteContractInputDto
 import org.calypsonet.keyple.demo.common.dto.WriteContractOutputDto
-import org.calypsonet.keyple.demo.reload.remote.domain.spi.RemoteServiceManager
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.TicketingServer
 import org.eclipse.keyple.distributed.LocalServiceClient
 import org.eclipse.keypop.reader.selection.spi.SmartCard
 
-class KeypleRemoteServiceManager
+class KeypleTicketingServer
 @Inject
-constructor(private val localServiceClient: LocalServiceClient) : RemoteServiceManager {
+constructor(private val localServiceClient: LocalServiceClient) : TicketingServer {
 
   override fun analyzeContracts(
       localReaderName: String,

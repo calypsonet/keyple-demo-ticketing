@@ -17,12 +17,12 @@ import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
 import org.calypsonet.keyple.demo.reload.remote.domain.CardReaderSession
 import org.calypsonet.keyple.demo.reload.remote.domain.mappers.toCardInfo
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardOperationResult
-import org.calypsonet.keyple.demo.reload.remote.domain.spi.RemoteServiceManager
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.TicketingServer
 
 /** Personalization of the presented card, by the server. */
 class PersonalizeCard(
     private val cardReaderSession: CardReaderSession,
-    private val remoteServiceManager: RemoteServiceManager
+    private val ticketingServer: TicketingServer
 ) {
 
   /**
@@ -33,7 +33,7 @@ class PersonalizeCard(
   operator fun invoke(): CardOperationResult {
     val smartCard = cardReaderSession.selectCard()
     val output =
-        remoteServiceManager.personalizeCard(
+        ticketingServer.personalizeCard(
             cardReaderSession.readerName,
             smartCard,
             CardIssuanceInputDto(cardReaderSession.pluginType))

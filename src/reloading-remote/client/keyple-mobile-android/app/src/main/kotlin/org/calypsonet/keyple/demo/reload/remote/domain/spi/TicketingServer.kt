@@ -20,7 +20,11 @@ import org.calypsonet.keyple.demo.common.dto.WriteContractInputDto
 import org.calypsonet.keyple.demo.common.dto.WriteContractOutputDto
 import org.eclipse.keypop.reader.selection.spi.SmartCard
 
-interface RemoteServiceManager {
+/**
+ * Ticketing server: remote services processing the card presented to the local reader (analysis of
+ * the contracts, personalization of the card, writing of a contract).
+ */
+interface TicketingServer {
   fun analyzeContracts(
       localReaderName: String,
       smartCard: SmartCard,

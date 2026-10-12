@@ -54,11 +54,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Android applications: logging through the `Logger` port (same `d`/`i`/`w`/`e` interface in all applications) in the
   domain, data and di layers. Timber is only used by `TimberLogger`, `Application` and the activities.
 - Android applications: the adapters are named after the technology they rely on instead of the `Impl` suffix
-  (`KeypleReaderManager`, `KeypleKeypopApiProvider`, `InMemoryAppSettingsRepository` and
+  (`KeypleTerminalReaders`, `KeypleKeypopApiProvider`, `InMemoryAppSettingsRepository` and
   `SharedPreferencesAppSettingsRepository`, `MediaPlayerUserFeedback` and `TerminalUserFeedback`,
-  `KeypleRemoteServiceManager`, `RestServerStatusProvider`, `DemoMifareClassicKeyProvider`, `TimberLogger`).
+  `KeypleTicketingServer`, `RestServerStatusProvider`, `DemoMifareClassicKeyProvider`, `TimberLogger`).
   `UiContextImpl` is renamed `ActivityUiContext` and moves from `ui/adapters` to `ui`, the `adapters` package being
   confusing with the RecyclerView adapters.
+- Android applications: the ports are named after their responsibility instead of the `Manager` suffix:
+  `TerminalReaders` (readers of the terminal, formerly `ReaderManager`) and, in the reloading client,
+  `TicketingServer` (remote services of the server, formerly `RemoteServiceManager`). The readers are released by
+  `release` instead of `onDestroy` (Android vocabulary), and `unregisterPlugin` is no longer part of the port of the
+  reloading client, being only used by its implementation.
 - Android applications: the messages logged through the `Logger` port are tagged in Logcat with the name of the
   calling class (they were all tagged `LoggerImpl`).
 - Android applications: card processing is now finalized with `ObservableCardReader.finalizeCardProcessing()` after
@@ -104,7 +109,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `Status` enums reduced to their values, the labels they carried being displayed nowhere (the reloading client
     passes the status name between its activities);
   - Hilt modules of the reloading client: `AppSettingsModule` (settings and shared preferences) instead of
-    `DataModule`, the server status provider being provided by `RestModule` with the other network adapters.
+    `DataModule`, and `ServerModule` (formerly `RestModule`) providing the communication with the server (Keyple
+    Distributed local service, ticketing server, server status), `ReaderModule` only providing the readers.
 - All the applications: same ticketing vocabulary, documented in the README ("Ticketing vocabulary"):
   - `Contract` instead of "title" (translation of the French "titre de transport") for the contracts of the card:
     `ContractsRecyclerAdapter`, `contract_recycler_row.xml`, `contractsList`, and in the reloading Android client
@@ -221,7 +227,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 #### Added
 - Anti-passback check for storage cards: a card presented again within the anti-passback delay is rejected.
 #### Changed
-- The user feedback (sounds, LEDs) is provided by the dedicated `UserFeedback` port instead of `ReaderManager`. The Arrive
+- The user feedback (sounds, LEDs) is provided by the dedicated `UserFeedback` port instead of the reader port. The Arrive
   and Android implementations are renamed `ArriveFeedbackDevice` and `AndroidFeedbackDevice`.
 - The settings are accessed through the `AppSettingsRepository` port instead of the global `AppSettings` object.
 - The UI uses the domain models directly (UI models removed, as no object is passed between activities).
@@ -252,7 +258,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The SAM selection no longer filters the SAM on its power-on data (SAM C1).
 - The user feedback (sounds) is provided by the `UserFeedback` port, and the settings are accessed through the
   `AppSettingsRepository` port.
-- `ReaderManager.clear()` is no longer part of the port, being only used by its implementation (as in the other
+- `clear()` is no longer part of the `TerminalReaders` port, being only used by its implementation (as in the other
   applications).
 #### Removed
 - Values of the `Status` enum never produced by the control procedure (`LOADING`, `SUCCESS`, `WRONG_CARD`,
@@ -269,8 +275,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Reloading remote Android client
 #### Changed
 - Major architectural refactoring to apply the layered architecture with ports and adapters: the plugins and readers
-  management is moved from the activities to `KeypleReaderManager`, and the remote services are called through the
-  `RemoteServiceManager` port.
+  management is moved from the activities to `KeypleTerminalReaders`, and the remote services are called through the
+  `TicketingServer` port.
 - The business logic is moved from the activities to the domain: card selection (AIDs depending on the device),
   interpretation of the server status codes, building of the contracts and check that the reloaded card is the one
   read before. The activities no longer handle the Keypop card types.

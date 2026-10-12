@@ -17,9 +17,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-import org.calypsonet.keyple.demo.control.data.KeypleReaderManager
+import org.calypsonet.keyple.demo.control.data.KeypleTerminalReaders
 import org.calypsonet.keyple.demo.control.domain.spi.Logger
-import org.calypsonet.keyple.demo.control.domain.spi.ReaderManager
+import org.calypsonet.keyple.demo.control.domain.spi.TerminalReaders
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 
 @Suppress("unused")
@@ -29,9 +29,9 @@ class ReaderModule {
 
   @Provides
   @Singleton
-  fun provideReaderManager(
+  fun provideTerminalReaders(
       cardReaderObservationExceptionHandlerSpi: CardReaderObservationExceptionHandlerSpi
-  ): ReaderManager = KeypleReaderManager(cardReaderObservationExceptionHandlerSpi)
+  ): TerminalReaders = KeypleTerminalReaders(cardReaderObservationExceptionHandlerSpi)
 
   @Provides
   @Singleton
