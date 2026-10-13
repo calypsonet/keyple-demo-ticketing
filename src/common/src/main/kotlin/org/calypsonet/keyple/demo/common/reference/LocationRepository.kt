@@ -10,9 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.common.data
-
-import org.calypsonet.keyple.demo.common.model.Location
+package org.calypsonet.keyple.demo.common.reference
 
 object LocationRepository {
 

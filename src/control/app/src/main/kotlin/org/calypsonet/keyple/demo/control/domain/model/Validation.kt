@@ -13,7 +13,7 @@
 package org.calypsonet.keyple.demo.control.domain.model
 
 import java.time.LocalDateTime
-import org.calypsonet.keyple.demo.common.model.Location
+import org.calypsonet.keyple.demo.common.reference.Location
 
 data class Validation(
     val name: String,

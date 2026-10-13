@@ -219,6 +219,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   record nor expired or exhausted contract to replace.
 #### Changed
 - `Location.toString()` now returns the name of the location.
+- Packages: `Location` and `LocationRepository` move to the new `reference` package (reference data of the
+  network), instead of `model` (data structures of the card) and `data` (a name used by the layer of the adapters in
+  the applications); `RemoteServiceId` moves from `constants` to `dto`, which gathers the protocol of the remote
+  services (service identifiers, input and output data, status codes).
 - Immutable model (used by all the applications and the server):
   - `EnvironmentHolderStructure`, `EventStructure` and `ContractStructure` are `data class` with read-only properties,
     modified by copy (`copy()`, or `EventStructure.withContractPriority()` and `ContractStructure.withCounterValue()`,
@@ -394,8 +398,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `ContractAnalysisService`, `ContractLoadingService` and `CardPersonalizationService` (Keyple clients),
   `CardSelectionApi` (JSON API: selection of the application by the server, then delegation to the previous services)
   and `ContractCounterService` (.NET client). The remote services are dispatched by `RemoteServiceDispatcher` with a
-  `switch` on `RemoteServiceId` (`CardConfigurator` only setting up the Keyple infrastructure), the transactions of the dashboard are recorded by `ActivityRecorder`, and the selection of the
-  application and the result messages of the JSON API are written once instead of three times. No functional change.
+  `switch` on `RemoteServiceId` (`CardConfigurator` only setting up the Keyple infrastructure), the transactions of
+  the dashboard are recorded by `ActivityRecorder`, and the selection of the application and the result messages
+  of the JSON API are written once instead of three times. No functional change.
 #### Removed
 - Unreachable "card not read" status code (`4`) of the contract writing.
 #### Fixed
@@ -460,6 +465,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The contract loading screen and its view model are named `LoadContractScreen` and `LoadContractScreenViewModel`
   (instead of `WriteCardScreen...`), and `KeypleService.selectCardAndWriteContract` is renamed
   `selectCardAndLoadContract`, as the `LoadContract` route and the `SELECT_APP_AND_LOAD_CONTRACT` service.
+- CI: the architecture check of the Android applications (`check-android-architecture.sh`) is not run on this
+  client (new `check-architecture` input of the reusable Android workflow): it follows the MVVM pattern, its view
+  models calling the data services directly, without domain layer.
 - The DTOs of the JSON API are named as in the `common` library which they mirror (e.g.
   `SelectAppAndLoadContractInputDto` instead of `WriteContract`, `SelectAppAndPersonalizeCardInputDto` and
   `SelectAppAndAnalyzeContractsInputDto` instead of `GenericSelectAppInputDto`), and the outputs of the

@@ -12,7 +12,7 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.control.domain.usecases
 
-import org.calypsonet.keyple.demo.common.data.LocationRepository
+import org.calypsonet.keyple.demo.common.reference.LocationRepository
 import org.calypsonet.keyple.demo.control.domain.CardReaderSession
 import org.calypsonet.keyple.demo.control.domain.CardReaderSession.CardSelection
 import org.calypsonet.keyple.demo.control.domain.model.ControlResult

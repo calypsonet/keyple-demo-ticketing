@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.common.model
+package org.calypsonet.keyple.demo.common.reference
 
 data class Location(val id: Int, val name: String) {
   override fun toString() = name

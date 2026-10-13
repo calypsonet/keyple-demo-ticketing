@@ -14,7 +14,7 @@ package org.calypsonet.keyple.demo.validation.domain.model
 
 import java.time.LocalDate
 import java.time.LocalDateTime
-import org.calypsonet.keyple.demo.common.model.Location
+import org.calypsonet.keyple.demo.common.reference.Location
 
 /** Result of the validation procedure, translated into texts by the UI. */
 sealed interface ValidationResult {

@@ -16,6 +16,11 @@ on:
         required: false
         type: string
         default: 'ubuntu-latest'
+      check-architecture:
+        description: 'Check the layering rules of the Android applications (domain, data, ui)'
+        required: false
+        type: boolean
+        default: true
 
 jobs:
   ci-android:
@@ -37,6 +42,7 @@ jobs:
         run: chmod +x ${{ inputs.working-directory }}/gradlew
 
       - name: Check architecture rules of ${{ inputs.component-name }}
+        if: ${{ inputs.check-architecture }}
         working-directory: .
         shell: bash
         run: bash .github/scripts/check-android-architecture.sh ${{ inputs.working-directory }}

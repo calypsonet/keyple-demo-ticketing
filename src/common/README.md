@@ -8,11 +8,14 @@ for building interoperable ticketing applications.
 ## Overview
 
 This library defines the common elements used across the Keyple Demo ecosystem:
-- Data model structures (EnvironmentHolderStructure, EventStructure, ContractStructure)
-- Record codecs (decoding and encoding of the card records)
-- Priority codes and enumeration types
-- Date/time compact format types
-- Card application identifiers
+- `model`: data model structures of the card (EnvironmentHolderStructure, EventStructure, ContractStructure), and
+  `model/type`: types of their fields (priority codes, compact date and time, version number)
+- `codecs`: record codecs (decoding and encoding of the card records)
+- `constants`: organization of the card (application identifiers, files, blocks, key identifiers) and PKI test
+  certificates
+- `dto`: protocol of the remote services between the clients and the server (service identifiers, input and
+  output data, status codes)
+- `reference`: reference data of the network (locations)
 
 ## Used By
 

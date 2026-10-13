@@ -17,8 +17,8 @@ import android.os.Bundle
 import android.provider.Settings
 import android.widget.ArrayAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import org.calypsonet.keyple.demo.common.data.LocationRepository
-import org.calypsonet.keyple.demo.common.model.Location
+import org.calypsonet.keyple.demo.common.reference.Location
+import org.calypsonet.keyple.demo.common.reference.LocationRepository
 import org.calypsonet.keyple.demo.validation.BuildConfig
 import org.calypsonet.keyple.demo.validation.R
 import org.calypsonet.keyple.demo.validation.databinding.ActivitySettingsBinding

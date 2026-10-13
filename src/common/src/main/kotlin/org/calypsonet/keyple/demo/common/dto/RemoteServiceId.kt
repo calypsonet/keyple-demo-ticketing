@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.common.constants
+package org.calypsonet.keyple.demo.common.dto
 
 enum class RemoteServiceId {
 

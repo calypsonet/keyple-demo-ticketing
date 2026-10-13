@@ -28,6 +28,9 @@ jobs:
       component-name: "Reloading Client Interop Mobile Multiplatform"
       working-directory: "./src/reloading-remote/client/interop-mobile-multiplatform/"
       target-os: "macos-latest"
+      # The layering rules apply to the Android applications: the multiplatform client follows the MVVM pattern, its
+      # view models calling the data services directly
+      check-architecture: false
 
   ci-reloading-android:
     name: "Reload (Android)"

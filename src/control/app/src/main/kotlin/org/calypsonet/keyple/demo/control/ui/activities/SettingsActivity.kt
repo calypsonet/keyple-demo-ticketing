@@ -18,8 +18,8 @@ import android.provider.Settings
 import android.text.Editable
 import android.widget.ArrayAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import org.calypsonet.keyple.demo.common.data.LocationRepository
-import org.calypsonet.keyple.demo.common.model.Location
+import org.calypsonet.keyple.demo.common.reference.Location
+import org.calypsonet.keyple.demo.common.reference.LocationRepository
 import org.calypsonet.keyple.demo.control.BuildConfig
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.databinding.ActivitySettingsBinding

@@ -13,7 +13,7 @@
 package org.calypsonet.keyple.demo.control.domain.procedures
 
 import java.time.LocalDateTime
-import org.calypsonet.keyple.demo.common.model.Location
+import org.calypsonet.keyple.demo.common.reference.Location
 import org.eclipse.keypop.calypso.card.transaction.AsymmetricCryptoSecuritySetting
 import org.eclipse.keypop.calypso.card.transaction.SymmetricCryptoSecuritySetting
 import org.eclipse.keypop.reader.CardReader

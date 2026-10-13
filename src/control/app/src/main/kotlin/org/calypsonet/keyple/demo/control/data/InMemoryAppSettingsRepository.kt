@@ -13,7 +13,7 @@
 package org.calypsonet.keyple.demo.control.data
 
 import javax.inject.Inject
-import org.calypsonet.keyple.demo.common.model.Location
+import org.calypsonet.keyple.demo.common.reference.Location
 import org.calypsonet.keyple.demo.control.domain.model.TerminalType
 import org.calypsonet.keyple.demo.control.domain.spi.AppSettingsRepository
 
