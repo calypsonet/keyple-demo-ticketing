@@ -18,10 +18,10 @@ import org.calypsonet.keyple.demo.control.ui.model.UiContract
 fun Contract.toUi(): UiContract =
     UiContract(
         name = name,
-        valid = valid,
+        isValidated = isValidated,
         validationDateTime = validationDateTime,
         record = record,
-        expired = expired,
-        contractValidityStartDate = contractValidityStartDate,
-        contractValidityEndDate = contractValidityEndDate,
+        isExpired = isExpired,
+        saleDate = saleDate,
+        validityEndDate = validityEndDate,
         remainingTrips = remainingTrips)

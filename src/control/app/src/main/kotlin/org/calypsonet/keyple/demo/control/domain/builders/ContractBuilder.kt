@@ -33,10 +33,10 @@ fun buildContract(
 ): Contract =
     Contract(
         name = contract.contractTariff.label,
-        valid = contractValidated,
+        isValidated = contractValidated,
         record = record,
         validationDateTime = validationDateTime,
-        expired = contractExpired,
-        contractValidityStartDate = contract.contractSaleDate.date,
-        contractValidityEndDate = contract.contractValidityEndDate.date,
+        isExpired = contractExpired,
+        saleDate = contract.contractSaleDate.date,
+        validityEndDate = contract.contractValidityEndDate.date,
         remainingTrips = remainingTrips)

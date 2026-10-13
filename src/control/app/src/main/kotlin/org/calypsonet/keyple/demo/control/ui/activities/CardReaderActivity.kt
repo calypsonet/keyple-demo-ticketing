@@ -157,13 +157,13 @@ class CardReaderActivity : BaseActivity() {
               try {
                 // Select and control the card
                 withContext(Dispatchers.Main) { showProgress() }
-                val cardReaderResponse =
+                val controlResult =
                     withContext(Dispatchers.IO) {
                       controlCard(readerEvent.scheduledCardSelectionsResponse)
                     }
                 withContext(Dispatchers.Main) {
-                  if (cardReaderResponse is ControlResult.CardContent) {
-                    when (cardReaderResponse.authenticationMode) {
+                  if (controlResult is ControlResult.CardContent) {
+                    when (controlResult.authenticationMode) {
                       AuthenticationMode.SAM ->
                           showToast(getString(R.string.authentication_mode_sam))
                       AuthenticationMode.PKI ->
@@ -173,7 +173,7 @@ class CardReaderActivity : BaseActivity() {
                     }
                   }
                   dismissProgress()
-                  displayResult(cardReaderResponse.toUi(resources))
+                  displayResult(controlResult.toUi(resources))
                 }
               } catch (e: CancellationException) {
                 // The activity has been destroyed

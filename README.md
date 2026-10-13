@@ -291,7 +291,26 @@ The applications use the same business terms, in the code and in the displayed t
 - "Title" (literal translation of the French "titre de transport") is not used: it is a false friend in English.
 - "Support" (French "support") is not used either: the displayed texts say "card".
 - The names of the resources of the displayed texts follow the terms of the code (e.g. `product_price`,
-  `trips_count`, `contract_loaded`).
+  `trips_count` plurals, `no_contract_label`).
+
+The operations are named in the same way in all the components:
+
+| Operation                               | In the code                                         | Displayed to the users                 |
+|-----------------------------------------|-----------------------------------------------------|----------------------------------------|
+| Reading of the contracts of a card      | `ReadContracts`, `analyzeContracts` (by the server) | "Read in progress"                     |
+| Loading of a product in the card        | `LoadContract`, `loadContract`, `tripsToLoad`       | "Load ticket", "Ticket loaded"         |
+| Extension of a season pass by a loading | `renewedSeasonPass`                                 | -                                      |
+| Preparation of a card for the demo      | `PersonalizeCard`, `personalizeCard`                | "Personalization", "Card personalized" |
+| Use of a contract at the entry          | `ValidateCard`, `ValidationResult`                  | "Validation"                           |
+| Check of the card by an inspector       | `ControlCard`, `ControlResult`                      | "Control"                              |
+
+- "Reload" is only the name of the reloading demo: the operation is "load", including when trips are added to a
+  multi-trip ticket or when a season pass is renewed.
+- "Issuance" and "initialization" do not designate the personalization ("initialization" only designates the
+  technical start of a component, e.g. a reader plugin).
+- "Write" only designates the technical operation (writing of a record), never the business operation.
+- The secure sessions are named after their Calypso access level: `PERSONALIZATION` (personalization), `LOAD`
+  (loading) and `DEBIT` (validation, control).
 
 The terms of the card data model (`EnvironmentHolder`, `Event`, `Contract`, `ContractTariff`, `ContractPriority`,
 `PriorityCode`) follow its specification (see the `common` library).

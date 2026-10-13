@@ -7,15 +7,15 @@
     <string name="please_wait">Please wait</string>
     <string name="version">version %s</string>
 
-    <string name="quit">Quitter</string>
+    <string name="quit">Quit</string>
     <string name="present_card">Please present your contactless card for validation</string>
     <string name="no_contract_desc">Please load a ticket.</string>
     <string name="valid_main_desc">Validation completed!</string>
     <string name="valid_location_time">%1$s\n%2$s</string>
     <string name="valid_trips_left_zero">You have no trip left</string>
     <string name="valid_trips_left_single">You have 1 trip left</string>
-    <string name="valid_trips_left_multiple">You have %d trips left.</string>
-    <string name="valid_season_pass">You have a season pass valid until %s.</string>
+    <string name="valid_trips_left_multiple">You have %d trips left</string>
+    <string name="valid_season_pass">You have a season pass valid until %s</string>
     <string name="valid_last_desc">Have a nice trip!</string>
     <string name="error_main_desc">An error occurred.</string>
     <string name="error_small_desc">Please try again.</string>
@@ -50,9 +50,9 @@
     <string name="selection_unexpected_df_name">Selection error: unexpected DF name</string>
     <string name="selection_unsupported_file_structure">Invalid card\nFile structure %1$sh not supported</string>
     <string name="card_type_calypso">CALYPSO: DF name %1$s</string>
-    <string name="card_type_mifare_classic_1k">Mifare Classic 1K</string>
-    <string name="card_type_mifare_classic_4k">Mifare Classic 4K</string>
-    <string name="card_type_mifare_ultralight">Mifare Ultralight</string>
+    <string name="card_type_mifare_classic_1k">MIFARE Classic 1K</string>
+    <string name="card_type_mifare_classic_4k">MIFARE Classic 4K</string>
+    <string name="card_type_mifare_ultralight">MIFARE Ultralight</string>
     <string name="card_type_st25_srt512">ST25 SRT512</string>
     <string name="rejection_environment_wrong_version">Environment error: wrong version number</string>
     <string name="rejection_environment_expired">Environment error: end date expired</string>
@@ -61,7 +61,7 @@
     <string name="rejection_already_validated">Card already tapped.\nPlease wait before retrying.</string>
     <string name="rejection_no_valid_contract">No valid ticket detected</string>
     <string name="rejection_expired_contract">Expired ticket</string>
-    <string name="rejection_no_trips_left">No trips left</string>
+    <string name="rejection_no_trips_left">No trip left</string>
     <string name="rejection_contract_forbidden_or_expired">Ticket forbidden or expired</string>
     <string name="error_mifare_classic_authentication">Authentication failed. Please ensure the card is correctly positioned.</string>
     <string name="error_mifare_classic_transaction">Transaction failed. Please try again.</string>

@@ -5,5 +5,5 @@
     </plurals>
     <string name="basket_season_pass">Season pass</string>
     <string name="contract_loaded">Ticket loaded</string>
-    <string name="card_empty">Card is empty</string>
+    <string name="no_contract_label">No ticket</string>
 </resources>

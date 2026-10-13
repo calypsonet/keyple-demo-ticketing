@@ -43,8 +43,8 @@ class ContractsRecyclerAdapter(private val contracts: List<UiContract>) :
             val formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH)
             context.getString(
                 R.string.card_content_description_season_pass,
-                contract.contractValidityStartDate.format(formatter),
-                contract.contractValidityEndDate.format(formatter))
+                contract.saleDate.format(formatter),
+                contract.validityEndDate.format(formatter))
           } else {
             when (val remainingTrips = contract.remainingTrips ?: 0) {
               0 -> context.getString(R.string.card_content_description_multi_trip_zero)
@@ -60,7 +60,7 @@ class ContractsRecyclerAdapter(private val contracts: List<UiContract>) :
       binding.contractName.text = contract.name
       binding.contractDescription.text = contractDescription
       binding.validImg.setImageResource(
-          if (contract.valid) R.drawable.ic_tick else R.drawable.ic_fail)
+          if (contract.isValidated) R.drawable.ic_tick else R.drawable.ic_fail)
     }
   }
 

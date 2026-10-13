@@ -62,7 +62,7 @@ cd keyple-demo-ticketing/src/reloading-remote/client/keyple-mobile-android
 The app supports multiple NFC reader types:
 - **Contactless card**: Standard Android NFC (all devices)
 - **SIM Card**: OMAPI reader access (work in progress)
-- **Embedded SE**: Wizway plugin for eSE (work in progress)
+- **Wearable**, **Embedded Secure Element**: card media planned, without reader yet
 
 ## Usage
 
@@ -74,7 +74,7 @@ The app supports multiple NFC reader types:
 
 2. **Card Personalization** (if needed)
   - Go to **Settings** → **Personalization**
-  - Present card to initialize with clean state
+  - Present the card to personalize (its data is reset)
   - Wait for confirmation message
 
 3. **Read Card Content**
@@ -105,7 +105,7 @@ Splash Screen → Home → Card Reader → Card Content → Select Product → C
 **Settings Menu (`SettingsMenuActivity`)**
 - **Server Settings**: Connection configuration
 - **Card media**: Card media shown in the home screen (enabled, disabled or hidden)
-- **Personalization**: Card reset and initialization
+- **Personalization**: Personalization of a card (reset of its data)
 
 **Card Reader (`CardReaderActivity`)**
 - Initializes selected Keyple plugin
@@ -171,9 +171,6 @@ The application supports multiple reader plugins:
 **Standard Plugins** (always available):
 - Android NFC plugin for standard contactless reading
 - OMAPI plugin for SIM card access (development)
-
-**Development Plugins**:
-- Wizway plugin for embedded Secure Element access
 
 ### Security Model
 

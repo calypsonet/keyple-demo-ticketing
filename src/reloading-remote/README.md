@@ -9,7 +9,7 @@ This is a client/server demonstration of the
 [Eclipse Keyple Distributed Solution](https://keyple.org/docs/developer-guide/distributed-application/) 
 feature where all ticketing procedures and sessions are fully managed by the server.
 
-The [Eclipse Keyple](https://keyple.org) SDK is used to remotely initialize a card and reload a contract (Season pass 
+The [Eclipse Keyple](https://keyple.org) SDK is used to remotely personalize a card and load a contract (Season pass 
 and/or Multi-trip ticket) on a Calypso contactless card using the 
 [Keyple Plugin Android NFC | Eclipse Keyple](https://keyple.org/components-java/plugins/nfc/) 
 plugin.
@@ -35,7 +35,7 @@ file of this library to discover these data structures.
 
 This repository is organized in four source code folders:
 
-- **server**: source code of the server part of the demo. The sever should run on a computer with a JVM and have a card reader with a SAM connected.
+- **server**: source code of the server part of the demo. The server should run on a computer with a JVM and have a card reader with a SAM connected.
 - **client/interop-mobile-multiplatform**: source code of interop client part of the demo as a Kotlin Multiplatform project.
 - **client/keyple-mobile-android**: source code of the client part of the demo as an Android project.
 - **client/pc-dotnet**: source code of the client part of the demo not using the Keyple middleware as Microsoft Visual Studio project.
@@ -44,9 +44,9 @@ This repository is organized in four source code folders:
 
 Each application's code source contains a `README` file, please refer to this document for more information.
 
-## Card Issuance / Personalization and Distribution / Loading Procedures
+## Card Personalization and Contract Loading Procedures
 
-### Card Issuance / Personalization Use Case
+### Card Personalization Use Case
 
 This use case prepares the cards to be used for the following use cases by setting the appropriate values for the data
 model fields of the Environment Record and making sure that the other relevant files are set to 0s (i.e. Events, 
@@ -54,11 +54,11 @@ Contracts and Counters).
 
 Steps:
 1. Detection and Selection
-2. Clean / Initialize application
+2. Clear the application
 
-### Card Issuance / Personalization Process
+### Card Personalization Process
 
-For this demo, a simple example card issuance / personalization procedure has been implemented. 
+For this demo, a simple example card personalization procedure has been implemented. 
 
 Opening a Calypso secure session is mandatory for this procedure since we need to write on the card.
 
@@ -70,8 +70,8 @@ This procedure's main steps are as follows:
     - If the status of the DF is invalid reject the card. <Exit process>
   - Selection Analysis:
     - If File Structure is unknown reject the card. <Exit process>
-- Clean/Initialize Application
-  - Open an Issuer session without reading any information.
+- Clear the Application
+  - Open a secure session with the PERSONALIZATION access level, without reading any information.
   - Fill the environment structure, pack it into a byte array and update the environment record:
     - `EnvVersionNumber` = 1
     - `EnvApplicationNumber` = GlobalNumber++
@@ -84,9 +84,9 @@ This procedure's main steps are as follows:
   - Close the session.
   - Return the status of the operation to the upper layer. <Exit process>
 
-### Distribution / Loading Use Case
+### Contract Loading Use Case
 
-This use case loads a new contract, or reloads/extends an existing contract, while updating the contract priority
+This use case loads a new contract, or adds trips to or renews an existing contract of the same type, while updating the contract priority
 levels if necessary.
 
 Contracts can be period duration in which they are valid for a specific period or have an associated counter that
@@ -95,18 +95,18 @@ represents the number of trips left.
 This use case must also contemplate the option of loading the contracts with traceability mode (thus adding an 
 authenticator to the end of the file). During the Contract Analysis phase the authenticator needs to be checked.
 
-Contracts will be loaded first into blank records and then, when it is not a reload, the expired contract with the 
+Contracts will be loaded first into blank records and then, when the card has no contract of the same type, the expired contract with the 
 lowest index will be replaced.
 
 Steps:
 1. Detection and Selection
 2. Contract Analysis
-3. Write new contract/extend existing one
+3. Write the new contract, or update the existing one
 4. Update contract priority value (if necessary)
 
-### Distribution / Loading Process
+### Contract Loading Process
 
-For this demo, a simple example card issuance / personalization procedure has been implemented. 
+For this demo, a simple example contract loading procedure has been implemented. 
 
 Opening a Calypso secure session is mandatory for this procedure since we need to write on the card.
 
@@ -117,7 +117,7 @@ This procedure's main steps are as follows:
   - Selection Analysis:
     - If File Structure is unknown reject the card. <Exit process>
 - Environment Analysis:
-  - Open a Reload session reading the environment record.
+  - Open a secure session with the LOAD access level, reading the environment record.
   - Unpack environment structure from the binary present in the environment record.
     - If `EnvVersionNumber` of the Environment structure is not the expected one (==1 for the current version) reject the card. <Abort Transaction and exit process>
     - If `EnvEndDate` points to a date in the past reject the card. <Abort Transaction and exit process>
@@ -130,7 +130,7 @@ This procedure's main steps are as follows:
     - Read and unpack the contract record for the index being iterated.
       - If `ContractVersionNumber` is 0 ensure that the associated `ContractPriority` field value is 0 and move on to the next contract.
       - If `ContractValidityEndDate` points to a date in the past update the associated `ContractPriority` field present in the persistent object to 31 and set the change flag to true.
-    - Add contract to the list of possible contracts to be reloaded.
+    - Add the contract to the list of the contracts of the card.
     - Return the list with the contract information. <Exit process>
 
 -----------------
@@ -139,15 +139,15 @@ This procedure's main steps are as follows:
 
 -----------------
 
-- Write new contract/extend existing one & Update Contract Priority Value:
+- Write the new contract or update the existing one, and update the Contract Priority Value:
   - Fill the contract structure to update:
     - `ContractVersionNumber` = 1.
     - `ContractTariff` = Value provided by upper layer.
     - `ContractSaleDate` = Current Date converted to `DateCompact`.
-    - If the operation is a reload of the `ContractTariff` == 1 and the original `ContractValidityEndDate` is not in the past, set `ContractValidityEndDate` = original `ContractValidityEndDate` + 30
+    - If the operation renews a season pass (`ContractTariff` == 1) and the original `ContractValidityEndDate` is not in the past, set `ContractValidityEndDate` = original `ContractValidityEndDate` + 30
     - Else `ContractValidityEndDate` = (`ContractSaleDate` + 30 if `ContractTariff` == 1) or (`EnvEndDate` if `ContractTariff` == 2)
   - Pack the Contract structure to write into the contract record.
-  - If the operation is a reload use the index of the original contract to update the information.
+  - If the card already has a contract of the same type, use the index of this contract to update the information.
   - `ContractPriority` Analysis: 
     - If `ContractPriority` Value == `ContractTariff` skip the next points and go to CNT_UPD. (can be expired)
     - Else, Set `ContractPriority` Value = `ContractTariff`, set the flag to `true`.

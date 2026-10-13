@@ -6,7 +6,7 @@ import Navigator from './Navigator';
 import Header from './Header';
 import './App.css';
 import useInterval from './util/useInterval'
-import CollapsibleTable from './CollapsibleTable';
+import TransactionTable from './TransactionTable';
 import Copyright from './Copyright'
 import {layoutSx,drawerWidth,theme} from './util/theme'
 
@@ -134,7 +134,7 @@ export default function App() {
         <Box sx={layoutSx.app}>
           <Header onDrawerToggle={handleDrawerToggle} isSamReady={isSamReady} isServerReady={isServerReady}/>
           <Box component="main" sx={layoutSx.main}>
-            <CollapsibleTable rows={rows} lastRowId={lastRowId} />
+            <TransactionTable rows={rows} lastRowId={lastRowId} />
           </Box>
           <Box component="footer" sx={layoutSx.footer}>
             <Copyright />

@@ -78,7 +78,7 @@ internal fun ServerSettingsScreen(
           OutlinedTextField(
               value = state.serverPort.toString(),
               onValueChange = { onPortChanged(it.trim().toInt()) },
-              label = { Text("Server Port") })
+              label = { Text("Server port") })
 
           OutlinedTextField(
               value = state.protocol,

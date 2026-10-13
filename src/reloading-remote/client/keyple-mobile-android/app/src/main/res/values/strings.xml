@@ -3,7 +3,7 @@
     <string name="eclipse_foundation">Eclipse Foundation</string>
 
     <string name="splash_title">Open Source API for Smart Ticketing</string>
-    <string name="present_travel_card_label">Please present a contactless card</string>
+    <string name="present_card_label">Please present a contactless card</string>
     <string name="read_in_progress">Read in progress</string>
     <string name="loading_in_progress">Loading in progress</string>
     <string name="card_invalid_label">Not valid on this network</string>
@@ -46,11 +46,11 @@
     <string name="credit_card_details">Credit card details</string>
     <string name="card_number">Card number</string>
     <string name="expiry">Expiry</string>
-    <string name="CVV">CVC</string>
+    <string name="cvc">CVC</string>
     <string name="pay">Pay</string>
     <string name="prefill_card">1111 1111 1111 1111</string>
-    <string name="prefill_expiry">06/19</string>
-    <string name="prefill_cvv">123</string>
+    <string name="prefill_expiry">12/30</string>
+    <string name="prefill_cvc">123</string>
 
     <string name="present_card">Please present the contactless card to be loaded</string>
 
@@ -74,7 +74,7 @@
     <string name="personalization_setting">Personalization</string>
 
     <string name="server_ip">Server IP</string>
-    <string name="server_port">Server Port</string>
+    <string name="server_port">Server port</string>
     <string name="protocol">Protocol</string>
     <string name="ping_action">Server state</string>
     <string name="save">Save</string>
@@ -86,13 +86,13 @@
     <string name="ping_success">Ping succeeded</string>
     <string name="ping_failed">Ping failed</string>
     <string name="invalid_server_ip">Please set a valid IP</string>
-    <string name="invalid_server_port">Please set a valid Port</string>
-    <string name="invalid_server_protocol">Please set a valid Protocol</string>
+    <string name="invalid_server_port">Please set a valid port</string>
+    <string name="invalid_server_protocol">Please set a valid protocol</string>
 
     <!-- CardContent screen -->
     <string name="content_title">Content</string>
     <string name="contract_name_placeholder">Multi-trip ticket</string>
-    <string name="card_content_description_placeholder">From JJ Month YYYY to JJ Month YYYY</string>
+    <string name="card_content_description_placeholder">From DD Month YYYY to DD Month YYYY</string>
     <string name="card_type">%1$s</string>
     <string name="contract_multi_trip">Multi-trip ticket</string>
     <plurals name="trips_left">
@@ -102,7 +102,7 @@
     <string name="no_counter">No counter</string>
     <string name="contract_season_pass">Season pass</string>
     <string name="contract_season_pass_expired">Season pass - Expired</string>
-    <string name="contract_forbidden">FORBIDDEN</string>
-    <string name="contract_unknown">UNKNOWN</string>
+    <string name="contract_forbidden">Forbidden</string>
+    <string name="contract_unknown">Unknown</string>
     <string name="validity_period">From %1$s to %2$s</string>
 </resources>

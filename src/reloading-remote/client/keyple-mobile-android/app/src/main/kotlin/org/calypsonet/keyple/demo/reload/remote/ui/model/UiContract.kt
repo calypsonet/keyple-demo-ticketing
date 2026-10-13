@@ -16,4 +16,4 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class UiContract(val name: String, val description: String, val valid: Boolean) : Parcelable
+data class UiContract(val name: String, val description: String, val isValid: Boolean) : Parcelable

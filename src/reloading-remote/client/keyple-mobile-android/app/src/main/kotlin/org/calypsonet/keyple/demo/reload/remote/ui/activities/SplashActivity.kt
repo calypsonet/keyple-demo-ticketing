@@ -39,7 +39,7 @@ class SplashActivity : AppCompatActivity() {
       WindowInsetsCompat.CONSUMED
     }
 
-    // Wait for Wizway Device to be connected
+    // Shows the splash screen for a moment, then the home screen
     Timer()
         .schedule(
             object : TimerTask() {

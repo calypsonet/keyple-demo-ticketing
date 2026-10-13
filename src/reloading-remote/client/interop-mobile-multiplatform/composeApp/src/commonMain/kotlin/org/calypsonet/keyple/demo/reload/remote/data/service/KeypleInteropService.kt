@@ -115,7 +115,7 @@ class KeypleInteropService(
           .get("${serverConfig?.baseUrl()}/card/export-card-selection-scenario") {}
           .body<String>()
     } catch (e: Exception) {
-      throw ServerIOException("Comm error: ${e.message}")
+      throw ServerIOException("Communication error: ${e.message}")
     }
   }
 

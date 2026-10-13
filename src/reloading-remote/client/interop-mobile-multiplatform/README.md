@@ -116,7 +116,7 @@ The application configuration is managed through:
 #### Card Personalization
 1. **Settings** → **Personalization**
 2. **Present Card** to device NFC reader
-3. **Wait for confirmation** of successful initialization
+3. **Wait for confirmation** of successful personalization
 
 #### Reading Card Content
 1. **Home Screen** → **Contactless card**
@@ -225,7 +225,7 @@ Multiplatform and Android application plugins in the same module.
 - `ReadCardScreen` - Screen for reading card content
 - `CardContentScreen` - Contracts of the card and products proposed for sale
 - `LoadContractScreen` - Screen for loading contracts
-- `PersonalizeCardScreen` - Screen for card initialization
+- `PersonalizeCardScreen` - Screen for card personalization
 - `SettingsMenuScreen` - Settings menu (server, personalization)
 - `ServerSettingsScreen` - Server settings UI
 

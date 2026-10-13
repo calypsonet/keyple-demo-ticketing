@@ -27,7 +27,7 @@ fun Contract.toUi(resources: Resources): UiContract =
       PriorityCode.MULTI_TRIP ->
           UiContract(
               resources.getString(R.string.contract_multi_trip),
-              counterValue?.let { resources.getQuantityString(R.plurals.trips_left, it, it) }
+              remainingTrips?.let { resources.getQuantityString(R.plurals.trips_left, it, it) }
                   ?: resources.getString(R.string.no_counter),
               isValid)
       PriorityCode.SEASON_PASS ->

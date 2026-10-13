@@ -4,34 +4,34 @@
 [![Release](https://img.shields.io/github/v/release/calypsonet/keyple-demo-ticketing)](https://github.com/calypsonet/keyple-demo-ticketing/releases)
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../LICENSE)
 
-Android control terminal application for post-validation inspection of transportation cards. This application represents the final verification step in the ticketing workflow, allowing inspectors to verify the validity of validation events and contract usage.
+Android control terminal application, checking after their validation the cards of the passengers. This application
+represents the last step of the ticketing workflow: it displays the contracts of the card and indicates which one has
+been validated at the location of the control within the validation period.
 
 [⬅️ Back to Main Project](../../README.md)
 
 ## Overview
 
-This Android application simulates inspection terminals used by transportation authority personnel to verify that passengers have properly validated their travel. It analyzes validation events created by the [Validation Demo](../validation/) and provides comprehensive contract status information for compliance checking.
+This Android application simulates the terminals used by the inspectors of a transport network to check that the
+passengers have validated their trip. It analyzes the validation events written by the
+[Validation Demo](../validation/) and the contracts loaded by the [Reload Demo](../reloading-remote/).
 
-**Role in Ecosystem**: Final step in the ticketing workflow - inspects cards after validation to verify proper usage and contract compliance.
+**Role in Ecosystem**: Last step of the ticketing workflow - checks the cards after their validation.
 
-**Control Purpose**: Verify that the last validation event is legitimate and that contracts are being used appropriately within the transportation system.
+**Control Purpose**: Check that the last validation used a contract of the card, at the location of the control and
+within the validation period.
 
 ## Prerequisites
 
 ### Hardware Requirements
 - Android device with Android 8.0+ (API level 26+)
 - NFC capability for contactless card reading
-- **SAM (Security Access Module)** for secure Calypso operations (optional)
+- **SAM (Secure Access Module)** for the authentication of the Calypso cards (optional)
 - Compatible terminal hardware (see [tested terminals](#tested-terminals))
 
-### Software Requirements
-- Cards with validation events from [Validation Demo](../validation/)
-- Contracts loaded using [Reload Demo](../reloading-remote/)
-- Inspector training on control procedures and result interpretation
-
 ### Card Requirements
-- Previously validated cards with event history
-- Valid contract structures and authentication data
+- Cards personalized and loaded with the [Reload Demo](../reloading-remote/)
+- Cards validated with the [Validation Demo](../validation/), to display a validated contract
 - Supported AIDs (see [Common Library](../common/README.md#supported-card-applications))
 
 ## Installation
@@ -54,146 +54,84 @@ cd keyple-demo-ticketing/src/control
 ### Terminal Selection
 1. Launch application
 2. Select the terminal type from **Terminal Selection** screen:
-  - **Famoco FX205**: Enterprise terminal with SAM reader
-  - **Standard NFC**: Consumer Android device (No card authentication)
-  - Proprietary terminals (grayed out by default)
+  - **Famoco**: terminal with a SAM reader
+  - **NFC terminal**: any Android device with NFC (no SAM: the Calypso cards are authenticated by PKI when they
+    support it, otherwise not authenticated)
+  - **Bluebird**: proprietary plugin (grayed out by default, see [Proprietary Plugins](#proprietary-plugins))
 
 ### Control Settings
-1. Open **Settings** from main menu
-2. Configure control parameters:
-
-**Location Settings**:
-- **Control Location**: Identifier for this inspection point
-- **Location Name**: Human-readable location (e.g., "Central Station", "Bus Line 42")
-- Used to verify validation occurred in correct zone/network
-
-**Validity Settings**:
-- **Validity Duration**: Time window (minutes) for considering validation events as current
-- **Grace Period**: Additional time allowance for edge cases
-- **Location Tolerance**: Accept validations from specific other locations
-
-**Inspector Settings**:
-- **Inspector ID**: Unique identifier for accountability
-- **Shift Information**: Start/end times for reporting
-- **Report Generation**: Enable automatic inspection reports
+The **Settings** screen, displayed after the terminal selection, configures the control:
+- **Location**: location of the control, compared with the location of the last validation
+- **Validation period** (minutes): period after the validation during which the validated contract is considered
+  as used for the current trip
+- **Time and date**: shortcut to the date and time settings of Android
 
 ## Usage
 
 ### Standard Control Flow
 
 ```
-Terminal Selection → Settings → Home → Reader Activity → Control Results
+Terminal Selection → Settings → Home → Card Reader → Card Content or Invalid Card
 ```
 
 ### Detailed Screen Guide
 
 **Terminal Selection (`TerminalSelectionActivity`)**
-- Choose appropriate hardware plugin for terminal type
+- Choice of the terminal type, which selects the reader plugins
 - Proprietary plugins require additional setup (see [Proprietary Plugins](#proprietary-plugins))
 
 **Settings (`SettingsActivity`)**
-- Configure location and validity parameters
-- Set inspector identification and reporting options
-- Access diagnostic and maintenance functions
+- Location of the control, validation period, access to the date and time settings
 
 **Home (`HomeActivity`)**
-- Inspector dashboard with current shift information
-- Quick access to settings and help documentation
-- Statistics on recent control operations
+- Start of the control
 
-**Reader Activity (`CardReaderActivity`)**
-- Initializes selected Keyple plugin and optional SAM integration
-- Displays "Present Card for Control" message
-- Shows real-time analysis during card processing
-- Handles card detection and control procedure execution
+**Card Reader (`CardReaderActivity`)**
+- Waits for a card ("Please present a contactless card to be controlled")
+- Selects the card and runs the control procedure supporting it
+- Displays the authentication mode of the card (by the SAM, by PKI, or not authenticated)
 
-**Control Results**
+**Card Content (`CardContentActivity`)**
+- **Last validation**: date, time and location of the last validation, and contract used
+- **Contracts**: list of the contracts of the card, with their validity period (season pass) or their number of
+  remaining trips (multi-trip ticket); the contract used by the last validation is marked as validated when the
+  validation took place at the location of the control, the same day and within the validation period
+- "No ticket" when the card has never been loaded
 
-**Valid Card Screen (`CardContentActivity`)**:
-- **Last Validation Event**:
-  - Date, time, and location of validation
-  - Contract used for validation
-  - Validation status (valid/expired/insufficient)
-- **Contract Analysis**:
-  - List of all contracts with current status
-  - Validity periods and remaining trips
-  - Priority assignments and usage history
-- **Compliance Status**: Clear indication of card validity
+**Invalid Card (`InvalidCardActivity`)**
+- Reason why the card is refused (see [Rejection Reasons](#rejection-reasons)) or error message
 
-**Invalid Card Screen (`InvalidCardActivity`)**:
-- **Non-compliance Reason**: Specific issue detected
-- **Recommended Action**: Guidance for inspector response
-- **Supporting Evidence**: Technical details for documentation
+### Rejection Reasons
 
-### Control Scenarios
-
-#### Valid Inspection Results
-
-**Recent Valid Validation**:
-- Card shows validation within validity duration
-- Validation occurred at acceptable location
-- Contract used was appropriate and had sufficient value
-- **Result**: Passenger in compliance
-
-**Valid Season pass**:
-- Card shows Season pass contract within validity period
-- Recent validation event confirms proper usage
-- **Result**: Unlimited travel authorization confirmed
-
-**Valid Multi-trip Usage**:
-- Card shows Multi-trip contract with remaining trips
-- Validation event shows proper trip deduction
-- **Result**: Paid travel confirmed
-
-#### Non-Compliance Detection
-
-**No Recent Validation**:
-- Last validation event outside validity duration
-- Passenger may have entered without validation
-- **Action**: Request proof of payment or issue citation
-
-**Wrong Location Validation**:
-- Validation occurred at incompatible location
-- May indicate network boundary violations
-- **Action**: Verify passenger's intended journey
-
-**Expired Contract Usage**:
-- Validation attempted with expired contract
-- System should have rejected but may indicate tampering
-- **Action**: Detailed inspection and possible citation
+| Displayed text                              | Cause                                                          |
+|:--------------------------------------------|:---------------------------------------------------------------|
+| Selection error: card not recognized         | No supported application in the card                          |
+| Invalid card - File structure not supported | File structure of the Calypso application not supported       |
+| Environment error: wrong version number      | Card not personalized (environment of an unexpected version)  |
+| Environment error: end date expired          | End date of the environment in the past                       |
+| Event error: wrong version number            | Last event of an unexpected version                           |
+| Ticket error: wrong version number           | Contract of an unexpected version (storage cards)             |
 
 ## Technical Architecture
 
 ### Supported Card Types
 
 #### Calypso Cards
-**Secure Analysis**:
-- Optional SAM authentication for enhanced security
-- Cryptographic verification of contract authenticity
-- Secure session management for sensitive operations
-- Full audit trail of all control operations
-
 **Control Procedure**:
-1. **Detection and Selection**: Verify supported AID
-2. **Environment Analysis**: Check card validity and expiration
-3. **Event Analysis**: Examine last validation event details
-4. **Contract Analysis**: Review all contracts and their status
-5. **Authentication Verification**: Validate contract signatures (if SAM available)
-6. **Compliance Determination**: Generate pass/fail result
+1. **Selection**: selection of the application by its AID
+2. **Authentication**: secure session with the `DEBIT` access level when a SAM is available, PKI secure session when
+   the card supports it, otherwise reading without authentication
+3. **Environment Analysis**: version and end date of the environment
+4. **Event Analysis**: version, date, time and location of the last event, and contract used
+5. **Contract Analysis**: reading of the contracts and of the counters, expiration of each contract, contract
+   validated by the last event
+6. **Result**: content of the card (`ControlResult.CardContent`) or reason of the refusal
 
 #### Storage Cards
-**Simplified Analysis**:
-- Basic read operations without SAM requirements
-- Direct data validation and consistency checking
-- Single contract analysis with simplified logic
+**Control Procedure** (MIFARE Ultralight, ST25 SRT512, MIFARE Classic):
+1. **Reading**: reading of the environment, of the event and of the contract, without cryptographic operation
+2. **Analysis**: same checks as for the Calypso cards, on the single contract of the card
 - **Note**: Production implementations should add security measures
-
-**Control Procedure**:
-1. **Card Detection**: Read all card data in single operation
-2. **Data Validation**: Verify structure integrity and versions
-3. **Contract Analysis**: Check single contract status and validity
-4. **Event Verification**: Analyze validation event details
-5. **Compliance Assessment**: Determine card validity status
 
 ### Key Classes
 
@@ -216,56 +154,12 @@ Terminal Selection → Settings → Home → Reader Activity → Control Results
 
 **CalypsoCardControlProcedure** (`domain/procedures/CalypsoCardControlProcedure.kt`)
 - Control procedure of the Calypso cards
-- Optional secure session when a SAM is available, contract authentication and verification
+- Secure session when a SAM is available (or PKI secure session), analysis of the environment, of the last event and
+  of the contracts
 
 **StorageCardControlProcedure** (`domain/procedures/StorageCardControlProcedure.kt`)
 - Control procedure of the storage cards (MIFARE Ultralight, ST25 SRT512, MIFARE Classic)
 - Direct reading of the contract and of the event, without cryptographic operation
-
-### Control Procedure Logic
-
-#### Event Analysis Process
-
-```
-1. Read Environment Record
-   ├─ Verify card application validity
-   ├─ Check overall card expiration
-   └─ Extract holder information (if available)
-
-2. Read Last Event Record  
-   ├─ Extract validation timestamp and location
-   ├─ Identify contract used for validation
-   ├─ Retrieve contract priority information
-   └─ Assess event validity against current time/location
-
-3. Contract Analysis Loop
-   ├─ For each contract slot:
-   │  ├─ Read contract record and metadata
-   │  ├─ Verify contract version and structure
-   │  ├─ Check validity dates and expiration
-   │  ├─ Validate authentication (if SAM available)
-   │  ├─ Read associated counters (if applicable)
-   │  └─ Determine contract status and usability
-   └─ Generate comprehensive status report
-
-4. Compliance Determination
-   ├─ Compare event location with control location
-   ├─ Verify event timestamp within validity window
-   ├─ Confirm contract used was appropriate
-   ├─ Check contract had sufficient value/trips
-   └─ Generate pass/fail result with details
-```
-
-#### Contract Status Classification
-
-| Status           | Description                                        | Control Action           |
-|:-----------------|:---------------------------------------------------|:-------------------------|
-| **Validated**    | Used in recent valid validation                    | ✅ Accept                 |
-| **Valid Unused** | Available for use but not recently validated       | ℹ️ Informational         |
-| **Expired**      | Past validity date                                 | ❌ Cannot be used         |
-| **Insufficient** | Multi-trip (0 trips)                               | ❌ Requires reload        |
-| **Unknown**      | Unrecognized contract type                         | ⚠️ Manual review         |
-| **Blank**        | Empty contract slot                                | ℹ️ Available for loading |
 
 ## Hardware Integration
 
@@ -274,30 +168,19 @@ Terminal Selection → Settings → Home → Reader Activity → Control Results
 #### Standard Plugins (Open Source)
 
 **Famoco FX205**
-- **Configuration**: Dual reader setup (NFC + SAM)
+- **Configuration**: NFC reader and SAM reader
 - **Plugins**: [Famoco Plugin](https://github.com/calypsonet/keyple-famoco) + [Android NFC](https://keyple.org/components/standard-reader-plugins/keyple-plugin-android-nfc-lib/)
-- **Advantages**: Enterprise security, robust construction, integrated SAM
-- **Use Case**: Fixed inspection points, high-security environments
 
-**Standard NFC Smartphones**
-- **Configuration**: Built-in NFC radio
+**NFC Terminal (any Android device with NFC)**
 - **Plugin**: [Android NFC Plugin](https://keyple.org/components/standard-reader-plugins/keyple-plugin-android-nfc-lib/)
-- **Limitations**: No SAM support (Storage Cards only)
-- **Use Case**: Development, testing, basic inspections
+- **Limitations**: No SAM (Calypso cards authenticated by PKI when they support it)
+- **Use Case**: Development and testing
 
-#### SAM Integration Benefits
+#### Proprietary Plugins (On Request)
 
-When SAM is available:
-- **Enhanced Security**: Cryptographic verification of contract authenticity
-- **Tamper Detection**: Identification of potentially modified cards
-- **Audit Trail**: Complete cryptographic record of control operations
-- **Compliance**: Meeting regulatory requirements for secure operations
-
-Without SAM:
-- **Basic Functionality**: Visual inspection and basic data validation
-- **Faster Processing**: No cryptographic operations required
-- **Wider Compatibility**: Works with any NFC-enabled Android device
-- **Cost Effective**: No specialized hardware requirements
+**Bluebird EF501**
+- **Plugin**: [Bluebird Plugin](https://github.com/calypsonet/keyple-plugin-cna-bluebird-specific-nfc-java-lib)
+- **Access**: Contact [CNA](https://calypsonet.org/contact-us/) for plugin
 
 ## Development
 
@@ -339,139 +222,46 @@ control/app/
 
 ## Troubleshooting
 
-### Common Control Issues
+**No contract marked as validated**
+- The card has not been validated, or the last validation used another contract
+- The location of the validation differs from the location of the control
+- The validation did not take place the same day, or is older than the validation period
 
-**"No validation event found"**
-- **Cause**: Card has never been validated or event data is corrupted
-- **Action**: Check if card was properly validated using Validation Demo
-- **Inspector Response**: Request proof of payment or issue citation
+**"SAM not available"**
+- Check that the SAM is properly inserted in the SAM reader of the terminal
+- Check that the SAM matches the keys of the cards (test SAM for the demo cards)
+- Restart the application to initialize the SAM reader again
 
-**"Validation too old"**
-- **Cause**: Last validation outside configured validity duration
-- **Solution**: Adjust validity duration settings if policy allows
-- **Inspector Response**: Ask passenger when they boarded/entered
-
-**"Wrong location validation"**
-- **Cause**: Validation occurred at different location than expected
-- **Check**: Verify control location settings match network configuration
-- **Inspector Response**: Confirm passenger's journey route and transfers
-
-**"Contract authentication failed"**
-- **Cause**: SAM unable to verify contract signature (security issue)
-- **Action**: Report potential fraud case, escalate to security team
-- **Inspector Response**: Detain card for investigation if policy permits
-
-### Hardware Troubleshooting
-
-**"SAM reader not responding"**
-- Check SAM is properly seated in reader slot
-- Verify SAM is compatible with card types being controlled
-- Restart application to reinitialize SAM connection
-- Check terminal's SAM reader hardware status
-
-**"Card reading intermittent"**
-- Clean NFC antenna area on terminal
-- Ensure card is held steady during reading
+**Card reading intermittent**
+- Ensure the card is held steady during the reading
 - Check for interference from other NFC devices
-- Verify card is not damaged or demagnetized
 
-**"Plugin initialization failed"**
-- Confirm selected device type matches actual hardware
-- Check plugin libraries are properly installed
-- Verify hardware drivers are up to date
-- Restart terminal if persistent issues occur
-
-## Inspector Training and Best Practices
-
-### Standard Operating Procedures
-
-#### Pre-Shift Checklist
-- [ ] Verify terminal battery level and charging status
-- [ ] Test NFC reader with known valid card
-- [ ] Check SAM status and authentication capability
-- [ ] Configure location and inspector ID settings
-- [ ] Verify network connectivity (if required)
-
-#### Control Procedure Guidelines
-1. **Approach Passenger Politely**: Identify yourself and request card presentation
-2. **Clear Instructions**: "Please place your card on the terminal"
-3. **Wait for Analysis**: Allow terminal to complete full control procedure
-4. **Review Results Carefully**: Check all displayed information
-5. **Take Appropriate Action**: Follow organizational policies for violations
-6. **Document Issues**: Record problems for system improvement
-
-#### Result Interpretation
-
-**Green Status (Valid)**:
-- Passenger is in compliance
-- Thank passenger and allow continuation
-- No further action required
-
-**Yellow Status (Warning)**:
-- Minor issues detected (e.g., few trips left, near expiration)
-- Inform passenger of status
-- Suggest remedial action (reload, renewal)
-
-**Red Status (Invalid)**:
-- Serious compliance issue detected
-- Follow organizational enforcement procedures
-- May require citation, fine, or card retention
-
-### Reporting and Analytics
-
-The application can generate reports for:
-- **Daily Control Statistics**: Number of checks, compliance rates
-- **Violation Patterns**: Common issues by location/time
-- **Hardware Performance**: Reader reliability, SAM status
-- **Inspector Productivity**: Controls per shift, issue resolution
+**Terminal type not available**
+- Confirm that the selected terminal type matches the actual hardware
+- Proprietary terminals require their plugin (see [Proprietary Plugins](#proprietary-plugins))
 
 ## Proprietary Plugins
 
-### Activation Instructions
-
-By default, proprietary plugins are deactivated to maintain open-source compatibility.
+By default, the proprietary plugins are replaced by mocks, and their terminal types are grayed out.
 
 **Activation Process**:
-1. **Request Plugin**: Contact [CNA](https://calypsonet.org/contact-us/) for desired proprietary plugin
-2. **Obtain License**: Complete any required licensing agreements
-3. **Install Plugin**:
-  - Copy provided `.aar` file to `/libs/` directory
-  - Remove corresponding `-mock.aar` file from `/libs/`
-4. **Rebuild Application**: Execute `./gradlew assembleDebug` command
-5. **Deploy Updated APK**: Install on target terminals
+1. **Request Plugin**: Contact [CNA](https://calypsonet.org/contact-us/) for the desired proprietary plugin
+2. **Install Plugin**: Copy the provided `.aar` file to the `libs` directory at the root of the repository: the
+   build uses it instead of the corresponding `-mock.aar` file
+3. **Rebuild Application**: Execute `./gradlew assembleDebug`
 
 **Available Proprietary Plugins**:
-- **Bluebird EF501**: Professional inspection terminal with integrated barcode scanning
-
-## Security and Compliance
-
-### Data Security
-- **Card Data Protection**: No persistent storage of sensitive card information
-- **Inspector Authentication**: Secure login and session management
-- **Audit Logging**: Complete record of all control operations
-- **Data Transmission**: Encrypted communication for networked operations
-
-### Regulatory Compliance
-- **Privacy Protection**: Minimal data collection, immediate disposal after use
-- **Audit Requirements**: Comprehensive logging for compliance verification
-- **Access Control**: Role-based permissions for inspector functions
-- **Data Retention**: Policy-compliant retention and deletion procedures
-
-### Anti-Fraud Measures
-- **Cryptographic Verification**: SAM-based authentication when available
-- **Pattern Recognition**: Detection of suspicious card usage patterns
-- **Real-time Alerts**: Immediate notification of potential security issues
-- **Forensic Support**: Detailed logging for investigation purposes
+- **Bluebird EF501**
 
 ## Contributing
 
 When contributing to this control application:
 
-1. **Maintain Inspector Usability**: Keep UI simple and inspection workflow efficient
-2. **Test Control Scenarios**: Verify all validation/control combinations work correctly
+1. **Keep the control flow simple**: one presentation of the card, one result
+2. **Test Control Scenarios**: Verify the results after validations at various locations and times
 3. **Hardware Compatibility**: Test on supported terminal types
 4. **Security Standards**: Maintain or enhance existing security measures
-5. **Documentation Updates**: Keep troubleshooting and training materials current
+5. **Documentation Updates**: Keep this document consistent with the application
 
 ## Related Documentation
 

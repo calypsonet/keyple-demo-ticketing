@@ -161,7 +161,7 @@ class CardReaderActivity : BaseCardActivity() {
   }
 
   private fun showPresentNfcCardInstructions() {
-    activityCardReaderBinding.presentTxt.text = getString(R.string.present_travel_card_label)
+    activityCardReaderBinding.presentTxt.text = getString(R.string.present_card_label)
     activityCardReaderBinding.cardAnimation.visibility = View.VISIBLE
     activityCardReaderBinding.cardAnimation.playAnimation()
     activityCardReaderBinding.loadingAnimation.cancelAnimation()

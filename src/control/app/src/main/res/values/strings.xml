@@ -16,7 +16,7 @@
 
     <string name="please_wait">Please wait</string>
     <string name="error_title">Error</string>
-    <string name="quit">Quitter</string>
+    <string name="quit">Quit</string>
     <string name="version">version %s</string>
 
     <string name="title_activity_home">HomeActivity</string>
@@ -56,7 +56,7 @@
     <string name="content_title">Content</string>
     <string name="last_validation_title">Last validation</string>
     <string name="new_control">New control</string>
-    <string name="empty_contract_list">No ticket available</string>
+    <string name="empty_contract_list">No ticket</string>
     <string name="card_content_description_season_pass">From %1$s\n to %2$s</string>
     <string name="card_content_description_multi_trip_zero">no trip left</string>
     <string name="card_content_description_multi_trip_single">%d trip left</string>
@@ -73,7 +73,7 @@
     <!-- Test values-->
     <string name="validation_label_placeholder">Multi-trip ticket - Place de la Bastille</string>
     <string name="contract_name_placeholder">Multi-trip ticket</string>
-    <string name="card_content_validation_date_placeholder">JJ Month YYYY, HH:MM:SS</string>
+    <string name="card_content_validation_date_placeholder">DD Month YYYY, HH:MM:SS</string>
 
     <!-- Results of the control -->
     <string name="selection_card_not_recognized">Selection error: card not recognized</string>
@@ -84,6 +84,6 @@
     <string name="rejection_event_wrong_version">Event error: wrong version number</string>
     <string name="rejection_contract_wrong_version">Ticket error: wrong version number</string>
     <string name="error_mifare_classic_authentication">Authentication failed. Please ensure the card is correctly positioned.</string>
-    <string name="error_mifare_classic_reading">Failed to read Mifare Classic card. Please try again.</string>
+    <string name="error_mifare_classic_reading">Failed to read the MIFARE Classic card. Please try again.</string>
     <string name="error_card_reading">An error occurred while reading the card.</string>
 </resources>

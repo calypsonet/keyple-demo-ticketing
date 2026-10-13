@@ -129,6 +129,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Vocabulary harmonized with the glossary (fifth audit): the glossary of `README.md` describes the operations
+  (reading, loading, renewal of a season pass, personalization, validation, control) and the use of "reload",
+  "issuance", "initialization" and "write"; the documentation of the reloading demo uses them (personalization and
+  loading procedures, secure sessions named after their `PERSONALIZATION` and `LOAD` access levels, instead of
+  "issuance", "Issuer session" and "Reload session"). Contract models: `remainingTrips` in the reloading Android client
+  (instead of `counterValue`), `saleDate`, `validityEndDate`, `isValidated` and `isExpired` in the control app (instead
+  of `contractValidityStartDate`, `contractValidityEndDate`, `valid` and `expired`), `isValid` in the UI contract of the
+  reloading Android client. Displayed texts: "Quit" (instead of the French "Quitter"), "MIFARE", "DD" date
+  placeholders, "No ticket" for an empty card in all the applications, card verification code named CVC, payment
+  expiry date in the future, capitalization of the server settings and of the contract states. Dashboard: transaction
+  table `TransactionTable` (column "Type"), without the commented code of its template. The README of the control and
+  validation apps only describe the actual features (settings, screens, terminals, activation of the proprietary
+  plugins).
 - Vocabulary harmonized with the glossary (fourth audit): the loading of a contract is no longer called
   "reload" (comments of the use case and of the server, renewal of a season pass, `loadContractBtn` instead of
   `chargeBtn`, texts of the .NET client which loads trips instead of "units"); the result overlay of the

@@ -47,7 +47,7 @@ import androidx.navigation.NavController
 import org.calypsonet.keyple.composeapp.generated.resources.Res
 import org.calypsonet.keyple.composeapp.generated.resources.basket_multi_trip
 import org.calypsonet.keyple.composeapp.generated.resources.basket_season_pass
-import org.calypsonet.keyple.composeapp.generated.resources.card_empty
+import org.calypsonet.keyple.composeapp.generated.resources.no_contract_label
 import org.calypsonet.keyple.demo.reload.remote.AppState
 import org.calypsonet.keyple.demo.reload.remote.data.dto.SelectAppAndAnalyzeContractsOutputDto.ContractInfo
 import org.calypsonet.keyple.demo.reload.remote.ui.components.KeypleTopAppBar
@@ -131,7 +131,7 @@ internal fun ColumnScope.CardContent(
   if (contracts.isEmpty()) {
     Spacer(modifier = Modifier.weight(1f))
     Text(
-        text = stringResource(Res.string.card_empty),
+        text = stringResource(Res.string.no_contract_label),
         modifier = Modifier.padding(10.dp).fillMaxWidth(),
         color = blue,
         fontWeight = FontWeight.Bold,
@@ -238,7 +238,7 @@ internal fun CreditCardDetails() {
           ) {
             Text(text = "Card number", color = grey)
             Text(
-                text = "1111.1111.1111.1111",
+                text = "1111 1111 1111 1111",
                 color = blue,
             )
           }
@@ -257,7 +257,7 @@ internal fun CreditCardDetails() {
                 text = "Expiry",
             )
             Text(
-                text = "10/24",
+                text = "12/30",
                 color = blue,
             )
             Text(

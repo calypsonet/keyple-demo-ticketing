@@ -140,26 +140,26 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toRightOf="@id/expiry_label"
-                    app:layout_constraintRight_toLeftOf="@id/cvv_label"/>
+                    app:layout_constraintRight_toLeftOf="@id/cvc_label"/>
 
                 <TextView
-                    android:id="@+id/cvv_label"
+                    android:id="@+id/cvc_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/CVV"
+                    android:text="@string/cvc"
                     style="@style/buy_text_info_reg_small_cc"
                     app:layout_constraintLeft_toRightOf="@id/expiryValue"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintRight_toLeftOf="@id/cvv_value"/>
+                    app:layout_constraintRight_toLeftOf="@id/cvc_value"/>
 
                 <TextView
-                    android:id="@+id/cvv_value"
+                    android:id="@+id/cvc_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/prefill_cvv"
+                    android:text="@string/prefill_cvc"
                     style="@style/buy_text_info_medium"
-                    app:layout_constraintLeft_toRightOf="@id/cvv_label"
+                    app:layout_constraintLeft_toRightOf="@id/cvc_label"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
@@ -167,8 +167,8 @@
                 <ImageView
                     android:layout_width="@dimen/cc_help_size"
                     android:layout_height="@dimen/cc_help_size"
-                    android:src="@drawable/ic_cvv_help"
-                    app:layout_constraintLeft_toRightOf="@id/cvv_value"
+                    android:src="@drawable/ic_cvc_help"
+                    app:layout_constraintLeft_toRightOf="@id/cvc_value"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />

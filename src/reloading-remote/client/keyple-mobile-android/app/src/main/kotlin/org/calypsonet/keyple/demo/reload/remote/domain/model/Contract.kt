@@ -19,7 +19,7 @@ import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 data class Contract(
     val contractTariff: PriorityCode,
     /** Number of remaining trips of a multi-trip contract, null if there is no counter. */
-    val counterValue: Int?,
+    val remainingTrips: Int?,
     val saleDate: LocalDate,
     val validityEndDate: LocalDate,
     /** Indicates whether the contract can currently be used. */

@@ -20,11 +20,11 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class UiContract(
     val name: String?,
-    val valid: Boolean,
+    val isValidated: Boolean,
     val validationDateTime: LocalDateTime?,
     val record: Int,
-    val expired: Boolean,
-    val contractValidityStartDate: LocalDate,
-    val contractValidityEndDate: LocalDate,
+    val isExpired: Boolean,
+    val saleDate: LocalDate,
+    val validityEndDate: LocalDate,
     val remainingTrips: Int? = null
 ) : Parcelable

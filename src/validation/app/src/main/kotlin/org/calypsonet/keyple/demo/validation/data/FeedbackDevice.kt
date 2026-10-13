@@ -19,7 +19,7 @@ package org.calypsonet.keyple.demo.validation.data
  */
 internal interface FeedbackDevice {
   /**
-   * Initializes the UI manager.
+   * Initializes the feedback device.
    *
    * @param onReady Callback to be invoked when initialization is complete.
    */
