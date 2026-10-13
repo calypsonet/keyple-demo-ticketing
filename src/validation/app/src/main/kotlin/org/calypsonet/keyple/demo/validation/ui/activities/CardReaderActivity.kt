@@ -338,7 +338,7 @@ class CardReaderActivity : BaseActivity() {
         } else if (result.passValidityEndDate != null) {
           val validityEndDate =
               result.passValidityEndDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-          b.smallDesc.text = getString(R.string.valid_season_ticket, validityEndDate)
+          b.smallDesc.text = getString(R.string.valid_season_pass, validityEndDate)
         } else {
           // Recovered broken session: no ticket/pass data available
           b.smallDesc.visibility = View.INVISIBLE
@@ -369,7 +369,7 @@ class CardReaderActivity : BaseActivity() {
           // No ticket to use
           b.summaryMainView.setBackgroundColor(ContextCompat.getColor(this, R.color.red))
           b.bigText.text = rejectionMessage(result.reason)
-          b.locationTime.setText(R.string.no_tickets_small_desc)
+          b.locationTime.setText(R.string.no_contract_desc)
         }
         b.mediumText.visibility = View.INVISIBLE
         b.smallDesc.visibility = View.INVISIBLE

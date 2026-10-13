@@ -21,7 +21,7 @@ package org.calypsonet.keyple.demo.common.model.type
  */
 enum class PriorityCode(val code: Int, val label: String) {
   FORBIDDEN(0, "Forbidden (present in clean records only)"),
-  SEASON_PASS(1, "Season Pass"),
+  SEASON_PASS(1, "Season pass"),
   MULTI_TRIP(2, "Multi-trip ticket"),
   EXPIRED(31, "Expired"),
   UNKNOWN(-1, "Unknown");

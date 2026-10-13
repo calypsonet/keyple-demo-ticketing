@@ -96,7 +96,7 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier, appS
 
           HomeCard(
               iconRes = Res.drawable.ic_contactless_card,
-              title = "Contactless support",
+              title = "Contactless card",
               onClick = { navController.navigate(route = ReadCard) })
 
           Spacer(modifier = Modifier.weight(1f))

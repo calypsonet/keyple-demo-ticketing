@@ -39,11 +39,11 @@ class CheckoutActivity : BaseActivity() {
 
     if (contractTariff == PriorityCode.SEASON_PASS) {
       activityCheckoutBinding.selectionLabel.text = getString(R.string.season_pass_label)
-      activityCheckoutBinding.selectionPrice.text = getString(R.string.ticket_price, 20)
+      activityCheckoutBinding.selectionPrice.text = getString(R.string.product_price, 20)
     } else {
       activityCheckoutBinding.selectionLabel.text =
-          resources.getQuantityString(R.plurals.x_tickets, tripsToLoad, tripsToLoad)
-      activityCheckoutBinding.selectionPrice.text = getString(R.string.ticket_price, tripsToLoad)
+          resources.getQuantityString(R.plurals.trips_count, tripsToLoad, tripsToLoad)
+      activityCheckoutBinding.selectionPrice.text = getString(R.string.product_price, tripsToLoad)
     }
     activityCheckoutBinding.validateBtn.setOnClickListener {
       val intent = Intent(this, PaymentValidatedActivity::class.java)

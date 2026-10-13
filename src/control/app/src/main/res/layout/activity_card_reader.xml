@@ -81,7 +81,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:gravity="center"
-        android:text="@string/present_support_label"
+        android:text="@string/present_card_label"
         app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
         app:layout_constraintLeft_toLeftOf="@id/guidelineLeft"
         app:layout_constraintRight_toRightOf="@id/guidelineRight"

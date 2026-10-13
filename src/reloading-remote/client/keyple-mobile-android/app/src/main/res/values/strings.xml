@@ -3,7 +3,7 @@
     <string name="eclipse_foundation">Eclipse Foundation</string>
 
     <string name="splash_title">Open Source API for Smart Ticketing</string>
-    <string name="present_travel_card_label">Please present a contactless support</string>
+    <string name="present_travel_card_label">Please present a contactless card</string>
     <string name="read_in_progress">Read in progress</string>
     <string name="loading_in_progress">Loading in progress</string>
     <string name="card_invalid_label">Not valid on this network</string>
@@ -27,7 +27,7 @@
     <string name="perso_success_label">Card personalized</string>
     <string name="perso_failed_label">Personalization failed</string>
 
-    <string name="contactless_card">Contactless support</string>
+    <string name="contactless_card">Contactless card</string>
     <string name="sim_card">SIM card</string>
     <string name="wearable">Wearable</string>
     <string name="embedded_secure_elem">Embedded Secure Element</string>
@@ -35,11 +35,11 @@
 
     <string name="device_selection">Choose a device</string>
     <string name="to_be_personalized">to be personalized</string>
-    <string name="choose_trips">Choose a type of ticket</string>
+    <string name="choose_product">Choose a type of ticket</string>
     <string name="try_again">Retry</string>
     <string name="try_again_countdown">Retry (%1$d)</string>
     <string name="cancel">Cancel</string>
-    <string name="buy_tickets">Buy ticket</string>
+    <string name="buy_product">Buy ticket</string>
     <string name="load_card">Load ticket</string>
 
     <string name="checkout_title">Basket</string>
@@ -52,13 +52,13 @@
     <string name="prefill_expiry">06/19</string>
     <string name="prefill_cvv">123</string>
 
-    <string name="present_card">Please present the contactless support to be loaded</string>
+    <string name="present_card">Please present the contactless card to be loaded</string>
 
-    <string name="present_card_personalization">Please present the contactless support to be personalized</string>
+    <string name="present_card_personalization">Please present the contactless card to be personalized</string>
 
-    <string name="season_pass_label">Monthly Season Pass</string>
-    <string name="ticket_price">%d,00 €</string>
-    <plurals name="x_tickets">
+    <string name="season_pass_label">Season pass</string>
+    <string name="product_price">%d,00 €</string>
+    <plurals name="trips_count">
         <item quantity="one">%d trip</item>
         <item quantity="other">%d trips</item>
     </plurals>
@@ -91,10 +91,10 @@
 
     <!-- CardContent screen -->
     <string name="content_title">Content</string>
-    <string name="contract_name_placeholder">Multi Trip</string>
+    <string name="contract_name_placeholder">Multi-trip ticket</string>
     <string name="card_content_description_placeholder">From JJ Month YYYY to JJ Month YYYY</string>
     <string name="card_type">%1$s</string>
-    <string name="contract_multi_trip">Multi trip</string>
+    <string name="contract_multi_trip">Multi-trip ticket</string>
     <plurals name="trips_left">
         <item quantity="one">%d trip left</item>
         <item quantity="other">%d trips left</item>

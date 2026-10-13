@@ -8,14 +8,14 @@
     <string name="version">version %s</string>
 
     <string name="quit">Quitter</string>
-    <string name="present_card">Please present your contactless support for validation</string>
-    <string name="no_tickets_small_desc">Please reload your support.</string>
+    <string name="present_card">Please present your contactless card for validation</string>
+    <string name="no_contract_desc">Please load a ticket.</string>
     <string name="valid_main_desc">Validation completed!</string>
     <string name="valid_location_time">%1$s\n%2$s</string>
     <string name="valid_trips_left_zero">You have no trip left</string>
     <string name="valid_trips_left_single">You have 1 trip left</string>
     <string name="valid_trips_left_multiple">You have %d trips left.</string>
-    <string name="valid_season_ticket">You have a season pass valid until %s.</string>
+    <string name="valid_season_pass">You have a season pass valid until %s.</string>
     <string name="valid_last_desc">Have a nice trip!</string>
     <string name="error_main_desc">An error occurred.</string>
     <string name="error_small_desc">Please try again.</string>
@@ -57,12 +57,12 @@
     <string name="rejection_environment_wrong_version">Environment error: wrong version number</string>
     <string name="rejection_environment_expired">Environment error: end date expired</string>
     <string name="rejection_event_wrong_version">Event error: wrong version number</string>
-    <string name="rejection_contract_wrong_version">Contract error: wrong version number</string>
+    <string name="rejection_contract_wrong_version">Ticket error: wrong version number</string>
     <string name="rejection_already_validated">Card already tapped.\nPlease wait before retrying.</string>
     <string name="rejection_no_valid_contract">No valid ticket detected</string>
     <string name="rejection_expired_contract">Expired ticket</string>
     <string name="rejection_no_trips_left">No trips left</string>
-    <string name="rejection_contract_forbidden_or_expired">Contract is forbidden or expired</string>
+    <string name="rejection_contract_forbidden_or_expired">Ticket forbidden or expired</string>
     <string name="error_mifare_classic_authentication">Authentication failed. Please ensure the card is correctly positioned.</string>
     <string name="error_mifare_classic_transaction">Transaction failed. Please try again.</string>
 </resources>

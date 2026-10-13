@@ -31,18 +31,18 @@ class SelectProductActivity : BaseActivity() {
     setContentView(activitySelectProductBinding.root)
 
     activitySelectProductBinding.multiTrip1Label.text =
-        resources.getQuantityString(R.plurals.x_tickets, 1, 1)
+        resources.getQuantityString(R.plurals.trips_count, 1, 1)
     activitySelectProductBinding.multiTrip2Label.text =
-        resources.getQuantityString(R.plurals.x_tickets, 2, 2)
+        resources.getQuantityString(R.plurals.trips_count, 2, 2)
     activitySelectProductBinding.multiTrip3Label.text =
-        resources.getQuantityString(R.plurals.x_tickets, 3, 3)
+        resources.getQuantityString(R.plurals.trips_count, 3, 3)
     activitySelectProductBinding.multiTrip4Label.text =
-        resources.getQuantityString(R.plurals.x_tickets, 4, 4)
-    activitySelectProductBinding.multiTrip1Price.text = getString(R.string.ticket_price, 1)
-    activitySelectProductBinding.multiTrip2Price.text = getString(R.string.ticket_price, 2)
-    activitySelectProductBinding.multiTrip3Price.text = getString(R.string.ticket_price, 3)
-    activitySelectProductBinding.multiTrip4Price.text = getString(R.string.ticket_price, 4)
-    activitySelectProductBinding.seasonPassPrice.text = getString(R.string.ticket_price, 20)
+        resources.getQuantityString(R.plurals.trips_count, 4, 4)
+    activitySelectProductBinding.multiTrip1Price.text = getString(R.string.product_price, 1)
+    activitySelectProductBinding.multiTrip2Price.text = getString(R.string.product_price, 2)
+    activitySelectProductBinding.multiTrip3Price.text = getString(R.string.product_price, 3)
+    activitySelectProductBinding.multiTrip4Price.text = getString(R.string.product_price, 4)
+    activitySelectProductBinding.seasonPassPrice.text = getString(R.string.product_price, 20)
 
     activitySelectProductBinding.multiTrip1Btn.setOnClickListener {
       startCheckoutActivity(PriorityCode.MULTI_TRIP, 1)

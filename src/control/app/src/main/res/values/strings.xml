@@ -46,7 +46,7 @@
     <string name="calypso">Calypso Networks Association</string>
 
     <!-- Present screen -->
-    <string name="present_support_label">Please present a contactless support to be controlled</string>
+    <string name="present_card_label">Please present a contactless card to be controlled</string>
 
     <!-- CardContent screen -->
     <string name="sam_available">SAM available and enabled</string>
@@ -57,7 +57,7 @@
     <string name="content_title">Content</string>
     <string name="last_validation_title">Last validation</string>
     <string name="new_control">New control</string>
-    <string name="empty_contract_list">No contract available</string>
+    <string name="empty_contract_list">No ticket available</string>
     <string name="card_content_description_season_pass">From %1$s\n to %2$s</string>
     <string name="card_content_description_multi_trip_zero">no trip left</string>
     <string name="card_content_description_multi_trip_single">%d trip left</string>
@@ -73,8 +73,8 @@
     <string name="nfc_not_enabled">The NFC feature of the device does not seem to be available. Please activate the NFC function before continuing.</string>
 
     <!-- Test values-->
-    <string name="validation_label_placeholder">Multi Trip - Place de la Bastille</string>
-    <string name="contract_name_placeholder">Multi Trip</string>
+    <string name="validation_label_placeholder">Multi-trip ticket - Place de la Bastille</string>
+    <string name="contract_name_placeholder">Multi-trip ticket</string>
     <string name="card_content_validation_date_placeholder">JJ Month YYYY, HH:MM:SS</string>
 
     <!-- Results of the control -->
@@ -84,7 +84,7 @@
     <string name="rejection_environment_wrong_version">Environment error: wrong version number</string>
     <string name="rejection_environment_expired">Environment error: end date expired</string>
     <string name="rejection_event_wrong_version">Event error: wrong version number</string>
-    <string name="rejection_contract_wrong_version">Contract error: wrong version number</string>
+    <string name="rejection_contract_wrong_version">Ticket error: wrong version number</string>
     <string name="error_mifare_classic_authentication">Authentication failed. Please ensure the card is correctly positioned.</string>
     <string name="error_mifare_classic_reading">Failed to read Mifare Classic card. Please try again.</string>
     <string name="error_card_reading">An error occurred while reading the card.</string>

@@ -31,7 +31,7 @@ import io.github.alexzhirkevich.compottie.LottieCompositionSpec
 import io.github.alexzhirkevich.compottie.animateLottieCompositionAsState
 import io.github.alexzhirkevich.compottie.rememberLottieComposition
 import org.calypsonet.keyple.composeapp.generated.resources.Res
-import org.calypsonet.keyple.composeapp.generated.resources.success_ticket_loaded
+import org.calypsonet.keyple.composeapp.generated.resources.contract_loaded
 import org.calypsonet.keyple.demo.reload.remote.AppState
 import org.calypsonet.keyple.demo.reload.remote.ui.components.AutoReturnProgress
 import org.calypsonet.keyple.demo.reload.remote.ui.components.KeypleTopAppBar
@@ -64,7 +64,7 @@ fun SuccessScreen(
           horizontalAlignment = Alignment.CenterHorizontally,
           verticalArrangement = Arrangement.Center,
       ) {
-        DisplaySuccess("anim_tick_white.json", stringResource(Res.string.success_ticket_loaded))
+        DisplaySuccess("anim_tick_white.json", stringResource(Res.string.contract_loaded))
       }
       AutoReturnProgress(
           delayMs = SUCCESS_RETURN_DELAY_MS,

@@ -273,20 +273,28 @@ bash .github/scripts/check-android-twin-files.sh
 
 **Ticketing vocabulary**
 
-The code uses the same business terms in all the applications:
+The applications use the same business terms, in the code and in the displayed texts:
 
-| Term                                        | Meaning                                                                                  | Replaces                 |
-|---------------------------------------------|------------------------------------------------------------------------------------------|--------------------------|
-| `Contract`                                  | Right recorded in the card (contract record), e.g. a season pass or a multi-trip ticket   | "title"                  |
-| `Product`, `ProductType`                    | What the reloading client sells (type, price, quantity), loaded as a contract            | "title"                  |
-| `trip` (`remainingTrips`, `tripsToLoad`)    | Unit of the counter of a multi-trip contract                                             | "ticket", "nbTickets"    |
-| `TerminalType`                              | Terminal running the application (Bluebird, Famoco, Arrive, standard NFC terminal)      | "reader type"            |
-| `CardMedium`                                | Medium holding the card application (contactless card, SIM, wearable, embedded)         | "device"                 |
-| `UserFeedback`                              | Sounds and LEDs of the terminal                                                          | "UI manager"             |
+| Concept                                   | In the code                                   | Displayed to the users                                   |
+|-------------------------------------------|-----------------------------------------------|----------------------------------------------------------|
+| Right recorded in the card                | `Contract` (contract record)                  | "ticket", or the name of the ticket                      |
+| What is sold (type, price, quantity)      | `Product`, `ProductType`                      | "ticket", or the name of the ticket                      |
+| Names of the two tickets                  | `SEASON_PASS`, `MULTI_TRIP` (`PriorityCode`)  | "Season pass", "Multi-trip ticket"                        |
+| Unit of the counter of a multi-trip ticket | `trip` (`remainingTrips`, `tripsToLoad`)      | "trip", "trips"                                          |
+| Medium holding the card application       | `CardMedium`                                  | "card" (contactless card, SIM card...)                   |
+| Terminal running the application          | `TerminalType`                                | name of the terminal (Bluebird, Famoco, Arrive...)       |
+| Sounds and LEDs of the terminal           | `UserFeedback`                                | -                                                        |
 
-The texts displayed to the users use "ticket" for the contracts and products. The terms of the card data model
-(`EnvironmentHolder`, `Event`, `Contract`, `ContractTariff`, `ContractPriority`, `PriorityCode`) follow its
-specification (see the `common` library).
+- A product becomes a contract when it is loaded in the card ("load a contract").
+- "Ticket" is only used in the displayed texts, as the word understood by the users; in the code, it is ambiguous
+  (a trip, a product or a contract) and only appears in "ticketing", the name of the domain.
+- "Title" (literal translation of the French "titre de transport") is not used: it is a false friend in English.
+- "Support" (French "support") is not used either: the displayed texts say "card".
+- The names of the resources of the displayed texts follow the terms of the code (e.g. `product_price`,
+  `trips_count`, `contract_loaded`).
+
+The terms of the card data model (`EnvironmentHolder`, `Event`, `Contract`, `ContractTariff`, `ContractPriority`,
+`PriorityCode`) follow its specification (see the `common` library).
 
 **Differences between the applications**
 

@@ -57,7 +57,7 @@ public class ContractLoadingService {
   private static final String AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT =
       "An error occurred while loading the contract: {}";
   private static final String ONLY_SEASON_PASS_OR_MULTI_TRIP_TICKET_CAN_BE_LOADED =
-      "Only Season Pass or Multi Trip ticket can be loaded";
+      "Only a season pass or a multi-trip ticket can be loaded";
 
   @Inject CardRepository cardRepository;
   @Inject TransactionRecorder transactionRecorder;

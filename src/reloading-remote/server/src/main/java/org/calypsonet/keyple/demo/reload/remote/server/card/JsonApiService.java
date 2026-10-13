@@ -221,7 +221,7 @@ public class JsonApiService {
     boolean isValid;
     switch (contract.getContractTariff()) {
       case MULTI_TRIP:
-        name = "Multi trip";
+        name = "Multi-trip ticket";
         description =
             contract.getCounterValue() != null
                 ? contract.getCounterValue() + " trip(s) left"

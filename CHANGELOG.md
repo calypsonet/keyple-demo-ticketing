@@ -111,6 +111,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `KeypleInteropService`, which names the integration of the Keyple Interop libraries more precisely, and
   `CardRepository` (cache of the last card read) `ReadCardCache`. Android applications: the start screen
   `MainActivity` becomes `SplashActivity` (layout `activity_splash`).
+- All the applications: same vocabulary in the displayed texts (see the "Ticketing vocabulary" of the README):
+  "ticket" for the contracts and the products (instead of "contract" and "product" in some texts, e.g. "No ticket
+  available", "Ticket error: wrong version number", "Ticket loaded" in the multiplatform client), "card" instead of
+  "support" (e.g. "Please present a contactless card"), and the same names for the two tickets: "Season pass" and
+  "Multi-trip ticket" (including the `PriorityCode` labels and the contract names sent by the server JSON API). The
+  names of the text resources follow the terms of the code (e.g. `product_price`, `trips_count`, `buy_product`,
+  `choose_product`, `contract_loaded`, `present_card_label`, `no_contract_desc`, `valid_season_pass`).
 - Android applications: the values of `CardProtocol` are named without the redundant `_LOGICAL_PROTOCOL` suffix
   (e.g. `ISO_14443_4`), the enum being documented as the logical protocols of the cards.
 - Android applications: each application stays standalone (no shared Android module), and the technical files

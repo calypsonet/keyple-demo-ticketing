@@ -115,7 +115,7 @@ internal fun PresentCardAnimation() {
   }
   val progress by animateLottieCompositionAsState(composition)
 
-  ScreenAnimByPlatform("Please present a contactless support", blue, composition, progress)
+  ScreenAnimByPlatform("Please present a contactless card", blue, composition, progress)
 }
 
 @OptIn(ExperimentalResourceApi::class)
