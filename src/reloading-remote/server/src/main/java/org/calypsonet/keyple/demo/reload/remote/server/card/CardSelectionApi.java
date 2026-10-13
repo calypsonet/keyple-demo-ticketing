@@ -25,8 +25,10 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 import org.calypsonet.keyple.demo.common.dto.AnalyzeContractsInputDto;
 import org.calypsonet.keyple.demo.common.dto.AnalyzeContractsOutputDto;
-import org.calypsonet.keyple.demo.common.dto.CardIssuanceInputDto;
-import org.calypsonet.keyple.demo.common.dto.CardIssuanceOutputDto;
+import org.calypsonet.keyple.demo.common.dto.LoadContractInputDto;
+import org.calypsonet.keyple.demo.common.dto.LoadContractOutputDto;
+import org.calypsonet.keyple.demo.common.dto.PersonalizeCardInputDto;
+import org.calypsonet.keyple.demo.common.dto.PersonalizeCardOutputDto;
 import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus;
 import org.calypsonet.keyple.demo.common.dto.SelectAppAndAnalyzeContractsInputDto;
 import org.calypsonet.keyple.demo.common.dto.SelectAppAndAnalyzeContractsOutputDto;
@@ -34,8 +36,6 @@ import org.calypsonet.keyple.demo.common.dto.SelectAppAndLoadContractInputDto;
 import org.calypsonet.keyple.demo.common.dto.SelectAppAndLoadContractOutputDto;
 import org.calypsonet.keyple.demo.common.dto.SelectAppAndPersonalizeCardInputDto;
 import org.calypsonet.keyple.demo.common.dto.SelectAppAndPersonalizeCardOutputDto;
-import org.calypsonet.keyple.demo.common.dto.WriteContractInputDto;
-import org.calypsonet.keyple.demo.common.dto.WriteContractOutputDto;
 import org.calypsonet.keyple.demo.common.model.ContractStructure;
 import org.eclipse.keyple.core.util.HexUtil;
 import org.eclipse.keypop.calypso.card.card.CalypsoCard;
@@ -56,10 +56,10 @@ public class CardSelectionApi {
   private static final Logger logger = LoggerFactory.getLogger(CardSelectionApi.class);
   private static final String AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS =
       "An error occurred while analyzing the contracts: {}";
-  private static final String AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT =
-      "An error occurred while writing the contract: {}";
-  private static final String AN_ERROR_OCCURRED_WHILE_INITIALIZING_THE_CARD =
-      "An error occurred while initializing the card: {}";
+  private static final String AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT =
+      "An error occurred while loading the contract: {}";
+  private static final String AN_ERROR_OCCURRED_WHILE_PERSONALIZING_THE_CARD =
+      "An error occurred while personalizing the card: {}";
   private static final String PROCESSED_CARD_SELECTION_SCENARIO_JSON_STRING =
       "processedCardSelectionScenarioJsonString";
 
@@ -122,12 +122,12 @@ public class CardSelectionApi {
     try {
       calypsoCard = selectCard(cardReader, properties);
     } catch (CardCommunicationException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT, e.getMessage(), e);
+      logger.error(AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT, e.getMessage(), e);
       recordSelectionFailure(pluginType);
       return new SelectAppAndLoadContractOutputDto(
           RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode(), e.getMessage());
     } catch (RuntimeException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT, e.getMessage(), e);
+      logger.error(AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT, e.getMessage(), e);
       recordSelectionFailure(pluginType);
       return new SelectAppAndLoadContractOutputDto(
           RemoteServiceStatus.SERVER_ERROR.getCode(), e.getMessage());
@@ -144,11 +144,11 @@ public class CardSelectionApi {
     }
 
     // Write contract
-    WriteContractOutputDto loading =
-        contractLoadingService.writeContract(
+    LoadContractOutputDto loading =
+        contractLoadingService.loadContract(
             cardReader,
             calypsoCard,
-            new WriteContractInputDto(
+            new LoadContractInputDto(
                 inputData.getContractTariff(), inputData.getTripsToLoad(), pluginType));
 
     // Build result
@@ -167,21 +167,21 @@ public class CardSelectionApi {
     try {
       calypsoCard = selectCard(cardReader, properties);
     } catch (CardCommunicationException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_INITIALIZING_THE_CARD, e.getMessage(), e);
+      logger.error(AN_ERROR_OCCURRED_WHILE_PERSONALIZING_THE_CARD, e.getMessage(), e);
       recordSelectionFailure(pluginType);
       return new SelectAppAndPersonalizeCardOutputDto(
           RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode(), e.getMessage());
     } catch (RuntimeException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_INITIALIZING_THE_CARD, e.getMessage(), e);
+      logger.error(AN_ERROR_OCCURRED_WHILE_PERSONALIZING_THE_CARD, e.getMessage(), e);
       recordSelectionFailure(pluginType);
       return new SelectAppAndPersonalizeCardOutputDto(
           RemoteServiceStatus.SERVER_ERROR.getCode(), e.getMessage());
     }
 
     // Init card
-    CardIssuanceOutputDto issuance =
-        cardPersonalizationService.initCard(
-            cardReader, calypsoCard, new CardIssuanceInputDto(pluginType));
+    PersonalizeCardOutputDto issuance =
+        cardPersonalizationService.personalizeCard(
+            cardReader, calypsoCard, new PersonalizeCardInputDto(pluginType));
 
     // Build result
     int statusCode = issuance.getStatusCode();

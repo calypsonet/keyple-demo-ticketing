@@ -23,9 +23,9 @@ import org.calypsonet.keyple.demo.reload.remote.domain.spi.KeypopApiProvider
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.TerminalReaders
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.TicketingServer
+import org.calypsonet.keyple.demo.reload.remote.domain.usecases.LoadContract
 import org.calypsonet.keyple.demo.reload.remote.domain.usecases.PersonalizeCard
 import org.calypsonet.keyple.demo.reload.remote.domain.usecases.ReadContracts
-import org.calypsonet.keyple.demo.reload.remote.domain.usecases.ReloadCard
 
 /** Provides the domain services, which carry no dependency injection annotation. */
 @Suppress("unused")
@@ -51,10 +51,10 @@ class DomainModule {
 
   @Provides
   @Singleton
-  fun provideReloadCard(
+  fun provideLoadContract(
       cardReaderSession: CardReaderSession,
       ticketingServer: TicketingServer
-  ): ReloadCard = ReloadCard(cardReaderSession, ticketingServer)
+  ): LoadContract = LoadContract(cardReaderSession, ticketingServer)
 
   @Provides
   @Singleton

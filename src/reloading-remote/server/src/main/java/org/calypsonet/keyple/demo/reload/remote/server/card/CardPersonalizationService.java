@@ -12,13 +12,13 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.server.card;
 
-import static org.calypsonet.keyple.demo.reload.remote.server.card.ActivityRecorder.ISSUANCE;
+import static org.calypsonet.keyple.demo.reload.remote.server.card.ActivityRecorder.PERSONALIZATION;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.calypsonet.keyple.demo.common.constants.CalypsoFiles;
-import org.calypsonet.keyple.demo.common.dto.CardIssuanceInputDto;
-import org.calypsonet.keyple.demo.common.dto.CardIssuanceOutputDto;
+import org.calypsonet.keyple.demo.common.dto.PersonalizeCardInputDto;
+import org.calypsonet.keyple.demo.common.dto.PersonalizeCardOutputDto;
 import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus;
 import org.eclipse.keyple.core.service.resource.CardResource;
 import org.eclipse.keyple.core.service.resource.CardResourceServiceProvider;
@@ -39,65 +39,65 @@ import org.slf4j.LoggerFactory;
 public class CardPersonalizationService {
 
   private static final Logger logger = LoggerFactory.getLogger(CardPersonalizationService.class);
-  private static final String AN_ERROR_OCCURRED_WHILE_INITIALIZING_THE_CARD =
-      "An error occurred while initializing the card: {}";
+  private static final String AN_ERROR_OCCURRED_WHILE_PERSONALIZING_THE_CARD =
+      "An error occurred while personalizing the card: {}";
 
   @Inject CardRepository cardRepository;
   @Inject ActivityRecorder activityRecorder;
 
-  CardIssuanceOutputDto initCard(
-      CardReader cardReader, SmartCard smartCard, CardIssuanceInputDto inputData) {
+  PersonalizeCardOutputDto personalizeCard(
+      CardReader cardReader, SmartCard smartCard, PersonalizeCardInputDto inputData) {
     if (smartCard instanceof CalypsoCard) {
-      return initCalypsoCard(cardReader, (CalypsoCard) smartCard, inputData);
+      return personalizeCalypsoCard(cardReader, (CalypsoCard) smartCard, inputData);
     } else {
-      return initStorageCard(cardReader, (StorageCard) smartCard, inputData);
+      return personalizeStorageCard(cardReader, (StorageCard) smartCard, inputData);
     }
   }
 
-  private CardIssuanceOutputDto initCalypsoCard(
-      CardReader cardReader, CalypsoCard calypsoCard, CardIssuanceInputDto inputData) {
+  private PersonalizeCardOutputDto personalizeCalypsoCard(
+      CardReader cardReader, CalypsoCard calypsoCard, PersonalizeCardInputDto inputData) {
 
     String pluginType = inputData.getPluginType();
     String appSerialNumber = HexUtil.toHex(calypsoCard.getApplicationSerialNumber());
 
     logger.info(
-        "=== INIT CALYPSO CARD === Plugin: {}, CSN: {}, ProductType: {}",
+        "=== PERSONALIZE CALYPSO CARD === Plugin: {}, CSN: {}, ProductType: {}",
         pluginType,
         appSerialNumber,
         calypsoCard.getProductType());
 
     if (!CalypsoFiles.ALLOWED_FILE_STRUCTURES.contains(calypsoCard.getApplicationSubtype())) {
-      return new CardIssuanceOutputDto(RemoteServiceStatus.CARD_REJECTED.getCode());
+      return new PersonalizeCardOutputDto(RemoteServiceStatus.CARD_REJECTED.getCode());
     }
 
     CardResource samResource =
         CardResourceServiceProvider.getService()
             .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
     try {
-      cardRepository.initCard(cardReader, calypsoCard, samResource);
-      activityRecorder.record(pluginType, true, ISSUANCE, appSerialNumber);
-      return new CardIssuanceOutputDto(RemoteServiceStatus.SUCCESS.getCode());
+      cardRepository.personalizeCard(cardReader, calypsoCard, samResource);
+      activityRecorder.record(pluginType, true, PERSONALIZATION, appSerialNumber);
+      return new PersonalizeCardOutputDto(RemoteServiceStatus.SUCCESS.getCode());
     } catch (CardCommunicationException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_INITIALIZING_THE_CARD, e.getMessage(), e);
-      activityRecorder.record(pluginType, false, ISSUANCE, appSerialNumber);
-      return new CardIssuanceOutputDto(RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
+      logger.error(AN_ERROR_OCCURRED_WHILE_PERSONALIZING_THE_CARD, e.getMessage(), e);
+      activityRecorder.record(pluginType, false, PERSONALIZATION, appSerialNumber);
+      return new PersonalizeCardOutputDto(RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_INITIALIZING_THE_CARD, e.getMessage(), e);
-      activityRecorder.record(pluginType, false, ISSUANCE, appSerialNumber);
-      return new CardIssuanceOutputDto(RemoteServiceStatus.SERVER_ERROR.getCode());
+      logger.error(AN_ERROR_OCCURRED_WHILE_PERSONALIZING_THE_CARD, e.getMessage(), e);
+      activityRecorder.record(pluginType, false, PERSONALIZATION, appSerialNumber);
+      return new PersonalizeCardOutputDto(RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
       CardResourceServiceProvider.getService().releaseCardResource(samResource);
     }
   }
 
-  private CardIssuanceOutputDto initStorageCard(
-      CardReader cardReader, StorageCard storageCard, CardIssuanceInputDto inputData) {
+  private PersonalizeCardOutputDto personalizeStorageCard(
+      CardReader cardReader, StorageCard storageCard, PersonalizeCardInputDto inputData) {
 
     String pluginType = inputData.getPluginType();
     String cardUID = HexUtil.toHex(storageCard.getUID());
 
     logger.info(
-        "=== INIT STORAGE CARD === Plugin: {}, UID: {}, ProductType: {}",
+        "=== PERSONALIZE STORAGE CARD === Plugin: {}, UID: {}, ProductType: {}",
         pluginType,
         cardUID,
         storageCard.getProductType());
@@ -109,17 +109,17 @@ public class CardPersonalizationService {
     //     .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
     CardResource samResource = null;
     try {
-      cardRepository.initCard(cardReader, storageCard, samResource);
-      activityRecorder.record(pluginType, true, ISSUANCE, cardUID);
-      return new CardIssuanceOutputDto(RemoteServiceStatus.SUCCESS.getCode());
+      cardRepository.personalizeCard(cardReader, storageCard, samResource);
+      activityRecorder.record(pluginType, true, PERSONALIZATION, cardUID);
+      return new PersonalizeCardOutputDto(RemoteServiceStatus.SUCCESS.getCode());
     } catch (CardCommunicationException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_INITIALIZING_THE_CARD, e.getMessage(), e);
-      activityRecorder.record(pluginType, false, ISSUANCE, cardUID);
-      return new CardIssuanceOutputDto(RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
+      logger.error(AN_ERROR_OCCURRED_WHILE_PERSONALIZING_THE_CARD, e.getMessage(), e);
+      activityRecorder.record(pluginType, false, PERSONALIZATION, cardUID);
+      return new PersonalizeCardOutputDto(RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_INITIALIZING_THE_CARD, e.getMessage(), e);
-      activityRecorder.record(pluginType, false, ISSUANCE, cardUID);
-      return new CardIssuanceOutputDto(RemoteServiceStatus.SERVER_ERROR.getCode());
+      logger.error(AN_ERROR_OCCURRED_WHILE_PERSONALIZING_THE_CARD, e.getMessage(), e);
+      activityRecorder.record(pluginType, false, PERSONALIZATION, cardUID);
+      return new PersonalizeCardOutputDto(RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
       if (samResource != null) {
         CardResourceServiceProvider.getService().releaseCardResource(samResource);

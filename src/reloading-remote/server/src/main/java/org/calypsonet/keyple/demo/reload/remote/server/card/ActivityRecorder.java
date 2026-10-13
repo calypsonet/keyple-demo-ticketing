@@ -25,7 +25,7 @@ public class ActivityRecorder {
   static final String READ = "READ";
   static final String SECURED_READ = "SECURED READ";
   static final String RELOAD = "RELOAD";
-  static final String ISSUANCE = "ISSUANCE";
+  static final String PERSONALIZATION = "PERSONALIZATION";
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAIL = "FAIL";

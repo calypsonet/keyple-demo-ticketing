@@ -14,15 +14,15 @@ package org.calypsonet.keyple.demo.reload.remote.domain.spi
 
 import org.calypsonet.keyple.demo.common.dto.AnalyzeContractsInputDto
 import org.calypsonet.keyple.demo.common.dto.AnalyzeContractsOutputDto
-import org.calypsonet.keyple.demo.common.dto.CardIssuanceInputDto
-import org.calypsonet.keyple.demo.common.dto.CardIssuanceOutputDto
-import org.calypsonet.keyple.demo.common.dto.WriteContractInputDto
-import org.calypsonet.keyple.demo.common.dto.WriteContractOutputDto
+import org.calypsonet.keyple.demo.common.dto.LoadContractInputDto
+import org.calypsonet.keyple.demo.common.dto.LoadContractOutputDto
+import org.calypsonet.keyple.demo.common.dto.PersonalizeCardInputDto
+import org.calypsonet.keyple.demo.common.dto.PersonalizeCardOutputDto
 import org.eclipse.keypop.reader.selection.spi.SmartCard
 
 /**
  * Ticketing server: remote services processing the card presented to the local reader (analysis of
- * the contracts, personalization of the card, writing of a contract).
+ * the contracts, personalization of the card, loading of a contract).
  */
 interface TicketingServer {
   fun analyzeContracts(
@@ -34,12 +34,12 @@ interface TicketingServer {
   fun personalizeCard(
       localReaderName: String,
       smartCard: SmartCard,
-      input: CardIssuanceInputDto
-  ): CardIssuanceOutputDto
+      input: PersonalizeCardInputDto
+  ): PersonalizeCardOutputDto
 
-  fun writeContract(
+  fun loadContract(
       localReaderName: String,
       smartCard: SmartCard,
-      input: WriteContractInputDto
-  ): WriteContractOutputDto
+      input: LoadContractInputDto
+  ): LoadContractOutputDto
 }

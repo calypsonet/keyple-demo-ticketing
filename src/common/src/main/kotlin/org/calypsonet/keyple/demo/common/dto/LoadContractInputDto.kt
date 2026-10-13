@@ -14,7 +14,7 @@ package org.calypsonet.keyple.demo.common.dto
 
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 
-data class WriteContractInputDto(
+data class LoadContractInputDto(
     var contractTariff: PriorityCode,
     var tripsToLoad: Int,
     var pluginType: String

@@ -16,13 +16,13 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.Properties;
 import org.calypsonet.keyple.demo.common.dto.AnalyzeContractsInputDto;
-import org.calypsonet.keyple.demo.common.dto.CardIssuanceInputDto;
+import org.calypsonet.keyple.demo.common.dto.LoadContractInputDto;
+import org.calypsonet.keyple.demo.common.dto.PersonalizeCardInputDto;
 import org.calypsonet.keyple.demo.common.dto.RemoteServiceId;
 import org.calypsonet.keyple.demo.common.dto.SelectAppAndAnalyzeContractsInputDto;
 import org.calypsonet.keyple.demo.common.dto.SelectAppAndIncreaseContractCounterInputDto;
 import org.calypsonet.keyple.demo.common.dto.SelectAppAndLoadContractInputDto;
 import org.calypsonet.keyple.demo.common.dto.SelectAppAndPersonalizeCardInputDto;
-import org.calypsonet.keyple.demo.common.dto.WriteContractInputDto;
 import org.eclipse.keyple.distributed.RemoteReaderServer;
 import org.eclipse.keypop.reader.CardReader;
 import org.eclipse.keypop.reader.selection.spi.SmartCard;
@@ -73,16 +73,16 @@ public class RemoteServiceDispatcher {
             reader,
             readerExtension.getInitialCardContent(SmartCard.class),
             readerExtension.getInputData(AnalyzeContractsInputDto.class));
-      case READ_CARD_AND_WRITE_CONTRACT:
-        return contractLoadingService.writeContract(
+      case READ_CARD_AND_LOAD_CONTRACT:
+        return contractLoadingService.loadContract(
             reader,
             readerExtension.getInitialCardContent(SmartCard.class),
-            readerExtension.getInputData(WriteContractInputDto.class));
+            readerExtension.getInputData(LoadContractInputDto.class));
       case PERSONALIZE_CARD:
-        return cardPersonalizationService.initCard(
+        return cardPersonalizationService.personalizeCard(
             reader,
             readerExtension.getInitialCardContent(SmartCard.class),
-            readerExtension.getInputData(CardIssuanceInputDto.class));
+            readerExtension.getInputData(PersonalizeCardInputDto.class));
       // Services of the JSON API (selection of the application by the server, possibly from the
       // selection scenario already processed by the client)
       case SELECT_APP_AND_ANALYZE_CONTRACTS:

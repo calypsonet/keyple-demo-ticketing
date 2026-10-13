@@ -42,7 +42,7 @@ remote service (`RemoteServiceId`) to the service handling it:
 | Class | Remote services | Clients |
 |-------|-----------------|---------|
 | `ContractAnalysisService` | `READ_CARD_AND_ANALYZE_CONTRACTS` | Android (Keyple) |
-| `ContractLoadingService` | `READ_CARD_AND_WRITE_CONTRACT` | Android (Keyple) |
+| `ContractLoadingService` | `READ_CARD_AND_LOAD_CONTRACT` | Android (Keyple) |
 | `CardPersonalizationService` | `PERSONALIZE_CARD` | Android (Keyple) |
 | `CardSelectionApi` | `SELECT_APP_AND_ANALYZE_CONTRACTS`, `SELECT_APP_AND_LOAD_CONTRACT`, `SELECT_APP_AND_PERSONALIZE_CARD` | Multiplatform (JSON API) |
 | `ContractCounterService` | `SELECT_APP_AND_READ_CONTRACTS`, `SELECT_APP_AND_INCREASE_CONTRACT_COUNTER` | .NET |

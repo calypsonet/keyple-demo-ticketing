@@ -216,7 +216,7 @@ application.
 - `CardReaderSession` manages the readers of the terminal: initialization of the readers and of the SAM (and of the
   user feedback devices), detection of the cards, selection of the presented card, end of its processing.
 - One use case per user operation (`domain/usecases`), invoked by the UI: `ControlCard` (control app), `ValidateCard`
-  (validation app), `ReadContracts`, `ReloadCard` and `PersonalizeCard` (reloading client). The use cases of the
+  (validation app), `ReadContracts`, `LoadContract` and `PersonalizeCard` (reloading client). The use cases of the
   control and validation apps select the card, execute the procedure supporting it and give the user feedback (sound,
   LEDs) of the result.
 - The control and validation procedures implement a common interface (`ControlProcedure`, `ValidationProcedure`), one

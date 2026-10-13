@@ -15,11 +15,11 @@ package org.calypsonet.keyple.demo.reload.remote.data.server
 import javax.inject.Inject
 import org.calypsonet.keyple.demo.common.dto.AnalyzeContractsInputDto
 import org.calypsonet.keyple.demo.common.dto.AnalyzeContractsOutputDto
-import org.calypsonet.keyple.demo.common.dto.CardIssuanceInputDto
-import org.calypsonet.keyple.demo.common.dto.CardIssuanceOutputDto
+import org.calypsonet.keyple.demo.common.dto.LoadContractInputDto
+import org.calypsonet.keyple.demo.common.dto.LoadContractOutputDto
+import org.calypsonet.keyple.demo.common.dto.PersonalizeCardInputDto
+import org.calypsonet.keyple.demo.common.dto.PersonalizeCardOutputDto
 import org.calypsonet.keyple.demo.common.dto.RemoteServiceId
-import org.calypsonet.keyple.demo.common.dto.WriteContractInputDto
-import org.calypsonet.keyple.demo.common.dto.WriteContractOutputDto
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.TicketingServer
 import org.eclipse.keyple.distributed.LocalServiceClient
 import org.eclipse.keypop.reader.selection.spi.SmartCard
@@ -44,26 +44,26 @@ constructor(private val localServiceClient: LocalServiceClient) : TicketingServe
   override fun personalizeCard(
       localReaderName: String,
       smartCard: SmartCard,
-      input: CardIssuanceInputDto
-  ): CardIssuanceOutputDto {
+      input: PersonalizeCardInputDto
+  ): PersonalizeCardOutputDto {
     return localServiceClient.executeRemoteService(
         RemoteServiceId.PERSONALIZE_CARD.name,
         localReaderName,
         smartCard,
         input,
-        CardIssuanceOutputDto::class.java)
+        PersonalizeCardOutputDto::class.java)
   }
 
-  override fun writeContract(
+  override fun loadContract(
       localReaderName: String,
       smartCard: SmartCard,
-      input: WriteContractInputDto
-  ): WriteContractOutputDto {
+      input: LoadContractInputDto
+  ): LoadContractOutputDto {
     return localServiceClient.executeRemoteService(
-        RemoteServiceId.READ_CARD_AND_WRITE_CONTRACT.name,
+        RemoteServiceId.READ_CARD_AND_LOAD_CONTRACT.name,
         localReaderName,
         smartCard,
         input,
-        WriteContractOutputDto::class.java)
+        LoadContractOutputDto::class.java)
   }
 }

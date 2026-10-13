@@ -179,7 +179,7 @@ class KeypleService(
     remoteService?.releaseReader()
   }
 
-  suspend fun selectCardAndAnalyseContracts(): KeypleResult<SelectAppAndAnalyzeContractsOutputDto> {
+  suspend fun selectCardAndAnalyzeContracts(): KeypleResult<SelectAppAndAnalyzeContractsOutputDto> {
     return withContext(Dispatchers.IO) {
       cardRepository.clear()
       remoteService?.let { service ->

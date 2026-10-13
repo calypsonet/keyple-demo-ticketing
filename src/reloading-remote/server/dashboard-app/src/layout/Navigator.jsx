@@ -28,7 +28,7 @@ const categories = [
   {
     id: 'Card Utilities',
     children: [
-      { id: 'Issuance', icon: <SettingsIcon /> },
+      { id: 'Personalization', icon: <SettingsIcon /> },
       { id: 'Load', icon: <TimerIcon /> },
     ],
   },

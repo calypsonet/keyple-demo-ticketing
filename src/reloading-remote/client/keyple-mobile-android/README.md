@@ -140,7 +140,7 @@ Main Screen → Card Reader → Card Summary → Select Tickets → Checkout →
 - Manages Keyple plugin initialization and cleanup
 - Handles NFC detection start/stop and card selection
 
-**ReadContracts**, **ReloadCard**, **PersonalizeCard** (use cases)
+**ReadContracts**, **LoadContract**, **PersonalizeCard** (use cases)
 - Coordinate with server for card operations on the selected card
 
 **TerminalReaders** (`domain/spi/TerminalReaders.kt`)

@@ -12,7 +12,7 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.domain.usecases
 
-import org.calypsonet.keyple.demo.common.dto.CardIssuanceInputDto
+import org.calypsonet.keyple.demo.common.dto.PersonalizeCardInputDto
 import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
 import org.calypsonet.keyple.demo.reload.remote.domain.CardReaderSession
 import org.calypsonet.keyple.demo.reload.remote.domain.mappers.toCardInfo
@@ -36,7 +36,7 @@ class PersonalizeCard(
         ticketingServer.personalizeCard(
             cardReaderSession.readerName,
             smartCard,
-            CardIssuanceInputDto(cardReaderSession.pluginType))
+            PersonalizeCardInputDto(cardReaderSession.pluginType))
     return CardOperationResult(
         smartCard.toCardInfo(), RemoteServiceStatus.fromCode(output.statusCode))
   }

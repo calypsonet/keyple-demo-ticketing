@@ -68,7 +68,7 @@ class ReadCardScreenViewModel(
   private suspend fun readContracts() {
     _state.value = ReadCardScreenState.ReadingCard
     try {
-      when (val result = keypleService.selectCardAndAnalyseContracts()) {
+      when (val result = keypleService.selectCardAndAnalyzeContracts()) {
         is KeypleResult.Failure -> {
           _state.value = ReadCardScreenState.DisplayError(result.message)
         }

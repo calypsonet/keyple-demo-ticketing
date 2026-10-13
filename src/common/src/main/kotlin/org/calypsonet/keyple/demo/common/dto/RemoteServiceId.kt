@@ -20,7 +20,7 @@ enum class RemoteServiceId {
 
   // Suitable for Android Keyple clients
   READ_CARD_AND_ANALYZE_CONTRACTS,
-  READ_CARD_AND_WRITE_CONTRACT,
+  READ_CARD_AND_LOAD_CONTRACT,
   PERSONALIZE_CARD,
 
   // Suitable for Kotlin Multiplaform Keyple-less client

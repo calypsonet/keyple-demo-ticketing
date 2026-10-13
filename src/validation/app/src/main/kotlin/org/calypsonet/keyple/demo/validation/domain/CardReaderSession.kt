@@ -277,7 +277,7 @@ class CardReaderSession(
   }
 
   /**
-   * Analyses the result of the selection scenario executed when a card has been presented, and
+   * Analyzes the result of the selection scenario executed when a card has been presented, and
    * checks the selected Calypso application (DF name and file structure).
    */
   fun selectCard(scheduledCardSelectionsResponse: ScheduledCardSelectionsResponse): CardSelection {

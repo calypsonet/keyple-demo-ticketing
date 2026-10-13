@@ -28,7 +28,7 @@ import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
-import org.calypsonet.keyple.demo.reload.remote.domain.usecases.ReloadCard
+import org.calypsonet.keyple.demo.reload.remote.domain.usecases.LoadContract
 import org.calypsonet.keyple.demo.reload.remote.ui.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.eclipse.keypop.reader.CardReaderEvent
@@ -37,7 +37,7 @@ import timber.log.Timber
 @AndroidEntryPoint
 class ReloadActivity : BaseCardActivity() {
 
-  @Inject lateinit var reloadCard: ReloadCard
+  @Inject lateinit var loadContract: LoadContract
   private lateinit var activityCardReaderBinding: ActivityCardReaderBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,7 +84,7 @@ class ReloadActivity : BaseCardActivity() {
       try {
         val tripsToLoad = intent.getIntExtra(SelectProductActivity.TRIPS_TO_LOAD, 0)
         val result =
-            reloadCard(
+            loadContract(
                 intent.getStringExtra(CARD_APPLICATION_NUMBER),
                 PriorityCode.fromCode(intent.getIntExtra(SelectProductActivity.CONTRACT_TARIFF, 0)),
                 tripsToLoad)

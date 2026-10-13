@@ -303,7 +303,7 @@ public class CardRepository {
     return 0;
   }
 
-  void initCard(CardReader cardReader, CalypsoCard calypsoCard, CardResource samResource) {
+  void personalizeCard(CardReader cardReader, CalypsoCard calypsoCard, CardResource samResource) {
 
     SecureRegularModeTransactionManager cardTransactionManager =
         initCardTransactionManager(cardReader, calypsoCard, samResource);
@@ -336,7 +336,7 @@ public class CardRepository {
     logger.info(CALYPSO_SESSION_CLOSED);
   }
 
-  void initCard(CardReader cardReader, StorageCard storageCard, CardResource samResource) {
+  void personalizeCard(CardReader cardReader, StorageCard storageCard, CardResource samResource) {
 
     logger.info(
         "Initializing StorageCard: ProductType={}, BlockSize={} bytes",

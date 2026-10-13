@@ -23,7 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   transaction is provided by a context object (`ControlContext`, `ValidationContext`) instead of 6 to 8 parameters.
 - Android applications: `TicketingService` is split into a `CardReaderSession` (initialization of the readers, of the
   SAM and of the user feedback devices, detection and selection of the cards) and one use case per user operation
-  (`domain/usecases`): `ControlCard`, `ValidateCard`, and in the reloading client `ReadContracts`, `ReloadCard` and
+  (`domain/usecases`): `ControlCard`, `ValidateCard`, and in the reloading client `ReadContracts`, `LoadContract` and
   `PersonalizeCard`:
   - the control and validation use cases select the card, execute the procedure supporting it and give the user
     feedback (sound, LEDs) of the result, the UI only displaying it;
@@ -88,6 +88,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   extra `CONTRACT_TARIFF`), the `TICKETS_FOUND` status becomes `CONTRACTS_FOUND`, and the dimensions named after
   the tickets are renamed (`block_space`, `product_button_height`, `elevation`). The number of trips passed to the
   result screen, never read, is removed.
+- Reloading demo (common library, server, Android and multiplatform clients, dashboard): one verb per operation.
+  "Load" designates the loading of a contract, "write" being kept for the technical writing of the card:
+  `WriteContractInputDto`/`OutputDto` become `LoadContractInputDto`/`OutputDto`, the `READ_CARD_AND_WRITE_CONTRACT`
+  remote service `READ_CARD_AND_LOAD_CONTRACT`, the `ReloadCard` use case `LoadContract`, and the `writeContract`
+  methods (port of the Android client, server) `loadContract`. "Personalize" designates the personalization of
+  the card (instead of "issuance" and "init"): `CardIssuanceInputDto`/`OutputDto` become
+  `PersonalizeCardInputDto`/`OutputDto`, the `initCard` methods of the server `personalizeCard`, and the
+  transactions of the dashboard are of type `PERSONALIZATION` (instead of `ISSUANCE`, also in its menu). The
+  multiplatform client writes `analyze` as the other components (`selectCardAndAnalyzeContracts`).
 - Android applications: the values of `CardProtocol` are named without the redundant `_LOGICAL_PROTOCOL` suffix
   (e.g. `ISO_14443_4`), the enum being documented as the logical protocols of the cards.
 - Android applications: each application stays standalone (no shared Android module), and the technical files
@@ -220,7 +229,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Common library
 #### Added
 - `RemoteServiceStatus` enum defining the status codes of the remote services (`statusCode` field of
-  `AnalyzeContractsOutputDto`, `WriteContractOutputDto`, `CardIssuanceOutputDto` and of the `SelectAppAnd...OutputDto`
+  `AnalyzeContractsOutputDto`, `LoadContractOutputDto`, `PersonalizeCardOutputDto` and of the `SelectAppAnd...OutputDto`
   of the Server JSON API, still transmitted as an integer), with the new `CARD_FULL` status (`7`): no empty contract
   record nor expired or exhausted contract to replace.
 #### Changed
@@ -248,7 +257,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `CardConstants` is split into objects by theme: `CalypsoAids` (with `matches()` instead of `aidMatch()`),
   `CalypsoFiles`, `DefaultKifs`, `StorageCardBlocks`, `MifareClassicBlocks` and `PkiTestCertificates`, accessed from
   Java as static fields.
-- Documentation of the status codes of `AnalyzeContractsOutputDto`, `WriteContractOutputDto`, `CardIssuanceOutputDto`
+- Documentation of the status codes of `AnalyzeContractsOutputDto`, `LoadContractOutputDto`, `PersonalizeCardOutputDto`
   and of the `SelectAppAnd...OutputDto` aligned with the codes actually returned by the server.
 #### Removed
 - `java.io.Serializable` interface of the structures, not used (they are only transmitted as JSON).

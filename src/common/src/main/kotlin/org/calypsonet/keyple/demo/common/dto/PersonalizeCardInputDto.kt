@@ -12,4 +12,4 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.common.dto
 
-class CardIssuanceInputDto(var pluginType: String)
+class PersonalizeCardInputDto(var pluginType: String)

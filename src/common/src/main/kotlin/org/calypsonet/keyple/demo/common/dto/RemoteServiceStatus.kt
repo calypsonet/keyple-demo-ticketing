@@ -15,7 +15,7 @@ package org.calypsonet.keyple.demo.common.dto
 /**
  * Status of a remote service executed by the server, transmitted as an integer [code] in the
  * `statusCode` field of the output DTOs of the remote services: [AnalyzeContractsOutputDto],
- * [WriteContractOutputDto] and [CardIssuanceOutputDto] (Keyple distributed clients), and the
+ * [LoadContractOutputDto] and [PersonalizeCardOutputDto] (Keyple distributed clients), and the
  * `SelectAppAnd...OutputDto` of the Server JSON API.
  *
  * The integer is kept in the DTOs so that the JSON format remains unchanged for all the clients.

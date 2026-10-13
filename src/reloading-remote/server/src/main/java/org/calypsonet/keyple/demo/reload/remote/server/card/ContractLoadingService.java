@@ -19,9 +19,9 @@ import jakarta.inject.Inject;
 import java.time.LocalDate;
 import java.util.List;
 import org.calypsonet.keyple.demo.common.constants.CalypsoFiles;
+import org.calypsonet.keyple.demo.common.dto.LoadContractInputDto;
+import org.calypsonet.keyple.demo.common.dto.LoadContractOutputDto;
 import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus;
-import org.calypsonet.keyple.demo.common.dto.WriteContractInputDto;
-import org.calypsonet.keyple.demo.common.dto.WriteContractOutputDto;
 import org.calypsonet.keyple.demo.common.model.ContractStructure;
 import org.calypsonet.keyple.demo.common.model.EnvironmentHolderStructure;
 import org.calypsonet.keyple.demo.common.model.EventStructure;
@@ -40,8 +40,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Loading of a contract in a card (remote service {@code READ_CARD_AND_WRITE_CONTRACT}): reload of
- * a contract of the same type, or new contract written in an empty record or in place of an expired
+ * Loading of a contract in a card (remote service {@code READ_CARD_AND_LOAD_CONTRACT}): reload of a
+ * contract of the same type, or new contract written in an empty record or in place of an expired
  * or exhausted contract.
  */
 @ApplicationScoped
@@ -54,35 +54,35 @@ public class ContractLoadingService {
       "No empty contract record nor expired or exhausted contract to replace, reject card";
 
   private static final Logger logger = LoggerFactory.getLogger(ContractLoadingService.class);
-  private static final String AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT =
-      "An error occurred while writing the contract: {}";
+  private static final String AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT =
+      "An error occurred while loading the contract: {}";
   private static final String ONLY_SEASON_PASS_OR_MULTI_TRIP_TICKET_CAN_BE_LOADED =
       "Only Season Pass or Multi Trip ticket can be loaded";
 
   @Inject CardRepository cardRepository;
   @Inject ActivityRecorder activityRecorder;
 
-  WriteContractOutputDto writeContract(
-      CardReader cardReader, SmartCard smartCard, WriteContractInputDto inputData) {
+  LoadContractOutputDto loadContract(
+      CardReader cardReader, SmartCard smartCard, LoadContractInputDto inputData) {
     if (smartCard instanceof CalypsoCard) {
-      return writeCalypsoCardContract(cardReader, (CalypsoCard) smartCard, inputData);
+      return loadCalypsoCardContract(cardReader, (CalypsoCard) smartCard, inputData);
     } else {
-      return writeStorageCardContract(cardReader, (StorageCard) smartCard, inputData);
+      return loadStorageCardContract(cardReader, (StorageCard) smartCard, inputData);
     }
   }
 
-  private WriteContractOutputDto writeCalypsoCardContract(
-      CardReader cardReader, CalypsoCard calypsoCard, WriteContractInputDto inputData) {
+  private LoadContractOutputDto loadCalypsoCardContract(
+      CardReader cardReader, CalypsoCard calypsoCard, LoadContractInputDto inputData) {
 
     String pluginType = inputData.getPluginType();
     String appSerialNumber = HexUtil.toHex(calypsoCard.getApplicationSerialNumber());
 
     if (!CalypsoFiles.ALLOWED_FILE_STRUCTURES.contains(calypsoCard.getApplicationSubtype())) {
-      return new WriteContractOutputDto(RemoteServiceStatus.CARD_REJECTED.getCode());
+      return new LoadContractOutputDto(RemoteServiceStatus.CARD_REJECTED.getCode());
     }
 
     logger.info(
-        "=== WRITE CALYPSO CARD CONTRACT === Plugin: {}, CSN: {}, ProductType: {}, Contract: {}, Tickets: {}",
+        "=== LOAD CALYPSO CARD CONTRACT === Plugin: {}, CSN: {}, ProductType: {}, Contract: {}, Tickets: {}",
         pluginType,
         appSerialNumber,
         calypsoCard.getProductType(),
@@ -99,32 +99,32 @@ public class ContractLoadingService {
       int statusCode = cardRepository.writeCard(cardReader, calypsoCard, samResource, card);
       activityRecorder.record(
           pluginType, true, RELOAD, appSerialNumber, describeLoadedContract(inputData));
-      return new WriteContractOutputDto(statusCode);
+      return new LoadContractOutputDto(statusCode);
     } catch (CardFullException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT, e.getMessage());
+      logger.error(AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT, e.getMessage());
       activityRecorder.record(pluginType, false, RELOAD, appSerialNumber, "");
-      return new WriteContractOutputDto(RemoteServiceStatus.CARD_FULL.getCode());
+      return new LoadContractOutputDto(RemoteServiceStatus.CARD_FULL.getCode());
     } catch (CardCommunicationException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT, e.getMessage(), e);
+      logger.error(AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT, e.getMessage(), e);
       activityRecorder.record(pluginType, false, RELOAD, appSerialNumber, "");
-      return new WriteContractOutputDto(RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
+      return new LoadContractOutputDto(RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT, e.getMessage(), e);
+      logger.error(AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT, e.getMessage(), e);
       activityRecorder.record(pluginType, false, RELOAD, appSerialNumber, "");
-      return new WriteContractOutputDto(RemoteServiceStatus.SERVER_ERROR.getCode());
+      return new LoadContractOutputDto(RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
       CardResourceServiceProvider.getService().releaseCardResource(samResource);
     }
   }
 
-  private WriteContractOutputDto writeStorageCardContract(
-      CardReader cardReader, StorageCard storageCard, WriteContractInputDto inputData) {
+  private LoadContractOutputDto loadStorageCardContract(
+      CardReader cardReader, StorageCard storageCard, LoadContractInputDto inputData) {
 
     String pluginType = inputData.getPluginType();
     String cardUID = HexUtil.toHex(storageCard.getUID());
 
     logger.info(
-        "=== WRITE STORAGE CARD CONTRACT === Plugin: {}, UID: {}, ProductType: {}, Contract: {}, Tickets: {}",
+        "=== LOAD STORAGE CARD CONTRACT === Plugin: {}, UID: {}, ProductType: {}, Contract: {}, Tickets: {}",
         pluginType,
         cardUID,
         storageCard.getProductType(),
@@ -143,19 +143,19 @@ public class ContractLoadingService {
       insertNewContract(inputData.getContractTariff(), inputData.getTripsToLoad(), card);
       int statusCode = cardRepository.writeCard(cardReader, storageCard, samResource, card);
       activityRecorder.record(pluginType, true, RELOAD, cardUID, describeLoadedContract(inputData));
-      return new WriteContractOutputDto(statusCode);
+      return new LoadContractOutputDto(statusCode);
     } catch (CardFullException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT, e.getMessage());
+      logger.error(AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT, e.getMessage());
       activityRecorder.record(pluginType, false, RELOAD, cardUID, "");
-      return new WriteContractOutputDto(RemoteServiceStatus.CARD_FULL.getCode());
+      return new LoadContractOutputDto(RemoteServiceStatus.CARD_FULL.getCode());
     } catch (CardCommunicationException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT, e.getMessage(), e);
+      logger.error(AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT, e.getMessage(), e);
       activityRecorder.record(pluginType, false, RELOAD, cardUID, "");
-      return new WriteContractOutputDto(RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
+      return new LoadContractOutputDto(RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_WRITING_THE_CONTRACT, e.getMessage(), e);
+      logger.error(AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT, e.getMessage(), e);
       activityRecorder.record(pluginType, false, RELOAD, cardUID, "");
-      return new WriteContractOutputDto(RemoteServiceStatus.SERVER_ERROR.getCode());
+      return new LoadContractOutputDto(RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
       if (samResource != null) {
         CardResourceServiceProvider.getService().releaseCardResource(samResource);
@@ -164,7 +164,7 @@ public class ContractLoadingService {
   }
 
   /** Returns the description of the loaded contract shown by the dashboard. */
-  private static String describeLoadedContract(WriteContractInputDto inputData) {
+  private static String describeLoadedContract(LoadContractInputDto inputData) {
     return inputData.getContractTariff().toString().replace("_", " ")
         + ((inputData.getTripsToLoad() != 0) ? ": " + inputData.getTripsToLoad() : "");
   }
