@@ -59,7 +59,7 @@
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity
-            android:name="org.calypsonet.keyple.demo.control.ui.activities.deviceselection.DeviceSelectionActivity"
+            android:name="org.calypsonet.keyple.demo.control.ui.activities.terminalselection.TerminalSelectionActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"

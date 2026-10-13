@@ -51,9 +51,9 @@ cd keyple-demo-ticketing/src/control
 
 ## Configuration
 
-### Device Selection
+### Terminal Selection
 1. Launch application
-2. Select device type from **Device Selection** screen:
+2. Select the terminal type from **Terminal Selection** screen:
   - **Famoco FX205**: Enterprise terminal with SAM reader
   - **Standard NFC**: Consumer Android device (No card authentication)
   - Proprietary terminals (grayed out by default)
@@ -82,12 +82,12 @@ cd keyple-demo-ticketing/src/control
 ### Standard Control Flow
 
 ```
-Device Selection → Settings → Home → Reader Activity → Control Results
+Terminal Selection → Settings → Home → Reader Activity → Control Results
 ```
 
 ### Detailed Screen Guide
 
-**Device Selection (`DeviceSelectionActivity`)**
+**Terminal Selection (`TerminalSelectionActivity`)**
 - Choose appropriate hardware plugin for terminal type
 - Proprietary plugins require additional setup (see [Proprietary Plugins](#proprietary-plugins))
 
@@ -135,8 +135,8 @@ Device Selection → Settings → Home → Reader Activity → Control Results
 - Contract used was appropriate and had sufficient value
 - **Result**: Passenger in compliance
 
-**Valid Season Pass**:
-- Card shows Season Pass contract within validity period
+**Valid Season pass**:
+- Card shows Season pass contract within validity period
 - Recent validation event confirms proper usage
 - **Result**: Unlimited travel authorization confirmed
 
@@ -318,7 +318,7 @@ control/app/
 │   │   └── ui/                              # UI layer
 │   │       ├── activities/                  # Android activities
 │   │       │   ├── cardcontent/             # Card content screen
-│   │       │   └── deviceselection/         # Device selection screen
+│   │       │   └── terminalselection/       # Terminal selection screen
 │   │       ├── mappers/                     # Domain to UI mappers
 │   │       └── model/                       # UI models
 │   ├── res/                                 # Android resources

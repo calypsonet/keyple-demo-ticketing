@@ -74,14 +74,14 @@ class ReloadResultActivity : BaseActivity() {
         activityReloadResultBinding.animation.setAnimation("tick_white.json")
         activityReloadResultBinding.animation.repeatCount = 0
         activityReloadResultBinding.animation.playAnimation()
-        activityReloadResultBinding.bigText.setText(R.string.charging_success_label)
+        activityReloadResultBinding.bigText.setText(R.string.loading_success_label)
         activityReloadResultBinding.bigText.visibility = View.VISIBLE
         activityReloadResultBinding.btnLayout.visibility = View.INVISIBLE
 
         if (intent.getBooleanExtra(IS_PERSONALIZATION_RESULT, false)) {
-          activityReloadResultBinding.bigText.setText(R.string.perso_success_label)
+          activityReloadResultBinding.bigText.setText(R.string.personalization_success_label)
         } else {
-          activityReloadResultBinding.bigText.setText(R.string.charging_success_label)
+          activityReloadResultBinding.bigText.setText(R.string.loading_success_label)
         }
 
         scheduleAutoReturn(SUCCESS_RETURN_DELAY_MS, activityReloadResultBinding.autoReturnProgress)
@@ -95,11 +95,11 @@ class ReloadResultActivity : BaseActivity() {
 
         val message = intent.getStringExtra(MESSAGE) ?: ""
         if (intent.getBooleanExtra(IS_PERSONALIZATION_RESULT, false)) {
-          activityReloadResultBinding.bigText.setText(R.string.perso_failed_label)
+          activityReloadResultBinding.bigText.setText(R.string.personalization_failed_label)
           activityReloadResultBinding.bigText.append(":\n")
           activityReloadResultBinding.bigText.append(message)
         } else {
-          activityReloadResultBinding.bigText.setText(R.string.transaction_cancelled_label)
+          activityReloadResultBinding.bigText.setText(R.string.loading_failed_label)
           activityReloadResultBinding.bigText.append(":\n")
           activityReloadResultBinding.bigText.append(message)
         }

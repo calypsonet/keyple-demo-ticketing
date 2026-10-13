@@ -95,7 +95,7 @@
                 android:exported="false">
         </activity>
         <activity
-                android:name="org.calypsonet.keyple.demo.reload.remote.ui.activities.PaymentValidatedActivity"
+                android:name="org.calypsonet.keyple.demo.reload.remote.ui.activities.PaymentConfirmedActivity"
                 android:theme="@style/AppTheme.NoActionBar"
                 android:screenOrientation="portrait"
                 android:launchMode="singleTop"

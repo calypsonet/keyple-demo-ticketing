@@ -24,7 +24,7 @@ public class TransactionRecorder {
   // Types of transaction
   static final String READ = "READ";
   static final String SECURED_READ = "SECURED READ";
-  static final String RELOAD = "RELOAD";
+  static final String LOAD = "LOAD";
   static final String PERSONALIZATION = "PERSONALIZATION";
 
   private static final String SUCCESS = "SUCCESS";

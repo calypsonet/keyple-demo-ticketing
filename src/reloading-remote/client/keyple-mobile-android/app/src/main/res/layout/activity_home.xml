@@ -21,10 +21,10 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/chooseDeviceTv"
+        android:id="@+id/chooseCardMediumTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/device_selection"
+        android:text="@string/card_medium_selection"
         style="@style/buy_text_info_regular"
         android:layout_marginHorizontal="@dimen/home_horizontal_margin"
         app:layout_constraintTop_toBottomOf="@id/homeDescription"
@@ -34,7 +34,7 @@
     <LinearLayout
         android:id="@+id/contactlessCardBtn"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/home_device_btn_height"
+        android:layout_height="@dimen/home_card_medium_btn_height"
         android:orientation="vertical"
         android:clickable="true"
         android:focusable="true"
@@ -43,7 +43,7 @@
         android:elevation="@dimen/elevation"
         android:layout_marginTop="@dimen/home_block_vertical_margin"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/chooseDeviceTv"
+        app:layout_constraintTop_toBottomOf="@id/chooseCardMediumTv"
         app:layout_constraintBottom_toTopOf="@id/simCardBtn"
         android:gravity="center">
 
@@ -58,7 +58,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/device_slct_text_top_margin"
+            android:layout_marginTop="@dimen/card_medium_selection_top_margin"
             android:text="@string/contactless_card"
             style="@style/bigBoldDarkBlue" />
     </LinearLayout>
@@ -66,7 +66,7 @@
     <LinearLayout
         android:id="@+id/simCardBtn"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/home_device_btn_height"
+        android:layout_height="@dimen/home_card_medium_btn_height"
         android:orientation="vertical"
         android:clickable="true"
         android:focusable="true"
@@ -90,7 +90,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/device_slct_text_top_margin"
+            android:layout_marginTop="@dimen/card_medium_selection_top_margin"
             android:text="@string/sim_card"
             style="@style/bigBoldDarkBlue" />
     </LinearLayout>
@@ -98,7 +98,7 @@
     <LinearLayout
         android:id="@+id/wearableBtn"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/home_device_btn_height"
+        android:layout_height="@dimen/home_card_medium_btn_height"
         android:orientation="vertical"
         android:clickable="true"
         android:focusable="true"
@@ -122,7 +122,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/device_slct_text_top_margin"
+            android:layout_marginTop="@dimen/card_medium_selection_top_margin"
             android:text="@string/wearable"
             style="@style/bigBoldDarkBlue" />
     </LinearLayout>
@@ -130,7 +130,7 @@
     <LinearLayout
         android:id="@+id/embeddedElemBtn"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/home_device_btn_height"
+        android:layout_height="@dimen/home_card_medium_btn_height"
         android:orientation="vertical"
         android:clickable="true"
         android:focusable="true"
@@ -153,7 +153,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/device_slct_text_top_margin"
+            android:layout_marginTop="@dimen/card_medium_selection_top_margin"
             android:text="@string/embedded_secure_elem"
             android:gravity="center"
             style="@style/bigBoldDarkBlue" />

@@ -16,7 +16,7 @@ This Android application simulates validation terminals found at transportation 
 
 **Role in Ecosystem**: Second step in the ticketing workflow - validates loaded contracts and grants/denies access to transportation networks.
 
-**Validation Flow**: Season Pass → Multi-trip Ticket (in order of priority)
+**Validation Flow**: Season pass → Multi-trip ticket (in order of priority)
 
 ## Prerequisites
 
@@ -53,9 +53,9 @@ cd keyple-demo-ticketing/src/validation
 
 ## Configuration
 
-### Device Selection
+### Terminal Selection
 1. Launch application
-2. Select device type from **Device Selection** screen:
+2. Select the terminal type from **Terminal Selection** screen:
   - **Famoco FX205**: Enterprise terminal with dual readers
   - **Standard NFC**: Consumer Android device
   - Proprietary terminals (grayed out by default)
@@ -84,17 +84,17 @@ cd keyple-demo-ticketing/src/validation
 
 #### Battery-Powered Mode (Portable Terminals)
 ```
-Device Selection → Settings → Home → Reader Activity → Validation Result
+Terminal Selection → Settings → Home → Reader Activity → Validation Result
 ```
 
 #### Fixed Terminal Mode
 ```
-Device Selection → Settings → Reader Activity → Validation Result
+Terminal Selection → Settings → Reader Activity → Validation Result
 ```
 
 ### Detailed Screen Guide
 
-**Device Selection (`DeviceSelectionActivity`)**
+**Terminal Selection (`TerminalSelectionActivity`)**
 - Choose appropriate hardware plugin
 - Proprietary plugins require additional setup (see [Proprietary Plugins](#proprietary-plugins))
 
@@ -123,8 +123,8 @@ The summary overlay of the reader screen (`CardReaderActivity`) displays both su
 - **Location**: Where validation occurred
 - **Date/Time**: When validation was processed
 - **Contract Details**:
-  - Season Pass: Shows validity end date
-  - Multi-trip: Shows remaining ticket count
+  - Season pass: Shows validity end date
+  - Multi-trip ticket: Shows the number of remaining trips
 - **Visual Feedback**: Green background with success animation
 
 **Failure Screens**:
@@ -139,8 +139,8 @@ The summary overlay of the reader screen (`CardReaderActivity`) displays both su
 
 #### Successful Validations
 
-**Season Pass Validation**:
-- Card detected with valid Season Pass
+**Season pass validation**:
+- Card detected with valid Season pass
 - Contract validity date checked
 - Access granted immediately
 - No counter decrementation
@@ -158,7 +158,7 @@ The summary overlay of the reader screen (`CardReaderActivity`) displays both su
 - Access denied
 
 **Expired Contracts**:
-- Season Pass validity date passed
+- Season pass validity date passed
 - Contract marked as expired
 - Access denied with expiration information
 
@@ -217,7 +217,7 @@ The summary overlay of the reader screen (`CardReaderActivity`) displays both su
 
 **CalypsoCardValidationProcedure** (`domain/procedures/CalypsoCardValidationProcedure.kt`)
 - Secure validation procedure for Calypso cards with SAM integration
-- Handles contract priority logic (Season Pass → Multi-trip)
+- Handles contract priority logic (Season pass → Multi-trip ticket)
 - Creates cryptographically verified validation events
 
 **StorageCardValidationProcedure** (`domain/procedures/StorageCardValidationProcedure.kt`)
@@ -233,7 +233,7 @@ The validation procedure processes contracts in priority order:
 
 | Priority | Contract Type | Validation Logic                   |
 |:---------|:--------------|:-----------------------------------|
-| 1        | Season Pass   | Check validity date only           |
+| 1        | Season pass   | Check validity date only           |
 | 2        | Multi-trip    | Check counter > 0, decrement       |
 | 31       | Expired       | Skip (automatic marking)           |
 | Other    | Unknown       | Skip (never validated)             |
@@ -300,7 +300,7 @@ validation/app/
 │   │   │   └── usecases/                # Use cases invoked by the UI
 │   │   └── ui/                          # UI layer
 │   │       └── activities/              # Android activities
-│   │           └── deviceselection/     # Device selection screens
+│   │           └── terminalselection/   # Terminal selection screen
 │   ├── res/                             # Android resources
 │   └── AndroidManifest.xml              # App configuration
 ├── build.gradle.kts                     # Build configuration (Kotlin DSL)

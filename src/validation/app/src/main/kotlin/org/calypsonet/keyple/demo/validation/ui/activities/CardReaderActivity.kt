@@ -260,7 +260,7 @@ class CardReaderActivity : BaseActivity() {
 
   /**
    * Indicates whether the card is refused because of its data (displayed as an invalid card),
-   * instead of having no ticket to use.
+   * instead of having no contract to use.
    */
   private fun isInvalidCard(reason: RejectionReason): Boolean =
       when (reason) {
@@ -340,7 +340,7 @@ class CardReaderActivity : BaseActivity() {
               result.passValidityEndDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
           b.smallDesc.text = getString(R.string.valid_season_pass, validityEndDate)
         } else {
-          // Recovered broken session: no ticket/pass data available
+          // Recovered broken session: no contract data available
           b.smallDesc.visibility = View.INVISIBLE
         }
         b.mediumText.setText(R.string.valid_last_desc)
@@ -366,7 +366,7 @@ class CardReaderActivity : BaseActivity() {
           b.bigText.setText(R.string.card_invalid_main_desc)
           b.locationTime.text = rejectionMessage(result.reason)
         } else {
-          // No ticket to use
+          // No contract to use
           b.summaryMainView.setBackgroundColor(ContextCompat.getColor(this, R.color.red))
           b.bigText.text = rejectionMessage(result.reason)
           b.locationTime.setText(R.string.no_contract_desc)

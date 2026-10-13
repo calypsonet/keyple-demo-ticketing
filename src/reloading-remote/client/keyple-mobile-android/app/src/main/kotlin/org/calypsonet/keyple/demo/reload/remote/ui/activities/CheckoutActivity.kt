@@ -46,7 +46,7 @@ class CheckoutActivity : BaseActivity() {
       activityCheckoutBinding.selectionPrice.text = getString(R.string.product_price, tripsToLoad)
     }
     activityCheckoutBinding.validateBtn.setOnClickListener {
-      val intent = Intent(this, PaymentValidatedActivity::class.java)
+      val intent = Intent(this, PaymentConfirmedActivity::class.java)
       intent.putExtras(getIntent())
       startActivity(intent)
       this@CheckoutActivity.finish()

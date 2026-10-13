@@ -55,7 +55,7 @@ class LoadContractScreenViewModel(
 
   private fun scan() {
     viewModelScope.launch {
-      keypleInteropService.updateReaderMessage("Place your card on the top of the iPhone")
+      keypleInteropService.updateReaderMessage("Place your card on the reader")
       try {
         val cardFound = keypleInteropService.waitCard()
         buzzer.beepAndVibrate()

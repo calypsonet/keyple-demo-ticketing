@@ -203,7 +203,7 @@ internal fun ColumnScope.Basket(product: Product, onPay: (product: Product) -> U
           shape = RoundedCornerShape(4.dp)) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = "PAY",
+                text = "Pay",
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
@@ -221,7 +221,7 @@ internal fun CreditCardDetails() {
       horizontalAlignment = Alignment.CenterHorizontally,
   ) {
     Text(
-        text = "Credit Card Details",
+        text = "Credit card details",
         modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp),
         textAlign = TextAlign.Center,
         fontWeight = FontWeight.Bold,
@@ -236,7 +236,7 @@ internal fun CreditCardDetails() {
               horizontalArrangement = Arrangement.SpaceEvenly,
               verticalAlignment = Alignment.CenterVertically,
           ) {
-            Text(text = "Card Number", color = grey)
+            Text(text = "Card number", color = grey)
             Text(
                 text = "1111.1111.1111.1111",
                 color = blue,

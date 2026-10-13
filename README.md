@@ -104,7 +104,7 @@ Use any client application's personalization feature to initialize cards with:
 
 ### 3. Workflow Execution
 
-1. **Load Contracts**: Use Reload Demo to add Season Pass or Multi-trip tickets
+1. **Load Contracts**: Use Reload Demo to add Season pass or Multi-trip tickets
 2. **Validate Entry**: Present card to Validation Demo terminal
 3. **Control Check**: Verify card status using Control Demo
 

@@ -18,7 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.Timer
 import java.util.TimerTask
 import org.calypsonet.keyple.demo.control.databinding.ActivitySplashBinding
-import org.calypsonet.keyple.demo.control.ui.activities.deviceselection.DeviceSelectionActivity
+import org.calypsonet.keyple.demo.control.ui.activities.terminalselection.TerminalSelectionActivity
 
 @AndroidEntryPoint
 class SplashActivity : BaseActivity() {
@@ -34,7 +34,7 @@ class SplashActivity : BaseActivity() {
             object : TimerTask() {
               override fun run() {
                 if (!isFinishing) {
-                  startActivity(Intent(applicationContext, DeviceSelectionActivity::class.java))
+                  startActivity(Intent(applicationContext, TerminalSelectionActivity::class.java))
                   finish()
                 }
               }

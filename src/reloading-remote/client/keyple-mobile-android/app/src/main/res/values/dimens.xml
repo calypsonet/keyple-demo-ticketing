@@ -15,7 +15,7 @@
     <dimen name="settings_margin">15dp</dimen>
     <dimen name="settings_edit_padding">7dp</dimen>
 
-    <dimen name="device_slct_text_top_margin">10dp</dimen>
+    <dimen name="card_medium_selection_top_margin">10dp</dimen>
 
     <dimen name="card_summary_desc_top_margin">20dp</dimen>
     <dimen name="content_top_margin">20dp</dimen>
@@ -43,7 +43,7 @@
     <dimen name="home_horizontal_margin">38dp</dimen>
     <dimen name="home_block_vertical_margin">10dp</dimen>
     <dimen name="home_choose_margin_top">7dp</dimen>
-    <dimen name="home_device_btn_height">70dp</dimen>
+    <dimen name="home_card_medium_btn_height">70dp</dimen>
 
     <dimen name="settings_line_top_padding">72dp</dimen>
     <dimen name="settings_btn_padding_horizontal">38dp</dimen>

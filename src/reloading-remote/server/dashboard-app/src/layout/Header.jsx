@@ -35,7 +35,7 @@ export default function Header(props) {
             <Grid size="grow" />
             <Grid>
               <Typography>
-                {isSamReady ? "Sam Resource is ready" : "Sam Resource is NOT Ready"}
+                {isSamReady ? "SAM resource is ready" : "SAM resource is not ready"}
               </Typography>
             </Grid>
             <Grid>

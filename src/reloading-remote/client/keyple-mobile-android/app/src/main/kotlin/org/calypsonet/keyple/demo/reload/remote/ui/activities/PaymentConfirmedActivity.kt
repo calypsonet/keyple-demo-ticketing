@@ -16,31 +16,31 @@ import android.content.Intent
 import android.os.Bundle
 import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.reload.remote.R
-import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityPaymentValidatedBinding
+import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityPaymentConfirmedBinding
 
 @AndroidEntryPoint
-class PaymentValidatedActivity : BaseActivity() {
+class PaymentConfirmedActivity : BaseActivity() {
 
-  private lateinit var activityPaymentValidatedBinding: ActivityPaymentValidatedBinding
+  private lateinit var activityPaymentConfirmedBinding: ActivityPaymentConfirmedBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    activityPaymentValidatedBinding = ActivityPaymentValidatedBinding.inflate(layoutInflater)
-    toolbarBinding = activityPaymentValidatedBinding.appBarLayout
-    setContentView(activityPaymentValidatedBinding.root)
-    activityPaymentValidatedBinding.chargeBtn.text = getString(R.string.load_card)
-    activityPaymentValidatedBinding.chargeBtn.setOnClickListener {
+    activityPaymentConfirmedBinding = ActivityPaymentConfirmedBinding.inflate(layoutInflater)
+    toolbarBinding = activityPaymentConfirmedBinding.appBarLayout
+    setContentView(activityPaymentConfirmedBinding.root)
+    activityPaymentConfirmedBinding.chargeBtn.text = getString(R.string.load_card)
+    activityPaymentConfirmedBinding.chargeBtn.setOnClickListener {
       val intent = Intent(this, ReloadActivity::class.java)
       intent.putExtras(getIntent())
       startActivity(intent)
-      this@PaymentValidatedActivity.finish()
+      this@PaymentConfirmedActivity.finish()
     }
   }
 
   override fun onResume() {
     super.onResume()
-    activityPaymentValidatedBinding.animation.setAnimation("tick_anim.json")
-    activityPaymentValidatedBinding.animation.repeatCount = 0
-    activityPaymentValidatedBinding.animation.playAnimation()
+    activityPaymentConfirmedBinding.animation.setAnimation("tick_anim.json")
+    activityPaymentConfirmedBinding.animation.repeatCount = 0
+    activityPaymentConfirmedBinding.animation.playAnimation()
   }
 }

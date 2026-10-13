@@ -111,7 +111,7 @@
         android:id="@+id/invalidDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/card_invalid_aid"
+        android:text="@string/selection_card_not_recognized"
         android:fontFamily="@font/worksans_regular"
         android:textSize="@dimen/small_text_size"
         android:textColor="@color/white"

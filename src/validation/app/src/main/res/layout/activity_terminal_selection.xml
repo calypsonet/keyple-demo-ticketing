@@ -1,26 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/ic_bg"
-    tools:context="org.calypsonet.keyple.demo.control.ui.activities.deviceselection.DeviceSelectionActivity">
+    android:background="@drawable/ic_img_bg_valideur"
+    tools:context="org.calypsonet.keyple.demo.validation.ui.activities.terminalselection.TerminalSelectionActivity">
+
+    <include layout="@layout/toolbar" android:id="@+id/appBarLayout"/>
 
     <Button
-        android:id="@+id/nfcTerminalBtn"
+        android:id="@+id/arriveBtn"
         style="@style/whiteBtnText"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:background="@drawable/btn_blue"
-        android:text="@string/device_nfc_terminal"
+        android:text="@string/terminal_arrive"
         android:textSize="@dimen/medium_text_size"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/famocoBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/terminal_title" />
 
     <Button
         android:id="@+id/famocoBtn"
@@ -29,7 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:background="@drawable/btn_blue"
-        android:text="@string/device_famoco"
+        android:text="@string/terminal_famoco"
         android:textSize="@dimen/medium_text_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
@@ -43,20 +46,20 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:background="@drawable/btn_blue"
-        android:text="@string/device_bluebird"
+        android:text="@string/terminal_bluebird"
         android:textSize="@dimen/medium_text_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/device_title" />
+        app:layout_constraintTop_toBottomOf="@+id/arriveBtn" />
 
     <TextView
-        android:id="@+id/device_title"
-        style="@style/mediumBoldBlue"
+        android:id="@+id/terminal_title"
+        style="@style/mediumBoldWhite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="@string/device_title"
+        android:text="@string/terminal_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -70,7 +73,7 @@
         android:layout_margin="5dp"
         android:gravity="center"
         android:text="@string/version"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textSize="@dimen/version"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -87,10 +90,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.8" />
+        app:layout_constraintGuide_percent="0.7" />
 
     <include
-        android:id="@+id/appBarLayout"
+        android:id="@+id/appBarLayoutBottom"
         layout="@layout/toolbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

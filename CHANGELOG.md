@@ -118,6 +118,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   "Multi-trip ticket" (including the `PriorityCode` labels and the contract names sent by the server JSON API). The
   names of the text resources follow the terms of the code (e.g. `product_price`, `trips_count`, `buy_product`,
   `choose_product`, `contract_loaded`, `present_card_label`, `no_contract_desc`, `valid_season_pass`).
+- Vocabulary audit: the terminal is no longer called "device" (control and validation apps:
+  `DeviceSelectionActivity` becomes `TerminalSelectionActivity`, package `terminalselection`, texts `terminal_*` and
+  the same title "Select the terminal"; reloading Android client: the choice of the card medium is
+  `card_medium_selection`, "Choose a card"). Dashboard: the loading transactions are of type `LOAD` (instead of
+  `RELOAD`) and describe the loaded contract with the names of the tickets (e.g. "Multi-trip ticket: 3"), "SAM" being
+  written in capital letters. Reloading Android client: `PaymentValidatedActivity` becomes `PaymentConfirmedActivity`
+  ("Payment confirmed", "validation" designating the validation of the tickets), and the resources are named after
+  their content (`loading_success_label`, `loading_failed_label`, `personalization_success_label`,
+  `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
+  Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
+  Android client. Same slogan in all the applications.
 - Android applications: the values of `CardProtocol` are named without the redundant `_LOGICAL_PROTOCOL` suffix
   (e.g. `ISO_14443_4`), the enum being documented as the logical protocols of the cards.
 - Android applications: each application stays standalone (no shared Android module), and the technical files

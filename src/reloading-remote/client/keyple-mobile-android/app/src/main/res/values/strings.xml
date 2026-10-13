@@ -17,15 +17,15 @@
     <string name="card_communication_error">Card communication error</string>
     <string name="server_error">Server error:\n%s</string>
     <string name="nfc_not_activated">NFC not activated</string>
-    <string name="transaction_cancelled_label">Ticket not loaded</string>
+    <string name="loading_failed_label">Ticket not loaded</string>
 
-    <string name="validation_confirmation_label">Payment validated</string>
-    <string name="charging_success_label">Ticket loaded</string>
+    <string name="payment_confirmation_label">Payment confirmed</string>
+    <string name="loading_success_label">Ticket loaded</string>
     <string name="no_valid_label">No ticket</string>
     <string name="no_valid_desc">Please load a ticket</string>
     <string name="error_label">An error occurred</string>
-    <string name="perso_success_label">Card personalized</string>
-    <string name="perso_failed_label">Personalization failed</string>
+    <string name="personalization_success_label">Card personalized</string>
+    <string name="personalization_failed_label">Personalization failed</string>
 
     <string name="contactless_card">Contactless card</string>
     <string name="sim_card">SIM card</string>
@@ -33,7 +33,7 @@
     <string name="embedded_secure_elem">Embedded Secure Element</string>
 
 
-    <string name="device_selection">Choose a device</string>
+    <string name="card_medium_selection">Choose a card</string>
     <string name="to_be_personalized">to be personalized</string>
     <string name="choose_product">Choose a type of ticket</string>
     <string name="try_again">Retry</string>
@@ -83,7 +83,7 @@
     <string name="disable">Disable</string>
     <string name="hide">Hide</string>
 
-    <string name="ping_success">Ping Success</string>
+    <string name="ping_success">Ping succeeded</string>
     <string name="ping_failed">Ping failed</string>
     <string name="invalid_server_ip">Please set a valid IP</string>
     <string name="invalid_server_port">Please set a valid Port</string>

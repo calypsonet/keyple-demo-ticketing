@@ -10,42 +10,43 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.ui.activities.deviceselection
+package org.calypsonet.keyple.demo.control.ui.activities.terminalselection
 
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.nfc.NfcManager
 import android.os.Build
 import android.os.Bundle
 import dagger.hilt.android.AndroidEntryPoint
-import org.calypsonet.keyple.demo.validation.BuildConfig
-import org.calypsonet.keyple.demo.validation.R
-import org.calypsonet.keyple.demo.validation.databinding.ActivityDeviceSelectionBinding
-import org.calypsonet.keyple.demo.validation.domain.model.TerminalType
-import org.calypsonet.keyple.demo.validation.ui.activities.BaseActivity
-import org.calypsonet.keyple.demo.validation.ui.activities.SettingsActivity
-import org.calypsonet.keyple.plugin.arrive.ArriveConstants
+import org.calypsonet.keyple.demo.control.BuildConfig
+import org.calypsonet.keyple.demo.control.R
+import org.calypsonet.keyple.demo.control.databinding.ActivityTerminalSelectionBinding
+import org.calypsonet.keyple.demo.control.domain.model.TerminalType
+import org.calypsonet.keyple.demo.control.ui.activities.BaseActivity
+import org.calypsonet.keyple.demo.control.ui.activities.SettingsActivity
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
 
 @AndroidEntryPoint
-class DeviceSelectionActivity : BaseActivity() {
+class TerminalSelectionActivity : BaseActivity() {
+
+  private lateinit var activityTerminalSelectionBinding: ActivityTerminalSelectionBinding
 
   private val mock: String = "Mock"
-  private lateinit var activityDeviceSelectionBinding: ActivityDeviceSelectionBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
-
     super.onCreate(savedInstanceState)
-    activityDeviceSelectionBinding = ActivityDeviceSelectionBinding.inflate(layoutInflater)
-    setContentView(activityDeviceSelectionBinding.root)
-
+    activityTerminalSelectionBinding = ActivityTerminalSelectionBinding.inflate(layoutInflater)
+    setContentView(activityTerminalSelectionBinding.root)
+    activityTerminalSelectionBinding.appVersion.text =
+        getString(R.string.version, BuildConfig.VERSION_NAME)
     // Bluebird
     if (BluebirdConstants.PLUGIN_NAME.contains(mock)) {
-      activityDeviceSelectionBinding.bluebirdBtn.setBackgroundColor(Color.GRAY)
+      activityTerminalSelectionBinding.bluebirdBtn.setBackgroundColor(Color.GRAY)
     } else {
-      activityDeviceSelectionBinding.bluebirdBtn.setOnClickListener {
+      activityTerminalSelectionBinding.bluebirdBtn.setOnClickListener {
         appSettings.terminalType = TerminalType.BLUEBIRD
         val permissions = mutableListOf("com.bluebird.permission.SAM_DEVICE_ACCESS")
         // Storage permission refused without prompt since Android 13 (declared up to Android 12)
@@ -59,26 +60,25 @@ class DeviceSelectionActivity : BaseActivity() {
         }
       }
     }
-
     // Famoco
-    activityDeviceSelectionBinding.famocoBtn.setOnClickListener {
+    activityTerminalSelectionBinding.famocoBtn.setOnClickListener {
       appSettings.terminalType = TerminalType.FAMOCO
       startActivity(Intent(this, SettingsActivity::class.java))
       finish()
     }
-
-    // Arrive
-    if (ArriveConstants.PLUGIN_NAME.contains(mock) || !BuildConfig.HAS_ARRIVE_SDK) {
-      activityDeviceSelectionBinding.arriveBtn.setBackgroundColor(Color.GRAY)
-    } else {
-      activityDeviceSelectionBinding.arriveBtn.setOnClickListener {
-        appSettings.terminalType = TerminalType.ARRIVE
+    // Standard NFC terminal
+    activityTerminalSelectionBinding.nfcTerminalBtn.setOnClickListener {
+      val nfcManager = getSystemService(NFC_SERVICE) as NfcManager
+      if (nfcManager.defaultAdapter?.isEnabled == true) {
+        appSettings.terminalType = TerminalType.NFC_TERMINAL
         startActivity(Intent(this, SettingsActivity::class.java))
         finish()
+      } else {
+        EnableNfcDialog().apply {
+          show(supportFragmentManager, EnableNfcDialog::class.java.simpleName)
+        }
       }
     }
-    activityDeviceSelectionBinding.appVersion.text =
-        getString(R.string.version, BuildConfig.VERSION_NAME)
   }
 
   @SuppressLint("MissingSuperCall")

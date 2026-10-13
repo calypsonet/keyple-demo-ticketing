@@ -44,8 +44,8 @@ class HomeActivity : BaseActivity() {
     }
 
     if (intent.getBooleanExtra(CHOOSE_DEVICE_FOR_PERSO, false)) {
-      activityHomeBinding.chooseDeviceTv.append(" ")
-      activityHomeBinding.chooseDeviceTv.append(getString(R.string.to_be_personalized))
+      activityHomeBinding.chooseCardMediumTv.append(" ")
+      activityHomeBinding.chooseCardMediumTv.append(getString(R.string.to_be_personalized))
     }
     toolbarBinding.menuBtn.visibility = View.VISIBLE
     toolbarBinding.menuBtn.setOnClickListener {

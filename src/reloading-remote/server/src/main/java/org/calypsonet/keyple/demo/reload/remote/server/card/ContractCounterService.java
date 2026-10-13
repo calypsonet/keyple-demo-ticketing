@@ -12,7 +12,7 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.server.card;
 
-import static org.calypsonet.keyple.demo.reload.remote.server.card.TransactionRecorder.RELOAD;
+import static org.calypsonet.keyple.demo.reload.remote.server.card.TransactionRecorder.LOAD;
 import static org.calypsonet.keyple.demo.reload.remote.server.card.TransactionRecorder.SECURED_READ;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -105,7 +105,7 @@ public class ContractCounterService {
       transactionRecorder.record(
           CUSTOM_PLUGIN,
           statusCode == 0,
-          RELOAD,
+          LOAD,
           calypsoCard == null ? "-" : HexUtil.toHex(calypsoCard.getApplicationSerialNumber()));
       if (samResource != null) {
         CardResourceServiceProvider.getService().releaseCardResource(samResource);
@@ -133,9 +133,9 @@ public class ContractCounterService {
       transactionRecorder.record(
           CUSTOM_PLUGIN,
           true,
-          RELOAD,
+          LOAD,
           HexUtil.toHex(calypsoCard.getApplicationSerialNumber()),
-          "MULTI TRIP: " + inputData.getCounterIncrement());
+          PriorityCode.MULTI_TRIP.getLabel() + ": " + inputData.getCounterIncrement());
       contractLoadingService.insertNewContract(
           PriorityCode.MULTI_TRIP, inputData.getCounterIncrement(), card);
       statusCode = cardRepository.writeCard(cardReader, calypsoCard, samResource, card);
@@ -163,7 +163,7 @@ public class ContractCounterService {
       transactionRecorder.record(
           CUSTOM_PLUGIN,
           statusCode == 0,
-          RELOAD,
+          LOAD,
           calypsoCard == null ? "-" : HexUtil.toHex(calypsoCard.getApplicationSerialNumber()));
       if (samResource != null) {
         CardResourceServiceProvider.getService().releaseCardResource(samResource);

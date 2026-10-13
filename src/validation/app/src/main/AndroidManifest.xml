@@ -54,7 +54,7 @@
             android:configChanges="orientation|keyboardHidden"
             android:exported="false"/>
         <activity
-            android:name="org.calypsonet.keyple.demo.validation.ui.activities.deviceselection.DeviceSelectionActivity"
+            android:name="org.calypsonet.keyple.demo.validation.ui.activities.terminalselection.TerminalSelectionActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"
             android:launchMode="singleTop"
             android:screenOrientation="fullUser"

@@ -9,7 +9,7 @@ This is a client/server demonstration of the
 [Eclipse Keyple Distributed Solution](https://keyple.org/docs/developer-guide/distributed-application/) 
 feature where all ticketing procedures and sessions are fully managed by the server.
 
-The [Eclipse Keyple](https://keyple.org) SDK is used to remotely initialize a card and reload a contract (Season Pass 
+The [Eclipse Keyple](https://keyple.org) SDK is used to remotely initialize a card and reload a contract (Season pass 
 and/or Multi-trip ticket) on a Calypso contactless card using the 
 [Keyple Plugin Android NFC | Eclipse Keyple](https://keyple.org/components-java/plugins/nfc/) 
 plugin.

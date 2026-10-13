@@ -1,29 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/ic_img_bg_valideur"
-    tools:context="org.calypsonet.keyple.demo.validation.ui.activities.deviceselection.DeviceSelectionActivity">
-
-    <include layout="@layout/toolbar" android:id="@+id/appBarLayout"/>
+    android:background="@drawable/ic_bg"
+    tools:context="org.calypsonet.keyple.demo.control.ui.activities.terminalselection.TerminalSelectionActivity">
 
     <Button
-        android:id="@+id/arriveBtn"
+        android:id="@+id/nfcTerminalBtn"
         style="@style/whiteBtnText"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/btn_blue"
-        android:text="@string/device_arrive"
+        android:text="@string/terminal_nfc"
         android:textSize="@dimen/medium_text_size"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/device_title" />
+        app:layout_constraintTop_toBottomOf="@+id/famocoBtn" />
 
     <Button
         android:id="@+id/famocoBtn"
@@ -32,7 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:background="@drawable/btn_blue"
-        android:text="@string/device_famoco"
+        android:text="@string/terminal_famoco"
         android:textSize="@dimen/medium_text_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
@@ -46,20 +43,20 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:background="@drawable/btn_blue"
-        android:text="@string/device_bluebird"
+        android:text="@string/terminal_bluebird"
         android:textSize="@dimen/medium_text_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/arriveBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/terminal_title" />
 
     <TextView
-        android:id="@+id/device_title"
-        style="@style/mediumBoldWhite"
+        android:id="@+id/terminal_title"
+        style="@style/mediumBoldBlue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="@string/device_title"
+        android:text="@string/terminal_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -73,7 +70,7 @@
         android:layout_margin="5dp"
         android:gravity="center"
         android:text="@string/version"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:textSize="@dimen/version"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -90,10 +87,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.7" />
+        app:layout_constraintGuide_percent="0.8" />
 
     <include
-        android:id="@+id/appBarLayoutBottom"
+        android:id="@+id/appBarLayout"
         layout="@layout/toolbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

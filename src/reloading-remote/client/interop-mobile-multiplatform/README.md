@@ -119,7 +119,7 @@ The application configuration is managed through:
 3. **Wait for confirmation** of successful initialization
 
 #### Reading Card Content
-1. **Main Screen** → **Contactless Support**
+1. **Home Screen** → **Contactless card**
 2. **Hold card** against device back (near NFC antenna)
 3. **View existing contracts** and their status
 4. **Select a new ticket** to load if desired
@@ -151,7 +151,7 @@ The application uses Compose Multiplatform for consistent UI across all platform
 
 ```
 ┌─────────────────────────────────────┐
-│            Main Screen              │
+│            Home Screen              │
 │  ┌─────────────────────────────────┐│
 │  │         Settings                ││
 │  │  ┌─────────────────────────────┐││

@@ -54,22 +54,22 @@ while read -r path apps; do
   checked=$((checked + 1))
 done <<'EOF'
 # Shared by the three applications
-DemoApplication.kt                                      control validation reload
-data/DemoMifareClassicKeyProvider.kt                    control validation reload
-data/JavaTimeClock.kt                                   control validation reload
-data/TimberLogger.kt                                    control validation reload
-di/ClockModule.kt                                       control validation reload
-di/KeypopApiModule.kt                                   control validation reload
-di/LoggerModule.kt                                      control validation reload
-domain/spi/Clock.kt                                     control validation reload
-domain/spi/Logger.kt                                    control validation reload
-domain/spi/UiContext.kt                                 control validation reload
-ui/ActivityUiContext.kt                                 control validation reload
+DemoApplication.kt                                        control validation reload
+data/DemoMifareClassicKeyProvider.kt                      control validation reload
+data/JavaTimeClock.kt                                     control validation reload
+data/TimberLogger.kt                                      control validation reload
+di/ClockModule.kt                                         control validation reload
+di/KeypopApiModule.kt                                     control validation reload
+di/LoggerModule.kt                                        control validation reload
+domain/spi/Clock.kt                                       control validation reload
+domain/spi/Logger.kt                                      control validation reload
+domain/spi/UiContext.kt                                   control validation reload
+ui/ActivityUiContext.kt                                   control validation reload
 # Shared by the control and validation applications
-domain/model/CardProtocol.kt                            control validation
-domain/model/SelectionError.kt                          control validation
-ui/activities/deviceselection/PermissionDeniedDialog.kt control validation
-ui/activities/deviceselection/PermissionHelper.kt       control validation
+domain/model/CardProtocol.kt                              control validation
+domain/model/SelectionError.kt                            control validation
+ui/activities/terminalselection/PermissionDeniedDialog.kt control validation
+ui/activities/terminalselection/PermissionHelper.kt       control validation
 EOF
 
 if [[ $violations -gt 0 ]]; then

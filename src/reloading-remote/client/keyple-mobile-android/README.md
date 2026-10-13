@@ -13,7 +13,7 @@ distributed architecture with remote server management.
 
 This Android application demonstrates distributed ticketing where all card operations are managed remotely by a Java server with SAM integration. The mobile client provides the user interface and NFC card communication while delegating all business logic and cryptographic operations to the server.
 
-**Role in Ecosystem**: First step in the ticketing workflow - loads Season Pass and Multi-trip contracts onto cards for later validation and control.
+**Role in Ecosystem**: First step in the ticketing workflow - loads Season pass and Multi-trip contracts onto cards for later validation and control.
 
 ## Prerequisites
 
@@ -60,7 +60,7 @@ cd keyple-demo-ticketing/src/reloading-remote/client/keyple-mobile-android
 
 ### Card Reader Selection
 The app supports multiple NFC reader types:
-- **Contactless Support**: Standard Android NFC (all devices)
+- **Contactless card**: Standard Android NFC (all devices)
 - **SIM Card**: OMAPI reader access (work in progress)
 - **Embedded SE**: Wizway plugin for eSE (work in progress)
 
@@ -69,7 +69,7 @@ The app supports multiple NFC reader types:
 ### Quick Start Workflow
 
 1. **Launch Application**
-  - Select **Contactless Support** from main menu
+  - Select **Contactless card** from main menu
   - Ensure server is running and accessible
 
 2. **Card Personalization** (if needed)
@@ -78,7 +78,7 @@ The app supports multiple NFC reader types:
   - Wait for confirmation message
 
 3. **Read Card Content**
-  - From main screen, tap **Contactless Support**
+  - From main screen, tap **Contactless card**
   - Present card to NFC reader
   - View existing contracts and validity status
 
@@ -90,7 +90,7 @@ The app supports multiple NFC reader types:
 ### Screen Flow
 
 ```
-Main Screen → Card Reader → Card Summary → Select Tickets → Checkout → Payment → Reload → Result
+Splash Screen → Home → Card Reader → Card Summary → Select Product → Checkout → Payment Confirmed → Reload → Result
 ```
 
 ### Detailed Screen Guide
@@ -114,7 +114,7 @@ Main Screen → Card Reader → Card Summary → Select Tickets → Checkout →
 - Displays connection status and progress
 
 **Card Summary (`CardSummaryActivity`)**
-- Shows current card content (Season Pass/Multi-trip)
+- Shows current card content (Season pass, Multi-trip ticket)
 - Displays contract validity and usage status
 - Option to load additional contracts
 
@@ -125,7 +125,7 @@ Main Screen → Card Reader → Card Summary → Select Tickets → Checkout →
 
 **Payment Simulation**
 - **Checkout (`CheckoutActivity`)**: Simulates credit card payment
-- **Payment Validated (`PaymentValidatedActivity`)**: Confirms payment success
+- **Payment Confirmed (`PaymentConfirmedActivity`)**: Confirms payment success
 
 **Contract Loading**
 - **Reload (`ReloadActivity`)**: Loads selected contract onto card

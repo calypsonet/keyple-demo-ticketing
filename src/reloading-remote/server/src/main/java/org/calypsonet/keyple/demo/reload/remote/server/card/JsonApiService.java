@@ -137,8 +137,8 @@ public class JsonApiService {
         HexUtil.toHex(calypsoCard.getApplicationSerialNumber());
     String expectedApplicationSerialNumber = inputData.getApplicationSerialNumber();
     if (!selectedApplicationSerialNumber.equals(expectedApplicationSerialNumber)) {
-      // Ticket would have been bought for the Card read at step one.
-      // To avoid swapping, we check that loading is done on the same card
+      // The product has been bought for the card read before: to avoid swapping the cards, the
+      // contract is only loaded in the same card
       return new SelectAppAndLoadContractOutputDto(
           RemoteServiceStatus.DIFFERENT_CARD.getCode(), "Not the same card");
     }

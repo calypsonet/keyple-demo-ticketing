@@ -27,7 +27,7 @@ sealed class CardContentScreenState(val screenTitle: String) {
       CardContentScreenState("Content")
 
   data class ChooseProduct(val products: List<Product> = emptyList()) :
-      CardContentScreenState("Choose a ticket")
+      CardContentScreenState("Choose a type of ticket")
 
   data class DisplayBasket(val selectedProduct: Product?) : CardContentScreenState("Basket")
 }

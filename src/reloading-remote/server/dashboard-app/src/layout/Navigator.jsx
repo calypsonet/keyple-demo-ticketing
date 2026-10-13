@@ -22,7 +22,7 @@ const categories = [
     children: [
       { id: 'Dashboard', icon: <PeopleIcon />},
       { id: 'Transactions', icon: <DnsRoundedIcon /> , active: true },
-      { id: 'Sam Resources', icon: <SettingsInputComponentIcon /> },
+      { id: 'SAM Resources', icon: <SettingsInputComponentIcon /> },
     ],
   },
   {

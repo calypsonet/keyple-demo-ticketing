@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/ic_img_bg_valideur"
-    tools:context="org.calypsonet.keyple.demo.validation.ui.activities.deviceselection.DeviceSelectionActivity">
+    tools:context="org.calypsonet.keyple.demo.validation.ui.activities.terminalselection.TerminalSelectionActivity">
 
     <include
         android:id="@+id/appBarLayout"
@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:background="@drawable/btn_blue"
-        android:text="@string/device_arrive"
+        android:text="@string/terminal_arrive"
         android:textSize="@dimen/medium_text_size"
         app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
         app:layout_constraintTop_toTopOf="@+id/guidelineTop" />
@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:background="@drawable/btn_blue"
-        android:text="@string/device_famoco"
+        android:text="@string/terminal_famoco"
         android:textSize="@dimen/medium_text_size"
         app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
         app:layout_constraintTop_toBottomOf="@+id/bluebirdBtn" />
@@ -43,18 +43,18 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:background="@drawable/btn_blue"
-        android:text="@string/device_bluebird"
+        android:text="@string/terminal_bluebird"
         android:textSize="@dimen/medium_text_size"
         app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
         app:layout_constraintTop_toBottomOf="@+id/arriveBtn" />
 
     <TextView
-        android:id="@+id/device_title"
+        android:id="@+id/terminal_title"
         style="@style/mediumBoldWhite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="@string/device_title"
+        android:text="@string/terminal_title"
         app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
         app:layout_constraintTop_toTopOf="@+id/guidelineTop" />
 

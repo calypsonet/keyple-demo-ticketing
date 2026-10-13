@@ -16,6 +16,6 @@
     <dimen name="reading_animation_size">180dp</dimen>
     <dimen name="contract_text_width">150dp</dimen>
 
-    <dimen name="home_device_btn_height">90dp</dimen>
+    <dimen name="home_card_medium_btn_height">90dp</dimen>
     <dimen name="home_btn_top_margin">20dp</dimen>
 </resources>
