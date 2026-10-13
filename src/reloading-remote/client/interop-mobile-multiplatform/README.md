@@ -231,7 +231,7 @@ Multiplatform and Android application plugins in the same module.
 
 Each platform provides:
 - NFC/PC/SC reader integration through Keyple libraries
-- Datastore implementation for settings persistence
+- DataStore implementation for settings persistence
 - Platform-specific UI adaptations
 
 ## Development

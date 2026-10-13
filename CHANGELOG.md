@@ -512,8 +512,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Android: code and resource shrinking (R8) enabled in the debug and release builds, as in the other Android
   applications (release APK of about 2 MB). The libraries provide their own R8 rules (e.g. the Ktor
   engine loaded by a service loader).
-- The platform specific files of `DataStorePathProducer` are suffixed by their platform (`Datastore.android.kt`,
-  `Datastore.desktop.kt`, `Datastore.ios.kt`), as the other `actual` files.
+- The platform specific files of `DataStorePathProducer` are suffixed by their platform (`DataStore.android.kt`,
+  `DataStore.desktop.kt`, `DataStore.ios.kt`), as the other `actual` files.
 #### Removed
 - Koin dependencies (`koin-core`, `koin-compose`, `koin-android`, `koin-androidx-compose`), declared but not used.
 - Ktor dependencies declared twice, the toolchain repeated in the desktop target, and the `android.nonTransitiveRClass`
