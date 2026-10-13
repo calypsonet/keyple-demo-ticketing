@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2026 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -10,14 +10,12 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.ui.model
+package org.calypsonet.keyple.demo.control.ui.model
 
-/** Kind of result displayed by the card screens. */
-enum class Status {
-  LOADING,
+/** Type of a control result, choosing the screen displaying it. */
+enum class ResultType {
   ERROR,
   CONTRACTS_FOUND,
   INVALID_CARD,
-  EMPTY_CARD,
-  SUCCESS
+  EMPTY_CARD
 }

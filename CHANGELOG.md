@@ -56,7 +56,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Android applications: the adapters are named after the technology they rely on instead of the `Impl` suffix
   (`KeypleTerminalReaders`, `KeypleKeypopApiProvider`, `InMemoryAppSettingsRepository` and
   `SharedPreferencesAppSettingsRepository`, `MediaPlayerUserFeedback` and `TerminalUserFeedback`,
-  `KeypleTicketingServer`, `RestServerStatusProvider`, `DemoMifareClassicKeyProvider`, `TimberLogger`).
+  `KeypleTicketingServer`, `RestServerReadinessChecker`, `DemoMifareClassicKeyProvider`, `TimberLogger`).
   `UiContextImpl` is renamed `ActivityUiContext` and moves from `ui/adapters` to `ui`, the `adapters` package being
   confusing with the RecyclerView adapters.
 - Android applications: the ports are named after their responsibility instead of the `Manager` suffix:
@@ -97,6 +97,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `PersonalizeCardInputDto`/`OutputDto`, the `initCard` methods of the server `personalizeCard`, and the
   transactions of the dashboard are of type `PERSONALIZATION` (instead of `ISSUANCE`, also in its menu). The
   multiplatform client writes `analyze` as the other components (`selectCardAndAnalyzeContracts`).
+- Control app and reloading Android client: the `Status` enum of the UI, which gives the type of the result to
+  display, is named `ResultType` (property `resultType` of the UI models, intent extra `RESULT_TYPE` of the result
+  screen of the reloading client), and the `TICKETS_FOUND` value of the control app becomes `CONTRACTS_FOUND`.
+  Reloading Android client: the `ServerStatusProvider` port, which checks that the server is reachable with its SAM
+  ready, is named `ServerReadinessChecker` (`isServerReady` instead of `isSamReady`, adapter
+  `RestServerReadinessChecker`), and the last known state is stored as `lastServerReady` (same preference key).
 - Android applications: the values of `CardProtocol` are named without the redundant `_LOGICAL_PROTOCOL` suffix
   (e.g. `ISO_14443_4`), the enum being documented as the logical protocols of the cards.
 - Android applications: each application stays standalone (no shared Android module), and the technical files
@@ -322,7 +328,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The business logic is moved from the activities to the domain: card selection (AIDs depending on the device),
   interpretation of the server status codes, building of the contracts and check that the reloaded card is the one
   read before. The activities no longer handle the Keypop card types.
-- The settings and the server status are accessed through the `AppSettingsRepository` and `ServerStatusProvider` ports,
+- The settings and the server status are accessed through the `AppSettingsRepository` and `ServerReadinessChecker` ports,
   instead of the shared preferences and the REST client.
 - The texts displayed by the activities (error messages, contract names and descriptions, server settings checks) are
   defined as string resources instead of being hardcoded.

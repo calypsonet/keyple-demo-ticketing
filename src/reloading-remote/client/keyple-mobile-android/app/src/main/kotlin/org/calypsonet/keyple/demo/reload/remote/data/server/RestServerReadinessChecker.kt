@@ -13,7 +13,7 @@
 package org.calypsonet.keyple.demo.reload.remote.data.server
 
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ServerConfig
-import org.calypsonet.keyple.demo.reload.remote.domain.spi.ServerStatusProvider
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.ServerReadinessChecker
 import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -24,9 +24,9 @@ import retrofit2.converter.gson.GsonConverterFactory
  * The client is built at each request, the server address being provided by the caller (e.g. an
  * address being entered in the settings).
  */
-class RestServerStatusProvider : ServerStatusProvider {
+class RestServerReadinessChecker : ServerReadinessChecker {
 
-  override fun isSamReady(serverConfig: ServerConfig): Boolean {
+  override fun isServerReady(serverConfig: ServerConfig): Boolean {
     val client =
         Retrofit.Builder()
             .baseUrl(serverConfig.url)

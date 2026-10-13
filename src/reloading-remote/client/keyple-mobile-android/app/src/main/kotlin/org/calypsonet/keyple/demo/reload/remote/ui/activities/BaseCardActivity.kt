@@ -23,7 +23,7 @@ import org.calypsonet.keyple.demo.reload.remote.domain.model.CardInfo
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
 import org.calypsonet.keyple.demo.reload.remote.domain.model.TerminalType
 import org.calypsonet.keyple.demo.reload.remote.ui.ActivityUiContext
-import org.calypsonet.keyple.demo.reload.remote.ui.model.Status
+import org.calypsonet.keyple.demo.reload.remote.ui.model.ResultType
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
@@ -111,7 +111,7 @@ abstract class BaseCardActivity :
   fun launchInvalidCardResponse(cardType: String, message: String) {
     runOnUiThread {
       changeDisplay(
-          UiCardReaderResponse(Status.INVALID_CARD, cardType, emptyList(), message),
+          UiCardReaderResponse(ResultType.INVALID_CARD, cardType, emptyList(), message),
           finishActivity = isFinishActivityAfterResult())
     }
   }
@@ -120,7 +120,7 @@ abstract class BaseCardActivity :
     runOnUiThread {
       changeDisplay(
           UiCardReaderResponse(
-              Status.ERROR, "", emptyList(), getString(R.string.card_communication_error)),
+              ResultType.ERROR, "", emptyList(), getString(R.string.card_communication_error)),
           finishActivity = isFinishActivityAfterResult())
     }
   }
@@ -128,7 +128,7 @@ abstract class BaseCardActivity :
   fun launchServerErrorResponse() {
     runOnUiThread {
       changeDisplay(
-          UiCardReaderResponse(Status.ERROR, "", emptyList()),
+          UiCardReaderResponse(ResultType.ERROR, "", emptyList()),
           finishActivity = isFinishActivityAfterResult())
     }
   }
@@ -136,7 +136,7 @@ abstract class BaseCardActivity :
   fun launchExceptionResponse(e: Exception, finishActivity: Boolean? = false) {
     runOnUiThread {
       changeDisplay(
-          UiCardReaderResponse(Status.ERROR, "", emptyList(), e.message),
+          UiCardReaderResponse(ResultType.ERROR, "", emptyList(), e.message),
           finishActivity = finishActivity)
     }
   }

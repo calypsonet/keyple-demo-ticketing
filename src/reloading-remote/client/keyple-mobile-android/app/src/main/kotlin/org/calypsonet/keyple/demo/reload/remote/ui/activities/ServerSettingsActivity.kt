@@ -61,7 +61,7 @@ class ServerSettingsActivity : BaseActivity() {
       val isReachable =
           withContext(Dispatchers.IO) {
             try {
-              serverStatusProvider.isSamReady(serverConfig)
+              serverReadinessChecker.isServerReady(serverConfig)
               true
             } catch (e: Exception) {
               Timber.e(e)

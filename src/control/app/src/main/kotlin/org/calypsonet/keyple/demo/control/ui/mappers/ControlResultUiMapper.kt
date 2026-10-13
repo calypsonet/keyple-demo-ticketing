@@ -18,7 +18,7 @@ import org.calypsonet.keyple.demo.control.domain.model.ControlResult
 import org.calypsonet.keyple.demo.control.domain.model.RejectionReason
 import org.calypsonet.keyple.demo.control.domain.model.SelectionError
 import org.calypsonet.keyple.demo.control.domain.model.TechnicalError
-import org.calypsonet.keyple.demo.control.ui.model.Status
+import org.calypsonet.keyple.demo.control.ui.model.ResultType
 import org.calypsonet.keyple.demo.control.ui.model.UiControlResult
 
 /** Translates the control result into the result displayed, with its texts. */
@@ -26,12 +26,12 @@ fun ControlResult.toUi(resources: Resources): UiControlResult =
     when (this) {
       is ControlResult.CardContent ->
           UiControlResult(
-              status = Status.TICKETS_FOUND,
+              resultType = ResultType.CONTRACTS_FOUND,
               lastValidationsList = lastValidation?.let { listOf(it.toUi()) },
               contractsList = contracts.map { it.toUi() })
       is ControlResult.NotSelected ->
           UiControlResult(
-              status = Status.INVALID_CARD,
+              resultType = ResultType.INVALID_CARD,
               contractsList = emptyList(),
               errorMessage =
                   when (error) {
@@ -44,15 +44,15 @@ fun ControlResult.toUi(resources: Resources): UiControlResult =
                             R.string.selection_unsupported_file_structure, fileStructure)
                   })
       ControlResult.EmptyCard ->
-          UiControlResult(status = Status.EMPTY_CARD, contractsList = emptyList())
+          UiControlResult(resultType = ResultType.EMPTY_CARD, contractsList = emptyList())
       is ControlResult.Rejected ->
           UiControlResult(
-              status = Status.ERROR,
+              resultType = ResultType.ERROR,
               contractsList = emptyList(),
               errorMessage = resources.getString(reason.message()))
       is ControlResult.Failed ->
           UiControlResult(
-              status = Status.ERROR,
+              resultType = ResultType.ERROR,
               contractsList = emptyList(),
               errorMessage =
                   when (error) {

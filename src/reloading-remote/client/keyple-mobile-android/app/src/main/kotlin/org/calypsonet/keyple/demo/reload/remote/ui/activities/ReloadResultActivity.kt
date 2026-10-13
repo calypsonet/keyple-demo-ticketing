@@ -22,7 +22,7 @@ import com.airbnb.lottie.LottieDrawable
 import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityReloadResultBinding
-import org.calypsonet.keyple.demo.reload.remote.ui.model.Status
+import org.calypsonet.keyple.demo.reload.remote.ui.model.ResultType
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 
 @AndroidEntryPoint
@@ -37,9 +37,10 @@ class ReloadResultActivity : BaseActivity() {
     setContentView(activityReloadResultBinding.root)
     toolbarBinding.toolbarLogo.setImageResource(R.drawable.ic_logo_white)
 
-    // Status name provided by the calling activity (error status by default)
-    val statusName = intent.getStringExtra(STATUS)
-    val status = Status.entries.firstOrNull { it.name == statusName } ?: Status.ERROR
+    // Result type provided by the calling activity (error by default)
+    val resultTypeName = intent.getStringExtra(RESULT_TYPE)
+    val resultType =
+        ResultType.entries.firstOrNull { it.name == resultTypeName } ?: ResultType.ERROR
     val cardContent: UiCardReaderResponse? =
         IntentCompat.getParcelableExtra(
             intent, BaseCardActivity.CARD_CONTENT, UiCardReaderResponse::class.java)
@@ -60,14 +61,14 @@ class ReloadResultActivity : BaseActivity() {
       activityReloadResultBinding.cardTypeLabel.visibility = View.GONE
     }
 
-    when (status) {
-      Status.LOADING -> {
+    when (resultType) {
+      ResultType.LOADING -> {
         activityReloadResultBinding.animation.setAnimation("loading_anim.json")
         activityReloadResultBinding.animation.repeatCount = LottieDrawable.INFINITE
         activityReloadResultBinding.bigText.visibility = View.INVISIBLE
         activityReloadResultBinding.btnLayout.visibility = View.INVISIBLE
       }
-      Status.SUCCESS -> {
+      ResultType.SUCCESS -> {
         activityReloadResultBinding.mainBackground.setBackgroundColor(
             ContextCompat.getColor(this, R.color.green))
         activityReloadResultBinding.animation.setAnimation("tick_white.json")
@@ -122,7 +123,7 @@ class ReloadResultActivity : BaseActivity() {
   }
 
   companion object {
-    const val STATUS = "status"
+    const val RESULT_TYPE = "resultType"
     const val MESSAGE = "message"
     const val IS_PERSONALIZATION_RESULT = "isPersonalizationResult"
   }

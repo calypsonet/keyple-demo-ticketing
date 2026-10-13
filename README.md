@@ -196,7 +196,7 @@ application.
   expressed in the port by a callback (e.g. registration of the OMAPI plugin).
 - Everything the domain needs from the outside world is expressed as a port in `domain/spi` (e.g. `TerminalReaders`,
   `KeypopApiProvider`, `UserFeedback`, `AppSettingsRepository`, `Clock`, `Logger`, `UiContext`, `TicketingServer`,
-  `ServerStatusProvider`) and implemented by an adapter in `data`, or in `ui` for the UI-bound ones.
+  `ServerReadinessChecker`) and implemented by an adapter in `data`, or in `ui` for the UI-bound ones.
 - A port is named after what it represents or provides (e.g. `TerminalReaders`, `TicketingServer`, `Clock`), not with
   a vague suffix such as `Manager`, and uses a platform-neutral vocabulary (e.g. `release` rather than `onDestroy`).
 - An adapter is named after the technology it relies on, followed by the name of its port (e.g.
@@ -259,7 +259,7 @@ bash .github/scripts/check-android-twin-files.sh
 - Layouts named after their activity (`activity_<name>.xml`), shared toolbar `toolbar.xml`.
 - Hilt modules named after what they provide (e.g. `AppSettingsModule`, `DomainModule`, `ReaderModule`), with
   `provide<Type>` methods.
-- Enums named without suffix (e.g. `TerminalType`, `CardProtocol`, `Status`).
+- Enums named without suffix (e.g. `TerminalType`, `CardProtocol`, `ResultType`).
 - Mappers and builders, files named after the domain type concerned:
   - a mapper converts a representation into another one, from a layer to another or from an external
     representation (Keypop card, DTO of the server) to the domain. Extension function of the converted object:
@@ -268,7 +268,7 @@ bash .github/scripts/check-android-twin-files.sh
   - a builder builds an object from several sources, none of them prevailing (e.g. data read in the card and
     results computed by a procedure). Top-level function `build<Type>(...)` in `domain/builders` (e.g.
     `buildContract(...)`, file `ContractBuilder.kt`).
-- The root package of an application only contains `DemoApplication`: the display states (e.g. `Status`) and the
+- The root package of an application only contains `DemoApplication`: the display states (e.g. `ResultType`) and the
   Android helpers (e.g. `RecyclerView` extensions) belong to the `ui` layer.
 
 **Ticketing vocabulary**

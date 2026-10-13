@@ -31,7 +31,7 @@ import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
 import org.calypsonet.keyple.demo.reload.remote.domain.usecases.ReadContracts
 import org.calypsonet.keyple.demo.reload.remote.ui.activities.cardsummary.CardSummaryActivity
 import org.calypsonet.keyple.demo.reload.remote.ui.mappers.toUi
-import org.calypsonet.keyple.demo.reload.remote.ui.model.Status
+import org.calypsonet.keyple.demo.reload.remote.ui.model.ResultType
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.eclipse.keypop.reader.CardReaderEvent
 import org.eclipse.keypop.reader.ReaderCommunicationException
@@ -116,11 +116,14 @@ class CardReaderActivity : BaseCardActivity() {
         val result = readContracts()
         if (result.status == RemoteServiceStatus.SUCCESS) {
           runOnUiThread {
-            val status =
-                if (result.contracts.isNotEmpty()) Status.CONTRACTS_FOUND else Status.EMPTY_CARD
+            val resultType =
+                if (result.contracts.isNotEmpty()) ResultType.CONTRACTS_FOUND
+                else ResultType.EMPTY_CARD
             changeDisplay(
                 UiCardReaderResponse(
-                    status, result.card.description, result.contracts.map { it.toUi(resources) }),
+                    resultType,
+                    result.card.description,
+                    result.contracts.map { it.toUi(resources) }),
                 result.card.serialNumber,
                 isFinishActivityAfterResult())
           }

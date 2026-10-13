@@ -28,7 +28,7 @@ import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityPersonalizationBinding
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
 import org.calypsonet.keyple.demo.reload.remote.domain.usecases.PersonalizeCard
-import org.calypsonet.keyple.demo.reload.remote.ui.model.Status
+import org.calypsonet.keyple.demo.reload.remote.ui.model.ResultType
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.eclipse.keypop.reader.CardReaderEvent
 import timber.log.Timber
@@ -95,7 +95,7 @@ class PersonalizationActivity : BaseCardActivity() {
   ) {
     val intent = Intent(this, ReloadResultActivity::class.java)
     intent.putExtra(ReloadResultActivity.IS_PERSONALIZATION_RESULT, true)
-    intent.putExtra(ReloadResultActivity.STATUS, cardReaderResponse.status.name)
+    intent.putExtra(ReloadResultActivity.RESULT_TYPE, cardReaderResponse.resultType.name)
     intent.putExtra(ReloadResultActivity.MESSAGE, cardReaderResponse.errorMessage)
     intent.putExtra(CARD_CONTENT, cardReaderResponse)
     intent.putExtra(CARD_APPLICATION_NUMBER, applicationSerialNumber)
@@ -119,7 +119,7 @@ class PersonalizationActivity : BaseCardActivity() {
         if (result.status == RemoteServiceStatus.SUCCESS) {
           runOnUiThread {
             changeDisplay(
-                UiCardReaderResponse(Status.SUCCESS, result.card.description, emptyList()),
+                UiCardReaderResponse(ResultType.SUCCESS, result.card.description, emptyList()),
                 applicationSerialNumber = result.card.serialNumber,
                 finishActivity = true)
           }

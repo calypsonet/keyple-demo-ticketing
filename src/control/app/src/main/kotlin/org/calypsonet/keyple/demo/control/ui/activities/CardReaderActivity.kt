@@ -33,7 +33,7 @@ import org.calypsonet.keyple.demo.control.domain.usecases.ControlCard
 import org.calypsonet.keyple.demo.control.ui.ActivityUiContext
 import org.calypsonet.keyple.demo.control.ui.activities.cardcontent.CardContentActivity
 import org.calypsonet.keyple.demo.control.ui.mappers.toUi
-import org.calypsonet.keyple.demo.control.ui.model.Status
+import org.calypsonet.keyple.demo.control.ui.model.ResultType
 import org.calypsonet.keyple.demo.control.ui.model.UiControlResult
 import org.eclipse.keypop.reader.CardReaderEvent
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
@@ -182,7 +182,8 @@ class CardReaderActivity : BaseActivity() {
                 Timber.e(e)
                 Timber.e("Load ERROR page after exception = ${e.message}")
                 withContext(Dispatchers.Main) { dismissProgress() }
-                displayResult(UiControlResult(status = Status.ERROR, contractsList = emptyList()))
+                displayResult(
+                    UiControlResult(resultType = ResultType.ERROR, contractsList = emptyList()))
               } finally {
                 cardReaderSession.endCardProcessing()
               }
@@ -206,15 +207,15 @@ class CardReaderActivity : BaseActivity() {
     }
 
     runOnUiThread { activityCardReaderBinding.loadingAnimation.cancelAnimation() }
-    when (uiControlResult.status) {
-      Status.TICKETS_FOUND,
-      Status.EMPTY_CARD -> {
+    when (uiControlResult.resultType) {
+      ResultType.CONTRACTS_FOUND,
+      ResultType.EMPTY_CARD -> {
         val intent = Intent(this@CardReaderActivity, CardContentActivity::class.java)
         intent.putExtra(CARD_CONTENT, uiControlResult)
         startActivity(intent)
       }
-      Status.ERROR,
-      Status.INVALID_CARD -> {
+      ResultType.ERROR,
+      ResultType.INVALID_CARD -> {
         val intent = Intent(this@CardReaderActivity, InvalidCardActivity::class.java)
         intent.putExtra(CARD_CONTENT, uiControlResult)
         startActivity(intent)

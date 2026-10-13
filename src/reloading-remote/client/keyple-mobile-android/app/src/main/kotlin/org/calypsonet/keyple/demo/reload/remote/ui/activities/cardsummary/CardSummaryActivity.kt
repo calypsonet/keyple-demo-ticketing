@@ -27,7 +27,7 @@ import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardSummaryB
 import org.calypsonet.keyple.demo.reload.remote.ui.activities.BaseActivity
 import org.calypsonet.keyple.demo.reload.remote.ui.activities.BaseCardActivity
 import org.calypsonet.keyple.demo.reload.remote.ui.activities.SelectProductActivity
-import org.calypsonet.keyple.demo.reload.remote.ui.model.Status
+import org.calypsonet.keyple.demo.reload.remote.ui.model.ResultType
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 
 @AndroidEntryPoint
@@ -53,8 +53,8 @@ class CardSummaryActivity : BaseActivity() {
     contractsAdapter = ContractsRecyclerAdapter(cardContent.contractsList)
     activityCardSummaryBinding.contractsList.adapter = contractsAdapter
 
-    when (cardContent.status) {
-      Status.INVALID_CARD -> {
+    when (cardContent.resultType) {
+      ResultType.INVALID_CARD -> {
         activityCardSummaryBinding.animation.setAnimation("error_orange_anim.json")
         activityCardSummaryBinding.animation.playAnimation()
         activityCardSummaryBinding.bigText.setText(R.string.card_invalid_label)
@@ -69,8 +69,8 @@ class CardSummaryActivity : BaseActivity() {
         activityCardSummaryBinding.contentTitle.visibility = View.GONE
         scheduleErrorAutoReturn(R.color.orange)
       }
-      Status.CONTRACTS_FOUND,
-      Status.SUCCESS -> {
+      ResultType.CONTRACTS_FOUND,
+      ResultType.SUCCESS -> {
         activityCardSummaryBinding.contractsList.visibility = View.VISIBLE
         activityCardSummaryBinding.animation.visibility = View.GONE
         activityCardSummaryBinding.bigText.visibility = View.GONE
@@ -79,7 +79,7 @@ class CardSummaryActivity : BaseActivity() {
         activityCardSummaryBinding.lastValidationContent.visibility = View.VISIBLE
         activityCardSummaryBinding.contentTitle.visibility = View.VISIBLE
       }
-      Status.EMPTY_CARD -> {
+      ResultType.EMPTY_CARD -> {
         activityCardSummaryBinding.animation.setAnimation("error_anim.json")
         activityCardSummaryBinding.animation.playAnimation()
         activityCardSummaryBinding.bigText.text = getString(R.string.no_valid_label)
@@ -92,7 +92,7 @@ class CardSummaryActivity : BaseActivity() {
         activityCardSummaryBinding.lastValidationContent.visibility = View.VISIBLE
         activityCardSummaryBinding.contentTitle.visibility = View.GONE
       }
-      Status.ERROR -> {
+      ResultType.ERROR -> {
         activityCardSummaryBinding.animation.setAnimation("error_anim.json")
         activityCardSummaryBinding.animation.playAnimation()
         if (cardContent.errorMessage != null)

@@ -29,7 +29,7 @@ import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
 import org.calypsonet.keyple.demo.reload.remote.domain.usecases.LoadContract
-import org.calypsonet.keyple.demo.reload.remote.ui.model.Status
+import org.calypsonet.keyple.demo.reload.remote.ui.model.ResultType
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.eclipse.keypop.reader.CardReaderEvent
 import timber.log.Timber
@@ -91,7 +91,7 @@ class ReloadActivity : BaseCardActivity() {
         if (result.status == RemoteServiceStatus.SUCCESS) {
           runOnUiThread {
             changeDisplay(
-                UiCardReaderResponse(Status.SUCCESS, result.card.description, emptyList()),
+                UiCardReaderResponse(ResultType.SUCCESS, result.card.description, emptyList()),
                 finishActivity = true)
           }
         } else {
@@ -117,7 +117,7 @@ class ReloadActivity : BaseCardActivity() {
     activityCardReaderBinding.loadingAnimation.cancelAnimation()
     activityCardReaderBinding.cardAnimation.cancelAnimation()
     val intent = Intent(this, ReloadResultActivity::class.java)
-    intent.putExtra(ReloadResultActivity.STATUS, cardReaderResponse.status.name)
+    intent.putExtra(ReloadResultActivity.RESULT_TYPE, cardReaderResponse.resultType.name)
     intent.putExtra(ReloadResultActivity.MESSAGE, cardReaderResponse.errorMessage)
     intent.putExtra(CARD_CONTENT, cardReaderResponse)
     intent.putExtra(CARD_APPLICATION_NUMBER, applicationSerialNumber)

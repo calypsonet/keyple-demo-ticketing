@@ -27,13 +27,13 @@ import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ToolbarBinding
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.AppSettingsRepository
-import org.calypsonet.keyple.demo.reload.remote.domain.spi.ServerStatusProvider
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.ServerReadinessChecker
 
 /** Each Activity of the app should show status connexion result */
 abstract class BaseActivity : AppCompatActivity() {
 
   @Inject lateinit var appSettings: AppSettingsRepository
-  @Inject lateinit var serverStatusProvider: ServerStatusProvider
+  @Inject lateinit var serverReadinessChecker: ServerReadinessChecker
   protected lateinit var toolbarBinding: ToolbarBinding
   private var autoReturnJob: Job? = null
   private var autoReturnAnimator: ObjectAnimator? = null
@@ -42,7 +42,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
   override fun onResume() {
     super.onResume()
-    checkServerStatus()
+    checkServerReadiness()
   }
 
   override fun onPause() {
@@ -104,26 +104,26 @@ abstract class BaseActivity : AppCompatActivity() {
     autoReturnCountdown = null
   }
 
-  private fun updateServerStatusIndicator() {
-    if (appSettings.lastServerStatus)
+  private fun updateServerReadyIndicator() {
+    if (appSettings.lastServerReady)
         toolbarBinding.serverStatus.setImageResource(R.drawable.ic_connection_success)
     else toolbarBinding.serverStatus.setImageResource(R.drawable.ic_connection_wait)
   }
 
-  /** Requests the server status in background, then updates the indicator in the main thread. */
-  private fun checkServerStatus() {
+  /** Checks the server readiness in background, then updates the indicator in the main thread. */
+  private fun checkServerReadiness() {
     val serverConfig = appSettings.serverConfig
     lifecycleScope.launch {
       val isUp =
           withContext(Dispatchers.IO) {
             try {
-              serverStatusProvider.isSamReady(serverConfig)
+              serverReadinessChecker.isServerReady(serverConfig)
             } catch (e: Exception) {
               false
             }
           }
-      appSettings.lastServerStatus = isUp
-      updateServerStatusIndicator()
+      appSettings.lastServerReady = isUp
+      updateServerReadyIndicator()
     }
   }
 

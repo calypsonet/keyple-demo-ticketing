@@ -14,15 +14,18 @@ package org.calypsonet.keyple.demo.reload.remote.domain.spi
 
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ServerConfig
 
-/** Port giving the status of the reloading server. */
-interface ServerStatusProvider {
+/**
+ * Port checking that the reloading server is ready to process the cards: reachable, and with its
+ * SAM ready.
+ */
+interface ServerReadinessChecker {
 
   /**
-   * Requests the status of the server at the provided address.
+   * Checks the server at the provided address.
    *
    * @param serverConfig The address of the server.
    * @return True if the server and its SAM are ready, false if the SAM is not ready.
    * @throws Exception If the server cannot be reached.
    */
-  fun isSamReady(serverConfig: ServerConfig): Boolean
+  fun isServerReady(serverConfig: ServerConfig): Boolean
 }

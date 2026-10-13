@@ -22,10 +22,10 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.calypsonet.keyple.demo.reload.remote.BuildConfig
 import org.calypsonet.keyple.demo.reload.remote.data.server.KeypleSyncEndPointClient
 import org.calypsonet.keyple.demo.reload.remote.data.server.KeypleTicketingServer
-import org.calypsonet.keyple.demo.reload.remote.data.server.RestServerStatusProvider
+import org.calypsonet.keyple.demo.reload.remote.data.server.RestServerReadinessChecker
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.AppSettingsRepository
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
-import org.calypsonet.keyple.demo.reload.remote.domain.spi.ServerStatusProvider
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.ServerReadinessChecker
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.TicketingServer
 import org.eclipse.keyple.core.service.SmartCardServiceProvider
 import org.eclipse.keyple.distributed.LocalServiceClient
@@ -80,5 +80,5 @@ class ServerModule {
 
   @Provides
   @Singleton
-  fun provideServerStatusProvider(): ServerStatusProvider = RestServerStatusProvider()
+  fun provideServerReadinessChecker(): ServerReadinessChecker = RestServerReadinessChecker()
 }

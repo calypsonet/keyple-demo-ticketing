@@ -18,7 +18,7 @@ import kotlinx.parcelize.Parcelize
 /** Control result displayed by the UI, passed to the screen displaying it. */
 @Parcelize
 data class UiControlResult(
-    val status: Status,
+    val resultType: ResultType,
     val lastValidationsList: List<UiValidation>? = null,
     val contractsList: List<UiContract>,
     val errorMessage: String? = null

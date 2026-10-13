@@ -44,10 +44,10 @@ class SharedPreferencesAppSettingsRepository(private val prefs: SharedPreference
       prefs.edit().putString(CARD_MEDIUM, value.toString()).apply()
     }
 
-  override var lastServerStatus: Boolean
-    get() = prefs.getBoolean(SETTING_SERVER_LAST_STATUS_UP, false)
+  override var lastServerReady: Boolean
+    get() = prefs.getBoolean(LAST_SERVER_READY_KEY, false)
     set(value) {
-      prefs.edit().putBoolean(SETTING_SERVER_LAST_STATUS_UP, value).apply()
+      prefs.edit().putBoolean(LAST_SERVER_READY_KEY, value).apply()
     }
 
   override fun getCardMediumVisibility(cardMedium: CardMedium): CardMediumVisibility {
@@ -85,6 +85,6 @@ class SharedPreferencesAppSettingsRepository(private val prefs: SharedPreference
     private const val SETTING_SIM_VISIBILITY = "setting_sim_visibility"
     private const val SETTING_WEARABLE_VISIBILITY = "setting_wearable_visibility"
     private const val SETTING_EMBEDDED_VISIBILITY = "setting_embedded_visibility"
-    private const val SETTING_SERVER_LAST_STATUS_UP = "setting_server_last_status_up"
+    private const val LAST_SERVER_READY_KEY = "setting_server_last_status_up"
   }
 }

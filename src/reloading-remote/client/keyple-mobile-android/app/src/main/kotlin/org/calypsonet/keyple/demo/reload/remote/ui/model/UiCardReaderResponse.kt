@@ -17,7 +17,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class UiCardReaderResponse(
-    val status: Status,
+    val resultType: ResultType,
     val cardType: String,
     val contractsList: List<UiContract>,
     val errorMessage: String? = null
