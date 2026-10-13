@@ -117,7 +117,7 @@ class CardReaderActivity : BaseCardActivity() {
         if (result.status == RemoteServiceStatus.SUCCESS) {
           runOnUiThread {
             val status =
-                if (result.contracts.isNotEmpty()) Status.TICKETS_FOUND else Status.EMPTY_CARD
+                if (result.contracts.isNotEmpty()) Status.CONTRACTS_FOUND else Status.EMPTY_CARD
             changeDisplay(
                 UiCardReaderResponse(
                     status, result.card.description, result.contracts.map { it.toUi(resources) }),

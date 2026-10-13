@@ -26,7 +26,7 @@ import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardSummaryBinding
 import org.calypsonet.keyple.demo.reload.remote.ui.activities.BaseActivity
 import org.calypsonet.keyple.demo.reload.remote.ui.activities.BaseCardActivity
-import org.calypsonet.keyple.demo.reload.remote.ui.activities.SelectTicketsActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.activities.SelectProductActivity
 import org.calypsonet.keyple.demo.reload.remote.ui.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 
@@ -69,7 +69,7 @@ class CardSummaryActivity : BaseActivity() {
         activityCardSummaryBinding.contentTitle.visibility = View.GONE
         scheduleErrorAutoReturn(R.color.orange)
       }
-      Status.TICKETS_FOUND,
+      Status.CONTRACTS_FOUND,
       Status.SUCCESS -> {
         activityCardSummaryBinding.contractsList.visibility = View.VISIBLE
         activityCardSummaryBinding.animation.visibility = View.GONE
@@ -132,7 +132,7 @@ class CardSummaryActivity : BaseActivity() {
     val mp: MediaPlayer = MediaPlayer.create(this, R.raw.reading_sound)
     mp.start()
     activityCardSummaryBinding.buyBtn.setOnClickListener {
-      val intent = Intent(this, SelectTicketsActivity::class.java)
+      val intent = Intent(this, SelectProductActivity::class.java)
       getIntent().getStringExtra(BaseCardActivity.CARD_APPLICATION_NUMBER)?.let {
         intent.putExtra(BaseCardActivity.CARD_APPLICATION_NUMBER, it)
       }

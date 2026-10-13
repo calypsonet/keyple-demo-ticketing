@@ -22,11 +22,11 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/tickets_btn_height"
+        android:layout_height="@dimen/product_button_height"
         android:clickable="true"
         android:focusable="true"
         android:background="@drawable/btn_blue_light"
-        android:elevation="@dimen/select_ticket_elevation"
+        android:elevation="@dimen/elevation"
         android:layout_marginStart="@dimen/content_title_padding"
         android:layout_marginEnd="@dimen/content_title_padding"
         app:layout_constraintTop_toBottomOf="@id/contentTitle"
@@ -63,7 +63,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@color/light_blue"
-        android:padding="@dimen/tickets_block_space"
+        android:padding="@dimen/block_space"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <TextView

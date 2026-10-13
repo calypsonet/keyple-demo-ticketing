@@ -82,12 +82,11 @@ class ReloadActivity : BaseCardActivity() {
   private suspend fun remoteServiceExecution() {
     withContext(Dispatchers.IO) {
       try {
-        val tripsToLoad = intent.getIntExtra(SelectTicketsActivity.TRIPS_TO_LOAD, 0)
+        val tripsToLoad = intent.getIntExtra(SelectProductActivity.TRIPS_TO_LOAD, 0)
         val result =
             reloadCard(
                 intent.getStringExtra(CARD_APPLICATION_NUMBER),
-                PriorityCode.fromCode(
-                    intent.getIntExtra(SelectTicketsActivity.SELECTED_TICKET_PRIORITY_CODE, 0)),
+                PriorityCode.fromCode(intent.getIntExtra(SelectProductActivity.CONTRACT_TARIFF, 0)),
                 tripsToLoad)
         if (result.status == RemoteServiceStatus.SUCCESS) {
           runOnUiThread {
@@ -118,7 +117,6 @@ class ReloadActivity : BaseCardActivity() {
     activityCardReaderBinding.loadingAnimation.cancelAnimation()
     activityCardReaderBinding.cardAnimation.cancelAnimation()
     val intent = Intent(this, ReloadResultActivity::class.java)
-    intent.putExtra(ReloadResultActivity.TRIPS_TO_LOAD, 0)
     intent.putExtra(ReloadResultActivity.STATUS, cardReaderResponse.status.name)
     intent.putExtra(ReloadResultActivity.MESSAGE, cardReaderResponse.errorMessage)
     intent.putExtra(CARD_CONTENT, cardReaderResponse)

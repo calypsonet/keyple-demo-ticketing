@@ -79,7 +79,7 @@
                 android:exported="false">
         </activity>
         <activity
-                android:name="org.calypsonet.keyple.demo.reload.remote.ui.activities.SelectTicketsActivity"
+                android:name="org.calypsonet.keyple.demo.reload.remote.ui.activities.SelectProductActivity"
                 android:theme="@style/AppTheme.NoActionBar"
                 android:screenOrientation="portrait"
                 android:launchMode="singleTop"

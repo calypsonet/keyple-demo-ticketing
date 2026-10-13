@@ -17,66 +17,66 @@ import android.os.Bundle
 import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.reload.remote.R
-import org.calypsonet.keyple.demo.reload.remote.databinding.ActivitySelectTicketsBinding
+import org.calypsonet.keyple.demo.reload.remote.databinding.ActivitySelectProductBinding
 
 @AndroidEntryPoint
-class SelectTicketsActivity : BaseActivity() {
-  private lateinit var activitySelectTicketsBinding: ActivitySelectTicketsBinding
+class SelectProductActivity : BaseActivity() {
+  private lateinit var activitySelectProductBinding: ActivitySelectProductBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    activitySelectTicketsBinding = ActivitySelectTicketsBinding.inflate(layoutInflater)
-    toolbarBinding = activitySelectTicketsBinding.appBarLayout
-    setContentView(activitySelectTicketsBinding.root)
+    activitySelectProductBinding = ActivitySelectProductBinding.inflate(layoutInflater)
+    toolbarBinding = activitySelectProductBinding.appBarLayout
+    setContentView(activitySelectProductBinding.root)
 
-    activitySelectTicketsBinding.ticket1Label.text =
+    activitySelectProductBinding.multiTrip1Label.text =
         resources.getQuantityString(R.plurals.x_tickets, 1, 1)
-    activitySelectTicketsBinding.ticket2Label.text =
+    activitySelectProductBinding.multiTrip2Label.text =
         resources.getQuantityString(R.plurals.x_tickets, 2, 2)
-    activitySelectTicketsBinding.ticket3Label.text =
+    activitySelectProductBinding.multiTrip3Label.text =
         resources.getQuantityString(R.plurals.x_tickets, 3, 3)
-    activitySelectTicketsBinding.ticket4Label.text =
+    activitySelectProductBinding.multiTrip4Label.text =
         resources.getQuantityString(R.plurals.x_tickets, 4, 4)
-    activitySelectTicketsBinding.ticket1Price.text = getString(R.string.ticket_price, 1)
-    activitySelectTicketsBinding.ticket2Price.text = getString(R.string.ticket_price, 2)
-    activitySelectTicketsBinding.ticket3Price.text = getString(R.string.ticket_price, 3)
-    activitySelectTicketsBinding.ticket4Price.text = getString(R.string.ticket_price, 4)
-    activitySelectTicketsBinding.seasonPassPrice.text = getString(R.string.ticket_price, 20)
+    activitySelectProductBinding.multiTrip1Price.text = getString(R.string.ticket_price, 1)
+    activitySelectProductBinding.multiTrip2Price.text = getString(R.string.ticket_price, 2)
+    activitySelectProductBinding.multiTrip3Price.text = getString(R.string.ticket_price, 3)
+    activitySelectProductBinding.multiTrip4Price.text = getString(R.string.ticket_price, 4)
+    activitySelectProductBinding.seasonPassPrice.text = getString(R.string.ticket_price, 20)
 
-    activitySelectTicketsBinding.ticket1Btn.setOnClickListener {
+    activitySelectProductBinding.multiTrip1Btn.setOnClickListener {
       startCheckoutActivity(PriorityCode.MULTI_TRIP, 1)
     }
-    activitySelectTicketsBinding.ticket2Btn.setOnClickListener {
+    activitySelectProductBinding.multiTrip2Btn.setOnClickListener {
       startCheckoutActivity(PriorityCode.MULTI_TRIP, 2)
     }
-    activitySelectTicketsBinding.ticket3Btn.setOnClickListener {
+    activitySelectProductBinding.multiTrip3Btn.setOnClickListener {
       startCheckoutActivity(PriorityCode.MULTI_TRIP, 3)
     }
-    activitySelectTicketsBinding.ticket4Btn.setOnClickListener {
+    activitySelectProductBinding.multiTrip4Btn.setOnClickListener {
       startCheckoutActivity(PriorityCode.MULTI_TRIP, 4)
     }
 
-    activitySelectTicketsBinding.seasonPassBtn.setOnClickListener {
+    activitySelectProductBinding.seasonPassBtn.setOnClickListener {
       startCheckoutActivity(PriorityCode.SEASON_PASS)
     }
   }
 
-  private fun startCheckoutActivity(priorityCode: PriorityCode, ticketNumber: Int? = null) {
+  private fun startCheckoutActivity(priorityCode: PriorityCode, tripsToLoad: Int? = null) {
     val intent = Intent(this, CheckoutActivity::class.java)
-    intent.putExtra(SELECTED_TICKET_PRIORITY_CODE, priorityCode.code)
-    if (ticketNumber != null) {
-      intent.putExtra(TRIPS_TO_LOAD, ticketNumber)
+    intent.putExtra(CONTRACT_TARIFF, priorityCode.code)
+    if (tripsToLoad != null) {
+      intent.putExtra(TRIPS_TO_LOAD, tripsToLoad)
     }
     getIntent().getStringExtra(BaseCardActivity.CARD_APPLICATION_NUMBER)?.let {
       intent.putExtra(BaseCardActivity.CARD_APPLICATION_NUMBER, it)
     }
     startActivity(intent)
-    this@SelectTicketsActivity.finish()
+    this@SelectProductActivity.finish()
   }
 
   companion object {
-    const val SELECTED_TICKET_PRIORITY_CODE = "SELECTED_TICKET_PRIORITY_CODE"
+    const val CONTRACT_TARIFF = "CONTRACT_TARIFF"
     const val TRIPS_TO_LOAD = "TRIPS_TO_LOAD"
   }
 }

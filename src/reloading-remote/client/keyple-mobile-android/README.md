@@ -119,10 +119,10 @@ Main Screen → Card Reader → Card Summary → Select Tickets → Checkout →
 - Displays contract validity and usage status
 - Option to load additional contracts
 
-**Select Tickets (`SelectTicketsActivity`)**
-- Lists available products from server
-- Shows pricing and validity information
-- Contract selection for purchase
+**Select Product (`SelectProductActivity`)**
+- Lists the products for sale: multi-trip tickets (1 to 4 trips) and season pass
+- Shows their prices
+- Product selection for purchase
 
 **Payment Simulation**
 - **Checkout (`CheckoutActivity`)**: Simulates credit card payment

@@ -32,20 +32,18 @@ class CheckoutActivity : BaseActivity() {
     toolbarBinding = activityCheckoutBinding.appBarLayout
     setContentView(activityCheckoutBinding.root)
 
-    val selectedTicketPriorityCode =
+    val contractTariff =
         PriorityCode.fromCode(
-            intent.getIntExtra(
-                SelectTicketsActivity.SELECTED_TICKET_PRIORITY_CODE, PriorityCode.MULTI_TRIP.code))
-    val ticketNumberCount: Int = intent.getIntExtra(SelectTicketsActivity.TRIPS_TO_LOAD, 0)
+            intent.getIntExtra(SelectProductActivity.CONTRACT_TARIFF, PriorityCode.MULTI_TRIP.code))
+    val tripsToLoad: Int = intent.getIntExtra(SelectProductActivity.TRIPS_TO_LOAD, 0)
 
-    if (selectedTicketPriorityCode == PriorityCode.SEASON_PASS) {
+    if (contractTariff == PriorityCode.SEASON_PASS) {
       activityCheckoutBinding.selectionLabel.text = getString(R.string.season_pass_label)
       activityCheckoutBinding.selectionPrice.text = getString(R.string.ticket_price, 20)
     } else {
       activityCheckoutBinding.selectionLabel.text =
-          resources.getQuantityString(R.plurals.x_tickets, ticketNumberCount, ticketNumberCount)
-      activityCheckoutBinding.selectionPrice.text =
-          getString(R.string.ticket_price, ticketNumberCount)
+          resources.getQuantityString(R.plurals.x_tickets, tripsToLoad, tripsToLoad)
+      activityCheckoutBinding.selectionPrice.text = getString(R.string.ticket_price, tripsToLoad)
     }
     activityCheckoutBinding.validateBtn.setOnClickListener {
       val intent = Intent(this, PaymentValidatedActivity::class.java)

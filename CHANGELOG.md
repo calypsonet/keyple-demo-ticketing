@@ -82,6 +82,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   displayed).
 - Control app: the `destination` and `provider` fields of the last validation (`Validation`, `UiValidation`), never
   set nor displayed, are removed.
+- Reloading Android client: "ticket" is no longer used in the code for the products and the trips (it remains in
+  the displayed texts): `SelectTicketsActivity` becomes `SelectProductActivity` (layout `activity_select_product`),
+  the number of trips to load is named `tripsToLoad` and the tariff of the chosen product `contractTariff` (intent
+  extra `CONTRACT_TARIFF`), the `TICKETS_FOUND` status becomes `CONTRACTS_FOUND`, and the dimensions named after
+  the tickets are renamed (`block_space`, `product_button_height`, `elevation`). The number of trips passed to the
+  result screen, never read, is removed.
 - Android applications: the values of `CardProtocol` are named without the redundant `_LOGICAL_PROTOCOL` suffix
   (e.g. `ISO_14443_4`), the enum being documented as the logical protocols of the cards.
 - Android applications: each application stays standalone (no shared Android module), and the technical files

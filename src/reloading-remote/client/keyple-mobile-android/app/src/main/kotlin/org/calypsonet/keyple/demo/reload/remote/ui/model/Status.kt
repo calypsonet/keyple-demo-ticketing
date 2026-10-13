@@ -16,7 +16,7 @@ package org.calypsonet.keyple.demo.reload.remote.ui.model
 enum class Status {
   LOADING,
   ERROR,
-  TICKETS_FOUND,
+  CONTRACTS_FOUND,
   INVALID_CARD,
   EMPTY_CARD,
   SUCCESS

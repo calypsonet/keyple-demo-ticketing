@@ -7,8 +7,8 @@
     <dimen name="small_text_size">17.3sp</dimen>
     <dimen name="smaller_text_size">12sp</dimen>
 
-    <dimen name="tickets_block_space">10dp</dimen>
-    <dimen name="tickets_btn_height">90dp</dimen>
+    <dimen name="block_space">10dp</dimen>
+    <dimen name="product_button_height">90dp</dimen>
     <dimen name="cc_padding">30dp</dimen>
     <dimen name="cc_help_size">17dp</dimen>
 
@@ -17,7 +17,6 @@
 
     <dimen name="device_slct_text_top_margin">10dp</dimen>
 
-    <dimen name="select_ticket_elevation">4dp</dimen>
     <dimen name="card_summary_desc_top_margin">20dp</dimen>
     <dimen name="content_top_margin">20dp</dimen>
     <dimen name="card_validation_horizontal_margin">13dp</dimen>
