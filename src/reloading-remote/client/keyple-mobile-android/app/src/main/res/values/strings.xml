@@ -21,8 +21,8 @@
 
     <string name="payment_confirmation_label">Payment confirmed</string>
     <string name="loading_success_label">Ticket loaded</string>
-    <string name="no_valid_label">No ticket</string>
-    <string name="no_valid_desc">Please load a ticket</string>
+    <string name="no_contract_label">No ticket</string>
+    <string name="no_contract_desc">Please load a ticket.</string>
     <string name="error_label">An error occurred</string>
     <string name="personalization_success_label">Card personalized</string>
     <string name="personalization_failed_label">Personalization failed</string>

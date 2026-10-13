@@ -32,7 +32,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.validation.R
 import org.calypsonet.keyple.demo.validation.databinding.ActivityCardReaderBinding
-import org.calypsonet.keyple.demo.validation.databinding.LayoutCardSummaryOverlayBinding
+import org.calypsonet.keyple.demo.validation.databinding.LayoutValidationResultOverlayBinding
 import org.calypsonet.keyple.demo.validation.domain.model.CardDescription
 import org.calypsonet.keyple.demo.validation.domain.model.RejectionReason
 import org.calypsonet.keyple.demo.validation.domain.model.SelectionError
@@ -56,8 +56,8 @@ class CardReaderActivity : BaseActivity() {
   var currentAppState = AppState.WAIT_SYSTEM_READY
   private var timer = Timer()
 
-  private var summaryBinding: LayoutCardSummaryOverlayBinding? = null
-  private var summaryTimer: Timer? = null
+  private var validationResultBinding: LayoutValidationResultOverlayBinding? = null
+  private var validationResultTimer: Timer? = null
   private var cardInsertedAt = 0L
 
   /* application states */
@@ -81,11 +81,12 @@ class CardReaderActivity : BaseActivity() {
     LottieCompositionFactory.fromAsset(this, "tick_white.json")
     LottieCompositionFactory.fromAsset(this, "error_white.json")
 
-    // Pre-inflate the card summary overlay so ConstraintLayout resolves all constraints
+    // Pre-inflate the validation result overlay so ConstraintLayout resolves all constraints
     // (including dimensionRatio on the Lottie view) before first use, avoiding
     // GONE→VISIBLE sizing issues where the animation would cover the text views.
-    summaryBinding =
-        LayoutCardSummaryOverlayBinding.bind(activityCardReaderBinding.cardSummaryStub.inflate())
+    validationResultBinding =
+        LayoutValidationResultOverlayBinding.bind(
+            activityCardReaderBinding.validationResultStub.inflate())
   }
 
   override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
@@ -98,11 +99,12 @@ class CardReaderActivity : BaseActivity() {
   override fun onResume() {
     super.onResume()
 
-    // If the summary overlay is visible (e.g. app returned from background), dismiss it first
-    summaryBinding?.root?.let {
+    // If the validation result overlay is visible (e.g. app returned from background), dismiss it
+    // first
+    validationResultBinding?.root?.let {
       if (it.visibility == View.VISIBLE) {
-        summaryTimer?.cancel()
-        summaryTimer = null
+        validationResultTimer?.cancel()
+        validationResultTimer = null
         it.visibility = View.GONE
       }
     }
@@ -152,8 +154,8 @@ class CardReaderActivity : BaseActivity() {
     super.onPause()
     activityCardReaderBinding.animation.cancelAnimation()
     timer.cancel()
-    summaryTimer?.cancel()
-    summaryTimer = null
+    validationResultTimer?.cancel()
+    validationResultTimer = null
     if (cardReaderSession.isInitialized) {
       cardReaderSession.stopCardDetection()
       Timber.d("stopCardDetection")
@@ -167,12 +169,14 @@ class CardReaderActivity : BaseActivity() {
     super.onDestroy()
   }
 
-  /** Back closes the summary overlay when it is visible, otherwise closes the activity. */
+  /**
+   * Back closes the validation result overlay when it is visible, otherwise closes the activity.
+   */
   private val backCallback =
       object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-          if (summaryBinding?.root?.visibility == View.VISIBLE) {
-            hideSummaryOverlay()
+          if (validationResultBinding?.root?.visibility == View.VISIBLE) {
+            hideValidationResult()
           } else {
             isEnabled = false
             onBackPressedDispatcher.onBackPressed()
@@ -241,7 +245,7 @@ class CardReaderActivity : BaseActivity() {
 
   private fun changeDisplay(validationResult: ValidationResult) {
     activityCardReaderBinding.animation.cancelAnimation()
-    showSummaryOverlay(validationResult)
+    showValidationResult(validationResult)
   }
 
   /** Returns the label of the presented card. */
@@ -302,8 +306,8 @@ class CardReaderActivity : BaseActivity() {
         TechnicalError.UNEXPECTED -> result.detail
       }
 
-  private fun showSummaryOverlay(result: ValidationResult) {
-    val b = summaryBinding!!
+  private fun showValidationResult(result: ValidationResult) {
+    val b = validationResultBinding!!
 
     // Card type label + transaction time
     val elapsedMs = System.currentTimeMillis() - cardInsertedAt
@@ -320,7 +324,7 @@ class CardReaderActivity : BaseActivity() {
     when (result) {
       is ValidationResult.Accepted -> {
         animationFile = "tick_white.json"
-        b.summaryMainView.setBackgroundColor(ContextCompat.getColor(this, R.color.green))
+        b.validationResultView.setBackgroundColor(ContextCompat.getColor(this, R.color.green))
         b.bigText.setText(R.string.valid_main_desc)
         val eventDate =
             result.dateTime.format(
@@ -352,7 +356,7 @@ class CardReaderActivity : BaseActivity() {
       is ValidationResult.NotSelected -> {
         // Card not selected (unknown or unsupported card): refused without validation
         animationFile = "error_white.json"
-        b.summaryMainView.setBackgroundColor(ContextCompat.getColor(this, R.color.orange))
+        b.validationResultView.setBackgroundColor(ContextCompat.getColor(this, R.color.orange))
         b.bigText.setText(R.string.card_invalid_main_desc)
         b.locationTime.text = selectionErrorMessage(result)
         b.mediumText.visibility = View.INVISIBLE
@@ -362,12 +366,12 @@ class CardReaderActivity : BaseActivity() {
         animationFile = "error_white.json"
         if (isInvalidCard(result.reason)) {
           // Card refused (card data)
-          b.summaryMainView.setBackgroundColor(ContextCompat.getColor(this, R.color.orange))
+          b.validationResultView.setBackgroundColor(ContextCompat.getColor(this, R.color.orange))
           b.bigText.setText(R.string.card_invalid_main_desc)
           b.locationTime.text = rejectionMessage(result.reason)
         } else {
           // No contract to use
-          b.summaryMainView.setBackgroundColor(ContextCompat.getColor(this, R.color.red))
+          b.validationResultView.setBackgroundColor(ContextCompat.getColor(this, R.color.red))
           b.bigText.text = rejectionMessage(result.reason)
           b.locationTime.setText(R.string.no_contract_desc)
         }
@@ -377,7 +381,7 @@ class CardReaderActivity : BaseActivity() {
       is ValidationResult.Failed,
       is ValidationResult.CardLost -> {
         animationFile = "error_white.json"
-        b.summaryMainView.setBackgroundColor(ContextCompat.getColor(this, R.color.red))
+        b.validationResultView.setBackgroundColor(ContextCompat.getColor(this, R.color.red))
         b.bigText.setText(R.string.error_main_desc)
         b.locationTime.text =
             (result as? ValidationResult.Failed)?.let { errorMessage(it) }
@@ -393,7 +397,7 @@ class CardReaderActivity : BaseActivity() {
       lifecycleScope.launch(Dispatchers.IO) { cardReaderSession.prepareNextTransaction() }
     }
 
-    displaySummary(animationFile)
+    displayValidationResult(animationFile)
   }
 
   /** Returns the message displayed when the presented card cannot be selected. */
@@ -405,28 +409,28 @@ class CardReaderActivity : BaseActivity() {
             getString(R.string.selection_unsupported_file_structure, result.fileStructure)
       }
 
-  /** Shows the summary overlay with the provided animation, hidden after a delay. */
-  private fun displaySummary(animationFile: String) {
-    val b = summaryBinding!!
-    b.summaryMainView.visibility = View.VISIBLE
+  /** Shows the validation result overlay with the provided animation, hidden after a delay. */
+  private fun displayValidationResult(animationFile: String) {
+    val b = validationResultBinding!!
+    b.validationResultView.visibility = View.VISIBLE
     b.animation.setAnimation(animationFile)
     b.animation.playAnimation()
 
-    summaryTimer = Timer()
-    summaryTimer!!.schedule(
+    validationResultTimer = Timer()
+    validationResultTimer!!.schedule(
         object : TimerTask() {
           override fun run() {
-            runOnUiThread { hideSummaryOverlay() }
+            runOnUiThread { hideValidationResult() }
           }
         },
         SUMMARY_DELAY_MS.toLong())
   }
 
-  private fun hideSummaryOverlay() {
-    summaryTimer?.cancel()
-    summaryTimer = null
-    summaryBinding?.root?.visibility = View.GONE
-    summaryBinding?.animation?.cancelAnimation()
+  private fun hideValidationResult() {
+    validationResultTimer?.cancel()
+    validationResultTimer = null
+    validationResultBinding?.root?.visibility = View.GONE
+    validationResultBinding?.animation?.cancelAnimation()
     activityCardReaderBinding.mainView.setBackgroundResource(R.drawable.ic_img_bg_valideur)
     activityCardReaderBinding.presentCardTv.visibility = View.VISIBLE
     playWaitingAnimation()

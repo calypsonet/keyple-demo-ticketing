@@ -1,4 +1,4 @@
-# Keyple Distributed Demo - server dashboard
+# Keyple Reload Demo - Server Dashboard
 
 React application monitoring the Keyple Reload Demo server, built with [Vite](https://vite.dev/).
 
@@ -18,7 +18,7 @@ In the project directory, you can run:
 
 Runs the app in development mode at [http://localhost:3000](http://localhost:3000), with hot reload.
 
-Be aware that the application relies on the Keyple Reload Demo server API: the API calls (`/activity`, `/card`) are
+Be aware that the application relies on the Keyple Reload Demo server API: the API calls (`/transactions`, `/card`) are
 forwarded to the server at http://localhost:8080 (see `vite.config.js`), which must be running.
 
 ### `npm run build`

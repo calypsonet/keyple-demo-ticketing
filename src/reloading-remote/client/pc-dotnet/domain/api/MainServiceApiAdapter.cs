@@ -81,7 +81,7 @@ namespace App.domain.api
         }
 
         /// <inheritdoc/>
-        public string SelectCardAndReadContracts()
+        public string SelectAppAndReadContracts()
         {
             _logger.Information("Execute remote service to read the card content...");
 
@@ -89,7 +89,7 @@ namespace App.domain.api
         }
 
         /// <inheritdoc/>
-        public string SelectCardAndIncreaseContractCounter(int counterIncrement)
+        public string SelectAppAndIncreaseContractCounter(int counterIncrement)
         {
             _logger.Information("Execute remote service to increase the contract counter...");
 

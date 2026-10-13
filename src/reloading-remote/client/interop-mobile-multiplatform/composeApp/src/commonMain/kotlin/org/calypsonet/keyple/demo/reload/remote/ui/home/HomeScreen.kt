@@ -46,7 +46,7 @@ import org.calypsonet.keyple.composeapp.generated.resources.keyple_background
 import org.calypsonet.keyple.demo.reload.remote.AppState
 import org.calypsonet.keyple.demo.reload.remote.ui.components.KeypleTopAppBar
 import org.calypsonet.keyple.demo.reload.remote.ui.nav.ReadCard
-import org.calypsonet.keyple.demo.reload.remote.ui.nav.Settings
+import org.calypsonet.keyple.demo.reload.remote.ui.nav.SettingsMenu
 import org.calypsonet.keyple.demo.reload.remote.ui.theme.blue
 import org.calypsonet.keyple.demo.reload.remote.ui.theme.darkBlue
 import org.jetbrains.compose.resources.DrawableResource
@@ -73,7 +73,7 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier, appS
             appState = appState,
             showBackArrow = false,
             actions = {
-              IconButton(onClick = { navController.navigate(route = Settings) }) {
+              IconButton(onClick = { navController.navigate(route = SettingsMenu) }) {
                 Icon(
                     imageVector = vectorResource(Res.drawable.ic_settings),
                     contentDescription = "Go to settings action",

@@ -114,9 +114,9 @@ Terminal Selection → Settings → Reader Activity → Validation Result
 - Shows real-time status during card processing
 - Handles card detection and validation procedure
 
-**Validation Results (`CardSummaryActivity`)**
+**Validation Result**
 
-The summary overlay of the reader screen (`CardReaderActivity`) displays both success and failure results
+The validation result overlay of the reader screen (`CardReaderActivity`) displays both success and failure results
 (`ValidationResult`):
 
 **Success Screen** (`ValidationResult.Accepted`):

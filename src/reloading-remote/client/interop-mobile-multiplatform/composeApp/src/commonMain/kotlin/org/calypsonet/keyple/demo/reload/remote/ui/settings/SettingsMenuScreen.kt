@@ -44,7 +44,7 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.vectorResource
 
 @Composable
-fun SettingsScreen(
+fun SettingsMenuScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
     appState: AppState

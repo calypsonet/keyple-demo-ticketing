@@ -40,9 +40,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Loading of a contract in a card (remote service {@code READ_CARD_AND_LOAD_CONTRACT}): reload of a
- * contract of the same type, or new contract written in an empty record or in place of an expired
- * or exhausted contract.
+ * Loading of a contract in a card (remote service {@code READ_CARD_AND_LOAD_CONTRACT}): loading of
+ * a contract of the same type (trips added or season pass renewed), or new contract written in an
+ * empty record or in place of an expired or exhausted contract.
  */
 @ApplicationScoped
 public class ContractLoadingService {
@@ -197,7 +197,7 @@ public class ContractLoadingService {
 
     int existingContractNumber = getContractNumber(contractTariff, contracts);
     if (existingContractNumber > 0) {
-      // Reloading same contract type
+      // Contract of the same type: trips added or season pass renewed
       newContractNumber = existingContractNumber;
       ContractStructure currentContract = contracts.get(existingContractNumber - 1);
       // build new contract
@@ -286,16 +286,16 @@ public class ContractLoadingService {
 
   /**
    * Builds a season pass valid for 30 days: from today for a new season pass, or from the validity
-   * end date of the reloaded season pass when it has not expired (the reload extends its validity).
+   * end date of the renewed season pass when it has not expired (the renewal extends its validity).
    *
-   * @param reloadedContract The season pass reloaded, null for a new season pass.
+   * @param renewedSeasonPass The season pass renewed, null for a new season pass.
    */
-  private ContractStructure buildSeasonContract(ContractStructure reloadedContract) {
+  private ContractStructure buildSeasonContract(ContractStructure renewedSeasonPass) {
     DateCompact contractSaleDate = new DateCompact(LocalDate.now());
     DateCompact validityStartDate = contractSaleDate;
-    if (reloadedContract != null
-        && !reloadedContract.getContractValidityEndDate().getDate().isBefore(LocalDate.now())) {
-      validityStartDate = reloadedContract.getContractValidityEndDate();
+    if (renewedSeasonPass != null
+        && !renewedSeasonPass.getContractValidityEndDate().getDate().isBefore(LocalDate.now())) {
+      validityStartDate = renewedSeasonPass.getContractValidityEndDate();
     }
     DateCompact contractValidityEndDate = new DateCompact(validityStartDate.getValue() + 30);
     return new ContractStructure(

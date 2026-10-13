@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.ui.card
+package org.calypsonet.keyple.demo.reload.remote.ui.cardcontent
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

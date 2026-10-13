@@ -21,7 +21,7 @@ import org.calypsonet.keyple.demo.reload.remote.domain.mappers.toCardInfo
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardOperationResult
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.TicketingServer
 
-/** Reload of the presented card with the contract bought, by the server. */
+/** Loading by the server of the contract bought in the presented card. */
 class LoadContract(
     private val cardReaderSession: CardReaderSession,
     private val ticketingServer: TicketingServer
@@ -45,7 +45,7 @@ class LoadContract(
     val smartCard = cardReaderSession.selectCard()
     val card = smartCard.toCardInfo()
     if (card.serialNumber != expectedSerialNumber) {
-      // The contract has been bought for the card read at the first step: the reload must be done
+      // The contract has been bought for the card read at the first step: the loading must be done
       // on the same card.
       return CardOperationResult(card, RemoteServiceStatus.DIFFERENT_CARD)
     }

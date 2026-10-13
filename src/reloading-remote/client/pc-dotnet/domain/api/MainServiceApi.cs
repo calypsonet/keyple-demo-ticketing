@@ -25,18 +25,18 @@ namespace App.domain.api
         void WaitForCardInsertion();
 
         /// <summary>
-        /// Selects the card and reads contracts.
+        /// Selects the application of the card and reads its contracts.
         /// The transaction is fully operated by the server.
         /// </summary>
         /// <returns>A string representation of the contracts read from the card.</returns>
-        string SelectCardAndReadContracts();
+        string SelectAppAndReadContracts();
 
         /// <summary>
-        /// Selects the card and increases the counter of its MULTI_TRIP contract if it exists.
+        /// Selects the application of the card and increases the counter of its MULTI_TRIP contract if it exists.
         /// The transaction is fully operated by the server.
         /// </summary>
         /// <param name="counterIncrement">The amount by which to increase the contract's counter.</param>
         /// <returns>A string representation of the status of the operation.</returns>
-        string SelectCardAndIncreaseContractCounter(int counterIncrement);
+        string SelectAppAndIncreaseContractCounter(int counterIncrement);
     }
 }

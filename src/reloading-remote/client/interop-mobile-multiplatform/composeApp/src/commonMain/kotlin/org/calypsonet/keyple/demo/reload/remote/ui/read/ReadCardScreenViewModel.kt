@@ -73,7 +73,7 @@ class ReadCardScreenViewModel(
     _state.value = ReadCardScreenState.ReadingCard
     readCardCache.clear()
     try {
-      when (val result = keypleInteropService.selectCardAndAnalyzeContracts()) {
+      when (val result = keypleInteropService.selectAppAndAnalyzeContracts()) {
         is KeypleResult.Failure -> {
           _state.value = ReadCardScreenState.DisplayError(result.message)
         }

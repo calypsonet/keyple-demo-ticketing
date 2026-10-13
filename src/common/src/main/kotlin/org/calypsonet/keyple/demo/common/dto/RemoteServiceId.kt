@@ -23,7 +23,7 @@ enum class RemoteServiceId {
   READ_CARD_AND_LOAD_CONTRACT,
   PERSONALIZE_CARD,
 
-  // Suitable for Kotlin Multiplaform Keyple-less client
+  // Suitable for Kotlin Multiplatform Keyple-less client
   SELECT_APP_AND_ANALYZE_CONTRACTS,
   SELECT_APP_AND_LOAD_CONTRACT,
   SELECT_APP_AND_PERSONALIZE_CARD

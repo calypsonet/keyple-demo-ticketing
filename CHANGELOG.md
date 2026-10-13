@@ -96,7 +96,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   the card (instead of "issuance" and "init"): `CardIssuanceInputDto`/`OutputDto` become
   `PersonalizeCardInputDto`/`OutputDto`, the `initCard` methods of the server `personalizeCard`, and the
   transactions of the dashboard are of type `PERSONALIZATION` (instead of `ISSUANCE`, also in its menu). The
-  multiplatform client writes `analyze` as the other components (`selectCardAndAnalyzeContracts`).
+  multiplatform client writes `analyze` as the other components (`selectAppAndAnalyzeContracts`).
 - Control app and reloading Android client: the `Status` enum of the UI, which gives the type of the result to
   display, is named `ResultType` (property `resultType` of the UI models, intent extra `RESULT_TYPE` of the result
   screen of the reloading client), and the `TICKETS_FOUND` value of the control app becomes `CONTRACTS_FOUND`.
@@ -129,6 +129,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Vocabulary harmonized with the glossary (fourth audit): the loading of a contract is no longer called
+  "reload" (comments of the use case and of the server, renewal of a season pass, `loadContractBtn` instead of
+  `chargeBtn`, texts of the .NET client which loads trips instead of "units"); the result overlay of the
+  validation app is named `layout_validation_result_overlay` (instead of `layout_card_summary_overlay`), as its
+  `ValidationResult` model, and its unused `activity_main` landscape layout is removed; the server takes the labels of the products from `PriorityCode` in the JSON API; the
+  client methods are named after the services they call (`selectAppAndAnalyzeContracts`,
+  `selectAppAndLoadContract`, `SelectAppAndReadContracts`, `SelectAppAndIncreaseContractCounter`); the
+  applications are named "Keyple Demo - Reload (Interop)", "Keyple Demo - Reload (.NET)", "Keyple Demo - Reload
+  Server" and "Keyple Demo - Reload Dashboard", as the Android applications; in the multiplatform client, the
+  settings menu is `SettingsMenuScreen` (route `SettingsMenu`), as `SettingsMenuActivity`, and the card content
+  screen is in the `cardcontent` package. Reloading Android client: identifiers of the "Card media" entry of
+  the settings menu (`cardMediumBtn`), accessibility description of its "Personalization" entry, and
+  `no_contract_label`/`no_contract_desc` texts as in the validation app.
 - Screens named after what they do, as the use cases and the multiplatform client. Reloading Android client:
   `ReloadActivity` becomes `LoadContractActivity`, `PersonalizationActivity` `PersonalizeCardActivity`,
   `CardSummaryActivity` `CardContentActivity` (package `cardcontent`, as in the control app), `ReloadResultActivity`
@@ -520,7 +533,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   the card content screen.
 - The contract loading screen and its view model are named `LoadContractScreen` and `LoadContractScreenViewModel`
   (instead of `WriteCardScreen...`), and `KeypleInteropService.selectCardAndWriteContract` is renamed
-  `selectCardAndLoadContract`, as the `LoadContract` route and the `SELECT_APP_AND_LOAD_CONTRACT` service.
+  `selectAppAndLoadContract`, as the `LoadContract` route and the `SELECT_APP_AND_LOAD_CONTRACT` service.
 - CI: the architecture check of the Android applications (`check-android-architecture.sh`) is not run on this
   client (new `check-architecture` input of the reusable Android workflow): it follows the MVVM pattern, its view
   models calling the data services directly, without domain layer.

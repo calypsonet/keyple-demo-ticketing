@@ -82,11 +82,11 @@ class CardContentActivity : BaseActivity() {
       ResultType.EMPTY_CARD -> {
         activityCardContentBinding.animation.setAnimation("error_anim.json")
         activityCardContentBinding.animation.playAnimation()
-        activityCardContentBinding.bigText.text = getString(R.string.no_valid_label)
+        activityCardContentBinding.bigText.text = getString(R.string.no_contract_label)
         activityCardContentBinding.bigText.setTextColor(ContextCompat.getColor(this, R.color.red))
         activityCardContentBinding.smallDesc.visibility = View.VISIBLE
         activityCardContentBinding.smallDesc.setTextColor(ContextCompat.getColor(this, R.color.red))
-        activityCardContentBinding.smallDesc.text = getString(R.string.no_valid_desc)
+        activityCardContentBinding.smallDesc.text = getString(R.string.no_contract_desc)
         activityCardContentBinding.buyBtn.visibility = View.VISIBLE
         activityCardContentBinding.contractsList.visibility = View.GONE
         activityCardContentBinding.lastValidationContent.visibility = View.VISIBLE

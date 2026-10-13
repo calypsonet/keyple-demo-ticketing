@@ -54,7 +54,7 @@ fun main(args: Array<String>) = application {
 
   Window(
       // icon = TODO
-      title = "Keyple Demo Reload Remote",
+      title = "Keyple Demo - Reload (Interop)",
       state = windowState,
       onCloseRequest = ::exitApplication) {
         App(

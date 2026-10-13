@@ -93,12 +93,12 @@ class LoadContractScreenViewModel(
   }
 
   private suspend fun loadSeasonPass(): KeypleResult<String> {
-    return keypleInteropService.selectCardAndLoadContract(
+    return keypleInteropService.selectAppAndLoadContract(
         expectedSerialNumber = route.cardSerial, tripsToLoad = 1, code = PriorityCode.SEASON_PASS)
   }
 
   private suspend fun loadMultiTrip(trips: Int): KeypleResult<String> {
-    return keypleInteropService.selectCardAndLoadContract(
+    return keypleInteropService.selectAppAndLoadContract(
         expectedSerialNumber = route.cardSerial,
         tripsToLoad = trips,
         code = PriorityCode.MULTI_TRIP)

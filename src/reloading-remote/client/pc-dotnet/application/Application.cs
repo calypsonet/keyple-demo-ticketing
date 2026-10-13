@@ -52,7 +52,7 @@ namespace App.application
             DisplayAndLog("Card found!\nContacting server...", ConsoleColor.Green, LogEventLevel.Information, _logger);
 
             // Select the card and read its content
-            string output = _mainService.SelectCardAndReadContracts();
+            string output = _mainService.SelectAppAndReadContracts();
 
             // Deserialize the output into a dynamic object
             EndRemoteServiceBody outputDto = JsonConvert.DeserializeObject<EndRemoteServiceBody>(output)!;
@@ -84,37 +84,37 @@ namespace App.application
                 DisplayAndLog("No MULTI_TRIP contract found.", ConsoleColor.DarkRed, LogEventLevel.Information, _logger);
             }
 
-            int nbUnits;
+            int tripsToLoad;
             do
             {
-                Console.Write("Please enter a number of units between 1 and 20: ");
+                Console.Write("Please enter a number of trips to load between 1 and 20: ");
                 string input = Console.ReadLine()!;
 
-                if (!int.TryParse(input, out nbUnits) || nbUnits < 1 || nbUnits > 20)
+                if (!int.TryParse(input, out tripsToLoad) || tripsToLoad < 1 || tripsToLoad > 20)
                 {
-                    Console.WriteLine("Error: please enter a valid number of units between 1 and 20.");
+                    Console.WriteLine("Error: please enter a valid number of trips between 1 and 20.");
                 }
-            } while (nbUnits < 1 || nbUnits > 20);
+            } while (tripsToLoad < 1 || tripsToLoad > 20);
 
-            DisplayAndLog($"The card will now be (re)loaded with {nbUnits} unit(s).", ConsoleColor.DarkCyan, LogEventLevel.Information, _logger);
+            DisplayAndLog($"{tripsToLoad} trip(s) will now be loaded in the card.", ConsoleColor.DarkCyan, LogEventLevel.Information, _logger);
             DisplayAndLog("Waiting for a card...", ConsoleColor.DarkBlue, LogEventLevel.Information, _logger);
 
             _mainService.WaitForCardInsertion();
 
             DisplayAndLog("Card found!\nContacting server...", ConsoleColor.Green, LogEventLevel.Information, _logger);
 
-            // Select the card and increase the contract counter by one unit
-            output = _mainService.SelectCardAndIncreaseContractCounter(nbUnits);
+            // Select the application of the card and increase the contract counter by the number of trips to load
+            output = _mainService.SelectAppAndIncreaseContractCounter(tripsToLoad);
 
             outputDto = JsonConvert.DeserializeObject<EndRemoteServiceBody>(output)!;
 
             if (outputDto.OutputData.StatusCode == 0)
             {
-                DisplayAndLog("Reloading successful", ConsoleColor.DarkGreen, LogEventLevel.Information, _logger);
+                DisplayAndLog("Loading successful", ConsoleColor.DarkGreen, LogEventLevel.Information, _logger);
             }
             else
             {
-                DisplayAndLog("Reloading failed, status code: " + outputDto.OutputData.StatusCode, ConsoleColor.DarkRed, LogEventLevel.Information, _logger);
+                DisplayAndLog("Loading failed, status code: " + outputDto.OutputData.StatusCode, ConsoleColor.DarkRed, LogEventLevel.Information, _logger);
                 DisplayAndLog(outputDto.OutputData.Message, ConsoleColor.DarkRed, LogEventLevel.Information, _logger);
             }
         }

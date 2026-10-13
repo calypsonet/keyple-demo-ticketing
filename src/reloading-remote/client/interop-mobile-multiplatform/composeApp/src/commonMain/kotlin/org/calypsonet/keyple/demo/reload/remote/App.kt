@@ -25,8 +25,8 @@ import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleInteropServic
 import org.calypsonet.keyple.demo.reload.remote.data.service.ReadCardCache
 import org.calypsonet.keyple.demo.reload.remote.data.service.ServerConfigRepository
 import org.calypsonet.keyple.demo.reload.remote.data.service.ServerReadinessChecker
-import org.calypsonet.keyple.demo.reload.remote.ui.card.CardContentScreen
-import org.calypsonet.keyple.demo.reload.remote.ui.card.CardContentScreenViewModel
+import org.calypsonet.keyple.demo.reload.remote.ui.cardcontent.CardContentScreen
+import org.calypsonet.keyple.demo.reload.remote.ui.cardcontent.CardContentScreenViewModel
 import org.calypsonet.keyple.demo.reload.remote.ui.home.HomeScreen
 import org.calypsonet.keyple.demo.reload.remote.ui.load.LoadContractScreen
 import org.calypsonet.keyple.demo.reload.remote.ui.load.LoadContractScreenViewModel
@@ -36,7 +36,7 @@ import org.calypsonet.keyple.demo.reload.remote.ui.nav.LoadContract
 import org.calypsonet.keyple.demo.reload.remote.ui.nav.PersonalizeCard
 import org.calypsonet.keyple.demo.reload.remote.ui.nav.ReadCard
 import org.calypsonet.keyple.demo.reload.remote.ui.nav.ServerSettings
-import org.calypsonet.keyple.demo.reload.remote.ui.nav.Settings
+import org.calypsonet.keyple.demo.reload.remote.ui.nav.SettingsMenu
 import org.calypsonet.keyple.demo.reload.remote.ui.nav.Success
 import org.calypsonet.keyple.demo.reload.remote.ui.personalize.PersonalizeCardScreen
 import org.calypsonet.keyple.demo.reload.remote.ui.personalize.PersonalizeCardScreenViewModel
@@ -44,7 +44,7 @@ import org.calypsonet.keyple.demo.reload.remote.ui.read.ReadCardScreen
 import org.calypsonet.keyple.demo.reload.remote.ui.read.ReadCardScreenViewModel
 import org.calypsonet.keyple.demo.reload.remote.ui.settings.ServerSettingsScreen
 import org.calypsonet.keyple.demo.reload.remote.ui.settings.ServerSettingsScreenViewModel
-import org.calypsonet.keyple.demo.reload.remote.ui.settings.SettingsScreen
+import org.calypsonet.keyple.demo.reload.remote.ui.settings.SettingsMenuScreen
 import org.calypsonet.keyple.demo.reload.remote.ui.success.SuccessScreen
 import org.calypsonet.keyple.demo.reload.remote.ui.theme.KeypleTheme
 
@@ -79,7 +79,9 @@ fun App(
     NavHost(navController = navController, startDestination = Home) {
       composable<Home> { HomeScreen(navController = navController, appState = state.value) }
 
-      composable<Settings> { SettingsScreen(navController = navController, appState = state.value) }
+      composable<SettingsMenu> {
+        SettingsMenuScreen(navController = navController, appState = state.value)
+      }
 
       composable<ReadCard> {
         ReadCardScreen(

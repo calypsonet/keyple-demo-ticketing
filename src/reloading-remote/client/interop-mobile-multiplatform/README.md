@@ -114,7 +114,7 @@ The application configuration is managed through:
 3. **Grant Permissions**: Allow NFC access when prompted
 
 #### Card Personalization
-1. **Settings** → **Personalize**
+1. **Settings** → **Personalization**
 2. **Present Card** to device NFC reader
 3. **Wait for confirmation** of successful initialization
 
@@ -153,18 +153,16 @@ The application uses Compose Multiplatform for consistent UI across all platform
 ┌─────────────────────────────────────┐
 │            Home Screen              │
 │  ┌─────────────────────────────────┐│
-│  │         Settings                ││
+│  │         Settings menu           ││
 │  │  ┌─────────────────────────────┐││
-│  │  │  Server Configuration      │││
-│  │  │  Reader Settings           │││
+│  │  │  Server                    │││
 │  │  │  Personalization           │││
 │  │  └─────────────────────────────┘││
 │  └─────────────────────────────────┘│
 │  ┌─────────────────────────────────┐│
 │  │      Card Operations            ││
 │  │  • Read Card Content           ││
-│  │  • Load New Contracts          ││
-│  │  • View Transaction History    ││
+│  │  • Load a Contract             ││
 │  └─────────────────────────────────┘│
 └─────────────────────────────────────┘
 ```
@@ -183,7 +181,7 @@ composeApp/src/                   # Kotlin Multiplatform library, desktop and iO
 │       │   ├── platform/         # Platform services (buzzer, data store), expect declarations
 │       │   └── service/          # KeypleInteropService, ReadCardCache, ServerConfigRepository
 │       └── ui/                   # Screens (one package per screen) and shared UI elements
-│           ├── card/             # Card content and basket
+│           ├── cardcontent/      # Card content and basket
 │           ├── components/       # Shared components (top bar, scan screen, automatic return)
 │           ├── home/             # Home screen
 │           ├── load/             # Loading of a contract
@@ -191,7 +189,7 @@ composeApp/src/                   # Kotlin Multiplatform library, desktop and iO
 │           ├── nav/              # Navigation routes
 │           ├── personalize/      # Personalization of the card
 │           ├── read/             # Reading of the card
-│           ├── settings/         # Settings and server configuration
+│           ├── settings/         # Settings menu and server settings
 │           ├── success/          # Success screen (animation by platform)
 │           └── theme/            # Theme and colors
 ├── androidMain/                  # Android-specific implementations (buzzer, data store, success animation)
@@ -225,8 +223,10 @@ Multiplatform and Android application plugins in the same module.
 
 **Screens** (`ui`):
 - `ReadCardScreen` - Screen for reading card content
+- `CardContentScreen` - Contracts of the card and products proposed for sale
 - `LoadContractScreen` - Screen for loading contracts
 - `PersonalizeCardScreen` - Screen for card initialization
+- `SettingsMenuScreen` - Settings menu (server, personalization)
 - `ServerSettingsScreen` - Server settings UI
 
 #### Platform-Specific Implementations

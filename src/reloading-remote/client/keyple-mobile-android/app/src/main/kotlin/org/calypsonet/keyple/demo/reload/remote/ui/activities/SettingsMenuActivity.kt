@@ -45,7 +45,7 @@ class SettingsMenuActivity : BaseActivity() {
       startActivity(intent)
     }
 
-    activitySettingsMenuBinding.configurationBtn.setOnClickListener {
+    activitySettingsMenuBinding.cardMediumBtn.setOnClickListener {
       val intent = Intent(this, CardMediumSettingsActivity::class.java)
       startActivity(intent)
     }

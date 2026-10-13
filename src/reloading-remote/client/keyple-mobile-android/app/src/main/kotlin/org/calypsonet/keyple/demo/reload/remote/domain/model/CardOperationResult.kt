@@ -14,5 +14,5 @@ package org.calypsonet.keyple.demo.reload.remote.domain.model
 
 import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
 
-/** Result of an operation writing the card (reload or personalization) on the server. */
+/** Result of an operation writing the card (loading or personalization) on the server. */
 data class CardOperationResult(val card: CardInfo, val status: RemoteServiceStatus)

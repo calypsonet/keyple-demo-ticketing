@@ -37,6 +37,7 @@ import org.calypsonet.keyple.demo.common.dto.SelectAppAndLoadContractOutputDto;
 import org.calypsonet.keyple.demo.common.dto.SelectAppAndPersonalizeCardInputDto;
 import org.calypsonet.keyple.demo.common.dto.SelectAppAndPersonalizeCardOutputDto;
 import org.calypsonet.keyple.demo.common.model.ContractStructure;
+import org.calypsonet.keyple.demo.common.model.type.PriorityCode;
 import org.eclipse.keyple.core.util.HexUtil;
 import org.eclipse.keypop.calypso.card.card.CalypsoCard;
 import org.eclipse.keypop.reader.CardCommunicationException;
@@ -221,7 +222,7 @@ public class JsonApiService {
     boolean isValid;
     switch (contract.getContractTariff()) {
       case MULTI_TRIP:
-        name = "Multi-trip ticket";
+        name = PriorityCode.MULTI_TRIP.getLabel();
         description =
             contract.getCounterValue() != null
                 ? contract.getCounterValue() + " trip(s) left"
@@ -233,7 +234,10 @@ public class JsonApiService {
         LocalDate saleDate = contract.getContractSaleDate().getDate();
         LocalDate validityEndDate = contract.getContractValidityEndDate().getDate();
         boolean isExpired = validityEndDate.isBefore(now);
-        name = isExpired ? "Season pass - Expired" : "Season pass";
+        name =
+            isExpired
+                ? PriorityCode.SEASON_PASS.getLabel() + " - Expired"
+                : PriorityCode.SEASON_PASS.getLabel();
         description =
             "From\n"
                 + saleDate.format(dateTimeFormatter)

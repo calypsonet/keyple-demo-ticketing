@@ -28,8 +28,8 @@ class PaymentConfirmedActivity : BaseActivity() {
     activityPaymentConfirmedBinding = ActivityPaymentConfirmedBinding.inflate(layoutInflater)
     toolbarBinding = activityPaymentConfirmedBinding.appBarLayout
     setContentView(activityPaymentConfirmedBinding.root)
-    activityPaymentConfirmedBinding.chargeBtn.text = getString(R.string.load_card)
-    activityPaymentConfirmedBinding.chargeBtn.setOnClickListener {
+    activityPaymentConfirmedBinding.loadContractBtn.text = getString(R.string.load_card)
+    activityPaymentConfirmedBinding.loadContractBtn.setOnClickListener {
       val intent = Intent(this, LoadContractActivity::class.java)
       intent.putExtras(getIntent())
       startActivity(intent)

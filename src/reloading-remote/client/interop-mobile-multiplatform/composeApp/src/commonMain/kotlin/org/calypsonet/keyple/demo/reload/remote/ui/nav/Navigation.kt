@@ -17,7 +17,7 @@ import org.calypsonet.keyple.demo.reload.remote.ui.model.Product
 
 @Serializable data object Home
 
-@Serializable data object Settings
+@Serializable data object SettingsMenu
 
 @Serializable
 data class LoadContract(

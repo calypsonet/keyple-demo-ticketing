@@ -137,7 +137,7 @@ class KeypleInteropService(
     keypleTerminal?.releaseReader()
   }
 
-  suspend fun selectCardAndAnalyzeContracts(): KeypleResult<SelectAppAndAnalyzeContractsOutputDto> {
+  suspend fun selectAppAndAnalyzeContracts(): KeypleResult<SelectAppAndAnalyzeContractsOutputDto> {
     return withContext(Dispatchers.IO) {
       keypleTerminal?.let { service ->
         val result: KeypleResult<SelectAppAndAnalyzeContractsOutputDto> =
@@ -193,7 +193,7 @@ class KeypleInteropService(
    *
    * @param expectedSerialNumber The serial number of the card read before.
    */
-  suspend fun selectCardAndLoadContract(
+  suspend fun selectAppAndLoadContract(
       expectedSerialNumber: String,
       tripsToLoad: Int,
       code: PriorityCode
