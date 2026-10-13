@@ -66,7 +66,7 @@ class HomeActivity : BaseActivity() {
       appSettings.cardMedium = type
       if (intent.getBooleanExtra(CHOOSE_DEVICE_FOR_PERSO, false)) {
         intent.putExtras(intent)
-        startActivity(Intent(this, PersonalizationActivity::class.java))
+        startActivity(Intent(this, PersonalizeCardActivity::class.java))
         this.finish()
       } else startActivity(Intent(this, CardReaderActivity::class.java))
     }

@@ -55,7 +55,7 @@
                 android:exported="false">
         </activity>
         <activity
-                android:name="org.calypsonet.keyple.demo.reload.remote.ui.activities.ConfigurationSettingsActivity"
+                android:name="org.calypsonet.keyple.demo.reload.remote.ui.activities.CardMediumSettingsActivity"
                 android:theme="@style/AppTheme.NoActionBar"
                 android:screenOrientation="portrait"
                 android:launchMode="singleTop"
@@ -71,7 +71,7 @@
                 android:exported="false">
         </activity>
         <activity
-                android:name="org.calypsonet.keyple.demo.reload.remote.ui.activities.cardsummary.CardSummaryActivity"
+                android:name="org.calypsonet.keyple.demo.reload.remote.ui.activities.cardcontent.CardContentActivity"
                 android:theme="@style/AppTheme.NoActionBar"
                 android:screenOrientation="portrait"
                 android:launchMode="singleTop"
@@ -103,7 +103,7 @@
                 android:exported="false">
         </activity>
         <activity
-                android:name="org.calypsonet.keyple.demo.reload.remote.ui.activities.ReloadActivity"
+                android:name="org.calypsonet.keyple.demo.reload.remote.ui.activities.LoadContractActivity"
                 android:theme="@style/AppTheme.NoActionBar"
                 android:screenOrientation="portrait"
                 android:launchMode="singleTop"
@@ -111,7 +111,7 @@
                 android:exported="false">
         </activity>
         <activity
-                android:name="org.calypsonet.keyple.demo.reload.remote.ui.activities.ReloadResultActivity"
+                android:name="org.calypsonet.keyple.demo.reload.remote.ui.activities.CardOperationResultActivity"
                 android:theme="@style/AppTheme.NoActionBar"
                 android:screenOrientation="portrait"
                 android:launchMode="singleTop"
@@ -119,7 +119,7 @@
                 android:exported="false">
         </activity>
         <activity
-                android:name="org.calypsonet.keyple.demo.reload.remote.ui.activities.PersonalizationActivity"
+                android:name="org.calypsonet.keyple.demo.reload.remote.ui.activities.PersonalizeCardActivity"
                 android:theme="@style/AppTheme.NoActionBar"
                 android:screenOrientation="portrait"
                 android:launchMode="singleTop"

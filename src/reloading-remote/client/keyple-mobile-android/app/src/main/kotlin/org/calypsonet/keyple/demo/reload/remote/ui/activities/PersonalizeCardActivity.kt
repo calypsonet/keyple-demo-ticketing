@@ -25,25 +25,25 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
 import org.calypsonet.keyple.demo.reload.remote.R
-import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityPersonalizationBinding
+import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityPersonalizeCardBinding
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
 import org.calypsonet.keyple.demo.reload.remote.domain.usecases.PersonalizeCard
 import org.calypsonet.keyple.demo.reload.remote.ui.model.ResultType
-import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
+import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardResult
 import org.eclipse.keypop.reader.CardReaderEvent
 import timber.log.Timber
 
 @AndroidEntryPoint
-class PersonalizationActivity : BaseCardActivity() {
+class PersonalizeCardActivity : BaseCardActivity() {
 
   @Inject lateinit var personalizeCard: PersonalizeCard
-  private lateinit var activityPersonalizationBinding: ActivityPersonalizationBinding
+  private lateinit var activityPersonalizeCardBinding: ActivityPersonalizeCardBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    activityPersonalizationBinding = ActivityPersonalizationBinding.inflate(layoutInflater)
-    toolbarBinding = activityPersonalizationBinding.appBarLayout
-    setContentView(activityPersonalizationBinding.root)
+    activityPersonalizeCardBinding = ActivityPersonalizeCardBinding.inflate(layoutInflater)
+    toolbarBinding = activityPersonalizeCardBinding.appBarLayout
+    setContentView(activityPersonalizeCardBinding.root)
   }
 
   override fun initReaders() {
@@ -61,8 +61,8 @@ class PersonalizationActivity : BaseCardActivity() {
   }
 
   override fun onPause() {
-    activityPersonalizationBinding.cardAnimation.cancelAnimation()
-    activityPersonalizationBinding.loadingAnimation.cancelAnimation()
+    activityPersonalizeCardBinding.cardAnimation.cancelAnimation()
+    activityPersonalizeCardBinding.loadingAnimation.cancelAnimation()
     try {
       deactivateAndClearReader()
     } catch (e: Exception) {
@@ -72,32 +72,32 @@ class PersonalizationActivity : BaseCardActivity() {
   }
 
   private fun showPresentNfcCardInstructions() {
-    activityPersonalizationBinding.presentTxt.text =
+    activityPersonalizeCardBinding.presentTxt.text =
         getString(R.string.present_card_personalization)
-    activityPersonalizationBinding.cardAnimation.visibility = View.VISIBLE
-    activityPersonalizationBinding.cardAnimation.playAnimation()
-    activityPersonalizationBinding.loadingAnimation.cancelAnimation()
-    activityPersonalizationBinding.loadingAnimation.visibility = View.INVISIBLE
+    activityPersonalizeCardBinding.cardAnimation.visibility = View.VISIBLE
+    activityPersonalizeCardBinding.cardAnimation.playAnimation()
+    activityPersonalizeCardBinding.loadingAnimation.cancelAnimation()
+    activityPersonalizeCardBinding.loadingAnimation.visibility = View.INVISIBLE
   }
 
   private fun showNowPersonalizingInformation() {
-    activityPersonalizationBinding.presentTxt.text = getString(R.string.personalization_in_progress)
-    activityPersonalizationBinding.loadingAnimation.visibility = View.VISIBLE
-    activityPersonalizationBinding.loadingAnimation.playAnimation()
-    activityPersonalizationBinding.cardAnimation.cancelAnimation()
-    activityPersonalizationBinding.cardAnimation.visibility = View.INVISIBLE
+    activityPersonalizeCardBinding.presentTxt.text = getString(R.string.personalization_in_progress)
+    activityPersonalizeCardBinding.loadingAnimation.visibility = View.VISIBLE
+    activityPersonalizeCardBinding.loadingAnimation.playAnimation()
+    activityPersonalizeCardBinding.cardAnimation.cancelAnimation()
+    activityPersonalizeCardBinding.cardAnimation.visibility = View.INVISIBLE
   }
 
   override fun changeDisplay(
-      cardReaderResponse: UiCardReaderResponse,
+      cardResult: UiCardResult,
       applicationSerialNumber: String?,
       finishActivity: Boolean?
   ) {
-    val intent = Intent(this, ReloadResultActivity::class.java)
-    intent.putExtra(ReloadResultActivity.IS_PERSONALIZATION_RESULT, true)
-    intent.putExtra(ReloadResultActivity.RESULT_TYPE, cardReaderResponse.resultType.name)
-    intent.putExtra(ReloadResultActivity.MESSAGE, cardReaderResponse.errorMessage)
-    intent.putExtra(CARD_CONTENT, cardReaderResponse)
+    val intent = Intent(this, CardOperationResultActivity::class.java)
+    intent.putExtra(CardOperationResultActivity.IS_PERSONALIZATION_RESULT, true)
+    intent.putExtra(CardOperationResultActivity.RESULT_TYPE, cardResult.resultType.name)
+    intent.putExtra(CardOperationResultActivity.MESSAGE, cardResult.errorMessage)
+    intent.putExtra(CARD_CONTENT, cardResult)
     intent.putExtra(CARD_APPLICATION_NUMBER, applicationSerialNumber)
     startActivity(intent)
     if (finishActivity == true) {
@@ -119,7 +119,7 @@ class PersonalizationActivity : BaseCardActivity() {
         if (result.status == RemoteServiceStatus.SUCCESS) {
           runOnUiThread {
             changeDisplay(
-                UiCardReaderResponse(ResultType.SUCCESS, result.card.description, emptyList()),
+                UiCardResult(ResultType.SUCCESS, result.card.description, emptyList()),
                 applicationSerialNumber = result.card.serialNumber,
                 finishActivity = true)
           }

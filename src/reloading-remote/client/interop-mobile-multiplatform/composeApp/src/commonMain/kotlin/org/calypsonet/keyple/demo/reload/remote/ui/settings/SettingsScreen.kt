@@ -38,7 +38,7 @@ import org.calypsonet.keyple.composeapp.generated.resources.ic_sim_card
 import org.calypsonet.keyple.demo.reload.remote.AppState
 import org.calypsonet.keyple.demo.reload.remote.ui.components.KeypleTopAppBar
 import org.calypsonet.keyple.demo.reload.remote.ui.nav.PersonalizeCard
-import org.calypsonet.keyple.demo.reload.remote.ui.nav.ServerConfig
+import org.calypsonet.keyple.demo.reload.remote.ui.nav.ServerSettings
 import org.calypsonet.keyple.demo.reload.remote.ui.theme.darkBlue
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.vectorResource
@@ -76,7 +76,7 @@ fun SettingsScreen(
           title = "Server",
           iconRes = Res.drawable.ic_server,
           modifier = Modifier.fillMaxWidth(),
-          onClick = { navController.navigate(route = ServerConfig) })
+          onClick = { navController.navigate(route = ServerSettings) })
 
       Divider(modifier = Modifier.fillMaxWidth(), thickness = 2.dp)
 

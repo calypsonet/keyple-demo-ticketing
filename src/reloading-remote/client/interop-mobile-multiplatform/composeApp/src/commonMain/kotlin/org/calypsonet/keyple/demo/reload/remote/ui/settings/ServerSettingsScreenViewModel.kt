@@ -21,18 +21,18 @@ import kotlinx.coroutines.launch
 import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleInteropService
 import org.calypsonet.keyple.demo.reload.remote.data.service.ServerConfigRepository
 
-data class ServerConfigScreenState(
+data class ServerSettingsScreenState(
     val serverHost: String = "",
     val serverPort: Int = 0,
     val protocol: String = "http",
     val endpoint: String = ""
 )
 
-class ServerConfigScreenViewModel(
+class ServerSettingsScreenViewModel(
     private val keypleInteropService: KeypleInteropService,
     private val serverConfigRepository: ServerConfigRepository
 ) : ViewModel() {
-  private var _state = MutableStateFlow(ServerConfigScreenState())
+  private var _state = MutableStateFlow(ServerSettingsScreenState())
   val state = _state.asStateFlow()
 
   init {
@@ -40,7 +40,7 @@ class ServerConfigScreenViewModel(
       serverConfigRepository.observe().collect {
         val hostUrl = Url(it.host)
         _state.value =
-            ServerConfigScreenState(
+            ServerSettingsScreenState(
                 serverHost = hostUrl.host,
                 serverPort = it.port,
                 endpoint = it.endpoint,

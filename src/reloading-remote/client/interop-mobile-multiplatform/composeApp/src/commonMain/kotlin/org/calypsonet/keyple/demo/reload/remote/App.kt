@@ -30,20 +30,20 @@ import org.calypsonet.keyple.demo.reload.remote.ui.card.CardContentScreenViewMod
 import org.calypsonet.keyple.demo.reload.remote.ui.home.HomeScreen
 import org.calypsonet.keyple.demo.reload.remote.ui.load.LoadContractScreen
 import org.calypsonet.keyple.demo.reload.remote.ui.load.LoadContractScreenViewModel
-import org.calypsonet.keyple.demo.reload.remote.ui.nav.AppSuccess
-import org.calypsonet.keyple.demo.reload.remote.ui.nav.Card
+import org.calypsonet.keyple.demo.reload.remote.ui.nav.CardContent
 import org.calypsonet.keyple.demo.reload.remote.ui.nav.Home
 import org.calypsonet.keyple.demo.reload.remote.ui.nav.LoadContract
 import org.calypsonet.keyple.demo.reload.remote.ui.nav.PersonalizeCard
 import org.calypsonet.keyple.demo.reload.remote.ui.nav.ReadCard
-import org.calypsonet.keyple.demo.reload.remote.ui.nav.ServerConfig
+import org.calypsonet.keyple.demo.reload.remote.ui.nav.ServerSettings
 import org.calypsonet.keyple.demo.reload.remote.ui.nav.Settings
+import org.calypsonet.keyple.demo.reload.remote.ui.nav.Success
 import org.calypsonet.keyple.demo.reload.remote.ui.personalize.PersonalizeCardScreen
 import org.calypsonet.keyple.demo.reload.remote.ui.personalize.PersonalizeCardScreenViewModel
 import org.calypsonet.keyple.demo.reload.remote.ui.read.ReadCardScreen
 import org.calypsonet.keyple.demo.reload.remote.ui.read.ReadCardScreenViewModel
-import org.calypsonet.keyple.demo.reload.remote.ui.settings.ServerConfigScreen
-import org.calypsonet.keyple.demo.reload.remote.ui.settings.ServerConfigScreenViewModel
+import org.calypsonet.keyple.demo.reload.remote.ui.settings.ServerSettingsScreen
+import org.calypsonet.keyple.demo.reload.remote.ui.settings.ServerSettingsScreenViewModel
 import org.calypsonet.keyple.demo.reload.remote.ui.settings.SettingsScreen
 import org.calypsonet.keyple.demo.reload.remote.ui.success.SuccessScreen
 import org.calypsonet.keyple.demo.reload.remote.ui.theme.KeypleTheme
@@ -64,9 +64,9 @@ fun App(
             serverReadinessChecker = serverReadinessChecker,
             serverConfigRepository = serverConfigRepository)
       }
-  val serverConfigVm =
-      viewModel<ServerConfigScreenViewModel> {
-        ServerConfigScreenViewModel(
+  val serverSettingsVm =
+      viewModel<ServerSettingsScreenViewModel> {
+        ServerSettingsScreenViewModel(
             keypleInteropService = keypleInteropService,
             serverConfigRepository = serverConfigRepository)
       }
@@ -118,7 +118,7 @@ fun App(
             appState = state.value)
       }
 
-      composable<Card> {
+      composable<CardContent> {
         CardContentScreen(
             navController = navController,
             appState = state.value,
@@ -128,13 +128,11 @@ fun App(
                 })
       }
 
-      composable<AppSuccess> {
-        SuccessScreen(navController = navController, appState = state.value)
-      }
+      composable<Success> { SuccessScreen(navController = navController, appState = state.value) }
 
-      composable<ServerConfig> {
-        ServerConfigScreen(
-            navController = navController, viewModel = serverConfigVm, appState = state.value)
+      composable<ServerSettings> {
+        ServerSettingsScreen(
+            navController = navController, viewModel = serverSettingsVm, appState = state.value)
       }
     }
   }

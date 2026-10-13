@@ -30,15 +30,15 @@ import org.calypsonet.keyple.demo.reload.remote.AppState
 import org.calypsonet.keyple.demo.reload.remote.ui.components.KeypleTopAppBar
 
 @Composable
-fun ServerConfigScreen(
+fun ServerSettingsScreen(
     navController: NavController,
-    viewModel: ServerConfigScreenViewModel,
+    viewModel: ServerSettingsScreenViewModel,
     modifier: Modifier = Modifier,
     appState: AppState
 ) {
   val state = viewModel.state.collectAsState()
 
-  ServerConfigScreen(
+  ServerSettingsScreen(
       state = state.value,
       restartServer = viewModel::restartServer,
       navController = navController,
@@ -51,8 +51,8 @@ fun ServerConfigScreen(
 }
 
 @Composable
-internal fun ServerConfigScreen(
-    state: ServerConfigScreenState,
+internal fun ServerSettingsScreen(
+    state: ServerSettingsScreenState,
     restartServer: () -> Unit,
     navController: NavController,
     modifier: Modifier = Modifier,

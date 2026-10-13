@@ -227,7 +227,7 @@ Multiplatform and Android application plugins in the same module.
 - `ReadCardScreen` - Screen for reading card content
 - `LoadContractScreen` - Screen for loading contracts
 - `PersonalizeCardScreen` - Screen for card initialization
-- `ServerConfigScreen` - Server configuration UI
+- `ServerSettingsScreen` - Server settings UI
 
 #### Platform-Specific Implementations
 

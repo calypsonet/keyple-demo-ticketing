@@ -30,7 +30,7 @@ class PaymentConfirmedActivity : BaseActivity() {
     setContentView(activityPaymentConfirmedBinding.root)
     activityPaymentConfirmedBinding.chargeBtn.text = getString(R.string.load_card)
     activityPaymentConfirmedBinding.chargeBtn.setOnClickListener {
-      val intent = Intent(this, ReloadActivity::class.java)
+      val intent = Intent(this, LoadContractActivity::class.java)
       intent.putExtras(getIntent())
       startActivity(intent)
       this@PaymentConfirmedActivity.finish()

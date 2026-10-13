@@ -18,22 +18,21 @@ import android.widget.RadioButton
 import androidx.core.content.ContextCompat
 import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.reload.remote.R
-import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityConfigurationSettingsBinding
+import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardMediumSettingsBinding
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMediumVisibility
 
 @AndroidEntryPoint
-class ConfigurationSettingsActivity : BaseActivity() {
-  private lateinit var activityConfigurationSettingsBinding: ActivityConfigurationSettingsBinding
+class CardMediumSettingsActivity : BaseActivity() {
+  private lateinit var activityCardMediumSettingsBinding: ActivityCardMediumSettingsBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    activityConfigurationSettingsBinding =
-        ActivityConfigurationSettingsBinding.inflate(layoutInflater)
-    toolbarBinding = activityConfigurationSettingsBinding.appBarLayout
-    setContentView(activityConfigurationSettingsBinding.root)
+    activityCardMediumSettingsBinding = ActivityCardMediumSettingsBinding.inflate(layoutInflater)
+    toolbarBinding = activityCardMediumSettingsBinding.appBarLayout
+    setContentView(activityCardMediumSettingsBinding.root)
 
-    activityConfigurationSettingsBinding.backBtn.setOnClickListener {
+    activityCardMediumSettingsBinding.backBtn.setOnClickListener {
       onBackPressedDispatcher.onBackPressed()
     }
 
@@ -68,7 +67,7 @@ class ConfigurationSettingsActivity : BaseActivity() {
 
   /** Returns the "enable", "disable" and "hide" radio buttons of the given card medium. */
   private fun radioButtons(cardMedium: CardMedium): Triple<RadioButton, RadioButton, RadioButton> =
-      with(activityConfigurationSettingsBinding) {
+      with(activityCardMediumSettingsBinding) {
         when (cardMedium) {
           CardMedium.CONTACTLESS_CARD ->
               Triple(contactlessCardEnable, contactlessCardDisable, contactlessCardHide)

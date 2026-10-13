@@ -24,7 +24,7 @@ import org.calypsonet.keyple.demo.reload.remote.ui.components.PresentCardAnimati
 import org.calypsonet.keyple.demo.reload.remote.ui.components.ReadingError
 import org.calypsonet.keyple.demo.reload.remote.ui.components.ScanCardAnimation
 import org.calypsonet.keyple.demo.reload.remote.ui.components.ScanScreen
-import org.calypsonet.keyple.demo.reload.remote.ui.nav.Card
+import org.calypsonet.keyple.demo.reload.remote.ui.nav.CardContent
 import org.calypsonet.keyple.demo.reload.remote.ui.nav.Home
 import org.calypsonet.keyple.demo.reload.remote.ui.theme.red
 
@@ -39,7 +39,7 @@ fun ReadCardScreen(
 
   LaunchedEffect(state.value) {
     if (state.value is ReadCardScreenState.ShowCardContent) {
-      navController.navigate(Card) { popUpTo(Home) }
+      navController.navigate(CardContent) { popUpTo(Home) }
     }
   }
 

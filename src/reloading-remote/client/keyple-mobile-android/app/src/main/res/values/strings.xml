@@ -70,7 +70,7 @@
     <string name="version">version %s</string>
     <string name="action_settings">Settings</string>
     <string name="server_setting">Server</string>
-    <string name="configuration_setting">Configuration</string>
+    <string name="card_medium_setting">Card media</string>
     <string name="personalization_setting">Personalization</string>
 
     <string name="server_ip">Server IP</string>

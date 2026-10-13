@@ -90,7 +90,7 @@ The app supports multiple NFC reader types:
 ### Screen Flow
 
 ```
-Splash Screen → Home → Card Reader → Card Summary → Select Product → Checkout → Payment Confirmed → Reload → Result
+Splash Screen → Home → Card Reader → Card Content → Select Product → Checkout → Payment Confirmed → Load Contract → Result
 ```
 
 ### Detailed Screen Guide
@@ -104,7 +104,7 @@ Splash Screen → Home → Card Reader → Card Summary → Select Product → C
 
 **Settings Menu (`SettingsMenuActivity`)**
 - **Server Settings**: Connection configuration
-- **Configuration**: Plugin availability settings
+- **Card media**: Card media shown in the home screen (enabled, disabled or hidden)
 - **Personalization**: Card reset and initialization
 
 **Card Reader (`CardReaderActivity`)**
@@ -113,7 +113,7 @@ Splash Screen → Home → Card Reader → Card Summary → Select Product → C
 - Reads card content through secure session
 - Displays connection status and progress
 
-**Card Summary (`CardSummaryActivity`)**
+**Card Content (`CardContentActivity`)**
 - Shows current card content (Season pass, Multi-trip ticket)
 - Displays contract validity and usage status
 - Option to load additional contracts
@@ -128,8 +128,9 @@ Splash Screen → Home → Card Reader → Card Summary → Select Product → C
 - **Payment Confirmed (`PaymentConfirmedActivity`)**: Confirms payment success
 
 **Contract Loading**
-- **Reload (`ReloadActivity`)**: Loads selected contract onto card
-- **Reload Result (`ReloadResultActivity`)**: Shows success/failure status
+- **Load Contract (`LoadContractActivity`)**: Loads selected contract onto card
+- **Card Operation Result (`CardOperationResultActivity`)**: Shows the success or failure of the loading or of the
+  personalization
 
 ## Technical Architecture
 
@@ -239,10 +240,7 @@ To integrate additional reader types:
 
 ### Debug Mode
 
-Enable detailed logging:
-1. Go to **Settings** → **Configuration**
-2. Enable **Debug Mode**
-3. View logs in Android Studio logcat or device logs
+The logs are written to Logcat (Timber): view them in the Android Studio Logcat or with `adb logcat`.
 
 ### Server Connectivity Test
 

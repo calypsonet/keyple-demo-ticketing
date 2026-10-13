@@ -29,10 +29,10 @@ import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
 import org.calypsonet.keyple.demo.reload.remote.domain.usecases.ReadContracts
-import org.calypsonet.keyple.demo.reload.remote.ui.activities.cardsummary.CardSummaryActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.activities.cardcontent.CardContentActivity
 import org.calypsonet.keyple.demo.reload.remote.ui.mappers.toUi
 import org.calypsonet.keyple.demo.reload.remote.ui.model.ResultType
-import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
+import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardResult
 import org.eclipse.keypop.reader.CardReaderEvent
 import org.eclipse.keypop.reader.ReaderCommunicationException
 import timber.log.Timber
@@ -120,7 +120,7 @@ class CardReaderActivity : BaseCardActivity() {
                 if (result.contracts.isNotEmpty()) ResultType.CONTRACTS_FOUND
                 else ResultType.EMPTY_CARD
             changeDisplay(
-                UiCardReaderResponse(
+                UiCardResult(
                     resultType,
                     result.card.description,
                     result.contracts.map { it.toUi(resources) }),
@@ -145,14 +145,14 @@ class CardReaderActivity : BaseCardActivity() {
   }
 
   override fun changeDisplay(
-      cardReaderResponse: UiCardReaderResponse,
+      cardResult: UiCardResult,
       applicationSerialNumber: String?,
       finishActivity: Boolean?
   ) {
     activityCardReaderBinding.loadingAnimation.cancelAnimation()
     activityCardReaderBinding.cardAnimation.cancelAnimation()
-    val intent = Intent(this, CardSummaryActivity::class.java)
-    intent.putExtra(CARD_CONTENT, cardReaderResponse)
+    val intent = Intent(this, CardContentActivity::class.java)
+    intent.putExtra(CARD_CONTENT, cardResult)
     intent.putExtra(CARD_APPLICATION_NUMBER, applicationSerialNumber)
     startActivity(intent)
     if (finishActivity == true) {

@@ -17,7 +17,7 @@
 
     <dimen name="card_medium_selection_top_margin">10dp</dimen>
 
-    <dimen name="card_summary_desc_top_margin">20dp</dimen>
+    <dimen name="card_content_desc_top_margin">20dp</dimen>
     <dimen name="content_top_margin">20dp</dimen>
     <dimen name="card_validation_horizontal_margin">13dp</dimen>
 

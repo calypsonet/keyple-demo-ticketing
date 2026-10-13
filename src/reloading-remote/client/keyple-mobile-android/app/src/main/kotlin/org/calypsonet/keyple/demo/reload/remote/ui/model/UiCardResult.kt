@@ -16,7 +16,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class UiCardReaderResponse(
+data class UiCardResult(
     val resultType: ResultType,
     val cardType: String,
     val contractsList: List<UiContract>,

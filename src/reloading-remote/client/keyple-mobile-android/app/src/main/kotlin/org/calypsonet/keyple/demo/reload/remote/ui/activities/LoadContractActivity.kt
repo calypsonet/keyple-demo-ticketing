@@ -30,12 +30,12 @@ import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardReaderBi
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
 import org.calypsonet.keyple.demo.reload.remote.domain.usecases.LoadContract
 import org.calypsonet.keyple.demo.reload.remote.ui.model.ResultType
-import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
+import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardResult
 import org.eclipse.keypop.reader.CardReaderEvent
 import timber.log.Timber
 
 @AndroidEntryPoint
-class ReloadActivity : BaseCardActivity() {
+class LoadContractActivity : BaseCardActivity() {
 
   @Inject lateinit var loadContract: LoadContract
   private lateinit var activityCardReaderBinding: ActivityCardReaderBinding
@@ -91,7 +91,7 @@ class ReloadActivity : BaseCardActivity() {
         if (result.status == RemoteServiceStatus.SUCCESS) {
           runOnUiThread {
             changeDisplay(
-                UiCardReaderResponse(ResultType.SUCCESS, result.card.description, emptyList()),
+                UiCardResult(ResultType.SUCCESS, result.card.description, emptyList()),
                 finishActivity = true)
           }
         } else {
@@ -110,16 +110,16 @@ class ReloadActivity : BaseCardActivity() {
   }
 
   override fun changeDisplay(
-      cardReaderResponse: UiCardReaderResponse,
+      cardResult: UiCardResult,
       applicationSerialNumber: String?,
       finishActivity: Boolean?
   ) {
     activityCardReaderBinding.loadingAnimation.cancelAnimation()
     activityCardReaderBinding.cardAnimation.cancelAnimation()
-    val intent = Intent(this, ReloadResultActivity::class.java)
-    intent.putExtra(ReloadResultActivity.RESULT_TYPE, cardReaderResponse.resultType.name)
-    intent.putExtra(ReloadResultActivity.MESSAGE, cardReaderResponse.errorMessage)
-    intent.putExtra(CARD_CONTENT, cardReaderResponse)
+    val intent = Intent(this, CardOperationResultActivity::class.java)
+    intent.putExtra(CardOperationResultActivity.RESULT_TYPE, cardResult.resultType.name)
+    intent.putExtra(CardOperationResultActivity.MESSAGE, cardResult.errorMessage)
+    intent.putExtra(CARD_CONTENT, cardResult)
     intent.putExtra(CARD_APPLICATION_NUMBER, applicationSerialNumber)
     startActivity(intent)
     if (finishActivity == true) {

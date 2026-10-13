@@ -129,6 +129,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Screens named after what they do, as the use cases and the multiplatform client. Reloading Android client:
+  `ReloadActivity` becomes `LoadContractActivity`, `PersonalizationActivity` `PersonalizeCardActivity`,
+  `CardSummaryActivity` `CardContentActivity` (package `cardcontent`, as in the control app), `ReloadResultActivity`
+  (result of a loading or of a personalization) `CardOperationResultActivity`, and `ConfigurationSettingsActivity`
+  (visibility of the card media) `CardMediumSettingsActivity` ("Card media" in the settings menu), with their
+  layouts; the UI model of a card result is `UiCardResult` (instead of `UiCardReaderResponse`). Multiplatform
+  client: routes `CardContent` and `Success` (instead of `Card` and `AppSuccess`), and `ServerSettingsScreen`
+  (instead of `ServerConfigScreen`), as in the Android client.
 - Android applications: the values of `CardProtocol` are named without the redundant `_LOGICAL_PROTOCOL` suffix
   (e.g. `ISO_14443_4`), the enum being documented as the logical protocols of the cards.
 - Android applications: each application stays standalone (no shared Android module), and the technical files
@@ -250,7 +258,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Android applications: unused resources (strings, dimensions, styles, drawables, layouts, menu, sound), the unused
     `FragmentScoped` annotation and extension functions, and duplicated sounds in the control app assets.
   - Reloading remote Android client: unused "last validations" display (`UiValidation`, related fields of
-    `UiCardReaderResponse`, layout and resources).
+    `UiCardResult`, layout and resources).
   - Reloading remote KMP client: unused Compose resources (images, animation, strings), colors and navigation helper,
     and the unused `Scan` route with its `ScanNavArgs` arguments.
   - Reloading remote .NET client: unused `MessageDto` setters, unused `WaitForCardAbsent()` and `IsCardPresent()`

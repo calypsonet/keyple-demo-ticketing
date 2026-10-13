@@ -31,8 +31,8 @@ import org.calypsonet.keyple.demo.reload.remote.ui.components.PresentCardAnimati
 import org.calypsonet.keyple.demo.reload.remote.ui.components.ReadingError
 import org.calypsonet.keyple.demo.reload.remote.ui.components.ScanCardAnimation
 import org.calypsonet.keyple.demo.reload.remote.ui.components.ScanScreen
-import org.calypsonet.keyple.demo.reload.remote.ui.nav.AppSuccess
 import org.calypsonet.keyple.demo.reload.remote.ui.nav.Home
+import org.calypsonet.keyple.demo.reload.remote.ui.nav.Success
 import org.calypsonet.keyple.demo.reload.remote.ui.theme.green
 import org.calypsonet.keyple.demo.reload.remote.ui.theme.red
 import org.calypsonet.keyple.demo.reload.remote.ui.theme.white
@@ -76,7 +76,7 @@ internal fun LoadContractScreen(
             ReadingError(state.message)
           }
           LoadContractScreenState.ShowTransactionSuccess -> {
-            navController.navigate(AppSuccess) { popUpTo(Home) }
+            navController.navigate(Success) { popUpTo(Home) }
           }
         }
       }

@@ -24,7 +24,7 @@ import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
 import org.calypsonet.keyple.demo.reload.remote.domain.model.TerminalType
 import org.calypsonet.keyple.demo.reload.remote.ui.ActivityUiContext
 import org.calypsonet.keyple.demo.reload.remote.ui.model.ResultType
-import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
+import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardResult
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 import timber.log.Timber
@@ -111,7 +111,7 @@ abstract class BaseCardActivity :
   fun launchInvalidCardResponse(cardType: String, message: String) {
     runOnUiThread {
       changeDisplay(
-          UiCardReaderResponse(ResultType.INVALID_CARD, cardType, emptyList(), message),
+          UiCardResult(ResultType.INVALID_CARD, cardType, emptyList(), message),
           finishActivity = isFinishActivityAfterResult())
     }
   }
@@ -119,7 +119,7 @@ abstract class BaseCardActivity :
   fun launchCardCommunicationErrorResponse() {
     runOnUiThread {
       changeDisplay(
-          UiCardReaderResponse(
+          UiCardResult(
               ResultType.ERROR, "", emptyList(), getString(R.string.card_communication_error)),
           finishActivity = isFinishActivityAfterResult())
     }
@@ -128,7 +128,7 @@ abstract class BaseCardActivity :
   fun launchServerErrorResponse() {
     runOnUiThread {
       changeDisplay(
-          UiCardReaderResponse(ResultType.ERROR, "", emptyList()),
+          UiCardResult(ResultType.ERROR, "", emptyList()),
           finishActivity = isFinishActivityAfterResult())
     }
   }
@@ -136,7 +136,7 @@ abstract class BaseCardActivity :
   fun launchExceptionResponse(e: Exception, finishActivity: Boolean? = false) {
     runOnUiThread {
       changeDisplay(
-          UiCardReaderResponse(ResultType.ERROR, "", emptyList(), e.message),
+          UiCardResult(ResultType.ERROR, "", emptyList(), e.message),
           finishActivity = finishActivity)
     }
   }
@@ -145,7 +145,7 @@ abstract class BaseCardActivity :
   protected fun isFinishActivityAfterResult(): Boolean = cardMedium != CardMedium.CONTACTLESS_CARD
 
   protected abstract fun changeDisplay(
-      cardReaderResponse: UiCardReaderResponse,
+      cardResult: UiCardResult,
       applicationSerialNumber: String? = null,
       finishActivity: Boolean? = false
   )

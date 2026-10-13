@@ -39,8 +39,8 @@ data class LoadContract(
 
 @Serializable data object ReadCard
 
-@Serializable data object Card
+@Serializable data object CardContent
 
-@Serializable data object AppSuccess
+@Serializable data object Success
 
-@Serializable data object ServerConfig
+@Serializable data object ServerSettings
