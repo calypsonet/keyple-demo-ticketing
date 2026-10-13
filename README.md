@@ -178,7 +178,7 @@ application.
 
 | Package  | Content                                                                                               |
 |----------|-------------------------------------------------------------------------------------------------------|
-| `domain` | Business logic: `CardReaderSession` and `usecases` (entry points of the UI), `procedures`, `model`, `mappers`, and the ports (`spi`) |
+| `domain` | Business logic: `CardReaderSession` and `usecases` (entry points of the UI), `procedures`, `model`, `mappers` and `builders`, and the ports (`spi`) |
 | `data`   | Adapters implementing the ports (readers, Keypop API factories, user feedback, settings, clock, logging...) |
 | `ui`     | Activities, UI-bound adapters (`ActivityUiContext`), and UI models with their mappers when needed     |
 | `di`     | Hilt modules binding the adapters to the ports and providing the domain services                      |
@@ -260,9 +260,14 @@ bash .github/scripts/check-android-twin-files.sh
 - Hilt modules named after what they provide (e.g. `AppSettingsModule`, `DomainModule`, `ReaderModule`), with
   `provide<Type>` methods.
 - Enums named without suffix (e.g. `TerminalType`, `CardProtocol`, `Status`).
-- Mappers written as extension functions: `to<Type>` in `domain/mappers` (e.g. `ContractStructure.toContract(...)`,
-  `SmartCard.toCardInfo()`, files `<Type>Mapper.kt`), and `toUi` in `ui/mappers` (e.g.
-  `ControlResult.toUi(resources)`, files `<Type>UiMapper.kt`).
+- Mappers and builders, files named after the domain type concerned:
+  - a mapper converts a representation into another one, from a layer to another or from an external
+    representation (Keypop card, DTO of the server) to the domain. Extension function of the converted object:
+    `to<Type>()` in `domain/mappers` (e.g. `SmartCard.toCardInfo()`, file `CardInfoMapper.kt`), `toUi()` in
+    `ui/mappers` (e.g. `ControlResult.toUi(resources)`, file `ControlResultUiMapper.kt`);
+  - a builder builds an object from several sources, none of them prevailing (e.g. data read in the card and
+    results computed by a procedure). Top-level function `build<Type>(...)` in `domain/builders` (e.g.
+    `buildContract(...)`, file `ContractBuilder.kt`).
 - The root package of an application only contains `DemoApplication`: the display states (e.g. `Status`) and the
   Android helpers (e.g. `RecyclerView` extensions) belong to the `ui` layer.
 

@@ -10,19 +10,21 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.domain.mappers
+package org.calypsonet.keyple.demo.control.domain.builders
 
 import java.time.LocalDateTime
 import org.calypsonet.keyple.demo.common.model.ContractStructure
 import org.calypsonet.keyple.demo.control.domain.model.Contract
 
 /**
- * Returns the contract displayed by the control, built from this contract read in the card and from
- * the result of its control.
+ * Builds the contract displayed by the control, from the contract read in the card and from the
+ * result of its control.
  *
+ * @param contract The contract read in the card.
  * @param record The number of the record of the contract in the card.
  */
-fun ContractStructure.toContract(
+fun buildContract(
+    contract: ContractStructure,
     record: Int,
     contractValidated: Boolean,
     contractExpired: Boolean,
@@ -30,11 +32,11 @@ fun ContractStructure.toContract(
     remainingTrips: Int?
 ): Contract =
     Contract(
-        name = contractTariff.label,
+        name = contract.contractTariff.label,
         valid = contractValidated,
         record = record,
         validationDateTime = validationDateTime,
         expired = contractExpired,
-        contractValidityStartDate = contractSaleDate.date,
-        contractValidityEndDate = contractValidityEndDate.date,
+        contractValidityStartDate = contract.contractSaleDate.date,
+        contractValidityEndDate = contract.contractValidityEndDate.date,
         remainingTrips = remainingTrips)

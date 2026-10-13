@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.domain.mappers
+package org.calypsonet.keyple.demo.control.domain.builders
 
 import org.calypsonet.keyple.demo.common.model.ContractStructure
 import org.calypsonet.keyple.demo.common.model.EventStructure
@@ -18,17 +18,24 @@ import org.calypsonet.keyple.demo.common.model.Location
 import org.calypsonet.keyple.demo.control.domain.model.Validation
 
 /**
- * Returns the last validation displayed by the control, built from this event read in the card.
+ * Builds the last validation displayed by the control, from the last event read in the card, from
+ * the contract it used and from the locations of the network.
  *
+ * @param event The last event read in the card.
  * @param contract The contract used by the event, null if unknown.
  * @param locations The locations of the network, among which the location of the event.
+ * @throws IndexOutOfBoundsException If the location of the event is unknown.
  */
-fun EventStructure.toValidation(
+fun buildValidation(
+    event: EventStructure,
     contract: ContractStructure?,
     locations: List<Location>
 ): Validation =
     Validation(
         name = contract?.contractTariff?.label ?: "Event",
-        dateTime = eventDatetime,
-        location = toLocation(locations),
-    )
+        dateTime = event.eventDatetime,
+        location = findLocation(event, locations))
+
+/** Returns the location of the event, among the provided locations. */
+private fun findLocation(event: EventStructure, locations: List<Location>): Location =
+    locations.filter { event.eventLocation == it.id }[0]

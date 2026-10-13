@@ -316,7 +316,7 @@ control/app/
 │   │   ├── data/                            # Adapters (readers, Keypop API, sounds, settings, logging)
 │   │   ├── di/                              # Dependency injection (Hilt modules)
 │   │   ├── domain/                          # Business logic
-│   │   │   ├── mappers/                     # Card data to domain models mappers
+│   │   │   ├── builders/                    # Builders of the domain models displayed by the control
 │   │   │   ├── model/                       # Domain models
 │   │   │   ├── procedures/                  # Control procedures (Calypso, Storage)
 │   │   │   ├── spi/                         # Ports

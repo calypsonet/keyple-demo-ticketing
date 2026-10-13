@@ -21,8 +21,8 @@ import org.calypsonet.keyple.demo.common.constants.StorageCardBlocks
 import org.calypsonet.keyple.demo.common.model.EventStructure
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
-import org.calypsonet.keyple.demo.control.domain.mappers.toContract
-import org.calypsonet.keyple.demo.control.domain.mappers.toValidation
+import org.calypsonet.keyple.demo.control.domain.builders.buildContract
+import org.calypsonet.keyple.demo.control.domain.builders.buildValidation
 import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
 import org.calypsonet.keyple.demo.control.domain.model.Contract
 import org.calypsonet.keyple.demo.control.domain.model.ControlResult
@@ -197,7 +197,7 @@ class StorageCardControlProcedure(
 
       // Create validation if the event is valid
       if (isValidEvent(event)) {
-        validation = event.toValidation(contract = contract, locations = locations)
+        validation = buildValidation(event = event, contract = contract, locations = locations)
       }
 
       val displayedContract = mutableListOf<Contract>()
@@ -245,7 +245,8 @@ class StorageCardControlProcedure(
 
         // Step 19 - Add contract data to the list of contracts read to return to the upper layer.
         displayedContract.add(
-            contract.toContract(
+            buildContract(
+                contract = contract,
                 record = record,
                 contractExpired = contractExpired,
                 contractValidated = contractValidated,

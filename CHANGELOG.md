@@ -64,9 +64,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `TicketingServer` (remote services of the server, formerly `RemoteServiceManager`). The readers are released by
   `release` instead of `onDestroy` (Android vocabulary), and `unregisterPlugin` is no longer part of the port of the
   reloading client, being only used by its implementation.
-- Android applications: packages aligned between the applications. The domain mappers are extension functions
-  named `to<Type>` in all the applications (control: `toContract`, `toValidation`, `toLocation` instead of the
-  `ContractMapper`, `ValidationMapper` and `LocationMapper` objects). Reloading client: the `Status` enum, only
+- Android applications: packages aligned between the applications. The mappers (conversion of a representation
+  into another one) are extension functions named `to<Type>` or `toUi`, and the builders (construction from
+  several sources) top-level functions named `build<Type>`: in the control app, the `ContractMapper` and
+  `ValidationMapper` objects become the `buildContract` and `buildValidation` builders (`domain/builders`), the
+  search of the location of the event (`LocationMapper`) being a private function of `buildValidation`. Reloading
+  client: the `Status` enum, only
   used by the screens, moves to the UI model (as in the control app), `KeypleTicketingServer` moves to `data/server`
   (formerly `data/network`) with the other adapters of the server communication, and the Retrofit interface of the
   REST API of the server is named `ServerRestApi` instead of `RestClient`. Control app: the `RecyclerView` extension
