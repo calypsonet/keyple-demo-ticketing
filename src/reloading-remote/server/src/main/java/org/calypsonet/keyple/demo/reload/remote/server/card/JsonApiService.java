@@ -12,7 +12,7 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.server.card;
 
-import static org.calypsonet.keyple.demo.reload.remote.server.card.ActivityRecorder.SECURED_READ;
+import static org.calypsonet.keyple.demo.reload.remote.server.card.TransactionRecorder.SECURED_READ;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -51,9 +51,9 @@ import org.slf4j.LoggerFactory;
  * SELECT_APP_AND_LOAD_CONTRACT} and {@code SELECT_APP_AND_PERSONALIZE_CARD}).
  */
 @ApplicationScoped
-public class CardSelectionApi {
+public class JsonApiService {
 
-  private static final Logger logger = LoggerFactory.getLogger(CardSelectionApi.class);
+  private static final Logger logger = LoggerFactory.getLogger(JsonApiService.class);
   private static final String AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS =
       "An error occurred while analyzing the contracts: {}";
   private static final String AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT =
@@ -67,7 +67,7 @@ public class CardSelectionApi {
       DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH);
 
   @Inject CardRepository cardRepository;
-  @Inject ActivityRecorder activityRecorder;
+  @Inject TransactionRecorder transactionRecorder;
   @Inject ContractAnalysisService contractAnalysisService;
   @Inject ContractLoadingService contractLoadingService;
   @Inject CardPersonalizationService cardPersonalizationService;
@@ -210,7 +210,7 @@ public class CardSelectionApi {
 
   /** Records the failure of the selection of the application of the card. */
   private void recordSelectionFailure(String pluginType) {
-    activityRecorder.record(pluginType, false, SECURED_READ, "");
+    transactionRecorder.record(pluginType, false, SECURED_READ, "");
   }
 
   /** Returns the contract information displayed by the client. */

@@ -10,26 +10,25 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.validation.ui.activities
+package org.calypsonet.keyple.demo.control.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Timer
 import java.util.TimerTask
-import org.calypsonet.keyple.demo.validation.databinding.ActivityMainBinding
-import org.calypsonet.keyple.demo.validation.ui.activities.deviceselection.DeviceSelectionActivity
+import org.calypsonet.keyple.demo.control.databinding.ActivitySplashBinding
+import org.calypsonet.keyple.demo.control.ui.activities.deviceselection.DeviceSelectionActivity
 
 @AndroidEntryPoint
-class MainActivity : BaseActivity() {
-
-  private lateinit var activityMainBinding: ActivityMainBinding
+class SplashActivity : BaseActivity() {
+  private lateinit var activitySplashBinding: ActivitySplashBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
     // Make sure this is before calling super.onCreate
     super.onCreate(savedInstanceState)
-    activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
-    setContentView(activityMainBinding.root)
+    activitySplashBinding = ActivitySplashBinding.inflate(layoutInflater)
+    setContentView(activitySplashBinding.root)
     Timer()
         .schedule(
             object : TimerTask() {

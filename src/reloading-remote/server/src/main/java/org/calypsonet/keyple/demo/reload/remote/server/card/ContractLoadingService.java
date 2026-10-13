@@ -12,7 +12,7 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.server.card;
 
-import static org.calypsonet.keyple.demo.reload.remote.server.card.ActivityRecorder.RELOAD;
+import static org.calypsonet.keyple.demo.reload.remote.server.card.TransactionRecorder.RELOAD;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -60,7 +60,7 @@ public class ContractLoadingService {
       "Only Season Pass or Multi Trip ticket can be loaded";
 
   @Inject CardRepository cardRepository;
-  @Inject ActivityRecorder activityRecorder;
+  @Inject TransactionRecorder transactionRecorder;
 
   LoadContractOutputDto loadContract(
       CardReader cardReader, SmartCard smartCard, LoadContractInputDto inputData) {
@@ -93,24 +93,24 @@ public class ContractLoadingService {
         CardResourceServiceProvider.getService()
             .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
     try {
-      Card card = cardRepository.readCard(cardReader, calypsoCard, samResource);
+      CardData card = cardRepository.readCard(cardReader, calypsoCard, samResource);
       // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
       insertNewContract(inputData.getContractTariff(), inputData.getTripsToLoad(), card);
       int statusCode = cardRepository.writeCard(cardReader, calypsoCard, samResource, card);
-      activityRecorder.record(
+      transactionRecorder.record(
           pluginType, true, RELOAD, appSerialNumber, describeLoadedContract(inputData));
       return new LoadContractOutputDto(statusCode);
     } catch (CardFullException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT, e.getMessage());
-      activityRecorder.record(pluginType, false, RELOAD, appSerialNumber, "");
+      transactionRecorder.record(pluginType, false, RELOAD, appSerialNumber, "");
       return new LoadContractOutputDto(RemoteServiceStatus.CARD_FULL.getCode());
     } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT, e.getMessage(), e);
-      activityRecorder.record(pluginType, false, RELOAD, appSerialNumber, "");
+      transactionRecorder.record(pluginType, false, RELOAD, appSerialNumber, "");
       return new LoadContractOutputDto(RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT, e.getMessage(), e);
-      activityRecorder.record(pluginType, false, RELOAD, appSerialNumber, "");
+      transactionRecorder.record(pluginType, false, RELOAD, appSerialNumber, "");
       return new LoadContractOutputDto(RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
       CardResourceServiceProvider.getService().releaseCardResource(samResource);
@@ -138,23 +138,24 @@ public class ContractLoadingService {
     //     .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
     CardResource samResource = null;
     try {
-      Card card = cardRepository.readCard(cardReader, storageCard, samResource);
+      CardData card = cardRepository.readCard(cardReader, storageCard, samResource);
       // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
       insertNewContract(inputData.getContractTariff(), inputData.getTripsToLoad(), card);
       int statusCode = cardRepository.writeCard(cardReader, storageCard, samResource, card);
-      activityRecorder.record(pluginType, true, RELOAD, cardUID, describeLoadedContract(inputData));
+      transactionRecorder.record(
+          pluginType, true, RELOAD, cardUID, describeLoadedContract(inputData));
       return new LoadContractOutputDto(statusCode);
     } catch (CardFullException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT, e.getMessage());
-      activityRecorder.record(pluginType, false, RELOAD, cardUID, "");
+      transactionRecorder.record(pluginType, false, RELOAD, cardUID, "");
       return new LoadContractOutputDto(RemoteServiceStatus.CARD_FULL.getCode());
     } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT, e.getMessage(), e);
-      activityRecorder.record(pluginType, false, RELOAD, cardUID, "");
+      transactionRecorder.record(pluginType, false, RELOAD, cardUID, "");
       return new LoadContractOutputDto(RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT, e.getMessage(), e);
-      activityRecorder.record(pluginType, false, RELOAD, cardUID, "");
+      transactionRecorder.record(pluginType, false, RELOAD, cardUID, "");
       return new LoadContractOutputDto(RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
       if (samResource != null) {
@@ -176,7 +177,7 @@ public class ContractLoadingService {
    *     ticket.
    * @throws CardFullException If no record is available for a new contract.
    */
-  void insertNewContract(PriorityCode contractTariff, Integer tripsToLoad, Card card) {
+  void insertNewContract(PriorityCode contractTariff, Integer tripsToLoad, CardData card) {
 
     if (contractTariff != PriorityCode.SEASON_PASS && contractTariff != PriorityCode.MULTI_TRIP) {
       throw new IllegalArgumentException(ONLY_SEASON_PASS_OR_MULTI_TRIP_TICKET_CAN_BE_LOADED);

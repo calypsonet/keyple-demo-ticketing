@@ -214,19 +214,13 @@ Device Selection → Settings → Home → Reader Activity → Control Results
 - Registers the reader plugins of the terminal type, then provides the card reader and the SAM reader
 - Implementation: `KeypleTerminalReaders`
 
-**Card Repository Implementations**
+**CalypsoCardControlProcedure** (`domain/procedures/CalypsoCardControlProcedure.kt`)
+- Control procedure of the Calypso cards
+- Optional secure session when a SAM is available, contract authentication and verification
 
-**CalypsoCardRepository**
-- Implements comprehensive control procedure for Calypso cards
-- Manages optional secure sessions and SAM integration
-- Handles complex contract authentication and verification
-- Provides detailed compliance analysis and reporting
-
-**StorageCardRepository**
-- Implements streamlined control for storage cards
-- Direct data access without cryptographic overhead
-- Simplified contract and event analysis
-- Basic compliance checking and result generation
+**StorageCardControlProcedure** (`domain/procedures/StorageCardControlProcedure.kt`)
+- Control procedure of the storage cards (MIFARE Ultralight, ST25 SRT512, MIFARE Classic)
+- Direct reading of the contract and of the event, without cryptographic operation
 
 ### Control Procedure Logic
 

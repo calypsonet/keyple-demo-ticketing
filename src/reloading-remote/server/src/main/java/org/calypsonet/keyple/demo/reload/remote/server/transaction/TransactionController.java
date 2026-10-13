@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.server.activity;
+package org.calypsonet.keyple.demo.reload.remote.server.transaction;
 
 import io.smallrye.mutiny.Multi;
 import jakarta.inject.Inject;
@@ -21,10 +21,10 @@ import jakarta.ws.rs.core.MediaType;
 import java.util.List;
 import org.jboss.resteasy.reactive.RestStreamElementType;
 
-@Path("/activity")
-public class ActivityController {
+@Path("/transactions")
+public class TransactionController {
 
-  @Inject ActivityService activityService;
+  @Inject TransactionService transactionService;
 
   /**
    * Returns all the transactions, in their order of arrival.
@@ -34,12 +34,12 @@ public class ActivityController {
   @GET
   @Path("/events")
   @Produces(MediaType.APPLICATION_JSON)
-  public List<Activity> getEvents() {
-    return activityService.list();
+  public List<Transaction> getEvents() {
+    return transactionService.list();
   }
 
   /**
-   * Server-Sent Events stream of the new transactions, each event being a JSON {@link Activity}.
+   * Server-Sent Events stream of the new transactions, each event being a JSON {@link Transaction}.
    * Every subscriber (e.g. each open dashboard) receives all the new transactions.
    *
    * @return The stream of the new transactions.
@@ -48,7 +48,7 @@ public class ActivityController {
   @Path("/stream")
   @Produces(MediaType.SERVER_SENT_EVENTS)
   @RestStreamElementType(MediaType.APPLICATION_JSON)
-  public Multi<Activity> stream() {
-    return activityService.stream();
+  public Multi<Transaction> stream() {
+    return transactionService.stream();
   }
 }

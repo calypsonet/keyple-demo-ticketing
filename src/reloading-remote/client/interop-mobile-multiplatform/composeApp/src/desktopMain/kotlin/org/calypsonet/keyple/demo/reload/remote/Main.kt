@@ -22,8 +22,8 @@ import org.calypsonet.keyple.demo.reload.remote.data.platform.Buzzer
 import org.calypsonet.keyple.demo.reload.remote.data.platform.DataStorePathProducer
 import org.calypsonet.keyple.demo.reload.remote.data.platform.PlatformBuzzer
 import org.calypsonet.keyple.demo.reload.remote.data.platform.createDataStore
-import org.calypsonet.keyple.demo.reload.remote.data.service.CardRepository
-import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleService
+import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleInteropService
+import org.calypsonet.keyple.demo.reload.remote.data.service.ReadCardCache
 import org.calypsonet.keyple.demo.reload.remote.data.service.ServerConfigRepository
 import org.eclipse.keyple.interop.localreader.nfcmobile.api.LocalNfcReader
 import org.eclipse.keyple.interop.localreader.nfcmobile.api.MultiplatformNfcReader
@@ -41,14 +41,14 @@ fun main(args: Array<String>) = application {
     }
   }
 
-  val cardRepository = CardRepository()
+  val readCardCache = ReadCardCache()
   val serverConfigRepository = ServerConfigRepository(createDataStore(DataStorePathProducer()))
-  val keypleService =
-      KeypleService(
+  val keypleInteropService =
+      KeypleInteropService(
           reader = MultiplatformNfcReader(LocalNfcReader(filter)),
           clientId = "SOMEID",
           serverConfigRepository = serverConfigRepository,
-          cardRepository = cardRepository,
+          readCardCache = readCardCache,
           buzzer = Buzzer(PlatformBuzzer()))
 
   Window(
@@ -56,6 +56,6 @@ fun main(args: Array<String>) = application {
       title = "Keyple Demo Reload Remote",
       state = windowState,
       onCloseRequest = ::exitApplication) {
-        App(keypleService, cardRepository, serverConfigRepository)
+        App(keypleInteropService, readCardCache, serverConfigRepository)
       }
 }

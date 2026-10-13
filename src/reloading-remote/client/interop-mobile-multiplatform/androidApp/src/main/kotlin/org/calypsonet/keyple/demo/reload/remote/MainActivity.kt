@@ -21,8 +21,8 @@ import org.calypsonet.keyple.demo.reload.remote.data.platform.Buzzer
 import org.calypsonet.keyple.demo.reload.remote.data.platform.DataStorePathProducer
 import org.calypsonet.keyple.demo.reload.remote.data.platform.PlatformBuzzer
 import org.calypsonet.keyple.demo.reload.remote.data.platform.createDataStore
-import org.calypsonet.keyple.demo.reload.remote.data.service.CardRepository
-import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleService
+import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleInteropService
+import org.calypsonet.keyple.demo.reload.remote.data.service.ReadCardCache
 import org.calypsonet.keyple.demo.reload.remote.data.service.ServerConfigRepository
 import org.eclipse.keyple.interop.localreader.nfcmobile.api.LocalNfcReader
 import org.eclipse.keyple.interop.localreader.nfcmobile.api.MultiplatformNfcReader
@@ -32,17 +32,17 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    val cardRepository = CardRepository()
+    val readCardCache = ReadCardCache()
     val serverConfigRepository =
         ServerConfigRepository(createDataStore(DataStorePathProducer(applicationContext)))
-    val keypleService =
-        KeypleService(
+    val keypleInteropService =
+        KeypleInteropService(
             reader = MultiplatformNfcReader(LocalNfcReader(this)),
             clientId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID),
             serverConfigRepository = serverConfigRepository,
-            cardRepository = cardRepository,
+            readCardCache = readCardCache,
             buzzer = Buzzer(PlatformBuzzer(applicationContext)))
 
-    setContent { App(keypleService, cardRepository, serverConfigRepository) }
+    setContent { App(keypleInteropService, readCardCache, serverConfigRepository) }
   }
 }

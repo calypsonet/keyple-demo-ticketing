@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.server.activity;
+package org.calypsonet.keyple.demo.reload.remote.server.transaction;
 
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.operators.multi.processors.BroadcastProcessor;
@@ -26,25 +26,25 @@ import org.slf4j.LoggerFactory;
  * dashboards).
  */
 @ApplicationScoped
-public class ActivityService {
+public class TransactionService {
 
-  private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
+  private static final Logger logger = LoggerFactory.getLogger(TransactionService.class);
 
   private static final int SUBSCRIBER_BUFFER_SIZE = 100;
 
   // All the transactions, added by the card processing threads and read by the HTTP threads
-  private final List<Activity> activities = new CopyOnWriteArrayList<>();
+  private final List<Transaction> transactions = new CopyOnWriteArrayList<>();
 
   // Broadcasts the new transactions, the transactions being pushed from several threads
-  private final BroadcastProcessor<Activity> broadcaster = BroadcastProcessor.create();
+  private final BroadcastProcessor<Transaction> broadcaster = BroadcastProcessor.create();
 
   /**
    * Returns all the transactions, in their order of arrival.
    *
    * @return A not null list.
    */
-  public List<Activity> list() {
-    return new ArrayList<>(activities);
+  public List<Transaction> list() {
+    return new ArrayList<>(transactions);
   }
 
   /**
@@ -52,8 +52,8 @@ public class ActivityService {
    *
    * @param t Transaction object to push.
    */
-  public void push(Activity t) {
-    activities.add(t);
+  public void push(Transaction t) {
+    transactions.add(t);
     synchronized (broadcaster) {
       broadcaster.onNext(t);
     }
@@ -65,7 +65,7 @@ public class ActivityService {
    *
    * @return A not null stream.
    */
-  public Multi<Activity> stream() {
+  public Multi<Transaction> stream() {
     return broadcaster.onOverflow().buffer(SUBSCRIBER_BUFFER_SIZE);
   }
 }

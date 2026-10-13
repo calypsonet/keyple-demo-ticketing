@@ -10,31 +10,42 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control.ui.activities
+package org.calypsonet.keyple.demo.reload.remote.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
-import dagger.hilt.android.AndroidEntryPoint
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import java.util.Timer
 import java.util.TimerTask
-import org.calypsonet.keyple.demo.control.databinding.ActivityMainBinding
-import org.calypsonet.keyple.demo.control.ui.activities.deviceselection.DeviceSelectionActivity
+import org.calypsonet.keyple.demo.reload.remote.databinding.ActivitySplashBinding
 
-@AndroidEntryPoint
-class MainActivity : BaseActivity() {
-  private lateinit var activityMainBinding: ActivityMainBinding
+class SplashActivity : AppCompatActivity() {
+
+  private lateinit var activitySplashBinding: ActivitySplashBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
     // Make sure this is before calling super.onCreate
     super.onCreate(savedInstanceState)
-    activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
-    setContentView(activityMainBinding.root)
+    activitySplashBinding = ActivitySplashBinding.inflate(layoutInflater)
+    setContentView(activitySplashBinding.root)
+
+    // Handle edge-to-edge display with proper window insets for Android 15+
+    ViewCompat.setOnApplyWindowInsetsListener(activitySplashBinding.root) { view, windowInsets ->
+      val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+      view.updatePadding(top = insets.top, bottom = insets.bottom)
+      WindowInsetsCompat.CONSUMED
+    }
+
+    // Wait for Wizway Device to be connected
     Timer()
         .schedule(
             object : TimerTask() {
               override fun run() {
                 if (!isFinishing) {
-                  startActivity(Intent(applicationContext, DeviceSelectionActivity::class.java))
+                  startActivity(Intent(applicationContext, HomeActivity::class.java))
                   finish()
                 }
               }
@@ -43,6 +54,6 @@ class MainActivity : BaseActivity() {
   }
 
   companion object {
-    private const val SPLASH_MAX_DELAY_MS = 2000
+    private const val SPLASH_MAX_DELAY_MS = 6000
   }
 }

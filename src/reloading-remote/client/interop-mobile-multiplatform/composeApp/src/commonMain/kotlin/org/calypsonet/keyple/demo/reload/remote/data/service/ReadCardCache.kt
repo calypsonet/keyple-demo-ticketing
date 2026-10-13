@@ -14,7 +14,8 @@ package org.calypsonet.keyple.demo.reload.remote.data.service
 
 import org.calypsonet.keyple.demo.reload.remote.data.dto.SelectAppAndAnalyzeContractsOutputDto.ContractInfo
 
-class CardRepository {
+/** Cache of the last card read: serial number and contracts, used by the following screens. */
+class ReadCardCache {
   private var cardContracts: List<ContractInfo>? = null
   private var cardSerial = ""
 

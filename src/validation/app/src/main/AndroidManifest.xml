@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme" >
 
         <activity
-            android:name="org.calypsonet.keyple.demo.validation.ui.activities.MainActivity"
+            android:name="org.calypsonet.keyple.demo.validation.ui.activities.SplashActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="fullUser"
             android:launchMode="singleTask"

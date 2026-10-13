@@ -103,6 +103,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   Reloading Android client: the `ServerStatusProvider` port, which checks that the server is reachable with its SAM
   ready, is named `ServerReadinessChecker` (`isServerReady` instead of `isSamReady`, adapter
   `RestServerReadinessChecker`), and the last known state is stored as `lastServerReady` (same preference key).
+- Names describing the role of the elements: on the server, the transaction log of the dashboard is named
+  `Transaction` (`Transaction`, `TransactionService`, `TransactionController`, `TransactionRecorder`, package
+  `transaction`, REST endpoints `/transactions/events` and `/transactions/stream`) instead of "activity", which
+  was confused with the Android activities, the data read in the card `CardData` instead of `Card`, and the services
+  of the JSON API `JsonApiService` instead of `CardSelectionApi`. Multiplatform client: `KeypleService` becomes
+  `KeypleInteropService`, which names the integration of the Keyple Interop libraries more precisely, and
+  `CardRepository` (cache of the last card read) `ReadCardCache`. Android applications: the start screen
+  `MainActivity` becomes `SplashActivity` (layout `activity_splash`).
 - Android applications: the values of `CardProtocol` are named without the redundant `_LOGICAL_PROTOCOL` suffix
   (e.g. `ISO_14443_4`), the enum being documented as the logical protocols of the cards.
 - Android applications: each application stays standalone (no shared Android module), and the technical files
@@ -405,8 +413,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `aria-current="page"`).
 - Dashboard: the source code is checked with ESLint (`npm run lint`, React hooks rules), also run by the `check` task of
   the server build, and therefore by the CI.
-- Activity monitoring: the long polling endpoint `/activity/events/wait` is replaced by the Server-Sent Events stream
-  `/activity/stream`, which broadcasts each new transaction to all the subscribers.
+- Transaction monitoring: the long polling endpoint `/activity/events/wait` is replaced by the Server-Sent Events stream
+  `/transactions/stream`, which broadcasts each new transaction to all the subscribers.
 - Dashboard: the entry page (`index.html`) is no longer cached by the browsers (`Cache-Control: no-cache`), so that a
   server update is taken into account immediately; the built assets, whose names change at each build, remain cached.
 - The status codes of the remote services are produced with the `RemoteServiceStatus` enum.
@@ -417,10 +425,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   of `2`) when the presented card is not the one read before.
 - The card processing is split by business operation instead of a single `CardService` class:
   `ContractAnalysisService`, `ContractLoadingService` and `CardPersonalizationService` (Keyple clients),
-  `CardSelectionApi` (JSON API: selection of the application by the server, then delegation to the previous services)
+  `JsonApiService` (JSON API: selection of the application by the server, then delegation to the previous services)
   and `ContractCounterService` (.NET client). The remote services are dispatched by `RemoteServiceDispatcher` with a
   `switch` on `RemoteServiceId` (`CardConfigurator` only setting up the Keyple infrastructure), the transactions of
-  the dashboard are recorded by `ActivityRecorder`, and the selection of the application and the result messages
+  the dashboard are recorded by `TransactionRecorder`, and the selection of the application and the result messages
   of the JSON API are written once instead of three times. No functional change.
 #### Removed
 - Unreachable "card not read" status code (`4`) of the contract writing.
@@ -474,17 +482,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The Android APK files are named through `base.archivesName` instead of an internal Android Gradle plugin API
   (`ApkVariantOutputImpl`). The debug APK keeps its name.
 - Android target SDK defined by its own `androidTargetSdk` property (still `35`) instead of `androidCompileSdk`.
-- The background tasks of `KeypleService` (server ping, card selection scenario) and the tones of the desktop buzzer
+- The background tasks of `KeypleInteropService` (server ping, card selection scenario) and the tones of the desktop buzzer
   are launched in a scope owned by their class instead of `GlobalScope`.
 - Code organized in two packages, as in the Android applications: `ui`, with one package per screen (`home`, `card`,
   `read`, `load`, `personalize`, `success`, `settings`) and the shared elements (`components`, `theme`, `nav`,
-  `model`), and `data` for everything else: `dto` (DTOs of the JSON API), `service` (`KeypleService`,
-  `CardRepository`, `ServerConfigRepository`), `network` and `platform` (buzzer and data store, with their
+  `model`), and `data` for everything else: `dto` (DTOs of the JSON API), `service` (`KeypleInteropService`,
+  `ReadCardCache`, `ServerConfigRepository`), `network` and `platform` (buzzer and data store, with their
   `expect`/`actual` declarations). `App` and `AppViewModel` stay in the root package. The `nfc` package (wrong name on
   desktop, where the cards are read through PC/SC) is removed, and the `Product` and `ProductType` models move out of
   the card content screen.
 - The contract loading screen and its view model are named `LoadContractScreen` and `LoadContractScreenViewModel`
-  (instead of `WriteCardScreen...`), and `KeypleService.selectCardAndWriteContract` is renamed
+  (instead of `WriteCardScreen...`), and `KeypleInteropService.selectCardAndWriteContract` is renamed
   `selectCardAndLoadContract`, as the `LoadContract` route and the `SELECT_APP_AND_LOAD_CONTRACT` service.
 - CI: the architecture check of the Android applications (`check-android-architecture.sh`) is not run on this
   client (new `check-architecture` input of the reusable Android workflow): it follows the MVVM pattern, its view
@@ -495,8 +503,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   personalization and of the loading are read with their own DTO instead of a generic `OutputData`. The unused
   `InputData` and `InputDataIncreaseCounter` DTOs are removed. The exchanged JSON is unchanged.
 - The server configuration (address, endpoint, basic authentication) is read and saved by a dedicated
-  `ServerConfigRepository` instead of `KeypleService`, and is loaded without blocking the main thread
-  (`KeypleService.start()` is a suspend function instead of using `runBlocking`).
+  `ServerConfigRepository` instead of `KeypleInteropService`, and is loaded without blocking the main thread
+  (`KeypleInteropService.start()` is a suspend function instead of using `runBlocking`).
 - The `expect`/`actual` classes (beta feature of Kotlin) are explicitly enabled (`-Xexpect-actual-classes`), removing
   the related compilation warnings (and the related `@Suppress` annotations).
 - Android: Java 17 as source and target level instead of Java 11, as in the other Android applications. The desktop

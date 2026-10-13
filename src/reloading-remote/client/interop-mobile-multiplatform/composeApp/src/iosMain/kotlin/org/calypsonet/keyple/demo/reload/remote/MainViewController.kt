@@ -19,30 +19,30 @@ import org.calypsonet.keyple.demo.reload.remote.data.platform.Buzzer
 import org.calypsonet.keyple.demo.reload.remote.data.platform.DataStorePathProducer
 import org.calypsonet.keyple.demo.reload.remote.data.platform.PlatformBuzzer
 import org.calypsonet.keyple.demo.reload.remote.data.platform.createDataStore
-import org.calypsonet.keyple.demo.reload.remote.data.service.CardRepository
-import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleService
+import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleInteropService
+import org.calypsonet.keyple.demo.reload.remote.data.service.ReadCardCache
 import org.calypsonet.keyple.demo.reload.remote.data.service.ServerConfigRepository
 import org.eclipse.keyple.interop.localreader.nfcmobile.api.*
 import platform.UIKit.UIDevice
 
 val serverConfigRepository = ServerConfigRepository(createDataStore(DataStorePathProducer()))
 
-val cardRepository = CardRepository()
+val readCardCache = ReadCardCache()
 
-val remoteService =
-    KeypleService(
+val keypleInteropService =
+    KeypleInteropService(
         reader =
             MultiplatformNfcReader(
                 LocalNfcReader() { error ->
                   return@LocalNfcReader "Error: ${error.message}"
                 }),
         clientId = UIDevice.currentDevice.identifierForVendor?.UUIDString() ?: "anon",
-        cardRepository = cardRepository,
+        readCardCache = readCardCache,
         serverConfigRepository = serverConfigRepository,
         buzzer = Buzzer(PlatformBuzzer()))
 
 val logger = Napier.base(DebugAntilog())
 
 fun MainViewController() = ComposeUIViewController {
-  App(remoteService, cardRepository, serverConfigRepository)
+  App(keypleInteropService, readCardCache, serverConfigRepository)
 }

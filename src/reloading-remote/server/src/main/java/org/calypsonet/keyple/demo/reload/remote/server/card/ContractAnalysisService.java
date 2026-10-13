@@ -12,8 +12,8 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.server.card;
 
-import static org.calypsonet.keyple.demo.reload.remote.server.card.ActivityRecorder.READ;
-import static org.calypsonet.keyple.demo.reload.remote.server.card.ActivityRecorder.SECURED_READ;
+import static org.calypsonet.keyple.demo.reload.remote.server.card.TransactionRecorder.READ;
+import static org.calypsonet.keyple.demo.reload.remote.server.card.TransactionRecorder.SECURED_READ;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -64,7 +64,7 @@ public class ContractAnalysisService {
   private static final String CONTRACTS = "Contracts {}";
 
   @Inject CardRepository cardRepository;
-  @Inject ActivityRecorder activityRecorder;
+  @Inject TransactionRecorder transactionRecorder;
 
   AnalyzeContractsOutputDto analyzeContracts(
       CardReader cardReader, SmartCard smartCard, AnalyzeContractsInputDto inputData) {
@@ -97,29 +97,29 @@ public class ContractAnalysisService {
         CardResourceServiceProvider.getService()
             .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
     try {
-      Card card = cardRepository.readCard(cardReader, calypsoCard, samResource);
+      CardData card = cardRepository.readCard(cardReader, calypsoCard, samResource);
       // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
       List<ContractStructure> presentContracts = findPresentContracts(card);
-      activityRecorder.record(pluginType, true, SECURED_READ, appSerialNumber);
+      transactionRecorder.record(pluginType, true, SECURED_READ, appSerialNumber);
       return new AnalyzeContractsOutputDto(presentContracts, RemoteServiceStatus.SUCCESS.getCode());
     } catch (CardNotPersonalizedException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
-      activityRecorder.record(pluginType, false, SECURED_READ, appSerialNumber);
+      transactionRecorder.record(pluginType, false, SECURED_READ, appSerialNumber);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode());
     } catch (ExpiredEnvironmentException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
-      activityRecorder.record(pluginType, false, SECURED_READ, appSerialNumber);
+      transactionRecorder.record(pluginType, false, SECURED_READ, appSerialNumber);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.EXPIRED_ENVIRONMENT.getCode());
     } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
-      activityRecorder.record(pluginType, false, SECURED_READ, appSerialNumber);
+      transactionRecorder.record(pluginType, false, SECURED_READ, appSerialNumber);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
-      activityRecorder.record(pluginType, false, SECURED_READ, appSerialNumber);
+      transactionRecorder.record(pluginType, false, SECURED_READ, appSerialNumber);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
@@ -148,29 +148,29 @@ public class ContractAnalysisService {
     //     .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
     CardResource samResource = null;
     try {
-      Card card = cardRepository.readCard(cardReader, storageCard, samResource);
+      CardData card = cardRepository.readCard(cardReader, storageCard, samResource);
       // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
       List<ContractStructure> presentContracts = findPresentContracts(card);
-      activityRecorder.record(pluginType, true, READ, cardUID);
+      transactionRecorder.record(pluginType, true, READ, cardUID);
       return new AnalyzeContractsOutputDto(presentContracts, RemoteServiceStatus.SUCCESS.getCode());
     } catch (CardNotPersonalizedException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
-      activityRecorder.record(pluginType, false, READ, cardUID);
+      transactionRecorder.record(pluginType, false, READ, cardUID);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode());
     } catch (ExpiredEnvironmentException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
-      activityRecorder.record(pluginType, false, READ, cardUID);
+      transactionRecorder.record(pluginType, false, READ, cardUID);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.EXPIRED_ENVIRONMENT.getCode());
     } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
-      activityRecorder.record(pluginType, false, READ, cardUID);
+      transactionRecorder.record(pluginType, false, READ, cardUID);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
-      activityRecorder.record(pluginType, false, READ, cardUID);
+      transactionRecorder.record(pluginType, false, READ, cardUID);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
@@ -188,7 +188,7 @@ public class ContractAnalysisService {
    * @throws CardNotPersonalizedException If the environment has not the current version.
    * @throws ExpiredEnvironmentException If the environment has expired.
    */
-  List<ContractStructure> findPresentContracts(Card card) {
+  List<ContractStructure> findPresentContracts(CardData card) {
     // Check environment
     EnvironmentHolderStructure environment = card.getEnvironment();
     if (environment.getEnvVersionNumber() != VersionNumber.CURRENT_VERSION) {

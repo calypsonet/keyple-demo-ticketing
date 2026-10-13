@@ -95,9 +95,8 @@ Main Screen → Card Reader → Card Summary → Select Tickets → Checkout →
 
 ### Detailed Screen Guide
 
-**Main Screen (`MainActivity`)**
-- Setup and configuration access
-- Reader type selection
+**Splash Screen (`SplashActivity`)**
+- Displayed at startup, then opens the home screen
 
 **Home Screen (`HomeActivity`)**
 - Menu for different card reader types

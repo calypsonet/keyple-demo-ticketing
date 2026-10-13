@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.server.activity;
+package org.calypsonet.keyple.demo.reload.remote.server.transaction;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -19,7 +19,7 @@ import java.time.format.FormatStyle;
 import java.util.UUID;
 
 /** Transaction log object for the dashboard view */
-public class Activity {
+public class Transaction {
 
   String id; // unique id of the transaction
   String cardSerialNumber; // Calypso Card Serial Number
@@ -29,7 +29,7 @@ public class Activity {
   String status; // SUCCESS or FAIL
   String contractLoaded; // (opt) description of the contract loaded
 
-  public Activity() {
+  public Transaction() {
     this.id = UUID.randomUUID().toString();
     this.startedAt =
         DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
@@ -65,27 +65,27 @@ public class Activity {
     return contractLoaded;
   }
 
-  public Activity setCardSerialNumber(String cardSerialNumber) {
+  public Transaction setCardSerialNumber(String cardSerialNumber) {
     this.cardSerialNumber = cardSerialNumber;
     return this;
   }
 
-  public Activity setPlugin(String plugin) {
+  public Transaction setPlugin(String plugin) {
     this.plugin = plugin;
     return this;
   }
 
-  public Activity setType(String type) {
+  public Transaction setType(String type) {
     this.type = type;
     return this;
   }
 
-  public Activity setStatus(String status) {
+  public Transaction setStatus(String status) {
     this.status = status;
     return this;
   }
 
-  public Activity setContractLoaded(String contractLoaded) {
+  public Transaction setContractLoaded(String contractLoaded) {
     this.contractLoaded = contractLoaded;
     return this;
   }

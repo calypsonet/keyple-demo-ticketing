@@ -18,7 +18,7 @@ import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleService
+import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleInteropService
 import org.eclipse.keyple.interop.jsonapi.client.api.KeypleResult
 
 sealed class PersonalizeCardScreenState {
@@ -32,7 +32,7 @@ sealed class PersonalizeCardScreenState {
 }
 
 class PersonalizeCardScreenViewModel(
-    private val keypleService: KeypleService,
+    private val keypleInteropService: KeypleInteropService,
 ) : ViewModel() {
   private var _state =
       MutableStateFlow<PersonalizeCardScreenState>(PersonalizeCardScreenState.WaitForCard)
@@ -44,16 +44,16 @@ class PersonalizeCardScreenViewModel(
 
   override fun onCleared() {
     super.onCleared()
-    keypleService.releaseReader()
+    keypleInteropService.releaseReader()
   }
 
   private fun scan() {
     viewModelScope.launch {
-      keypleService.updateReaderMessage("Place your card on the top of the iPhone")
+      keypleInteropService.updateReaderMessage("Place your card on the top of the iPhone")
       try {
-        val cardFound = keypleService.waitCard()
+        val cardFound = keypleInteropService.waitCard()
         if (cardFound) {
-          keypleService.updateReaderMessage("Stay still...")
+          keypleInteropService.updateReaderMessage("Stay still...")
           personalizeCard()
         } else {
           _state.value = PersonalizeCardScreenState.DisplayError("No card found")
@@ -67,7 +67,7 @@ class PersonalizeCardScreenViewModel(
   private suspend fun personalizeCard() {
     _state.value = PersonalizeCardScreenState.WritingToCard
     try {
-      when (val result = keypleService.personalizeCard()) {
+      when (val result = keypleInteropService.personalizeCard()) {
         is KeypleResult.Failure -> {
           _state.value = PersonalizeCardScreenState.DisplayError(result.message)
         }

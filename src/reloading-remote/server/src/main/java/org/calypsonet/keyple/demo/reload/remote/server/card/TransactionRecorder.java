@@ -14,12 +14,12 @@ package org.calypsonet.keyple.demo.reload.remote.server.card;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.calypsonet.keyple.demo.reload.remote.server.activity.Activity;
-import org.calypsonet.keyple.demo.reload.remote.server.activity.ActivityService;
+import org.calypsonet.keyple.demo.reload.remote.server.transaction.Transaction;
+import org.calypsonet.keyple.demo.reload.remote.server.transaction.TransactionService;
 
-/** Records the card transactions in the activity log displayed by the dashboard. */
+/** Records the card transactions in the transaction log displayed by the dashboard. */
 @ApplicationScoped
-public class ActivityRecorder {
+public class TransactionRecorder {
 
   // Types of transaction
   static final String READ = "READ";
@@ -30,7 +30,7 @@ public class ActivityRecorder {
   private static final String SUCCESS = "SUCCESS";
   private static final String FAIL = "FAIL";
 
-  @Inject ActivityService activityService;
+  @Inject TransactionService transactionService;
 
   /**
    * Records a transaction.
@@ -55,8 +55,8 @@ public class ActivityRecorder {
    */
   void record(
       String plugin, boolean success, String type, String cardSerialNumber, String contractLoaded) {
-    activityService.push(
-        new Activity()
+    transactionService.push(
+        new Transaction()
             .setPlugin(plugin)
             .setStatus(success ? SUCCESS : FAIL)
             .setType(type)

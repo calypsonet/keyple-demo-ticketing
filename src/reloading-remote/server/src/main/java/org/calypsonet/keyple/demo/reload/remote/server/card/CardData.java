@@ -19,7 +19,7 @@ import org.calypsonet.keyple.demo.common.model.EnvironmentHolderStructure;
 import org.calypsonet.keyple.demo.common.model.EventStructure;
 import org.eclipse.keyple.core.util.json.JsonUtil;
 
-class Card {
+class CardData {
 
   private final EnvironmentHolderStructure environment;
   private final List<ContractStructure> contracts;
@@ -28,7 +28,7 @@ class Card {
   private final List<ContractStructure> updatedContracts = new ArrayList<>();
   private boolean isEventUpdated;
 
-  Card(
+  CardData(
       EnvironmentHolderStructure environment,
       List<ContractStructure> contracts,
       EventStructure event) {

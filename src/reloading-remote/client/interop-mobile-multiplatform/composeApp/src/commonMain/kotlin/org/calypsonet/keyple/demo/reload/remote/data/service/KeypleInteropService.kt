@@ -53,23 +53,29 @@ private const val SELECT_APP_AND_PERSONALIZE_CARD = "SELECT_APP_AND_PERSONALIZE_
 private const val SELECT_APP_AND_ANALYZE_CONTRACTS = "SELECT_APP_AND_ANALYZE_CONTRACTS"
 private const val SELECT_APP_AND_LOAD_CONTRACT = "SELECT_APP_AND_LOAD_CONTRACT"
 
-data class KeypleServiceState(val serverReachable: Boolean = false)
+data class KeypleInteropServiceState(val serverReachable: Boolean = false)
 
-private const val TAG = "KeypleService"
+private const val TAG = "KeypleInteropService"
 
-class KeypleService(
+/**
+ * Integration point of the Keyple Interop libraries (JSON API client and local reader): client of
+ * the ticketing server, giving its availability, its card selection scenario, and executing its
+ * remote services on the card presented to the local reader.
+ */
+class KeypleInteropService(
     private val reader: LocalReader,
     private val clientId: String,
     private val serverConfigRepository: ServerConfigRepository,
-    private val cardRepository: CardRepository,
+    private val readCardCache: ReadCardCache,
     private val buzzer: Buzzer
 ) {
 
-  private var _state: MutableStateFlow<KeypleServiceState> = MutableStateFlow(KeypleServiceState())
+  private var _state: MutableStateFlow<KeypleInteropServiceState> =
+      MutableStateFlow(KeypleInteropServiceState())
   val state = _state.asStateFlow()
 
   private var serverConfig: KeypleServerConfig? = null
-  private var remoteService: KeypleTerminal? = null
+  private var keypleTerminal: KeypleTerminal? = null
   private val httpClient = HttpClient {
     install(ContentNegotiation) {
       json(
@@ -97,7 +103,7 @@ class KeypleService(
 
     val server = SimpleHttpNetworkClient(serverConfig!!, buildHttpClient(LogLevel.ALL))
 
-    remoteService = KeypleTerminal(reader = reader, clientId = clientId, networkClient = server)
+    keypleTerminal = KeypleTerminal(reader = reader, clientId = clientId, networkClient = server)
 
     launchPingJob()
     launchGetCardSelectionScenarioJob()
@@ -106,7 +112,7 @@ class KeypleService(
   private fun launchPingJob() {
     pingJob?.cancel()
     pingJob =
-        remoteService?.let {
+        keypleTerminal?.let {
           scope.launch {
             while (true) {
               try {
@@ -124,12 +130,12 @@ class KeypleService(
   }
 
   private fun launchGetCardSelectionScenarioJob() {
-    remoteService?.let {
+    keypleTerminal?.let {
       scope.launch {
         try {
           val scenarioJsonString = retrieveSelectionScenarioJson()
           Napier.d("Card Selection Scenario retrieved: $scenarioJsonString")
-          remoteService?.setCardSelectionScenarioJsonString(scenarioJsonString)
+          keypleTerminal?.setCardSelectionScenarioJsonString(scenarioJsonString)
         } catch (e: Exception) {
           Napier.e("Error getting card selection scenario: ${e.message}")
         }
@@ -161,28 +167,28 @@ class KeypleService(
 
   suspend fun waitCard(): Boolean {
     return withContext(Dispatchers.IO) {
-      val result = remoteService?.waitForCard() ?: false
+      val result = keypleTerminal?.waitForCard() ?: false
       buzzer()
       return@withContext result
     }
   }
 
   fun waitForCard(cardConnected: () -> Unit) {
-    this.remoteService?.waitForCard(cardConnected)
+    this.keypleTerminal?.waitForCard(cardConnected)
   }
 
   fun updateReaderMessage(msg: String) {
-    remoteService?.setScanMessage(msg)
+    keypleTerminal?.setScanMessage(msg)
   }
 
   fun releaseReader() {
-    remoteService?.releaseReader()
+    keypleTerminal?.releaseReader()
   }
 
   suspend fun selectCardAndAnalyzeContracts(): KeypleResult<SelectAppAndAnalyzeContractsOutputDto> {
     return withContext(Dispatchers.IO) {
-      cardRepository.clear()
-      remoteService?.let { service ->
+      readCardCache.clear()
+      keypleTerminal?.let { service ->
         val result: KeypleResult<SelectAppAndAnalyzeContractsOutputDto> =
             executeService(
                 service,
@@ -202,8 +208,8 @@ class KeypleService(
                   status = Status.SERVER_ERROR,
                   message = "Server side error: ${result.data.statusCode} / ${result.data.message}")
             }
-            cardRepository.saveCardSerial(result.data.applicationSerialNumber)
-            cardRepository.saveCardContracts(result.data.contracts)
+            readCardCache.saveCardSerial(result.data.applicationSerialNumber)
+            readCardCache.saveCardContracts(result.data.contracts)
             return@withContext KeypleResult.Success(result.data)
           }
         }
@@ -213,7 +219,7 @@ class KeypleService(
 
   suspend fun personalizeCard(): KeypleResult<String> {
     return withContext(Dispatchers.IO) {
-      remoteService?.let {
+      keypleTerminal?.let {
         val result =
             executeServiceWithStatusOutput(
                 it,
@@ -238,13 +244,13 @@ class KeypleService(
       code: PriorityCode
   ): KeypleResult<String> {
     return withContext(Dispatchers.IO) {
-      remoteService?.let {
+      keypleTerminal?.let {
         val result =
             executeServiceWithStatusOutput(
                 it,
                 SELECT_APP_AND_LOAD_CONTRACT,
                 SelectAppAndLoadContractInputDto(
-                    applicationSerialNumber = cardRepository.getCardSerial(),
+                    applicationSerialNumber = readCardCache.getCardSerial(),
                     contractTariff = code,
                     tripsToLoad = tripsToLoad),
                 SelectAppAndLoadContractInputDto.serializer(),

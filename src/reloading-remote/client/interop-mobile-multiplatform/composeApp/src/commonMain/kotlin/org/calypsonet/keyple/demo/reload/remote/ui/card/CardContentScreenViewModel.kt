@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import org.calypsonet.keyple.demo.reload.remote.data.dto.SelectAppAndAnalyzeContractsOutputDto.ContractInfo
-import org.calypsonet.keyple.demo.reload.remote.data.service.CardRepository
+import org.calypsonet.keyple.demo.reload.remote.data.service.ReadCardCache
 import org.calypsonet.keyple.demo.reload.remote.ui.model.Product
 import org.calypsonet.keyple.demo.reload.remote.ui.model.ProductType
 
@@ -32,20 +32,20 @@ sealed class CardContentScreenState(val screenTitle: String) {
   data class DisplayBasket(val selectedProduct: Product?) : CardContentScreenState("Basket")
 }
 
-class CardContentScreenViewModel(private val cardRepository: CardRepository) : ViewModel() {
+class CardContentScreenViewModel(private val readCardCache: ReadCardCache) : ViewModel() {
 
   private var _state =
       MutableStateFlow<CardContentScreenState>(
-          CardContentScreenState.DisplayContent(cardRepository.getCardContracts()))
+          CardContentScreenState.DisplayContent(readCardCache.getCardContracts()))
 
   val state =
       _state.stateIn(
           scope = viewModelScope,
           started = SharingStarted.WhileSubscribed(5000),
-          initialValue = CardContentScreenState.DisplayContent(cardRepository.getCardContracts()))
+          initialValue = CardContentScreenState.DisplayContent(readCardCache.getCardContracts()))
 
   fun displayContent() {
-    val contracts = cardRepository.getCardContracts()
+    val contracts = readCardCache.getCardContracts()
     _state.value = CardContentScreenState.DisplayContent(contracts)
   }
 
@@ -67,6 +67,6 @@ class CardContentScreenViewModel(private val cardRepository: CardRepository) : V
   }
 
   fun getCardSerial(): String {
-    return cardRepository.getCardSerial()
+    return readCardCache.getCardSerial()
   }
 }

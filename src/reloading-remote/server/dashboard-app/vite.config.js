@@ -10,7 +10,7 @@ export default defineConfig({
     port: 3000,
     // Forwards the API calls to the Keyple Reload Demo server
     proxy: {
-      '/activity': serverUrl,
+      '/transactions': serverUrl,
       '/card': serverUrl,
     },
   },

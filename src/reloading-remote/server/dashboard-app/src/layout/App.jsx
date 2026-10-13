@@ -27,11 +27,11 @@ export default function App() {
     // Transactions received from the stream since the last (re)connection
     const streamed = [];
 
-    const eventSource = new EventSource("/activity/stream");
+    const eventSource = new EventSource("/transactions/stream");
 
     eventSource.onopen = () => {
       streamed.length = 0;
-      fetch("/activity/events")
+      fetch("/transactions/events")
         .then(response => {
           if (!response.ok) {
             throw new Error("Response status: " + response.status);

@@ -17,20 +17,22 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleService
+import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleInteropService
 
 data class AppState(val serverOnline: Boolean = false)
 
-class AppViewModel(private val keypleService: KeypleService) : ViewModel() {
+class AppViewModel(private val keypleInteropService: KeypleInteropService) : ViewModel() {
 
   private var _state = MutableStateFlow(AppState())
   val state = _state.asStateFlow()
 
   init {
-    viewModelScope.launch { keypleService.start() }
+    viewModelScope.launch { keypleInteropService.start() }
 
     viewModelScope.launch {
-      keypleService.state.collect { _state.value = AppState(serverOnline = it.serverReachable) }
+      keypleInteropService.state.collect {
+        _state.value = AppState(serverOnline = it.serverReachable)
+      }
     }
   }
 }

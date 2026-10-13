@@ -254,8 +254,8 @@ bash .github/scripts/check-android-twin-files.sh
 
 **Naming conventions**
 
-- Application class `DemoApplication`, base activity `BaseActivity` (and `BaseCardActivity` for the card screens of
-  the reloading client), card presentation screen `CardReaderActivity`.
+- Application class `DemoApplication`, start screen `SplashActivity`, base activity `BaseActivity` (and
+  `BaseCardActivity` for the card screens of the reloading client), card presentation screen `CardReaderActivity`.
 - Layouts named after their activity (`activity_<name>.xml`), shared toolbar `toolbar.xml`.
 - Hilt modules named after what they provide (e.g. `AppSettingsModule`, `DomainModule`, `ReaderModule`), with
   `provide<Type>` methods.

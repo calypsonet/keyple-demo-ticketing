@@ -40,7 +40,7 @@ public class RemoteServiceDispatcher {
   @Inject ContractAnalysisService contractAnalysisService;
   @Inject ContractLoadingService contractLoadingService;
   @Inject CardPersonalizationService cardPersonalizationService;
-  @Inject CardSelectionApi cardSelectionApi;
+  @Inject JsonApiService jsonApiService;
 
   /**
    * Executes the business service matching the Service ID specified by the client, and returns its
@@ -86,17 +86,17 @@ public class RemoteServiceDispatcher {
       // Services of the JSON API (selection of the application by the server, possibly from the
       // selection scenario already processed by the client)
       case SELECT_APP_AND_ANALYZE_CONTRACTS:
-        return cardSelectionApi.selectAppAndAnalyzeContracts(
+        return jsonApiService.selectAppAndAnalyzeContracts(
             reader,
             readerExtension.getInputData(SelectAppAndAnalyzeContractsInputDto.class),
             readerExtension.getInitialCardContent(Properties.class));
       case SELECT_APP_AND_LOAD_CONTRACT:
-        return cardSelectionApi.selectAppAndLoadContract(
+        return jsonApiService.selectAppAndLoadContract(
             reader,
             readerExtension.getInputData(SelectAppAndLoadContractInputDto.class),
             readerExtension.getInitialCardContent(Properties.class));
       case SELECT_APP_AND_PERSONALIZE_CARD:
-        return cardSelectionApi.selectAppAndPersonalizeCard(
+        return jsonApiService.selectAppAndPersonalizeCard(
             reader,
             readerExtension.getInputData(SelectAppAndPersonalizeCardInputDto.class),
             readerExtension.getInitialCardContent(Properties.class));

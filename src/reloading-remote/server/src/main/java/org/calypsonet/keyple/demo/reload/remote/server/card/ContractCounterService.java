@@ -12,8 +12,8 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.server.card;
 
-import static org.calypsonet.keyple.demo.reload.remote.server.card.ActivityRecorder.RELOAD;
-import static org.calypsonet.keyple.demo.reload.remote.server.card.ActivityRecorder.SECURED_READ;
+import static org.calypsonet.keyple.demo.reload.remote.server.card.TransactionRecorder.RELOAD;
+import static org.calypsonet.keyple.demo.reload.remote.server.card.TransactionRecorder.SECURED_READ;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -54,7 +54,7 @@ public class ContractCounterService {
   private static final String CARD_COMMUNICATION_ERROR = "Card communication error: ";
 
   @Inject CardRepository cardRepository;
-  @Inject ActivityRecorder activityRecorder;
+  @Inject TransactionRecorder transactionRecorder;
   @Inject ContractAnalysisService contractAnalysisService;
   @Inject ContractLoadingService contractLoadingService;
 
@@ -73,9 +73,9 @@ public class ContractCounterService {
           CardResourceServiceProvider.getService()
               .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
 
-      Card card = cardRepository.readCard(cardReader, calypsoCard, samResource);
+      CardData card = cardRepository.readCard(cardReader, calypsoCard, samResource);
       // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
-      activityRecorder.record(
+      transactionRecorder.record(
           CUSTOM_PLUGIN,
           true,
           SECURED_READ,
@@ -102,7 +102,7 @@ public class ContractCounterService {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
       message = RUNTIME_EXCEPTION + e.getMessage();
     } finally {
-      activityRecorder.record(
+      transactionRecorder.record(
           CUSTOM_PLUGIN,
           statusCode == 0,
           RELOAD,
@@ -128,9 +128,9 @@ public class ContractCounterService {
           CardResourceServiceProvider.getService()
               .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
 
-      Card card = cardRepository.readCard(cardReader, calypsoCard, samResource);
+      CardData card = cardRepository.readCard(cardReader, calypsoCard, samResource);
       // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
-      activityRecorder.record(
+      transactionRecorder.record(
           CUSTOM_PLUGIN,
           true,
           RELOAD,
@@ -160,7 +160,7 @@ public class ContractCounterService {
       message = RUNTIME_EXCEPTION + e.getMessage();
       logger.error(AN_ERROR_OCCURRED_WHILE_INCREASING_THE_CONTRACT_COUNTER, e.getMessage(), e);
     } finally {
-      activityRecorder.record(
+      transactionRecorder.record(
           CUSTOM_PLUGIN,
           statusCode == 0,
           RELOAD,

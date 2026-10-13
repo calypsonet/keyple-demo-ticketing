@@ -20,7 +20,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleService
+import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleInteropService
 import org.eclipse.keyple.interop.jsonapi.client.api.KeypleResult
 
 sealed class ReadCardScreenState {
@@ -34,7 +34,7 @@ sealed class ReadCardScreenState {
 }
 
 class ReadCardScreenViewModel(
-    private val keypleService: KeypleService,
+    private val keypleInteropService: KeypleInteropService,
 ) : ViewModel() {
 
   private var _state = MutableStateFlow<ReadCardScreenState>(ReadCardScreenState.WaitForCard)
@@ -46,16 +46,16 @@ class ReadCardScreenViewModel(
 
   override fun onCleared() {
     super.onCleared()
-    keypleService.releaseReader()
+    keypleInteropService.releaseReader()
   }
 
   private fun scan() {
     viewModelScope.launch {
-      keypleService.updateReaderMessage("Place your card on the top of the iPhone")
+      keypleInteropService.updateReaderMessage("Place your card on the top of the iPhone")
       try {
-        keypleService.waitForCard {
-          keypleService.updateReaderMessage("Stay still...")
-          keypleService.buzzer()
+        keypleInteropService.waitForCard {
+          keypleInteropService.updateReaderMessage("Stay still...")
+          keypleInteropService.buzzer()
           viewModelScope.launch(Dispatchers.IO) { readContracts() }
         }
         // _state.value = ReadCardScreenState.DisplayError("No card found")
@@ -68,7 +68,7 @@ class ReadCardScreenViewModel(
   private suspend fun readContracts() {
     _state.value = ReadCardScreenState.ReadingCard
     try {
-      when (val result = keypleService.selectCardAndAnalyzeContracts()) {
+      when (val result = keypleInteropService.selectCardAndAnalyzeContracts()) {
         is KeypleResult.Failure -> {
           _state.value = ReadCardScreenState.DisplayError(result.message)
         }

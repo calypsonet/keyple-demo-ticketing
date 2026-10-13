@@ -131,7 +131,7 @@ public class CardRepository {
     return (CalypsoCard) selectionResult.getActiveSmartCard();
   }
 
-  Card readCard(CardReader cardReader, CalypsoCard calypsoCard, CardResource samResource) {
+  CardData readCard(CardReader cardReader, CalypsoCard calypsoCard, CardResource samResource) {
     int contractCount = getContractCount(calypsoCard);
 
     SecureRegularModeTransactionManager cardTransactionManager =
@@ -156,7 +156,7 @@ public class CardRepository {
     return parse(calypsoCard);
   }
 
-  Card readCard(CardReader cardReader, StorageCard storageCard, CardResource samResource) {
+  CardData readCard(CardReader cardReader, StorageCard storageCard, CardResource samResource) {
     logger.info(
         "Reading StorageCard: ProductType={}, BlockSize={} bytes, BlockCount={}, TotalCapacity={} bytes",
         storageCard.getProductType(),
@@ -203,7 +203,7 @@ public class CardRepository {
   }
 
   int writeCard(
-      CardReader cardReader, CalypsoCard calypsoCard, CardResource samResource, Card card) {
+      CardReader cardReader, CalypsoCard calypsoCard, CardResource samResource, CardData card) {
 
     SecureRegularModeTransactionManager cardTransactionManager =
         initCardTransactionManager(cardReader, calypsoCard, samResource);
@@ -246,7 +246,7 @@ public class CardRepository {
   }
 
   int writeCard(
-      CardReader cardReader, StorageCard storageCard, CardResource samResource, Card card) {
+      CardReader cardReader, StorageCard storageCard, CardResource samResource, CardData card) {
     logger.info(
         "Writing StorageCard: ProductType={}, UpdatedContracts={}, EventUpdated={}",
         storageCard.getProductType(),
@@ -435,7 +435,7 @@ public class CardRepository {
         event.getContractPriorities());
   }
 
-  private Card parse(CalypsoCard calypsoCard) {
+  private CardData parse(CalypsoCard calypsoCard) {
     // Parse environment
     EnvironmentHolderStructure environment =
         CalypsoEnvironmentHolderCodec.INSTANCE.decode(
@@ -465,7 +465,7 @@ public class CardRepository {
     EventStructure event =
         CalypsoEventCodec.INSTANCE.decode(
             calypsoCard.getFileBySfi(CalypsoFiles.SFI_EVENTS_LOG).getData().getContent());
-    return new Card(environment, contracts, event);
+    return new CardData(environment, contracts, event);
   }
 
   private int getContractCount(CalypsoCard calypsoCard) {
@@ -477,7 +477,7 @@ public class CardRepository {
     return 4;
   }
 
-  private Card parse(StorageCard storageCard) {
+  private CardData parse(StorageCard storageCard) {
     EnvironmentHolderStructure environment;
     List<ContractStructure> contracts = new ArrayList<>();
     EventStructure event;
@@ -530,6 +530,6 @@ public class CardRepository {
                   StorageCardBlocks.EVENT_FIRST_BLOCK, StorageCardBlocks.EVENT_LAST_BLOCK));
     }
 
-    return new Card(environment, contracts, event);
+    return new CardData(environment, contracts, event);
   }
 }

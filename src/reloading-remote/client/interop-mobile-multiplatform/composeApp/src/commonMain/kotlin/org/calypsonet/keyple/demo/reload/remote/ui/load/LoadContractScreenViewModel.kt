@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.calypsonet.keyple.demo.reload.remote.data.dto.PriorityCode
-import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleService
+import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleInteropService
 import org.calypsonet.keyple.demo.reload.remote.ui.model.ProductType
 import org.calypsonet.keyple.demo.reload.remote.ui.nav.LoadContract
 import org.eclipse.keyple.interop.jsonapi.client.api.KeypleResult
@@ -35,7 +35,7 @@ sealed class LoadContractScreenState {
 }
 
 class LoadContractScreenViewModel(
-    private val keypleService: KeypleService,
+    private val keypleInteropService: KeypleInteropService,
     private val route: LoadContract,
 ) : ViewModel() {
   private var _state =
@@ -48,16 +48,16 @@ class LoadContractScreenViewModel(
 
   override fun onCleared() {
     super.onCleared()
-    keypleService.releaseReader()
+    keypleInteropService.releaseReader()
   }
 
   private fun scan() {
     viewModelScope.launch {
-      keypleService.updateReaderMessage("Place your card on the top of the iPhone")
+      keypleInteropService.updateReaderMessage("Place your card on the top of the iPhone")
       try {
-        val cardFound = keypleService.waitCard()
+        val cardFound = keypleInteropService.waitCard()
         if (cardFound) {
-          keypleService.updateReaderMessage("Stay still...")
+          keypleInteropService.updateReaderMessage("Stay still...")
           loadContract(route)
         } else {
           _state.value = LoadContractScreenState.DisplayError("No card found")
@@ -90,11 +90,12 @@ class LoadContractScreenViewModel(
   }
 
   private suspend fun loadSeasonPass(): KeypleResult<String> {
-    return keypleService.selectCardAndLoadContract(tripsToLoad = 1, code = PriorityCode.SEASON_PASS)
+    return keypleInteropService.selectCardAndLoadContract(
+        tripsToLoad = 1, code = PriorityCode.SEASON_PASS)
   }
 
   private suspend fun loadMultiTrip(trips: Int): KeypleResult<String> {
-    return keypleService.selectCardAndLoadContract(
+    return keypleInteropService.selectCardAndLoadContract(
         tripsToLoad = trips, code = PriorityCode.MULTI_TRIP)
   }
 }

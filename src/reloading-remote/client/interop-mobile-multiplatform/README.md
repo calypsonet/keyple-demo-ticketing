@@ -181,7 +181,7 @@ composeApp/src/                   # Kotlin Multiplatform library, desktop and iO
 │       │   ├── dto/              # DTOs of the JSON API of the server (mirror of the common library)
 │       │   ├── network/          # Server communication (HTTP client, server configuration)
 │       │   ├── platform/         # Platform services (buzzer, data store), expect declarations
-│       │   └── service/          # KeypleService, CardRepository, ServerConfigRepository
+│       │   └── service/          # KeypleInteropService, ReadCardCache, ServerConfigRepository
 │       └── ui/                   # Screens (one package per screen) and shared UI elements
 │           ├── card/             # Card content and basket
 │           ├── components/       # Shared components (top bar, scan screen, automatic return)
@@ -208,9 +208,9 @@ Multiplatform and Android application plugins in the same module.
 #### Shared Business Logic (`commonMain`)
 
 **Services** (`data/service`):
-- `KeypleService` - Handles Keyple Interop API communication (server status, card selection scenario, remote
-  services)
-- `CardRepository` - Manages card data (serial number, contracts)
+- `KeypleInteropService` - Integration of the Keyple Interop libraries: client of the ticketing server (server
+  status, card selection scenario, remote services)
+- `ReadCardCache` - Cache of the last card read (serial number, contracts)
 - `ServerConfigRepository` - Server configuration persisted in the data store (address, endpoint, basic
   authentication)
 - `SimpleHttpNetworkClient` (`data/network`) - HTTP client for server communication

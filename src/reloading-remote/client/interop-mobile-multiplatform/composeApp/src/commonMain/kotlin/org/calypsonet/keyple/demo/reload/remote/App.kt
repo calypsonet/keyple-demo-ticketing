@@ -20,8 +20,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import org.calypsonet.keyple.demo.reload.remote.data.service.CardRepository
-import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleService
+import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleInteropService
+import org.calypsonet.keyple.demo.reload.remote.data.service.ReadCardCache
 import org.calypsonet.keyple.demo.reload.remote.data.service.ServerConfigRepository
 import org.calypsonet.keyple.demo.reload.remote.ui.card.CardContentScreen
 import org.calypsonet.keyple.demo.reload.remote.ui.card.CardContentScreenViewModel
@@ -49,15 +49,16 @@ import org.calypsonet.keyple.demo.reload.remote.ui.theme.KeypleTheme
 @Composable
 @Preview
 fun App(
-    service: KeypleService,
-    cardRepository: CardRepository,
+    keypleInteropService: KeypleInteropService,
+    readCardCache: ReadCardCache,
     serverConfigRepository: ServerConfigRepository
 ) {
-  val vm = viewModel<AppViewModel> { AppViewModel(keypleService = service) }
+  val vm = viewModel<AppViewModel> { AppViewModel(keypleInteropService = keypleInteropService) }
   val serverConfigVm =
       viewModel<ServerConfigScreenViewModel> {
         ServerConfigScreenViewModel(
-            keypleService = service, serverConfigRepository = serverConfigRepository)
+            keypleInteropService = keypleInteropService,
+            serverConfigRepository = serverConfigRepository)
       }
 
   val navController = rememberNavController()
@@ -76,7 +77,7 @@ fun App(
             viewModel =
                 viewModel<ReadCardScreenViewModel> {
                   ReadCardScreenViewModel(
-                      keypleService = service,
+                      keypleInteropService = keypleInteropService,
                   )
                 },
             appState = state.value)
@@ -89,7 +90,8 @@ fun App(
             navController = navController,
             viewModel =
                 viewModel<LoadContractScreenViewModel> {
-                  LoadContractScreenViewModel(keypleService = service, route = route)
+                  LoadContractScreenViewModel(
+                      keypleInteropService = keypleInteropService, route = route)
                 },
             appState = state.value)
       }
@@ -100,7 +102,7 @@ fun App(
             viewModel =
                 viewModel<PersonalizeCardScreenViewModel> {
                   PersonalizeCardScreenViewModel(
-                      keypleService = service,
+                      keypleInteropService = keypleInteropService,
                   )
                 },
             appState = state.value)
@@ -112,7 +114,7 @@ fun App(
             appState = state.value,
             viewModel =
                 viewModel<CardContentScreenViewModel> {
-                  CardContentScreenViewModel(cardRepository = cardRepository)
+                  CardContentScreenViewModel(readCardCache = readCardCache)
                 })
       }
 
