@@ -22,7 +22,7 @@ import com.airbnb.lottie.LottieDrawable
 import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityReloadResultBinding
-import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
+import org.calypsonet.keyple.demo.reload.remote.ui.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 
 @AndroidEntryPoint

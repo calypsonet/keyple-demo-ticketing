@@ -326,8 +326,7 @@ class CardReaderActivity : BaseActivity() {
             result.dateTime.format(
                 DateTimeFormatter.ofPattern("dd MMMM yyyy, HH:mm", Locale.ENGLISH))
         b.locationTime.text =
-            getString(
-                R.string.valid_location_time, result.validationData?.location?.name, eventDate)
+            getString(R.string.valid_location_time, result.location.name, eventDate)
         val remainingTrips = result.remainingTrips
         if (remainingTrips != null) {
           b.smallDesc.text =

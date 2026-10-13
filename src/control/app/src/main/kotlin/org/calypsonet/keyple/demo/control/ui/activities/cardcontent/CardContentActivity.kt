@@ -20,10 +20,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.databinding.ActivityCardContentBinding
 import org.calypsonet.keyple.demo.control.databinding.ToolbarBinding
-import org.calypsonet.keyple.demo.control.setDivider
 import org.calypsonet.keyple.demo.control.ui.activities.BaseActivity
 import org.calypsonet.keyple.demo.control.ui.activities.CardReaderActivity.Companion.CARD_CONTENT
 import org.calypsonet.keyple.demo.control.ui.model.UiControlResult
+import org.calypsonet.keyple.demo.control.ui.setDivider
 import timber.log.Timber
 
 @AndroidEntryPoint

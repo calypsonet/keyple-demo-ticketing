@@ -17,18 +17,18 @@ import org.calypsonet.keyple.demo.common.model.EventStructure
 import org.calypsonet.keyple.demo.common.model.Location
 import org.calypsonet.keyple.demo.control.domain.model.Validation
 
-object ValidationMapper {
-  fun map(
-      event: EventStructure,
-      contract: ContractStructure?,
-      locations: List<Location>
-  ): Validation {
-    val name = contract?.contractTariff?.label ?: "Event"
-    return Validation(
-        name = name,
-        dateTime = event.eventDatetime,
-        location = LocationMapper.map(locations, event),
-        destination = null,
-        provider = null)
-  }
-}
+/**
+ * Returns the last validation displayed by the control, built from this event read in the card.
+ *
+ * @param contract The contract used by the event, null if unknown.
+ * @param locations The locations of the network, among which the location of the event.
+ */
+fun EventStructure.toValidation(
+    contract: ContractStructure?,
+    locations: List<Location>
+): Validation =
+    Validation(
+        name = contract?.contractTariff?.label ?: "Event",
+        dateTime = eventDatetime,
+        location = toLocation(locations),
+    )

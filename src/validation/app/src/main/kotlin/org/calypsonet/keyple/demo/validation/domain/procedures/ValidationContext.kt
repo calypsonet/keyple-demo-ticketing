@@ -25,7 +25,6 @@ import org.eclipse.keypop.reader.selection.spi.SmartCard
  * @property card The selected card.
  * @property dateTime The date and time of the validation.
  * @property location The location of the validation.
- * @property locations The known locations, to build the validation data.
  * @property cardSecuritySetting The security setting of the Calypso secure sessions, null if no SAM
  *   is available.
  */
@@ -34,6 +33,5 @@ data class ValidationContext(
     val card: SmartCard,
     val dateTime: LocalDateTime,
     val location: Location,
-    val locations: List<Location>,
     val cardSecuritySetting: SymmetricCryptoSecuritySetting?
 )

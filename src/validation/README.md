@@ -294,7 +294,6 @@ validation/app/
 │   │   ├── data/                        # Data layer implementations
 │   │   ├── di/                          # Dependency injection (Hilt modules)
 │   │   ├── domain/                      # Business logic layer
-│   │   │   ├── builders/                # Data builders
 │   │   │   ├── model/                   # Domain models
 │   │   │   ├── procedures/              # Validation procedures (Calypso, Storage)
 │   │   │   ├── spi/                     # Ports

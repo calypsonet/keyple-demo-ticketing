@@ -20,7 +20,5 @@ import kotlinx.parcelize.Parcelize
 data class UiValidation(
     val name: String,
     val location: UiLocation,
-    val destination: String?,
     val dateTime: LocalDateTime,
-    val provider: Int? = null
 ) : Parcelable

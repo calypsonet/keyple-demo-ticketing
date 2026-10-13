@@ -12,7 +12,6 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.validation.domain.usecases
 
-import org.calypsonet.keyple.demo.common.data.LocationRepository
 import org.calypsonet.keyple.demo.validation.domain.CardReaderSession
 import org.calypsonet.keyple.demo.validation.domain.CardReaderSession.CardSelection
 import org.calypsonet.keyple.demo.validation.domain.model.TechnicalError
@@ -68,7 +67,6 @@ class ValidateCard(
               card = card,
               dateTime = clock.now(),
               location = appSettings.location,
-              locations = LocationRepository.getLocations(),
               cardSecuritySetting = cardReaderSession.cardSecuritySetting))
     } catch (e: Exception) {
       logger.e("Validation error: ${e.message}")

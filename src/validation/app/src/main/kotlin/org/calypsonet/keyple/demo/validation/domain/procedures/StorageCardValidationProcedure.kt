@@ -23,7 +23,6 @@ import org.calypsonet.keyple.demo.common.model.type.DateCompact
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.TimeCompact
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
-import org.calypsonet.keyple.demo.validation.domain.builders.ValidationDataBuilder
 import org.calypsonet.keyple.demo.validation.domain.model.CardDescription
 import org.calypsonet.keyple.demo.validation.domain.model.RejectionReason
 import org.calypsonet.keyple.demo.validation.domain.model.TechnicalError
@@ -270,8 +269,6 @@ class StorageCardValidationProcedure(
                     PriorityCode.FORBIDDEN,
                     PriorityCode.FORBIDDEN))
 
-    val validationData = ValidationDataBuilder.buildFrom(eventToWrite, context.locations)
-
     // Re-authenticate for Mifare Classic before writing (best practice)
     if (requiresAuth) {
       logger.d("Re-authenticating before write operation")
@@ -304,7 +301,7 @@ class StorageCardValidationProcedure(
     return ValidationResult.Accepted(
         card = card,
         dateTime = validationDateTime,
-        validationData = validationData,
+        location = context.location,
         remainingTrips = remainingTrips,
         passValidityEndDate = passValidityEndDate)
   }

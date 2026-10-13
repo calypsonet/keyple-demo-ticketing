@@ -10,13 +10,14 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.control
+package org.calypsonet.keyple.demo.control.ui
 
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 
+/** Adds a divider drawn with the provided drawable between the items of the list. */
 fun RecyclerView.setDivider(@DrawableRes drawableRes: Int) {
   val divider = DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL)
   val drawable = ContextCompat.getDrawable(this.context, drawableRes)

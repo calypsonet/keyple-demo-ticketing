@@ -21,8 +21,8 @@ import org.calypsonet.keyple.demo.common.model.ContractStructure
 import org.calypsonet.keyple.demo.common.model.EventStructure
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
-import org.calypsonet.keyple.demo.control.domain.mappers.ContractMapper
-import org.calypsonet.keyple.demo.control.domain.mappers.ValidationMapper
+import org.calypsonet.keyple.demo.control.domain.mappers.toContract
+import org.calypsonet.keyple.demo.control.domain.mappers.toValidation
 import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
 import org.calypsonet.keyple.demo.control.domain.model.Contract
 import org.calypsonet.keyple.demo.control.domain.model.ControlResult
@@ -193,10 +193,9 @@ class CalypsoCardControlProcedure(
       if (isValidEvent(event)) {
         validation =
             if (eventContract.isNotEmpty()) {
-              ValidationMapper.map(
-                  event = event, contract = eventContract[0], locations = locations)
+              event.toValidation(contract = eventContract[0], locations = locations)
             } else {
-              ValidationMapper.map(event = event, contract = null, locations = locations)
+              event.toValidation(contract = null, locations = locations)
             }
       }
 
@@ -255,8 +254,7 @@ class CalypsoCardControlProcedure(
 
           // Step 19 - Add contract data to the list of contracts read to return to the upper layer.
           displayedContract.add(
-              ContractMapper.map(
-                  contract = contract,
+              contract.toContract(
                   record = record,
                   contractExpired = contractExpired,
                   contractValidated = contractValidated,

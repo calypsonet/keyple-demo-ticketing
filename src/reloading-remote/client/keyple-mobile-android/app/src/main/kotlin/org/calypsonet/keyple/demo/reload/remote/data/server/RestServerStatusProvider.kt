@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.data.network
+package org.calypsonet.keyple.demo.reload.remote.data.server
 
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ServerConfig
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.ServerStatusProvider
@@ -32,7 +32,7 @@ class RestServerStatusProvider : ServerStatusProvider {
             .baseUrl(serverConfig.url)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(RestClient::class.java)
+            .create(ServerRestApi::class.java)
     val response = client.getSamStatus().execute()
     if (!response.isSuccessful) {
       throw HttpException(response)

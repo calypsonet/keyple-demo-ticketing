@@ -22,7 +22,6 @@ import org.calypsonet.keyple.demo.common.model.type.DateCompact
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.TimeCompact
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
-import org.calypsonet.keyple.demo.validation.domain.builders.ValidationDataBuilder
 import org.calypsonet.keyple.demo.validation.domain.model.CardDescription
 import org.calypsonet.keyple.demo.validation.domain.model.RejectionReason
 import org.calypsonet.keyple.demo.validation.domain.model.TechnicalError
@@ -162,7 +161,7 @@ class CalypsoCardValidationProcedure(private val keypopApiProvider: KeypopApiPro
         rejected(RejectionReason.ALREADY_VALIDATED)
       } else {
         SessionOutcome(
-            ValidationResult.Accepted(card, validationDateTime, validationData = null),
+            ValidationResult.Accepted(card, validationDateTime, context.location),
             closeSession = true)
       }
     }
@@ -295,7 +294,7 @@ class CalypsoCardValidationProcedure(private val keypopApiProvider: KeypopApiPro
           ValidationResult.Accepted(
               card = card,
               dateTime = validationDateTime,
-              validationData = ValidationDataBuilder.buildFrom(eventToWrite, context.locations),
+              location = context.location,
               remainingTrips = remainingTrips,
               passValidityEndDate = passValidityEndDate)
     } else {

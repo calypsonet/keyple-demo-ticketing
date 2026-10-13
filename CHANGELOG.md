@@ -64,6 +64,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `TicketingServer` (remote services of the server, formerly `RemoteServiceManager`). The readers are released by
   `release` instead of `onDestroy` (Android vocabulary), and `unregisterPlugin` is no longer part of the port of the
   reloading client, being only used by its implementation.
+- Android applications: packages aligned between the applications. The domain mappers are extension functions
+  named `to<Type>` in all the applications (control: `toContract`, `toValidation`, `toLocation` instead of the
+  `ContractMapper`, `ValidationMapper` and `LocationMapper` objects). Reloading client: the `Status` enum, only
+  used by the screens, moves to the UI model (as in the control app), `KeypleTicketingServer` moves to `data/server`
+  (formerly `data/network`) with the other adapters of the server communication, and the Retrofit interface of the
+  REST API of the server is named `ServerRestApi` instead of `RestClient`. Control app: the `RecyclerView` extension
+  moves from the root package to the `ui` layer.
+- Validation app: an accepted validation (`ValidationResult.Accepted`) carries the location of the terminal instead
+  of a `ValidationData` object, which only carried a placeholder name, the date and time already provided by the
+  result and empty fields, its location being searched again among the known locations from the event just built
+  (the `ValidationData` model, its builder and the `locations` field of `ValidationContext` are removed). The
+  location is now displayed when a validation interrupted by the removal of the card is recovered ("null" was
+  displayed).
+- Control app: the `destination` and `provider` fields of the last validation (`Validation`, `UiValidation`), never
+  set nor displayed, are removed.
 - Android applications: the values of `CardProtocol` are named without the redundant `_LOGICAL_PROTOCOL` suffix
   (e.g. `ISO_14443_4`), the enum being documented as the logical protocols of the cards.
 - Android applications: each application stays standalone (no shared Android module), and the technical files

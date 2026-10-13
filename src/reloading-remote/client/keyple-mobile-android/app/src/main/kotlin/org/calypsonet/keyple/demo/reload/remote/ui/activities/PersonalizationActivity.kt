@@ -27,8 +27,8 @@ import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityPersonalizationBinding
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
-import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.domain.usecases.PersonalizeCard
+import org.calypsonet.keyple.demo.reload.remote.ui.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.eclipse.keypop.reader.CardReaderEvent
 import timber.log.Timber

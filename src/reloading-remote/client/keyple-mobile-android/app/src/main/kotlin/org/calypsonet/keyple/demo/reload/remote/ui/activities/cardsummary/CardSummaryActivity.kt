@@ -24,10 +24,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardSummaryBinding
-import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.activities.BaseActivity
 import org.calypsonet.keyple.demo.reload.remote.ui.activities.BaseCardActivity
 import org.calypsonet.keyple.demo.reload.remote.ui.activities.SelectTicketsActivity
+import org.calypsonet.keyple.demo.reload.remote.ui.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 
 @AndroidEntryPoint

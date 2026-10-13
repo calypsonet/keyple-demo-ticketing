@@ -19,6 +19,5 @@ fun Validation.toUi(): UiValidation =
     UiValidation(
         name = name,
         location = location.toUi(),
-        destination = destination,
         dateTime = dateTime,
-        provider = provider)
+    )

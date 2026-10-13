@@ -28,8 +28,8 @@ import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
-import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.domain.usecases.ReloadCard
+import org.calypsonet.keyple.demo.reload.remote.ui.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.eclipse.keypop.reader.CardReaderEvent
 import timber.log.Timber

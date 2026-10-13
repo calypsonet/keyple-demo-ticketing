@@ -18,7 +18,5 @@ import org.calypsonet.keyple.demo.common.model.Location
 data class Validation(
     val name: String,
     val location: Location,
-    val destination: String?,
     val dateTime: LocalDateTime,
-    val provider: Int? = null
 )

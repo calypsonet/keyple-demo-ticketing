@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.data.network
+package org.calypsonet.keyple.demo.reload.remote.data.server
 
 import okhttp3.OkHttpClient
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.AppSettingsRepository
@@ -36,11 +36,11 @@ class KeypleSyncEndPointClient(
     private val logger: Logger
 ) : SyncEndpointClientSpi {
 
-  private var restClient: RestClient? = null
-  private var restClientUrl: String? = null
+  private var serverRestApi: ServerRestApi? = null
+  private var serverRestApiUrl: String? = null
 
   override fun sendRequest(msg: MessageDto?): MutableList<MessageDto> {
-    val response = getRestClient().sendRequest(msg).execute()
+    val response = getServerRestApi().sendRequest(msg).execute()
     if (!response.isSuccessful) {
       throw HttpException(response)
     }
@@ -49,22 +49,22 @@ class KeypleSyncEndPointClient(
 
   /** Returns the REST client of the configured server, created again when its address changes. */
   @Synchronized
-  private fun getRestClient(): RestClient {
+  private fun getServerRestApi(): ServerRestApi {
     val serverUrl = appSettings.serverConfig.url
-    val currentRestClient = restClient
-    if (currentRestClient != null && serverUrl == restClientUrl) {
-      return currentRestClient
+    val currentServerRestApi = serverRestApi
+    if (currentServerRestApi != null && serverUrl == serverRestApiUrl) {
+      return currentServerRestApi
     }
     logger.i("Loaded Rest client with URL: $serverUrl")
-    val newRestClient =
+    val newServerRestApi =
         Retrofit.Builder()
             .baseUrl(serverUrl)
             .client(httpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(RestClient::class.java)
-    restClient = newRestClient
-    restClientUrl = serverUrl
-    return newRestClient
+            .create(ServerRestApi::class.java)
+    serverRestApi = newServerRestApi
+    serverRestApiUrl = serverUrl
+    return newServerRestApi
   }
 }

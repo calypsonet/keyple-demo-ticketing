@@ -28,10 +28,10 @@ import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
-import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.domain.usecases.ReadContracts
 import org.calypsonet.keyple.demo.reload.remote.ui.activities.cardsummary.CardSummaryActivity
 import org.calypsonet.keyple.demo.reload.remote.ui.mappers.toUi
+import org.calypsonet.keyple.demo.reload.remote.ui.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.eclipse.keypop.reader.CardReaderEvent
 import org.eclipse.keypop.reader.ReaderCommunicationException

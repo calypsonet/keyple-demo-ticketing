@@ -16,23 +16,25 @@ import java.time.LocalDateTime
 import org.calypsonet.keyple.demo.common.model.ContractStructure
 import org.calypsonet.keyple.demo.control.domain.model.Contract
 
-object ContractMapper {
-  fun map(
-      contract: ContractStructure,
-      record: Int,
-      contractValidated: Boolean,
-      contractExpired: Boolean,
-      validationDateTime: LocalDateTime?,
-      remainingTrips: Int?
-  ): Contract {
-    return Contract(
-        name = contract.contractTariff.label,
+/**
+ * Returns the contract displayed by the control, built from this contract read in the card and from
+ * the result of its control.
+ *
+ * @param record The number of the record of the contract in the card.
+ */
+fun ContractStructure.toContract(
+    record: Int,
+    contractValidated: Boolean,
+    contractExpired: Boolean,
+    validationDateTime: LocalDateTime?,
+    remainingTrips: Int?
+): Contract =
+    Contract(
+        name = contractTariff.label,
         valid = contractValidated,
         record = record,
         validationDateTime = validationDateTime,
         expired = contractExpired,
-        contractValidityStartDate = contract.contractSaleDate.date,
-        contractValidityEndDate = contract.contractValidityEndDate.date,
+        contractValidityStartDate = contractSaleDate.date,
+        contractValidityEndDate = contractValidityEndDate.date,
         remainingTrips = remainingTrips)
-  }
-}

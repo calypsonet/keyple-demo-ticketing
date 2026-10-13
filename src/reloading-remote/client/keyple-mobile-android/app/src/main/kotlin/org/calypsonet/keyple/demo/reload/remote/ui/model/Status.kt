@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2022 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2026 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -10,7 +10,14 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.data.network
+package org.calypsonet.keyple.demo.reload.remote.ui.model
 
-/** SAM status returned by the server (`/card/sam-status` endpoint). */
-data class SamStatus(val isSamReady: Boolean)
+/** Kind of result displayed by the card screens. */
+enum class Status {
+  LOADING,
+  ERROR,
+  TICKETS_FOUND,
+  INVALID_CARD,
+  EMPTY_CARD,
+  SUCCESS
+}

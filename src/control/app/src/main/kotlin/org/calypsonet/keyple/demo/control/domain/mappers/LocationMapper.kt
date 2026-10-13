@@ -15,8 +15,10 @@ package org.calypsonet.keyple.demo.control.domain.mappers
 import org.calypsonet.keyple.demo.common.model.EventStructure
 import org.calypsonet.keyple.demo.common.model.Location
 
-object LocationMapper {
-  fun map(locations: List<Location>, event: EventStructure): Location {
-    return locations.filter { event.eventLocation == it.id }[0]
-  }
-}
+/**
+ * Returns the location of this event, among the provided locations of the network.
+ *
+ * @throws IndexOutOfBoundsException If the location of the event is unknown.
+ */
+fun EventStructure.toLocation(locations: List<Location>): Location =
+    locations.filter { eventLocation == it.id }[0]

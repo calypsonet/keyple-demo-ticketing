@@ -21,9 +21,9 @@ import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.domain.CardReaderSession
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardInfo
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardMedium
-import org.calypsonet.keyple.demo.reload.remote.domain.model.Status
 import org.calypsonet.keyple.demo.reload.remote.domain.model.TerminalType
 import org.calypsonet.keyple.demo.reload.remote.ui.ActivityUiContext
+import org.calypsonet.keyple.demo.reload.remote.ui.model.Status
 import org.calypsonet.keyple.demo.reload.remote.ui.model.UiCardReaderResponse
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi

@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  ****************************************************************************** */
-package org.calypsonet.keyple.demo.reload.remote.data.network
+package org.calypsonet.keyple.demo.reload.remote.data.server
 
 import org.eclipse.keyple.distributed.MessageDto
 import retrofit2.Call
@@ -22,10 +22,10 @@ import retrofit2.http.POST
 /**
  * REST API of the reloading server.
  *
- * Cannot directly extend SyncEndpointClient because retrofit allows API interfaces to extend
- * interfaces.
+ * Cannot directly extend SyncEndpointClient because Retrofit does not allow API interfaces to
+ * extend other interfaces.
  */
-interface RestClient {
+interface ServerRestApi {
 
   @GET("/card/sam-status") fun getSamStatus(): Call<SamStatus>
 
