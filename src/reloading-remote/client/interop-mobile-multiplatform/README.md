@@ -208,8 +208,10 @@ Multiplatform and Android application plugins in the same module.
 #### Shared Business Logic (`commonMain`)
 
 **Services** (`data/service`):
-- `KeypleInteropService` - Integration of the Keyple Interop libraries: client of the ticketing server (server
-  status, card selection scenario, remote services)
+- `KeypleInteropService` - Integration of the Keyple Interop libraries: Keyple terminal, card selection scenario of
+  the server, local reader and remote services
+- `ServerReadinessChecker` - Checks that the server is reachable with its SAM ready (as in the Android client), the
+  check being repeated by `AppViewModel`
 - `ReadCardCache` - Cache of the last card read (serial number, contracts)
 - `ServerConfigRepository` - Server configuration persisted in the data store (address, endpoint, basic
   authentication)

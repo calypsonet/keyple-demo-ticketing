@@ -22,6 +22,7 @@ import org.calypsonet.keyple.demo.reload.remote.data.platform.createDataStore
 import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleInteropService
 import org.calypsonet.keyple.demo.reload.remote.data.service.ReadCardCache
 import org.calypsonet.keyple.demo.reload.remote.data.service.ServerConfigRepository
+import org.calypsonet.keyple.demo.reload.remote.data.service.ServerReadinessChecker
 import org.eclipse.keyple.interop.localreader.nfcmobile.api.*
 import platform.UIKit.UIDevice
 
@@ -37,12 +38,14 @@ val keypleInteropService =
                   return@LocalNfcReader "Error: ${error.message}"
                 }),
         clientId = UIDevice.currentDevice.identifierForVendor?.UUIDString() ?: "anon",
-        readCardCache = readCardCache,
-        serverConfigRepository = serverConfigRepository,
-        buzzer = Buzzer(PlatformBuzzer()))
+        serverConfigRepository = serverConfigRepository)
+
+val serverReadinessChecker = ServerReadinessChecker()
+
+val buzzer = Buzzer(PlatformBuzzer())
 
 val logger = Napier.base(DebugAntilog())
 
 fun MainViewController() = ComposeUIViewController {
-  App(keypleInteropService, readCardCache, serverConfigRepository)
+  App(keypleInteropService, readCardCache, serverConfigRepository, serverReadinessChecker, buzzer)
 }

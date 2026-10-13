@@ -25,6 +25,7 @@ import org.calypsonet.keyple.demo.reload.remote.data.platform.createDataStore
 import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleInteropService
 import org.calypsonet.keyple.demo.reload.remote.data.service.ReadCardCache
 import org.calypsonet.keyple.demo.reload.remote.data.service.ServerConfigRepository
+import org.calypsonet.keyple.demo.reload.remote.data.service.ServerReadinessChecker
 import org.eclipse.keyple.interop.localreader.nfcmobile.api.LocalNfcReader
 import org.eclipse.keyple.interop.localreader.nfcmobile.api.MultiplatformNfcReader
 
@@ -47,15 +48,20 @@ fun main(args: Array<String>) = application {
       KeypleInteropService(
           reader = MultiplatformNfcReader(LocalNfcReader(filter)),
           clientId = "SOMEID",
-          serverConfigRepository = serverConfigRepository,
-          readCardCache = readCardCache,
-          buzzer = Buzzer(PlatformBuzzer()))
+          serverConfigRepository = serverConfigRepository)
+  val serverReadinessChecker = ServerReadinessChecker()
+  val buzzer = Buzzer(PlatformBuzzer())
 
   Window(
       // icon = TODO
       title = "Keyple Demo Reload Remote",
       state = windowState,
       onCloseRequest = ::exitApplication) {
-        App(keypleInteropService, readCardCache, serverConfigRepository)
+        App(
+            keypleInteropService,
+            readCardCache,
+            serverConfigRepository,
+            serverReadinessChecker,
+            buzzer)
       }
 }

@@ -482,8 +482,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The Android APK files are named through `base.archivesName` instead of an internal Android Gradle plugin API
   (`ApkVariantOutputImpl`). The debug APK keeps its name.
 - Android target SDK defined by its own `androidTargetSdk` property (still `35`) instead of `androidCompileSdk`.
-- The background tasks of `KeypleInteropService` (server ping, card selection scenario) and the tones of the desktop buzzer
-  are launched in a scope owned by their class instead of `GlobalScope`.
+- The background tasks are no longer launched in `GlobalScope`: the retrieval of the card selection scenario
+  (`KeypleInteropService`) and the tones of the desktop buzzer in a scope owned by their class, the periodic check of
+  the server in the scope of `AppViewModel`.
 - Code organized in two packages, as in the Android applications: `ui`, with one package per screen (`home`, `card`,
   `read`, `load`, `personalize`, `success`, `settings`) and the shared elements (`components`, `theme`, `nav`,
   `model`), and `data` for everything else: `dto` (DTOs of the JSON API), `service` (`KeypleInteropService`,
@@ -502,6 +503,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `SelectAppAndAnalyzeContractsInputDto` instead of `GenericSelectAppInputDto`), and the outputs of the
   personalization and of the loading are read with their own DTO instead of a generic `OutputData`. The unused
   `InputData` and `InputDataIncreaseCounter` DTOs are removed. The exchanged JSON is unchanged.
+- `KeypleInteropService` is limited to the integration of the Keyple Interop libraries (Keyple terminal, card
+  selection scenario, local reader, remote services). The check of the server moves to `ServerReadinessChecker`
+  (same name and contract as in the Android client, the SAM being now required for the server to be shown online),
+  repeated every 5 seconds by `AppViewModel` with the current server configuration; the sound and vibration on card
+  detection are triggered by the view models, the read card is kept in `ReadCardCache` by the reading screen, and
+  the serial number of the card to load is provided by the loading screen (from its route).
 - The server configuration (address, endpoint, basic authentication) is read and saved by a dedicated
   `ServerConfigRepository` instead of `KeypleInteropService`, and is loaded without blocking the main thread
   (`KeypleInteropService.start()` is a suspend function instead of using `runBlocking`).

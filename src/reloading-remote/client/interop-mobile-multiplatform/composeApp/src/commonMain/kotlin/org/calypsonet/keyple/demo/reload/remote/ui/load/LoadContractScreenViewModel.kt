@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.calypsonet.keyple.demo.reload.remote.data.dto.PriorityCode
+import org.calypsonet.keyple.demo.reload.remote.data.platform.Buzzer
 import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleInteropService
 import org.calypsonet.keyple.demo.reload.remote.ui.model.ProductType
 import org.calypsonet.keyple.demo.reload.remote.ui.nav.LoadContract
@@ -36,6 +37,7 @@ sealed class LoadContractScreenState {
 
 class LoadContractScreenViewModel(
     private val keypleInteropService: KeypleInteropService,
+    private val buzzer: Buzzer,
     private val route: LoadContract,
 ) : ViewModel() {
   private var _state =
@@ -56,6 +58,7 @@ class LoadContractScreenViewModel(
       keypleInteropService.updateReaderMessage("Place your card on the top of the iPhone")
       try {
         val cardFound = keypleInteropService.waitCard()
+        buzzer.beepAndVibrate()
         if (cardFound) {
           keypleInteropService.updateReaderMessage("Stay still...")
           loadContract(route)
@@ -91,11 +94,13 @@ class LoadContractScreenViewModel(
 
   private suspend fun loadSeasonPass(): KeypleResult<String> {
     return keypleInteropService.selectCardAndLoadContract(
-        tripsToLoad = 1, code = PriorityCode.SEASON_PASS)
+        expectedSerialNumber = route.cardSerial, tripsToLoad = 1, code = PriorityCode.SEASON_PASS)
   }
 
   private suspend fun loadMultiTrip(trips: Int): KeypleResult<String> {
     return keypleInteropService.selectCardAndLoadContract(
-        tripsToLoad = trips, code = PriorityCode.MULTI_TRIP)
+        expectedSerialNumber = route.cardSerial,
+        tripsToLoad = trips,
+        code = PriorityCode.MULTI_TRIP)
   }
 }

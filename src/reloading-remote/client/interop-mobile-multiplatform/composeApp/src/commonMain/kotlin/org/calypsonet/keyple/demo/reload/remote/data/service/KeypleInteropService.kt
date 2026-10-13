@@ -23,10 +23,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.KSerializer
@@ -42,7 +39,6 @@ import org.calypsonet.keyple.demo.reload.remote.data.dto.SelectAppAndPersonalize
 import org.calypsonet.keyple.demo.reload.remote.data.network.KeypleServerConfig
 import org.calypsonet.keyple.demo.reload.remote.data.network.SimpleHttpNetworkClient
 import org.calypsonet.keyple.demo.reload.remote.data.network.buildHttpClient
-import org.calypsonet.keyple.demo.reload.remote.data.platform.Buzzer
 import org.eclipse.keyple.interop.jsonapi.client.api.KeypleResult
 import org.eclipse.keyple.interop.jsonapi.client.api.KeypleTerminal
 import org.eclipse.keyple.interop.jsonapi.client.api.ServerIOException
@@ -53,26 +49,18 @@ private const val SELECT_APP_AND_PERSONALIZE_CARD = "SELECT_APP_AND_PERSONALIZE_
 private const val SELECT_APP_AND_ANALYZE_CONTRACTS = "SELECT_APP_AND_ANALYZE_CONTRACTS"
 private const val SELECT_APP_AND_LOAD_CONTRACT = "SELECT_APP_AND_LOAD_CONTRACT"
 
-data class KeypleInteropServiceState(val serverReachable: Boolean = false)
-
 private const val TAG = "KeypleInteropService"
 
 /**
- * Integration point of the Keyple Interop libraries (JSON API client and local reader): client of
- * the ticketing server, giving its availability, its card selection scenario, and executing its
- * remote services on the card presented to the local reader.
+ * Integration point of the Keyple Interop libraries (JSON API client and local reader): creates the
+ * Keyple terminal, provides it with the card selection scenario of the ticketing server, drives the
+ * local reader and executes the remote services of the server on the presented card.
  */
 class KeypleInteropService(
     private val reader: LocalReader,
     private val clientId: String,
-    private val serverConfigRepository: ServerConfigRepository,
-    private val readCardCache: ReadCardCache,
-    private val buzzer: Buzzer
+    private val serverConfigRepository: ServerConfigRepository
 ) {
-
-  private var _state: MutableStateFlow<KeypleInteropServiceState> =
-      MutableStateFlow(KeypleInteropServiceState())
-  val state = _state.asStateFlow()
 
   private var serverConfig: KeypleServerConfig? = null
   private var keypleTerminal: KeypleTerminal? = null
@@ -93,10 +81,9 @@ class KeypleInteropService(
     expectSuccess = true
     followRedirects = true
   }
-  // Background tasks of the service (server ping, card selection scenario), living as long as the
-  // service: a failing task does not cancel the others
+  // Background task of the service (retrieval of the card selection scenario), living as long as
+  // the service
   private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-  private var pingJob: Job? = null
 
   suspend fun start() {
     serverConfig = serverConfigRepository.load()
@@ -105,28 +92,7 @@ class KeypleInteropService(
 
     keypleTerminal = KeypleTerminal(reader = reader, clientId = clientId, networkClient = server)
 
-    launchPingJob()
     launchGetCardSelectionScenarioJob()
-  }
-
-  private fun launchPingJob() {
-    pingJob?.cancel()
-    pingJob =
-        keypleTerminal?.let {
-          scope.launch {
-            while (true) {
-              try {
-                val response = pingServer()
-                _state.value = _state.value.copy(serverReachable = true)
-                Napier.d("Ping response: $response")
-              } catch (e: Exception) {
-                Napier.e("Error pinging server: ${e.message}")
-                _state.value = _state.value.copy(serverReachable = false)
-              }
-              kotlinx.coroutines.delay(5000)
-            }
-          }
-        }
   }
 
   private fun launchGetCardSelectionScenarioJob() {
@@ -143,14 +109,6 @@ class KeypleInteropService(
     }
   }
 
-  private suspend fun pingServer(): String {
-    return try {
-      httpClient.get("${serverConfig?.baseUrl()}/card/sam-status") {}.body<String>()
-    } catch (e: Exception) {
-      throw ServerIOException("Comm error: ${e.message}")
-    }
-  }
-
   private suspend fun retrieveSelectionScenarioJson(): String {
     return try {
       httpClient
@@ -161,15 +119,9 @@ class KeypleInteropService(
     }
   }
 
-  fun buzzer() {
-    buzzer.beepAndVibrate()
-  }
-
   suspend fun waitCard(): Boolean {
     return withContext(Dispatchers.IO) {
-      val result = keypleTerminal?.waitForCard() ?: false
-      buzzer()
-      return@withContext result
+      return@withContext keypleTerminal?.waitForCard() ?: false
     }
   }
 
@@ -187,7 +139,6 @@ class KeypleInteropService(
 
   suspend fun selectCardAndAnalyzeContracts(): KeypleResult<SelectAppAndAnalyzeContractsOutputDto> {
     return withContext(Dispatchers.IO) {
-      readCardCache.clear()
       keypleTerminal?.let { service ->
         val result: KeypleResult<SelectAppAndAnalyzeContractsOutputDto> =
             executeService(
@@ -208,8 +159,6 @@ class KeypleInteropService(
                   status = Status.SERVER_ERROR,
                   message = "Server side error: ${result.data.statusCode} / ${result.data.message}")
             }
-            readCardCache.saveCardSerial(result.data.applicationSerialNumber)
-            readCardCache.saveCardContracts(result.data.contracts)
             return@withContext KeypleResult.Success(result.data)
           }
         }
@@ -239,7 +188,13 @@ class KeypleInteropService(
     }
   }
 
+  /**
+   * Loads a contract in the presented card, the server checking that it is the card read before.
+   *
+   * @param expectedSerialNumber The serial number of the card read before.
+   */
   suspend fun selectCardAndLoadContract(
+      expectedSerialNumber: String,
       tripsToLoad: Int,
       code: PriorityCode
   ): KeypleResult<String> {
@@ -250,7 +205,7 @@ class KeypleInteropService(
                 it,
                 SELECT_APP_AND_LOAD_CONTRACT,
                 SelectAppAndLoadContractInputDto(
-                    applicationSerialNumber = readCardCache.getCardSerial(),
+                    applicationSerialNumber = expectedSerialNumber,
                     contractTariff = code,
                     tripsToLoad = tripsToLoad),
                 SelectAppAndLoadContractInputDto.serializer(),

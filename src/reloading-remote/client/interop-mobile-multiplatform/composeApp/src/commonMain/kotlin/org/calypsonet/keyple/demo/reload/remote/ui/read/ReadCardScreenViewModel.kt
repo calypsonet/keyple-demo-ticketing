@@ -20,7 +20,9 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.calypsonet.keyple.demo.reload.remote.data.platform.Buzzer
 import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleInteropService
+import org.calypsonet.keyple.demo.reload.remote.data.service.ReadCardCache
 import org.eclipse.keyple.interop.jsonapi.client.api.KeypleResult
 
 sealed class ReadCardScreenState {
@@ -35,6 +37,8 @@ sealed class ReadCardScreenState {
 
 class ReadCardScreenViewModel(
     private val keypleInteropService: KeypleInteropService,
+    private val readCardCache: ReadCardCache,
+    private val buzzer: Buzzer,
 ) : ViewModel() {
 
   private var _state = MutableStateFlow<ReadCardScreenState>(ReadCardScreenState.WaitForCard)
@@ -55,7 +59,7 @@ class ReadCardScreenViewModel(
       try {
         keypleInteropService.waitForCard {
           keypleInteropService.updateReaderMessage("Stay still...")
-          keypleInteropService.buzzer()
+          buzzer.beepAndVibrate()
           viewModelScope.launch(Dispatchers.IO) { readContracts() }
         }
         // _state.value = ReadCardScreenState.DisplayError("No card found")
@@ -67,12 +71,16 @@ class ReadCardScreenViewModel(
 
   private suspend fun readContracts() {
     _state.value = ReadCardScreenState.ReadingCard
+    readCardCache.clear()
     try {
       when (val result = keypleInteropService.selectCardAndAnalyzeContracts()) {
         is KeypleResult.Failure -> {
           _state.value = ReadCardScreenState.DisplayError(result.message)
         }
         is KeypleResult.Success -> {
+          // Card read, kept for the following screens (card content, loading of a contract)
+          readCardCache.saveCardSerial(result.data.applicationSerialNumber)
+          readCardCache.saveCardContracts(result.data.contracts)
           _state.value = ReadCardScreenState.ShowCardContent
         }
       }

@@ -18,6 +18,7 @@ import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.calypsonet.keyple.demo.reload.remote.data.platform.Buzzer
 import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleInteropService
 import org.eclipse.keyple.interop.jsonapi.client.api.KeypleResult
 
@@ -33,6 +34,7 @@ sealed class PersonalizeCardScreenState {
 
 class PersonalizeCardScreenViewModel(
     private val keypleInteropService: KeypleInteropService,
+    private val buzzer: Buzzer,
 ) : ViewModel() {
   private var _state =
       MutableStateFlow<PersonalizeCardScreenState>(PersonalizeCardScreenState.WaitForCard)
@@ -52,6 +54,7 @@ class PersonalizeCardScreenViewModel(
       keypleInteropService.updateReaderMessage("Place your card on the top of the iPhone")
       try {
         val cardFound = keypleInteropService.waitCard()
+        buzzer.beepAndVibrate()
         if (cardFound) {
           keypleInteropService.updateReaderMessage("Stay still...")
           personalizeCard()

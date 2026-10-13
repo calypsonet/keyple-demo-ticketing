@@ -24,6 +24,7 @@ import org.calypsonet.keyple.demo.reload.remote.data.platform.createDataStore
 import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleInteropService
 import org.calypsonet.keyple.demo.reload.remote.data.service.ReadCardCache
 import org.calypsonet.keyple.demo.reload.remote.data.service.ServerConfigRepository
+import org.calypsonet.keyple.demo.reload.remote.data.service.ServerReadinessChecker
 import org.eclipse.keyple.interop.localreader.nfcmobile.api.LocalNfcReader
 import org.eclipse.keyple.interop.localreader.nfcmobile.api.MultiplatformNfcReader
 
@@ -39,10 +40,17 @@ class MainActivity : ComponentActivity() {
         KeypleInteropService(
             reader = MultiplatformNfcReader(LocalNfcReader(this)),
             clientId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID),
-            serverConfigRepository = serverConfigRepository,
-            readCardCache = readCardCache,
-            buzzer = Buzzer(PlatformBuzzer(applicationContext)))
+            serverConfigRepository = serverConfigRepository)
+    val serverReadinessChecker = ServerReadinessChecker()
+    val buzzer = Buzzer(PlatformBuzzer(applicationContext))
 
-    setContent { App(keypleInteropService, readCardCache, serverConfigRepository) }
+    setContent {
+      App(
+          keypleInteropService,
+          readCardCache,
+          serverConfigRepository,
+          serverReadinessChecker,
+          buzzer)
+    }
   }
 }
