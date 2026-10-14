@@ -43,7 +43,7 @@ class AppViewModel(
       var lastServerReady: Boolean? = null
       while (true) {
         val serverConfig = serverConfigRepository.load()
-        var cause = "SAM not ready"
+        var cause = "SAM not available"
         val serverReady =
             try {
               serverReadinessChecker.isServerReady(serverConfig)

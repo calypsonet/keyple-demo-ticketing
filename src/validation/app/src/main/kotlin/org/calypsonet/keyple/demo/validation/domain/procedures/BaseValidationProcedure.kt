@@ -63,7 +63,7 @@ abstract class BaseValidationProcedure : ValidationProcedure {
    * @param priorities List of pairs (contract index, priority code)
    * @return Sorted list of contract priorities
    */
-  fun sortContractPrioritiesByPriority(
+  fun sortContractPriorities(
       priorities: List<Pair<Int, PriorityCode>>
   ): List<Pair<Int, PriorityCode>> {
     return priorities.sortedBy { it.second.code }

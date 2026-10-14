@@ -127,8 +127,8 @@ class KeypleInteropService(
     this.keypleTerminal?.waitForCard(cardConnected)
   }
 
-  fun updateReaderMessage(msg: String) {
-    keypleTerminal?.setScanMessage(msg)
+  fun setScanMessage(message: String) {
+    keypleTerminal?.setScanMessage(message)
   }
 
   fun releaseReader() {

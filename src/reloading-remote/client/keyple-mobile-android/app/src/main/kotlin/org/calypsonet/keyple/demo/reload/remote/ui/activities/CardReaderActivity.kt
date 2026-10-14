@@ -115,7 +115,7 @@ class CardReaderActivity : BaseCardActivity() {
             val resultType =
                 if (result.contracts.isNotEmpty()) ResultType.CONTRACTS_FOUND
                 else ResultType.EMPTY_CARD
-            changeDisplay(
+            displayResult(
                 UiCardResult(
                     resultType,
                     result.card.description,
@@ -138,7 +138,7 @@ class CardReaderActivity : BaseCardActivity() {
     }
   }
 
-  override fun changeDisplay(
+  override fun displayResult(
       cardResult: UiCardResult,
       applicationSerialNumber: String?,
       finishActivity: Boolean?

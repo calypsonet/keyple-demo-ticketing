@@ -432,10 +432,15 @@ All the components name their methods with the same verbs:
 
 - A method is named after what it does for the user or the domain, not after its technical effect (e.g.
   `applyServerSettings()` saves the settings and reconnects the client, `showReadInProgress()` displays "Read in
-  progress"). Its name starts with a verb; the Compose functions, which describe an element of the screen, are named
-  with a noun (e.g. `SuccessMessage`, `PlatformAnimation`).
-- The same operation has the same name in all the components: the methods calling a remote service of the server are
-  named after its identifier (`SELECT_APP_AND_PERSONALIZE_CARD`: `selectAppAndPersonalizeCard()`).
+  progress").
+- An action is named with a verb. A function returning a value computed without side effect may be named after this
+  value, as a property (e.g. `technicalError()`, `rejectionMessage()`, `environmentRejection()`), and the Compose
+  functions, which describe an element of the screen, are named with a noun (e.g. `SuccessMessage`,
+  `PlatformAnimation`).
+- The same operation has the same name in all the components. The methods executing a remote service of the server
+  (`JsonApiService` of the server, multiplatform and .NET clients) are named after its identifier
+  (`SELECT_APP_AND_PERSONALIZE_CARD`: `selectAppAndPersonalizeCard()`); the ports of the domain are named after the
+  operation of the glossary (`TicketingServer.personalizeCard()`).
 - No abbreviation (`btn`, `anim`, `env`...), except the acronyms (`Sam`, `Aid`, `Apdu`) and the terms of the card data
   model specification (`envEndDate`...).
 - Each language keeps its case convention: camelCase in Kotlin, Java and JavaScript, PascalCase in C#.

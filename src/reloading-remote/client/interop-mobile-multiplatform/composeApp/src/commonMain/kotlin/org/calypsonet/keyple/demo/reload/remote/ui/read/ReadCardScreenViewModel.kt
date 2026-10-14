@@ -55,10 +55,10 @@ class ReadCardScreenViewModel(
 
   private fun scan() {
     viewModelScope.launch {
-      keypleInteropService.updateReaderMessage("Place your card on the reader")
+      keypleInteropService.setScanMessage("Place your card on the reader")
       try {
         keypleInteropService.waitForCard {
-          keypleInteropService.updateReaderMessage("Stay still...")
+          keypleInteropService.setScanMessage("Stay still...")
           buzzer.beepAndVibrate()
           viewModelScope.launch(Dispatchers.IO) { readContracts() }
         }

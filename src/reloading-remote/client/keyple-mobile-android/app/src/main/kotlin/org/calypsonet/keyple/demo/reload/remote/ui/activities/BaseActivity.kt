@@ -115,7 +115,7 @@ abstract class BaseActivity : AppCompatActivity() {
   private fun checkServerReadiness() {
     val serverConfig = appSettings.serverConfig
     lifecycleScope.launch {
-      var cause = "SAM not ready"
+      var cause = "SAM not available"
       val isUp =
           withContext(Dispatchers.IO) {
             try {

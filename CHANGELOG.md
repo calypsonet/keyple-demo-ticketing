@@ -129,6 +129,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Method names (second audit): the result screens of the reloading Android client are displayed by
+  `displayResult()` (instead of `changeDisplay()`), as in the control and validation apps; the control and validation
+  apps request the missing permissions with `PermissionHelper.requestMissingPermissions()` (instead of
+  `checkPermission()`, which did not tell that it requests them); the "Server state" button of the settings of the
+  reloading Android client tests the readiness of the server with `testServerReadiness()` (instead of `ping()`) and
+  takes into account the availability of the SAM, which was ignored: it displays "Server ready" or "Server not
+  ready" (instead of "Ping succeeded" even when the SAM was not available), as the indicator of the toolbar. The
+  multiplatform client sets the message of the NFC reader with `setScanMessage()` (instead of `updateReaderMessage()`)
+  and no longer contains the unused `Success` composable of the loading screen, and the validation app sorts the
+  contracts with `sortContractPriorities()` (instead of `sortContractPrioritiesByPriority()`). The README states that
+  a value computed without side effect may be named after this value, and that the ports of the domain are named
+  after the operations of the glossary.
 - Method names harmonized (README section "Method Names"):
   - names which were misleading: the reading screen of the reloading Android client displays its progress with
     `showReadInProgress()` (instead of `showNowLoadingInformation()`, "load" designating the loading of a contract),

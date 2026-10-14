@@ -52,7 +52,7 @@ class TerminalSelectionActivity : BaseActivity() {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
           permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
-        val granted = PermissionHelper.checkPermission(this, permissions.toTypedArray())
+        val granted = PermissionHelper.requestMissingPermissions(this, permissions.toTypedArray())
         if (granted) {
           startActivity(Intent(this, SettingsActivity::class.java))
           finish()

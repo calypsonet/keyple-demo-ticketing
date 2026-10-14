@@ -88,7 +88,7 @@ class PersonalizeCardActivity : BaseCardActivity() {
     activityPersonalizeCardBinding.cardAnimation.visibility = View.INVISIBLE
   }
 
-  override fun changeDisplay(
+  override fun displayResult(
       cardResult: UiCardResult,
       applicationSerialNumber: String?,
       finishActivity: Boolean?
@@ -118,7 +118,7 @@ class PersonalizeCardActivity : BaseCardActivity() {
         val result = personalizeCard()
         if (result.status == RemoteServiceStatus.SUCCESS) {
           runOnUiThread {
-            changeDisplay(
+            displayResult(
                 UiCardResult(ResultType.SUCCESS, result.card.description, emptyList()),
                 applicationSerialNumber = result.card.serialNumber,
                 finishActivity = true)

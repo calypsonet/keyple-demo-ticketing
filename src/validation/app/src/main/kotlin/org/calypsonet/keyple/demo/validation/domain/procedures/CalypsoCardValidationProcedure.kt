@@ -193,7 +193,7 @@ class CalypsoCardValidationProcedure(
     var remainingTrips: Int? = null
 
     // Step 10 - For each element in the list:
-    val sortedPriorities = sortContractPrioritiesByPriority(filteredPriorities)
+    val sortedPriorities = sortContractPriorities(filteredPriorities)
 
     // Step 11 - For each element in the list:
     for ((record, contractPriority) in sortedPriorities) {

@@ -55,12 +55,12 @@ class LoadContractScreenViewModel(
 
   private fun scan() {
     viewModelScope.launch {
-      keypleInteropService.updateReaderMessage("Place your card on the reader")
+      keypleInteropService.setScanMessage("Place your card on the reader")
       try {
         val cardFound = keypleInteropService.waitForCard()
         buzzer.beepAndVibrate()
         if (cardFound) {
-          keypleInteropService.updateReaderMessage("Stay still...")
+          keypleInteropService.setScanMessage("Stay still...")
           loadContract(route)
         } else {
           _state.value = LoadContractScreenState.DisplayError("No card found")

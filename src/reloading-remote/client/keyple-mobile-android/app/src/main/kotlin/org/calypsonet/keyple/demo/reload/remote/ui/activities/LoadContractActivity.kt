@@ -90,7 +90,7 @@ class LoadContractActivity : BaseCardActivity() {
                 tripsToLoad)
         if (result.status == RemoteServiceStatus.SUCCESS) {
           runOnUiThread {
-            changeDisplay(
+            displayResult(
                 UiCardResult(ResultType.SUCCESS, result.card.description, emptyList()),
                 finishActivity = true)
           }
@@ -109,7 +109,7 @@ class LoadContractActivity : BaseCardActivity() {
     }
   }
 
-  override fun changeDisplay(
+  override fun displayResult(
       cardResult: UiCardResult,
       applicationSerialNumber: String?,
       finishActivity: Boolean?

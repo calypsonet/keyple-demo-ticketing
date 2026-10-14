@@ -110,7 +110,7 @@ abstract class BaseCardActivity :
 
   fun showInvalidCard(cardType: String, message: String) {
     runOnUiThread {
-      changeDisplay(
+      displayResult(
           UiCardResult(ResultType.INVALID_CARD, cardType, emptyList(), message),
           finishActivity = isFinishActivityAfterResult())
     }
@@ -118,7 +118,7 @@ abstract class BaseCardActivity :
 
   fun showCardCommunicationError() {
     runOnUiThread {
-      changeDisplay(
+      displayResult(
           UiCardResult(
               ResultType.ERROR, "", emptyList(), getString(R.string.card_communication_error)),
           finishActivity = isFinishActivityAfterResult())
@@ -127,7 +127,7 @@ abstract class BaseCardActivity :
 
   fun showServerError() {
     runOnUiThread {
-      changeDisplay(
+      displayResult(
           UiCardResult(ResultType.ERROR, "", emptyList()),
           finishActivity = isFinishActivityAfterResult())
     }
@@ -139,7 +139,7 @@ abstract class BaseCardActivity :
    */
   fun showError(message: String, finishActivity: Boolean? = false) {
     runOnUiThread {
-      changeDisplay(
+      displayResult(
           UiCardResult(ResultType.ERROR, "", emptyList(), message), finishActivity = finishActivity)
     }
   }
@@ -147,7 +147,7 @@ abstract class BaseCardActivity :
   /** Only with NFC we can come back to the 'present the card' screen after a result. */
   protected fun isFinishActivityAfterResult(): Boolean = cardMedium != CardMedium.CONTACTLESS_CARD
 
-  protected abstract fun changeDisplay(
+  protected abstract fun displayResult(
       cardResult: UiCardResult,
       applicationSerialNumber: String? = null,
       finishActivity: Boolean? = false

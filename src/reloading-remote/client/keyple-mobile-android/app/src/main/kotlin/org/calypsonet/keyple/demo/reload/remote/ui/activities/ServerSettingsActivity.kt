@@ -48,30 +48,34 @@ class ServerSettingsActivity : BaseActivity() {
       }
     }
 
-    activityServerSettingsBinding.pingBtn.setOnClickListener {
-      readServerConfig()?.let { ping(it) }
+    activityServerSettingsBinding.serverReadinessBtn.setOnClickListener {
+      readServerConfig()?.let { testServerReadiness(it) }
     }
   }
 
-  private fun ping(serverConfig: ServerConfig) {
+  /** Tests whether the server entered by the user is ready (reachable, with its SAM available). */
+  private fun testServerReadiness(serverConfig: ServerConfig) {
     Timber.i("Checking the server [url=${serverConfig.url}]")
-    activityServerSettingsBinding.pingProgressBar.visibility = View.VISIBLE
-    activityServerSettingsBinding.pingResultText.visibility = View.INVISIBLE
+    activityServerSettingsBinding.serverReadinessProgressBar.visibility = View.VISIBLE
+    activityServerSettingsBinding.serverReadinessText.visibility = View.INVISIBLE
     lifecycleScope.launch(Dispatchers.Main) {
-      val isReachable =
+      val isReady =
           withContext(Dispatchers.IO) {
             try {
-              serverReadinessChecker.isServerReady(serverConfig)
-              true
+              val isReady = serverReadinessChecker.isServerReady(serverConfig)
+              if (!isReady) {
+                Timber.w("Server not ready [url=${serverConfig.url}, cause=SAM not available]")
+              }
+              isReady
             } catch (e: Exception) {
               Timber.w("Server not ready [url=${serverConfig.url}, cause=${e.message}]")
               false
             }
           }
-      activityServerSettingsBinding.pingProgressBar.visibility = View.INVISIBLE
-      activityServerSettingsBinding.pingResultText.visibility = View.VISIBLE
-      activityServerSettingsBinding.pingResultText.text =
-          getString(if (isReachable) R.string.ping_success else R.string.ping_failed)
+      activityServerSettingsBinding.serverReadinessProgressBar.visibility = View.INVISIBLE
+      activityServerSettingsBinding.serverReadinessText.visibility = View.VISIBLE
+      activityServerSettingsBinding.serverReadinessText.text =
+          getString(if (isReady) R.string.server_ready else R.string.server_not_ready)
     }
   }
 

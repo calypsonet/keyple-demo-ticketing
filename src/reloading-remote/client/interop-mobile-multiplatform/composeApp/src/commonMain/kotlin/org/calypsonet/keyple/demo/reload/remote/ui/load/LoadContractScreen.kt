@@ -12,17 +12,9 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.ui.load
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
 import org.calypsonet.keyple.demo.reload.remote.AppState
 import org.calypsonet.keyple.demo.reload.remote.ui.components.AutoReturn
@@ -33,9 +25,7 @@ import org.calypsonet.keyple.demo.reload.remote.ui.components.ScanCardAnimation
 import org.calypsonet.keyple.demo.reload.remote.ui.components.ScanScreen
 import org.calypsonet.keyple.demo.reload.remote.ui.nav.Home
 import org.calypsonet.keyple.demo.reload.remote.ui.nav.Success
-import org.calypsonet.keyple.demo.reload.remote.ui.theme.green
 import org.calypsonet.keyple.demo.reload.remote.ui.theme.red
-import org.calypsonet.keyple.demo.reload.remote.ui.theme.white
 
 @Composable
 fun LoadContractScreen(
@@ -79,20 +69,5 @@ internal fun LoadContractScreen(
             navController.navigate(Success) { popUpTo(Home) }
           }
         }
-      }
-}
-
-@Composable
-internal fun Success(title: String) {
-  Column(
-      Modifier.fillMaxSize().background(green),
-      horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement = Arrangement.Center) {
-        Text(
-            text = title,
-            color = white,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-        )
       }
 }
