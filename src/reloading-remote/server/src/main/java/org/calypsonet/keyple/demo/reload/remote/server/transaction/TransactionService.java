@@ -57,7 +57,7 @@ public class TransactionService {
     synchronized (broadcaster) {
       broadcaster.onNext(t);
     }
-    logger.trace("Transaction broadcast [transactionId={}]", t.getId());
+    logger.debug("Transaction broadcast [transactionId={}]", t.getId());
   }
 
   /**

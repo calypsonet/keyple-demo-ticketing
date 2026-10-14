@@ -244,7 +244,7 @@ dotnet publish -c Release -r win-x64 --self-contained
 - Verify card contains supported AID
 - Check card is properly positioned on reader
 - Try different cards to isolate issue
-- Enable debug logging to see APDU exchanges
+- Check the APDU exchanges in the log file (`logs/demo-keyple-less-<date>.log`, `DEBUG` level)
 
 
 ## Performance Considerations

@@ -178,7 +178,9 @@ class KeypleInteropService(
                 SELECT_APP_AND_PERSONALIZE_CARD,
                 SelectAppAndPersonalizeCardInputDto(),
                 SelectAppAndPersonalizeCardInputDto.serializer(),
-                SelectAppAndPersonalizeCardOutputDto.serializer())
+                SelectAppAndPersonalizeCardOutputDto.serializer(),
+                successLog = "Card personalized",
+                failureLog = "Personalization failed")
         when (result) {
           is KeypleResult.Failure -> {
             return@withContext result
@@ -212,7 +214,9 @@ class KeypleInteropService(
                     contractTariff = code,
                     tripsToLoad = tripsToLoad),
                 SelectAppAndLoadContractInputDto.serializer(),
-                SelectAppAndLoadContractOutputDto.serializer())
+                SelectAppAndLoadContractOutputDto.serializer(),
+                successLog = "Contract loaded [contractTariff=$code, tripsToLoad=$tripsToLoad]",
+                failureLog = "Contract loading failed")
         when (result) {
           is KeypleResult.Failure -> {
             return@withContext result
@@ -228,6 +232,10 @@ class KeypleInteropService(
   /**
    * Executes a remote service whose output only carries a status, and returns its message on
    * success.
+   *
+   * @param successLog The log message of a success.
+   * @param failureLog The log message of a failure, completed by the status code and the message of
+   *   the server.
    */
   private suspend fun <T, R : RemoteServiceOutputDto> executeServiceWithStatusOutput(
       remote: KeypleTerminal,
@@ -235,6 +243,8 @@ class KeypleInteropService(
       inputData: T? = null,
       inputSerializer: KSerializer<T>,
       outputSerializer: KSerializer<R>,
+      successLog: String,
+      failureLog: String,
   ): KeypleResult<String> {
     when (val result =
         remote.executeRemoteService(service, inputData, inputSerializer, outputSerializer)) {
@@ -251,14 +261,14 @@ class KeypleInteropService(
         if (result.data != null) {
           if (result.data!!.statusCode != 0) {
             Napier.w(
-                "Remote service failed [service=$service, statusCode=${result.data!!.statusCode}, " +
+                "$failureLog [statusCode=${result.data!!.statusCode}, " +
                     "message=${result.data!!.message}]")
             return KeypleResult.Failure(
                 status = Status.SERVER_ERROR,
                 message =
                     "Server side error: ${result.data!!.statusCode} / ${result.data!!.message}")
           } else {
-            Napier.i("Remote service executed [service=$service]")
+            Napier.i(successLog)
             return KeypleResult.Success(result.data!!.message)
           }
         } else {

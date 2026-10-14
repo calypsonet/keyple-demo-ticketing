@@ -77,7 +77,7 @@ public class CardSamObserver
   }
 
   boolean isSamAvailable() {
-    logger.trace("SAM availability checked [available={}]", isSamAvailable);
+    logger.debug("SAM availability checked [available={}]", isSamAvailable);
     return isSamAvailable;
   }
 

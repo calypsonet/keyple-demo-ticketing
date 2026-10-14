@@ -196,7 +196,7 @@ The application supports multiple reader plugins:
 
 **Debug Settings**:
 - Use test server URL for development
-- Enable verbose logging for debugging
+- Read the logs in Logcat (Timber, all levels)
 
 **Testing**:
 - Unit tests for business logic components

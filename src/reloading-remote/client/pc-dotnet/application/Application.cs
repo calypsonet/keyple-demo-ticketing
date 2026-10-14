@@ -56,14 +56,14 @@ namespace App.application
             {
                 Display("Reading failed, status code: " + outputDto.OutputData.StatusCode, ConsoleColor.DarkRed);
                 Display(outputDto.OutputData.Message, ConsoleColor.DarkRed);
-                _logger.Warning($"Contracts not read [statusCode={outputDto.OutputData.StatusCode}, message={outputDto.OutputData.Message}]");
+                _logger.Warning($"Contracts reading failed [statusCode={outputDto.OutputData.StatusCode}, message={outputDto.OutputData.Message}]");
                 return;
             }
 
             Display("Reading successful", ConsoleColor.DarkGreen);
 
             List<string> contracts = outputDto.OutputData.Items;
-            _logger.Information($"Contracts read [count={contracts.Count}]");
+            _logger.Information($"Contracts read [contracts={contracts.Count}]");
             int i = 1;
             bool multitripContractPresent = false;
             foreach (string contract in contracts)
@@ -113,7 +113,7 @@ namespace App.application
             {
                 Display("Loading failed, status code: " + outputDto.OutputData.StatusCode, ConsoleColor.DarkRed);
                 Display(outputDto.OutputData.Message, ConsoleColor.DarkRed);
-                _logger.Warning($"Trips not loaded [statusCode={outputDto.OutputData.StatusCode}, message={outputDto.OutputData.Message}]");
+                _logger.Warning($"Trips loading failed [statusCode={outputDto.OutputData.StatusCode}, message={outputDto.OutputData.Message}]");
             }
         }
 

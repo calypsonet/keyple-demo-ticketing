@@ -270,11 +270,14 @@ until a SAM is detected (no restart needed once the reader is connected and the 
 
 ### Debug Mode
 
-Enable detailed logging:
+Enable the detailed logging of the demo (`DEBUG` level: secure sessions, blocks read or written, SAM availability):
 
 ```bash
-java -Dquarkus.log.level=DEBUG -Dquarkus.log.category."org.calypsonet".level=TRACE -jar server.jar
+java -Dquarkus.log.category."org.calypsonet.keyple".level=DEBUG -jar kdt-reloading-server-X.Y.Z-full.jar
 ```
+
+The `TRACE` level cannot be used: the minimum level of Quarkus (`quarkus.log.min-level`, `DEBUG` by default) is fixed at
+build time.
 
 ### Health Checks
 

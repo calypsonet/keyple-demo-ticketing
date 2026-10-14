@@ -359,8 +359,19 @@ Message [key1=value1, key2=value2]
 | `ERROR` | Unexpected error, with the stack trace                                                                                  |
 | `WARN`  | Refusal or expected incident (card refused or removed, SAM or server unavailable), without stack trace                  |
 | `INFO`  | One line per business operation (e.g. `Loading a contract in a Calypso card [...]`) and main events of the life cycle   |
-| `DEBUG` | Technical details (blocks read or written, secure session, states of the screens)                                       |
-| `TRACE` | Repetitive events (e.g. periodic check of the SAM)                                                                      |
+| `DEBUG` | Technical details (blocks read or written, secure session, states of the screens) and repetitive events                 |
+
+The `TRACE` level is not used. A repetitive event (e.g. periodic check of the server) is logged at the `DEBUG` level,
+or only when its state changes (e.g. "Server ready", "Server not ready").
+
+Where to read the logs:
+
+| Component            | Logs                                                                   | Default level | To see the `DEBUG` messages                                                |
+|----------------------|------------------------------------------------------------------------|---------------|----------------------------------------------------------------------------|
+| Server               | Console                                                                | `INFO`        | `java -Dquarkus.log.category."org.calypsonet.keyple".level=DEBUG -jar ...` |
+| Android applications | Logcat (Android Studio or `adb logcat`)                                | All levels    | -                                                                          |
+| Multiplatform client | Logcat (Android), console (desktop), Xcode console (iOS)               | All levels    | -                                                                          |
+| .NET client          | File `logs/demo-keyple-less-<date>.log` (kept 7 days), not the console | `DEBUG`       | -                                                                          |
 
 Examples:
 

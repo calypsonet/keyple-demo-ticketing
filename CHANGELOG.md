@@ -129,6 +129,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Log messages (fourth audit): the results of the reloading operations are logged with the same messages by the
+  three clients ("Contract loaded", "Contract loading failed", "Card personalized", "Personalization failed" in the
+  multiplatform client instead of "Remote service executed/failed"; "Contracts reading failed" and "Trips loading
+  failed" in the .NET client instead of "...not read" and "...not loaded"); the `TRACE` level is no longer used (its two
+  server messages, removed by the minimum level of Quarkus fixed at build time, are logged at the `DEBUG` level); the
+  README describes where to read the logs of each component and how to see the `DEBUG` messages, and the inexact
+  logging instructions of the server, .NET client and reloading Android client READMEs are corrected.
 - Log messages (third audit): the reloading clients log the result of each operation (contracts read, contract
   loaded, card personalized, or failure with its status), the reading, loading and personalization use cases of the
   Android client receiving the `Logger` port; the multiplatform client logs a refusal of the server at the `WARN`
