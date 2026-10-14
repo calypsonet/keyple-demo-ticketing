@@ -170,7 +170,7 @@ class CardReaderSession(
       // notify reader that se detection has been switched off
       (terminalReaders.getCardReader() as ObservableCardReader).stopCardDetection()
     } catch (e: Exception) {
-      logger.w("Error while stopping the card detection", e)
+      logger.w("Error while stopping the card detection [cause=${e.message}]")
     }
   }
 
@@ -190,7 +190,7 @@ class CardReaderSession(
       logger.d("Ending the card processing")
       (terminalReaders.getCardReader() as ObservableCardReader).finalizeCardProcessing()
     } catch (e: Exception) {
-      logger.w("Error while ending the card processing", e)
+      logger.w("Error while ending the card processing [cause=${e.message}]")
     }
     userFeedback.displayWaiting()
   }

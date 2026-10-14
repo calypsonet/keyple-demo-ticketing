@@ -249,8 +249,8 @@ class KeypleInteropService(
     when (val result =
         remote.executeRemoteService(service, inputData, inputSerializer, outputSerializer)) {
       is KeypleResult.Failure -> {
-        Napier.e(
-            "Error while executing the service [service=$service, status=${result.status}, " +
+        Napier.w(
+            "Remote service execution failed [service=$service, status=${result.status}, " +
                 "message=${result.message}, output=${result.data}]")
         return KeypleResult.Failure(
             status = result.status,
@@ -297,8 +297,8 @@ class KeypleInteropService(
 
     when (val result = remote.executeRemoteService(service, inputDataStr)) {
       is KeypleResult.Failure -> {
-        Napier.e(
-            "Error while executing the service [service=$service, status=${result.status}, " +
+        Napier.w(
+            "Remote service execution failed [service=$service, status=${result.status}, " +
                 "message=${result.message}, output=${result.data}]")
         return KeypleResult.Failure(result.status, result.message)
       }

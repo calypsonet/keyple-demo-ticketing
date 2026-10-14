@@ -129,6 +129,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Log messages (sixth audit): the incidents without consequence of the end of the card processing and of the stop
+  of the card detection are logged at the `WARN` level with their cause instead of their stack trace, and the failures
+  of the remote services returned by the interop library (multiplatform client) at the `WARN` level ("Remote service
+  execution failed") instead of the `ERROR` level, as described by the convention.
 - Log messages (fifth audit): the errors which were silently ignored are logged: stop of the card detection
   (validation app, at the `WARN` level as in the control app, which logged it at the `ERROR` level), wait for the card
   (multiplatform client), wait for a card and errors of the card or of the reader returned to the server (.NET client).

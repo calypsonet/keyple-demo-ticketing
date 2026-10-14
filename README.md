@@ -348,8 +348,8 @@ Message [key1=value1, key2=value2]
 - **No class or method name** in the message: the logger gives it (tag of `TimberLogger`, logger of the class with
   SLF4J, Napier and Serilog).
 - **Exceptions**:
-  - unexpected error: `ERROR` level, the exception being attached to the call (stack trace) and not copied in the
-    message, e.g. `logger.error("Unexpected error while loading the contract", e)`;
+  - unexpected error: `ERROR` level, the exception, when there is one, being attached to the call (stack trace) and
+    not copied in the message, e.g. `logger.error("Unexpected error while loading the contract", e)`;
   - expected incident (card refused or removed, server not ready): `WARN` level without stack trace, the message of
     the exception being given in the `cause` key, e.g. `Card communication error while loading the contract [cause=...]`;
   - an exception thrown again is not logged: it is logged once, where it is handled.
