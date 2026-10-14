@@ -13,9 +13,8 @@
 package org.calypsonet.keyple.demo.validation.data
 
 /**
- * Manages the User Interface (UI) feedback for the validation application, handling visual (LEDs)
- * and auditory (sounds) indications. This interface provides a common API for different terminal
- * implementations.
+ * Feedback device of the terminal, giving the user feedback of the validation with LEDs and sounds.
+ * This interface provides a common API for different terminal implementations.
  */
 internal interface FeedbackDevice {
   /**
@@ -34,6 +33,6 @@ internal interface FeedbackDevice {
   /** Displays feedback indicating the terminal is waiting for a card. */
   fun displayWaiting()
 
-  /** Releases resources held by the UI manager. */
+  /** Releases resources held by the feedback device. */
   fun release()
 }

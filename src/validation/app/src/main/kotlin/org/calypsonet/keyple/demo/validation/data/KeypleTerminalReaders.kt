@@ -42,6 +42,7 @@ import org.eclipse.keypop.reader.ObservableCardReader
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 
+/** [TerminalReaders] adapter based on the Keyple reader plugins of the terminal. */
 class KeypleTerminalReaders
 @Inject
 constructor(

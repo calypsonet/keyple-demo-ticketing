@@ -55,7 +55,7 @@ class CardReaderActivity : BaseCardActivity() {
     try {
       when (cardMedium) {
         CardMedium.CONTACTLESS_CARD -> {
-          if (!isBluebirdDevice) {
+          if (!isBluebirdTerminal) {
             val nfcManager = getSystemService(NFC_SERVICE) as NfcManager
             if (nfcManager.defaultAdapter?.isEnabled == true) {
               showPresentNfcCardInstructions()

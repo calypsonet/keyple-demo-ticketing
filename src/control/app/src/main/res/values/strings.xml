@@ -30,7 +30,7 @@
     <string name="control_info">Control information</string>
     <string name="msg_location_period_empty">Please fill in validation period</string>
 
-    <!-- Device selector screen -->
+    <!-- Terminal selection screen -->
     <string name="terminal_title">Select the terminal</string>
     <string name="terminal_bluebird">BLUEBIRD</string>
     <string name="terminal_famoco">FAMOCO</string>
@@ -40,10 +40,10 @@
     <string name="home_description">Open Source API for Smart Ticketing</string>
     <string name="calypso">Calypso Networks Association</string>
 
-    <!-- Present screen -->
+    <!-- Card reader screen -->
     <string name="present_card_label">Please present a contactless card to be controlled</string>
 
-    <!-- CardContent screen -->
+    <!-- Card content screen -->
     <string name="sam_available">SAM available and enabled</string>
     <string name="sam_not_available">SAM not available</string>
     <string name="authentication_mode_sam">Card authenticated by the SAM</string>
@@ -59,14 +59,14 @@
     <string name="card_content_description_multi_trip_multiple">%d trips left</string>
     <string name="status_unspecified">An error occurred during card reading, please try again.</string>
 
-    <!-- NetworkInvalid screen -->
+    <!-- Invalid card screen -->
     <string name="card_invalid_title">Not valid on this network</string>
 
-    <!--    Dialog-->
+    <!-- Dialog -->
     <string name="permission_denied_message">You must accept the requested permissions to continue. Please relaunch the app.</string>
     <string name="nfc_not_enabled">The NFC feature of the device does not seem to be available. Please activate the NFC function before continuing.</string>
 
-    <!-- Test values-->
+    <!-- Layout preview placeholders -->
     <string name="validation_label_placeholder">Multi-trip ticket - Place de la Bastille</string>
     <string name="contract_name_placeholder">Multi-trip ticket</string>
     <string name="card_content_validation_date_placeholder">DD Month YYYY, HH:MM:SS</string>

@@ -39,10 +39,7 @@ import org.eclipse.keypop.reader.ReaderCommunicationException
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 
-/**
- * Manager provided to encapsulate slight differences between readers provides methods to improve
- * code readability.
- */
+/** [TerminalReaders] adapter based on the Keyple reader plugins of the terminal. */
 class KeypleTerminalReaders @Inject constructor(private val logger: Logger) : TerminalReaders {
 
   private lateinit var terminalType: TerminalType

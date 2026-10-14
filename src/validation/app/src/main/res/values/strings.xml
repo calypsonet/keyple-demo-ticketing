@@ -26,7 +26,7 @@
     <string name="time_label">Set time and date</string>
     <string name="start_label">Start</string>
 
-    <!-- Device selector screen -->
+    <!-- Terminal selection screen -->
     <string name="terminal_title">Select the terminal</string>
     <string name="terminal_arrive">ARRIVE</string>
     <string name="terminal_bluebird">BLUEBIRD</string>
@@ -37,12 +37,12 @@
     <string name="start_validation_label">Start validation</string>
     <string name="calypso">Calypso Networks Association</string>
 
-    <!-- Error screen -->
+    <!-- Errors of the validation result -->
     <string name="card_invalid_main_desc">Card refused</string>
 
     <!-- MIFARE Classic specific errors -->
 
-    <!--    Dialog-->
+    <!-- Dialog -->
     <string name="permission_denied_message">You must accept the requested permissions to continue. Please relaunch the app.</string>
 
     <!-- Card types and results of the validation -->

@@ -27,7 +27,7 @@ import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
  */
 interface TerminalReaders {
   /**
-   * Returns the name of the reader to use for the given reader type and device.
+   * Returns the name of the reader to use for the given terminal type and card medium.
    *
    * @param terminalType The type of terminal.
    * @param cardMedium The card medium (contactless card, SIM...) to read.

@@ -35,10 +35,10 @@ abstract class BaseCardActivity :
   @Inject lateinit var cardReaderSession: CardReaderSession
   lateinit var cardMedium: CardMedium
 
-  val isBluebirdDevice = Build.MANUFACTURER?.lowercase()?.contains("bluebird") == true
+  val isBluebirdTerminal = Build.MANUFACTURER?.lowercase()?.contains("bluebird") == true
 
   private val terminalType: TerminalType
-    get() = if (isBluebirdDevice) TerminalType.BLUEBIRD else TerminalType.NFC_TERMINAL
+    get() = if (isBluebirdTerminal) TerminalType.BLUEBIRD else TerminalType.NFC_TERMINAL
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)

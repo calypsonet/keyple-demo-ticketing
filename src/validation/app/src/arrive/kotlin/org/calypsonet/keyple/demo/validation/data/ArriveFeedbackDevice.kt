@@ -22,7 +22,7 @@ import java.io.File
 import org.calypsonet.keyple.demo.validation.domain.spi.Logger
 
 /**
- * Manages UI feedback (LEDs, sounds) for Arrive terminals using the Parkeon SDK.
+ * User feedback (LEDs, sounds) of the Arrive terminals, using the Parkeon SDK.
  *
  * Replaces the UI methods previously provided by the FlowBird plugin (FlowbirdUserFeedback), which
  * were removed in the Arrive plugin. Uses LedInterface and SoundManager from AndroidParkeonCommon.

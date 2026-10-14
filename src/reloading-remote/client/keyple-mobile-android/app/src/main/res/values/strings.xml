@@ -89,7 +89,7 @@
     <string name="invalid_server_port">Please set a valid port</string>
     <string name="invalid_server_protocol">Please set a valid protocol</string>
 
-    <!-- CardContent screen -->
+    <!-- Card content screen -->
     <string name="content_title">Content</string>
     <string name="contract_name_placeholder">Multi-trip ticket</string>
     <string name="card_content_description_placeholder">From DD Month YYYY to DD Month YYYY</string>

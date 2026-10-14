@@ -15,7 +15,7 @@ package org.calypsonet.keyple.demo.validation.data
 import android.content.Context
 import org.calypsonet.keyple.demo.validation.domain.spi.Logger
 
-/** Mock UI manager feedback for Arrive terminals */
+/** Mock of the feedback device of the Arrive terminals. */
 internal class ArriveFeedbackDevice(private val context: Context, private val logger: Logger) :
     FeedbackDevice {
   override fun init(onReady: () -> Unit) {}

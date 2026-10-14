@@ -134,7 +134,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `ReadCardCache`) and `applicationSerialNumber` in the server (instead of `appSerialNumber`); the dimension of the
   validation result overlay is `validation_result_desc_top_margin` (instead of `summary_desc_top_margin`); the
   activities of the control app take the name of the application (their labels were their class names); the
-  unused `date` of the products of the multiplatform client is removed.
+  unused `date` of the products of the multiplatform client is removed. The comments follow the glossary
+  (terminal selection, card content, invalid card, card medium, user feedback, instead of "device", "present",
+  "network invalid", "UI manager"), the `KeypleTerminalReaders` adapters of the three applications have the same
+  description, and the reloading Android client names `isBluebirdTerminal` the detection of a Bluebird terminal
+  (instead of `isBluebirdDevice`).
 - Vocabulary harmonized with the glossary (seventh audit): the theme and the top bar of the multiplatform client
   are named `AppTheme` and `AppTopBar` (instead of `KeypleTheme` and `KeypleTopAppBar`), the "Keyple" prefix
   being kept for the integration of the Keyple libraries; the .NET client names its service API
