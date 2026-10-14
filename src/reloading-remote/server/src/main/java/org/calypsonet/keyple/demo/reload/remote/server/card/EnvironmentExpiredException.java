@@ -13,8 +13,8 @@
 package org.calypsonet.keyple.demo.reload.remote.server.card;
 
 /** Thrown when the end date of the environment of the card is in the past. */
-class ExpiredEnvironmentException extends RuntimeException {
-  ExpiredEnvironmentException() {
+class EnvironmentExpiredException extends RuntimeException {
+  EnvironmentExpiredException() {
     super("The environment has expired");
   }
 }

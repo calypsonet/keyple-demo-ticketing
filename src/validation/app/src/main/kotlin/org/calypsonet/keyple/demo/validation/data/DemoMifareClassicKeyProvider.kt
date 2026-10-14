@@ -15,7 +15,7 @@ package org.calypsonet.keyple.demo.validation.data
 import org.eclipse.keyple.core.util.HexUtil
 
 /**
- * Provides Mifare Classic authentication keys for Android NFC and Bluebird plugins. For demo
+ * Provides MIFARE Classic authentication keys for Android NFC and Bluebird plugins. For demo
  * purposes, returns the factory default key (FF FF FF FF FF FF).
  *
  * In production, this should be replaced with a secure key management system using Android KeyStore

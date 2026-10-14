@@ -89,8 +89,8 @@ public class ContractCounterService {
       statusCode = RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode();
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
       message = CARD_NOT_PERSONALIZED;
-    } catch (ExpiredEnvironmentException e) {
-      statusCode = RemoteServiceStatus.EXPIRED_ENVIRONMENT.getCode();
+    } catch (EnvironmentExpiredException e) {
+      statusCode = RemoteServiceStatus.ENVIRONMENT_EXPIRED.getCode();
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
       message = ENVIRONMENT_EXPIRED;
     } catch (CardCommunicationException e) {
@@ -147,8 +147,8 @@ public class ContractCounterService {
       statusCode = RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode();
       message = CARD_NOT_PERSONALIZED;
       logger.error(AN_ERROR_OCCURRED_WHILE_INCREASING_THE_CONTRACT_COUNTER, e.getMessage());
-    } catch (ExpiredEnvironmentException e) {
-      statusCode = RemoteServiceStatus.EXPIRED_ENVIRONMENT.getCode();
+    } catch (EnvironmentExpiredException e) {
+      statusCode = RemoteServiceStatus.ENVIRONMENT_EXPIRED.getCode();
       message = ENVIRONMENT_EXPIRED;
       logger.error(AN_ERROR_OCCURRED_WHILE_INCREASING_THE_CONTRACT_COUNTER, e.getMessage());
     } catch (CardCommunicationException e) {

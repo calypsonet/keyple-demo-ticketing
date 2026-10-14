@@ -40,7 +40,7 @@
     <!-- Error screen -->
     <string name="card_invalid_main_desc">Card refused</string>
 
-    <!-- Mifare Classic specific errors -->
+    <!-- MIFARE Classic specific errors -->
 
     <!--    Dialog-->
     <string name="permission_denied_message">You must accept the requested permissions to continue. Please relaunch the app.</string>

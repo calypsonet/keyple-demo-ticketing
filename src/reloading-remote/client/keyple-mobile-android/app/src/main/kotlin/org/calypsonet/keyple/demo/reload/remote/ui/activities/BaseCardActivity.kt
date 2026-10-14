@@ -95,9 +95,11 @@ abstract class BaseCardActivity :
                   String.format(
                       getString(R.string.card_invalid_structure), card.applicationSubtype))
       RemoteServiceStatus.CARD_NOT_PERSONALIZED ->
-          launchInvalidCardResponse(card.description, getString(R.string.card_not_personalized))
-      RemoteServiceStatus.EXPIRED_ENVIRONMENT ->
-          launchInvalidCardResponse(card.description, getString(R.string.expired_environment))
+          launchInvalidCardResponse(
+              card.description, getString(R.string.rejection_environment_wrong_version))
+      RemoteServiceStatus.ENVIRONMENT_EXPIRED ->
+          launchInvalidCardResponse(
+              card.description, getString(R.string.rejection_environment_expired))
       RemoteServiceStatus.DIFFERENT_CARD ->
           launchInvalidCardResponse(card.description, getString(R.string.not_the_same_card))
       RemoteServiceStatus.CARD_FULL ->

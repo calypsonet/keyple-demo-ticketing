@@ -230,7 +230,7 @@
         android:id="@+id/embeddedCardSetting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/embedded_secure_elem"
+        android:text="@string/embedded_secure_element"
         style="@style/mediumBoldDarkBlue"
         android:layout_marginStart="@dimen/settings_btn_padding_horizontal"
         app:layout_constraintStart_toStartOf="parent"

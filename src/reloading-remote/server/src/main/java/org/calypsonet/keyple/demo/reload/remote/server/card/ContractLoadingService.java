@@ -222,7 +222,7 @@ public class ContractLoadingService {
         newContract = buildSeasonContract(null);
       }
     } else {
-      // Calypso: Issuing new contract, find available position
+      // Calypso: loading of a new contract, find available position
       newContractNumber = findAvailablePosition(contracts, currentEvent);
       if (newContractNumber == 0) {
         logger.warn(THE_CARD_IS_FULL);

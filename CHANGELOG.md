@@ -129,6 +129,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Vocabulary harmonized with the glossary (sixth audit): the status of an expired environment is
+  `RemoteServiceStatus.ENVIRONMENT_EXPIRED` (instead of `EXPIRED_ENVIRONMENT`, same code), as the
+  `RejectionReason.ENVIRONMENT_EXPIRED` of the Android applications, and the exception of the server
+  `EnvironmentExpiredException`; the reloading Android client names the texts of these refusals as the control and
+  validation apps (`rejection_environment_wrong_version`, `rejection_environment_expired`, instead of
+  `card_not_personalized` and `expired_environment`), and its "Embedded Secure Element" text
+  `embedded_secure_element`; the label of `PriorityCode.FORBIDDEN` is "Forbidden"; the server names the
+  personalization and the loading in its comments and logs (instead of "init", "initialization" and "issuing");
+  "MIFARE Classic" in the comments, logs and documentation; the iOS application is identified by
+  `org.calypsonet.keyple.demo.reload.remote.interop` (as the Android application of the multiplatform client).
 - Vocabulary harmonized with the glossary (fifth audit): the glossary of `README.md` describes the operations
   (reading, loading, renewal of a season pass, personalization, validation, control) and the use of "reload",
   "issuance", "initialization" and "write"; the documentation of the reloading demo uses them (personalization and

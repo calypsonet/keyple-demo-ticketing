@@ -38,16 +38,16 @@ import org.eclipse.keypop.storagecard.card.StorageCard
 import org.eclipse.keypop.storagecard.transaction.StorageCardTransactionManager
 
 /**
- * Unified validation procedure for all storage cards (MIFARE Ultralight, ST25, Mifare Classic).
+ * Unified validation procedure for all storage cards (MIFARE Ultralight, ST25, MIFARE Classic).
  *
  * This procedure adapts its behavior based on the card's ProductType characteristics:
- * - For cards requiring authentication (Mifare Classic): performs sector authentication before
+ * - For cards requiring authentication (MIFARE Classic): performs sector authentication before
  *   read/write
- * - Block layout adapts to card type (4-byte blocks for UL/ST25, 16-byte blocks for Mifare Classic)
+ * - Block layout adapts to card type (4-byte blocks for UL/ST25, 16-byte blocks for MIFARE Classic)
  *
  * Block layouts:
  * - MIFARE Ultralight/ST25 SRT512: blocks 4-7 (Env), 8-11 (Contract), 12-15 (Event) [4 bytes each]
- * - Mifare Classic 1K: blocks 4 (Env), 5 (Contract), 6 (Event) [16 bytes each, sector 1]
+ * - MIFARE Classic 1K: blocks 4 (Env), 5 (Contract), 6 (Event) [16 bytes each, sector 1]
  */
 class StorageCardValidationProcedure(
     private val keypopApiProvider: KeypopApiProvider,
@@ -92,10 +92,10 @@ class StorageCardValidationProcedure(
   /** Returns the technical error corresponding to the provided exception. */
   private fun technicalError(productType: ProductType, e: Exception): TechnicalError =
       when {
-        // Specific authentication failure for Mifare Classic
+        // Specific authentication failure for MIFARE Classic
         productType.hasAuthentication() && e.message?.contains("auth", ignoreCase = true) == true ->
             TechnicalError.MIFARE_CLASSIC_AUTHENTICATION_FAILED
-        // Generic Mifare Classic transaction failure
+        // Generic MIFARE Classic transaction failure
         productType.hasAuthentication() -> TechnicalError.MIFARE_CLASSIC_TRANSACTION_FAILED
         // Other storage card errors
         else -> TechnicalError.UNEXPECTED
@@ -110,7 +110,7 @@ class StorageCardValidationProcedure(
   ): ValidationResult {
     val validationDateTime = context.dateTime
 
-    // Determine if this card requires authentication (Mifare Classic)
+    // Determine if this card requires authentication (MIFARE Classic)
     val requiresAuth = storageCard.productType.hasAuthentication()
     val isMifareClassic = storageCard.productType == ProductType.MIFARE_CLASSIC_1K
 
@@ -119,7 +119,7 @@ class StorageCardValidationProcedure(
         "Starting validation for ${storageCard.productType.name} " +
             "(requiresAuth=$requiresAuth, isMifareClassic=$isMifareClassic)")
 
-    // ========= AUTHENTICATION PHASE (Mifare Classic only) =========
+    // ========= AUTHENTICATION PHASE (MIFARE Classic only) =========
     if (requiresAuth) {
       logger.d(
           "Authenticating sector 1 with KEY_A (keyNumber=${MifareClassicBlocks.DEFAULT_KEY_NUMBER})")
@@ -133,9 +133,9 @@ class StorageCardValidationProcedure(
     // Read environment, contract, and event based on card type
     if (isMifareClassic) {
       logger.d(
-          "Reading Mifare Classic blocks: ${MifareClassicBlocks.ENVIRONMENT_AND_HOLDER_BLOCK}, " +
+          "Reading MIFARE Classic blocks: ${MifareClassicBlocks.ENVIRONMENT_AND_HOLDER_BLOCK}, " +
               "${MifareClassicBlocks.CONTRACT_BLOCK}, ${MifareClassicBlocks.EVENT_BLOCK}")
-      // Mifare Classic: read individual 16-byte blocks
+      // MIFARE Classic: read individual 16-byte blocks
       cardTransaction
           .prepareReadBlocks(
               MifareClassicBlocks.ENVIRONMENT_AND_HOLDER_BLOCK,
@@ -269,7 +269,7 @@ class StorageCardValidationProcedure(
                     PriorityCode.FORBIDDEN,
                     PriorityCode.FORBIDDEN))
 
-    // Re-authenticate for Mifare Classic before writing (best practice)
+    // Re-authenticate for MIFARE Classic before writing (best practice)
     if (requiresAuth) {
       logger.d("Re-authenticating before write operation")
       cardTransaction.prepareMifareClassicAuthenticate(
@@ -284,7 +284,7 @@ class StorageCardValidationProcedure(
     val eventBytesToWrite = StorageCardEventCodec.encode(eventToWrite)
 
     if (isMifareClassic) {
-      // Mifare Classic: write individual blocks
+      // MIFARE Classic: write individual blocks
       cardTransaction
           .prepareWriteBlocks(MifareClassicBlocks.CONTRACT_BLOCK, updatedContractContent)
           .prepareWriteBlocks(MifareClassicBlocks.EVENT_BLOCK, eventBytesToWrite)

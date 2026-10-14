@@ -170,16 +170,16 @@ public class CardRepository {
             .getStorageCardApiFactory()
             .createStorageCardTransactionManager(cardReader, storageCard);
 
-    // Mifare Classic requires authentication before reading
+    // MIFARE Classic requires authentication before reading
     if (storageCard.getProductType().hasAuthentication()) {
       logger.info(
-          "Mifare Classic detected - authenticating sector 1 (block 4) with KEY_A, keyNumber=0");
+          "MIFARE Classic detected - authenticating sector 1 (block 4) with KEY_A, keyNumber=0");
       cardTransactionManager.prepareMifareClassicAuthenticate(4, MifareClassicKeyType.KEY_A, 0);
     } else {
       logger.info("No authentication required for StorageCard: {}", JsonUtil.toJson(storageCard));
     }
 
-    // For Mifare Classic 1K, read only data blocks 4-6 (sector 1, avoiding sector trailer block 7)
+    // For MIFARE Classic 1K, read only data blocks 4-6 (sector 1, avoiding sector trailer block 7)
     // For other storage cards, read all blocks
     int startBlock = 0;
     int endBlock = storageCard.getProductType().getBlockCount() - 1;
@@ -187,7 +187,7 @@ public class CardRepository {
       startBlock = 4;
       endBlock = 6;
       logger.info(
-          "Mifare Classic 1K - reading data blocks {} to {} (avoiding sector trailer block 7)",
+          "MIFARE Classic 1K - reading data blocks {} to {} (avoiding sector trailer block 7)",
           startBlock,
           endBlock);
     } else {
@@ -259,10 +259,10 @@ public class CardRepository {
             .getStorageCardApiFactory()
             .createStorageCardTransactionManager(cardReader, storageCard);
 
-    // Mifare Classic requires authentication before writing
+    // MIFARE Classic requires authentication before writing
     if (storageCard.getProductType().hasAuthentication()) {
       logger.info(
-          "Mifare Classic detected - authenticating sector 1 (block 4) with KEY_A, keyNumber=0 before write");
+          "MIFARE Classic detected - authenticating sector 1 (block 4) with KEY_A, keyNumber=0 before write");
       cardTransactionManager.prepareMifareClassicAuthenticate(4, MifareClassicKeyType.KEY_A, 0);
     }
 
@@ -273,7 +273,7 @@ public class CardRepository {
       for (int i = 0; i < contractCount; i++) {
         ContractStructure contract = card.getContracts().get(i);
         if (card.getUpdatedContracts().contains(contract)) {
-          // For Mifare Classic 1K, write to block 5 (16 bytes)
+          // For MIFARE Classic 1K, write to block 5 (16 bytes)
           // For other cards, write to blocks 8-11 (4×4 bytes = 16 bytes)
           int contractBlock =
               (storageCard.getProductType() == ProductType.MIFARE_CLASSIC_1K)
@@ -287,7 +287,7 @@ public class CardRepository {
     }
     /* Update event */
     if (Boolean.TRUE.equals(card.isEventUpdated())) {
-      // For Mifare Classic 1K, write to block 6 (16 bytes)
+      // For MIFARE Classic 1K, write to block 6 (16 bytes)
       // For other cards, write to blocks 12-15 (4×4 bytes = 16 bytes)
       int eventBlock =
           (storageCard.getProductType() == ProductType.MIFARE_CLASSIC_1K)
@@ -339,7 +339,7 @@ public class CardRepository {
   void personalizeCard(CardReader cardReader, StorageCard storageCard, CardResource samResource) {
 
     logger.info(
-        "Initializing StorageCard: ProductType={}, BlockSize={} bytes",
+        "Personalizing StorageCard: ProductType={}, BlockSize={} bytes",
         storageCard.getProductType(),
         storageCard.getProductType().getBlockSize());
 
@@ -349,14 +349,14 @@ public class CardRepository {
             .getStorageCardApiFactory()
             .createStorageCardTransactionManager(cardReader, storageCard);
 
-    // Mifare Classic requires authentication before writing
+    // MIFARE Classic requires authentication before writing
     if (storageCard.getProductType().hasAuthentication()) {
       logger.info(
-          "Mifare Classic detected - authenticating sector 1 (block 4) with KEY_A, keyNumber=0 before initialization");
+          "MIFARE Classic detected - authenticating sector 1 (block 4) with KEY_A, keyNumber=0 before personalization");
       cardTransactionManager.prepareMifareClassicAuthenticate(4, MifareClassicKeyType.KEY_A, 0);
     }
 
-    // For Mifare Classic 1K, use single-block layout (blocks 4, 5, 6)
+    // For MIFARE Classic 1K, use single-block layout (blocks 4, 5, 6)
     // For other cards, use multi-block layout (blocks 4-7, 8-11, 12-15)
     boolean isMifareClassic = storageCard.getProductType() == ProductType.MIFARE_CLASSIC_1K;
     int environmentBlock =
@@ -381,7 +381,7 @@ public class CardRepository {
         contractBlock, new byte[StorageCardBlocks.CONTRACT_RECORD_SIZE_BYTES]);
 
     cardTransactionManager.processCommands(ChannelControl.KEEP_OPEN);
-    logger.info("StorageCard initialization completed successfully");
+    logger.info("StorageCard personalization completed successfully");
   }
 
   @NotNull
@@ -482,11 +482,11 @@ public class CardRepository {
     List<ContractStructure> contracts = new ArrayList<>();
     EventStructure event;
 
-    // Mifare Classic 1K uses a different layout: 1 block of 16 bytes per structure
+    // MIFARE Classic 1K uses a different layout: 1 block of 16 bytes per structure
     // (blocks 4, 5, 6) instead of 4 blocks of 4 bytes (blocks 4-7, 8-11, 12-15)
     if (storageCard.getProductType() == ProductType.MIFARE_CLASSIC_1K) {
       logger.info(
-          "Parsing Mifare Classic 1K data: Using single-block layout (block 4=Environment, 5=Contract, 6=Event)");
+          "Parsing MIFARE Classic 1K data: Using single-block layout (block 4=Environment, 5=Contract, 6=Event)");
 
       // Parse environment from block 4 (16 bytes)
       environment = StorageCardEnvironmentHolderCodec.INSTANCE.decode(storageCard.getBlock(4));

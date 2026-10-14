@@ -107,11 +107,11 @@ public class ContractAnalysisService {
       transactionRecorder.record(pluginType, false, SECURED_READ, appSerialNumber);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode());
-    } catch (ExpiredEnvironmentException e) {
+    } catch (EnvironmentExpiredException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
       transactionRecorder.record(pluginType, false, SECURED_READ, appSerialNumber);
       return new AnalyzeContractsOutputDto(
-          Collections.emptyList(), RemoteServiceStatus.EXPIRED_ENVIRONMENT.getCode());
+          Collections.emptyList(), RemoteServiceStatus.ENVIRONMENT_EXPIRED.getCode());
     } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
       transactionRecorder.record(pluginType, false, SECURED_READ, appSerialNumber);
@@ -158,11 +158,11 @@ public class ContractAnalysisService {
       transactionRecorder.record(pluginType, false, READ, cardUID);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode());
-    } catch (ExpiredEnvironmentException e) {
+    } catch (EnvironmentExpiredException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
       transactionRecorder.record(pluginType, false, READ, cardUID);
       return new AnalyzeContractsOutputDto(
-          Collections.emptyList(), RemoteServiceStatus.EXPIRED_ENVIRONMENT.getCode());
+          Collections.emptyList(), RemoteServiceStatus.ENVIRONMENT_EXPIRED.getCode());
     } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
       transactionRecorder.record(pluginType, false, READ, cardUID);
@@ -186,7 +186,7 @@ public class ContractAnalysisService {
    * ContractTariff field keeping the type of the contract.
    *
    * @throws CardNotPersonalizedException If the environment has not the current version.
-   * @throws ExpiredEnvironmentException If the environment has expired.
+   * @throws EnvironmentExpiredException If the environment has expired.
    */
   List<ContractStructure> findPresentContracts(CardData card) {
     // Check environment
@@ -197,7 +197,7 @@ public class ContractAnalysisService {
     }
     if (environment.getEnvEndDate().getDate().isBefore(LocalDate.now())) {
       logger.warn(ENV_END_DATE_OF_CARD_IS_INVALID_REJECT_CARD);
-      throw new ExpiredEnvironmentException();
+      throw new EnvironmentExpiredException();
     }
     // Check last event
     EventStructure lastEvent = card.getEvent();

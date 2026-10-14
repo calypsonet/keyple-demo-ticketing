@@ -77,7 +77,7 @@ class StorageCardControlProcedure(
           "Reading card: ${storageCard.productType.name} " +
               "(requiresAuth=$requiresAuth, isMifareClassic=$isMifareClassic)")
 
-      // ========= AUTHENTICATION PHASE (Mifare Classic only) =========
+      // ========= AUTHENTICATION PHASE (MIFARE Classic only) =========
       if (requiresAuth) {
         logger.d(
             "Authenticating sector 1 with KEY_A (keyNumber=${MifareClassicBlocks.DEFAULT_KEY_NUMBER})")
@@ -91,9 +91,9 @@ class StorageCardControlProcedure(
       // Step 2 - Read environment, event and contract structures based on card type
       if (isMifareClassic) {
         logger.d(
-            "Reading Mifare Classic blocks: ${MifareClassicBlocks.ENVIRONMENT_AND_HOLDER_BLOCK}, " +
+            "Reading MIFARE Classic blocks: ${MifareClassicBlocks.ENVIRONMENT_AND_HOLDER_BLOCK}, " +
                 "${MifareClassicBlocks.CONTRACT_BLOCK}, ${MifareClassicBlocks.EVENT_BLOCK}")
-        // Mifare Classic: read individual 16-byte blocks
+        // MIFARE Classic: read individual 16-byte blocks
         cardTransaction
             .prepareReadBlocks(
                 MifareClassicBlocks.ENVIRONMENT_AND_HOLDER_BLOCK,
@@ -271,7 +271,7 @@ class StorageCardControlProcedure(
   /** Returns the technical error corresponding to the provided exception. */
   private fun technicalError(productType: ProductType, e: Exception): TechnicalError =
       when {
-        // Specific error handling for Mifare Classic authentication failures
+        // Specific error handling for MIFARE Classic authentication failures
         productType.hasAuthentication() && e.message?.contains("auth", ignoreCase = true) == true ->
             TechnicalError.MIFARE_CLASSIC_AUTHENTICATION_FAILED
         productType.hasAuthentication() -> TechnicalError.MIFARE_CLASSIC_READING_FAILED

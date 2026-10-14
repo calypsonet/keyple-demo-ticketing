@@ -9,8 +9,8 @@
     <string name="card_invalid_label">Not valid on this network</string>
     <string name="card_invalid_structure">Invalid card\nFile structure %sh not supported</string>
     <string name="storage_card_invalid">Invalid storage card</string>
-    <string name="card_not_personalized">Environment error: wrong version number</string>
-    <string name="expired_environment">Environment error: end date expired</string>
+    <string name="rejection_environment_wrong_version">Environment error: wrong version number</string>
+    <string name="rejection_environment_expired">Environment error: end date expired</string>
     <string name="not_the_same_card">Not the same card</string>
     <string name="card_full">No space left on the card for a new ticket</string>
     <string name="undetermined_card_type">Undetermined card type</string>
@@ -30,7 +30,7 @@
     <string name="contactless_card">Contactless card</string>
     <string name="sim_card">SIM card</string>
     <string name="wearable">Wearable</string>
-    <string name="embedded_secure_elem">Embedded Secure Element</string>
+    <string name="embedded_secure_element">Embedded Secure Element</string>
 
 
     <string name="card_medium_selection">Choose a card</string>

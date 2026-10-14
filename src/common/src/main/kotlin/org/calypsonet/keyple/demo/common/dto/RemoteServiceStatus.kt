@@ -32,7 +32,7 @@ enum class RemoteServiceStatus(val code: Int) {
   /** The card has not been personalized. */
   CARD_NOT_PERSONALIZED(4),
   /** The environment of the card has expired. */
-  EXPIRED_ENVIRONMENT(5),
+  ENVIRONMENT_EXPIRED(5),
   /** The presented card is not the one read before the contract loading. */
   DIFFERENT_CARD(6),
   /**

@@ -96,7 +96,7 @@ java -jar kdt-reloading-server-X.Y.Z-full.jar
 
 ### 2. Card Personalization
 
-Use any client application's personalization feature to initialize cards with:
+Use any client application's personalization feature to personalize cards with:
 
 - Environment data (validity dates, application number)
 - Clean contract slots

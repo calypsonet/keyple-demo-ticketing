@@ -122,7 +122,7 @@ The demos work with cards from the [CNA Test Kit](https://calypsonet.org/technic
 
 ### Card Personalization Process
 
-Prepares cards for use by initializing data structures:
+Prepares the cards for the demo:
 
 1. **Application Selection** using configured AID
 2. **Environment Setup**:
@@ -130,7 +130,7 @@ Prepares cards for use by initializing data structures:
     - Assign unique `EnvApplicationNumber`
     - Set issuing and expiration dates
     - Clear holder information
-3. **File Initialization**:
+3. **Files Clearing**:
     - Clear event log (set to zeros)
     - Clear all contract records
     - Reset counter files
@@ -138,7 +138,7 @@ Prepares cards for use by initializing data structures:
 
 ### Contract Loading Process
 
-Loads new contracts or extends existing ones:
+Loads new contracts, or adds trips to or renews existing ones:
 
 1. **Environment Validation**:
     - Verify version compatibility

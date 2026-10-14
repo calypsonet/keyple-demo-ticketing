@@ -20,7 +20,8 @@ package org.calypsonet.keyple.demo.common.model.type
  * @property label The description of the code.
  */
 enum class PriorityCode(val code: Int, val label: String) {
-  FORBIDDEN(0, "Forbidden (present in clean records only)"),
+  /** Forbidden contract, present in the clean records only. */
+  FORBIDDEN(0, "Forbidden"),
   SEASON_PASS(1, "Season pass"),
   MULTI_TRIP(2, "Multi-trip ticket"),
   EXPIRED(31, "Expired"),

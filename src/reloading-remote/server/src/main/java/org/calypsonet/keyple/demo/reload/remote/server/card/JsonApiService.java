@@ -179,13 +179,13 @@ public class JsonApiService {
           RemoteServiceStatus.SERVER_ERROR.getCode(), e.getMessage());
     }
 
-    // Init card
-    PersonalizeCardOutputDto issuance =
+    // Personalize the card
+    PersonalizeCardOutputDto personalizationOutput =
         cardPersonalizationService.personalizeCard(
             cardReader, calypsoCard, new PersonalizeCardInputDto(pluginType));
 
     // Build result
-    int statusCode = issuance.getStatusCode();
+    int statusCode = personalizationOutput.getStatusCode();
     return new SelectAppAndPersonalizeCardOutputDto(
         statusCode, getStatusMessage(statusCode, calypsoCard));
   }
@@ -274,7 +274,7 @@ public class JsonApiService {
             + "h not supported";
       case CARD_NOT_PERSONALIZED:
         return "Environment error: wrong version number";
-      case EXPIRED_ENVIRONMENT:
+      case ENVIRONMENT_EXPIRED:
         return "Environment error: end date expired";
       case CARD_FULL:
         return ContractLoadingService.CARD_FULL_MESSAGE;

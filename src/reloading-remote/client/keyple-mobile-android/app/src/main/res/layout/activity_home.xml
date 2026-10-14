@@ -147,14 +147,14 @@
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
-            android:contentDescription="@string/embedded_secure_elem"
+            android:contentDescription="@string/embedded_secure_element"
             android:src="@drawable/ic_embedded" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/card_medium_selection_top_margin"
-            android:text="@string/embedded_secure_elem"
+            android:text="@string/embedded_secure_element"
             android:gravity="center"
             style="@style/bigBoldDarkBlue" />
     </LinearLayout>

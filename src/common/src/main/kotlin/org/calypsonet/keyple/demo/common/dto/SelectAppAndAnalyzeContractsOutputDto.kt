@@ -16,7 +16,7 @@ package org.calypsonet.keyple.demo.common.dto
  * - contracts: List of contracts present in the card. Each contract is tied to a counter by its
  *   index.
  * - statusCode: code of the [RemoteServiceStatus]: 0 (successful), 1 (card communication error), 2
- *   (server error), 3 (card rejected), 4 (card not personalized), 5 (expired environment).
+ *   (server error), 3 (card rejected), 4 (card not personalized), 5 (environment expired).
  * - message: Status message.
  */
 data class SelectAppAndAnalyzeContractsOutputDto(
