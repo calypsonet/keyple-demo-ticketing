@@ -22,41 +22,41 @@ import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 /** Codec of the event record of the storage cards (16 bytes). */
 object StorageCardEventCodec : RecordCodec<EventStructure> {
 
-  private const val EVENT_SIZE = 128
-  private const val EVENT_VERSION_NUMBER_SIZE = 8
-  private const val EVENT_DATE_STAMP_SIZE = 16
-  private const val EVENT_TIME_STAMP_SIZE = 16
-  private const val EVENT_LOCATION_SIZE = 32
-  private const val EVENT_CONTRACT_USED_SIZE = 8
-  private const val EVENT_CONTRACT_PRIORITY_SIZE = 8
-  private const val EVENT_PADDING = 16
+  private const val EVENT_SIZE_BITS = 128
+  private const val EVENT_VERSION_NUMBER_SIZE_BITS = 8
+  private const val EVENT_DATE_STAMP_SIZE_BITS = 16
+  private const val EVENT_TIME_STAMP_SIZE_BITS = 16
+  private const val EVENT_LOCATION_SIZE_BITS = 32
+  private const val EVENT_CONTRACT_USED_SIZE_BITS = 8
+  private const val EVENT_CONTRACT_PRIORITY_SIZE_BITS = 8
+  private const val EVENT_PADDING_BITS = 16
 
   override fun decode(content: ByteArray): EventStructure {
     val bitUtils = BitUtils(content)
     return EventStructure(
         eventVersionNumber =
-            VersionNumber.fromCode(bitUtils.getNextInteger(EVENT_VERSION_NUMBER_SIZE)),
-        eventDateStamp = DateCompact(bitUtils.getNextInteger(EVENT_DATE_STAMP_SIZE)),
-        eventTimeStamp = TimeCompact(bitUtils.getNextInteger(EVENT_TIME_STAMP_SIZE)),
-        eventLocation = bitUtils.getNextInteger(EVENT_LOCATION_SIZE),
-        eventContractUsed = bitUtils.getNextInteger(EVENT_CONTRACT_USED_SIZE),
+            VersionNumber.fromCode(bitUtils.getNextInteger(EVENT_VERSION_NUMBER_SIZE_BITS)),
+        eventDateStamp = DateCompact(bitUtils.getNextInteger(EVENT_DATE_STAMP_SIZE_BITS)),
+        eventTimeStamp = TimeCompact(bitUtils.getNextInteger(EVENT_TIME_STAMP_SIZE_BITS)),
+        eventLocation = bitUtils.getNextInteger(EVENT_LOCATION_SIZE_BITS),
+        eventContractUsed = bitUtils.getNextInteger(EVENT_CONTRACT_USED_SIZE_BITS),
         contractPriorities =
             List(EventStructure.CONTRACT_COUNT) {
-              PriorityCode.fromCode(bitUtils.getNextInteger(EVENT_CONTRACT_PRIORITY_SIZE))
+              PriorityCode.fromCode(bitUtils.getNextInteger(EVENT_CONTRACT_PRIORITY_SIZE_BITS))
             })
   }
 
   override fun encode(structure: EventStructure): ByteArray {
-    val bitUtils = BitUtils(EVENT_SIZE)
-    bitUtils.setNextValue(structure.eventVersionNumber.code, EVENT_VERSION_NUMBER_SIZE)
-    bitUtils.setNextValue(structure.eventDateStamp.value, EVENT_DATE_STAMP_SIZE)
-    bitUtils.setNextValue(structure.eventTimeStamp.value, EVENT_TIME_STAMP_SIZE)
-    bitUtils.setNextValue(structure.eventLocation, EVENT_LOCATION_SIZE)
-    bitUtils.setNextValue(structure.eventContractUsed, EVENT_CONTRACT_USED_SIZE)
+    val bitUtils = BitUtils(EVENT_SIZE_BITS)
+    bitUtils.setNextValue(structure.eventVersionNumber.code, EVENT_VERSION_NUMBER_SIZE_BITS)
+    bitUtils.setNextValue(structure.eventDateStamp.value, EVENT_DATE_STAMP_SIZE_BITS)
+    bitUtils.setNextValue(structure.eventTimeStamp.value, EVENT_TIME_STAMP_SIZE_BITS)
+    bitUtils.setNextValue(structure.eventLocation, EVENT_LOCATION_SIZE_BITS)
+    bitUtils.setNextValue(structure.eventContractUsed, EVENT_CONTRACT_USED_SIZE_BITS)
     structure.contractPriorities.forEach {
-      bitUtils.setNextValue(it.code, EVENT_CONTRACT_PRIORITY_SIZE)
+      bitUtils.setNextValue(it.code, EVENT_CONTRACT_PRIORITY_SIZE_BITS)
     }
-    bitUtils.setNextValue(0, EVENT_PADDING)
+    bitUtils.setNextValue(0, EVENT_PADDING_BITS)
     return bitUtils.data
   }
 }

@@ -22,7 +22,7 @@ namespace App.domain.data.response
         /// Core API level.
         /// </summary>
         [JsonProperty("coreApiLevel")]
-        public const int CoreApiLevel = ApiInfo.CORE_API_LEVEL;
+        public const int CoreApiLevel = ApiInfo.CoreApiLevel;
 
         /// <summary>
         /// Service name.

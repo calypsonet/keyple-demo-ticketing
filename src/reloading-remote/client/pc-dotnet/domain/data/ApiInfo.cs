@@ -19,7 +19,7 @@ namespace App.domain.data
 {
     internal class ApiInfo
     {
-        public const int API_LEVEL = 3;
-        public const int CORE_API_LEVEL = 2;
+        public const int ApiLevel = 3;
+        public const int CoreApiLevel = 2;
     }
 }

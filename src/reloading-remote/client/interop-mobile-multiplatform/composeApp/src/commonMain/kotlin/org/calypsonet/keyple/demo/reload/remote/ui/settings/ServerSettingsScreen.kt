@@ -71,12 +71,12 @@ internal fun ServerSettingsScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center) {
           OutlinedTextField(
-              value = state.serverHost,
+              value = state.host,
               onValueChange = { onHostChanged(it) },
               label = { Text("Server IP") })
 
           OutlinedTextField(
-              value = state.serverPort.toString(),
+              value = state.port.toString(),
               onValueChange = { onPortChanged(it.trim().toInt()) },
               label = { Text("Server port") })
 

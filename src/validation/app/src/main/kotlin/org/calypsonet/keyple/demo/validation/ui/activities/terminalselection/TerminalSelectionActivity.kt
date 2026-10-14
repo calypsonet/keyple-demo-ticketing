@@ -32,7 +32,6 @@ import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
 @AndroidEntryPoint
 class TerminalSelectionActivity : BaseActivity() {
 
-  private val mock: String = "Mock"
   private lateinit var activityTerminalSelectionBinding: ActivityTerminalSelectionBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +41,7 @@ class TerminalSelectionActivity : BaseActivity() {
     setContentView(activityTerminalSelectionBinding.root)
 
     // Bluebird
-    if (BluebirdConstants.PLUGIN_NAME.contains(mock)) {
+    if (BluebirdConstants.PLUGIN_NAME.contains(MOCK_PLUGIN_MARKER)) {
       activityTerminalSelectionBinding.bluebirdBtn.setBackgroundColor(Color.GRAY)
     } else {
       activityTerminalSelectionBinding.bluebirdBtn.setOnClickListener {
@@ -68,7 +67,7 @@ class TerminalSelectionActivity : BaseActivity() {
     }
 
     // Arrive
-    if (ArriveConstants.PLUGIN_NAME.contains(mock) || !BuildConfig.HAS_ARRIVE_SDK) {
+    if (ArriveConstants.PLUGIN_NAME.contains(MOCK_PLUGIN_MARKER) || !BuildConfig.HAS_ARRIVE_SDK) {
       activityTerminalSelectionBinding.arriveBtn.setBackgroundColor(Color.GRAY)
     } else {
       activityTerminalSelectionBinding.arriveBtn.setOnClickListener {
@@ -113,5 +112,10 @@ class TerminalSelectionActivity : BaseActivity() {
         // Ignore all other requests.
       }
     }
+  }
+
+  private companion object {
+    /** Part of the name of the simulated plugins (mock libraries of the proprietary plugins). */
+    const val MOCK_PLUGIN_MARKER = "Mock"
   }
 }

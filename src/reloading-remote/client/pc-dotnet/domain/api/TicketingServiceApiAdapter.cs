@@ -30,22 +30,22 @@ namespace App.domain.api
         private readonly string _clientNodeId;
         private string _localReaderName;
 
-        private const int SW_6100 = 0x6100;
-        private const int SW_6C00 = 0x6C00;
-        private const int SW1_MASK = 0xFF00;
-        private const int SW2_MASK = 0x00FF;
+        private const int StatusWord6100 = 0x6100;
+        private const int StatusWord6C00 = 0x6C00;
+        private const int Sw1Mask = 0xFF00;
+        private const int Sw2Mask = 0x00FF;
 
-        private const string EXECUTE_REMOTE_SERVICE = "EXECUTE_REMOTE_SERVICE";
-        private const string END_REMOTE_SERVICE = "END_REMOTE_SERVICE";
-        private const string RESP = "RESP";
+        private const string ExecuteRemoteServiceAction = "EXECUTE_REMOTE_SERVICE";
+        private const string EndRemoteServiceAction = "END_REMOTE_SERVICE";
+        private const string ResponseAction = "RESP";
 
-        private const string IS_CONTACTLESS = "IS_CONTACTLESS";
-        private const string IS_CARD_PRESENT = "IS_CARD_PRESENT";
-        private const string TRANSMIT_CARD_SELECTION_REQUESTS = "TRANSMIT_CARD_SELECTION_REQUESTS";
-        private const string TRANSMIT_CARD_REQUEST = "TRANSMIT_CARD_REQUEST";
+        private const string IsContactlessService = "IS_CONTACTLESS";
+        private const string IsCardPresentService = "IS_CARD_PRESENT";
+        private const string TransmitCardSelectionRequestsService = "TRANSMIT_CARD_SELECTION_REQUESTS";
+        private const string TransmitCardRequestService = "TRANSMIT_CARD_REQUEST";
 
-        private const string SELECT_APP_AND_READ_CONTRACTS = "SELECT_APP_AND_READ_CONTRACTS";
-        private const string SELECT_APP_AND_INCREASE_CONTRACT_COUNTER = "SELECT_APP_AND_INCREASE_CONTRACT_COUNTER";
+        private const string SelectAppAndReadContractsService = "SELECT_APP_AND_READ_CONTRACTS";
+        private const string SelectAppAndIncreaseContractCounterService = "SELECT_APP_AND_INCREASE_CONTRACT_COUNTER";
 
         internal TicketingServiceApiAdapter(ReaderSpi readerSpi, string readerName, ServerSpi serverSpi)
         {
@@ -85,7 +85,7 @@ namespace App.domain.api
         {
             _logger.Information("Executing the remote service [service=SELECT_APP_AND_READ_CONTRACTS]");
 
-            return ExecuteRemoteService(SELECT_APP_AND_READ_CONTRACTS, new ReadContractsInputData { });
+            return ExecuteRemoteService(SelectAppAndReadContractsService, new ReadContractsInputData { });
         }
 
         /// <inheritdoc/>
@@ -93,7 +93,7 @@ namespace App.domain.api
         {
             _logger.Information("Executing the remote service [service=SELECT_APP_AND_INCREASE_CONTRACT_COUNTER]");
 
-            return ExecuteRemoteService(SELECT_APP_AND_INCREASE_CONTRACT_COUNTER, new IncreaseContractCounterInputData { CounterIncrement = counterIncrement.ToString("X") });
+            return ExecuteRemoteService(SelectAppAndIncreaseContractCounterService, new IncreaseContractCounterInputData { CounterIncrement = counterIncrement.ToString("X") });
         }
 
         private string ExecuteRemoteService(string serviceId, InputData inputData)
@@ -111,9 +111,9 @@ namespace App.domain.api
             // Create and fill RemoteServiceDto object
             MessageDto message = new MessageDto
             {
-                ApiLevel = ApiInfo.API_LEVEL,
+                ApiLevel = ApiInfo.ApiLevel,
                 SessionId = sessionId,
-                Action = EXECUTE_REMOTE_SERVICE,
+                Action = ExecuteRemoteServiceAction,
                 ClientNodeId = _clientNodeId,
                 LocalReaderName = _localReaderName,
                 Body = JsonConvert.SerializeObject(bodyContent, Formatting.None)
@@ -130,7 +130,7 @@ namespace App.domain.api
 
         private MessageDto ProcessServerCommands(MessageDto message)
         {
-            while (message.Action != END_REMOTE_SERVICE)
+            while (message.Action != EndRemoteServiceAction)
             {
                 _logger.Debug($"Processing the action [action={message.Action}]");
 
@@ -141,21 +141,21 @@ namespace App.domain.api
                 string jsonBodyString = "";
                 switch (service)
                 {
-                    case IS_CONTACTLESS:
+                    case IsContactlessService:
                         jsonBodyString = CreateIsContactlessResponse();
                         break;
-                    case IS_CARD_PRESENT:
+                    case IsCardPresentService:
                         jsonBodyString = CreateIsCardPresentResponse();
                         break;
-                    case TRANSMIT_CARD_SELECTION_REQUESTS:
+                    case TransmitCardSelectionRequestsService:
                         jsonBodyString = TransmitCardSelectionRequests(message);
                         break;
-                    case TRANSMIT_CARD_REQUEST:
+                    case TransmitCardRequestService:
                         jsonBodyString = TransmitCardRequest(message);
                         break;
                 }
-                message.ApiLevel = ApiInfo.API_LEVEL;
-                message.Action = RESP;
+                message.ApiLevel = ApiInfo.ApiLevel;
+                message.Action = ResponseAction;
                 message.Body = jsonBodyString;
                 string jsonResponse = _server.TransmitRequest(JsonConvert.SerializeObject(message, Formatting.None));
                 message = JsonConvert.DeserializeObject<List<MessageDto>>(jsonResponse)![0];
@@ -414,21 +414,21 @@ namespace App.domain.api
 
             if (apduResponse.Apdu.Length == 2)
             {
-                if ((apduResponse.StatusWord & SW1_MASK) == SW_6100)
+                if ((apduResponse.StatusWord & Sw1Mask) == StatusWord6100)
                 {
                     byte[] getResponseApdu = {
                         0x00,
                         0xC0,
                         0x00,
                         0x00,
-                        (byte)(apduResponse.StatusWord & SW2_MASK)
+                        (byte)(apduResponse.StatusWord & Sw2Mask)
                         };
                     apduResponse = ProcessApduRequest(new ApduRequest { Apdu = getResponseApdu, SuccessfulStatusWords = new HashSet<int>(), Info = "Internal Get Response" });
                 }
-                else if ((apduResponse.StatusWord & SW1_MASK) == SW_6C00)
+                else if ((apduResponse.StatusWord & Sw1Mask) == StatusWord6C00)
                 {
                     apduRequest.Apdu[apduRequest.Apdu.Length - 1] =
-                        (byte)(apduResponse.StatusWord & SW2_MASK);
+                        (byte)(apduResponse.StatusWord & Sw2Mask);
                     apduResponse = ProcessApduRequest(apduRequest);
                 }
             }

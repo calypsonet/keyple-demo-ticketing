@@ -21,11 +21,11 @@ import org.calypsonet.keyple.demo.control.domain.model.Contract
  * result of its control.
  *
  * @param contract The contract read in the card.
- * @param record The number of the record of the contract in the card.
+ * @param recordNumber The number of the record of the contract in the card.
  */
 fun buildContract(
     contract: ContractStructure,
-    record: Int,
+    recordNumber: Int,
     contractValidated: Boolean,
     contractExpired: Boolean,
     validationDateTime: LocalDateTime?,
@@ -34,7 +34,7 @@ fun buildContract(
     Contract(
         name = contract.contractTariff.label,
         isValidated = contractValidated,
-        record = record,
+        recordNumber = recordNumber,
         validationDateTime = validationDateTime,
         isExpired = contractExpired,
         saleDate = contract.contractSaleDate.date,

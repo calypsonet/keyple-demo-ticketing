@@ -199,7 +199,7 @@ class StorageCardControlProcedure(
       }
 
       val displayedContract = mutableListOf<Contract>()
-      val record = 1 // Storage card has only one contract
+      val recordNumber = 1 // Storage card has only one contract
       var contractExpired = false
       var contractValidated = false
 
@@ -224,7 +224,7 @@ class StorageCardControlProcedure(
 
         // Step 17 - If EventContractUsed points to the current contract index
         // and not the validity flag is false, then mark it as Validated.
-        if (contractUsed == record && contractEventValid) {
+        if (contractUsed == recordNumber && contractEventValid) {
           contractValidated = true
         }
 
@@ -245,7 +245,7 @@ class StorageCardControlProcedure(
         displayedContract.add(
             buildContract(
                 contract = contract,
-                record = record,
+                recordNumber = recordNumber,
                 contractExpired = contractExpired,
                 contractValidated = contractValidated,
                 validationDateTime = validationDateTime,

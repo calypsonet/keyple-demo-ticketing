@@ -22,8 +22,8 @@ import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleInteropServic
 import org.calypsonet.keyple.demo.reload.remote.data.service.ServerConfigRepository
 
 data class ServerSettingsScreenState(
-    val serverHost: String = "",
-    val serverPort: Int = 0,
+    val host: String = "",
+    val port: Int = 0,
     val protocol: String = "http",
     val endpoint: String = ""
 )
@@ -41,8 +41,8 @@ class ServerSettingsScreenViewModel(
         val hostUrl = Url(it.host)
         _state.value =
             ServerSettingsScreenState(
-                serverHost = hostUrl.host,
-                serverPort = it.port,
+                host = hostUrl.host,
+                port = it.port,
                 endpoint = it.endpoint,
                 protocol = hostUrl.protocol.name)
       }
@@ -52,8 +52,8 @@ class ServerSettingsScreenViewModel(
   fun applyServerSettings() {
     viewModelScope.launch {
       serverConfigRepository.update(
-          host = state.value.serverHost,
-          port = state.value.serverPort,
+          host = state.value.host,
+          port = state.value.port,
           protocol = state.value.protocol,
           endpoint = state.value.endpoint,
       )
@@ -62,11 +62,11 @@ class ServerSettingsScreenViewModel(
   }
 
   fun onHostChanged(host: String) {
-    _state.value = state.value.copy(serverHost = host)
+    _state.value = state.value.copy(host = host)
   }
 
   fun onPortChanged(port: Int) {
-    _state.value = state.value.copy(serverPort = port)
+    _state.value = state.value.copy(port = port)
   }
 
   fun onProtocolChanged(protocol: String) {

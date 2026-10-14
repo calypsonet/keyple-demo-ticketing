@@ -129,6 +129,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Field names (second audit): `host` and `port` in the state of the server settings screen of the multiplatform
+  client (instead of `serverHost` and `serverPort`, as `protocol`, `endpoint` and `KeypleServerConfig`),
+  `recordNumber` in the contracts of the control app (instead of `record`, which was a number), `NON_KEYPLE_PLUGIN`
+  on the server (instead of `CUSTOM_PLUGIN`, the plugin name recorded for the .NET client); the constants of the .NET
+  client are in PascalCase as the convention of C# (e.g. `ExecuteRemoteServiceAction`, `IsContactlessService`,
+  `ApiLevel`, instead of `EXECUTE_REMOTE_SERVICE`, `IS_CONTACTLESS`, `API_LEVEL`); the sizes of the fields of the
+  codecs, in bits, are suffixed by `_BITS` (e.g. `CONTRACT_TARIFF_SIZE_BITS`), as the sizes in bytes by `_BYTES`; the
+  control and validation apps recognize the simulated plugins by the `MOCK_PLUGIN_MARKER` constant (instead of a
+  `mock` field).
 - Field names harmonized:
   - glossary and readability: `CHOOSE_CARD_MEDIUM_FOR_PERSONALIZATION` (instead of `CHOOSE_DEVICE_FOR_PERSO`) in the
     reloading Android client, `seasonPassValidityEndDate` (instead of `passValidityEndDate`, also in the log of the

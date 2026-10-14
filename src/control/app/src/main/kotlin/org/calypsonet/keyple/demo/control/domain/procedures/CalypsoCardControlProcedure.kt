@@ -201,7 +201,7 @@ class CalypsoCardControlProcedure(
 
       val displayedContract = mutableListOf<Contract>()
       contracts.forEach {
-        val record = it.key
+        val recordNumber = it.key
         val contract = it.value
         var contractExpired = false
         var contractValidated = false
@@ -234,7 +234,7 @@ class CalypsoCardControlProcedure(
 
           // Step 17 - If EventContractUsed points to the current contract index
           // and not the validity flag is false, then mark it as Validated.
-          if (contractUsed == record && contractEventValid) {
+          if (contractUsed == recordNumber && contractEventValid) {
             contractValidated = true
           }
 
@@ -247,7 +247,7 @@ class CalypsoCardControlProcedure(
           // associated with the contract to extract the counter-value.
           val remainingTrips =
               if (contract.contractTariff == PriorityCode.MULTI_TRIP) {
-                efCounters.data.getContentAsCounterValue(record)
+                efCounters.data.getContentAsCounterValue(recordNumber)
               } else {
                 null
               }
@@ -256,7 +256,7 @@ class CalypsoCardControlProcedure(
           displayedContract.add(
               buildContract(
                   contract = contract,
-                  record = record,
+                  recordNumber = recordNumber,
                   contractExpired = contractExpired,
                   contractValidated = contractValidated,
                   validationDateTime = validationDateTime,

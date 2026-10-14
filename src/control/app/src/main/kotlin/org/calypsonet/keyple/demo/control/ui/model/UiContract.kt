@@ -22,7 +22,7 @@ data class UiContract(
     val name: String?,
     val isValidated: Boolean,
     val validationDateTime: LocalDateTime?,
-    val record: Int,
+    val recordNumber: Int,
     val isExpired: Boolean,
     val saleDate: LocalDate,
     val validityEndDate: LocalDate,

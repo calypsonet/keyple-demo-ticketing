@@ -24,7 +24,7 @@ data class Contract(
      */
     val isValidated: Boolean,
     val validationDateTime: LocalDateTime?,
-    val record: Int,
+    val recordNumber: Int,
     /** Indicates whether the validity end date of the contract is in the past. */
     val isExpired: Boolean,
     val saleDate: LocalDate,

@@ -34,8 +34,6 @@ class TerminalSelectionActivity : BaseActivity() {
 
   private lateinit var activityTerminalSelectionBinding: ActivityTerminalSelectionBinding
 
-  private val mock: String = "Mock"
-
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     activityTerminalSelectionBinding = ActivityTerminalSelectionBinding.inflate(layoutInflater)
@@ -43,7 +41,7 @@ class TerminalSelectionActivity : BaseActivity() {
     activityTerminalSelectionBinding.appVersion.text =
         getString(R.string.version, BuildConfig.VERSION_NAME)
     // Bluebird
-    if (BluebirdConstants.PLUGIN_NAME.contains(mock)) {
+    if (BluebirdConstants.PLUGIN_NAME.contains(MOCK_PLUGIN_MARKER)) {
       activityTerminalSelectionBinding.bluebirdBtn.setBackgroundColor(Color.GRAY)
     } else {
       activityTerminalSelectionBinding.bluebirdBtn.setOnClickListener {
@@ -113,5 +111,10 @@ class TerminalSelectionActivity : BaseActivity() {
         // Ignore all other requests.
       }
     }
+  }
+
+  private companion object {
+    /** Part of the name of the simulated plugins (mock libraries of the proprietary plugins). */
+    const val MOCK_PLUGIN_MARKER = "Mock"
   }
 }

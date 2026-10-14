@@ -20,35 +20,36 @@ import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 /** Codec of the environment and holder record of the Calypso cards (29 bytes). */
 object CalypsoEnvironmentHolderCodec : RecordCodec<EnvironmentHolderStructure> {
 
-  private const val ENV_SIZE = 232
-  private const val ENV_VERSION_NUMBER_SIZE = 8
-  private const val ENV_APPLICATION_NUMBER_SIZE = 32
-  private const val ENV_ISSUING_DATE_SIZE = 16
-  private const val ENV_END_DATE_SIZE = 16
-  private const val ENV_HOLDER_COMPANY_SIZE = 8
-  private const val ENV_HOLDER_ID_NUMBER_SIZE = 32
-  private const val ENV_PADDING = 120
+  private const val ENV_SIZE_BITS = 232
+  private const val ENV_VERSION_NUMBER_SIZE_BITS = 8
+  private const val ENV_APPLICATION_NUMBER_SIZE_BITS = 32
+  private const val ENV_ISSUING_DATE_SIZE_BITS = 16
+  private const val ENV_END_DATE_SIZE_BITS = 16
+  private const val ENV_HOLDER_COMPANY_SIZE_BITS = 8
+  private const val ENV_HOLDER_ID_NUMBER_SIZE_BITS = 32
+  private const val ENV_PADDING_BITS = 120
 
   override fun decode(content: ByteArray): EnvironmentHolderStructure {
     val bitUtils = BitUtils(content)
     return EnvironmentHolderStructure(
-        envVersionNumber = VersionNumber.fromCode(bitUtils.getNextInteger(ENV_VERSION_NUMBER_SIZE)),
-        envApplicationNumber = bitUtils.getNextInteger(ENV_APPLICATION_NUMBER_SIZE),
-        envIssuingDate = DateCompact(bitUtils.getNextInteger(ENV_ISSUING_DATE_SIZE)),
-        envEndDate = DateCompact(bitUtils.getNextInteger(ENV_END_DATE_SIZE)),
-        holderCompany = bitUtils.getNextInteger(ENV_HOLDER_COMPANY_SIZE),
-        holderIdNumber = bitUtils.getNextInteger(ENV_HOLDER_ID_NUMBER_SIZE))
+        envVersionNumber =
+            VersionNumber.fromCode(bitUtils.getNextInteger(ENV_VERSION_NUMBER_SIZE_BITS)),
+        envApplicationNumber = bitUtils.getNextInteger(ENV_APPLICATION_NUMBER_SIZE_BITS),
+        envIssuingDate = DateCompact(bitUtils.getNextInteger(ENV_ISSUING_DATE_SIZE_BITS)),
+        envEndDate = DateCompact(bitUtils.getNextInteger(ENV_END_DATE_SIZE_BITS)),
+        holderCompany = bitUtils.getNextInteger(ENV_HOLDER_COMPANY_SIZE_BITS),
+        holderIdNumber = bitUtils.getNextInteger(ENV_HOLDER_ID_NUMBER_SIZE_BITS))
   }
 
   override fun encode(structure: EnvironmentHolderStructure): ByteArray {
-    val bitUtils = BitUtils(ENV_SIZE)
-    bitUtils.setNextValue(structure.envVersionNumber.code, ENV_VERSION_NUMBER_SIZE)
-    bitUtils.setNextValue(structure.envApplicationNumber, ENV_APPLICATION_NUMBER_SIZE)
-    bitUtils.setNextValue(structure.envIssuingDate.value, ENV_ISSUING_DATE_SIZE)
-    bitUtils.setNextValue(structure.envEndDate.value, ENV_END_DATE_SIZE)
-    bitUtils.setNextValue(structure.holderCompany ?: 0, ENV_HOLDER_COMPANY_SIZE)
-    bitUtils.setNextValue(structure.holderIdNumber ?: 0, ENV_HOLDER_ID_NUMBER_SIZE)
-    bitUtils.setNextValue(0, ENV_PADDING)
+    val bitUtils = BitUtils(ENV_SIZE_BITS)
+    bitUtils.setNextValue(structure.envVersionNumber.code, ENV_VERSION_NUMBER_SIZE_BITS)
+    bitUtils.setNextValue(structure.envApplicationNumber, ENV_APPLICATION_NUMBER_SIZE_BITS)
+    bitUtils.setNextValue(structure.envIssuingDate.value, ENV_ISSUING_DATE_SIZE_BITS)
+    bitUtils.setNextValue(structure.envEndDate.value, ENV_END_DATE_SIZE_BITS)
+    bitUtils.setNextValue(structure.holderCompany ?: 0, ENV_HOLDER_COMPANY_SIZE_BITS)
+    bitUtils.setNextValue(structure.holderIdNumber ?: 0, ENV_HOLDER_ID_NUMBER_SIZE_BITS)
+    bitUtils.setNextValue(0, ENV_PADDING_BITS)
     return bitUtils.data
   }
 }

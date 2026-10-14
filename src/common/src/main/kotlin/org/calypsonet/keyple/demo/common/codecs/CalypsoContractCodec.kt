@@ -24,43 +24,44 @@ import org.calypsonet.keyple.demo.common.model.type.VersionNumber
  */
 object CalypsoContractCodec : RecordCodec<ContractStructure> {
 
-  private const val CONTRACT_SIZE = 232
-  private const val CONTRACT_VERSION_NUMBER_SIZE = 8
-  private const val CONTRACT_TARIFF_SIZE = 8
-  private const val CONTRACT_SALE_DATE_SIZE = 16
-  private const val CONTRACT_VALIDITY_END_DATE_SIZE = 16
-  private const val CONTRACT_SALE_SAM_SIZE = 32
-  private const val CONTRACT_SALE_COUNTER_SIZE = 24
-  private const val CONTRACT_AUTH_KVC_SIZE = 8
-  private const val CONTRACT_AUTHENTICATOR_SIZE = 24
-  private const val CONTRACT_PADDING = 96
+  private const val CONTRACT_SIZE_BITS = 232
+  private const val CONTRACT_VERSION_NUMBER_SIZE_BITS = 8
+  private const val CONTRACT_TARIFF_SIZE_BITS = 8
+  private const val CONTRACT_SALE_DATE_SIZE_BITS = 16
+  private const val CONTRACT_VALIDITY_END_DATE_SIZE_BITS = 16
+  private const val CONTRACT_SALE_SAM_SIZE_BITS = 32
+  private const val CONTRACT_SALE_COUNTER_SIZE_BITS = 24
+  private const val CONTRACT_AUTH_KVC_SIZE_BITS = 8
+  private const val CONTRACT_AUTHENTICATOR_SIZE_BITS = 24
+  private const val CONTRACT_PADDING_BITS = 96
 
   override fun decode(content: ByteArray): ContractStructure {
     val bitUtils = BitUtils(content)
     return ContractStructure(
         contractVersionNumber =
-            VersionNumber.fromCode(bitUtils.getNextInteger(CONTRACT_VERSION_NUMBER_SIZE)),
-        contractTariff = PriorityCode.fromCode(bitUtils.getNextInteger(CONTRACT_TARIFF_SIZE)),
-        contractSaleDate = DateCompact(bitUtils.getNextInteger(CONTRACT_SALE_DATE_SIZE)),
+            VersionNumber.fromCode(bitUtils.getNextInteger(CONTRACT_VERSION_NUMBER_SIZE_BITS)),
+        contractTariff = PriorityCode.fromCode(bitUtils.getNextInteger(CONTRACT_TARIFF_SIZE_BITS)),
+        contractSaleDate = DateCompact(bitUtils.getNextInteger(CONTRACT_SALE_DATE_SIZE_BITS)),
         contractValidityEndDate =
-            DateCompact(bitUtils.getNextInteger(CONTRACT_VALIDITY_END_DATE_SIZE)),
-        contractSaleSam = bitUtils.getNextInteger(CONTRACT_SALE_SAM_SIZE),
-        contractSaleCounter = bitUtils.getNextInteger(CONTRACT_SALE_COUNTER_SIZE),
-        contractAuthKvc = bitUtils.getNextInteger(CONTRACT_AUTH_KVC_SIZE),
-        contractAuthenticator = bitUtils.getNextInteger(CONTRACT_AUTHENTICATOR_SIZE))
+            DateCompact(bitUtils.getNextInteger(CONTRACT_VALIDITY_END_DATE_SIZE_BITS)),
+        contractSaleSam = bitUtils.getNextInteger(CONTRACT_SALE_SAM_SIZE_BITS),
+        contractSaleCounter = bitUtils.getNextInteger(CONTRACT_SALE_COUNTER_SIZE_BITS),
+        contractAuthKvc = bitUtils.getNextInteger(CONTRACT_AUTH_KVC_SIZE_BITS),
+        contractAuthenticator = bitUtils.getNextInteger(CONTRACT_AUTHENTICATOR_SIZE_BITS))
   }
 
   override fun encode(structure: ContractStructure): ByteArray {
-    val bitUtils = BitUtils(CONTRACT_SIZE)
-    bitUtils.setNextValue(structure.contractVersionNumber.code, CONTRACT_VERSION_NUMBER_SIZE)
-    bitUtils.setNextValue(structure.contractTariff.code, CONTRACT_TARIFF_SIZE)
-    bitUtils.setNextValue(structure.contractSaleDate.value, CONTRACT_SALE_DATE_SIZE)
-    bitUtils.setNextValue(structure.contractValidityEndDate.value, CONTRACT_VALIDITY_END_DATE_SIZE)
-    bitUtils.setNextValue(structure.contractSaleSam ?: 0, CONTRACT_SALE_SAM_SIZE)
-    bitUtils.setNextValue(structure.contractSaleCounter ?: 0, CONTRACT_SALE_COUNTER_SIZE)
-    bitUtils.setNextValue(structure.contractAuthKvc ?: 0, CONTRACT_AUTH_KVC_SIZE)
-    bitUtils.setNextValue(structure.contractAuthenticator ?: 0, CONTRACT_AUTHENTICATOR_SIZE)
-    bitUtils.setNextValue(0, CONTRACT_PADDING)
+    val bitUtils = BitUtils(CONTRACT_SIZE_BITS)
+    bitUtils.setNextValue(structure.contractVersionNumber.code, CONTRACT_VERSION_NUMBER_SIZE_BITS)
+    bitUtils.setNextValue(structure.contractTariff.code, CONTRACT_TARIFF_SIZE_BITS)
+    bitUtils.setNextValue(structure.contractSaleDate.value, CONTRACT_SALE_DATE_SIZE_BITS)
+    bitUtils.setNextValue(
+        structure.contractValidityEndDate.value, CONTRACT_VALIDITY_END_DATE_SIZE_BITS)
+    bitUtils.setNextValue(structure.contractSaleSam ?: 0, CONTRACT_SALE_SAM_SIZE_BITS)
+    bitUtils.setNextValue(structure.contractSaleCounter ?: 0, CONTRACT_SALE_COUNTER_SIZE_BITS)
+    bitUtils.setNextValue(structure.contractAuthKvc ?: 0, CONTRACT_AUTH_KVC_SIZE_BITS)
+    bitUtils.setNextValue(structure.contractAuthenticator ?: 0, CONTRACT_AUTHENTICATOR_SIZE_BITS)
+    bitUtils.setNextValue(0, CONTRACT_PADDING_BITS)
     return bitUtils.data
   }
 }

@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 public class ContractCounterService {
 
   private static final Logger logger = LoggerFactory.getLogger(ContractCounterService.class);
-  private static final String CUSTOM_PLUGIN = "Non Keyple plugin";
+  private static final String NON_KEYPLE_PLUGIN = "Non Keyple plugin";
 
   @Inject CardRepository cardRepository;
   @Inject TransactionRecorder transactionRecorder;
@@ -61,7 +61,7 @@ public class ContractCounterService {
       calypsoCard = cardRepository.selectCard(cardReader);
       logger.info(
           "Reading the contracts [plugin={}, serialNumber={}]",
-          CUSTOM_PLUGIN,
+          NON_KEYPLE_PLUGIN,
           HexUtil.toHex(calypsoCard.getApplicationSerialNumber()));
 
       samResource =
@@ -89,7 +89,7 @@ public class ContractCounterService {
       logger.error("Unexpected error while reading the contracts", e);
     } finally {
       transactionRecorder.record(
-          CUSTOM_PLUGIN,
+          NON_KEYPLE_PLUGIN,
           statusCode == RemoteServiceStatus.SUCCESS.getCode(),
           SECURED_READ,
           calypsoCard == null ? "-" : HexUtil.toHex(calypsoCard.getApplicationSerialNumber()));
@@ -113,7 +113,7 @@ public class ContractCounterService {
       calypsoCard = cardRepository.selectCard(cardReader);
       logger.info(
           "Increasing the contract counter [plugin={}, serialNumber={}, counterIncrement={}]",
-          CUSTOM_PLUGIN,
+          NON_KEYPLE_PLUGIN,
           HexUtil.toHex(calypsoCard.getApplicationSerialNumber()),
           inputData.getCounterIncrement());
 
@@ -145,7 +145,7 @@ public class ContractCounterService {
     } finally {
       boolean success = statusCode == RemoteServiceStatus.SUCCESS.getCode();
       transactionRecorder.record(
-          CUSTOM_PLUGIN,
+          NON_KEYPLE_PLUGIN,
           success,
           LOAD,
           calypsoCard == null ? "-" : HexUtil.toHex(calypsoCard.getApplicationSerialNumber()),
