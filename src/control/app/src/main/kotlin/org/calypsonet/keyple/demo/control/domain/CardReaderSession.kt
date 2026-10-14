@@ -148,7 +148,7 @@ class CardReaderSession(
     try {
       cardReader = terminalReaders.initCardReader()
     } catch (e: Exception) {
-      logger.e("An error occurred while init card reader ${e.message}")
+      logger.e("An error occurred while initializing the card reader: ${e.message}")
       throw IllegalStateException(e.message)
     }
     // Init SAM reader
@@ -156,7 +156,7 @@ class CardReaderSession(
     try {
       samReaders = terminalReaders.initSamReaders()
     } catch (e: Exception) {
-      logger.e("An error occurred while init sam reader ${e.message}")
+      logger.e("An error occurred while initializing the SAM reader: ${e.message}")
     }
     if (samReaders.isNullOrEmpty()) {
       logger.w("No SAM reader available")
