@@ -96,10 +96,12 @@ public class ContractAnalysisService {
       transactionRecorder.record(pluginType, true, SECURED_READ, applicationSerialNumber);
       return new AnalyzeContractsOutputDto(presentContracts, RemoteServiceStatus.SUCCESS.getCode());
     } catch (CardNotPersonalizedException e) {
+      // Refusal logged where it is detected
       transactionRecorder.record(pluginType, false, SECURED_READ, applicationSerialNumber);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode());
     } catch (EnvironmentExpiredException e) {
+      // Refusal logged where it is detected
       transactionRecorder.record(pluginType, false, SECURED_READ, applicationSerialNumber);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.ENVIRONMENT_EXPIRED.getCode());
@@ -144,10 +146,12 @@ public class ContractAnalysisService {
       transactionRecorder.record(pluginType, true, READ, cardUID);
       return new AnalyzeContractsOutputDto(presentContracts, RemoteServiceStatus.SUCCESS.getCode());
     } catch (CardNotPersonalizedException e) {
+      // Refusal logged where it is detected
       transactionRecorder.record(pluginType, false, READ, cardUID);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode());
     } catch (EnvironmentExpiredException e) {
+      // Refusal logged where it is detected
       transactionRecorder.record(pluginType, false, READ, cardUID);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.ENVIRONMENT_EXPIRED.getCode());

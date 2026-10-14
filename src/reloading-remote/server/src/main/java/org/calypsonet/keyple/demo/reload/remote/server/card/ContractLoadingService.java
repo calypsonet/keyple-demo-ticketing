@@ -105,6 +105,7 @@ public class ContractLoadingService {
           pluginType, true, LOAD, applicationSerialNumber, describeLoadedContract(inputData));
       return new LoadContractOutputDto(statusCode);
     } catch (CardFullException e) {
+      // Refusal logged where it is detected
       transactionRecorder.record(pluginType, false, LOAD, applicationSerialNumber, "");
       return new LoadContractOutputDto(RemoteServiceStatus.CARD_FULL.getCode());
     } catch (CardCommunicationException e) {
@@ -148,6 +149,7 @@ public class ContractLoadingService {
           pluginType, true, LOAD, cardUID, describeLoadedContract(inputData));
       return new LoadContractOutputDto(statusCode);
     } catch (CardFullException e) {
+      // Refusal logged where it is detected
       transactionRecorder.record(pluginType, false, LOAD, cardUID, "");
       return new LoadContractOutputDto(RemoteServiceStatus.CARD_FULL.getCode());
     } catch (CardCommunicationException e) {

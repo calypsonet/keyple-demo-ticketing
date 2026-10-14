@@ -129,6 +129,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- CI: the log messages of all the components are checked against the convention of `README.md` ("Log Messages") by
+  the new `check-log-messages.py` script (job "Log messages"): form of the messages, warnings without stack trace,
+  catch blocks logging, throwing or explaining in a comment why they do not log (comments added to the catch blocks
+  of the refusals of the server, of the removal of the card in the validation app and of the readiness of the
+  server).
 - Log messages (sixth audit): the incidents without consequence of the end of the card processing and of the stop
   of the card detection are logged at the `WARN` level with their cause instead of their stack trace, and the failures
   of the remote services returned by the interop library (multiplatform client) at the `WARN` level ("Remote service

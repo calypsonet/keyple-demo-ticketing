@@ -58,6 +58,21 @@ jobs:
         run: bash .github/scripts/check-android-twin-files.sh
 
   # ========================================
+  # LOG MESSAGES OF ALL THE COMPONENTS
+  # ========================================
+
+  check-log-messages:
+    name: "Log messages (all components)"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
+        uses: actions/checkout@v5
+
+      - name: Check the log messages against the convention of the README
+        shell: bash
+        run: python3 .github/scripts/check-log-messages.py
+
+  # ========================================
   # SERVER APPLICATION
   # ========================================
 

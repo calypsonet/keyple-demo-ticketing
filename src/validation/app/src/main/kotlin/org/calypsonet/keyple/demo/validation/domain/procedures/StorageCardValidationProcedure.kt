@@ -77,6 +77,7 @@ class StorageCardValidationProcedure(
     return try {
       validate(context, storageCard, card, cardTransaction)
     } catch (e: SCCardCommunicationException) {
+      // Card removal logged by the use case
       ValidationResult.CardLost(card)
     } catch (e: Exception) {
       logger.e(

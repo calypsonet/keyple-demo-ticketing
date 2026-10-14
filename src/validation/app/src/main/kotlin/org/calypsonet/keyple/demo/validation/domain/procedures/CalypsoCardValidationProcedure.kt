@@ -65,6 +65,7 @@ class CalypsoCardValidationProcedure(
         try {
           validate(context, calypsoCard, card, cardTransaction)
         } catch (e: CardCommunicationException) {
+          // Card removal logged by the use case
           SessionOutcome(ValidationResult.CardLost(card), closeSession = false)
         } catch (e: Exception) {
           logger.e("Unexpected error while validating the Calypso card", e)

@@ -121,6 +121,7 @@ abstract class BaseActivity : AppCompatActivity() {
             try {
               serverReadinessChecker.isServerReady(serverConfig)
             } catch (e: Exception) {
+              // Logged when the readiness of the server changes
               cause = e.message ?: e.toString()
               false
             }

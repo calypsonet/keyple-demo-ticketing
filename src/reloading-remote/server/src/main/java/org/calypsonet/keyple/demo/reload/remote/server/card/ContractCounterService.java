@@ -80,9 +80,11 @@ public class ContractCounterService {
         output.add(formatContractStructure(contractStructure));
       }
     } catch (CardNotPersonalizedException e) {
+      // Refusal logged where it is detected
       statusCode = RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode();
       message = CARD_NOT_PERSONALIZED;
     } catch (EnvironmentExpiredException e) {
+      // Refusal logged where it is detected
       statusCode = RemoteServiceStatus.ENVIRONMENT_EXPIRED.getCode();
       message = ENVIRONMENT_EXPIRED;
     } catch (CardCommunicationException e) {
@@ -131,12 +133,15 @@ public class ContractCounterService {
           PriorityCode.MULTI_TRIP, inputData.getCounterIncrement(), card);
       statusCode = cardRepository.writeCard(cardReader, calypsoCard, samResource, card);
     } catch (CardFullException e) {
+      // Refusal logged where it is detected
       statusCode = RemoteServiceStatus.CARD_FULL.getCode();
       message = ContractLoadingService.CARD_FULL_MESSAGE;
     } catch (CardNotPersonalizedException e) {
+      // Refusal logged where it is detected
       statusCode = RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode();
       message = CARD_NOT_PERSONALIZED;
     } catch (EnvironmentExpiredException e) {
+      // Refusal logged where it is detected
       statusCode = RemoteServiceStatus.ENVIRONMENT_EXPIRED.getCode();
       message = ENVIRONMENT_EXPIRED;
     } catch (CardCommunicationException e) {

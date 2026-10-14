@@ -364,6 +364,17 @@ Message [key1=value1, key2=value2]
 The `TRACE` level is not used. A repetitive event (e.g. periodic check of the server) is logged at the `DEBUG` level,
 or only when its state changes (e.g. "Server ready", "Server not ready").
 
+These rules are checked by the CI (`.github/scripts/check-log-messages.py`, Python 3), which can also be run locally
+from the root of the repository:
+
+```bash
+python3 .github/scripts/check-log-messages.py
+```
+
+It checks the form of the messages (capital letter, final punctuation, class name, context at the end, keys in
+camelCase), the warnings logged without stack trace, and the catch blocks: a catch block logs the exception, throws
+an exception, or explains in a comment why it does not log it (e.g. `// Refusal logged where it is detected`).
+
 Where to read the logs:
 
 | Component            | Logs                                                                   | Default level | To see the `DEBUG` messages                                                |
