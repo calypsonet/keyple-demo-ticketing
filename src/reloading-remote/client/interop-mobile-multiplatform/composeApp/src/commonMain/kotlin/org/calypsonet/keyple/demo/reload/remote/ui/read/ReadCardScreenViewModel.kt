@@ -64,6 +64,7 @@ class ReadCardScreenViewModel(
         }
         // _state.value = ReadCardScreenState.DisplayError("No card found")
       } catch (e: Exception) {
+        Napier.e("Error while waiting for the card", e)
         _state.value = ReadCardScreenState.DisplayError("Error: ${e.message}")
       }
     }

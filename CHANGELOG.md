@@ -129,6 +129,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Log messages (fifth audit): the errors which were silently ignored are logged: stop of the card detection
+  (validation app, at the `WARN` level as in the control app, which logged it at the `ERROR` level), wait for the card
+  (multiplatform client), wait for a card and errors of the card or of the reader returned to the server (.NET client).
 - Log messages (fourth audit): the results of the reloading operations are logged with the same messages by the
   three clients ("Contract loaded", "Contract loading failed", "Card personalized", "Personalization failed" in the
   multiplatform client instead of "Remote service executed/failed"; "Contracts reading failed" and "Trips loading

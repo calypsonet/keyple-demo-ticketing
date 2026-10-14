@@ -164,13 +164,13 @@ class CardReaderSession(
     userFeedback.displayWaiting()
   }
 
-  /** Stops the detection of the cards. Swallows exceptions silently. */
+  /** Stops the detection of the cards. */
   fun stopCardDetection() {
     try {
       // notify reader that se detection has been switched off
       (terminalReaders.getCardReader() as ObservableCardReader).stopCardDetection()
     } catch (e: Exception) {
-      // NOP
+      logger.w("Error while stopping the card detection", e)
     }
   }
 

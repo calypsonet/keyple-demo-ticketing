@@ -200,16 +200,19 @@ namespace App.domain.api
                 }
                 catch (CardIOException ex)
                 {
+                    _logger.Warning($"Card communication error while processing the card selection request [cause={ex.Message}]");
                     error = new Error { Code = ErrorCode.CARD_COMMUNICATION_ERROR, Message = ex.Message };
                     break;
                 }
                 catch (ReaderNotFoundException ex)
                 {
+                    _logger.Warning($"Reader communication error while processing the card selection request [cause={ex.Message}]");
                     error = new Error { Code = ErrorCode.READER_COMMUNICATION_ERROR, Message = ex.Message };
                     break;
                 }
                 catch (UnexpectedStatusWordException ex)
                 {
+                    _logger.Warning($"Unexpected status word while processing the card selection request [cause={ex.Message}]");
                     error = new Error { Code = ErrorCode.CARD_COMMAND_ERROR, Message = ex.Message };
                     break;
                 }
@@ -338,14 +341,17 @@ namespace App.domain.api
             }
             catch (CardIOException ex)
             {
+                _logger.Warning($"Card communication error while processing the card request [cause={ex.Message}]");
                 error = new Error { Code = ErrorCode.CARD_COMMUNICATION_ERROR, Message = ex.Message };
             }
             catch (ReaderNotFoundException ex)
             {
+                _logger.Warning($"Reader communication error while processing the card request [cause={ex.Message}]");
                 error = new Error { Code = ErrorCode.READER_COMMUNICATION_ERROR, Message = ex.Message };
             }
             catch (UnexpectedStatusWordException ex)
             {
+                _logger.Warning($"Unexpected status word while processing the card request [cause={ex.Message}]");
                 error = new Error { Code = ErrorCode.CARD_COMMAND_ERROR, Message = ex.Message };
             }
             if (error == null)

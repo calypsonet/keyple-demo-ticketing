@@ -66,6 +66,7 @@ class LoadContractScreenViewModel(
           _state.value = LoadContractScreenState.DisplayError("No card found")
         }
       } catch (e: Exception) {
+        Napier.e("Error while waiting for the card", e)
         _state.value = LoadContractScreenState.DisplayError("Error: ${e.message}")
       }
     }

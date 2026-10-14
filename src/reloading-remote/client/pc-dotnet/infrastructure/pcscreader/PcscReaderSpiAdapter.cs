@@ -115,9 +115,9 @@ namespace App.infrastructure.pcscreader
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Handle exceptions if necessary
+                _logger.Error(ex, "Error while waiting for a card");
             }
             return false;
         }

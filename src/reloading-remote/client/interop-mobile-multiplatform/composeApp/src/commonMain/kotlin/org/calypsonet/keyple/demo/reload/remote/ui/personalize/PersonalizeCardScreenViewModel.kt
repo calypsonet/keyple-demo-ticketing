@@ -62,6 +62,7 @@ class PersonalizeCardScreenViewModel(
           _state.value = PersonalizeCardScreenState.DisplayError("No card found")
         }
       } catch (e: Exception) {
+        Napier.e("Error while waiting for the card", e)
         _state.value = PersonalizeCardScreenState.DisplayError("Error: ${e.message}")
       }
     }

@@ -187,7 +187,7 @@ class CardReaderSession(
       // notify the reader that se detection has been switched off
       (terminalReaders.getCardReader() as ObservableCardReader).stopCardDetection()
     } catch (e: Exception) {
-      logger.e("Error while stopping the card detection", e)
+      logger.w("Error while stopping the card detection", e)
     }
   }
 
