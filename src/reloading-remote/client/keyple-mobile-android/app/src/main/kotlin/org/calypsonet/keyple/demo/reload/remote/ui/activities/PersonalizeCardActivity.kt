@@ -50,7 +50,7 @@ class PersonalizeCardActivity : BaseCardActivity() {
     try {
       if (cardMedium == CardMedium.CONTACTLESS_CARD) {
         showPresentCardInstructions()
-        startCardReader()
+        initCardReader()
       } else {
         showPersonalizationInProgress()
         initOmapiReader { lifecycleScope.launch(Dispatchers.Default) { executeRemoteService() } }

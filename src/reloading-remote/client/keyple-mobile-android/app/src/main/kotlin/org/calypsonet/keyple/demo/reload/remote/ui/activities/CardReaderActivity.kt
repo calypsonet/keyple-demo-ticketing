@@ -59,13 +59,13 @@ class CardReaderActivity : BaseCardActivity() {
             val nfcManager = getSystemService(NFC_SERVICE) as NfcManager
             if (nfcManager.defaultAdapter?.isEnabled == true) {
               showPresentCardInstructions()
-              startCardReader()
+              initCardReader()
             } else {
               showError(getString(R.string.nfc_not_activated), finishActivity = true)
             }
           } else {
             showPresentCardInstructions()
-            startCardReader()
+            initCardReader()
           }
         }
         CardMedium.SIM -> {

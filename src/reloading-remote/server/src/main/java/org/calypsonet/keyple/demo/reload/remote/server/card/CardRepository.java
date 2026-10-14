@@ -134,7 +134,7 @@ public class CardRepository {
     int contractCount = getContractCount(calypsoCard);
 
     SecureRegularModeTransactionManager cardTransactionManager =
-        initCardTransactionManager(cardReader, calypsoCard, samResource);
+        createCardTransactionManager(cardReader, calypsoCard, samResource);
 
     logger.debug("Opening the secure session [writeAccessLevel=LOAD]");
     cardTransactionManager
@@ -205,7 +205,7 @@ public class CardRepository {
       CardReader cardReader, CalypsoCard calypsoCard, CardResource samResource, CardData card) {
 
     SecureRegularModeTransactionManager cardTransactionManager =
-        initCardTransactionManager(cardReader, calypsoCard, samResource);
+        createCardTransactionManager(cardReader, calypsoCard, samResource);
 
     logger.debug("Opening the secure session [writeAccessLevel=LOAD]");
     cardTransactionManager.prepareOpenSecureSession(WriteAccessLevel.LOAD);
@@ -305,7 +305,7 @@ public class CardRepository {
   void personalizeCard(CardReader cardReader, CalypsoCard calypsoCard, CardResource samResource) {
 
     SecureRegularModeTransactionManager cardTransactionManager =
-        initCardTransactionManager(cardReader, calypsoCard, samResource);
+        createCardTransactionManager(cardReader, calypsoCard, samResource);
 
     logger.debug("Opening the secure session [writeAccessLevel=PERSONALIZATION]");
     cardTransactionManager.prepareOpenSecureSession(WriteAccessLevel.PERSONALIZATION);
@@ -384,7 +384,7 @@ public class CardRepository {
   }
 
   @NotNull
-  private SecureRegularModeTransactionManager initCardTransactionManager(
+  private SecureRegularModeTransactionManager createCardTransactionManager(
       CardReader cardReader, CalypsoCard calypsoCard, CardResource samResource) {
     CalypsoCardApiFactory calypsoCardApiFactory =
         CalypsoExtensionService.getInstance().getCalypsoCardApiFactory();

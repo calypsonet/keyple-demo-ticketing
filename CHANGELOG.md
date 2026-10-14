@@ -129,6 +129,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Method names (fifth audit): the server creates the card transaction managers with `createCardTransactionManager()`
+  (instead of `initCardTransactionManager()`), as the card selection manager (`createCardSelectionManager()`); the
+  README describes the `create...` verb.
 - Method names (fourth audit): the multiplatform client executes the remote services with `executeRemoteService()`
   and `executeRemoteServiceWithStatus()` (instead of `executeService()` and `executeServiceWithStatusOutput()`), as
   the Android and .NET clients; the .NET client processes the commands of the server with `ProcessServerCommands()`
@@ -175,7 +178,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     security setting of the card transactions is created by `createSecuritySetting()` in both apps;
   - reloading Android client: `executeRemoteService()` (instead of `remoteServiceExecution()`), `showError()`,
     `showStatusError()`, `showInvalidCard()`, `showCardCommunicationError()` and `showServerError()` (instead of
-    `launch...Response()`), `startCardReader()` and `releaseCardReader()` (instead of `initAndActivateCardReader()` and
+    `launch...Response()`), `initCardReader()` and `releaseCardReader()` (instead of `initAndActivateCardReader()` and
     `deactivateAndClearReader()`), `setUpCardMediumButton()` (instead of `setupBtn()`), and `KeypleSyncEndpointClient`
     (instead of `KeypleSyncEndPointClient`, after the Keyple `SyncEndpointClientSpi`);
   - multiplatform client: `selectAppAndPersonalizeCard()` as the two other remote services (instead of

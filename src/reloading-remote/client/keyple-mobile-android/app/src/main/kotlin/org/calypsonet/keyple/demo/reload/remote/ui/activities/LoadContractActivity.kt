@@ -51,7 +51,7 @@ class LoadContractActivity : BaseCardActivity() {
     try {
       if (cardMedium == CardMedium.CONTACTLESS_CARD) {
         showPresentCardInstructions()
-        startCardReader()
+        initCardReader()
       } else {
         showLoadingInProgress()
         initOmapiReader { lifecycleScope.launch(Dispatchers.Default) { executeRemoteService() } }

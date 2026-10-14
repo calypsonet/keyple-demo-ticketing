@@ -52,7 +52,7 @@ abstract class BaseCardActivity :
 
   /** Android NFC Reader is strongly dependent and Android Activity component. */
   @Throws(UnsupportedOperationException::class)
-  fun startCardReader() {
+  fun initCardReader() {
     cardReaderSession.init(
         terminalType,
         cardMedium,
