@@ -14,7 +14,6 @@ package org.calypsonet.keyple.demo.control.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
@@ -71,7 +70,6 @@ class CardReaderActivity : BaseActivity() {
     activityCardReaderBinding.loadingAnimation.playAnimation()
     if (!cardReaderSession.isInitialized) {
       lifecycleScope.launch(Dispatchers.Default) {
-        withContext(Dispatchers.Main) { showProgress() }
         withContext(Dispatchers.IO) {
           try {
             cardReaderObserver = CardReaderObserver()
@@ -87,14 +85,8 @@ class CardReaderActivity : BaseActivity() {
             cardReaderSession.startCardDetection()
           } catch (e: Exception) {
             Timber.e(e, "Error while initializing the readers")
-            withContext(Dispatchers.Main) {
-              hideProgress()
-              showReaderInitializationErrorDialog()
-            }
+            withContext(Dispatchers.Main) { showReaderInitializationErrorDialog() }
           }
-        }
-        if (cardReaderSession.isInitialized) {
-          withContext(Dispatchers.Main) { hideProgress() }
         }
       }
     } else {
@@ -156,7 +148,6 @@ class CardReaderActivity : BaseActivity() {
             lifecycleScope.launch(Dispatchers.Default) {
               try {
                 // Select and control the card
-                withContext(Dispatchers.Main) { showProgress() }
                 val controlResult =
                     withContext(Dispatchers.IO) {
                       controlCard(readerEvent.scheduledCardSelectionsResponse)
@@ -172,7 +163,6 @@ class CardReaderActivity : BaseActivity() {
                           showToast(getString(R.string.authentication_mode_no_authentication))
                     }
                   }
-                  hideProgress()
                   displayResult(controlResult.toUi(resources))
                 }
               } catch (e: CancellationException) {
@@ -180,7 +170,6 @@ class CardReaderActivity : BaseActivity() {
                 throw e
               } catch (e: IllegalStateException) {
                 Timber.e(e, "Error while displaying the control result")
-                withContext(Dispatchers.Main) { hideProgress() }
                 displayResult(
                     UiControlResult(resultType = ResultType.ERROR, contracts = emptyList()))
               } finally {
@@ -231,14 +220,6 @@ class CardReaderActivity : BaseActivity() {
     val dialog = builder.create()
     dialog.setCancelable(false)
     dialog.show()
-  }
-
-  private fun showProgress() {
-    activityCardReaderBinding.progressOverlay.visibility = View.VISIBLE
-  }
-
-  private fun hideProgress() {
-    activityCardReaderBinding.progressOverlay.visibility = View.GONE
   }
 
   companion object {

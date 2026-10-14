@@ -14,7 +14,6 @@
     <string name="app_name">Keyple Demo - Control</string>
 
 
-    <string name="please_wait">Please wait</string>
     <string name="error_title">Error</string>
     <string name="quit">Quit</string>
     <string name="version">version %s</string>

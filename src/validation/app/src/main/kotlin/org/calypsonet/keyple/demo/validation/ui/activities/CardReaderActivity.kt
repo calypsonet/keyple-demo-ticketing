@@ -113,7 +113,6 @@ class CardReaderActivity : BaseActivity() {
 
     if (!cardReaderSession.isInitialized) {
       lifecycleScope.launch {
-        withContext(Dispatchers.Main) { showProgress() }
         withContext(Dispatchers.IO) {
           try {
             cardReaderObserver = CardReaderObserver()
@@ -125,14 +124,8 @@ class CardReaderActivity : BaseActivity() {
             cardReaderSession.startCardDetection()
           } catch (e: Exception) {
             Timber.e(e, "Error while initializing the readers")
-            withContext(Dispatchers.Main) {
-              hideProgress()
-              showReaderInitializationErrorDialog()
-            }
+            withContext(Dispatchers.Main) { showReaderInitializationErrorDialog() }
           }
-        }
-        if (cardReaderSession.isInitialized) {
-          withContext(Dispatchers.Main) { hideProgress() }
         }
       }
     } else {
@@ -444,14 +437,6 @@ class CardReaderActivity : BaseActivity() {
     val dialog = builder.create()
     dialog.setCancelable(false)
     dialog.show()
-  }
-
-  private fun showProgress() {
-    activityCardReaderBinding.progressOverlay.visibility = View.VISIBLE
-  }
-
-  private fun hideProgress() {
-    activityCardReaderBinding.progressOverlay.visibility = View.GONE
   }
 
   /**

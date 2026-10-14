@@ -4,7 +4,6 @@
 
     <string name="card_type">%1$s</string>
     <string name="error_title">Error</string>
-    <string name="please_wait">Please wait</string>
     <string name="version">version %s</string>
 
     <string name="quit">Quit</string>
