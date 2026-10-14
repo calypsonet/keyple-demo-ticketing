@@ -617,11 +617,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   request.
 - The server IP address entered in the settings is checked as an IPv4 address (four numbers from 0 to 255) instead of
   using the deprecated `Patterns.IP_ADDRESS`.
-- The error screens return automatically to the previous screen after 8 seconds, as the success screen does after 5
-  seconds: the card presentation screen to try again (or the home screen when it was closed), unless the user
-  chooses before with the buttons. This applies to the reload and personalization result in error, and to the card
-  summary for an invalid card or a technical error. The automatic return uses a coroutine bound to the screen
-  lifecycle instead of a `Timer`.
+- The error screens return automatically to the previous screen after 5 seconds, as the success screen does: the card
+  presentation screen to try again (or the home screen when it was closed), unless the user chooses before with the
+  buttons. This applies to the reload and personalization result in error, and to the card summary for an invalid card
+  or a technical error. The automatic return uses a coroutine bound to the screen lifecycle instead of a `Timer`.
 - The screens returning automatically show the remaining time: a bar emptied at the bottom of the screen (white on the
   result screens, of the color of the message on the card summary), and the remaining seconds in the "Retry" button
   of the result screen in error ("Retry (8)"), which performs the same action.
@@ -746,7 +745,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Navigation Compose: `2.9.0-rc01` -> `2.9.2` (stable), Lifecycle ViewModel Compose: `2.9.2` -> `2.10.0` (`2.11`+
   requires compileSdk 37).
 - The result screens return automatically, as in the Android client: to the home screen 5 seconds after a successful
-  reload or personalization, and to the previous screen 8 seconds after an error (same action as the back arrow), the
+  reload or personalization, and to the previous screen 5 seconds after an error (same action as the back arrow), the
   remaining time being shown by a bar emptied at the bottom of the screen. The back arrow of the success screen now
   replaces the screens of the transaction with the home screen instead of adding it on top of them.
 - iOS: the Intel simulator target (`iosX64`) is removed, no longer supported by Compose Multiplatform 1.11 and

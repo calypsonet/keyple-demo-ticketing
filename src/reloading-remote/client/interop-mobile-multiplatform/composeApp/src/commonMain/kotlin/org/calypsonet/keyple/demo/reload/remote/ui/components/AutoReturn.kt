@@ -32,8 +32,8 @@ import kotlinx.coroutines.launch
 /** Display duration of a successful result before the automatic return. */
 internal const val SUCCESS_RETURN_DELAY_MS = 5000L
 
-/** Display duration of an error before the automatic return, longer to read the message. */
-internal const val ERROR_RETURN_DELAY_MS = 8000L
+/** Display duration of an error before the automatic return. */
+internal const val ERROR_RETURN_DELAY_MS = 5000L
 
 /**
  * Automatic return to the previous screen after a result.

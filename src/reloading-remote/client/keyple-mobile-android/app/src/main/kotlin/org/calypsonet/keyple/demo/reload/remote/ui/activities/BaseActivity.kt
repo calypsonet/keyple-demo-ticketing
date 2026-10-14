@@ -142,8 +142,8 @@ abstract class BaseActivity : AppCompatActivity() {
   companion object {
     /** Display duration of a successful result before the automatic return. */
     const val SUCCESS_RETURN_DELAY_MS = 5000L
-    /** Display duration of an error before the automatic return, longer to read the message. */
-    const val ERROR_RETURN_DELAY_MS = 8000L
+    /** Display duration of an error before the automatic return. */
+    const val ERROR_RETURN_DELAY_MS = 5000L
     /** Resolution of the progress bar showing the remaining time (smooth animation). */
     private const val AUTO_RETURN_PROGRESS_MAX = 1000
   }
