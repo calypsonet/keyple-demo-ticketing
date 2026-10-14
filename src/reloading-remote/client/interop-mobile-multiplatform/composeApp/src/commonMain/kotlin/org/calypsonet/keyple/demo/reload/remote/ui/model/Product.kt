@@ -21,10 +21,4 @@ enum class ProductType {
   SEASON_PASS
 }
 
-@Serializable
-data class Product(
-    val type: ProductType,
-    val price: Int,
-    val quantity: Int = 1,
-    val date: String? = null
-)
+@Serializable data class Product(val type: ProductType, val price: Int, val quantity: Int = 1)

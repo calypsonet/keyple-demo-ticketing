@@ -17,14 +17,14 @@ import org.calypsonet.keyple.demo.reload.remote.data.dto.SelectAppAndAnalyzeCont
 /** Cache of the last card read: serial number and contracts, used by the following screens. */
 class ReadCardCache {
   private var cardContracts: List<ContractInfo>? = null
-  private var cardSerial = ""
+  private var cardSerialNumber = ""
 
-  fun getCardSerial(): String {
-    return cardSerial
+  fun getCardSerialNumber(): String {
+    return cardSerialNumber
   }
 
-  fun saveCardSerial(serial: String) {
-    cardSerial = serial
+  fun saveCardSerialNumber(serialNumber: String) {
+    cardSerialNumber = serialNumber
   }
 
   fun getCardContracts(): List<ContractInfo> {

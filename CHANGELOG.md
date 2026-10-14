@@ -129,6 +129,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Vocabulary harmonized with the glossary (eighth audit): the serial number of the card is named
+  `cardSerialNumber` in the multiplatform client (instead of `cardSerial`, also in the `LoadContract` route and in
+  `ReadCardCache`) and `applicationSerialNumber` in the server (instead of `appSerialNumber`); the dimension of the
+  validation result overlay is `validation_result_desc_top_margin` (instead of `summary_desc_top_margin`); the
+  activities of the control app take the name of the application (their labels were their class names); the
+  unused `date` of the products of the multiplatform client is removed.
 - Vocabulary harmonized with the glossary (seventh audit): the theme and the top bar of the multiplatform client
   are named `AppTheme` and `AppTopBar` (instead of `KeypleTheme` and `KeypleTopAppBar`), the "Keyple" prefix
   being kept for the integration of the Keyple libraries; the .NET client names its service API

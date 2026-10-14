@@ -57,8 +57,7 @@ class CardContentScreenViewModel(private val readCardCache: ReadCardCache) : Vie
                 Product(type = ProductType.MULTI_TRIP, price = 2, quantity = 2),
                 Product(type = ProductType.MULTI_TRIP, price = 3, quantity = 3),
                 Product(type = ProductType.MULTI_TRIP, price = 4, quantity = 4),
-                Product(
-                    type = ProductType.SEASON_PASS, price = 20, quantity = 1, date = "12/12/24"),
+                Product(type = ProductType.SEASON_PASS, price = 20, quantity = 1),
             ))
   }
 
@@ -66,7 +65,7 @@ class CardContentScreenViewModel(private val readCardCache: ReadCardCache) : Vie
     _state.value = CardContentScreenState.DisplayBasket(product)
   }
 
-  fun getCardSerial(): String {
-    return readCardCache.getCardSerial()
+  fun getCardSerialNumber(): String {
+    return readCardCache.getCardSerialNumber()
   }
 }

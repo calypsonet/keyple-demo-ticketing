@@ -58,12 +58,12 @@ public class CardPersonalizationService {
       CardReader cardReader, CalypsoCard calypsoCard, PersonalizeCardInputDto inputData) {
 
     String pluginType = inputData.getPluginType();
-    String appSerialNumber = HexUtil.toHex(calypsoCard.getApplicationSerialNumber());
+    String applicationSerialNumber = HexUtil.toHex(calypsoCard.getApplicationSerialNumber());
 
     logger.info(
         "=== PERSONALIZE CALYPSO CARD === Plugin: {}, CSN: {}, ProductType: {}",
         pluginType,
-        appSerialNumber,
+        applicationSerialNumber,
         calypsoCard.getProductType());
 
     if (!CalypsoFiles.ALLOWED_FILE_STRUCTURES.contains(calypsoCard.getApplicationSubtype())) {
@@ -75,15 +75,15 @@ public class CardPersonalizationService {
             .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
     try {
       cardRepository.personalizeCard(cardReader, calypsoCard, samResource);
-      transactionRecorder.record(pluginType, true, PERSONALIZATION, appSerialNumber);
+      transactionRecorder.record(pluginType, true, PERSONALIZATION, applicationSerialNumber);
       return new PersonalizeCardOutputDto(RemoteServiceStatus.SUCCESS.getCode());
     } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_PERSONALIZING_THE_CARD, e.getMessage(), e);
-      transactionRecorder.record(pluginType, false, PERSONALIZATION, appSerialNumber);
+      transactionRecorder.record(pluginType, false, PERSONALIZATION, applicationSerialNumber);
       return new PersonalizeCardOutputDto(RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_PERSONALIZING_THE_CARD, e.getMessage(), e);
-      transactionRecorder.record(pluginType, false, PERSONALIZATION, appSerialNumber);
+      transactionRecorder.record(pluginType, false, PERSONALIZATION, applicationSerialNumber);
       return new PersonalizeCardOutputDto(RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
       CardResourceServiceProvider.getService().releaseCardResource(samResource);

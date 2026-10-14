@@ -79,12 +79,12 @@ public class ContractAnalysisService {
       CardReader cardReader, CalypsoCard calypsoCard, AnalyzeContractsInputDto inputData) {
 
     String pluginType = inputData.getPluginType();
-    String appSerialNumber = HexUtil.toHex(calypsoCard.getApplicationSerialNumber());
+    String applicationSerialNumber = HexUtil.toHex(calypsoCard.getApplicationSerialNumber());
 
     logger.info(
         "=== ANALYZE CALYPSO CARD === Plugin: {}, CSN: {}, ProductType: {}, ApplicationSubtype: {}",
         pluginType,
-        appSerialNumber,
+        applicationSerialNumber,
         calypsoCard.getProductType(),
         HexUtil.toHex(calypsoCard.getApplicationSubtype()));
 
@@ -100,26 +100,26 @@ public class ContractAnalysisService {
       CardData card = cardRepository.readCard(cardReader, calypsoCard, samResource);
       // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
       List<ContractStructure> presentContracts = findPresentContracts(card);
-      transactionRecorder.record(pluginType, true, SECURED_READ, appSerialNumber);
+      transactionRecorder.record(pluginType, true, SECURED_READ, applicationSerialNumber);
       return new AnalyzeContractsOutputDto(presentContracts, RemoteServiceStatus.SUCCESS.getCode());
     } catch (CardNotPersonalizedException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
-      transactionRecorder.record(pluginType, false, SECURED_READ, appSerialNumber);
+      transactionRecorder.record(pluginType, false, SECURED_READ, applicationSerialNumber);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode());
     } catch (EnvironmentExpiredException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
-      transactionRecorder.record(pluginType, false, SECURED_READ, appSerialNumber);
+      transactionRecorder.record(pluginType, false, SECURED_READ, applicationSerialNumber);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.ENVIRONMENT_EXPIRED.getCode());
     } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
-      transactionRecorder.record(pluginType, false, SECURED_READ, appSerialNumber);
+      transactionRecorder.record(pluginType, false, SECURED_READ, applicationSerialNumber);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
-      transactionRecorder.record(pluginType, false, SECURED_READ, appSerialNumber);
+      transactionRecorder.record(pluginType, false, SECURED_READ, applicationSerialNumber);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {

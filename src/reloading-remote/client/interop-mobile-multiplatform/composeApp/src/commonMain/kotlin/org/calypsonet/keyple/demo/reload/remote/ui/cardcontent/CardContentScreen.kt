@@ -114,7 +114,7 @@ fun CardContentScreen(
               product = (state.value as CardContentScreenState.DisplayBasket).selectedProduct!!,
               onPay = {
                 navController.navigate(
-                    LoadContract(product = it, cardSerial = viewModel.getCardSerial()))
+                    LoadContract(product = it, cardSerialNumber = viewModel.getCardSerialNumber()))
               })
         }
       }

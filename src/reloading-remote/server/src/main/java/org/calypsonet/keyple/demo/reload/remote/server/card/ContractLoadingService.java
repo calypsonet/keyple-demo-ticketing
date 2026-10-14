@@ -75,7 +75,7 @@ public class ContractLoadingService {
       CardReader cardReader, CalypsoCard calypsoCard, LoadContractInputDto inputData) {
 
     String pluginType = inputData.getPluginType();
-    String appSerialNumber = HexUtil.toHex(calypsoCard.getApplicationSerialNumber());
+    String applicationSerialNumber = HexUtil.toHex(calypsoCard.getApplicationSerialNumber());
 
     if (!CalypsoFiles.ALLOWED_FILE_STRUCTURES.contains(calypsoCard.getApplicationSubtype())) {
       return new LoadContractOutputDto(RemoteServiceStatus.CARD_REJECTED.getCode());
@@ -84,7 +84,7 @@ public class ContractLoadingService {
     logger.info(
         "=== LOAD CALYPSO CARD CONTRACT === Plugin: {}, CSN: {}, ProductType: {}, Contract: {}, Trips: {}",
         pluginType,
-        appSerialNumber,
+        applicationSerialNumber,
         calypsoCard.getProductType(),
         inputData.getContractTariff(),
         inputData.getTripsToLoad());
@@ -98,19 +98,19 @@ public class ContractLoadingService {
       insertNewContract(inputData.getContractTariff(), inputData.getTripsToLoad(), card);
       int statusCode = cardRepository.writeCard(cardReader, calypsoCard, samResource, card);
       transactionRecorder.record(
-          pluginType, true, LOAD, appSerialNumber, describeLoadedContract(inputData));
+          pluginType, true, LOAD, applicationSerialNumber, describeLoadedContract(inputData));
       return new LoadContractOutputDto(statusCode);
     } catch (CardFullException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT, e.getMessage());
-      transactionRecorder.record(pluginType, false, LOAD, appSerialNumber, "");
+      transactionRecorder.record(pluginType, false, LOAD, applicationSerialNumber, "");
       return new LoadContractOutputDto(RemoteServiceStatus.CARD_FULL.getCode());
     } catch (CardCommunicationException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT, e.getMessage(), e);
-      transactionRecorder.record(pluginType, false, LOAD, appSerialNumber, "");
+      transactionRecorder.record(pluginType, false, LOAD, applicationSerialNumber, "");
       return new LoadContractOutputDto(RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
       logger.error(AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT, e.getMessage(), e);
-      transactionRecorder.record(pluginType, false, LOAD, appSerialNumber, "");
+      transactionRecorder.record(pluginType, false, LOAD, applicationSerialNumber, "");
       return new LoadContractOutputDto(RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
       CardResourceServiceProvider.getService().releaseCardResource(samResource);

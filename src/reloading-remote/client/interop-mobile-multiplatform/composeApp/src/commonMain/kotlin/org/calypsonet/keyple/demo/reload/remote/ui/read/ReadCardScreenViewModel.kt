@@ -79,7 +79,7 @@ class ReadCardScreenViewModel(
         }
         is KeypleResult.Success -> {
           // Card read, kept for the following screens (card content, loading of a contract)
-          readCardCache.saveCardSerial(result.data.applicationSerialNumber)
+          readCardCache.saveCardSerialNumber(result.data.applicationSerialNumber)
           readCardCache.saveCardContracts(result.data.contracts)
           _state.value = ReadCardScreenState.ShowCardContent
         }

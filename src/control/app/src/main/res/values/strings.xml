@@ -19,10 +19,6 @@
     <string name="quit">Quit</string>
     <string name="version">version %s</string>
 
-    <string name="title_activity_home">HomeActivity</string>
-    <string name="title_activity_card_reader">CardReaderActivity</string>
-    <string name="title_activity_invalid_card">InvalidCardActivity</string>
-    <string name="title_activity_card_content">CardContentActivity</string>
 
     <!-- Settings screen -->
     <string name="location_label">Set location</string>

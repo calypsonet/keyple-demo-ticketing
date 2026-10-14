@@ -24,13 +24,11 @@ data class LoadContract(
     val type: Int,
     val price: Int,
     val quantity: Int = 1,
-    val date: String? = null,
-    val cardSerial: String
+    val cardSerialNumber: String
 ) {
   companion object {
-    operator fun invoke(product: Product, cardSerial: String = ""): LoadContract {
-      return LoadContract(
-          product.type.ordinal, product.price, product.quantity, product.date, cardSerial)
+    operator fun invoke(product: Product, cardSerialNumber: String = ""): LoadContract {
+      return LoadContract(product.type.ordinal, product.price, product.quantity, cardSerialNumber)
     }
   }
 }

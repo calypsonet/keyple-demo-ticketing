@@ -105,12 +105,12 @@ public class JsonApiService {
             cardReader, calypsoCard, new AnalyzeContractsInputDto(pluginType));
 
     // Build result
-    String appSerialNumber = HexUtil.toHex(calypsoCard.getApplicationSerialNumber());
+    String applicationSerialNumber = HexUtil.toHex(calypsoCard.getApplicationSerialNumber());
     List<SelectAppAndAnalyzeContractsOutputDto.ContractInfo> contracts =
         analysis.getContracts().stream().map(this::toContractInfo).collect(Collectors.toList());
     int statusCode = analysis.getStatusCode();
     return new SelectAppAndAnalyzeContractsOutputDto(
-        appSerialNumber, contracts, statusCode, getStatusMessage(statusCode, calypsoCard));
+        applicationSerialNumber, contracts, statusCode, getStatusMessage(statusCode, calypsoCard));
   }
 
   SelectAppAndLoadContractOutputDto selectAppAndLoadContract(
