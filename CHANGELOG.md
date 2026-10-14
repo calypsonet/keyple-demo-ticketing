@@ -463,7 +463,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Versions in the READMEs aligned with the build: JDK 17 to build, Java 17+ for the KMP desktop client, Kotlin 2.3,
   Android 8.0+ and iOS 15.3+ for the KMP client.
 ### Upgraded
-- `keyple-java-bom`: `2026.03.19` -> `2026.09.29`
+- `keyple-java-bom`: `2026.03.19` -> `2026.10.14` (with `keyple-card-calypso-java-lib` `3.3.0`, which fixes the
+  session signature of the PKI cards when the CA certificate is not registered, and
+  `keypop-calypso-card-java-api` `2.3.0`)
 - `keyple-card-cna-storagecard-java-lib` (mock): `2.3.0` -> `2.3.1`
 - `keyple-plugin-cna-storagecard-java-lib` (mock): `1.1.0` -> `1.1.1`
 - Android applications: Dagger `2.25` -> Hilt `2.60.1`, with KSP `2.3.12`.
