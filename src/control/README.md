@@ -56,7 +56,8 @@ cd keyple-demo-ticketing/src/control
 2. Select the terminal type from **Terminal Selection** screen:
   - **Famoco**: terminal with a SAM reader
   - **NFC terminal**: any Android device with NFC (no SAM: the Calypso cards are authenticated by PKI when they
-    support it, otherwise not authenticated)
+    support it, otherwise not authenticated); the MIFARE Ultralight and MIFARE Classic storage cards are also
+    supported
   - **Bluebird**: proprietary plugin (grayed out by default, see [Proprietary Plugins](#proprietary-plugins))
 
 ### Control Settings

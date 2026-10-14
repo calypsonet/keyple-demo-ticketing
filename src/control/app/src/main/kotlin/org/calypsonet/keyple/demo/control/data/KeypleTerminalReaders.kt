@@ -112,11 +112,16 @@ constructor(
     cardReaderName = AndroidNfcConstants.READER_NAME
     cardReaderProtocols[AndroidNfcSupportedProtocols.ISO_14443_4.name] =
         CardProtocol.ISO_14443_4.name
+    cardReaderProtocols[AndroidNfcSupportedProtocols.MIFARE_ULTRALIGHT.name] =
+        CardProtocol.MIFARE_ULTRALIGHT.name
+    cardReaderProtocols[AndroidNfcSupportedProtocols.MIFARE_CLASSIC_1K.name] =
+        CardProtocol.MIFARE_CLASSIC.name
     samPluginName = ""
     samReaderNameRegex = ""
     samReaderName = ""
     samReaderProtocolPhysicalName = ""
     samReaderProtocolLogicalName = ""
+    isStorageCardSupported = true
   }
 
   @Throws(KeyplePluginException::class)
