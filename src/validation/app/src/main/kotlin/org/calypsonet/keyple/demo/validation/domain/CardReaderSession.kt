@@ -144,7 +144,7 @@ class CardReaderSession(
       // attempts to select a SAM, if any, sets the isSecureSessionMode flag accordingly
       val samReader = terminalReaders.getSamReader()
       if (samReader == null || !selectSam(samReader)) {
-        throw IllegalStateException("SAM reader or SAM not available")
+        throw IllegalStateException("SAM not available")
       }
       cardSecuritySettings = createSecuritySettings()
       cardSecuritySettings.initCryptoContextForNextTransaction()

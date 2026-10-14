@@ -61,12 +61,12 @@ namespace App.domain.api
 
             if (readerNames.Count == 0)
             {
-                throw new ReaderNotFoundException("No reader found!");
+                throw new ReaderNotFoundException("No reader found");
             }
 
             if (!readerNames.Contains(readerName))
             {
-                throw new ReaderNotFoundException($"Reader '{readerName}' is not found in the list of readers.");
+                throw new ReaderNotFoundException($"Reader not found [reader={readerName}]");
             }
 
             _localReaderName = readerName;
@@ -282,7 +282,7 @@ namespace App.domain.api
             }
 
             // Handle the case where cardSelector or cardSelector.Aid is null.
-            throw new ArgumentNullException("cardSelector", "cardSelector or cardSelector.Aid is null.");
+            throw new ArgumentNullException("cardSelector", "Card selector or its AID missing");
         }
 
         private byte ComputeSelectApplicationP2(FileOccurrence fileOccurrence, FileControlInformation fileControlInformation)
@@ -304,7 +304,7 @@ namespace App.domain.api
                     p2 = 0x03;
                     break;
                 default:
-                    throw new Exception("Unexpected value: " + fileOccurrence);
+                    throw new InvalidOperationException($"Unexpected file occurrence [fileOccurrence={fileOccurrence}]");
             }
 
             switch (fileControlInformation)
@@ -322,7 +322,7 @@ namespace App.domain.api
                     p2 |= 0x0C;
                     break;
                 default:
-                    throw new Exception("Unexpected value: " + fileControlInformation);
+                    throw new InvalidOperationException($"Unexpected file control information [fileControlInformation={fileControlInformation}]");
             }
 
             return p2;
@@ -379,7 +379,7 @@ namespace App.domain.api
 
                     if (!apduRequest.SuccessfulStatusWords.Contains(apduResponse.StatusWord))
                     {
-                        throw new UnexpectedStatusWordException($"Unexpected status word: {apduResponse.StatusWord:X}");
+                        throw new UnexpectedStatusWordException($"Unexpected status word [statusWord={apduResponse.StatusWord:X}]");
                     }
                 }
                 catch (ReaderIOException)

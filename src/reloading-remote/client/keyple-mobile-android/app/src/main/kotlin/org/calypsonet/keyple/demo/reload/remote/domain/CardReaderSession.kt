@@ -163,7 +163,7 @@ class CardReaderSession(
     }
 
     return cardSelectionManager.processCardSelectionScenario(reader).activeSmartCard
-        ?: throw IllegalStateException("Matching smartcard not found")
+        ?: throw IllegalStateException("No matching card found")
   }
 
   /**

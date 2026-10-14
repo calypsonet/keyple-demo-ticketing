@@ -58,7 +58,7 @@ class SimpleHttpNetworkClient(val config: KeypleServerConfig, val httpClient: Ht
               .body()
       json
     } catch (e: Exception) {
-      throw ServerIOException("Communication error: ${e.message}")
+      throw ServerIOException("Communication error [cause=${e.message}]")
     }
   }
 }

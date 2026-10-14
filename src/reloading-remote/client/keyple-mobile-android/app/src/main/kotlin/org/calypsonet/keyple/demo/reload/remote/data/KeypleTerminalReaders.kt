@@ -194,6 +194,6 @@ class KeypleTerminalReaders @Inject constructor(private val logger: Logger) : Te
   override fun getReader(readerName: String): CardReader {
     var reader: CardReader? = null
     SmartCardServiceProvider.getService().plugins.forEach { reader = it.getReader(readerName) }
-    return reader ?: throw ReaderCommunicationException("$readerName not found")
+    return reader ?: throw ReaderCommunicationException("Reader not found [reader=$readerName]")
   }
 }

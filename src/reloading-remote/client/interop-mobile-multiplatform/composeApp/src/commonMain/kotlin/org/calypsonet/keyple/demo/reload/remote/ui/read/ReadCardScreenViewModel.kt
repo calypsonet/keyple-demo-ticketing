@@ -65,7 +65,7 @@ class ReadCardScreenViewModel(
         // _state.value = ReadCardScreenState.DisplayError("No card found")
       } catch (e: Exception) {
         Napier.e("Error while waiting for the card", e)
-        _state.value = ReadCardScreenState.DisplayError("Error: ${e.message}")
+        _state.value = ReadCardScreenState.DisplayError("Card reader error")
       }
     }
   }
@@ -87,7 +87,7 @@ class ReadCardScreenViewModel(
       }
     } catch (e: Exception) {
       Napier.e("Error while reading the contracts", e)
-      _state.value = ReadCardScreenState.DisplayError(e.message ?: "Unknown error")
+      _state.value = ReadCardScreenState.DisplayError("Unexpected error")
     }
   }
 }

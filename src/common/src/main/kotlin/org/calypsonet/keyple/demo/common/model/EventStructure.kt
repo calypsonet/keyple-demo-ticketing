@@ -35,7 +35,7 @@ data class EventStructure(
 
   init {
     require(contractPriorities.size == CONTRACT_COUNT) {
-      "$CONTRACT_COUNT contract priorities expected, got ${contractPriorities.size}"
+      "Unexpected number of contract priorities [expected=$CONTRACT_COUNT, actual=${contractPriorities.size}]"
     }
   }
 

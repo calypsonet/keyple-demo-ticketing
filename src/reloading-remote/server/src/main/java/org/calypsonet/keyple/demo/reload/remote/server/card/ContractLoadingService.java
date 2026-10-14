@@ -48,12 +48,8 @@ import org.slf4j.LoggerFactory;
 public class ContractLoadingService {
 
   /** Message of the result of a loading refused because the card is full. */
-  static final String CARD_FULL_MESSAGE = "No space left on the card for a new ticket.";
-
-  static final String THE_CARD_IS_FULL =
-      "No empty contract record nor expired or exhausted contract to replace, reject card";
-
   private static final Logger logger = LoggerFactory.getLogger(ContractLoadingService.class);
+
   private static final String CARD_COMMUNICATION_ERROR_WHILE_LOADING =
       "Card communication error while loading the contract [cause={}]";
   private static final String UNEXPECTED_ERROR_WHILE_LOADING =

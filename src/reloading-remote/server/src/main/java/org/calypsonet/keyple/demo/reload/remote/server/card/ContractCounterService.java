@@ -44,10 +44,6 @@ public class ContractCounterService {
 
   private static final Logger logger = LoggerFactory.getLogger(ContractCounterService.class);
   private static final String CUSTOM_PLUGIN = "Non Keyple plugin";
-  private static final String CARD_NOT_PERSONALIZED = "Card not personalized.";
-  private static final String ENVIRONMENT_EXPIRED = "Environment expired.";
-  private static final String RUNTIME_EXCEPTION = "Runtime exception: ";
-  private static final String CARD_COMMUNICATION_ERROR = "Card communication error: ";
 
   @Inject CardRepository cardRepository;
   @Inject TransactionRecorder transactionRecorder;
@@ -59,7 +55,6 @@ public class ContractCounterService {
     CalypsoCard calypsoCard = null;
     List<String> output = new ArrayList<>();
     int statusCode = RemoteServiceStatus.SUCCESS.getCode();
-    String message = "Success.";
     CardResource samResource = null;
 
     try {
@@ -82,20 +77,16 @@ public class ContractCounterService {
     } catch (CardNotPersonalizedException e) {
       // Refusal logged where it is detected
       statusCode = RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode();
-      message = CARD_NOT_PERSONALIZED;
     } catch (EnvironmentExpiredException e) {
       // Refusal logged where it is detected
       statusCode = RemoteServiceStatus.ENVIRONMENT_EXPIRED.getCode();
-      message = ENVIRONMENT_EXPIRED;
     } catch (CardCommunicationException e) {
       statusCode = RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode();
       logger.warn(
           "Card communication error while reading the contracts [cause={}]", e.getMessage());
-      message = CARD_COMMUNICATION_ERROR + e.getMessage();
     } catch (RuntimeException e) {
       statusCode = RemoteServiceStatus.SERVER_ERROR.getCode();
       logger.error("Unexpected error while reading the contracts", e);
-      message = RUNTIME_EXCEPTION + e.getMessage();
     } finally {
       transactionRecorder.record(
           CUSTOM_PLUGIN,
@@ -106,7 +97,10 @@ public class ContractCounterService {
         CardResourceServiceProvider.getService().releaseCardResource(samResource);
       }
     }
-    return new SelectAppAndReadContractsOutputDto(output, statusCode, message);
+    return new SelectAppAndReadContractsOutputDto(
+        output,
+        statusCode,
+        RemoteServiceMessages.of(RemoteServiceStatus.fromCode(statusCode), calypsoCard));
   }
 
   SelectAppAndIncreaseContractCounterOutputDto selectAppAndIncreaseContractCounter(
@@ -115,7 +109,6 @@ public class ContractCounterService {
     CalypsoCard calypsoCard = null;
     CardResource samResource = null;
     int statusCode = RemoteServiceStatus.SUCCESS.getCode();
-    String message = "Success.";
     try {
       calypsoCard = cardRepository.selectCard(cardReader);
       logger.info(
@@ -135,24 +128,19 @@ public class ContractCounterService {
     } catch (CardFullException e) {
       // Refusal logged where it is detected
       statusCode = RemoteServiceStatus.CARD_FULL.getCode();
-      message = ContractLoadingService.CARD_FULL_MESSAGE;
     } catch (CardNotPersonalizedException e) {
       // Refusal logged where it is detected
       statusCode = RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode();
-      message = CARD_NOT_PERSONALIZED;
     } catch (EnvironmentExpiredException e) {
       // Refusal logged where it is detected
       statusCode = RemoteServiceStatus.ENVIRONMENT_EXPIRED.getCode();
-      message = ENVIRONMENT_EXPIRED;
     } catch (CardCommunicationException e) {
       statusCode = RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode();
-      message = CARD_COMMUNICATION_ERROR + e.getMessage();
       logger.warn(
           "Card communication error while increasing the contract counter [cause={}]",
           e.getMessage());
     } catch (RuntimeException e) {
       statusCode = RemoteServiceStatus.SERVER_ERROR.getCode();
-      message = RUNTIME_EXCEPTION + e.getMessage();
       logger.error("Unexpected error while increasing the contract counter", e);
     } finally {
       boolean success = statusCode == RemoteServiceStatus.SUCCESS.getCode();
@@ -168,7 +156,9 @@ public class ContractCounterService {
         CardResourceServiceProvider.getService().releaseCardResource(samResource);
       }
     }
-    return new SelectAppAndIncreaseContractCounterOutputDto(statusCode, message);
+    return new SelectAppAndIncreaseContractCounterOutputDto(
+        statusCode,
+        RemoteServiceMessages.of(RemoteServiceStatus.fromCode(statusCode), calypsoCard));
   }
 
   /** Returns the description of a contract, one field per line, sent as text to the client. */

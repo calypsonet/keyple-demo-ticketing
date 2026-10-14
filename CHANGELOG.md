@@ -129,8 +129,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Exception messages written with the template of the log messages (README section "Exception Messages"): English
+  sentence without final punctuation nor class or method name, variable values in the context (e.g. "Reader not
+  found [reader=...]" instead of "Reader '...' is not found in the list of readers." or "OpenPhysicalChannel: ..."),
+  cause chained instead of copied in the message (control app, .NET client), specific types instead of `Exception`
+  and `RuntimeException`; the exception classes of the server are "Card not personalized", "Environment expired"
+  and "Card full: ...". The server returns the same messages of the statuses of its remote services to the
+  multiplatform and .NET clients (new `RemoteServiceMessages` class, texts of the Android applications), instead of
+  two vocabularies and of exception messages ("Runtime exception: ..."); the multiplatform client displays these
+  messages, or "Communication error", "Card reader error" and "Unexpected error", instead of technical texts
+  ("Server side error: 7 / ...", "Error: ..."). The CI checks the exception messages too (`check-messages.py`, job
+  "Log and exception messages").
 - CI: the log messages of all the components are checked against the convention of `README.md` ("Log Messages") by
-  the new `check-log-messages.py` script (job "Log messages"): form of the messages, warnings without stack trace,
+  the new `check-messages.py` script (job "Log and exception messages"): form of the messages, warnings without stack trace,
   catch blocks logging, throwing or explaining in a comment why they do not log (comments added to the catch blocks
   of the refusals of the server, of the removal of the card in the validation app and of the readiness of the
   server).

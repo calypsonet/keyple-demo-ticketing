@@ -77,10 +77,10 @@ class CardReaderActivity : BaseCardActivity() {
           }
         }
         CardMedium.WEARABLE -> {
-          throw UnsupportedOperationException("Wearable")
+          throw UnsupportedOperationException("Card medium not supported [cardMedium=WEARABLE]")
         }
         CardMedium.EMBEDDED -> {
-          throw UnsupportedOperationException("Embedded")
+          throw UnsupportedOperationException("Card medium not supported [cardMedium=EMBEDDED]")
         }
       }
     } catch (e: ReaderCommunicationException) {

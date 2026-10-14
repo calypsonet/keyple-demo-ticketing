@@ -114,7 +114,7 @@ namespace App.domain.utils
 
             if (hex.Length % 2 != 0)
             {
-                throw new ArgumentOutOfRangeException("hex", "Input string must have an even number of characters.");
+                throw new ArgumentOutOfRangeException("hex", "Odd number of hexadecimal digits");
             }
 
             byte[] byteArray = new byte[hex.Length / 2];

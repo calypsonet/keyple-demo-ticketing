@@ -106,7 +106,7 @@ public class CardRepository {
 
     // Check the selection result.
     if (cardSelectionResult.getActiveSmartCard() == null) {
-      throw new IllegalStateException("Selection error: AID not found");
+      throw new IllegalStateException("Card application not found");
     }
 
     // Get the SmartCard resulting of the selection.
@@ -123,7 +123,7 @@ public class CardRepository {
 
     // Check the selection result.
     if (selectionResult.getActiveSmartCard() == null) {
-      throw new IllegalStateException("Selection error: AID not found");
+      throw new IllegalStateException("Card application not found");
     }
 
     // Get the SmartCard resulting of the selection.

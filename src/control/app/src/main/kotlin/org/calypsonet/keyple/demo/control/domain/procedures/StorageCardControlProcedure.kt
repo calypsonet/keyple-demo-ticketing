@@ -65,7 +65,7 @@ class StorageCardControlProcedure(
           try {
             storageCardApiFactory.createStorageCardTransactionManager(cardReader, storageCard)
           } catch (e: Exception) {
-            throw RuntimeException("Failed to create storage card transaction", e)
+            throw IllegalStateException("Error while creating the storage card transaction", e)
           }
 
       // Determine card type and authentication requirements

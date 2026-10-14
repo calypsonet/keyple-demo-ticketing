@@ -364,16 +364,17 @@ Message [key1=value1, key2=value2]
 The `TRACE` level is not used. A repetitive event (e.g. periodic check of the server) is logged at the `DEBUG` level,
 or only when its state changes (e.g. "Server ready", "Server not ready").
 
-These rules are checked by the CI (`.github/scripts/check-log-messages.py`, Python 3), which can also be run locally
-from the root of the repository:
+These rules, and the ones of the exception messages (see [Exception Messages](#exception-messages)), are checked by the
+CI (`.github/scripts/check-messages.py`, Python 3), which can also be run locally from the root of the repository:
 
 ```bash
-python3 .github/scripts/check-log-messages.py
+python3 .github/scripts/check-messages.py
 ```
 
-It checks the form of the messages (capital letter, final punctuation, class name, context at the end, keys in
-camelCase), the warnings logged without stack trace, and the catch blocks: a catch block logs the exception, throws
-an exception, or explains in a comment why it does not log it (e.g. `// Refusal logged where it is detected`).
+It checks the form of the messages (capital letter, final punctuation, class name, variable values and keys in
+camelCase in the context at the end), the warnings logged without stack trace, and the catch blocks: a catch block
+logs the exception, throws an exception, or explains in a comment why it does not log it (e.g.
+`// Refusal logged where it is detected`).
 
 Where to read the logs:
 
@@ -392,6 +393,23 @@ WARN  Card refused: environment expired [envEndDate=2025-05-01]
 WARN  Card communication error while loading the contract [cause=Card removed]
 ERROR Unexpected error while loading the contract
 ```
+
+### Exception Messages
+
+The messages of the exceptions follow the template of the log messages, `Message [key1=value1, key2=value2]`, as
+they are often logged (`cause` key) or displayed:
+
+- English sentence starting with a capital letter, without final punctuation, without class or method name, the
+  variable values being given in the context (e.g. `Reader not found [reader=...]`).
+- The cause is chained to the exception (`IllegalStateException("Error while registering the reader plugins", e)`),
+  not copied in its message. When the exception type does not accept a cause, its message is given in the `cause` key
+  (e.g. `ServerIOException("Communication error [cause=...]")`).
+- The exception is of a specific type (e.g. `IllegalStateException`, `InvalidOperationException`), never `Exception`
+  nor `RuntimeException`.
+
+The messages displayed to the users are not the messages of the exceptions: the Android applications display their
+texts (`strings.xml`), and the server returns to the clients which do not use Keyple the messages of the statuses of
+its remote services (`RemoteServiceMessages`, texts of the Android applications), the causes being logged.
 
 ### Building from Source
 

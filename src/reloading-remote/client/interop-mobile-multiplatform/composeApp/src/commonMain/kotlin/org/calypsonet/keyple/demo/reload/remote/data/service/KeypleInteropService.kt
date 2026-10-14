@@ -113,7 +113,7 @@ class KeypleInteropService(
           .get("${serverConfig?.baseUrl()}/card/export-card-selection-scenario") {}
           .body<String>()
     } catch (e: Exception) {
-      throw ServerIOException("Communication error: ${e.message}")
+      throw ServerIOException("Communication error [cause=${e.message}]")
     }
   }
 
@@ -156,8 +156,7 @@ class KeypleInteropService(
                   "Contracts reading failed [statusCode=${result.data.statusCode}, " +
                       "message=${result.data.message}]")
               return@withContext KeypleResult.Failure(
-                  status = Status.SERVER_ERROR,
-                  message = "Server side error: ${result.data.statusCode} / ${result.data.message}")
+                  status = Status.SERVER_ERROR, message = result.data.message)
             }
             Napier.i(
                 "Contracts read [serialNumber=${result.data.applicationSerialNumber}, " +
@@ -253,9 +252,7 @@ class KeypleInteropService(
             "Remote service execution failed [service=$service, status=${result.status}, " +
                 "message=${result.message}, output=${result.data}]")
         return KeypleResult.Failure(
-            status = result.status,
-            message =
-                "Error is ${result.status} - Server side: ${result.data?.statusCode} / ${result.data?.message}")
+            status = result.status, message = result.data?.message ?: "Communication error")
       }
       is KeypleResult.Success -> {
         if (result.data != null) {
@@ -264,9 +261,7 @@ class KeypleInteropService(
                 "$failureLog [statusCode=${result.data!!.statusCode}, " +
                     "message=${result.data!!.message}]")
             return KeypleResult.Failure(
-                status = Status.SERVER_ERROR,
-                message =
-                    "Server side error: ${result.data!!.statusCode} / ${result.data!!.message}")
+                status = Status.SERVER_ERROR, message = result.data!!.message)
           } else {
             Napier.i(successLog)
             return KeypleResult.Success(result.data!!.message)
@@ -300,7 +295,7 @@ class KeypleInteropService(
         Napier.w(
             "Remote service execution failed [service=$service, status=${result.status}, " +
                 "message=${result.message}, output=${result.data}]")
-        return KeypleResult.Failure(result.status, result.message)
+        return KeypleResult.Failure(result.status, "Communication error")
       }
       is KeypleResult.Success -> {
         val resStr: String = result.data!!

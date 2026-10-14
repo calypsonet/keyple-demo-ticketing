@@ -139,11 +139,11 @@ namespace App.infrastructure.pcscreader
             }
             catch (PCSCException ex) when (ex.SCardError == SCardError.CommunicationError)
             {
-                throw new CardIOException($"OpenPhysicalChannel: Reader {_readerName} disconnected or card removed", ex);
+                throw new CardIOException($"Reader disconnected or card removed [reader={_readerName}]", ex);
             }
             catch (Exception ex)
             {
-                throw new CardIOException($"OpenPhysicalChannel: An error occurred while connecting to reader {_readerName}", ex);
+                throw new CardIOException($"Error while connecting to the reader [reader={_readerName}]", ex);
             }
         }
 
@@ -161,11 +161,11 @@ namespace App.infrastructure.pcscreader
             }
             catch (PCSCException ex) when (ex.SCardError == SCardError.CommunicationError)
             {
-                throw new CardIOException($"ClosePhysicalChannel: Reader {_readerName} disconnected or card removed", ex);
+                throw new CardIOException($"Reader disconnected or card removed [reader={_readerName}]", ex);
             }
             catch (Exception ex)
             {
-                throw new CardIOException($"ClosePhysicalChannel: An error occurred while disconnecting the reader {_readerName}", ex);
+                throw new CardIOException($"Error while disconnecting the reader [reader={_readerName}]", ex);
             }
         }
 
@@ -204,11 +204,11 @@ namespace App.infrastructure.pcscreader
             }
             catch (PCSCException ex) when (ex.SCardError == SCardError.CommunicationError)
             {
-                throw new CardIOException($"TransmitApdu: error while communicating with the card", ex);
+                throw new CardIOException("Error while communicating with the card", ex);
             }
             catch (Exception ex)
             {
-                throw new ReaderIOException($"TransmitApdu: error while communicating with the reader", ex);
+                throw new ReaderIOException("Error while communicating with the reader", ex);
             }
         }
     }

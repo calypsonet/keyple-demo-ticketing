@@ -46,22 +46,22 @@ try
     // Handle null or missing values as needed
     if (serverHost == null)
     {
-        throw new ConfigurationErrorsException("Server host is missing or null.");
+        throw new ConfigurationErrorsException("Server host missing in the configuration");
     }
 
     if (serverPort == -1)
     {
-        throw new ConfigurationErrorsException("Server port is missing or not a valid integer.");
+        throw new ConfigurationErrorsException("Server port missing or invalid in the configuration");
     }
 
     if (serverEndpoint == null)
     {
-        throw new ConfigurationErrorsException("Server endpoint is missing or null.");
+        throw new ConfigurationErrorsException("Server endpoint missing in the configuration");
     }
 
     if (readerName == null)
     {
-        throw new ConfigurationErrorsException("Reader name is missing or null.");
+        throw new ConfigurationErrorsException("Reader name missing in the configuration");
     }
 
 

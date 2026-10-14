@@ -22,6 +22,6 @@ class ActivityUiContext(private val activity: Activity) : UiContext {
       @Suppress("UNCHECKED_CAST")
       return activity as T
     }
-    throw IllegalArgumentException("Unsupported adapter type: $adapter")
+    throw IllegalArgumentException("Unsupported adapter type [adapter=$adapter]")
   }
 }

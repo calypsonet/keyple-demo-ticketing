@@ -57,7 +57,8 @@ public class RemoteServiceDispatcher {
     try {
       serviceId = RemoteServiceId.valueOf(readerExtension.getServiceId());
     } catch (IllegalArgumentException | NullPointerException e) {
-      throw new IllegalArgumentException("Service ID not recognized");
+      throw new IllegalArgumentException(
+          "Service ID not recognized [serviceId=" + readerExtension.getServiceId() + "]", e);
     }
     switch (serviceId) {
       // Services of the .NET client (selection of the application by the server)
@@ -101,7 +102,8 @@ public class RemoteServiceDispatcher {
             readerExtension.getInputData(SelectAppAndPersonalizeCardInputDto.class),
             readerExtension.getInitialCardContent(Properties.class));
       default:
-        throw new IllegalArgumentException("Service ID not recognized");
+        throw new IllegalArgumentException(
+            "Service ID not recognized [serviceId=" + serviceId + "]");
     }
   }
 }

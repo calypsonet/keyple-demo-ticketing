@@ -46,7 +46,7 @@ namespace App.domain.utils
             else
             {
                 // Handle the case where the value is not a string, or it is null.
-                throw new JsonSerializationException("Invalid value type for byte array conversion.");
+                throw new JsonSerializationException("Invalid value type for the byte array conversion");
             }
         }
 
@@ -65,7 +65,7 @@ namespace App.domain.utils
             else
             {
                 // Handle the case where the value is not a byte array or it is null.
-                throw new JsonSerializationException("Invalid value type for byte array serialization.");
+                throw new JsonSerializationException("Invalid value type for the byte array serialization");
             }
         }
 
@@ -113,7 +113,7 @@ namespace App.domain.utils
             }
 
             // Handle the case where hexStrings is null.
-            throw new JsonSerializationException("Invalid null value for hexStrings conversion.");
+            throw new JsonSerializationException("Invalid null value for the hexadecimal strings conversion");
         }
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace App.domain.utils
             {
                 // Handle the case where the value is not a HashSet<int> or it is null.
                 // You can throw an exception or handle it according to your requirements.
-                throw new JsonSerializationException("Invalid value type for HashSet<int> serialization.");
+                throw new JsonSerializationException("Invalid value type for the HashSet<int> serialization");
             }
         }
     }
@@ -172,12 +172,12 @@ namespace App.domain.utils
                 else
                 {
                     // Handle the case where the enum value is not valid.
-                    throw new JsonSerializationException($"Invalid value '{str}' for FileOccurrence.");
+                    throw new JsonSerializationException($"Invalid FileOccurrence value [value={str}]");
                 }
             }
 
             // Handle the case where the value is not a string or it is null.
-            throw new JsonSerializationException("Invalid value type for FileOccurrence conversion.");
+            throw new JsonSerializationException("Invalid value type for the FileOccurrence conversion");
         }
 
 
@@ -224,12 +224,12 @@ namespace App.domain.utils
                 else
                 {
                     // Handle the case where the enum value is not valid.
-                    throw new JsonSerializationException($"Invalid value '{str}' for FileControlInformation.");
+                    throw new JsonSerializationException($"Invalid FileControlInformation value [value={str}]");
                 }
             }
 
             // Handle the case where the value is not a string or it is null.
-            throw new JsonSerializationException("Invalid value type for FileControlInformation conversion.");
+            throw new JsonSerializationException("Invalid value type for the FileControlInformation conversion");
         }
 
 
@@ -276,12 +276,12 @@ namespace App.domain.utils
                 else
                 {
                     // Handle the case where the enum value is not valid.
-                    throw new JsonSerializationException($"Invalid value '{str}' for MultiSelectionProcessing.");
+                    throw new JsonSerializationException($"Invalid MultiSelectionProcessing value [value={str}]");
                 }
             }
 
             // Handle the case where the value is not a string or it is null.
-            throw new JsonSerializationException("Invalid value type for MultiSelectionProcessing conversion.");
+            throw new JsonSerializationException("Invalid value type for the MultiSelectionProcessing conversion");
         }
 
         /// <summary>
@@ -296,7 +296,7 @@ namespace App.domain.utils
             else
             {
                 // Handle the case where the value is null.
-                throw new JsonSerializationException("Invalid null value for serialization.");
+                throw new JsonSerializationException("Invalid null value for the serialization");
             }
         }
     }
@@ -340,12 +340,12 @@ namespace App.domain.utils
                 else
                 {
                     // Handle the case where the enum value is not valid.
-                    throw new JsonSerializationException($"Invalid value '{str}' for ChannelControl.");
+                    throw new JsonSerializationException($"Invalid ChannelControl value [value={str}]");
                 }
             }
 
             // Handle the case where the value is not a string or it is null.
-            throw new JsonSerializationException("Invalid value type for ChannelControl conversion.");
+            throw new JsonSerializationException("Invalid value type for the ChannelControl conversion");
         }
 
         /// <summary>
@@ -363,7 +363,7 @@ namespace App.domain.utils
             else
             {
                 // Handle the case where the value is null.
-                throw new JsonSerializationException("Invalid null value for serialization.");
+                throw new JsonSerializationException("Invalid null value for the serialization");
             }
         }
     }
@@ -408,12 +408,12 @@ namespace App.domain.utils
                 else
                 {
                     // Handle the case where the hexString is null.
-                    throw new JsonSerializationException("Invalid null value for hexString conversion.");
+                    throw new JsonSerializationException("Invalid null value for the hexadecimal string conversion");
                 }
             }
 
             // Handle the case where the value is not a string.
-            throw new JsonSerializationException("Invalid value type for hexString conversion.");
+            throw new JsonSerializationException("Invalid value type for the hexadecimal string conversion");
         }
 
 
@@ -434,7 +434,7 @@ namespace App.domain.utils
             else
             {
                 // Handle the case where the value is null.
-                throw new JsonSerializationException("Invalid null value for serialization.");
+                throw new JsonSerializationException("Invalid null value for the serialization");
             }
         }
     }

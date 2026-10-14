@@ -46,8 +46,7 @@ class CalypsoCardValidationProcedure(
   override fun execute(context: ValidationContext): ValidationResult {
     val calypsoCard = context.card as CalypsoCard
     val card = CardDescription.Calypso(HexUtil.toHex(calypsoCard.dfName))
-    val cardSecuritySettings =
-        checkNotNull(context.cardSecuritySetting) { "No SAM available for the Calypso cards" }
+    val cardSecuritySettings = checkNotNull(context.cardSecuritySetting) { "SAM not available" }
 
     // Create a card transaction for validation.
     val cardTransaction =

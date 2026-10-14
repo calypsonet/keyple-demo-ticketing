@@ -15,6 +15,6 @@ package org.calypsonet.keyple.demo.reload.remote.server.card;
 /** Thrown when the environment of the card has not the current version (card not personalized). */
 class CardNotPersonalizedException extends RuntimeException {
   CardNotPersonalizedException() {
-    super("The card is not personalized");
+    super("Card not personalized");
   }
 }

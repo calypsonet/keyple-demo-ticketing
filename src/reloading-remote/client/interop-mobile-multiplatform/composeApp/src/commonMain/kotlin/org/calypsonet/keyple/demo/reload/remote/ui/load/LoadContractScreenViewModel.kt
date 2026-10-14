@@ -67,7 +67,7 @@ class LoadContractScreenViewModel(
         }
       } catch (e: Exception) {
         Napier.e("Error while waiting for the card", e)
-        _state.value = LoadContractScreenState.DisplayError("Error: ${e.message}")
+        _state.value = LoadContractScreenState.DisplayError("Card reader error")
       }
     }
   }
@@ -89,7 +89,7 @@ class LoadContractScreenViewModel(
       }
     } catch (e: Exception) {
       Napier.e("Error while loading the contract", e)
-      _state.value = LoadContractScreenState.DisplayError(e.message ?: "Unknown error")
+      _state.value = LoadContractScreenState.DisplayError("Unexpected error")
     }
   }
 

@@ -101,7 +101,7 @@ public class CardController {
     try {
       message = jsonb.fromJson(body, MessageDto.class);
     } catch (JsonbException e) {
-      throw badRequest("Invalid message: " + e.getMessage());
+      throw badRequest("Invalid message [cause=" + e.getMessage() + "]");
     }
     if (message == null) {
       throw badRequest("Invalid message: no content");

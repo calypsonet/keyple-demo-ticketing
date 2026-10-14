@@ -61,7 +61,7 @@ class ValidateCard(
     return try {
       val procedure =
           validationProcedures.firstOrNull { it.supports(card) }
-              ?: error("Unsupported card type: ${card::class.simpleName}")
+              ?: error("Unsupported card type [type=${card::class.simpleName}]")
       procedure.execute(
           ValidationContext(
               cardReader = cardReaderSession.cardReader,

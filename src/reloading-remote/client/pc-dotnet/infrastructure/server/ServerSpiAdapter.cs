@@ -75,14 +75,14 @@ namespace App.infrastructure.server
                     else
                     {
                         // If the request was not successful, throw an exception with the status code
-                        throw new ServerIOException($"Server status code: {response.StatusCode}");
+                        throw new ServerIOException($"Unexpected server response [statusCode={(int)response.StatusCode}]");
                     }
                 }
             }
             catch (Exception ex)
             {
                 // If an exception occurred, throw a new exception with the message of the original exception
-                throw new ServerIOException($"Exception when calling the API: {ex.Message}", ex);
+                throw new ServerIOException("Error while calling the server API", ex);
             }
 
             // Return the result of the request

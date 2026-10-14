@@ -89,12 +89,15 @@ public class JsonApiService {
           "",
           Collections.emptyList(),
           RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode(),
-          e.getMessage());
+          RemoteServiceMessages.of(RemoteServiceStatus.CARD_COMMUNICATION_ERROR, null));
     } catch (RuntimeException e) {
       logger.error(UNEXPECTED_ERROR_WHILE_SELECTING, e);
       recordSelectionFailure(pluginType);
       return new SelectAppAndAnalyzeContractsOutputDto(
-          "", Collections.emptyList(), RemoteServiceStatus.SERVER_ERROR.getCode(), e.getMessage());
+          "",
+          Collections.emptyList(),
+          RemoteServiceStatus.SERVER_ERROR.getCode(),
+          RemoteServiceMessages.of(RemoteServiceStatus.SERVER_ERROR, null));
     }
 
     // Analyze contracts
@@ -108,7 +111,10 @@ public class JsonApiService {
         analysis.getContracts().stream().map(this::toContractInfo).collect(Collectors.toList());
     int statusCode = analysis.getStatusCode();
     return new SelectAppAndAnalyzeContractsOutputDto(
-        applicationSerialNumber, contracts, statusCode, getStatusMessage(statusCode, calypsoCard));
+        applicationSerialNumber,
+        contracts,
+        statusCode,
+        RemoteServiceMessages.of(RemoteServiceStatus.fromCode(statusCode), calypsoCard));
   }
 
   SelectAppAndLoadContractOutputDto selectAppAndLoadContract(
@@ -124,12 +130,14 @@ public class JsonApiService {
       logger.warn(CARD_COMMUNICATION_ERROR_WHILE_SELECTING, e.getMessage());
       recordSelectionFailure(pluginType);
       return new SelectAppAndLoadContractOutputDto(
-          RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode(), e.getMessage());
+          RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode(),
+          RemoteServiceMessages.of(RemoteServiceStatus.CARD_COMMUNICATION_ERROR, null));
     } catch (RuntimeException e) {
       logger.error(UNEXPECTED_ERROR_WHILE_SELECTING, e);
       recordSelectionFailure(pluginType);
       return new SelectAppAndLoadContractOutputDto(
-          RemoteServiceStatus.SERVER_ERROR.getCode(), e.getMessage());
+          RemoteServiceStatus.SERVER_ERROR.getCode(),
+          RemoteServiceMessages.of(RemoteServiceStatus.SERVER_ERROR, null));
     }
 
     String selectedApplicationSerialNumber =
@@ -143,7 +151,8 @@ public class JsonApiService {
           selectedApplicationSerialNumber,
           expectedApplicationSerialNumber);
       return new SelectAppAndLoadContractOutputDto(
-          RemoteServiceStatus.DIFFERENT_CARD.getCode(), "Not the same card");
+          RemoteServiceStatus.DIFFERENT_CARD.getCode(),
+          RemoteServiceMessages.of(RemoteServiceStatus.DIFFERENT_CARD, calypsoCard));
     }
 
     // Write contract
@@ -157,7 +166,8 @@ public class JsonApiService {
     // Build result
     int statusCode = loading.getStatusCode();
     return new SelectAppAndLoadContractOutputDto(
-        statusCode, getStatusMessage(statusCode, calypsoCard));
+        statusCode,
+        RemoteServiceMessages.of(RemoteServiceStatus.fromCode(statusCode), calypsoCard));
   }
 
   SelectAppAndPersonalizeCardOutputDto selectAppAndPersonalizeCard(
@@ -173,12 +183,14 @@ public class JsonApiService {
       logger.warn(CARD_COMMUNICATION_ERROR_WHILE_SELECTING, e.getMessage());
       recordSelectionFailure(pluginType);
       return new SelectAppAndPersonalizeCardOutputDto(
-          RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode(), e.getMessage());
+          RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode(),
+          RemoteServiceMessages.of(RemoteServiceStatus.CARD_COMMUNICATION_ERROR, null));
     } catch (RuntimeException e) {
       logger.error(UNEXPECTED_ERROR_WHILE_SELECTING, e);
       recordSelectionFailure(pluginType);
       return new SelectAppAndPersonalizeCardOutputDto(
-          RemoteServiceStatus.SERVER_ERROR.getCode(), e.getMessage());
+          RemoteServiceStatus.SERVER_ERROR.getCode(),
+          RemoteServiceMessages.of(RemoteServiceStatus.SERVER_ERROR, null));
     }
 
     // Personalize the card
@@ -189,7 +201,8 @@ public class JsonApiService {
     // Build result
     int statusCode = personalizationOutput.getStatusCode();
     return new SelectAppAndPersonalizeCardOutputDto(
-        statusCode, getStatusMessage(statusCode, calypsoCard));
+        statusCode,
+        RemoteServiceMessages.of(RemoteServiceStatus.fromCode(statusCode), calypsoCard));
   }
 
   /**
@@ -262,26 +275,4 @@ public class JsonApiService {
   }
 
   /** Returns the message displayed by the client for the provided status of a remote service. */
-  private static String getStatusMessage(int statusCode, CalypsoCard calypsoCard) {
-    switch (RemoteServiceStatus.fromCode(statusCode)) {
-      case SUCCESS:
-        return "Success";
-      case CARD_COMMUNICATION_ERROR:
-        return "Card communication error";
-      case SERVER_ERROR:
-        return "Server error";
-      case CARD_REJECTED:
-        return "Invalid card\nFile structure "
-            + HexUtil.toHex(calypsoCard.getApplicationSubtype())
-            + "h not supported";
-      case CARD_NOT_PERSONALIZED:
-        return "Environment error: wrong version number";
-      case ENVIRONMENT_EXPIRED:
-        return "Environment error: end date expired";
-      case CARD_FULL:
-        return ContractLoadingService.CARD_FULL_MESSAGE;
-      default:
-        return "";
-    }
-  }
 }

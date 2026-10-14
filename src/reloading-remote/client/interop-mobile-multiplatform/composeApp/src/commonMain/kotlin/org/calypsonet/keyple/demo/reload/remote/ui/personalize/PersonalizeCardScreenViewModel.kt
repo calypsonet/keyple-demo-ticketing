@@ -63,7 +63,7 @@ class PersonalizeCardScreenViewModel(
         }
       } catch (e: Exception) {
         Napier.e("Error while waiting for the card", e)
-        _state.value = PersonalizeCardScreenState.DisplayError("Error: ${e.message}")
+        _state.value = PersonalizeCardScreenState.DisplayError("Card reader error")
       }
     }
   }
@@ -81,7 +81,7 @@ class PersonalizeCardScreenViewModel(
       }
     } catch (e: Exception) {
       Napier.e("Error while personalizing the card", e)
-      _state.value = PersonalizeCardScreenState.DisplayError(e.message ?: "Unknown error")
+      _state.value = PersonalizeCardScreenState.DisplayError("Unexpected error")
     }
   }
 }

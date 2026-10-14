@@ -140,16 +140,14 @@ class CardReaderSession(
       userFeedback.init(terminalType, uiContext)
       terminalReaders.registerPlugin(terminalType, uiContext)
     } catch (e: Exception) {
-      logger.e("Error while registering the reader plugins", e)
-      throw IllegalStateException(e.message)
+      throw IllegalStateException("Error while registering the reader plugins", e)
     }
     // Init card reader
     val cardReader: CardReader?
     try {
       cardReader = terminalReaders.initCardReader()
     } catch (e: Exception) {
-      logger.e("Error while initializing the card reader", e)
-      throw IllegalStateException(e.message)
+      throw IllegalStateException("Error while initializing the card reader", e)
     }
     // Init SAM reader
     var samReaders: List<CardReader>? = null
