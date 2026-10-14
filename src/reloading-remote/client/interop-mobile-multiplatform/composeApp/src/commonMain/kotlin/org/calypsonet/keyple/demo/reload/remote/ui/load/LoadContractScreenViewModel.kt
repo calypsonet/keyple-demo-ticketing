@@ -77,7 +77,7 @@ class LoadContractScreenViewModel(
 
     try {
       val result =
-          if (route.type == ProductType.SEASON_PASS.ordinal) loadSeasonPass()
+          if (route.productType == ProductType.SEASON_PASS.ordinal) loadSeasonPass()
           else loadMultiTrip(route.quantity)
       when (result) {
         is KeypleResult.Failure -> {

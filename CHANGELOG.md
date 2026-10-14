@@ -129,6 +129,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Field names (fourth audit): the loading route of the multiplatform client names `productType` the type of the
+  product (instead of `type`) and no longer carries its unused price; the .NET client names `reader` its PC/SC reader
+  (instead of `cardService`).
 - Field names (third audit): the serial number of the card passed between the screens of the reloading Android
   client is named `APPLICATION_SERIAL_NUMBER` (instead of `CARD_APPLICATION_NUMBER`, the application number being
   another data of the card); the multiplatform client names `SERVER_HOST_KEY` and `DEFAULT_SERVER_HOST` the host of

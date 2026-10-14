@@ -20,15 +20,10 @@ import org.calypsonet.keyple.demo.reload.remote.ui.model.Product
 @Serializable data object SettingsMenu
 
 @Serializable
-data class LoadContract(
-    val type: Int,
-    val price: Int,
-    val quantity: Int = 1,
-    val cardSerialNumber: String
-) {
+data class LoadContract(val productType: Int, val quantity: Int = 1, val cardSerialNumber: String) {
   companion object {
     operator fun invoke(product: Product, cardSerialNumber: String = ""): LoadContract {
-      return LoadContract(product.type.ordinal, product.price, product.quantity, cardSerialNumber)
+      return LoadContract(product.type.ordinal, product.quantity, cardSerialNumber)
     }
   }
 }
