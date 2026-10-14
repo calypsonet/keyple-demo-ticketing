@@ -314,7 +314,7 @@ public class CardRepository {
     cardTransactionManager.prepareUpdateRecord(
         CalypsoFiles.SFI_ENVIRONMENT_AND_HOLDER,
         1,
-        CalypsoEnvironmentHolderCodec.INSTANCE.encode(buildEnvironmentHolderStructure()));
+        CalypsoEnvironmentHolderCodec.INSTANCE.encode(buildEnvironmentHolder()));
 
     // Clear the first event (update with a byte array filled with 0 s).
     cardTransactionManager.prepareUpdateRecord(
@@ -367,7 +367,7 @@ public class CardRepository {
     logger.debug("Writing the environment [block={}]", environmentBlock);
     cardTransactionManager.prepareWriteBlocks(
         environmentBlock,
-        StorageCardEnvironmentHolderCodec.INSTANCE.encode(buildEnvironmentHolderStructure()));
+        StorageCardEnvironmentHolderCodec.INSTANCE.encode(buildEnvironmentHolder()));
 
     // Clear the first event (update with a byte array filled with 0 s).
     logger.debug("Clearing the event [block={}]", eventBlock);
@@ -404,7 +404,7 @@ public class CardRepository {
         cardReader, calypsoCard, cardSecuritySetting);
   }
 
-  private EnvironmentHolderStructure buildEnvironmentHolderStructure() {
+  private EnvironmentHolderStructure buildEnvironmentHolder() {
     // calculate issuing date
     Instant now = Instant.now();
     // calculate env end date

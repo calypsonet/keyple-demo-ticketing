@@ -123,12 +123,12 @@ namespace App.domain.api
 
             message = JsonConvert.DeserializeObject<List<MessageDto>>(jsonResponse)![0];
 
-            message = ProcessTransaction(message);
+            message = ProcessServerCommands(message);
 
             return message.Body;
         }
 
-        private MessageDto ProcessTransaction(MessageDto message)
+        private MessageDto ProcessServerCommands(MessageDto message)
         {
             while (message.Action != END_REMOTE_SERVICE)
             {

@@ -33,7 +33,7 @@ import org.eclipse.keyple.distributed.LocalServiceClientFactoryBuilder
 
 /**
  * Communication with the server: Keyple Distributed local service and ticketing server (remote
- * services), SAM status of the server (REST API).
+ * services), availability of the SAM of the server (REST API).
  */
 @Suppress("unused")
 @Module

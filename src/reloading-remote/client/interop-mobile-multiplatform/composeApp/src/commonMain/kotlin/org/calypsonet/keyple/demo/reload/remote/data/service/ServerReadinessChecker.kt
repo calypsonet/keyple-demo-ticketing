@@ -23,9 +23,9 @@ import kotlinx.serialization.json.Json
 import org.calypsonet.keyple.demo.reload.remote.data.network.KeypleServerConfig
 
 /**
- * Checks that the ticketing server is ready to process the cards: reachable, and with its SAM ready
- * (SAM status of the REST API of the server), as the `ServerReadinessChecker` of the Android
- * client.
+ * Checks that the ticketing server is ready to process the cards: reachable, and with its SAM
+ * available (availability of the SAM given by the REST API of the server,
+ * `/card/sam-availability`), as the `ServerReadinessChecker` of the Android client.
  */
 class ServerReadinessChecker {
 
@@ -42,7 +42,8 @@ class ServerReadinessChecker {
    * Checks the server at the provided address.
    *
    * @param serverConfig The address of the server.
-   * @return True if the server and its SAM are ready, false if the SAM is not ready.
+   * @return True if the server is reachable and its SAM available, false if the SAM is not
+   *   available.
    * @throws Exception If the server cannot be reached.
    */
   suspend fun isServerReady(serverConfig: KeypleServerConfig): Boolean =
@@ -51,6 +52,6 @@ class ServerReadinessChecker {
           .body<SamAvailability>()
           .isSamAvailable
 
-  /** SAM status returned by the REST API of the server. */
+  /** Availability of the SAM returned by the REST API of the server. */
   @Serializable private data class SamAvailability(val isSamAvailable: Boolean)
 }

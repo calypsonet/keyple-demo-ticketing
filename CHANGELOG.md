@@ -129,6 +129,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Method names (fourth audit): the multiplatform client executes the remote services with `executeRemoteService()`
+  and `executeRemoteServiceWithStatus()` (instead of `executeService()` and `executeServiceWithStatusOutput()`), as
+  the Android and .NET clients; the .NET client processes the commands of the server with `ProcessServerCommands()`
+  (instead of `ProcessTransaction()`, "transaction" designating the card and dashboard transactions); the server
+  builds the environment of a personalized card with `buildEnvironmentHolder()` (instead of
+  `buildEnvironmentHolderStructure()`, as `buildEvent()`); the documentation of the readiness checks of the server
+  refers to the availability of the SAM instead of its "status".
 - Method names (third audit): the .NET client builds the responses of the remote reader with
   `CreateIsContactlessResponse()` and `CreateIsCardPresentResponse()` (instead of `IsContactless()` and
   `IsCardPresent()`, which returned a JSON text and not a boolean); the description of the loaded contract of a

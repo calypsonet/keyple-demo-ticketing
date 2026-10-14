@@ -25,7 +25,7 @@ interface AppSettingsRepository {
   /** Card medium (contactless card, SIM...) chosen by the user. */
   var cardMedium: CardMedium
 
-  /** Last known readiness of the server (true if the server is reachable and its SAM ready). */
+  /** Last known readiness of the server (true if the server is reachable and its SAM available). */
   var lastServerReady: Boolean
 
   /** Returns the visibility of the given card medium in the home screen. */

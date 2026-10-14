@@ -139,7 +139,7 @@ class KeypleInteropService(
     return withContext(Dispatchers.IO) {
       keypleTerminal?.let { service ->
         val result: KeypleResult<SelectAppAndAnalyzeContractsOutputDto> =
-            executeService(
+            executeRemoteService(
                 service,
                 SELECT_APP_AND_ANALYZE_CONTRACTS,
                 SelectAppAndAnalyzeContractsInputDto(),
@@ -172,7 +172,7 @@ class KeypleInteropService(
     return withContext(Dispatchers.IO) {
       keypleTerminal?.let {
         val result =
-            executeServiceWithStatusOutput(
+            executeRemoteServiceWithStatus(
                 it,
                 SELECT_APP_AND_PERSONALIZE_CARD,
                 SelectAppAndPersonalizeCardInputDto(),
@@ -205,7 +205,7 @@ class KeypleInteropService(
     return withContext(Dispatchers.IO) {
       keypleTerminal?.let {
         val result =
-            executeServiceWithStatusOutput(
+            executeRemoteServiceWithStatus(
                 it,
                 SELECT_APP_AND_LOAD_CONTRACT,
                 SelectAppAndLoadContractInputDto(
@@ -236,7 +236,7 @@ class KeypleInteropService(
    * @param failureLog The log message of a failure, completed by the status code and the message of
    *   the server.
    */
-  private suspend fun <T, R : RemoteServiceOutputDto> executeServiceWithStatusOutput(
+  private suspend fun <T, R : RemoteServiceOutputDto> executeRemoteServiceWithStatus(
       remote: KeypleTerminal,
       service: String,
       inputData: T? = null,
@@ -279,7 +279,7 @@ class KeypleInteropService(
     explicitNulls = false
   }
 
-  private suspend fun <T, R> executeService(
+  private suspend fun <T, R> executeRemoteService(
       remote: KeypleTerminal,
       service: String,
       inputData: T? = null,
