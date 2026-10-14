@@ -46,20 +46,23 @@ class DomainModule {
   fun provideReadContracts(
       cardReaderSession: CardReaderSession,
       ticketingServer: TicketingServer,
-      clock: Clock
-  ): ReadContracts = ReadContracts(cardReaderSession, ticketingServer, clock)
+      clock: Clock,
+      logger: Logger
+  ): ReadContracts = ReadContracts(cardReaderSession, ticketingServer, clock, logger)
 
   @Provides
   @Singleton
   fun provideLoadContract(
       cardReaderSession: CardReaderSession,
-      ticketingServer: TicketingServer
-  ): LoadContract = LoadContract(cardReaderSession, ticketingServer)
+      ticketingServer: TicketingServer,
+      logger: Logger
+  ): LoadContract = LoadContract(cardReaderSession, ticketingServer, logger)
 
   @Provides
   @Singleton
   fun providePersonalizeCard(
       cardReaderSession: CardReaderSession,
-      ticketingServer: TicketingServer
-  ): PersonalizeCard = PersonalizeCard(cardReaderSession, ticketingServer)
+      ticketingServer: TicketingServer,
+      logger: Logger
+  ): PersonalizeCard = PersonalizeCard(cardReaderSession, ticketingServer, logger)
 }

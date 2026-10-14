@@ -28,6 +28,7 @@ import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.databinding.ToolbarBinding
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.AppSettingsRepository
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.ServerReadinessChecker
+import timber.log.Timber
 
 /** Each Activity of the app should show status connexion result */
 abstract class BaseActivity : AppCompatActivity() {
@@ -114,14 +115,24 @@ abstract class BaseActivity : AppCompatActivity() {
   private fun checkServerReadiness() {
     val serverConfig = appSettings.serverConfig
     lifecycleScope.launch {
+      var cause = "SAM not ready"
       val isUp =
           withContext(Dispatchers.IO) {
             try {
               serverReadinessChecker.isServerReady(serverConfig)
             } catch (e: Exception) {
+              cause = e.message ?: e.toString()
               false
             }
           }
+      // Only the changes of the readiness are logged, the server being checked at each screen
+      if (isUp != appSettings.lastServerReady) {
+        if (isUp) {
+          Timber.i("Server ready [url=${serverConfig.url}]")
+        } else {
+          Timber.w("Server not ready [url=${serverConfig.url}, cause=$cause]")
+        }
+      }
       appSettings.lastServerReady = isUp
       updateServerReadyIndicator()
     }

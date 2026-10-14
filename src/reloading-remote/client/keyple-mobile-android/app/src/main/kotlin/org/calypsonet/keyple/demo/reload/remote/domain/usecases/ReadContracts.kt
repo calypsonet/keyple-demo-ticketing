@@ -19,13 +19,15 @@ import org.calypsonet.keyple.demo.reload.remote.domain.mappers.toCardInfo
 import org.calypsonet.keyple.demo.reload.remote.domain.mappers.toContract
 import org.calypsonet.keyple.demo.reload.remote.domain.model.ReadContractsResult
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.Clock
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.TicketingServer
 
 /** Reading of the contracts of the presented card, analyzed by the server. */
 class ReadContracts(
     private val cardReaderSession: CardReaderSession,
     private val ticketingServer: TicketingServer,
-    private val clock: Clock
+    private val clock: Clock,
+    private val logger: Logger
 ) {
 
   /**
@@ -45,6 +47,12 @@ class ReadContracts(
     val contracts =
         if (status == RemoteServiceStatus.SUCCESS) output.contracts.map { it.toContract(today) }
         else emptyList()
-    return ReadContractsResult(smartCard.toCardInfo(), status, contracts)
+    val card = smartCard.toCardInfo()
+    if (status == RemoteServiceStatus.SUCCESS) {
+      logger.i("Contracts read [serialNumber=${card.serialNumber}, contracts=${contracts.size}]")
+    } else {
+      logger.w("Contracts reading failed [serialNumber=${card.serialNumber}, status=$status]")
+    }
+    return ReadContractsResult(card, status, contracts)
   }
 }

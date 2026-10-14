@@ -40,14 +40,26 @@ class AppViewModel(
     // Periodic check of the server, its configuration being read at each check (address changed in
     // the settings)
     viewModelScope.launch {
+      var lastServerReady: Boolean? = null
       while (true) {
+        val serverConfig = serverConfigRepository.load()
+        var cause = "SAM not ready"
         val serverReady =
             try {
-              serverReadinessChecker.isServerReady(serverConfigRepository.load())
+              serverReadinessChecker.isServerReady(serverConfig)
             } catch (e: Exception) {
-              Napier.w("Server not ready [cause=${e.message}]")
+              cause = e.message ?: e.toString()
               false
             }
+        // Only the changes of the readiness are logged, the server being checked periodically
+        if (serverReady != lastServerReady) {
+          if (serverReady) {
+            Napier.i("Server ready [url=${serverConfig.baseUrl()}]")
+          } else {
+            Napier.w("Server not ready [url=${serverConfig.baseUrl()}, cause=$cause]")
+          }
+          lastServerReady = serverReady
+        }
         _state.value = AppState(serverOnline = serverReady)
         delay(SERVER_CHECK_PERIOD_MS)
       }

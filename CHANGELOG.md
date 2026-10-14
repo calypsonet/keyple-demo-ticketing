@@ -129,6 +129,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Log messages (third audit): the reloading clients log the result of each operation (contracts read, contract
+  loaded, card personalized, or failure with its status), the reading, loading and personalization use cases of the
+  Android client receiving the `Logger` port; the multiplatform client logs a refusal of the server at the `WARN`
+  level (instead of "Service executed" at the `INFO` level) and no longer gives an explicit tag; the readiness of the
+  server is logged by the two clients when it changes only ("Server ready", "Server not ready" with its cause), instead
+  of a warning every 5 s (multiplatform client) or nothing (Android client).
 - Log messages (second audit): the results of the validation and of the control (card validated, controlled, refused,
   removed, not selected) are logged once by the `ValidateCard` and `ControlCard` use cases, whatever the type of card
   (the Calypso validation procedure logged nothing, the storage card one logged its results, and the card removal

@@ -17,12 +17,14 @@ import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
 import org.calypsonet.keyple.demo.reload.remote.domain.CardReaderSession
 import org.calypsonet.keyple.demo.reload.remote.domain.mappers.toCardInfo
 import org.calypsonet.keyple.demo.reload.remote.domain.model.CardOperationResult
+import org.calypsonet.keyple.demo.reload.remote.domain.spi.Logger
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.TicketingServer
 
 /** Personalization of the presented card, by the server. */
 class PersonalizeCard(
     private val cardReaderSession: CardReaderSession,
-    private val ticketingServer: TicketingServer
+    private val ticketingServer: TicketingServer,
+    private val logger: Logger
 ) {
 
   /**
@@ -37,7 +39,14 @@ class PersonalizeCard(
             cardReaderSession.readerName,
             smartCard,
             PersonalizeCardInputDto(cardReaderSession.pluginType))
-    return CardOperationResult(
-        smartCard.toCardInfo(), RemoteServiceStatus.fromCode(output.statusCode))
+    val result =
+        CardOperationResult(smartCard.toCardInfo(), RemoteServiceStatus.fromCode(output.statusCode))
+    if (result.status == RemoteServiceStatus.SUCCESS) {
+      logger.i("Card personalized [serialNumber=${result.card.serialNumber}]")
+    } else {
+      logger.w(
+          "Personalization failed [serialNumber=${result.card.serialNumber}, status=${result.status}]")
+    }
+    return result
   }
 }

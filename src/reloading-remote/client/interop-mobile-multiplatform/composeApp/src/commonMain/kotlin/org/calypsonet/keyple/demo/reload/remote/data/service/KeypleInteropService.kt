@@ -49,8 +49,6 @@ private const val SELECT_APP_AND_PERSONALIZE_CARD = "SELECT_APP_AND_PERSONALIZE_
 private const val SELECT_APP_AND_ANALYZE_CONTRACTS = "SELECT_APP_AND_ANALYZE_CONTRACTS"
 private const val SELECT_APP_AND_LOAD_CONTRACT = "SELECT_APP_AND_LOAD_CONTRACT"
 
-private const val TAG = "KeypleInteropService"
-
 /**
  * Integration point of the Keyple Interop libraries (JSON API client and local reader): creates the
  * Keyple terminal, provides it with the card selection scenario of the ticketing server, drives the
@@ -154,11 +152,16 @@ class KeypleInteropService(
           }
           is KeypleResult.Success -> {
             if (result.data.statusCode != 0) {
-              Napier.i(tag = TAG, message = "Service executed [output=${result.data.message}]")
+              Napier.w(
+                  "Contracts reading failed [statusCode=${result.data.statusCode}, " +
+                      "message=${result.data.message}]")
               return@withContext KeypleResult.Failure(
                   status = Status.SERVER_ERROR,
                   message = "Server side error: ${result.data.statusCode} / ${result.data.message}")
             }
+            Napier.i(
+                "Contracts read [serialNumber=${result.data.applicationSerialNumber}, " +
+                    "contracts=${result.data.contracts.size}]")
             return@withContext KeypleResult.Success(result.data)
           }
         }
@@ -237,9 +240,8 @@ class KeypleInteropService(
         remote.executeRemoteService(service, inputData, inputSerializer, outputSerializer)) {
       is KeypleResult.Failure -> {
         Napier.e(
-            tag = TAG,
-            message =
-                "Error while executing the service [status=${result.status}, message=${result.message}, output=${result.data}]")
+            "Error while executing the service [service=$service, status=${result.status}, " +
+                "message=${result.message}, output=${result.data}]")
         return KeypleResult.Failure(
             status = result.status,
             message =
@@ -248,13 +250,15 @@ class KeypleInteropService(
       is KeypleResult.Success -> {
         if (result.data != null) {
           if (result.data!!.statusCode != 0) {
-            Napier.i(tag = TAG, message = "Service executed [output=${result.data!!.message}]")
+            Napier.w(
+                "Remote service failed [service=$service, statusCode=${result.data!!.statusCode}, " +
+                    "message=${result.data!!.message}]")
             return KeypleResult.Failure(
                 status = Status.SERVER_ERROR,
                 message =
                     "Server side error: ${result.data!!.statusCode} / ${result.data!!.message}")
           } else {
-            Napier.i(tag = TAG, message = "Service executed [output=${result.data!!.message}]")
+            Napier.i("Remote service executed [service=$service]")
             return KeypleResult.Success(result.data!!.message)
           }
         } else {
@@ -284,9 +288,8 @@ class KeypleInteropService(
     when (val result = remote.executeRemoteService(service, inputDataStr)) {
       is KeypleResult.Failure -> {
         Napier.e(
-            tag = TAG,
-            message =
-                "Error while executing the service [status=${result.status}, message=${result.message}, output=${result.data}]")
+            "Error while executing the service [service=$service, status=${result.status}, " +
+                "message=${result.message}, output=${result.data}]")
         return KeypleResult.Failure(result.status, result.message)
       }
       is KeypleResult.Success -> {
