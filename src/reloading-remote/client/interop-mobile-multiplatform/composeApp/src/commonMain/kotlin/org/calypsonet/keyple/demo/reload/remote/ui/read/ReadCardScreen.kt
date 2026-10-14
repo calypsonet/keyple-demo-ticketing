@@ -38,7 +38,7 @@ fun ReadCardScreen(
   val state = viewModel.state.collectAsState()
 
   LaunchedEffect(state.value) {
-    if (state.value is ReadCardScreenState.ShowCardContent) {
+    if (state.value is ReadCardScreenState.DisplayCardContent) {
       navController.navigate(CardContent) { popUpTo(Home) }
     }
   }
@@ -71,7 +71,7 @@ internal fun ReadCardScreen(
           is ReadCardScreenState.DisplayError -> {
             ReadingError(state.message)
           }
-          ReadCardScreenState.ShowCardContent -> {
+          ReadCardScreenState.DisplayCardContent -> {
             // no-op
           }
         }

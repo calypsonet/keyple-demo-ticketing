@@ -236,13 +236,13 @@ The React-based dashboard provides:
 ```http
 GET  /card/export-card-selection-scenario
 POST /card/remote-plugin
-GET  /card/sam-status
+GET  /card/sam-availability
 ```
 
 ### Transaction Monitoring
 
 ```http
-GET  /transactions/events    # all the transactions (JSON)
+GET  /transactions           # all the transactions (JSON)
 GET  /transactions/stream    # new transactions (Server-Sent Events, one JSON transaction per event)
 ```
 

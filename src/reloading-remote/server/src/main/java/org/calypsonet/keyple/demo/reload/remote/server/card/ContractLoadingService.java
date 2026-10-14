@@ -205,7 +205,7 @@ public class ContractLoadingService {
             buildMultiTripContract(
                 environment.getEnvEndDate(), currentContract.getCounterValue() + tripsToLoad);
       } else {
-        newContract = buildSeasonContract(currentContract);
+        newContract = buildSeasonPassContract(currentContract);
       }
     } else if (isSingleContractCard) {
       // Single contract card: new contract type replaces existing one at position 1
@@ -218,7 +218,7 @@ public class ContractLoadingService {
       if (PriorityCode.MULTI_TRIP == contractTariff) {
         newContract = buildMultiTripContract(environment.getEnvEndDate(), tripsToLoad);
       } else {
-        newContract = buildSeasonContract(null);
+        newContract = buildSeasonPassContract(null);
       }
     } else {
       // Calypso: loading of a new contract, find available position
@@ -231,7 +231,7 @@ public class ContractLoadingService {
       if (PriorityCode.MULTI_TRIP == contractTariff) {
         newContract = buildMultiTripContract(environment.getEnvEndDate(), tripsToLoad);
       } else {
-        newContract = buildSeasonContract(null);
+        newContract = buildSeasonPassContract(null);
       }
     }
     currentEvent =
@@ -289,7 +289,7 @@ public class ContractLoadingService {
    *
    * @param renewedSeasonPass The season pass renewed, null for a new season pass.
    */
-  private ContractStructure buildSeasonContract(ContractStructure renewedSeasonPass) {
+  private ContractStructure buildSeasonPassContract(ContractStructure renewedSeasonPass) {
     DateCompact contractSaleDate = new DateCompact(LocalDate.now());
     DateCompact validityStartDate = contractSaleDate;
     if (renewedSeasonPass != null

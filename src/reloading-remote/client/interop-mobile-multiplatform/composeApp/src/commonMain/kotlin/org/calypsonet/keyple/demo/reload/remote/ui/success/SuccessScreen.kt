@@ -62,7 +62,7 @@ fun SuccessScreen(
           horizontalAlignment = Alignment.CenterHorizontally,
           verticalArrangement = Arrangement.Center,
       ) {
-        DisplaySuccess("anim_tick_white.json", stringResource(Res.string.contract_loaded))
+        SuccessMessage("anim_tick_white.json", stringResource(Res.string.contract_loaded))
       }
       AutoReturnProgress(
           delayMs = SUCCESS_RETURN_DELAY_MS,
@@ -75,7 +75,7 @@ fun SuccessScreen(
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-internal fun DisplaySuccess(animationFileName: String, message: String) {
+internal fun SuccessMessage(animationFileName: String, message: String) {
   val composition by rememberLottieComposition {
     LottieCompositionSpec.JsonString(Res.readBytes("files/$animationFileName").decodeToString())
   }
@@ -84,11 +84,11 @@ internal fun DisplaySuccess(animationFileName: String, message: String) {
           composition,
       )
 
-  ScreenAnimByPlatform(message, white, composition, progress, infinite = false)
+  PlatformAnimation(message, white, composition, progress, infinite = false)
 }
 
 @Composable
-expect fun ScreenAnimByPlatform(
+expect fun PlatformAnimation(
     message: String,
     textColor: Color,
     composition: LottieComposition?,

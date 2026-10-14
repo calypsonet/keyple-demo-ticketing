@@ -58,21 +58,19 @@ class CardReaderActivity : BaseCardActivity() {
           if (!isBluebirdTerminal) {
             val nfcManager = getSystemService(NFC_SERVICE) as NfcManager
             if (nfcManager.defaultAdapter?.isEnabled == true) {
-              showPresentNfcCardInstructions()
-              initAndActivateCardReader()
+              showPresentCardInstructions()
+              startCardReader()
             } else {
-              launchErrorResponse(getString(R.string.nfc_not_activated), finishActivity = true)
+              showError(getString(R.string.nfc_not_activated), finishActivity = true)
             }
           } else {
-            showPresentNfcCardInstructions()
-            initAndActivateCardReader()
+            showPresentCardInstructions()
+            startCardReader()
           }
         }
         CardMedium.SIM -> {
-          showNowLoadingInformation()
-          initOmapiReader {
-            lifecycleScope.launch(Dispatchers.Default) { remoteServiceExecution() }
-          }
+          showReadInProgress()
+          initOmapiReader { lifecycleScope.launch(Dispatchers.Default) { executeRemoteService() } }
         }
         CardMedium.WEARABLE -> {
           throw UnsupportedOperationException("Card medium not supported [cardMedium=WEARABLE]")
@@ -83,7 +81,7 @@ class CardReaderActivity : BaseCardActivity() {
       }
     } catch (e: ReaderCommunicationException) {
       Timber.e(e, "Reader communication error while initializing the readers")
-      launchErrorResponse(getString(R.string.error_label), true)
+      showError(getString(R.string.error_label), true)
     } catch (e: Exception) {
       Timber.e(e, "Error while initializing the readers")
     }
@@ -93,7 +91,7 @@ class CardReaderActivity : BaseCardActivity() {
     activityCardReaderBinding.cardAnimation.cancelAnimation()
     activityCardReaderBinding.loadingAnimation.cancelAnimation()
     try {
-      deactivateAndClearReader()
+      releaseCardReader()
     } catch (e: Exception) {
       Timber.e(e, "Error while releasing the readers")
     }
@@ -103,12 +101,12 @@ class CardReaderActivity : BaseCardActivity() {
   override fun onReaderEvent(event: CardReaderEvent?) {
     if (event?.type == CardReaderEvent.Type.CARD_INSERTED) {
       // We'll select Card when SmartCard is presented in field
-      runOnUiThread { showNowLoadingInformation() }
-      lifecycleScope.launch(Dispatchers.Default) { remoteServiceExecution() }
+      runOnUiThread { showReadInProgress() }
+      lifecycleScope.launch(Dispatchers.Default) { executeRemoteService() }
     }
   }
 
-  private suspend fun remoteServiceExecution() {
+  private suspend fun executeRemoteService() {
     withContext(Dispatchers.IO) {
       try {
         val result = readContracts()
@@ -126,14 +124,14 @@ class CardReaderActivity : BaseCardActivity() {
                 isFinishActivityAfterResult())
           }
         } else {
-          launchStatusErrorResponse(result.card, result.status)
+          showStatusError(result.card, result.status)
         }
       } catch (e: IllegalStateException) {
         Timber.w("Card not supported while reading the contracts [cause=${e.message}]")
-        launchInvalidCardResponse(getString(R.string.undetermined_card_type), "")
+        showInvalidCard(getString(R.string.undetermined_card_type), "")
       } catch (e: Exception) {
         Timber.e(e, "Error while reading the contracts")
-        launchErrorResponse(getString(R.string.server_error), isFinishActivityAfterResult())
+        showError(getString(R.string.server_error), isFinishActivityAfterResult())
       } finally {
         cardReaderSession.endCardProcessing()
       }
@@ -156,7 +154,7 @@ class CardReaderActivity : BaseCardActivity() {
     }
   }
 
-  private fun showPresentNfcCardInstructions() {
+  private fun showPresentCardInstructions() {
     activityCardReaderBinding.presentTxt.text = getString(R.string.present_card_label)
     activityCardReaderBinding.cardAnimation.visibility = View.VISIBLE
     activityCardReaderBinding.cardAnimation.playAnimation()
@@ -164,7 +162,7 @@ class CardReaderActivity : BaseCardActivity() {
     activityCardReaderBinding.loadingAnimation.visibility = View.INVISIBLE
   }
 
-  private fun showNowLoadingInformation() {
+  private fun showReadInProgress() {
     activityCardReaderBinding.presentTxt.text = getString(R.string.read_in_progress)
     activityCardReaderBinding.loadingAnimation.visibility = View.VISIBLE
     activityCardReaderBinding.loadingAnimation.playAnimation()

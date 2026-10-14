@@ -172,7 +172,7 @@ class StorageCardValidationProcedure(
     val environment = StorageCardEnvironmentHolderCodec.decode(environmentContent)
 
     // Steps 3 and 4 - Validate the environment version and end date
-    checkEnvironment(
+    environmentRejection(
             environment.envVersionNumber,
             environment.envEndDate.date,
             validationDateTime.toLocalDate())
@@ -191,7 +191,7 @@ class StorageCardValidationProcedure(
     val event = StorageCardEventCodec.decode(eventContent)
 
     // Step 6 - Validate the event version
-    checkEventVersion(event.eventVersionNumber)?.let {
+    eventVersionRejection(event.eventVersionNumber)?.let {
       return ValidationResult.Rejected(card, it)
     }
 
@@ -211,7 +211,7 @@ class StorageCardValidationProcedure(
     val contract = StorageCardContractCodec.decode(contractContent)
 
     // Validate contract version
-    checkContractVersion(contract.contractVersionNumber)?.let {
+    contractVersionRejection(contract.contractVersionNumber)?.let {
       return ValidationResult.Rejected(card, it)
     }
 

@@ -40,7 +40,7 @@ fun ServerSettingsScreen(
 
   ServerSettingsScreen(
       state = state.value,
-      restartServer = viewModel::restartServer,
+      applyServerSettings = viewModel::applyServerSettings,
       navController = navController,
       modifier = modifier,
       appState = appState,
@@ -53,7 +53,7 @@ fun ServerSettingsScreen(
 @Composable
 internal fun ServerSettingsScreen(
     state: ServerSettingsScreenState,
-    restartServer: () -> Unit,
+    applyServerSettings: () -> Unit,
     navController: NavController,
     modifier: Modifier = Modifier,
     appState: AppState,
@@ -92,7 +92,7 @@ internal fun ServerSettingsScreen(
 
           Spacer(modifier = Modifier.weight(1f))
 
-          Button(onClick = { restartServer() }) { Text("Restart") }
+          Button(onClick = { applyServerSettings() }) { Text("Apply") }
         }
   }
 }

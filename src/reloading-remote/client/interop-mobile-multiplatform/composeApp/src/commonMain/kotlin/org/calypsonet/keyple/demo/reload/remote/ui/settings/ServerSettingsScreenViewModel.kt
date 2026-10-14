@@ -49,7 +49,7 @@ class ServerSettingsScreenViewModel(
     }
   }
 
-  fun restartServer() {
+  fun applyServerSettings() {
     viewModelScope.launch {
       serverConfigRepository.update(
           host = state.value.serverHost,

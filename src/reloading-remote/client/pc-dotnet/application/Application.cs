@@ -125,7 +125,7 @@ namespace App.application
             Display("Waiting for a card...", ConsoleColor.DarkBlue);
             _logger.Information("Waiting for a card");
 
-            _ticketingService.WaitForCardInsertion();
+            _ticketingService.WaitForCard();
 
             Display("Card found!\nContacting server...", ConsoleColor.Green);
             _logger.Information("Card found");

@@ -13,7 +13,7 @@ import {layoutSx,drawerWidth,theme} from './util/theme'
 
 export default function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [isSamReady, setIsSamReady] = useState(true);
+  const [isSamAvailable, setIsSamAvailable] = useState(true);
   const [isServerReady, setIsServerReady] = useState(true);
   const [rows, setRows] = useState([]);
   const [lastRowId, setLastRowId] = useState();
@@ -31,7 +31,7 @@ export default function App() {
 
     eventSource.onopen = () => {
       streamed.length = 0;
-      fetch("/transactions/events")
+      fetch("/transactions")
         .then(response => {
           if (!response.ok) {
             throw new Error("Unexpected response [status=" + response.status + "]");
@@ -66,15 +66,14 @@ export default function App() {
    */
   useInterval(() => {
     /*
-     * Fetch the server/sam state and change server/sam status
+     * Fetches the availability of the SAM, which also gives the readiness of the server
      */
-    function fetchIsSamReady () {
+    function fetchSamAvailability () {
       var requestOptions = {
         method: 'GET'
       };
 
-      //request SAM status
-      fetch("/card/sam-status", requestOptions)
+      fetch("/card/sam-availability", requestOptions)
         .then(response => {
           if(response.status === 200){
             // Only the changes of the readiness are logged, the server being checked periodically
@@ -89,9 +88,9 @@ export default function App() {
         })
         .then(json => {
           // Only the changes of the availability of the SAM are logged
-          if(isSamReady !== json.isSamReady){
-            console.info("SAM availability changed [available=" + json.isSamReady + "]");
-            setIsSamReady(json.isSamReady)
+          if(isSamAvailable !== json.isSamAvailable){
+            console.info("SAM availability changed [available=" + json.isSamAvailable + "]");
+            setIsSamAvailable(json.isSamAvailable)
           }
         })
         .catch(error =>{
@@ -103,7 +102,7 @@ export default function App() {
         });
     }
 
-    fetchIsSamReady()
+    fetchSamAvailability()
   }, 3000);
 
   const handleDrawerToggle = () => {
@@ -132,7 +131,7 @@ export default function App() {
           </Box>
         </Box>
         <Box sx={layoutSx.app}>
-          <Header onDrawerToggle={handleDrawerToggle} isSamReady={isSamReady} isServerReady={isServerReady}/>
+          <Header onDrawerToggle={handleDrawerToggle} isSamAvailable={isSamAvailable} isServerReady={isServerReady}/>
           <Box component="main" sx={layoutSx.main}>
             <TransactionTable rows={rows} lastRowId={lastRowId} />
           </Box>

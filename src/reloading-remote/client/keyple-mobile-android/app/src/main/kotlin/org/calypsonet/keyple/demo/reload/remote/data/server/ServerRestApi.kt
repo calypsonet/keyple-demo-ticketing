@@ -27,7 +27,7 @@ import retrofit2.http.POST
  */
 interface ServerRestApi {
 
-  @GET("/card/sam-status") fun getSamStatus(): Call<SamStatus>
+  @GET("/card/sam-availability") fun getSamAvailability(): Call<SamAvailability>
 
   @Headers("Accept: application/json", "Content-Type: application/json; charset=UTF-8")
   @POST("/card/remote-plugin")

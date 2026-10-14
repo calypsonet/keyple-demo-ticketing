@@ -53,7 +53,7 @@ class PersonalizeCardScreenViewModel(
     viewModelScope.launch {
       keypleInteropService.updateReaderMessage("Place your card on the reader")
       try {
-        val cardFound = keypleInteropService.waitCard()
+        val cardFound = keypleInteropService.waitForCard()
         buzzer.beepAndVibrate()
         if (cardFound) {
           keypleInteropService.updateReaderMessage("Stay still...")
@@ -71,7 +71,7 @@ class PersonalizeCardScreenViewModel(
   private suspend fun personalizeCard() {
     _state.value = PersonalizeCardScreenState.WritingToCard
     try {
-      when (val result = keypleInteropService.personalizeCard()) {
+      when (val result = keypleInteropService.selectAppAndPersonalizeCard()) {
         is KeypleResult.Failure -> {
           _state.value = PersonalizeCardScreenState.DisplayError(result.message)
         }

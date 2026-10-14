@@ -12,5 +12,5 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.data.server
 
-/** SAM status returned by the server (`/card/sam-status` endpoint). */
-data class SamStatus(val isSamReady: Boolean)
+/** Availability of the SAM returned by the server (`/card/sam-availability` endpoint). */
+data class SamAvailability(val isSamAvailable: Boolean)

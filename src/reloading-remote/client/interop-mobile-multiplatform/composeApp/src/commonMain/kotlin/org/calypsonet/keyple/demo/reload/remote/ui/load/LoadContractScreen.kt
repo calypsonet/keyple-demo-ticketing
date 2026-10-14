@@ -75,7 +75,7 @@ internal fun LoadContractScreen(
           is LoadContractScreenState.DisplayError -> {
             ReadingError(state.message)
           }
-          LoadContractScreenState.ShowTransactionSuccess -> {
+          LoadContractScreenState.DisplaySuccess -> {
             navController.navigate(Success) { popUpTo(Home) }
           }
         }

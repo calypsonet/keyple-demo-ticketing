@@ -55,34 +55,34 @@ class HomeActivity : BaseActivity() {
 
   override fun onResume() {
     super.onResume()
-    setupBtn(activityHomeBinding.contactlessCardBtn, CardMedium.CONTACTLESS_CARD)
-    setupBtn(activityHomeBinding.simCardBtn, CardMedium.SIM)
-    setupBtn(activityHomeBinding.wearableBtn, CardMedium.WEARABLE)
-    setupBtn(activityHomeBinding.embeddedElemBtn, CardMedium.EMBEDDED)
+    setUpCardMediumButton(activityHomeBinding.contactlessCardBtn, CardMedium.CONTACTLESS_CARD)
+    setUpCardMediumButton(activityHomeBinding.simCardBtn, CardMedium.SIM)
+    setUpCardMediumButton(activityHomeBinding.wearableBtn, CardMedium.WEARABLE)
+    setUpCardMediumButton(activityHomeBinding.embeddedElemBtn, CardMedium.EMBEDDED)
   }
 
-  private fun setupBtn(btn: View, type: CardMedium) {
-    btn.setOnClickListener {
-      appSettings.cardMedium = type
+  private fun setUpCardMediumButton(button: View, cardMedium: CardMedium) {
+    button.setOnClickListener {
+      appSettings.cardMedium = cardMedium
       if (intent.getBooleanExtra(CHOOSE_DEVICE_FOR_PERSO, false)) {
         intent.putExtras(intent)
         startActivity(Intent(this, PersonalizeCardActivity::class.java))
         this.finish()
       } else startActivity(Intent(this, CardReaderActivity::class.java))
     }
-    when (appSettings.getCardMediumVisibility(type)) {
+    when (appSettings.getCardMediumVisibility(cardMedium)) {
       CardMediumVisibility.ENABLE -> {
-        btn.visibility = View.VISIBLE
-        btn.background = ContextCompat.getDrawable(this, R.drawable.white_card)
-        btn.isEnabled = true
+        button.visibility = View.VISIBLE
+        button.background = ContextCompat.getDrawable(this, R.drawable.white_card)
+        button.isEnabled = true
       }
       CardMediumVisibility.DISABLE -> {
-        btn.visibility = View.VISIBLE
-        btn.background = ContextCompat.getDrawable(this, R.drawable.grey_card)
-        btn.isEnabled = false
+        button.visibility = View.VISIBLE
+        button.background = ContextCompat.getDrawable(this, R.drawable.grey_card)
+        button.isEnabled = false
       }
       CardMediumVisibility.HIDE -> {
-        btn.visibility = View.GONE
+        button.visibility = View.GONE
       }
     }
   }

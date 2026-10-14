@@ -123,17 +123,17 @@ internal class ArriveFeedbackDevice(private val context: Context, private val lo
     }
   }
 
-  override fun displayResultSuccess() {
+  override fun signalSuccess() {
     setLeds(LEDS_SUCCESS)
     playSound(SOUND_SUCCESS)
   }
 
-  override fun displayResultFailed() {
+  override fun signalFailure() {
     setLeds(LEDS_FAILED)
     playSound(SOUND_ERROR)
   }
 
-  override fun displayWaiting() {
+  override fun signalWaiting() {
     setLeds(LEDS_WAITING)
   }
 

@@ -90,14 +90,14 @@ class KeypleInteropService(
 
     keypleTerminal = KeypleTerminal(reader = reader, clientId = clientId, networkClient = server)
 
-    launchGetCardSelectionScenarioJob()
+    launchCardSelectionScenarioRetrieval()
   }
 
-  private fun launchGetCardSelectionScenarioJob() {
+  private fun launchCardSelectionScenarioRetrieval() {
     keypleTerminal?.let {
       scope.launch {
         try {
-          val scenarioJsonString = retrieveSelectionScenarioJson()
+          val scenarioJsonString = retrieveCardSelectionScenario()
           Napier.d("Card selection scenario received [scenario=$scenarioJsonString]")
           keypleTerminal?.setCardSelectionScenarioJsonString(scenarioJsonString)
         } catch (e: Exception) {
@@ -107,7 +107,7 @@ class KeypleInteropService(
     }
   }
 
-  private suspend fun retrieveSelectionScenarioJson(): String {
+  private suspend fun retrieveCardSelectionScenario(): String {
     return try {
       httpClient
           .get("${serverConfig?.baseUrl()}/card/export-card-selection-scenario") {}
@@ -117,7 +117,7 @@ class KeypleInteropService(
     }
   }
 
-  suspend fun waitCard(): Boolean {
+  suspend fun waitForCard(): Boolean {
     return withContext(Dispatchers.IO) {
       return@withContext keypleTerminal?.waitForCard() ?: false
     }
@@ -168,7 +168,7 @@ class KeypleInteropService(
     }
   }
 
-  suspend fun personalizeCard(): KeypleResult<String> {
+  suspend fun selectAppAndPersonalizeCard(): KeypleResult<String> {
     return withContext(Dispatchers.IO) {
       keypleTerminal?.let {
         val result =

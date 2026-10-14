@@ -75,9 +75,9 @@ namespace App.domain.api
         }
 
         /// <inheritdoc/>
-        public void WaitForCardInsertion()
+        public void WaitForCard()
         {
-            _reader.WaitForCardPresent();
+            _reader.WaitForCard();
         }
 
         /// <inheritdoc/>
@@ -119,7 +119,7 @@ namespace App.domain.api
                 Body = JsonConvert.SerializeObject(bodyContent, Formatting.None)
             };
 
-            string jsonResponse = _server.transmitRequest(JsonConvert.SerializeObject(message));
+            string jsonResponse = _server.TransmitRequest(JsonConvert.SerializeObject(message));
 
             message = JsonConvert.DeserializeObject<List<MessageDto>>(jsonResponse)![0];
 
@@ -157,7 +157,7 @@ namespace App.domain.api
                 message.ApiLevel = ApiInfo.API_LEVEL;
                 message.Action = RESP;
                 message.Body = jsonBodyString;
-                string jsonResponse = _server.transmitRequest(JsonConvert.SerializeObject(message, Formatting.None));
+                string jsonResponse = _server.TransmitRequest(JsonConvert.SerializeObject(message, Formatting.None));
                 message = JsonConvert.DeserializeObject<List<MessageDto>>(jsonResponse)![0];
             }
             return message;

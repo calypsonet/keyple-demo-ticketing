@@ -96,7 +96,7 @@ public class CardSamObserver
     plugin = samPlugin;
     plugin.setPluginObservationExceptionHandler(this);
     plugin.addObserver(this);
-    reader = searchReader(plugin);
+    reader = findReader(plugin);
     if (reader == null) {
       logger.warn("SAM reader not connected: its monitoring starts as soon as it is connected");
       return;
@@ -112,7 +112,7 @@ public class CardSamObserver
       reader.removeObserver(this);
       reader.stopCardDetection();
     }
-    reader = searchReader(plugin);
+    reader = findReader(plugin);
     if (reader == null) {
       logger.warn("SAM reader not found: monitoring not restarted");
       return;
@@ -127,7 +127,7 @@ public class CardSamObserver
     reader.startCardDetection(ObservableCardReader.DetectionMode.REPEATING);
   }
 
-  private ObservableCardReader searchReader(Plugin plugin) {
+  private ObservableCardReader findReader(Plugin plugin) {
     logger.info(
         "Searching the SAM reader [plugin={}, readerNameRegex={}]",
         plugin.getName(),

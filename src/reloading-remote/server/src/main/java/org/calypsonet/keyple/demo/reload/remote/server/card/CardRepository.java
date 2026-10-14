@@ -152,7 +152,7 @@ public class CardRepository {
         .processCommands(ChannelControl.KEEP_OPEN);
     logger.debug(SECURE_SESSION_CLOSED);
 
-    return parse(calypsoCard);
+    return decodeCardData(calypsoCard);
   }
 
   CardData readCard(CardReader cardReader, StorageCard storageCard, CardResource samResource) {
@@ -198,7 +198,7 @@ public class CardRepository {
         .processCommands(ChannelControl.KEEP_OPEN);
 
     logger.debug("Storage card read");
-    return parse(storageCard);
+    return decodeCardData(storageCard);
   }
 
   int writeCard(
@@ -434,7 +434,7 @@ public class CardRepository {
         event.getContractPriorities());
   }
 
-  private CardData parse(CalypsoCard calypsoCard) {
+  private CardData decodeCardData(CalypsoCard calypsoCard) {
     // Parse environment
     EnvironmentHolderStructure environment =
         CalypsoEnvironmentHolderCodec.INSTANCE.decode(
@@ -476,7 +476,7 @@ public class CardRepository {
     return 4;
   }
 
-  private CardData parse(StorageCard storageCard) {
+  private CardData decodeCardData(StorageCard storageCard) {
     EnvironmentHolderStructure environment;
     List<ContractStructure> contracts = new ArrayList<>();
     EventStructure event;

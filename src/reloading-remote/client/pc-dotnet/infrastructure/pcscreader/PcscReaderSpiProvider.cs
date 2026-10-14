@@ -26,7 +26,7 @@ namespace App.infrastructure.pcscreader
         /// <summary>
         /// Gets the singleton instance of PcscReaderSpiAdapter.
         /// </summary>
-        public static ReaderSpi getInstance()
+        public static ReaderSpi GetInstance()
         {
             if (s_instance == null)
             {

@@ -60,7 +60,7 @@ constructor(
   private var samReaderProtocolLogicalName: String? = null
   private var samReaders: MutableList<CardReader> = mutableListOf()
 
-  private fun initTerminalType(terminalType: TerminalType) {
+  private fun initTerminalReader(terminalType: TerminalType) {
     when (terminalType) {
       TerminalType.BLUEBIRD -> initBluebirdReader()
       TerminalType.FAMOCO -> initFamocoReader()
@@ -121,7 +121,7 @@ constructor(
 
   @Throws(KeyplePluginException::class)
   override fun registerPlugin(terminalType: TerminalType, uiContext: UiContext) {
-    initTerminalType(terminalType)
+    initTerminalReader(terminalType)
     val activity = uiContext.adaptTo(Activity::class.java)
     // Plugin
     val pluginFactory =

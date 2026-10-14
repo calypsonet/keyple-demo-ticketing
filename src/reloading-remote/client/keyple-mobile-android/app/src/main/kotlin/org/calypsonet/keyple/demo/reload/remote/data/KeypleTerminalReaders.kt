@@ -52,7 +52,7 @@ class KeypleTerminalReaders @Inject constructor(private val logger: Logger) : Te
   private var cardReader: CardReader? = null
   private var isStorageCardSupported = false
 
-  private fun initTerminalType(terminalType: TerminalType) {
+  private fun initTerminalReader(terminalType: TerminalType) {
     when (terminalType) {
       TerminalType.BLUEBIRD -> initBluebirdReader()
       TerminalType.NFC_TERMINAL -> initNfcTerminalReader()
@@ -105,7 +105,7 @@ class KeypleTerminalReaders @Inject constructor(private val logger: Logger) : Te
       }
       return
     }
-    initTerminalType(terminalType)
+    initTerminalReader(terminalType)
     val pluginFactory =
         when (terminalType) {
           TerminalType.BLUEBIRD ->

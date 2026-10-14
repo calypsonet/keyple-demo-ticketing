@@ -68,13 +68,13 @@ try
     Log.Information("Retrieving the reader and server connectors");
 
     // Get an instance of the ReaderSpi implementation
-    ReaderSpi cardService = PcscReaderSpiProvider.getInstance();
+    ReaderSpi cardService = PcscReaderSpiProvider.GetInstance();
 
     // Get an instance of the ServerSpi implementation
-    ServerSpi server = ServerSpiProvider.getInstance(serverHost, serverPort, serverEndpoint);
+    ServerSpi server = ServerSpiProvider.GetInstance(serverHost, serverPort, serverEndpoint);
 
     // Create an instance of the TicketingServiceApi using the reader service and server
-    TicketingServiceApi ticketingService = TicketingServiceApiProvider.GetService(cardService, readerName, server);
+    TicketingServiceApi ticketingService = TicketingServiceApiProvider.GetInstance(cardService, readerName, server);
 
     Log.Information("Creating and starting the application");
 

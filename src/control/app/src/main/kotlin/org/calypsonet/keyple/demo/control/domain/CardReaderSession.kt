@@ -166,8 +166,7 @@ class CardReaderSession(
       val samReader = terminalReaders.getSamReader()
       isSamAvailable = samReader != null && selectSam(samReader)
     }
-    symmetricCryptoSecuritySetting =
-        if (isSamAvailable) createSymmetricCryptoSecuritySetting() else null
+    symmetricCryptoSecuritySetting = if (isSamAvailable) createSecuritySetting() else null
     isInitialized = true
   }
 
@@ -315,7 +314,7 @@ class CardReaderSession(
     return CardSelection.Selected(smartCard)
   }
 
-  private fun createSymmetricCryptoSecuritySetting(): SymmetricCryptoSecuritySetting {
+  private fun createSecuritySetting(): SymmetricCryptoSecuritySetting {
     return calypsoCardApiFactory
         .createSymmetricCryptoSecuritySetting(
             legacySamApiFactory.createSymmetricCryptoCardTransactionManagerFactory(

@@ -126,13 +126,13 @@ class CardReaderActivity : BaseActivity() {
           } catch (e: Exception) {
             Timber.e(e, "Error while initializing the readers")
             withContext(Dispatchers.Main) {
-              dismissProgress()
+              hideProgress()
               showReaderInitializationErrorDialog()
             }
           }
         }
         if (cardReaderSession.isInitialized) {
-          withContext(Dispatchers.Main) { dismissProgress() }
+          withContext(Dispatchers.Main) { hideProgress() }
         }
       }
     } else {
@@ -176,7 +176,7 @@ class CardReaderActivity : BaseActivity() {
       object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
           if (validationResultBinding?.root?.visibility == View.VISIBLE) {
-            hideValidationResult()
+            hideResultOverlay()
           } else {
             isEnabled = false
             onBackPressedDispatcher.onBackPressed()
@@ -230,7 +230,7 @@ class CardReaderActivity : BaseActivity() {
                 cardReaderSession.endCardProcessing()
                 playWaitingAnimation()
               } else {
-                changeDisplay(validationResult)
+                displayResult(validationResult)
               }
             }
           }
@@ -240,11 +240,6 @@ class CardReaderActivity : BaseActivity() {
         }
       }
     }
-  }
-
-  private fun changeDisplay(validationResult: ValidationResult) {
-    activityCardReaderBinding.animation.cancelAnimation()
-    showValidationResult(validationResult)
   }
 
   /** Returns the label of the presented card. */
@@ -305,7 +300,11 @@ class CardReaderActivity : BaseActivity() {
         TechnicalError.UNEXPECTED -> getString(R.string.error_small_desc)
       }
 
-  private fun showValidationResult(result: ValidationResult) {
+  /**
+   * Displays the result of the validation, the waiting screen being displayed again after a delay.
+   */
+  private fun displayResult(result: ValidationResult) {
+    activityCardReaderBinding.animation.cancelAnimation()
     val b = validationResultBinding!!
 
     // Card type label + transaction time
@@ -396,7 +395,7 @@ class CardReaderActivity : BaseActivity() {
       lifecycleScope.launch(Dispatchers.IO) { cardReaderSession.prepareNextTransaction() }
     }
 
-    displayValidationResult(animationFile)
+    showResultOverlay(animationFile)
   }
 
   /** Returns the message displayed when the presented card cannot be selected. */
@@ -409,7 +408,7 @@ class CardReaderActivity : BaseActivity() {
       }
 
   /** Shows the validation result overlay with the provided animation, hidden after a delay. */
-  private fun displayValidationResult(animationFile: String) {
+  private fun showResultOverlay(animationFile: String) {
     val b = validationResultBinding!!
     b.validationResultView.visibility = View.VISIBLE
     b.animation.setAnimation(animationFile)
@@ -419,13 +418,13 @@ class CardReaderActivity : BaseActivity() {
     validationResultTimer!!.schedule(
         object : TimerTask() {
           override fun run() {
-            runOnUiThread { hideValidationResult() }
+            runOnUiThread { hideResultOverlay() }
           }
         },
         SUMMARY_DELAY_MS.toLong())
   }
 
-  private fun hideValidationResult() {
+  private fun hideResultOverlay() {
     validationResultTimer?.cancel()
     validationResultTimer = null
     validationResultBinding?.root?.visibility = View.GONE
@@ -451,7 +450,7 @@ class CardReaderActivity : BaseActivity() {
     activityCardReaderBinding.progressOverlay.visibility = View.VISIBLE
   }
 
-  private fun dismissProgress() {
+  private fun hideProgress() {
     activityCardReaderBinding.progressOverlay.visibility = View.GONE
   }
 

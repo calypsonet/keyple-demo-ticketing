@@ -136,7 +136,7 @@ class CalypsoCardValidationProcedure(
     // the
     // current version), reject the card. <Abort Secure Session>
     // Step 4 - If EnvEndDate points to a date in the past, reject the card. <Abort Secure Session>
-    checkEnvironment(
+    environmentRejection(
             environment.envVersionNumber,
             environment.envEndDate.date,
             validationDateTime.toLocalDate())
@@ -154,7 +154,7 @@ class CalypsoCardValidationProcedure(
 
     // Step 6 - If EventVersionNumber is not the expected one (==1 for the current version), reject
     // the card. <Abort Secure Session>
-    checkEventVersion(event.eventVersionNumber)?.let {
+    eventVersionRejection(event.eventVersionNumber)?.let {
       return rejected(it)
     }
 
@@ -210,7 +210,7 @@ class CalypsoCardValidationProcedure(
 
       // Step 11.2 - If ContractVersionNumber is not the expected one (==1 for the current version),
       // reject the card. <Abort Secure Session>
-      checkContractVersion(contract.contractVersionNumber)?.let {
+      contractVersionRejection(contract.contractVersionNumber)?.let {
         return rejected(it)
       }
 

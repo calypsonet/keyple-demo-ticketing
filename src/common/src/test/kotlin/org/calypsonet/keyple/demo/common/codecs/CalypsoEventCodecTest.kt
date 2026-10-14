@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test
 class CalypsoEventCodecTest {
 
   @Test
-  fun decodeEvent1() {
+  fun decodeSeasonPassEvent() {
     val content = BytesUtils.fromString(DATA_EVENT_1)
 
     val event = CalypsoEventCodec.decode(content)
@@ -46,7 +46,7 @@ class CalypsoEventCodecTest {
   }
 
   @Test
-  fun encodeEvent1() {
+  fun encodeSeasonPassEvent() {
     val eventDate = LocalDateTime.of(2021, 1, 14, 14, 0, 0)
 
     val eventStructure =

@@ -38,7 +38,7 @@ import org.calypsonet.keyple.composeapp.generated.resources.Res
 import org.calypsonet.keyple.composeapp.generated.resources.ic_logo_calypso
 import org.calypsonet.keyple.composeapp.generated.resources.keyple_background
 import org.calypsonet.keyple.demo.reload.remote.AppState
-import org.calypsonet.keyple.demo.reload.remote.ui.success.ScreenAnimByPlatform
+import org.calypsonet.keyple.demo.reload.remote.ui.success.PlatformAnimation
 import org.calypsonet.keyple.demo.reload.remote.ui.theme.blue
 import org.calypsonet.keyple.demo.reload.remote.ui.theme.red
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -115,7 +115,7 @@ internal fun PresentCardAnimation() {
   }
   val progress by animateLottieCompositionAsState(composition)
 
-  ScreenAnimByPlatform("Please present a contactless card", blue, composition, progress)
+  PlatformAnimation("Please present a contactless card", blue, composition, progress)
 }
 
 @OptIn(ExperimentalResourceApi::class)
@@ -127,7 +127,7 @@ internal fun ScanCardAnimation() {
   val progress by
       animateLottieCompositionAsState(composition, iterations = Compottie.IterateForever)
 
-  ScreenAnimByPlatform("Read in progress", blue, composition, progress)
+  PlatformAnimation("Read in progress", blue, composition, progress)
 }
 
 @OptIn(ExperimentalResourceApi::class)
@@ -141,5 +141,5 @@ internal fun ReadingError(errorMessage: String) {
           composition,
       )
 
-  ScreenAnimByPlatform(errorMessage, red, composition, progress, infinite = false)
+  PlatformAnimation(errorMessage, red, composition, progress, infinite = false)
 }

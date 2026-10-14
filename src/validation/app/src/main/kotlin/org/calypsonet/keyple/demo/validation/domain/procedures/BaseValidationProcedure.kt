@@ -87,7 +87,7 @@ abstract class BaseValidationProcedure : ValidationProcedure {
    *
    * @return The reason why the card is refused, null if the environment is valid.
    */
-  fun checkEnvironment(
+  fun environmentRejection(
       envVersionNumber: VersionNumber,
       envEndDate: LocalDate,
       validationDate: LocalDate
@@ -105,7 +105,7 @@ abstract class BaseValidationProcedure : ValidationProcedure {
    *
    * @return The reason why the card is refused, null if the version is the current one.
    */
-  fun checkEventVersion(eventVersionNumber: VersionNumber): RejectionReason? =
+  fun eventVersionRejection(eventVersionNumber: VersionNumber): RejectionReason? =
       when (eventVersionNumber) {
         VersionNumber.CURRENT_VERSION -> null
         VersionNumber.UNDEFINED -> RejectionReason.NO_VALID_CONTRACT
@@ -125,7 +125,7 @@ abstract class BaseValidationProcedure : ValidationProcedure {
    *
    * @return The reason why the card is refused, null if the version is the current one.
    */
-  fun checkContractVersion(contractVersionNumber: VersionNumber): RejectionReason? =
+  fun contractVersionRejection(contractVersionNumber: VersionNumber): RejectionReason? =
       if (contractVersionNumber != VersionNumber.CURRENT_VERSION)
           RejectionReason.CONTRACT_WRONG_VERSION
       else null

@@ -34,15 +34,15 @@ internal class AndroidFeedbackDevice(private val context: Context, private val l
     onReady()
   }
 
-  override fun displayResultSuccess() {
+  override fun signalSuccess() {
     successMedia?.start()
   }
 
-  override fun displayResultFailed() {
+  override fun signalFailure() {
     errorMedia?.start()
   }
 
-  override fun displayWaiting() {}
+  override fun signalWaiting() {}
 
   override fun release() {
     try {

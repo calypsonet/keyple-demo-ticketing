@@ -52,7 +52,7 @@ abstract class BaseCardActivity :
 
   /** Android NFC Reader is strongly dependent and Android Activity component. */
   @Throws(UnsupportedOperationException::class)
-  fun initAndActivateCardReader() {
+  fun startCardReader() {
     cardReaderSession.init(
         terminalType,
         cardMedium,
@@ -75,7 +75,7 @@ abstract class BaseCardActivity :
   }
 
   @Throws(UnsupportedOperationException::class)
-  fun deactivateAndClearReader() {
+  fun releaseCardReader() {
     if (cardMedium == CardMedium.CONTACTLESS_CARD) {
       cardReaderSession.stopCardDetection()
     }
@@ -83,34 +83,32 @@ abstract class BaseCardActivity :
   }
 
   /** Displays the error corresponding to the status returned by the server for the given card. */
-  fun launchStatusErrorResponse(card: CardInfo, status: RemoteServiceStatus) {
+  fun showStatusError(card: CardInfo, status: RemoteServiceStatus) {
     when (status) {
-      RemoteServiceStatus.CARD_COMMUNICATION_ERROR -> launchCardCommunicationErrorResponse()
-      RemoteServiceStatus.SERVER_ERROR -> launchServerErrorResponse()
+      RemoteServiceStatus.CARD_COMMUNICATION_ERROR -> showCardCommunicationError()
+      RemoteServiceStatus.SERVER_ERROR -> showServerError()
       RemoteServiceStatus.CARD_REJECTED ->
-          launchInvalidCardResponse(
+          showInvalidCard(
               card.description,
               if (card.isStorageCard) getString(R.string.storage_card_invalid)
               else
                   String.format(
                       getString(R.string.card_invalid_structure), card.applicationSubtype))
       RemoteServiceStatus.CARD_NOT_PERSONALIZED ->
-          launchInvalidCardResponse(
-              card.description, getString(R.string.rejection_environment_wrong_version))
+          showInvalidCard(card.description, getString(R.string.rejection_environment_wrong_version))
       RemoteServiceStatus.ENVIRONMENT_EXPIRED ->
-          launchInvalidCardResponse(
-              card.description, getString(R.string.rejection_environment_expired))
+          showInvalidCard(card.description, getString(R.string.rejection_environment_expired))
       RemoteServiceStatus.DIFFERENT_CARD ->
-          launchInvalidCardResponse(card.description, getString(R.string.not_the_same_card))
+          showInvalidCard(card.description, getString(R.string.not_the_same_card))
       RemoteServiceStatus.CARD_FULL ->
-          launchInvalidCardResponse(card.description, getString(R.string.card_full))
+          showInvalidCard(card.description, getString(R.string.card_full))
       RemoteServiceStatus.SUCCESS -> {
         // Not an error
       }
     }
   }
 
-  fun launchInvalidCardResponse(cardType: String, message: String) {
+  fun showInvalidCard(cardType: String, message: String) {
     runOnUiThread {
       changeDisplay(
           UiCardResult(ResultType.INVALID_CARD, cardType, emptyList(), message),
@@ -118,7 +116,7 @@ abstract class BaseCardActivity :
     }
   }
 
-  fun launchCardCommunicationErrorResponse() {
+  fun showCardCommunicationError() {
     runOnUiThread {
       changeDisplay(
           UiCardResult(
@@ -127,7 +125,7 @@ abstract class BaseCardActivity :
     }
   }
 
-  fun launchServerErrorResponse() {
+  fun showServerError() {
     runOnUiThread {
       changeDisplay(
           UiCardResult(ResultType.ERROR, "", emptyList()),
@@ -139,7 +137,7 @@ abstract class BaseCardActivity :
    * Displays an error with the provided text, written for the user (never the message of an
    * exception).
    */
-  fun launchErrorResponse(message: String, finishActivity: Boolean? = false) {
+  fun showError(message: String, finishActivity: Boolean? = false) {
     runOnUiThread {
       changeDisplay(
           UiCardResult(ResultType.ERROR, "", emptyList(), message), finishActivity = finishActivity)

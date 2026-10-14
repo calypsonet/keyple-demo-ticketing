@@ -30,7 +30,7 @@ sealed class LoadContractScreenState {
 
   data object WritingToCard : LoadContractScreenState()
 
-  data object ShowTransactionSuccess : LoadContractScreenState()
+  data object DisplaySuccess : LoadContractScreenState()
 
   data class DisplayError(val message: String) : LoadContractScreenState()
 }
@@ -57,7 +57,7 @@ class LoadContractScreenViewModel(
     viewModelScope.launch {
       keypleInteropService.updateReaderMessage("Place your card on the reader")
       try {
-        val cardFound = keypleInteropService.waitCard()
+        val cardFound = keypleInteropService.waitForCard()
         buzzer.beepAndVibrate()
         if (cardFound) {
           keypleInteropService.updateReaderMessage("Stay still...")
@@ -84,7 +84,7 @@ class LoadContractScreenViewModel(
           _state.value = LoadContractScreenState.DisplayError(result.message)
         }
         is KeypleResult.Success -> {
-          _state.value = LoadContractScreenState.ShowTransactionSuccess
+          _state.value = LoadContractScreenState.DisplaySuccess
         }
       }
     } catch (e: Exception) {

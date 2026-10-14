@@ -146,7 +146,7 @@ class CardReaderSession(
       if (samReader == null || !selectSam(samReader)) {
         throw IllegalStateException("SAM not available")
       }
-      cardSecuritySettings = createSecuritySettings()
+      cardSecuritySettings = createSecuritySetting()
       cardSecuritySettings.initCryptoContextForNextTransaction()
     }
     isInitialized = true
@@ -161,7 +161,7 @@ class CardReaderSession(
     prepareAndScheduleCardSelectionScenario()
     (terminalReaders.getCardReader() as ObservableCardReader).startCardDetection(
         ObservableCardReader.DetectionMode.REPEATING)
-    userFeedback.displayWaiting()
+    userFeedback.signalWaiting()
   }
 
   /** Stops the detection of the cards. */
@@ -192,7 +192,7 @@ class CardReaderSession(
     } catch (e: Exception) {
       logger.w("Error while ending the card processing [cause=${e.message}]")
     }
-    userFeedback.displayWaiting()
+    userFeedback.signalWaiting()
   }
 
   /**
@@ -316,7 +316,7 @@ class CardReaderSession(
     return CardSelection.Selected(smartCard)
   }
 
-  private fun createSecuritySettings(): SymmetricCryptoSecuritySetting {
+  private fun createSecuritySetting(): SymmetricCryptoSecuritySetting {
     return calypsoCardApiFactory
         .createSymmetricCryptoSecuritySetting(
             keypopApiProvider

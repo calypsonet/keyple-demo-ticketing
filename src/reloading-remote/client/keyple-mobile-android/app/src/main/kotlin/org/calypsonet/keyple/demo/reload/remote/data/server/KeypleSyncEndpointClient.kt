@@ -30,7 +30,7 @@ import retrofit2.converter.gson.GsonConverterFactory
  * The request is sent to the server currently configured in the settings: a change of the server
  * address is taken into account without restarting the application.
  */
-class KeypleSyncEndPointClient(
+class KeypleSyncEndpointClient(
     private val appSettings: AppSettingsRepository,
     private val httpClient: OkHttpClient,
     private val logger: Logger

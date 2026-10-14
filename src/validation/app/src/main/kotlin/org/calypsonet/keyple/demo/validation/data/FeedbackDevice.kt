@@ -24,14 +24,14 @@ internal interface FeedbackDevice {
    */
   fun init(onReady: () -> Unit = {})
 
-  /** Displays feedback for a successful result. */
-  fun displayResultSuccess()
+  /** Signals a successful result to the user (sound, LEDs...). */
+  fun signalSuccess()
 
-  /** Displays feedback for a failed result. */
-  fun displayResultFailed()
+  /** Signals a failed result to the user (sound, LEDs...). */
+  fun signalFailure()
 
-  /** Displays feedback indicating the terminal is waiting for a card. */
-  fun displayWaiting()
+  /** Signals that the terminal is waiting for a card. */
+  fun signalWaiting()
 
   /** Releases resources held by the feedback device. */
   fun release()

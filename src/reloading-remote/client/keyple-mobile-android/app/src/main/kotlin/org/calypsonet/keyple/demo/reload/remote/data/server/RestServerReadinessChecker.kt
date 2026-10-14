@@ -33,11 +33,11 @@ class RestServerReadinessChecker : ServerReadinessChecker {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ServerRestApi::class.java)
-    val response = client.getSamStatus().execute()
+    val response = client.getSamAvailability().execute()
     if (!response.isSuccessful) {
       throw HttpException(response)
     }
-    val samStatus = response.body() ?: throw IllegalStateException("Empty SAM status")
-    return samStatus.isSamReady
+    val samAvailability = response.body() ?: throw IllegalStateException("Empty SAM availability")
+    return samAvailability.isSamAvailable
   }
 }

@@ -25,14 +25,14 @@ interface UserFeedback {
    */
   fun init(terminalType: TerminalType, uiContext: UiContext)
 
-  /** Displays feedback for a successful result. */
-  fun displayResultSuccess()
+  /** Signals a successful result to the user (sound, LEDs...). */
+  fun signalSuccess()
 
-  /** Displays feedback for a failed result. */
-  fun displayResultFailed()
+  /** Signals a failed result to the user (sound, LEDs...). */
+  fun signalFailure()
 
   /** Resets the feedback to the waiting-for-card state (e.g. turns off result LEDs). */
-  fun displayWaiting()
+  fun signalWaiting()
 
   /** Releases the feedback resources. */
   fun release()

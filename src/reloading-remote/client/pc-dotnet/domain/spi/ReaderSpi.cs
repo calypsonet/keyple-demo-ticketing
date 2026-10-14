@@ -34,7 +34,7 @@ namespace App.domain.spi
         /// Waits for a card to be inserted in the reader.
         /// </summary>
         /// <returns>True if a card is detected, otherwise false.</returns>
-        bool WaitForCardPresent();
+        bool WaitForCard();
 
         /// <summary>
         /// Attempts to open the physical channel (to establish communication with the card).

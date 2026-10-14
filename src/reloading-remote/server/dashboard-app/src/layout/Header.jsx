@@ -10,15 +10,15 @@ import AlertDialog from './AlertDialog'
 
 /**
  * Header Component
- * @param props onDrawerToggle (function), isSamReady (boolean), isServerReady (boolean)
+ * @param props onDrawerToggle (function), isSamAvailable (boolean), isServerReady (boolean)
  * @returns {JSX.Element}
  * @constructor
  */
 export default function Header(props) {
-  const { onDrawerToggle, isSamReady, isServerReady } = props;
+  const { onDrawerToggle, isSamAvailable, isServerReady } = props;
   return (
     <React.Fragment>
-      <AlertDialog show={isServerReady && !isSamReady} title="SAM Resource is not available" text="Please ensure that the SAM is inserted into the SAM Reader"/>
+      <AlertDialog show={isServerReady && !isSamAvailable} title="SAM Resource is not available" text="Please ensure that the SAM is inserted into the SAM Reader"/>
       <AlertDialog show={!isServerReady} title="Cannot reach the Keyple Demo - Reload Server" text="Keyple Distributed server is not reachable. Please ensure that the Server process is running. Restart it if needed."/>
       <AppBar color="primary" position="sticky" elevation={0}>
         <Toolbar>
@@ -35,7 +35,7 @@ export default function Header(props) {
             <Grid size="grow" />
             <Grid>
               <Typography>
-                {isSamReady ? "SAM resource is ready" : "SAM resource is not ready"}
+                {isSamAvailable ? "SAM resource is available" : "SAM resource is not available"}
               </Typography>
             </Grid>
             <Grid>

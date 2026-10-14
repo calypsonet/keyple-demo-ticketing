@@ -84,7 +84,7 @@ namespace App.infrastructure.pcscreader
         }
 
         /// <inheritdoc/>
-        public bool WaitForCardPresent()
+        public bool WaitForCard()
         {
             try
             {

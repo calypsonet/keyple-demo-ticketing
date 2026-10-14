@@ -411,6 +411,37 @@ The messages displayed to the users are never the messages of the exceptions: th
 texts (`strings.xml`), a technical error being displayed with a generic text, and the server returns to the clients which do not use Keyple the messages of the statuses of
 its remote services (`RemoteServiceMessages`, texts of the Android applications), the causes being logged.
 
+### Method Names
+
+All the components name their methods with the same verbs:
+
+| Verb                            | Use                                                                    | Examples                                                                       |
+|---------------------------------|------------------------------------------------------------------------|--------------------------------------------------------------------------------|
+| `display...`                    | Display of the result of an operation                                  | `displayResult(result)` (control and validation apps), `DisplaySuccess` state  |
+| `show...` / `hide...`           | Display or masking of an element of the screen                         | `showProgress()` / `hideProgress()`, `showResultOverlay()`, `showError(text)`  |
+| `signal...`                     | User feedback of the terminal (sounds, LEDs)                           | `signalSuccess()`, `signalFailure()`, `signalWaiting()`                         |
+| `init...` / `release...`        | Technical start and stop of a component (plugin, reader, resources)    | `initCardReader()`, `initSamPlugin()`, `releaseCardReader()`                    |
+| `start...` / `stop...`          | Start and stop of a continuous activity (detection, monitoring)        | `startCardDetection()`, `startReaderMonitoring()`                               |
+| `wait...`                       | Blocking or suspending wait                                            | `waitForCard()` (multiplatform client), `WaitForCard()` (.NET client)           |
+| `execute...`                    | Execution of a procedure or of a remote service                        | `execute(context)`, `executeRemoteService()`                                    |
+| `find...`                       | Search of an element, which may not be found                           | `findReader()`, `findLocation()`, `findAvailablePosition()`                     |
+| `build...` / `to...`            | Building from several sources / conversion                            | `buildContract()`, `buildSeasonPassContract()`, `toCardInfo()`, `toUi()`       |
+| `decode` / `encode`             | Conversion between the content of the card and its structures          | codecs of the `common` library, `decodeCardData()`                              |
+| `is...` / `has...`              | Boolean                                                                | `isServerReady()`, `isSamAvailable()`, `hasTripsLeft()`                         |
+| `...Rejection`                  | Reason of the refusal of the card by a rule, null if the rule is met   | `environmentRejection()`, `contractVersionRejection()`                          |
+
+- A method is named after what it does for the user or the domain, not after its technical effect (e.g.
+  `applyServerSettings()` saves the settings and reconnects the client, `showReadInProgress()` displays "Read in
+  progress"). Its name starts with a verb; the Compose functions, which describe an element of the screen, are named
+  with a noun (e.g. `SuccessMessage`, `PlatformAnimation`).
+- The same operation has the same name in all the components: the methods calling a remote service of the server are
+  named after its identifier (`SELECT_APP_AND_PERSONALIZE_CARD`: `selectAppAndPersonalizeCard()`).
+- No abbreviation (`btn`, `anim`, `env`...), except the acronyms (`Sam`, `Aid`, `Apdu`) and the terms of the card data
+  model specification (`envEndDate`...).
+- Each language keeps its case convention: camelCase in Kotlin, Java and JavaScript, PascalCase in C#.
+- The names imposed by the frameworks and by the Keyple interfaces (`onCreate`, `onPluginEvent`, `setupReader`...)
+  are kept.
+
 ### Building from Source
 
 Each module (e.g., `src/common`, `src/reloading-remote/server`, `src/validation`, `src/control`) is an independent

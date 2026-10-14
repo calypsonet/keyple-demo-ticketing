@@ -76,16 +76,16 @@ public class CardController {
   }
 
   /**
-   * Return the SAM status.
+   * Returns the availability of the SAM.
    *
-   * @return {isSamReady:true} if sam is ready.
+   * @return {isSamAvailable:true} if the SAM is available.
    */
   @GET
-  @Path("/sam-status")
+  @Path("/sam-availability")
   @Produces(MediaType.APPLICATION_JSON)
-  public Response getSamStatus() {
+  public Response getSamAvailability() {
     JsonObject jsonObject = new JsonObject();
-    jsonObject.addProperty("isSamReady", cardSamObserver.isSamAvailable());
+    jsonObject.addProperty("isSamAvailable", cardSamObserver.isSamAvailable());
     return Response.ok(jsonObject.toString()).build();
   }
 

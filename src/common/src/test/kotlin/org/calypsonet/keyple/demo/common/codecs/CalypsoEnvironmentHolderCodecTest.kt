@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test
 class CalypsoEnvironmentHolderCodecTest {
 
   @Test
-  fun decodeEnv1() {
+  fun decodeEnvironmentWithHolder() {
     val content = BytesUtils.fromString(DATA_ENV_1)
 
     val environment = CalypsoEnvironmentHolderCodec.decode(content)
@@ -40,7 +40,7 @@ class CalypsoEnvironmentHolderCodecTest {
   }
 
   @Test
-  fun encodeEnv1() {
+  fun encodeEnvironmentWithHolder() {
     val envIssuingDate = LocalDate.of(2021, 3, 15)
     val envEndDate = LocalDate.of(2030, 1, 10)
 
@@ -59,7 +59,7 @@ class CalypsoEnvironmentHolderCodecTest {
   }
 
   @Test
-  fun decodeEnv2() {
+  fun decodeEnvironmentWithoutHolder() {
     val content = BytesUtils.fromString(DATA_ENV_2)
 
     val environment = CalypsoEnvironmentHolderCodec.decode(content)
@@ -76,7 +76,7 @@ class CalypsoEnvironmentHolderCodecTest {
   }
 
   @Test
-  fun encodeEnv2() {
+  fun encodeEnvironmentWithoutHolder() {
     val envIssuingDate = LocalDate.of(2021, 1, 14)
     val envEndDate = LocalDate.of(2027, 1, 14)
 

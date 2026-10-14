@@ -22,7 +22,7 @@ namespace App.domain.api
         /// <summary>
         /// Blocks until a card is inserted. 
         /// </summary>
-        void WaitForCardInsertion();
+        void WaitForCard();
 
         /// <summary>
         /// Selects the application of the card and reads its contracts.

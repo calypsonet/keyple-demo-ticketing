@@ -81,14 +81,14 @@ public class CardConfigurator {
       // the dashboard showing meanwhile that the SAM is not available.
       logger.warn("No PC/SC reader connected: waiting for the SAM reader to be connected");
     }
-    // Set up the associated card resource service
-    setupCardResourceService(plugin);
+    // Initialize the associated card resource service
+    initCardResourceService(plugin);
 
     // Start monitoring the SAM plugin (reader connection) and reader (SAM insertion)
     cardSamObserver.startMonitoring((ObservablePlugin) plugin);
   }
 
-  private void setupCardResourceService(Plugin plugin) {
+  private void initCardResourceService(Plugin plugin) {
     logger.info(
         "Card resource service set up [plugin={}, readerNameRegex={}, samProfile={}]",
         plugin.getName(),

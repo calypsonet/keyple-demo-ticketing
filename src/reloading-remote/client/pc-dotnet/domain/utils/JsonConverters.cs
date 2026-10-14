@@ -41,7 +41,7 @@ namespace App.domain.utils
         {
             if (reader.Value is string hexString)
             {
-                return StringToByteArray(hexString);
+                return HexUtil.ToByteArray(hexString);
             }
             else
             {
@@ -67,16 +67,6 @@ namespace App.domain.utils
                 // Handle the case where the value is not a byte array or it is null.
                 throw new JsonSerializationException("Invalid value type for the byte array serialization");
             }
-        }
-
-        /// <summary>
-        /// Converts a hexadecimal string into a byte array.
-        /// </summary>
-        /// <param name="hex">The hexadecimal string to convert.</param>
-        /// <returns>A byte array that represents the hexadecimal string.</returns>
-        public static byte[] StringToByteArray(string hex)
-        {
-            return HexUtil.ToByteArray(hex);
         }
     }
 

@@ -26,6 +26,6 @@ namespace App.domain.spi
         /// A JSON string representing the server's response.
         /// </returns>
         /// <exception cref="ServerIOException">If the communication with the server has failed.</exception>
-        string transmitRequest(string jsonRequest);
+        string TransmitRequest(string jsonRequest);
     }
 }

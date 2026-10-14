@@ -68,8 +68,8 @@
 -keep class org.calypsonet.keyple.demo.common.dto.** { *; }
 -keep class org.calypsonet.keyple.demo.common.model.** { *; }
 
-# Keep app DTOs deserialized by Gson from the server REST API (e.g. SamStatus).
--keep class org.calypsonet.keyple.demo.reload.remote.data.server.SamStatus { *; }
+# Keep app DTOs deserialized by Gson from the server REST API (e.g. SamAvailability).
+-keep class org.calypsonet.keyple.demo.reload.remote.data.server.SamAvailability { *; }
 
 # Keep Keyple storage card internal classes
 -keep class org.eclipse.keyple.core.plugin.storagecard.internal.** { *; }

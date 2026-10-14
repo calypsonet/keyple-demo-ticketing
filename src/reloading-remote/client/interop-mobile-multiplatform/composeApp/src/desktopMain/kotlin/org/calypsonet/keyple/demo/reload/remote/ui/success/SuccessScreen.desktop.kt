@@ -27,7 +27,7 @@ import io.github.alexzhirkevich.compottie.LottieComposition
 import io.github.alexzhirkevich.compottie.rememberLottiePainter
 
 @Composable
-actual fun ScreenAnimByPlatform(
+actual fun PlatformAnimation(
     message: String,
     textColor: Color,
     composition: LottieComposition?,

@@ -244,7 +244,7 @@ The logs are written to Logcat (Timber): view them in the Android Studio Logcat 
 Test server connection:
 ```bash
 # From development machine
-curl http://your-server:8080/card/sam-status
+curl http://your-server:8080/card/sam-availability
 ```
 
 ## Known Limitations

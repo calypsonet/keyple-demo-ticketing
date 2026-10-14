@@ -49,11 +49,11 @@ class PersonalizeCardActivity : BaseCardActivity() {
   override fun initReaders() {
     try {
       if (cardMedium == CardMedium.CONTACTLESS_CARD) {
-        showPresentNfcCardInstructions()
-        initAndActivateCardReader()
+        showPresentCardInstructions()
+        startCardReader()
       } else {
-        showNowPersonalizingInformation()
-        initOmapiReader { lifecycleScope.launch(Dispatchers.Default) { remoteServiceExecution() } }
+        showPersonalizationInProgress()
+        initOmapiReader { lifecycleScope.launch(Dispatchers.Default) { executeRemoteService() } }
       }
     } catch (e: Exception) {
       Timber.e(e, "Error while initializing the readers")
@@ -64,14 +64,14 @@ class PersonalizeCardActivity : BaseCardActivity() {
     activityPersonalizeCardBinding.cardAnimation.cancelAnimation()
     activityPersonalizeCardBinding.loadingAnimation.cancelAnimation()
     try {
-      deactivateAndClearReader()
+      releaseCardReader()
     } catch (e: Exception) {
       Timber.e(e, "Error while releasing the readers")
     }
     super.onPause()
   }
 
-  private fun showPresentNfcCardInstructions() {
+  private fun showPresentCardInstructions() {
     activityPersonalizeCardBinding.presentTxt.text =
         getString(R.string.present_card_personalization)
     activityPersonalizeCardBinding.cardAnimation.visibility = View.VISIBLE
@@ -80,7 +80,7 @@ class PersonalizeCardActivity : BaseCardActivity() {
     activityPersonalizeCardBinding.loadingAnimation.visibility = View.INVISIBLE
   }
 
-  private fun showNowPersonalizingInformation() {
+  private fun showPersonalizationInProgress() {
     activityPersonalizeCardBinding.presentTxt.text = getString(R.string.personalization_in_progress)
     activityPersonalizeCardBinding.loadingAnimation.visibility = View.VISIBLE
     activityPersonalizeCardBinding.loadingAnimation.playAnimation()
@@ -107,12 +107,12 @@ class PersonalizeCardActivity : BaseCardActivity() {
 
   override fun onReaderEvent(event: CardReaderEvent?) {
     if (event?.type == CardReaderEvent.Type.CARD_INSERTED) {
-      runOnUiThread { showNowPersonalizingInformation() }
-      lifecycleScope.launch(Dispatchers.Default) { remoteServiceExecution() }
+      runOnUiThread { showPersonalizationInProgress() }
+      lifecycleScope.launch(Dispatchers.Default) { executeRemoteService() }
     }
   }
 
-  private suspend fun remoteServiceExecution() {
+  private suspend fun executeRemoteService() {
     withContext(Dispatchers.IO) {
       try {
         val result = personalizeCard()
@@ -124,14 +124,14 @@ class PersonalizeCardActivity : BaseCardActivity() {
                 finishActivity = true)
           }
         } else {
-          launchStatusErrorResponse(result.card, result.status)
+          showStatusError(result.card, result.status)
         }
       } catch (e: IllegalStateException) {
         Timber.w("Card not supported while personalizing the card [cause=${e.message}]")
-        launchInvalidCardResponse(getString(R.string.undetermined_card_type), "")
+        showInvalidCard(getString(R.string.undetermined_card_type), "")
       } catch (e: Exception) {
         Timber.e(e, "Error while personalizing the card")
-        launchErrorResponse(getString(R.string.error_label))
+        showError(getString(R.string.error_label))
       } finally {
         cardReaderSession.endCardProcessing()
       }

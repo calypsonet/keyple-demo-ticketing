@@ -32,11 +32,11 @@ class MediaPlayerUserFeedback @Inject constructor() : UserFeedback {
     errorMedia = MediaPlayer.create(activity, R.raw.error)
   }
 
-  override fun displayResultSuccess() {
+  override fun signalSuccess() {
     successMedia?.start()
   }
 
-  override fun displayResultFailed() {
+  override fun signalFailure() {
     errorMedia?.start()
   }
 

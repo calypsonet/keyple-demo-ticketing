@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test
 class CalypsoContractCodecTest {
 
   @Test
-  fun decodeContract1() {
+  fun decodeSeasonPassContract() {
     val content = BytesUtils.fromString(DATA_CONTRACT_1)
 
     val contract = CalypsoContractCodec.decode(content)
@@ -43,7 +43,7 @@ class CalypsoContractCodecTest {
   }
 
   @Test
-  fun encodeContract1() {
+  fun encodeSeasonPassContract() {
     val contractSaleDate = LocalDate.of(2021, 1, 14)
     val contractValidityEndDate = LocalDate.of(2021, 2, 13)
 

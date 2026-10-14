@@ -105,7 +105,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `RestServerReadinessChecker`), and the last known state is stored as `lastServerReady` (same preference key).
 - Names describing the role of the elements: on the server, the transaction log of the dashboard is named
   `Transaction` (`Transaction`, `TransactionService`, `TransactionController`, `TransactionRecorder`, package
-  `transaction`, REST endpoints `/transactions/events` and `/transactions/stream`) instead of "activity", which
+  `transaction`, REST endpoints `/transactions` and `/transactions/stream`) instead of "activity", which
   was confused with the Android activities, the data read in the card `CardData` instead of `Card`, and the services
   of the JSON API `JsonApiService` instead of `CardSelectionApi`. Multiplatform client: `KeypleService` becomes
   `KeypleInteropService`, which names the integration of the Keyple Interop libraries more precisely, and
@@ -129,6 +129,48 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Method names harmonized (README section "Method Names"):
+  - names which were misleading: the reading screen of the reloading Android client displays its progress with
+    `showReadInProgress()` (instead of `showNowLoadingInformation()`, "load" designating the loading of a contract),
+    the loading and personalization screens with `showLoadingInProgress()` and `showPersonalizationInProgress()`, and
+    the instructions with `showPresentCardInstructions()` (also for the SIM cards, instead of
+    `showPresentNfcCardInstructions()`); the multiplatform client applies the server settings with
+    `applyServerSettings()` and an "Apply" button (instead of `restartServer()` and "Restart", the server not being
+    restarted) and waits for a card with `waitForCard()` only (instead of `waitCard()` and `waitForCard(callback)`);
+    the server returns the transactions with `getTransactions()` on `GET /transactions` (instead of `getEvents()` on
+    `/transactions/events`, an event being a record of the card);
+  - display verbs: the validation app displays its result with `displayResult()` as the control app (instead of
+    `changeDisplay()` and `showValidationResult()`), its overlay with `showResultOverlay()` and `hideResultOverlay()`,
+    and both apps hide their progress with `hideProgress()` (instead of `dismissProgress()`). The user feedback of the
+    terminal (`UserFeedback`, `FeedbackDevice`) is given with `signalSuccess()`, `signalFailure()` and
+    `signalWaiting()` (instead of `displayResultSuccess()`, `displayResultFailed()` and `displayWaiting()`), and the
+    security setting of the card transactions is created by `createSecuritySetting()` in both apps;
+  - reloading Android client: `executeRemoteService()` (instead of `remoteServiceExecution()`), `showError()`,
+    `showStatusError()`, `showInvalidCard()`, `showCardCommunicationError()` and `showServerError()` (instead of
+    `launch...Response()`), `startCardReader()` and `releaseCardReader()` (instead of `initAndActivateCardReader()` and
+    `deactivateAndClearReader()`), `setUpCardMediumButton()` (instead of `setupBtn()`), and `KeypleSyncEndpointClient`
+    (instead of `KeypleSyncEndPointClient`, after the Keyple `SyncEndpointClientSpi`);
+  - multiplatform client: `selectAppAndPersonalizeCard()` as the two other remote services (instead of
+    `personalizeCard()`), `launchCardSelectionScenarioRetrieval()` and `retrieveCardSelectionScenario()`, Compose
+    functions `SuccessMessage` and `PlatformAnimation` (instead of `DisplaySuccess` and `ScreenAnimByPlatform`), screen
+    states `DisplaySuccess` and `DisplayCardContent` (instead of `ShowTransactionSuccess` and `ShowCardContent`), and
+    `playTone()` on desktop (instead of `tone()`);
+  - .NET client: PascalCase methods `GetInstance()` and `TransmitRequest()` (instead of `getInstance()` and
+    `transmitRequest()`), `GetInstance()` also for the provider of the ticketing service (instead of `GetService()`),
+    and `WaitForCard()` in the API, the reader SPI and the application (instead of `WaitForCardInsertion()` and
+    `WaitForCardPresent()`); `HexStringToByteArrayConverter.StringToByteArray()`, which only called
+    `HexUtil.ToByteArray()`, is removed;
+  - server and dashboard: `buildSeasonPassContract()` (instead of `buildSeasonContract()`), `findReader()` (instead of
+    `searchReader()`), `initCardResourceService()` (instead of `setupCardResourceService()`), `decodeCardData()`
+    (instead of `parse()`); the availability of the SAM is named in the same way by the server, the dashboard and the
+    clients: endpoint `GET /card/sam-availability` returning `isSamAvailable` (instead of `/card/sam-status` returning
+    `isSamReady`), `getSamAvailability()`, `SamAvailability`, `fetchSamAvailability()`, and "SAM resource is
+    available" in the header of the dashboard (instead of "ready");
+  - validation app: the rules returning the reason of a refusal are named `environmentRejection()`,
+    `eventVersionRejection()` and `contractVersionRejection()` (instead of `check...()`, which suggested a boolean or
+    an exception); Android applications: `initTerminalReader()` (instead of `initTerminalType()`); common library: the
+    tests of the codecs are named after the tested case (e.g. `decodeEnvironmentWithHolder()` instead of
+    `decodeEnv1()`).
 - Control and validation apps: the dialog displayed when the readers cannot be initialized shows "The readers of the
   terminal could not be initialized." instead of the message of the exception (method `showReaderInitializationErrorDialog`,
   instead of `showNoProxyReaderDialog`, a term of a former version of Keyple), and the authentication failures of the
@@ -143,7 +185,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   displayed with the generic text of the application ("An error occurred while reading the card." in the control app,
   "Please try again." in the validation app, "An error occurred" or "Server error" in the reloading client), its
   cause being logged; the `detail` of the `Failed` results of the control and validation domains is removed, and the
-  error screen of the reloading client receives a text (`launchErrorResponse`) instead of an exception built to carry
+  error screen of the reloading client receives a text (`showError`) instead of an exception built to carry
   it (`launchExceptionResponse`).
 - Exception messages written with the template of the log messages (README section "Exception Messages"): English
   sentence without final punctuation nor class or method name, variable values in the context (e.g. "Reader not
@@ -213,7 +255,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   are named `AppTheme` and `AppTopBar` (instead of `KeypleTheme` and `KeypleTopAppBar`), the "Keyple" prefix
   being kept for the integration of the Keyple libraries; the .NET client names its service API
   `TicketingServiceApi` (instead of `MainServiceApi`, also for its adapter and its provider, whose method is
-  `GetService`) and the input data of its services `ReadContractsInputData` and `IncreaseContractCounterInputData`
+  `GetInstance`) and the input data of its services `ReadContractsInputData` and `IncreaseContractCounterInputData`
   (instead of `InputDataRead` and `InputDataWrite`); the CI jobs of the multiplatform client are named
   "Reload Interop (KMP, ...)"; the text styles of the reloading Android client follow the naming of the other
   styles (`smallRegularDarkBlue`, `smallMediumDarkBlue`, `smallBoldDarkBlue`, `smallRegularGrey`, instead of

@@ -43,9 +43,9 @@ class ControlCard(
     val result = control(selectionResponse)
     log(result)
     if (result is ControlResult.CardContent) {
-      userFeedback.displayResultSuccess()
+      userFeedback.signalSuccess()
     } else {
-      userFeedback.displayResultFailed()
+      userFeedback.signalFailure()
     }
     return result
   }

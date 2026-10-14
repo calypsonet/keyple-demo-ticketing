@@ -88,13 +88,13 @@ class CardReaderActivity : BaseActivity() {
           } catch (e: Exception) {
             Timber.e(e, "Error while initializing the readers")
             withContext(Dispatchers.Main) {
-              dismissProgress()
+              hideProgress()
               showReaderInitializationErrorDialog()
             }
           }
         }
         if (cardReaderSession.isInitialized) {
-          withContext(Dispatchers.Main) { dismissProgress() }
+          withContext(Dispatchers.Main) { hideProgress() }
         }
       }
     } else {
@@ -172,7 +172,7 @@ class CardReaderActivity : BaseActivity() {
                           showToast(getString(R.string.authentication_mode_no_authentication))
                     }
                   }
-                  dismissProgress()
+                  hideProgress()
                   displayResult(controlResult.toUi(resources))
                 }
               } catch (e: CancellationException) {
@@ -180,7 +180,7 @@ class CardReaderActivity : BaseActivity() {
                 throw e
               } catch (e: IllegalStateException) {
                 Timber.e(e, "Error while displaying the control result")
-                withContext(Dispatchers.Main) { dismissProgress() }
+                withContext(Dispatchers.Main) { hideProgress() }
                 displayResult(
                     UiControlResult(resultType = ResultType.ERROR, contractsList = emptyList()))
               } finally {
@@ -237,7 +237,7 @@ class CardReaderActivity : BaseActivity() {
     activityCardReaderBinding.progressOverlay.visibility = View.VISIBLE
   }
 
-  private fun dismissProgress() {
+  private fun hideProgress() {
     activityCardReaderBinding.progressOverlay.visibility = View.GONE
   }
 

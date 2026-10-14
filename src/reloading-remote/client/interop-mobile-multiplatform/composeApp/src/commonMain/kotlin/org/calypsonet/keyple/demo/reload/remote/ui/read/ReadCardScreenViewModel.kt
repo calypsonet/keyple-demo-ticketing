@@ -30,7 +30,7 @@ sealed class ReadCardScreenState {
 
   data object ReadingCard : ReadCardScreenState()
 
-  data object ShowCardContent : ReadCardScreenState()
+  data object DisplayCardContent : ReadCardScreenState()
 
   data class DisplayError(val message: String) : ReadCardScreenState()
 }
@@ -82,7 +82,7 @@ class ReadCardScreenViewModel(
           // Card read, kept for the following screens (card content, loading of a contract)
           readCardCache.saveCardSerialNumber(result.data.applicationSerialNumber)
           readCardCache.saveCardContracts(result.data.contracts)
-          _state.value = ReadCardScreenState.ShowCardContent
+          _state.value = ReadCardScreenState.DisplayCardContent
         }
       }
     } catch (e: Exception) {

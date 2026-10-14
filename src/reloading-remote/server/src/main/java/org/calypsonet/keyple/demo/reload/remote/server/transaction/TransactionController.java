@@ -32,9 +32,8 @@ public class TransactionController {
    * @return A not null list.
    */
   @GET
-  @Path("/events")
   @Produces(MediaType.APPLICATION_JSON)
-  public List<Transaction> getEvents() {
+  public List<Transaction> getTransactions() {
     return transactionService.list();
   }
 

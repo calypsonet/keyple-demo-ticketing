@@ -20,7 +20,7 @@ import javax.inject.Singleton
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.calypsonet.keyple.demo.reload.remote.BuildConfig
-import org.calypsonet.keyple.demo.reload.remote.data.server.KeypleSyncEndPointClient
+import org.calypsonet.keyple.demo.reload.remote.data.server.KeypleSyncEndpointClient
 import org.calypsonet.keyple.demo.reload.remote.data.server.KeypleTicketingServer
 import org.calypsonet.keyple.demo.reload.remote.data.server.RestServerReadinessChecker
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.AppSettingsRepository
@@ -45,14 +45,14 @@ class ServerModule {
   fun provideKeypleSyncEndpointClient(
       appSettings: AppSettingsRepository,
       logger: Logger
-  ): KeypleSyncEndPointClient {
+  ): KeypleSyncEndpointClient {
     // Logs the exchanges with the server (messages of the remote plugin) in the debug builds only
     val loggingInterceptor =
         HttpLoggingInterceptor { message -> logger.d(message) }
             .setLevel(
                 if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
                 else HttpLoggingInterceptor.Level.NONE)
-    return KeypleSyncEndPointClient(
+    return KeypleSyncEndpointClient(
         appSettings,
         OkHttpClient.Builder().addNetworkInterceptor(loggingInterceptor).build(),
         logger)
@@ -61,14 +61,14 @@ class ServerModule {
   @Provides
   @Singleton
   fun provideLocalServiceClient(
-      keypleSyncEndPointClient: KeypleSyncEndPointClient
+      keypleSyncEndpointClient: KeypleSyncEndpointClient
   ): LocalServiceClient {
     val smartCardService = SmartCardServiceProvider.getService()
     val localService =
         smartCardService.getDistributedLocalService("localService")
             ?: smartCardService.registerDistributedLocalService(
                 LocalServiceClientFactoryBuilder.builder("localService")
-                    .withSyncNode(keypleSyncEndPointClient)
+                    .withSyncNode(keypleSyncEndpointClient)
                     .build())
     return localService.getExtension(LocalServiceClient::class.java)
   }

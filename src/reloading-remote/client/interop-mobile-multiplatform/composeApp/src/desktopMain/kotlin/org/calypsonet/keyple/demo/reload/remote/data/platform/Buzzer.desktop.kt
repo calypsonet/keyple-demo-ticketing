@@ -32,13 +32,9 @@ actual class PlatformBuzzer {
 
   var SAMPLE_RATE: Float = 8000f
 
+  /** Plays a tone of the given frequency and duration, in background. */
   @Throws(LineUnavailableException::class)
-  fun tone(hz: Int, msecs: Int) {
-    tone(hz, msecs, 1.0)
-  }
-
-  @Throws(LineUnavailableException::class)
-  fun tone(hz: Int, msecs: Int, vol: Double) {
+  fun playTone(frequencyHz: Int, durationMs: Int, volume: Double = 1.0) {
     scope.launch {
       val buf = ByteArray(1)
       val af =
@@ -51,9 +47,9 @@ actual class PlatformBuzzer {
       val sdl = AudioSystem.getSourceDataLine(af)
       sdl.open(af)
       sdl.start()
-      for (i in 0..<msecs * 8) {
-        val angle = i / (SAMPLE_RATE / hz) * 2.0 * Math.PI
-        buf[0] = (sin(angle) * 127.0 * vol).toInt().toByte()
+      for (i in 0..<durationMs * 8) {
+        val angle = i / (SAMPLE_RATE / frequencyHz) * 2.0 * Math.PI
+        buf[0] = (sin(angle) * 127.0 * volume).toInt().toByte()
         sdl.write(buf, 0, 1)
       }
       sdl.drain()
@@ -63,6 +59,6 @@ actual class PlatformBuzzer {
   }
 
   actual fun beep() {
-    tone(1200, 100, 1.0)
+    playTone(1200, 100)
   }
 }

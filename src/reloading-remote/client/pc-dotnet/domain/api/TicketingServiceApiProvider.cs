@@ -25,7 +25,7 @@ namespace App.domain.api
         /// <param name="readerName">The name of the reader to use.</param>
         /// <param name="serverSpi">The ServerSpi implementation to use.</param>
         /// <returns>An instance of the TicketingServiceApi.</returns>
-        public static TicketingServiceApi GetService(ReaderSpi readerSpi, string readerName, ServerSpi serverSpi)
+        public static TicketingServiceApi GetInstance(ReaderSpi readerSpi, string readerName, ServerSpi serverSpi)
         {
             return new TicketingServiceApiAdapter(readerSpi, readerName, serverSpi);
         }

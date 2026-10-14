@@ -42,11 +42,11 @@ class ValidateCard(
     val result = validate(selectionResponse)
     log(result)
     when (result) {
-      is ValidationResult.Accepted -> userFeedback.displayResultSuccess()
+      is ValidationResult.Accepted -> userFeedback.signalSuccess()
       is ValidationResult.CardLost -> {
         // Card removed during the transaction: no feedback
       }
-      else -> userFeedback.displayResultFailed()
+      else -> userFeedback.signalFailure()
     }
     return result
   }

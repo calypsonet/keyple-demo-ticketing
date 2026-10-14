@@ -37,16 +37,16 @@ class TerminalUserFeedback @Inject constructor(private val logger: Logger) : Use
         }
   }
 
-  override fun displayResultSuccess() {
-    feedbackDevice?.displayResultSuccess()
+  override fun signalSuccess() {
+    feedbackDevice?.signalSuccess()
   }
 
-  override fun displayResultFailed() {
-    feedbackDevice?.displayResultFailed()
+  override fun signalFailure() {
+    feedbackDevice?.signalFailure()
   }
 
-  override fun displayWaiting() {
-    feedbackDevice?.displayWaiting()
+  override fun signalWaiting() {
+    feedbackDevice?.signalWaiting()
   }
 
   override fun release() {

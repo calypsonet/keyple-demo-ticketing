@@ -50,11 +50,11 @@ class LoadContractActivity : BaseCardActivity() {
   override fun initReaders() {
     try {
       if (cardMedium == CardMedium.CONTACTLESS_CARD) {
-        showPresentNfcCardInstructions()
-        initAndActivateCardReader()
+        showPresentCardInstructions()
+        startCardReader()
       } else {
-        showNowLoadingInformation()
-        initOmapiReader { lifecycleScope.launch(Dispatchers.Default) { remoteServiceExecution() } }
+        showLoadingInProgress()
+        initOmapiReader { lifecycleScope.launch(Dispatchers.Default) { executeRemoteService() } }
       }
     } catch (e: Exception) {
       Timber.e(e, "Error while initializing the readers")
@@ -65,7 +65,7 @@ class LoadContractActivity : BaseCardActivity() {
     activityCardReaderBinding.cardAnimation.cancelAnimation()
     activityCardReaderBinding.loadingAnimation.cancelAnimation()
     try {
-      deactivateAndClearReader()
+      releaseCardReader()
     } catch (e: Exception) {
       Timber.e(e, "Error while releasing the readers")
     }
@@ -74,12 +74,12 @@ class LoadContractActivity : BaseCardActivity() {
 
   override fun onReaderEvent(event: CardReaderEvent?) {
     if (event?.type == CardReaderEvent.Type.CARD_INSERTED) {
-      runOnUiThread { showNowLoadingInformation() }
-      lifecycleScope.launch(Dispatchers.Default) { remoteServiceExecution() }
+      runOnUiThread { showLoadingInProgress() }
+      lifecycleScope.launch(Dispatchers.Default) { executeRemoteService() }
     }
   }
 
-  private suspend fun remoteServiceExecution() {
+  private suspend fun executeRemoteService() {
     withContext(Dispatchers.IO) {
       try {
         val tripsToLoad = intent.getIntExtra(SelectProductActivity.TRIPS_TO_LOAD, 0)
@@ -95,14 +95,14 @@ class LoadContractActivity : BaseCardActivity() {
                 finishActivity = true)
           }
         } else {
-          launchStatusErrorResponse(result.card, result.status)
+          showStatusError(result.card, result.status)
         }
       } catch (e: IllegalStateException) {
         Timber.w("Card not supported while loading the contract [cause=${e.message}]")
-        launchInvalidCardResponse(getString(R.string.undetermined_card_type), "")
+        showInvalidCard(getString(R.string.undetermined_card_type), "")
       } catch (e: Exception) {
         Timber.e(e, "Error while loading the contract")
-        launchErrorResponse(getString(R.string.error_label))
+        showError(getString(R.string.error_label))
       } finally {
         cardReaderSession.endCardProcessing()
       }
@@ -127,7 +127,7 @@ class LoadContractActivity : BaseCardActivity() {
     }
   }
 
-  private fun showPresentNfcCardInstructions() {
+  private fun showPresentCardInstructions() {
     activityCardReaderBinding.presentTxt.text = getString(R.string.present_card)
     activityCardReaderBinding.cardAnimation.visibility = View.VISIBLE
     activityCardReaderBinding.cardAnimation.playAnimation()
@@ -135,7 +135,7 @@ class LoadContractActivity : BaseCardActivity() {
     activityCardReaderBinding.loadingAnimation.visibility = View.INVISIBLE
   }
 
-  private fun showNowLoadingInformation() {
+  private fun showLoadingInProgress() {
     activityCardReaderBinding.presentTxt.text = getString(R.string.loading_in_progress)
     activityCardReaderBinding.loadingAnimation.visibility = View.VISIBLE
     activityCardReaderBinding.loadingAnimation.playAnimation()

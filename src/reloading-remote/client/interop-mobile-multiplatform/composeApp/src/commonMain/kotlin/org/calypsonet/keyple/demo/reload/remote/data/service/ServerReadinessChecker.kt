@@ -46,8 +46,11 @@ class ServerReadinessChecker {
    * @throws Exception If the server cannot be reached.
    */
   suspend fun isServerReady(serverConfig: KeypleServerConfig): Boolean =
-      httpClient.get("${serverConfig.baseUrl()}/card/sam-status").body<SamStatus>().isSamReady
+      httpClient
+          .get("${serverConfig.baseUrl()}/card/sam-availability")
+          .body<SamAvailability>()
+          .isSamAvailable
 
   /** SAM status returned by the REST API of the server. */
-  @Serializable private data class SamStatus(val isSamReady: Boolean)
+  @Serializable private data class SamAvailability(val isSamAvailable: Boolean)
 }

@@ -20,11 +20,11 @@ internal class ArriveFeedbackDevice(private val context: Context, private val lo
     FeedbackDevice {
   override fun init(onReady: () -> Unit) {}
 
-  override fun displayResultSuccess() {}
+  override fun signalSuccess() {}
 
-  override fun displayResultFailed() {}
+  override fun signalFailure() {}
 
-  override fun displayWaiting() {}
+  override fun signalWaiting() {}
 
   override fun release() {}
 }

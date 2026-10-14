@@ -44,7 +44,7 @@ namespace App.infrastructure.server
         /// </summary>
         /// <param name="jsonRequest">The JSON request to transmit.</param>
         /// <returns>A JSON string containing the server's response.</returns>
-        public string transmitRequest(string jsonRequest)
+        public string TransmitRequest(string jsonRequest)
         {
             if (_logger.IsEnabled(LogEventLevel.Debug))
             {
