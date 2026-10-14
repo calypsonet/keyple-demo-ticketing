@@ -63,6 +63,7 @@
     <string name="card_invalid_title">Not valid on this network</string>
 
     <!-- Dialog -->
+    <string name="reader_initialization_error">The readers of the terminal could not be initialized.</string>
     <string name="permission_denied_message">You must accept the requested permissions to continue. Please relaunch the app.</string>
     <string name="nfc_not_enabled">The NFC feature of the device does not seem to be available. Please activate the NFC function before continuing.</string>
 

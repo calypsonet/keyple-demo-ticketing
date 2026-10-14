@@ -127,7 +127,7 @@ class CardReaderActivity : BaseActivity() {
             Timber.e(e, "Error while initializing the readers")
             withContext(Dispatchers.Main) {
               dismissProgress()
-              showNoProxyReaderDialog(e)
+              showReaderInitializationErrorDialog()
             }
           }
         }
@@ -436,10 +436,11 @@ class CardReaderActivity : BaseActivity() {
     cardReaderSession.endCardProcessing()
   }
 
-  private fun showNoProxyReaderDialog(t: Throwable) {
+  /** Displays the failure of the initialization of the readers, the application being then quit. */
+  private fun showReaderInitializationErrorDialog() {
     val builder = AlertDialog.Builder(this)
     builder.setTitle(R.string.error_title)
-    builder.setMessage(t.message)
+    builder.setMessage(R.string.reader_initialization_error)
     builder.setNegativeButton(R.string.quit) { _, _ -> finish() }
     val dialog = builder.create()
     dialog.setCancelable(false)

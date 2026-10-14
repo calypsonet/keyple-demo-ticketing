@@ -34,6 +34,7 @@ import org.calypsonet.keyple.demo.control.domain.spi.Logger
 import org.eclipse.keypop.reader.ChannelControl
 import org.eclipse.keypop.reader.selection.spi.SmartCard
 import org.eclipse.keypop.storagecard.MifareClassicKeyType
+import org.eclipse.keypop.storagecard.SCAuthenticationFailedException
 import org.eclipse.keypop.storagecard.card.ProductType
 import org.eclipse.keypop.storagecard.card.StorageCard
 
@@ -265,11 +266,15 @@ class StorageCardControlProcedure(
     }
   }
 
+  /** Indicates whether the exception, or one of its causes, is a failure of the authentication. */
+  private fun isAuthenticationFailure(e: Exception): Boolean =
+      generateSequence<Throwable>(e) { it.cause }.any { it is SCAuthenticationFailedException }
+
   /** Returns the technical error corresponding to the provided exception. */
   private fun technicalError(productType: ProductType, e: Exception): TechnicalError =
       when {
         // Specific error handling for MIFARE Classic authentication failures
-        productType.hasAuthentication() && e.message?.contains("auth", ignoreCase = true) == true ->
+        productType.hasAuthentication() && isAuthenticationFailure(e) ->
             TechnicalError.MIFARE_CLASSIC_AUTHENTICATION_FAILED
         productType.hasAuthentication() -> TechnicalError.MIFARE_CLASSIC_READING_FAILED
         else -> TechnicalError.UNEXPECTED

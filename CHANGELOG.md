@@ -129,6 +129,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Control and validation apps: the dialog displayed when the readers cannot be initialized shows "The readers of the
+  terminal could not be initialized." instead of the message of the exception (method `showReaderInitializationErrorDialog`,
+  instead of `showNoProxyReaderDialog`, a term of a former version of Keyple), and the authentication failures of the
+  MIFARE Classic cards are recognized by their type (`SCAuthenticationFailedException`) instead of the word "auth" in
+  the message of the exception.
 - The last technical messages displayed are replaced: the NFC sheet of the iOS client displays "Card reading error"
   (instead of "Error: " and the message of the error, which is logged), and the .NET client no longer displays the
   message of a fatal exception after the text referring to its log file. The browser console of the dashboard follows
