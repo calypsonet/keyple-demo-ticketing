@@ -18,6 +18,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import org.calypsonet.keyple.demo.control.data.MediaPlayerUserFeedback
+import org.calypsonet.keyple.demo.control.domain.spi.Logger
 import org.calypsonet.keyple.demo.control.domain.spi.UserFeedback
 
 @Suppress("unused")
@@ -25,5 +26,7 @@ import org.calypsonet.keyple.demo.control.domain.spi.UserFeedback
 @InstallIn(SingletonComponent::class)
 class UserFeedbackModule {
 
-  @Provides @Singleton fun provideUserFeedback(): UserFeedback = MediaPlayerUserFeedback()
+  @Provides
+  @Singleton
+  fun provideUserFeedback(logger: Logger): UserFeedback = MediaPlayerUserFeedback(logger)
 }

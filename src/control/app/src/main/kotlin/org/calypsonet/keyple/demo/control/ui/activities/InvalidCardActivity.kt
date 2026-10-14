@@ -20,7 +20,6 @@ import org.calypsonet.keyple.demo.control.databinding.ActivityInvalidCardBinding
 import org.calypsonet.keyple.demo.control.databinding.ToolbarBinding
 import org.calypsonet.keyple.demo.control.ui.activities.CardReaderActivity.Companion.CARD_CONTENT
 import org.calypsonet.keyple.demo.control.ui.model.UiControlResult
-import timber.log.Timber
 
 @AndroidEntryPoint
 class InvalidCardActivity : BaseActivity() {
@@ -39,14 +38,6 @@ class InvalidCardActivity : BaseActivity() {
     activityInvalidCardBinding.invalidDescription.text = cardContent?.errorMessage
     activityInvalidCardBinding.presentBtn.setOnClickListener {
       onBackPressedDispatcher.onBackPressed()
-    }
-  }
-
-  override fun onResume() {
-    super.onResume()
-    if (cardReaderSession.isInitialized) {
-      cardReaderSession.stopCardDetection()
-      Timber.d("Card detection stopped")
     }
   }
 }

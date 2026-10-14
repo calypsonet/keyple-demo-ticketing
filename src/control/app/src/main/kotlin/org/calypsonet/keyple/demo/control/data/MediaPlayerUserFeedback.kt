@@ -14,38 +14,64 @@ package org.calypsonet.keyple.demo.control.data
 
 import android.app.Activity
 import android.media.MediaPlayer
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import javax.inject.Inject
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.domain.model.TerminalType
+import org.calypsonet.keyple.demo.control.domain.spi.Logger
 import org.calypsonet.keyple.demo.control.domain.spi.UiContext
 import org.calypsonet.keyple.demo.control.domain.spi.UserFeedback
 
-/** User feedback based on Android MediaPlayer (success/error sounds). */
-class MediaPlayerUserFeedback @Inject constructor() : UserFeedback {
+/**
+ * User feedback based on Android MediaPlayer (success/error sounds).
+ *
+ * The sounds are played by a dedicated thread: starting a MediaPlayer may take several hundred
+ * milliseconds (wake-up of the audio output), which would delay the display of the result.
+ */
+class MediaPlayerUserFeedback @Inject constructor(private val logger: Logger) : UserFeedback {
 
   private var successMedia: MediaPlayer? = null
   private var failureMedia: MediaPlayer? = null
+  private var soundExecutor: ExecutorService? = null
 
   override fun init(terminalType: TerminalType, uiContext: UiContext) {
     val activity = uiContext.adaptTo(Activity::class.java)
     successMedia = MediaPlayer.create(activity, R.raw.success)
     failureMedia = MediaPlayer.create(activity, R.raw.error)
+    soundExecutor = Executors.newSingleThreadExecutor()
   }
 
   override fun signalSuccess() {
-    successMedia?.start()
+    play { successMedia }
   }
 
   override fun signalFailure() {
-    failureMedia?.start()
+    play { failureMedia }
   }
 
   override fun release() {
-    successMedia?.stop()
-    successMedia?.release()
-    successMedia = null
-    failureMedia?.stop()
-    failureMedia?.release()
-    failureMedia = null
+    // Released by the thread playing the sounds, after the sounds being started
+    soundExecutor?.execute {
+      successMedia?.stop()
+      successMedia?.release()
+      successMedia = null
+      failureMedia?.stop()
+      failureMedia?.release()
+      failureMedia = null
+    }
+    soundExecutor?.shutdown()
+    soundExecutor = null
+  }
+
+  /** Starts the provided sound in the thread playing the sounds. */
+  private fun play(media: () -> MediaPlayer?) {
+    soundExecutor?.execute {
+      try {
+        media()?.start()
+      } catch (e: IllegalStateException) {
+        logger.w("Error while playing the sound [cause=${e.message}]")
+      }
+    }
   }
 }

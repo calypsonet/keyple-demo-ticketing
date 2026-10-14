@@ -47,6 +47,7 @@ class ControlCard(
     } else {
       userFeedback.signalFailure()
     }
+    logger.d("User feedback signalled")
     return result
   }
 

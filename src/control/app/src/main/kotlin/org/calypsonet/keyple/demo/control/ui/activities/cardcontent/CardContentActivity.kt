@@ -24,7 +24,6 @@ import org.calypsonet.keyple.demo.control.ui.activities.BaseActivity
 import org.calypsonet.keyple.demo.control.ui.activities.CardReaderActivity.Companion.CARD_CONTENT
 import org.calypsonet.keyple.demo.control.ui.model.UiControlResult
 import org.calypsonet.keyple.demo.control.ui.setDivider
-import timber.log.Timber
 
 @AndroidEntryPoint
 class CardContentActivity : BaseActivity() {
@@ -61,14 +60,6 @@ class CardContentActivity : BaseActivity() {
       activityCardContentBinding.lastValidationList.setDivider(R.drawable.recycler_view_divider)
     } else {
       activityCardContentBinding.lastValidationListContainer.visibility = View.GONE
-    }
-  }
-
-  override fun onResume() {
-    super.onResume()
-    if (cardReaderSession.isInitialized) {
-      cardReaderSession.stopCardDetection()
-      Timber.d("Card detection stopped")
     }
   }
 }
