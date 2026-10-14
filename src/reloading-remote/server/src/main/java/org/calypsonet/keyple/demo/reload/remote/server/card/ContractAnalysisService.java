@@ -19,7 +19,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.calypsonet.keyple.demo.common.constants.CalypsoFiles;
@@ -50,18 +49,10 @@ import org.slf4j.LoggerFactory;
 public class ContractAnalysisService {
 
   private static final Logger logger = LoggerFactory.getLogger(ContractAnalysisService.class);
-  private static final String AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS =
-      "An error occurred while analyzing the contracts: {}";
-  private static final String VERSION_NUMBER_OF_CARD_IS_INVALID_REJECT_CARD =
-      "Version Number of card is invalid, reject card";
-  private static final String ENV_END_DATE_OF_CARD_IS_INVALID_REJECT_CARD =
-      "EnvEndDate of card is invalid, reject card";
-  private static final String EVENT_VERSION_NUMBER_OF_CARD_IS_INVALID_REJECT_CARD =
-      "EventVersionNumber of card is invalid, reject card";
-  private static final String CONTRACT_TARIFF_IS_NOT_VALID_FOR_THIS_CONTRACT =
-      "Contract tariff is not valid for this contract";
-  private static final String CONTRACT_AT_INDEX = "Contract at index {}: {} {}";
-  private static final String CONTRACTS = "Contracts {}";
+  private static final String CARD_COMMUNICATION_ERROR_WHILE_ANALYZING =
+      "Card communication error while analyzing the contracts [cause={}]";
+  private static final String UNEXPECTED_ERROR_WHILE_ANALYZING =
+      "Unexpected error while analyzing the contracts";
 
   @Inject CardRepository cardRepository;
   @Inject TransactionRecorder transactionRecorder;
@@ -82,13 +73,16 @@ public class ContractAnalysisService {
     String applicationSerialNumber = HexUtil.toHex(calypsoCard.getApplicationSerialNumber());
 
     logger.info(
-        "=== ANALYZE CALYPSO CARD === Plugin: {}, CSN: {}, ProductType: {}, ApplicationSubtype: {}",
+        "Analyzing the contracts of a Calypso card [plugin={}, serialNumber={}, productType={}, applicationSubtype={}]",
         pluginType,
         applicationSerialNumber,
         calypsoCard.getProductType(),
         HexUtil.toHex(calypsoCard.getApplicationSubtype()));
 
     if (!CalypsoFiles.ALLOWED_FILE_STRUCTURES.contains(calypsoCard.getApplicationSubtype())) {
+      logger.warn(
+          "Card refused: file structure not supported [applicationSubtype={}]",
+          HexUtil.toHex(calypsoCard.getApplicationSubtype()));
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.CARD_REJECTED.getCode());
     }
@@ -98,27 +92,24 @@ public class ContractAnalysisService {
             .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
     try {
       CardData card = cardRepository.readCard(cardReader, calypsoCard, samResource);
-      // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
       List<ContractStructure> presentContracts = findPresentContracts(card);
       transactionRecorder.record(pluginType, true, SECURED_READ, applicationSerialNumber);
       return new AnalyzeContractsOutputDto(presentContracts, RemoteServiceStatus.SUCCESS.getCode());
     } catch (CardNotPersonalizedException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
       transactionRecorder.record(pluginType, false, SECURED_READ, applicationSerialNumber);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode());
     } catch (EnvironmentExpiredException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
       transactionRecorder.record(pluginType, false, SECURED_READ, applicationSerialNumber);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.ENVIRONMENT_EXPIRED.getCode());
     } catch (CardCommunicationException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
+      logger.warn(CARD_COMMUNICATION_ERROR_WHILE_ANALYZING, e.getMessage());
       transactionRecorder.record(pluginType, false, SECURED_READ, applicationSerialNumber);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
+      logger.error(UNEXPECTED_ERROR_WHILE_ANALYZING, e);
       transactionRecorder.record(pluginType, false, SECURED_READ, applicationSerialNumber);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.SERVER_ERROR.getCode());
@@ -134,7 +125,7 @@ public class ContractAnalysisService {
     String cardUID = HexUtil.toHex(storageCard.getUID());
 
     logger.info(
-        "=== ANALYZE STORAGE CARD === Plugin: {}, UID: {}, ProductType: {}, BlockSize: {} bytes, BlockCount: {}",
+        "Analyzing the contracts of a storage card [plugin={}, uid={}, productType={}, blockSize={}, blockCount={}]",
         pluginType,
         cardUID,
         storageCard.getProductType(),
@@ -149,27 +140,24 @@ public class ContractAnalysisService {
     CardResource samResource = null;
     try {
       CardData card = cardRepository.readCard(cardReader, storageCard, samResource);
-      // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
       List<ContractStructure> presentContracts = findPresentContracts(card);
       transactionRecorder.record(pluginType, true, READ, cardUID);
       return new AnalyzeContractsOutputDto(presentContracts, RemoteServiceStatus.SUCCESS.getCode());
     } catch (CardNotPersonalizedException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
       transactionRecorder.record(pluginType, false, READ, cardUID);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode());
     } catch (EnvironmentExpiredException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
       transactionRecorder.record(pluginType, false, READ, cardUID);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.ENVIRONMENT_EXPIRED.getCode());
     } catch (CardCommunicationException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
+      logger.warn(CARD_COMMUNICATION_ERROR_WHILE_ANALYZING, e.getMessage());
       transactionRecorder.record(pluginType, false, READ, cardUID);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
+      logger.error(UNEXPECTED_ERROR_WHILE_ANALYZING, e);
       transactionRecorder.record(pluginType, false, READ, cardUID);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.SERVER_ERROR.getCode());
@@ -192,18 +180,24 @@ public class ContractAnalysisService {
     // Check environment
     EnvironmentHolderStructure environment = card.getEnvironment();
     if (environment.getEnvVersionNumber() != VersionNumber.CURRENT_VERSION) {
-      logger.warn(VERSION_NUMBER_OF_CARD_IS_INVALID_REJECT_CARD);
+      logger.warn(
+          "Card refused: unexpected EnvVersionNumber [envVersionNumber={}]",
+          environment.getEnvVersionNumber());
       throw new CardNotPersonalizedException();
     }
     if (environment.getEnvEndDate().getDate().isBefore(LocalDate.now())) {
-      logger.warn(ENV_END_DATE_OF_CARD_IS_INVALID_REJECT_CARD);
+      logger.warn(
+          "Card refused: environment expired [envEndDate={}]",
+          environment.getEnvEndDate().getDate());
       throw new EnvironmentExpiredException();
     }
     // Check last event
     EventStructure lastEvent = card.getEvent();
     if (lastEvent.getEventVersionNumber() != VersionNumber.CURRENT_VERSION
         && lastEvent.getEventVersionNumber() != VersionNumber.UNDEFINED) {
-      logger.warn(EVENT_VERSION_NUMBER_OF_CARD_IS_INVALID_REJECT_CARD);
+      logger.warn(
+          "No contract analyzed: unexpected EventVersionNumber [eventVersionNumber={}]",
+          lastEvent.getEventVersionNumber());
       return Collections.emptyList();
     }
     // Iterate through the contracts in the card session
@@ -211,23 +205,26 @@ public class ContractAnalysisService {
     List<ContractStructure> presentContracts = new ArrayList<>();
     int contractIndex = 1;
     for (ContractStructure contract : contracts) {
-      logger.info(
-          CONTRACT_AT_INDEX,
+      logger.debug(
+          "Contract read [index={}, contractTariff={}, contractSaleDate={}]",
           contractIndex,
           contract.getContractTariff(),
-          contract.getContractSaleDate().getValue());
+          contract.getContractSaleDate().getDate());
       if (contract.getContractVersionNumber() == VersionNumber.UNDEFINED) {
         // If ContractVersionNumber is 0, ensure that the associated ContractPriority field value is
         // 0 and move on to the next contract.
         if (contract.getContractTariff() != PriorityCode.FORBIDDEN) {
-          logger.warn(CONTRACT_TARIFF_IS_NOT_VALID_FOR_THIS_CONTRACT);
+          logger.warn(
+              "Blank contract of an unexpected ContractTariff [index={}, contractTariff={}]",
+              contractIndex,
+              contract.getContractTariff());
         }
       } else {
         presentContracts.add(contract);
       }
       contractIndex++;
     }
-    logger.info(CONTRACTS, Arrays.deepToString(presentContracts.toArray()));
+    logger.debug("Contracts present in the card [contracts={}]", presentContracts);
     return presentContracts;
   }
 }

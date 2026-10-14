@@ -68,7 +68,7 @@ class CardContentActivity : BaseActivity() {
     super.onResume()
     if (cardReaderSession.isInitialized) {
       cardReaderSession.stopCardDetection()
-      Timber.d("stopCardDetection")
+      Timber.d("Card detection stopped")
     }
   }
 }

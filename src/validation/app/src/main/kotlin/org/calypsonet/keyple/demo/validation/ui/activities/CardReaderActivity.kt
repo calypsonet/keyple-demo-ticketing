@@ -124,7 +124,7 @@ class CardReaderActivity : BaseActivity() {
             handleAppEvents(AppState.WAIT_CARD, null)
             cardReaderSession.startCardDetection()
           } catch (e: Exception) {
-            Timber.e(e)
+            Timber.e(e, "Error while initializing the readers")
             withContext(Dispatchers.Main) {
               dismissProgress()
               showNoProxyReaderDialog(e)
@@ -158,7 +158,7 @@ class CardReaderActivity : BaseActivity() {
     validationResultTimer = null
     if (cardReaderSession.isInitialized) {
       cardReaderSession.stopCardDetection()
-      Timber.d("stopCardDetection")
+      Timber.d("Card detection stopped")
     }
   }
 
@@ -205,7 +205,7 @@ class CardReaderActivity : BaseActivity() {
         currentAppState = AppState.WAIT_SYSTEM_READY
       }
       else -> {
-        Timber.w("Event type not handled.")
+        Timber.w("Reader event not handled [type=${readerEvent?.type}]")
       }
     }
     when (newAppState) {
@@ -226,7 +226,7 @@ class CardReaderActivity : BaseActivity() {
                   }
               if (validationResult is ValidationResult.CardLost) {
                 // Card removed during transaction: silent reset, no display, no sound
-                Timber.i("Card removed during transaction")
+                Timber.i("Card removed during the transaction")
                 currentAppState = AppState.WAIT_CARD
                 cardReaderSession.endCardProcessing()
                 playWaitingAnimation()

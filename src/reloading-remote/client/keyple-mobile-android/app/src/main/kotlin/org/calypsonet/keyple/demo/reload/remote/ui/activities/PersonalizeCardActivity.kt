@@ -56,7 +56,7 @@ class PersonalizeCardActivity : BaseCardActivity() {
         initOmapiReader { lifecycleScope.launch(Dispatchers.Default) { remoteServiceExecution() } }
       }
     } catch (e: Exception) {
-      Timber.e(e)
+      Timber.e(e, "Error while initializing the readers")
     }
   }
 
@@ -66,7 +66,7 @@ class PersonalizeCardActivity : BaseCardActivity() {
     try {
       deactivateAndClearReader()
     } catch (e: Exception) {
-      Timber.e(e)
+      Timber.e(e, "Error while releasing the readers")
     }
     super.onPause()
   }
@@ -127,10 +127,10 @@ class PersonalizeCardActivity : BaseCardActivity() {
           launchStatusErrorResponse(result.card, result.status)
         }
       } catch (e: IllegalStateException) {
-        Timber.e(e)
+        Timber.w("Card not supported while personalizing the card [cause=${e.message}]")
         launchInvalidCardResponse(getString(R.string.undetermined_card_type), e.message!!)
       } catch (e: Exception) {
-        Timber.e(e)
+        Timber.e(e, "Error while personalizing the card")
         launchExceptionResponse(e)
       } finally {
         cardReaderSession.endCardProcessing()

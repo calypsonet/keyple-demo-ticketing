@@ -187,10 +187,10 @@ class CardReaderSession(
    */
   fun endCardProcessing() {
     try {
-      logger.i("endCardProcessing")
+      logger.d("Ending the card processing")
       (terminalReaders.getCardReader() as ObservableCardReader).finalizeCardProcessing()
     } catch (e: Exception) {
-      logger.e("Cannot end card processing: $e")
+      logger.w("Error while ending the card processing", e)
     }
     userFeedback.displayWaiting()
   }
@@ -306,10 +306,11 @@ class CardReaderSession(
               SelectionError.UNSUPPORTED_FILE_STRUCTURE,
               HexUtil.toHex(smartCard.applicationSubtype))
         }
-        logger.i("Card DF Name = ${HexUtil.toHex(smartCard.dfName)}")
+        logger.i("Calypso card selected [dfName=${HexUtil.toHex(smartCard.dfName)}]")
       }
       is StorageCard -> {
-        logger.i("${smartCard.productType.name} Card UID = ${HexUtil.toHex(smartCard.uid)}")
+        logger.i(
+            "Storage card selected [productType=${smartCard.productType.name}, uid=${HexUtil.toHex(smartCard.uid)}]")
       }
     }
     return CardSelection.Selected(smartCard)
@@ -345,7 +346,7 @@ class CardReaderSession(
       calypsoSam = samSelectionResult.activeSmartCard!! as LegacySam
       return true
     } catch (e: Exception) {
-      logger.e("An exception occurred while selecting the SAM. ${e.message}", e)
+      logger.e("Error while selecting the SAM", e)
     }
     return false
   }

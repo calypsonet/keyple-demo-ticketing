@@ -49,37 +49,35 @@ public class CardSamObserver
 
   @Override
   public void onPluginObservationError(String pluginName, Throwable e) {
-    logger.error(
-        "An error occurred while observing the SAM plugin {}: {}", pluginName, e.getMessage(), e);
+    logger.error("Error while observing the SAM plugin [plugin={}]", pluginName, e);
   }
 
   @Override
   public void onReaderObservationError(String contextInfo, String readerName, Throwable e) {
     logger.error(
-        "An error occurred while observing the SAM reader {}/{}: {}",
-        contextInfo,
-        readerName,
-        e.getMessage(),
-        e);
+        "Error while observing the SAM reader [context={}, reader={}]", contextInfo, readerName, e);
   }
 
   @Override
   public void onPluginEvent(PluginEvent pluginEvent) {
-    logger.info("Plugin event received {} {}", pluginEvent.getType(), pluginEvent.getPluginName());
+    logger.info(
+        "Plugin event received [type={}, plugin={}]",
+        pluginEvent.getType(),
+        pluginEvent.getPluginName());
     restartReaderMonitoring();
   }
 
   @Override
   public void onReaderEvent(CardReaderEvent readerEvent) {
-    logger.info("Reader event received: {}", readerEvent.getType());
+    logger.info("Reader event received [type={}]", readerEvent.getType());
     isSamAvailable =
         readerEvent.getType() == CardReaderEvent.Type.CARD_INSERTED
             || readerEvent.getType() == CardReaderEvent.Type.CARD_MATCHED;
-    logger.debug("SAM availability set to {}", isSamAvailable);
+    logger.debug("SAM availability changed [available={}]", isSamAvailable);
   }
 
   boolean isSamAvailable() {
-    logger.trace("Checking SAM availability: {}", isSamAvailable);
+    logger.trace("SAM availability checked [available={}]", isSamAvailable);
     return isSamAvailable;
   }
 
@@ -92,7 +90,8 @@ public class CardSamObserver
    */
   void startMonitoring(ObservablePlugin samPlugin) {
     logger.info(
-        "Starting SAM plugin monitoring (only once at server startup): {}", samPlugin.getName());
+        "Starting the SAM plugin monitoring, once at server startup [plugin={}]",
+        samPlugin.getName());
     isSamAvailable = false;
     plugin = samPlugin;
     plugin.setPluginObservationExceptionHandler(this);
@@ -106,23 +105,23 @@ public class CardSamObserver
   }
 
   private void restartReaderMonitoring() {
-    logger.info("Restart SAM reader monitoring");
+    logger.info("Restarting the SAM reader monitoring");
     isSamAvailable = false;
     if (reader != null) {
-      logger.info("Stopping current SAM reader monitoring");
+      logger.info("Stopping the current SAM reader monitoring");
       reader.removeObserver(this);
       reader.stopCardDetection();
     }
     reader = searchReader(plugin);
     if (reader == null) {
-      logger.warn("SAM reader not found. SAM reader monitoring not restarted");
+      logger.warn("SAM reader not found: monitoring not restarted");
       return;
     }
     startReaderMonitoring();
   }
 
   private void startReaderMonitoring() {
-    logger.info("Starting SAM reader monitoring: {}", reader.getName());
+    logger.info("Starting the SAM reader monitoring [reader={}]", reader.getName());
     reader.setReaderObservationExceptionHandler(this);
     reader.addObserver(this);
     reader.startCardDetection(ObservableCardReader.DetectionMode.REPEATING);
@@ -130,12 +129,12 @@ public class CardSamObserver
 
   private ObservableCardReader searchReader(Plugin plugin) {
     logger.info(
-        "Search SAM reader for plugin {} using filter: {}", plugin.getName(), samReaderFilter);
+        "Searching the SAM reader [plugin={}, filter={}]", plugin.getName(), samReaderFilter);
     Pattern p = Pattern.compile(samReaderFilter);
     for (CardReader reader : plugin.getReaders()) {
-      logger.debug("Checking reader: {}", reader.getName());
+      logger.debug("Checking the reader [reader={}]", reader.getName());
       if (p.matcher(reader.getName()).matches()) {
-        logger.info("Matching reader found: {}", reader.getName());
+        logger.info("SAM reader found [reader={}]", reader.getName());
         return (ObservableCardReader) reader;
       }
     }

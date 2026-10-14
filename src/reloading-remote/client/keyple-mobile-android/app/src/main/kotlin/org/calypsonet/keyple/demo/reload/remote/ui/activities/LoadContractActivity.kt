@@ -57,7 +57,7 @@ class LoadContractActivity : BaseCardActivity() {
         initOmapiReader { lifecycleScope.launch(Dispatchers.Default) { remoteServiceExecution() } }
       }
     } catch (e: Exception) {
-      Timber.e(e)
+      Timber.e(e, "Error while initializing the readers")
     }
   }
 
@@ -67,7 +67,7 @@ class LoadContractActivity : BaseCardActivity() {
     try {
       deactivateAndClearReader()
     } catch (e: Exception) {
-      Timber.e(e)
+      Timber.e(e, "Error while releasing the readers")
     }
     super.onPause()
   }
@@ -98,10 +98,10 @@ class LoadContractActivity : BaseCardActivity() {
           launchStatusErrorResponse(result.card, result.status)
         }
       } catch (e: IllegalStateException) {
-        Timber.e(e)
+        Timber.w("Card not supported while loading the contract [cause=${e.message}]")
         launchInvalidCardResponse(getString(R.string.undetermined_card_type), e.message!!)
       } catch (e: Exception) {
-        Timber.e(e)
+        Timber.e(e, "Error while loading the contract")
         launchExceptionResponse(e)
       } finally {
         cardReaderSession.endCardProcessing()

@@ -48,7 +48,7 @@ namespace App.infrastructure.server
         {
             if (_logger.IsEnabled(LogEventLevel.Debug))
             {
-                _logger.Debug($"Tx Json = {jsonRequest}");
+                _logger.Debug($"JSON request sent [json={jsonRequest}]");
             }
             string? result = null;
             try
@@ -69,7 +69,7 @@ namespace App.infrastructure.server
 
                         if (_logger.IsEnabled(LogEventLevel.Debug))
                         {
-                            _logger.Debug($"Rx Json = {result}");
+                            _logger.Debug($"JSON response received [json={result}]");
                         }
                     }
                     else

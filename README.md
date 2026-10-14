@@ -229,6 +229,7 @@ application.
 - `domain`, `data` and `di` log through the `Logger` port. Timber is only used by its implementation
   (`data/TimberLogger`, which tags each message with the name of the calling class), by `DemoApplication` (Timber
   initialization) and by the activities.
+- The messages follow the convention of all the components (see [Log Messages](#log-messages)).
 
 **UI models**
 
@@ -322,12 +323,53 @@ The applications share these conventions, except for the following deliberate di
 | Difference                                                                                                         | Reason                                                                                                                                  |
 |--------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
 | Validation app: free orientation, `arrive`/`arrive-mock` source sets and `com.parkeon.app.customer` action          | Arrive (Parkeon) terminal: landscape screen, optional proprietary SDK, application launched by the terminal                             |
-| Reloading Android client: reader detected from the device, no device selection screen                             | Only the Bluebird terminals use a specific reader; the other devices use the Android NFC reader                                         |
+| Reloading Android client: reader detected from the device, no terminal selection screen                           | Only the Bluebird terminals use a specific reader; the other devices use the Android NFC reader                                         |
 | Reloading Android client: settings persisted (`SharedPreferences`), in memory in the control and validation apps   | The server address must survive a restart; the control and validation apps ask for the terminal at each startup                         |
 | Reloading Android client: no local SAM, but NFC and OMAPI (SIM) readers                                            | The SAM is managed by the server (Keyple Distributed)                                                                                   |
 | KMP client: `ui` and `data` packages without `domain` layer (MVVM), without Hilt nor the `common` library          | Compose code shared by Android, desktop and iOS; the `common` library relies on Java libraries (bit-lib4j, Keyple utilities) unavailable on iOS |
 | KMP client: Android APK suffixed `-android-`                                                                       | The same project name is used by the desktop packages                                                                                   |
 | Directory and project names (`reloading-remote`, `keyple-mobile-android`, `kdt-...`) differing from the packages   | Referenced by the CI, the names of the released artifacts and the existing links                                                        |
+
+### Log Messages
+
+All the components (server, Android applications, multiplatform and .NET clients) write their log messages with the
+same template:
+
+```
+Message [key1=value1, key2=value2]
+```
+
+- **Message**: English sentence starting with a capital letter, without final punctuation, acronyms in capitals (SAM,
+  NFC, REST, DF, UID). It names the event without its variable values, so that the same event always gives the same
+  message (search, counting): the values are only in the context.
+- **Context** (optional): `key=value` pairs between square brackets, separated by `, `. The keys are in camelCase and
+  use the terms of the glossary (`plugin`, `reader`, `serialNumber`, `uid`, `productType`, `contractTariff`,
+  `tripsToLoad`, `block`...), the values are written without quotes.
+- **No class or method name** in the message: the logger gives it (tag of `TimberLogger`, logger of the class with
+  SLF4J, Napier and Serilog).
+- **Exceptions**:
+  - unexpected error: `ERROR` level, the exception being attached to the call (stack trace) and not copied in the
+    message, e.g. `logger.error("Unexpected error while loading the contract", e)`;
+  - expected incident (card refused or removed, server not ready): `WARN` level without stack trace, the message of
+    the exception being given in the `cause` key, e.g. `Card communication error while loading the contract [cause=...]`;
+  - an exception thrown again is not logged: it is logged once, where it is handled.
+
+| Level   | Use                                                                                                                     |
+|---------|-------------------------------------------------------------------------------------------------------------------------|
+| `ERROR` | Unexpected error, with the stack trace                                                                                  |
+| `WARN`  | Refusal or expected incident (card refused or removed, SAM or server unavailable), without stack trace                  |
+| `INFO`  | One line per business operation (e.g. `Loading a contract in a Calypso card [...]`) and main events of the life cycle   |
+| `DEBUG` | Technical details (blocks read or written, secure session, states of the screens)                                       |
+| `TRACE` | Repetitive events (e.g. periodic check of the SAM)                                                                      |
+
+Examples:
+
+```
+INFO  Loading a contract in a Calypso card [plugin=Android NFC, serialNumber=0000000011223344, productType=PRIME_REVISION_3, contractTariff=MULTI_TRIP, tripsToLoad=10]
+WARN  Card refused: environment expired [envEndDate=2025-05-01]
+WARN  Card communication error while loading the contract [cause=Card removed]
+ERROR Unexpected error while loading the contract
+```
 
 ### Building from Source
 

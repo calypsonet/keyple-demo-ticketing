@@ -55,7 +55,7 @@ class KeypleSyncEndPointClient(
     if (currentServerRestApi != null && serverUrl == serverRestApiUrl) {
       return currentServerRestApi
     }
-    logger.i("Loaded Rest client with URL: $serverUrl")
+    logger.i("REST client created [url=$serverUrl]")
     val newServerRestApi =
         Retrofit.Builder()
             .baseUrl(serverUrl)

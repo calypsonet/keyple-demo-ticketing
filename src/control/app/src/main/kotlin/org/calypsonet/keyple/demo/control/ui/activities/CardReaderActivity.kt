@@ -86,7 +86,7 @@ class CardReaderActivity : BaseActivity() {
             handleAppEvents(AppState.WAIT_CARD, null)
             cardReaderSession.startCardDetection()
           } catch (e: Exception) {
-            Timber.e(e)
+            Timber.e(e, "Error while initializing the readers")
             withContext(Dispatchers.Main) {
               dismissProgress()
               showNoProxyReaderDialog(e)
@@ -107,7 +107,7 @@ class CardReaderActivity : BaseActivity() {
     activityCardReaderBinding.loadingAnimation.cancelAnimation()
     if (cardReaderSession.isInitialized) {
       cardReaderSession.stopCardDetection()
-      Timber.d("stopCardDetection")
+      Timber.d("Card detection stopped")
     }
   }
 
@@ -125,8 +125,8 @@ class CardReaderActivity : BaseActivity() {
    */
   private fun handleAppEvents(appState: AppState, readerEvent: CardReaderEvent?) {
     var newAppState = appState
-    Timber.i(
-        "Current state = $currentAppState, wanted new state = $newAppState, event = ${readerEvent?.type}")
+    Timber.d(
+        "Handling a reader event [state=$currentAppState, newState=$newAppState, event=${readerEvent?.type}]")
     when (readerEvent?.type) {
       CardReaderEvent.Type.CARD_INSERTED,
       CardReaderEvent.Type.CARD_MATCHED -> {
@@ -140,7 +140,7 @@ class CardReaderActivity : BaseActivity() {
         currentAppState = AppState.WAIT_SYSTEM_READY
       }
       else -> {
-        Timber.w("Event type not handled.")
+        Timber.w("Reader event not handled [type=${readerEvent?.type}]")
       }
     }
     when (newAppState) {
@@ -179,8 +179,7 @@ class CardReaderActivity : BaseActivity() {
                 // The activity has been destroyed
                 throw e
               } catch (e: IllegalStateException) {
-                Timber.e(e)
-                Timber.e("Load ERROR page after exception = ${e.message}")
+                Timber.e(e, "Error while controlling the card")
                 withContext(Dispatchers.Main) { dismissProgress() }
                 displayResult(
                     UiControlResult(resultType = ResultType.ERROR, contractsList = emptyList()))
@@ -198,7 +197,7 @@ class CardReaderActivity : BaseActivity() {
         Toast.makeText(this, getString(R.string.status_unspecified), Toast.LENGTH_SHORT).show()
       }
     }
-    Timber.i("New state = $currentAppState")
+    Timber.d("Application state changed [state=$currentAppState]")
   }
 
   private fun displayResult(uiControlResult: UiControlResult?) {
@@ -248,7 +247,7 @@ class CardReaderActivity : BaseActivity() {
   private inner class CardReaderObserver : CardReaderObserverSpi {
 
     override fun onReaderEvent(readerEvent: CardReaderEvent?) {
-      Timber.i("New ReaderEvent received: ${readerEvent?.type?.name}")
+      Timber.i("Reader event received [type=${readerEvent?.type?.name}]")
       handleAppEvents(currentAppState, readerEvent)
     }
   }

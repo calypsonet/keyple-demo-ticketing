@@ -43,10 +43,6 @@ import org.slf4j.LoggerFactory;
 public class ContractCounterService {
 
   private static final Logger logger = LoggerFactory.getLogger(ContractCounterService.class);
-  private static final String AN_ERROR_OCCURRED_WHILE_INCREASING_THE_CONTRACT_COUNTER =
-      "An error occurred while increasing the contract counter: {}";
-  private static final String AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS =
-      "An error occurred while analyzing the contracts: {}";
   private static final String CUSTOM_PLUGIN = "Non Keyple plugin";
   private static final String CARD_NOT_PERSONALIZED = "Card not personalized.";
   private static final String ENVIRONMENT_EXPIRED = "Environment expired.";
@@ -68,18 +64,16 @@ public class ContractCounterService {
 
     try {
       calypsoCard = cardRepository.selectCard(cardReader);
+      logger.info(
+          "Reading the contracts [plugin={}, serialNumber={}]",
+          CUSTOM_PLUGIN,
+          HexUtil.toHex(calypsoCard.getApplicationSerialNumber()));
 
       samResource =
           CardResourceServiceProvider.getService()
               .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
 
       CardData card = cardRepository.readCard(cardReader, calypsoCard, samResource);
-      // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
-      transactionRecorder.record(
-          CUSTOM_PLUGIN,
-          true,
-          SECURED_READ,
-          HexUtil.toHex(calypsoCard.getApplicationSerialNumber()));
       List<ContractStructure> presentContracts = contractAnalysisService.findPresentContracts(card);
 
       for (ContractStructure contractStructure : presentContracts) {
@@ -87,25 +81,24 @@ public class ContractCounterService {
       }
     } catch (CardNotPersonalizedException e) {
       statusCode = RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode();
-      logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
       message = CARD_NOT_PERSONALIZED;
     } catch (EnvironmentExpiredException e) {
       statusCode = RemoteServiceStatus.ENVIRONMENT_EXPIRED.getCode();
-      logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage());
       message = ENVIRONMENT_EXPIRED;
     } catch (CardCommunicationException e) {
       statusCode = RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode();
-      logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
+      logger.warn(
+          "Card communication error while reading the contracts [cause={}]", e.getMessage());
       message = CARD_COMMUNICATION_ERROR + e.getMessage();
     } catch (RuntimeException e) {
       statusCode = RemoteServiceStatus.SERVER_ERROR.getCode();
-      logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
+      logger.error("Unexpected error while reading the contracts", e);
       message = RUNTIME_EXCEPTION + e.getMessage();
     } finally {
       transactionRecorder.record(
           CUSTOM_PLUGIN,
-          statusCode == 0,
-          LOAD,
+          statusCode == RemoteServiceStatus.SUCCESS.getCode(),
+          SECURED_READ,
           calypsoCard == null ? "-" : HexUtil.toHex(calypsoCard.getApplicationSerialNumber()));
       if (samResource != null) {
         CardResourceServiceProvider.getService().releaseCardResource(samResource);
@@ -123,48 +116,49 @@ public class ContractCounterService {
     String message = "Success.";
     try {
       calypsoCard = cardRepository.selectCard(cardReader);
+      logger.info(
+          "Increasing the contract counter [plugin={}, serialNumber={}, counterIncrement={}]",
+          CUSTOM_PLUGIN,
+          HexUtil.toHex(calypsoCard.getApplicationSerialNumber()),
+          inputData.getCounterIncrement());
 
       samResource =
           CardResourceServiceProvider.getService()
               .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
 
       CardData card = cardRepository.readCard(cardReader, calypsoCard, samResource);
-      // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
-      transactionRecorder.record(
-          CUSTOM_PLUGIN,
-          true,
-          LOAD,
-          HexUtil.toHex(calypsoCard.getApplicationSerialNumber()),
-          PriorityCode.MULTI_TRIP.getLabel() + ": " + inputData.getCounterIncrement());
       contractLoadingService.insertNewContract(
           PriorityCode.MULTI_TRIP, inputData.getCounterIncrement(), card);
       statusCode = cardRepository.writeCard(cardReader, calypsoCard, samResource, card);
     } catch (CardFullException e) {
       statusCode = RemoteServiceStatus.CARD_FULL.getCode();
       message = ContractLoadingService.CARD_FULL_MESSAGE;
-      logger.error(AN_ERROR_OCCURRED_WHILE_INCREASING_THE_CONTRACT_COUNTER, e.getMessage());
     } catch (CardNotPersonalizedException e) {
       statusCode = RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode();
       message = CARD_NOT_PERSONALIZED;
-      logger.error(AN_ERROR_OCCURRED_WHILE_INCREASING_THE_CONTRACT_COUNTER, e.getMessage());
     } catch (EnvironmentExpiredException e) {
       statusCode = RemoteServiceStatus.ENVIRONMENT_EXPIRED.getCode();
       message = ENVIRONMENT_EXPIRED;
-      logger.error(AN_ERROR_OCCURRED_WHILE_INCREASING_THE_CONTRACT_COUNTER, e.getMessage());
     } catch (CardCommunicationException e) {
       statusCode = RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode();
       message = CARD_COMMUNICATION_ERROR + e.getMessage();
-      logger.error(AN_ERROR_OCCURRED_WHILE_INCREASING_THE_CONTRACT_COUNTER, e.getMessage(), e);
+      logger.warn(
+          "Card communication error while increasing the contract counter [cause={}]",
+          e.getMessage());
     } catch (RuntimeException e) {
       statusCode = RemoteServiceStatus.SERVER_ERROR.getCode();
       message = RUNTIME_EXCEPTION + e.getMessage();
-      logger.error(AN_ERROR_OCCURRED_WHILE_INCREASING_THE_CONTRACT_COUNTER, e.getMessage(), e);
+      logger.error("Unexpected error while increasing the contract counter", e);
     } finally {
+      boolean success = statusCode == RemoteServiceStatus.SUCCESS.getCode();
       transactionRecorder.record(
           CUSTOM_PLUGIN,
-          statusCode == 0,
+          success,
           LOAD,
-          calypsoCard == null ? "-" : HexUtil.toHex(calypsoCard.getApplicationSerialNumber()));
+          calypsoCard == null ? "-" : HexUtil.toHex(calypsoCard.getApplicationSerialNumber()),
+          success
+              ? PriorityCode.MULTI_TRIP.getLabel() + ": " + inputData.getCounterIncrement()
+              : null);
       if (samResource != null) {
         CardResourceServiceProvider.getService().releaseCardResource(samResource);
       }

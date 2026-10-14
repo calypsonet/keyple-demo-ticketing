@@ -70,21 +70,23 @@ class StorageCardValidationProcedure(
         try {
           storageCardApiFactory.createStorageCardTransactionManager(context.cardReader, storageCard)
         } catch (e: Exception) {
-          logger.e("Failed to create card transaction")
+          logger.e("Error while creating the storage card transaction", e)
           return ValidationResult.Failed(card, TechnicalError.UNEXPECTED, e.message)
         }
 
     return try {
       validate(context, storageCard, card, cardTransaction).also {
         if (it is ValidationResult.Rejected) {
-          logger.w("Validation failed: ${it.reason}")
+          logger.w("Card refused [reason=${it.reason}]")
         }
       }
     } catch (e: SCCardCommunicationException) {
-      logger.w("Card removed during transaction: ${storageCard.productType.name}")
+      logger.w("Card removed during the transaction [productType=${storageCard.productType.name}]")
       ValidationResult.CardLost(card)
     } catch (e: Exception) {
-      logger.e("Unexpected error during validation: ${storageCard.productType.name}", e)
+      logger.e(
+          "Unexpected error while validating the storage card [productType=${storageCard.productType.name}]",
+          e)
       ValidationResult.Failed(card, technicalError(storageCard.productType, e), e.message)
     }
   }
@@ -116,13 +118,12 @@ class StorageCardValidationProcedure(
 
     // LOG: Card detected
     logger.d(
-        "Starting validation for ${storageCard.productType.name} " +
-            "(requiresAuth=$requiresAuth, isMifareClassic=$isMifareClassic)")
+        "Validating the storage card [productType=${storageCard.productType.name}, requiresAuthentication=$requiresAuth, isMifareClassic=$isMifareClassic]")
 
     // ========= AUTHENTICATION PHASE (MIFARE Classic only) =========
     if (requiresAuth) {
       logger.d(
-          "Authenticating sector 1 with KEY_A (keyNumber=${MifareClassicBlocks.DEFAULT_KEY_NUMBER})")
+          "Authenticating the MIFARE Classic sector [sector=1, keyType=KEY_A, keyNumber=${MifareClassicBlocks.DEFAULT_KEY_NUMBER}]")
       cardTransaction.prepareMifareClassicAuthenticate(
           MifareClassicBlocks.SECTOR_1_AUTH_BLOCK,
           MifareClassicKeyType.KEY_A,
@@ -133,8 +134,7 @@ class StorageCardValidationProcedure(
     // Read environment, contract, and event based on card type
     if (isMifareClassic) {
       logger.d(
-          "Reading MIFARE Classic blocks: ${MifareClassicBlocks.ENVIRONMENT_AND_HOLDER_BLOCK}, " +
-              "${MifareClassicBlocks.CONTRACT_BLOCK}, ${MifareClassicBlocks.EVENT_BLOCK}")
+          "Reading the MIFARE Classic blocks [environmentBlock=${MifareClassicBlocks.ENVIRONMENT_AND_HOLDER_BLOCK}, contractBlock=${MifareClassicBlocks.CONTRACT_BLOCK}, eventBlock=${MifareClassicBlocks.EVENT_BLOCK}]")
       // MIFARE Classic: read individual 16-byte blocks
       cardTransaction
           .prepareReadBlocks(
@@ -144,7 +144,7 @@ class StorageCardValidationProcedure(
           .prepareReadBlocks(MifareClassicBlocks.EVENT_BLOCK, MifareClassicBlocks.EVENT_BLOCK)
           .processCommands(ChannelControl.KEEP_OPEN)
     } else {
-      logger.d("Reading storage card block ranges...")
+      logger.d("Reading the storage card block ranges")
       // MIFARE Ultralight/ST25: read ranges of 4-byte blocks
       cardTransaction
           .prepareReadBlocks(
@@ -157,7 +157,7 @@ class StorageCardValidationProcedure(
           .processCommands(ChannelControl.KEEP_OPEN)
     }
 
-    logger.d("Card data read successfully")
+    logger.d("Storage card read")
 
     // Step 2 - Unpack environment structure (16 bytes regardless of card type)
     val environmentContent =
@@ -271,14 +271,14 @@ class StorageCardValidationProcedure(
 
     // Re-authenticate for MIFARE Classic before writing (best practice)
     if (requiresAuth) {
-      logger.d("Re-authenticating before write operation")
+      logger.d("Authenticating the MIFARE Classic sector again before writing")
       cardTransaction.prepareMifareClassicAuthenticate(
           MifareClassicBlocks.SECTOR_1_AUTH_BLOCK,
           MifareClassicKeyType.KEY_A,
           MifareClassicBlocks.DEFAULT_KEY_NUMBER)
     }
 
-    logger.d("Writing updated contract and event to card")
+    logger.d("Writing the contract and the event")
     // Prepare write operations based on card type
     val updatedContractContent = StorageCardContractCodec.encode(contractToWrite)
     val eventBytesToWrite = StorageCardEventCodec.encode(eventToWrite)
@@ -297,7 +297,7 @@ class StorageCardValidationProcedure(
 
     cardTransaction.processCommands(ChannelControl.CLOSE_AFTER)
 
-    logger.i("Validation successful: ${storageCard.productType.name}")
+    logger.i("Card validated [productType=${storageCard.productType.name}]")
     return ValidationResult.Accepted(
         card = card,
         dateTime = validationDateTime,

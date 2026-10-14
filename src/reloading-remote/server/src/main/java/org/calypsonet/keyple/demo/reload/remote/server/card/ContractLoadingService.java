@@ -54,8 +54,10 @@ public class ContractLoadingService {
       "No empty contract record nor expired or exhausted contract to replace, reject card";
 
   private static final Logger logger = LoggerFactory.getLogger(ContractLoadingService.class);
-  private static final String AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT =
-      "An error occurred while loading the contract: {}";
+  private static final String CARD_COMMUNICATION_ERROR_WHILE_LOADING =
+      "Card communication error while loading the contract [cause={}]";
+  private static final String UNEXPECTED_ERROR_WHILE_LOADING =
+      "Unexpected error while loading the contract";
   private static final String ONLY_SEASON_PASS_OR_MULTI_TRIP_TICKET_CAN_BE_LOADED =
       "Only a season pass or a multi-trip ticket can be loaded";
 
@@ -78,11 +80,14 @@ public class ContractLoadingService {
     String applicationSerialNumber = HexUtil.toHex(calypsoCard.getApplicationSerialNumber());
 
     if (!CalypsoFiles.ALLOWED_FILE_STRUCTURES.contains(calypsoCard.getApplicationSubtype())) {
+      logger.warn(
+          "Card refused: file structure not supported [applicationSubtype={}]",
+          HexUtil.toHex(calypsoCard.getApplicationSubtype()));
       return new LoadContractOutputDto(RemoteServiceStatus.CARD_REJECTED.getCode());
     }
 
     logger.info(
-        "=== LOAD CALYPSO CARD CONTRACT === Plugin: {}, CSN: {}, ProductType: {}, Contract: {}, Trips: {}",
+        "Loading a contract in a Calypso card [plugin={}, serialNumber={}, productType={}, contractTariff={}, tripsToLoad={}]",
         pluginType,
         applicationSerialNumber,
         calypsoCard.getProductType(),
@@ -94,22 +99,20 @@ public class ContractLoadingService {
             .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
     try {
       CardData card = cardRepository.readCard(cardReader, calypsoCard, samResource);
-      // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
       insertNewContract(inputData.getContractTariff(), inputData.getTripsToLoad(), card);
       int statusCode = cardRepository.writeCard(cardReader, calypsoCard, samResource, card);
       transactionRecorder.record(
           pluginType, true, LOAD, applicationSerialNumber, describeLoadedContract(inputData));
       return new LoadContractOutputDto(statusCode);
     } catch (CardFullException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT, e.getMessage());
       transactionRecorder.record(pluginType, false, LOAD, applicationSerialNumber, "");
       return new LoadContractOutputDto(RemoteServiceStatus.CARD_FULL.getCode());
     } catch (CardCommunicationException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT, e.getMessage(), e);
+      logger.warn(CARD_COMMUNICATION_ERROR_WHILE_LOADING, e.getMessage());
       transactionRecorder.record(pluginType, false, LOAD, applicationSerialNumber, "");
       return new LoadContractOutputDto(RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT, e.getMessage(), e);
+      logger.error(UNEXPECTED_ERROR_WHILE_LOADING, e);
       transactionRecorder.record(pluginType, false, LOAD, applicationSerialNumber, "");
       return new LoadContractOutputDto(RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
@@ -124,7 +127,7 @@ public class ContractLoadingService {
     String cardUID = HexUtil.toHex(storageCard.getUID());
 
     logger.info(
-        "=== LOAD STORAGE CARD CONTRACT === Plugin: {}, UID: {}, ProductType: {}, Contract: {}, Trips: {}",
+        "Loading a contract in a storage card [plugin={}, uid={}, productType={}, contractTariff={}, tripsToLoad={}]",
         pluginType,
         cardUID,
         storageCard.getProductType(),
@@ -139,22 +142,20 @@ public class ContractLoadingService {
     CardResource samResource = null;
     try {
       CardData card = cardRepository.readCard(cardReader, storageCard, samResource);
-      // logger.info("{}", card); deactivate until LocalDate is properly processed by KeypleUtil
       insertNewContract(inputData.getContractTariff(), inputData.getTripsToLoad(), card);
       int statusCode = cardRepository.writeCard(cardReader, storageCard, samResource, card);
       transactionRecorder.record(
           pluginType, true, LOAD, cardUID, describeLoadedContract(inputData));
       return new LoadContractOutputDto(statusCode);
     } catch (CardFullException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT, e.getMessage());
       transactionRecorder.record(pluginType, false, LOAD, cardUID, "");
       return new LoadContractOutputDto(RemoteServiceStatus.CARD_FULL.getCode());
     } catch (CardCommunicationException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT, e.getMessage(), e);
+      logger.warn(CARD_COMMUNICATION_ERROR_WHILE_LOADING, e.getMessage());
       transactionRecorder.record(pluginType, false, LOAD, cardUID, "");
       return new LoadContractOutputDto(RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT, e.getMessage(), e);
+      logger.error(UNEXPECTED_ERROR_WHILE_LOADING, e);
       transactionRecorder.record(pluginType, false, LOAD, cardUID, "");
       return new LoadContractOutputDto(RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
@@ -212,7 +213,7 @@ public class ContractLoadingService {
       // Single contract card: new contract type replaces existing one at position 1
       newContractNumber = 1;
       logger.info(
-          "Single contract card: replacing existing contract {} with new {} contract",
+          "Single contract card: contract replaced [contractTariff={}, newContractTariff={}]",
           contracts.get(0).getContractTariff(),
           contractTariff);
       // build new contract
@@ -225,7 +226,7 @@ public class ContractLoadingService {
       // Calypso: loading of a new contract, find available position
       newContractNumber = findAvailablePosition(contracts, currentEvent);
       if (newContractNumber == 0) {
-        logger.warn(THE_CARD_IS_FULL);
+        logger.warn("Card refused: card full, no empty, expired or exhausted contract record");
         throw new CardFullException();
       }
       // build new contract

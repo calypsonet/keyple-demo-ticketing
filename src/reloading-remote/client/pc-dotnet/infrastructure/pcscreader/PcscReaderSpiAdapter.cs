@@ -62,7 +62,7 @@ namespace App.infrastructure.pcscreader
                 }
                 catch (InvalidOperationException ex)
                 {
-                    _logger.Error(ex, "GetReaders: Unable to start SCardSvr.");
+                    _logger.Error(ex, "Unable to start the smart card service (SCardSvr)");
                     return readerNames;
                 }
                 sc.WaitForStatus(desiredStatus: ServiceControllerStatus.Running);
@@ -72,7 +72,7 @@ namespace App.infrastructure.pcscreader
 
             // Get the list of readers.
             readerNames.AddRange(_context.GetReaders());
-            _logger.Information($"GetReaders: Found {readerNames.Count} readers.");
+            _logger.Information($"Readers found [count={readerNames.Count}]");
 
             return readerNames;
         }
@@ -129,12 +129,12 @@ namespace App.infrastructure.pcscreader
             {
                 _cardAtr = null;
                 _reader = _context.ConnectReader(_readerName, SCardShareMode.Shared, SCardProtocol.T0 | SCardProtocol.T1);
-                _logger.Debug($"OpenPhysicalChannel: Successfully connected to reader {_readerName}.");
+                _logger.Debug($"Physical channel open [reader={_readerName}]");
 
                 _cardAtr = _reader.GetAttrib(SCardAttribute.AtrString);
                 if (_logger.IsEnabled(LogEventLevel.Debug))
                 {
-                    _logger.Debug($"OpenPhysicalChannel: card ATR is {GetPowerOnData()}.");
+                    _logger.Debug($"Card ATR read [atr={GetPowerOnData()}]");
                 }
             }
             catch (PCSCException ex) when (ex.SCardError == SCardError.CommunicationError)
@@ -190,7 +190,7 @@ namespace App.infrastructure.pcscreader
             {
                 if (_logger.IsEnabled(LogEventLevel.Debug))
                 {
-                    _logger.Debug($"TransmitApdu: command = {HexUtil.ToHex(commandApdu)}");
+                    _logger.Debug($"APDU sent [command={HexUtil.ToHex(commandApdu)}]");
                 }
                 byte[] receiveBuffer = new byte[ReceiveBufferSize];
                 int responseLength = _reader.Transmit(commandApdu, receiveBuffer);
@@ -198,7 +198,7 @@ namespace App.infrastructure.pcscreader
                 Array.Copy(receiveBuffer, 0, responseApdu, 0, responseLength);
                 if (_logger.IsEnabled(LogEventLevel.Debug))
                 {
-                    _logger.Debug($"TransmitApdu: response = {HexUtil.ToHex(responseApdu)}");
+                    _logger.Debug($"APDU received [response={HexUtil.ToHex(responseApdu)}]");
                 }
                 return responseApdu;
             }

@@ -140,7 +140,7 @@ class CardReaderSession(
       userFeedback.init(terminalType, uiContext)
       terminalReaders.registerPlugin(terminalType, uiContext)
     } catch (e: Exception) {
-      logger.e("An error occurred while registering plugin ${e.message}")
+      logger.e("Error while registering the reader plugins", e)
       throw IllegalStateException(e.message)
     }
     // Init card reader
@@ -148,7 +148,7 @@ class CardReaderSession(
     try {
       cardReader = terminalReaders.initCardReader()
     } catch (e: Exception) {
-      logger.e("An error occurred while initializing the card reader: ${e.message}")
+      logger.e("Error while initializing the card reader", e)
       throw IllegalStateException(e.message)
     }
     // Init SAM reader
@@ -156,7 +156,7 @@ class CardReaderSession(
     try {
       samReaders = terminalReaders.initSamReaders()
     } catch (e: Exception) {
-      logger.e("An error occurred while initializing the SAM reader: ${e.message}")
+      logger.e("Error while initializing the SAM readers", e)
     }
     if (samReaders.isNullOrEmpty()) {
       logger.w("No SAM reader available")
@@ -187,7 +187,7 @@ class CardReaderSession(
       // notify the reader that se detection has been switched off
       (terminalReaders.getCardReader() as ObservableCardReader).stopCardDetection()
     } catch (e: Exception) {
-      logger.e("An error occurred while stopping nfc detection ${e.message}")
+      logger.e("Error while stopping the card detection", e)
     }
   }
 
@@ -201,10 +201,10 @@ class CardReaderSession(
   /** Ends the processing of the presented card, the reader waiting for its removal. */
   fun endCardProcessing() {
     try {
-      logger.i("endCardProcessing")
+      logger.d("Ending the card processing")
       (terminalReaders.getCardReader() as ObservableCardReader).finalizeCardProcessing()
     } catch (e: Exception) {
-      logger.e("Cannot end card processing: $e")
+      logger.w("Error while ending the card processing", e)
     }
   }
 
@@ -283,7 +283,7 @@ class CardReaderSession(
    * checks the selected Calypso application (DF name and file structure).
    */
   fun selectCard(scheduledCardSelectionsResponse: ScheduledCardSelectionsResponse): CardSelection {
-    logger.i("selectionResponse = $scheduledCardSelectionsResponse")
+    logger.d("Card selection response received [response=$scheduledCardSelectionsResponse]")
     val cardSelectionResult: CardSelectionResult =
         cardSelectionManager.parseScheduledCardSelectionsResponse(scheduledCardSelectionsResponse)
     if (cardSelectionResult.activeSelectionIndex == -1) {
@@ -307,10 +307,11 @@ class CardReaderSession(
               SelectionError.UNSUPPORTED_FILE_STRUCTURE,
               HexUtil.toHex(smartCard.applicationSubtype))
         }
-        logger.i("Card DF Name = ${HexUtil.toHex(smartCard.dfName)}")
+        logger.i("Calypso card selected [dfName=${HexUtil.toHex(smartCard.dfName)}]")
       }
       is StorageCard -> {
-        logger.i("${smartCard.productType.name} Card UID = ${HexUtil.toHex(smartCard.uid)}")
+        logger.i(
+            "Storage card selected [productType=${smartCard.productType.name}, uid=${HexUtil.toHex(smartCard.uid)}]")
       }
     }
     return CardSelection.Selected(smartCard)
@@ -344,7 +345,7 @@ class CardReaderSession(
       legacySam = samSelectionResult.activeSmartCard!! as LegacySam
       return true
     } catch (e: Exception) {
-      logger.e("An exception occurred while selecting the SAM.  ${e.message}")
+      logger.e("Error while selecting the SAM", e)
     }
     return false
   }

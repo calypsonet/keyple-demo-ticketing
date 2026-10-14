@@ -49,7 +49,7 @@ internal class AndroidFeedbackDevice(private val context: Context, private val l
       successMedia?.stop()
       successMedia?.release()
     } catch (e: Exception) {
-      logger.e("AndroidFeedbackDevice: error releasing success media", e)
+      logger.e("Error while releasing the success sound", e)
     } finally {
       successMedia = null
     }
@@ -57,7 +57,7 @@ internal class AndroidFeedbackDevice(private val context: Context, private val l
       errorMedia?.stop()
       errorMedia?.release()
     } catch (e: Exception) {
-      logger.e("AndroidFeedbackDevice: error releasing error media", e)
+      logger.e("Error while releasing the error sound", e)
     } finally {
       errorMedia = null
     }

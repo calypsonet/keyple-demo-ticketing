@@ -79,7 +79,7 @@ class PersonalizeCardScreenViewModel(
         }
       }
     } catch (e: Exception) {
-      Napier.e("Error personalizing card", e)
+      Napier.e("Error while personalizing the card", e)
       _state.value = PersonalizeCardScreenState.DisplayError(e.message ?: "Unknown error")
     }
   }

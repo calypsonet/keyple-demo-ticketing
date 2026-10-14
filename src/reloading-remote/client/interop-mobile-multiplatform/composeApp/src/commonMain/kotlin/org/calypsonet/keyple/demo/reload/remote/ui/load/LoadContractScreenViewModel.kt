@@ -87,7 +87,7 @@ class LoadContractScreenViewModel(
         }
       }
     } catch (e: Exception) {
-      Napier.e("Error loading the contract", e)
+      Napier.e("Error while loading the contract", e)
       _state.value = LoadContractScreenState.DisplayError(e.message ?: "Unknown error")
     }
   }

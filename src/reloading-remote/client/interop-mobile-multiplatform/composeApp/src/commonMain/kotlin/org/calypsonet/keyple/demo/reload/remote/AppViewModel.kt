@@ -45,7 +45,7 @@ class AppViewModel(
             try {
               serverReadinessChecker.isServerReady(serverConfigRepository.load())
             } catch (e: Exception) {
-              Napier.e("Error checking the server: ${e.message}")
+              Napier.w("Server not ready [cause=${e.message}]")
               false
             }
         _state.value = AppState(serverOnline = serverReady)

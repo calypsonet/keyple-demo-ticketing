@@ -29,7 +29,7 @@ Log.Logger = new LoggerConfiguration()
 Log.Information("Starting the application");
 try
 {
-    Log.Information("Loading paramters...");
+    Log.Information("Loading the parameters");
 
     IConfigurationBuilder builder = new ConfigurationBuilder()
         .AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json"), optional: false, reloadOnChange: false);
@@ -65,7 +65,7 @@ try
     }
 
 
-    Log.Information("Retrieve reader and server connectors...");
+    Log.Information("Retrieving the reader and server connectors");
 
     // Get an instance of the ReaderSpi implementation
     ReaderSpi cardService = PcscReaderSpiProvider.getInstance();
@@ -76,7 +76,7 @@ try
     // Create an instance of the TicketingServiceApi using the reader service and server
     TicketingServiceApi ticketingService = TicketingServiceApiProvider.GetService(cardService, readerName, server);
 
-    Log.Information("Create and start application...");
+    Log.Information("Creating and starting the application");
 
     // Create an instance of the application and start it
     Application app = new Application(ticketingService);
@@ -86,7 +86,7 @@ catch (Exception ex)
 {
     Console.Error.WriteLine("Error while running the application (see log file for details).");
     Console.Error.WriteLine(ex.Message);
-    Log.Fatal(ex, "The application failed.");
+    Log.Fatal(ex, "Application failed");
 }
 finally
 {

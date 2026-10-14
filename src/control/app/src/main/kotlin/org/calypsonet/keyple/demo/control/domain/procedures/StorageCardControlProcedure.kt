@@ -65,7 +65,6 @@ class StorageCardControlProcedure(
           try {
             storageCardApiFactory.createStorageCardTransactionManager(cardReader, storageCard)
           } catch (e: Exception) {
-            logger.w("Failed to create storage card transaction", e)
             throw RuntimeException("Failed to create storage card transaction", e)
           }
 
@@ -74,13 +73,12 @@ class StorageCardControlProcedure(
       val isMifareClassic = storageCard.productType == ProductType.MIFARE_CLASSIC_1K
 
       logger.d(
-          "Reading card: ${storageCard.productType.name} " +
-              "(requiresAuth=$requiresAuth, isMifareClassic=$isMifareClassic)")
+          "Reading the storage card [productType=${storageCard.productType.name}, requiresAuthentication=$requiresAuth, isMifareClassic=$isMifareClassic]")
 
       // ========= AUTHENTICATION PHASE (MIFARE Classic only) =========
       if (requiresAuth) {
         logger.d(
-            "Authenticating sector 1 with KEY_A (keyNumber=${MifareClassicBlocks.DEFAULT_KEY_NUMBER})")
+            "Authenticating the MIFARE Classic sector [sector=1, keyType=KEY_A, keyNumber=${MifareClassicBlocks.DEFAULT_KEY_NUMBER}]")
         cardTransaction.prepareMifareClassicAuthenticate(
             MifareClassicBlocks.SECTOR_1_AUTH_BLOCK,
             MifareClassicKeyType.KEY_A,
@@ -91,8 +89,7 @@ class StorageCardControlProcedure(
       // Step 2 - Read environment, event and contract structures based on card type
       if (isMifareClassic) {
         logger.d(
-            "Reading MIFARE Classic blocks: ${MifareClassicBlocks.ENVIRONMENT_AND_HOLDER_BLOCK}, " +
-                "${MifareClassicBlocks.CONTRACT_BLOCK}, ${MifareClassicBlocks.EVENT_BLOCK}")
+            "Reading the MIFARE Classic blocks [environmentBlock=${MifareClassicBlocks.ENVIRONMENT_AND_HOLDER_BLOCK}, contractBlock=${MifareClassicBlocks.CONTRACT_BLOCK}, eventBlock=${MifareClassicBlocks.EVENT_BLOCK}]")
         // MIFARE Classic: read individual 16-byte blocks
         cardTransaction
             .prepareReadBlocks(
@@ -103,7 +100,7 @@ class StorageCardControlProcedure(
             .prepareReadBlocks(MifareClassicBlocks.EVENT_BLOCK, MifareClassicBlocks.EVENT_BLOCK)
             .processCommands(ChannelControl.KEEP_OPEN)
       } else {
-        logger.d("Reading storage card block ranges...")
+        logger.d("Reading the storage card block ranges")
         // MIFARE Ultralight/ST25: read ranges of 4-byte blocks
         cardTransaction
             .prepareReadBlocks(
@@ -116,7 +113,7 @@ class StorageCardControlProcedure(
             .processCommands(ChannelControl.KEEP_OPEN)
       }
 
-      logger.d("Card data read successfully")
+      logger.d("Storage card read")
 
       // Step 2 - Unpack environment structure
       val environmentContent =
@@ -254,7 +251,7 @@ class StorageCardControlProcedure(
                 remainingTrips = remainingTrips))
       }
 
-      logger.i("Control procedure result: STATUS_OK")
+      logger.i("Card controlled")
 
       // Step 20 - Close the transaction
       cardTransaction.processCommands(ChannelControl.CLOSE_AFTER)
@@ -263,7 +260,9 @@ class StorageCardControlProcedure(
       return ControlResult.CardContent(
           AuthenticationMode.NO_AUTHENTICATION, displayedContract, validation)
     } catch (e: Exception) {
-      logger.e("Error during control procedure: ${storageCard.productType.name}", e)
+      logger.e(
+          "Error while controlling the storage card [productType=${storageCard.productType.name}]",
+          e)
       return ControlResult.Failed(technicalError(storageCard.productType, e), e.message)
     }
   }

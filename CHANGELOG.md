@@ -129,6 +129,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Log messages written in all the components with the same template, `Message [key1=value1, key2=value2]`, described
+  in `README.md` (section "Log Messages"): English sentence without final punctuation and without variable value, the
+  values being given in the context with the terms of the glossary, no class or method name. The refusals of the
+  cards (card not personalized, environment expired, card full, file structure not supported, different card) are
+  logged once at the `WARN` level where they are detected, instead of an `ERROR` "An error occurred while..." in each
+  service; the card communication errors are logged at the `WARN` level with their cause, the unexpected errors at the
+  `ERROR` level with their stack trace. The technical details of the server (secure session, blocks read or written)
+  are logged at the `DEBUG` level, a single `INFO` line being written per operation (instead of the `=== ... ===`
+  banners). The errors of the reloading Android client are logged with their context (instead of `Timber.e(e)`
+  alone), the exceptions are attached to the messages of the Android applications (instead of their message copied
+  in the text), and an exception thrown again is no longer logged twice. The commented logs of the card content are
+  removed from the server.
 - Vocabulary harmonized with the glossary (eighth audit): the serial number of the card is named
   `cardSerialNumber` in the multiplatform client (instead of `cardSerial`, also in the `LoadContract` route and in
   `ReadCardCache`) and `applicationSerialNumber` in the server (instead of `appSerialNumber`); the dimension of the
@@ -540,6 +552,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   required by the loading procedure (it was reset to 30 days from the reload date, losing the remaining days).
 - A card without empty contract record nor expired or exhausted contract to replace is rejected with the new
   `CARD_FULL` status (`7`): the loading returned a success without writing the contract.
+- Dashboard: each request of the .NET client gives exactly one transaction, recorded after the operation with its
+  actual result: the reading of the contracts (`SELECT_APP_AND_READ_CONTRACTS`) is a `SECURED READ` transaction (it was
+  recorded twice, once as a successful `SECURED READ` and once as a `LOAD`), and the increase of the contract counter
+  (`SELECT_APP_AND_INCREASE_CONTRACT_COUNTER`) a `LOAD` transaction, with the description of the loaded trips only
+  when it succeeds (it was recorded twice, once as a successful loading before the card was written).
 ### Reloading remote KMP client
 #### Changed
 - The Android application is moved to a new `androidApp` module, the Android Gradle plugin 9 not supporting the Kotlin

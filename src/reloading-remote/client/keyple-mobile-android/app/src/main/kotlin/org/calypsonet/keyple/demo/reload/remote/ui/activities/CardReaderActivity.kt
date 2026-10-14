@@ -84,10 +84,10 @@ class CardReaderActivity : BaseCardActivity() {
         }
       }
     } catch (e: ReaderCommunicationException) {
-      Timber.e(e)
+      Timber.e(e, "Reader communication error while initializing the readers")
       launchExceptionResponse(e, true)
     } catch (e: Exception) {
-      Timber.e(e)
+      Timber.e(e, "Error while initializing the readers")
     }
   }
 
@@ -97,7 +97,7 @@ class CardReaderActivity : BaseCardActivity() {
     try {
       deactivateAndClearReader()
     } catch (e: Exception) {
-      Timber.e(e)
+      Timber.e(e, "Error while releasing the readers")
     }
     super.onPause()
   }
@@ -131,10 +131,10 @@ class CardReaderActivity : BaseCardActivity() {
           launchStatusErrorResponse(result.card, result.status)
         }
       } catch (e: IllegalStateException) {
-        Timber.e(e)
+        Timber.w("Card not supported while reading the contracts [cause=${e.message}]")
         launchInvalidCardResponse(getString(R.string.undetermined_card_type), e.message!!)
       } catch (e: Exception) {
-        Timber.e(e)
+        Timber.e(e, "Error while reading the contracts")
         launchExceptionResponse(
             IllegalStateException(getString(R.string.server_error, e.message)),
             isFinishActivityAfterResult())

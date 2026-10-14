@@ -60,10 +60,10 @@ internal class ArriveFeedbackDevice(private val context: Context, private val lo
             object : BindJoiner.Listener {
               override fun onJoined(initDone: Boolean) {
                 if (!initDone) {
-                  logger.e("ArriveFeedbackDevice: services binding failed (initDone=false)")
+                  logger.e("Arrive services binding failed")
                   return
                 }
-                logger.i("ArriveFeedbackDevice: services bound successfully")
+                logger.i("Arrive services bound")
                 ledInterface = LedInterface.Stub.asInterface(joiner?.getService("leds"))
                 soundManager = SoundManager.Stub.asInterface(joiner?.getService("sound"))
                 deploySoundFiles()
@@ -71,7 +71,7 @@ internal class ArriveFeedbackDevice(private val context: Context, private val lo
               }
 
               override fun onBindLost(intent: Intent) {
-                logger.w("ArriveFeedbackDevice: bind lost for ${intent.action}")
+                logger.w("Arrive services binding lost [action=${intent.action}]")
                 ledInterface = null
                 soundManager = null
               }
@@ -95,14 +95,14 @@ internal class ArriveFeedbackDevice(private val context: Context, private val lo
         }
         deployedUris.add(Uri.fromFile(dest))
       } catch (e: Exception) {
-        logger.e("ArriveFeedbackDevice: failed to deploy sound file '$name'", e)
+        logger.e("Error while deploying the sound file [name=$name]", e)
       }
     }
     if (deployedUris.isNotEmpty()) {
       try {
         soundManager?.loadFiles(deployedUris)
       } catch (e: Exception) {
-        logger.e("ArriveFeedbackDevice: failed to load sound files", e)
+        logger.e("Error while loading the sound files", e)
       }
     }
   }
@@ -111,7 +111,7 @@ internal class ArriveFeedbackDevice(private val context: Context, private val lo
     try {
       ledInterface?.set(leds)
     } catch (e: Exception) {
-      logger.e("ArriveFeedbackDevice: failed to set LEDs $leds", e)
+      logger.e("Error while setting the LEDs [leds=$leds]", e)
     }
   }
 
@@ -119,7 +119,7 @@ internal class ArriveFeedbackDevice(private val context: Context, private val lo
     try {
       soundManager?.startDefaultPlayingFile(filename)
     } catch (e: Exception) {
-      logger.e("ArriveFeedbackDevice: failed to play sound '$filename'", e)
+      logger.e("Error while playing the sound [file=$filename]", e)
     }
   }
 
@@ -141,7 +141,7 @@ internal class ArriveFeedbackDevice(private val context: Context, private val lo
     try {
       setLeds(LEDS_OFF)
     } catch (e: Exception) {
-      logger.e("ArriveFeedbackDevice: error during release", e)
+      logger.e("Error while releasing the feedback device", e)
     }
     joiner?.unbind()
     joiner = null

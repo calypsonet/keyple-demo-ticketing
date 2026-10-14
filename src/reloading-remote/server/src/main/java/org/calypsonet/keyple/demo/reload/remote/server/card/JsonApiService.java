@@ -55,12 +55,10 @@ import org.slf4j.LoggerFactory;
 public class JsonApiService {
 
   private static final Logger logger = LoggerFactory.getLogger(JsonApiService.class);
-  private static final String AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS =
-      "An error occurred while analyzing the contracts: {}";
-  private static final String AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT =
-      "An error occurred while loading the contract: {}";
-  private static final String AN_ERROR_OCCURRED_WHILE_PERSONALIZING_THE_CARD =
-      "An error occurred while personalizing the card: {}";
+  private static final String CARD_COMMUNICATION_ERROR_WHILE_SELECTING =
+      "Card communication error while selecting the card application [cause={}]";
+  private static final String UNEXPECTED_ERROR_WHILE_SELECTING =
+      "Unexpected error while selecting the card application";
   private static final String PROCESSED_CARD_SELECTION_SCENARIO_JSON_STRING =
       "processedCardSelectionScenarioJsonString";
 
@@ -85,7 +83,7 @@ public class JsonApiService {
     try {
       calypsoCard = selectCard(cardReader, properties);
     } catch (CardCommunicationException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
+      logger.warn(CARD_COMMUNICATION_ERROR_WHILE_SELECTING, e.getMessage());
       recordSelectionFailure(pluginType);
       return new SelectAppAndAnalyzeContractsOutputDto(
           "",
@@ -93,7 +91,7 @@ public class JsonApiService {
           RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode(),
           e.getMessage());
     } catch (RuntimeException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_ANALYZING_THE_CONTRACTS, e.getMessage(), e);
+      logger.error(UNEXPECTED_ERROR_WHILE_SELECTING, e);
       recordSelectionFailure(pluginType);
       return new SelectAppAndAnalyzeContractsOutputDto(
           "", Collections.emptyList(), RemoteServiceStatus.SERVER_ERROR.getCode(), e.getMessage());
@@ -123,12 +121,12 @@ public class JsonApiService {
     try {
       calypsoCard = selectCard(cardReader, properties);
     } catch (CardCommunicationException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT, e.getMessage(), e);
+      logger.warn(CARD_COMMUNICATION_ERROR_WHILE_SELECTING, e.getMessage());
       recordSelectionFailure(pluginType);
       return new SelectAppAndLoadContractOutputDto(
           RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode(), e.getMessage());
     } catch (RuntimeException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_LOADING_THE_CONTRACT, e.getMessage(), e);
+      logger.error(UNEXPECTED_ERROR_WHILE_SELECTING, e);
       recordSelectionFailure(pluginType);
       return new SelectAppAndLoadContractOutputDto(
           RemoteServiceStatus.SERVER_ERROR.getCode(), e.getMessage());
@@ -140,6 +138,10 @@ public class JsonApiService {
     if (!selectedApplicationSerialNumber.equals(expectedApplicationSerialNumber)) {
       // The product has been bought for the card read before: to avoid swapping the cards, the
       // contract is only loaded in the same card
+      logger.warn(
+          "Card refused: not the card read before [serialNumber={}, expectedSerialNumber={}]",
+          selectedApplicationSerialNumber,
+          expectedApplicationSerialNumber);
       return new SelectAppAndLoadContractOutputDto(
           RemoteServiceStatus.DIFFERENT_CARD.getCode(), "Not the same card");
     }
@@ -168,12 +170,12 @@ public class JsonApiService {
     try {
       calypsoCard = selectCard(cardReader, properties);
     } catch (CardCommunicationException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_PERSONALIZING_THE_CARD, e.getMessage(), e);
+      logger.warn(CARD_COMMUNICATION_ERROR_WHILE_SELECTING, e.getMessage());
       recordSelectionFailure(pluginType);
       return new SelectAppAndPersonalizeCardOutputDto(
           RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode(), e.getMessage());
     } catch (RuntimeException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_PERSONALIZING_THE_CARD, e.getMessage(), e);
+      logger.error(UNEXPECTED_ERROR_WHILE_SELECTING, e);
       recordSelectionFailure(pluginType);
       return new SelectAppAndPersonalizeCardOutputDto(
           RemoteServiceStatus.SERVER_ERROR.getCode(), e.getMessage());

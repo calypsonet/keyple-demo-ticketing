@@ -39,6 +39,6 @@ class ReaderModule {
       logger: Logger
   ): CardReaderObservationExceptionHandlerSpi =
       CardReaderObservationExceptionHandlerSpi { pluginName, readerName, e ->
-        logger.e("An unexpected reader error occurred: $pluginName:$readerName", e)
+        logger.e("Unexpected reader error [plugin=$pluginName, reader=$readerName]", e)
       }
 }

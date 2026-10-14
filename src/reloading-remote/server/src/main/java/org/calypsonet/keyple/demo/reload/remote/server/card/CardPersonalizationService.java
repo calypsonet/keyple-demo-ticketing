@@ -39,8 +39,10 @@ import org.slf4j.LoggerFactory;
 public class CardPersonalizationService {
 
   private static final Logger logger = LoggerFactory.getLogger(CardPersonalizationService.class);
-  private static final String AN_ERROR_OCCURRED_WHILE_PERSONALIZING_THE_CARD =
-      "An error occurred while personalizing the card: {}";
+  private static final String CARD_COMMUNICATION_ERROR_WHILE_PERSONALIZING =
+      "Card communication error while personalizing the card [cause={}]";
+  private static final String UNEXPECTED_ERROR_WHILE_PERSONALIZING =
+      "Unexpected error while personalizing the card";
 
   @Inject CardRepository cardRepository;
   @Inject TransactionRecorder transactionRecorder;
@@ -61,12 +63,15 @@ public class CardPersonalizationService {
     String applicationSerialNumber = HexUtil.toHex(calypsoCard.getApplicationSerialNumber());
 
     logger.info(
-        "=== PERSONALIZE CALYPSO CARD === Plugin: {}, CSN: {}, ProductType: {}",
+        "Personalizing a Calypso card [plugin={}, serialNumber={}, productType={}]",
         pluginType,
         applicationSerialNumber,
         calypsoCard.getProductType());
 
     if (!CalypsoFiles.ALLOWED_FILE_STRUCTURES.contains(calypsoCard.getApplicationSubtype())) {
+      logger.warn(
+          "Card refused: file structure not supported [applicationSubtype={}]",
+          HexUtil.toHex(calypsoCard.getApplicationSubtype()));
       return new PersonalizeCardOutputDto(RemoteServiceStatus.CARD_REJECTED.getCode());
     }
 
@@ -78,11 +83,11 @@ public class CardPersonalizationService {
       transactionRecorder.record(pluginType, true, PERSONALIZATION, applicationSerialNumber);
       return new PersonalizeCardOutputDto(RemoteServiceStatus.SUCCESS.getCode());
     } catch (CardCommunicationException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_PERSONALIZING_THE_CARD, e.getMessage(), e);
+      logger.warn(CARD_COMMUNICATION_ERROR_WHILE_PERSONALIZING, e.getMessage());
       transactionRecorder.record(pluginType, false, PERSONALIZATION, applicationSerialNumber);
       return new PersonalizeCardOutputDto(RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_PERSONALIZING_THE_CARD, e.getMessage(), e);
+      logger.error(UNEXPECTED_ERROR_WHILE_PERSONALIZING, e);
       transactionRecorder.record(pluginType, false, PERSONALIZATION, applicationSerialNumber);
       return new PersonalizeCardOutputDto(RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
@@ -97,7 +102,7 @@ public class CardPersonalizationService {
     String cardUID = HexUtil.toHex(storageCard.getUID());
 
     logger.info(
-        "=== PERSONALIZE STORAGE CARD === Plugin: {}, UID: {}, ProductType: {}",
+        "Personalizing a storage card [plugin={}, uid={}, productType={}]",
         pluginType,
         cardUID,
         storageCard.getProductType());
@@ -113,11 +118,11 @@ public class CardPersonalizationService {
       transactionRecorder.record(pluginType, true, PERSONALIZATION, cardUID);
       return new PersonalizeCardOutputDto(RemoteServiceStatus.SUCCESS.getCode());
     } catch (CardCommunicationException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_PERSONALIZING_THE_CARD, e.getMessage(), e);
+      logger.warn(CARD_COMMUNICATION_ERROR_WHILE_PERSONALIZING, e.getMessage());
       transactionRecorder.record(pluginType, false, PERSONALIZATION, cardUID);
       return new PersonalizeCardOutputDto(RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
-      logger.error(AN_ERROR_OCCURRED_WHILE_PERSONALIZING_THE_CARD, e.getMessage(), e);
+      logger.error(UNEXPECTED_ERROR_WHILE_PERSONALIZING, e);
       transactionRecorder.record(pluginType, false, PERSONALIZATION, cardUID);
       return new PersonalizeCardOutputDto(RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {

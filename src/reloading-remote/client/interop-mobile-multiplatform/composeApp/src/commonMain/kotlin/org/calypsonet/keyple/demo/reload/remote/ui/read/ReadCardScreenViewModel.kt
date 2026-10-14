@@ -85,7 +85,7 @@ class ReadCardScreenViewModel(
         }
       }
     } catch (e: Exception) {
-      Napier.e("Error reading card", e)
+      Napier.e("Error while reading the contracts", e)
       _state.value = ReadCardScreenState.DisplayError(e.message ?: "Unknown error")
     }
   }

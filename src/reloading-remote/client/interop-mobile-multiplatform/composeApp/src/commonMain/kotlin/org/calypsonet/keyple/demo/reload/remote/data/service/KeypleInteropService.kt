@@ -100,10 +100,10 @@ class KeypleInteropService(
       scope.launch {
         try {
           val scenarioJsonString = retrieveSelectionScenarioJson()
-          Napier.d("Card Selection Scenario retrieved: $scenarioJsonString")
+          Napier.d("Card selection scenario received [scenario=$scenarioJsonString]")
           keypleTerminal?.setCardSelectionScenarioJsonString(scenarioJsonString)
         } catch (e: Exception) {
-          Napier.e("Error getting card selection scenario: ${e.message}")
+          Napier.e("Error while getting the card selection scenario", e)
         }
       }
     }
@@ -154,7 +154,7 @@ class KeypleInteropService(
           }
           is KeypleResult.Success -> {
             if (result.data.statusCode != 0) {
-              Napier.i(tag = TAG, message = "Output = ${result.data.message}")
+              Napier.i(tag = TAG, message = "Service executed [output=${result.data.message}]")
               return@withContext KeypleResult.Failure(
                   status = Status.SERVER_ERROR,
                   message = "Server side error: ${result.data.statusCode} / ${result.data.message}")
@@ -238,7 +238,8 @@ class KeypleInteropService(
       is KeypleResult.Failure -> {
         Napier.e(
             tag = TAG,
-            message = "Error executing service: ${result.status} ${result.message} ${result.data}")
+            message =
+                "Error while executing the service [status=${result.status}, message=${result.message}, output=${result.data}]")
         return KeypleResult.Failure(
             status = result.status,
             message =
@@ -247,13 +248,13 @@ class KeypleInteropService(
       is KeypleResult.Success -> {
         if (result.data != null) {
           if (result.data!!.statusCode != 0) {
-            Napier.i(tag = TAG, message = "Output = ${result.data!!.message}")
+            Napier.i(tag = TAG, message = "Service executed [output=${result.data!!.message}]")
             return KeypleResult.Failure(
                 status = Status.SERVER_ERROR,
                 message =
                     "Server side error: ${result.data!!.statusCode} / ${result.data!!.message}")
           } else {
-            Napier.i(tag = TAG, message = "Output = ${result.data!!.message}")
+            Napier.i(tag = TAG, message = "Service executed [output=${result.data!!.message}]")
             return KeypleResult.Success(result.data!!.message)
           }
         } else {
@@ -284,7 +285,8 @@ class KeypleInteropService(
       is KeypleResult.Failure -> {
         Napier.e(
             tag = TAG,
-            message = "Error executing service: ${result.status} ${result.message}, ${result.data}")
+            message =
+                "Error while executing the service [status=${result.status}, message=${result.message}, output=${result.data}]")
         return KeypleResult.Failure(result.status, result.message)
       }
       is KeypleResult.Success -> {

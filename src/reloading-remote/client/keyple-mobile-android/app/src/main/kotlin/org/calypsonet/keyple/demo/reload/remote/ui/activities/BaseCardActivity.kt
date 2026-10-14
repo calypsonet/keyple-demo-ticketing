@@ -153,8 +153,7 @@ abstract class BaseCardActivity :
   )
 
   override fun onReaderObservationError(contextInfo: String?, readerName: String?, e: Throwable?) {
-    Timber.e(e)
-    Timber.d("Error on $contextInfo, $readerName")
+    Timber.e(e, "Reader observation error [context=$contextInfo, reader=$readerName]")
     this@BaseCardActivity.finish()
   }
 

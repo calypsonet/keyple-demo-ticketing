@@ -54,7 +54,7 @@ class ServerSettingsActivity : BaseActivity() {
   }
 
   private fun ping(serverConfig: ServerConfig) {
-    Timber.i("Ping server with URL: ${serverConfig.url}")
+    Timber.i("Checking the server [url=${serverConfig.url}]")
     activityServerSettingsBinding.pingProgressBar.visibility = View.VISIBLE
     activityServerSettingsBinding.pingResultText.visibility = View.INVISIBLE
     lifecycleScope.launch(Dispatchers.Main) {
@@ -64,7 +64,7 @@ class ServerSettingsActivity : BaseActivity() {
               serverReadinessChecker.isServerReady(serverConfig)
               true
             } catch (e: Exception) {
-              Timber.e(e)
+              Timber.w("Server not ready [url=${serverConfig.url}, cause=${e.message}]")
               false
             }
           }

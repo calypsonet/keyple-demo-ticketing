@@ -50,7 +50,7 @@ namespace App.domain.api
         internal TicketingServiceApiAdapter(ReaderSpi readerSpi, string readerName, ServerSpi serverSpi)
         {
             _logger = Log.ForContext<TicketingServiceApiAdapter>();
-            _logger.Information("Creation of the ticketing service...");
+            _logger.Information("Creating the ticketing service");
 
             _reader = readerSpi;
             _server = serverSpi;
@@ -70,7 +70,7 @@ namespace App.domain.api
             }
 
             _localReaderName = readerName;
-            _logger.Information($"Select reader {_localReaderName}");
+            _logger.Information($"Reader selected [reader={_localReaderName}]");
             _reader.SelectReader(_localReaderName);
         }
 
@@ -83,7 +83,7 @@ namespace App.domain.api
         /// <inheritdoc/>
         public string SelectAppAndReadContracts()
         {
-            _logger.Information("Execute remote service to read the card content...");
+            _logger.Information("Executing the remote service [service=SELECT_APP_AND_READ_CONTRACTS]");
 
             return ExecuteRemoteService(SELECT_APP_AND_READ_CONTRACTS, new ReadContractsInputData { });
         }
@@ -91,7 +91,7 @@ namespace App.domain.api
         /// <inheritdoc/>
         public string SelectAppAndIncreaseContractCounter(int counterIncrement)
         {
-            _logger.Information("Execute remote service to increase the contract counter...");
+            _logger.Information("Executing the remote service [service=SELECT_APP_AND_INCREASE_CONTRACT_COUNTER]");
 
             return ExecuteRemoteService(SELECT_APP_AND_INCREASE_CONTRACT_COUNTER, new IncreaseContractCounterInputData { CounterIncrement = counterIncrement.ToString("X") });
         }
@@ -132,12 +132,12 @@ namespace App.domain.api
         {
             while (message.Action != END_REMOTE_SERVICE)
             {
-                _logger.Debug($"Processing action {message.Action}");
+                _logger.Debug($"Processing the action [action={message.Action}]");
 
                 CmdBody command = JsonConvert.DeserializeObject<CmdBody>(message.Body)!;
 
                 string service = command.Service;
-                _logger.Debug($"Service: {service}");
+                _logger.Debug($"Command received [service={service}]");
                 string jsonBodyString = "";
                 switch (service)
                 {

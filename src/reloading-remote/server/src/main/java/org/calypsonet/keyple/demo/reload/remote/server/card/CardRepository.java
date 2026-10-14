@@ -38,7 +38,6 @@ import org.eclipse.keyple.card.calypso.CalypsoExtensionService;
 import org.eclipse.keyple.card.calypso.crypto.legacysam.LegacySamExtensionService;
 import org.eclipse.keyple.core.service.SmartCardServiceProvider;
 import org.eclipse.keyple.core.service.resource.CardResource;
-import org.eclipse.keyple.core.util.json.JsonUtil;
 import org.eclipse.keypop.calypso.card.CalypsoCardApiFactory;
 import org.eclipse.keypop.calypso.card.WriteAccessLevel;
 import org.eclipse.keypop.calypso.card.card.CalypsoCard;
@@ -64,7 +63,7 @@ public class CardRepository {
 
   private static final Logger logger = LoggerFactory.getLogger(CardRepository.class);
 
-  private static final String CALYPSO_SESSION_CLOSED = "Calypso Session Closed.";
+  private static final String SECURE_SESSION_CLOSED = "Secure session closed";
 
   private static CardSelectionManager createCardSelectionManager() {
     ReaderApiFactory readerApiFactory = SmartCardServiceProvider.getService().getReaderApiFactory();
@@ -137,7 +136,7 @@ public class CardRepository {
     SecureRegularModeTransactionManager cardTransactionManager =
         initCardTransactionManager(cardReader, calypsoCard, samResource);
 
-    logger.info("Open Calypso Session (LOAD)...");
+    logger.debug("Opening the secure session [writeAccessLevel=LOAD]");
     cardTransactionManager
         .prepareOpenSecureSession(WriteAccessLevel.LOAD)
         .prepareReadRecords(
@@ -151,14 +150,14 @@ public class CardRepository {
         .prepareReadCounter(CalypsoFiles.SFI_COUNTERS, contractCount)
         .prepareCloseSecureSession()
         .processCommands(ChannelControl.KEEP_OPEN);
-    logger.info(CALYPSO_SESSION_CLOSED);
+    logger.debug(SECURE_SESSION_CLOSED);
 
     return parse(calypsoCard);
   }
 
   CardData readCard(CardReader cardReader, StorageCard storageCard, CardResource samResource) {
-    logger.info(
-        "Reading StorageCard: ProductType={}, BlockSize={} bytes, BlockCount={}, TotalCapacity={} bytes",
+    logger.debug(
+        "Reading the storage card [productType={}, blockSize={}, blockCount={}, capacity={}]",
         storageCard.getProductType(),
         storageCard.getProductType().getBlockSize(),
         storageCard.getProductType().getBlockCount(),
@@ -172,11 +171,11 @@ public class CardRepository {
 
     // MIFARE Classic requires authentication before reading
     if (storageCard.getProductType().hasAuthentication()) {
-      logger.info(
-          "MIFARE Classic detected - authenticating sector 1 (block 4) with KEY_A, keyNumber=0");
+      logger.debug(
+          "Authenticating the MIFARE Classic sector [sector=1, block=4, keyType=KEY_A, keyNumber=0]");
       cardTransactionManager.prepareMifareClassicAuthenticate(4, MifareClassicKeyType.KEY_A, 0);
     } else {
-      logger.info("No authentication required for StorageCard: {}", JsonUtil.toJson(storageCard));
+      logger.debug("No authentication required [productType={}]", storageCard.getProductType());
     }
 
     // For MIFARE Classic 1K, read only data blocks 4-6 (sector 1, avoiding sector trailer block 7)
@@ -186,19 +185,19 @@ public class CardRepository {
     if (storageCard.getProductType() == ProductType.MIFARE_CLASSIC_1K) {
       startBlock = 4;
       endBlock = 6;
-      logger.info(
-          "MIFARE Classic 1K - reading data blocks {} to {} (avoiding sector trailer block 7)",
+      logger.debug(
+          "Reading the MIFARE Classic 1K data blocks, sector trailer excluded [firstBlock={}, lastBlock={}]",
           startBlock,
           endBlock);
     } else {
-      logger.info("Preparing to read blocks {} to {} from StorageCard", startBlock, endBlock);
+      logger.debug("Reading the blocks [firstBlock={}, lastBlock={}]", startBlock, endBlock);
     }
 
     cardTransactionManager
         .prepareReadBlocks(startBlock, endBlock)
         .processCommands(ChannelControl.KEEP_OPEN);
 
-    logger.info("StorageCard read completed successfully");
+    logger.debug("Storage card read");
     return parse(storageCard);
   }
 
@@ -208,7 +207,7 @@ public class CardRepository {
     SecureRegularModeTransactionManager cardTransactionManager =
         initCardTransactionManager(cardReader, calypsoCard, samResource);
 
-    logger.info("Open Calypso Session (LOAD)...");
+    logger.debug("Opening the secure session [writeAccessLevel=LOAD]");
     cardTransactionManager.prepareOpenSecureSession(WriteAccessLevel.LOAD);
 
     /* Update contract records */
@@ -240,15 +239,15 @@ public class CardRepository {
     }
 
     cardTransactionManager.prepareCloseSecureSession().processCommands(ChannelControl.KEEP_OPEN);
-    logger.info(CALYPSO_SESSION_CLOSED);
+    logger.debug(SECURE_SESSION_CLOSED);
 
     return 0;
   }
 
   int writeCard(
       CardReader cardReader, StorageCard storageCard, CardResource samResource, CardData card) {
-    logger.info(
-        "Writing StorageCard: ProductType={}, UpdatedContracts={}, EventUpdated={}",
+    logger.debug(
+        "Writing the storage card [productType={}, updatedContracts={}, eventUpdated={}]",
         storageCard.getProductType(),
         card.getUpdatedContracts().size(),
         card.isEventUpdated());
@@ -261,8 +260,8 @@ public class CardRepository {
 
     // MIFARE Classic requires authentication before writing
     if (storageCard.getProductType().hasAuthentication()) {
-      logger.info(
-          "MIFARE Classic detected - authenticating sector 1 (block 4) with KEY_A, keyNumber=0 before write");
+      logger.debug(
+          "Authenticating the MIFARE Classic sector [sector=1, block=4, keyType=KEY_A, keyNumber=0]");
       cardTransactionManager.prepareMifareClassicAuthenticate(4, MifareClassicKeyType.KEY_A, 0);
     }
 
@@ -279,7 +278,7 @@ public class CardRepository {
               (storageCard.getProductType() == ProductType.MIFARE_CLASSIC_1K)
                   ? 5
                   : StorageCardBlocks.CONTRACT_FIRST_BLOCK;
-          logger.info("Updating contract on StorageCard at block {}", contractBlock);
+          logger.debug("Updating the contract [block={}]", contractBlock);
           cardTransactionManager.prepareWriteBlocks(
               contractBlock, StorageCardContractCodec.INSTANCE.encode(contract));
         }
@@ -293,13 +292,13 @@ public class CardRepository {
           (storageCard.getProductType() == ProductType.MIFARE_CLASSIC_1K)
               ? 6
               : StorageCardBlocks.EVENT_FIRST_BLOCK;
-      logger.info("Updating event on StorageCard at block {}", eventBlock);
+      logger.debug("Updating the event [block={}]", eventBlock);
       cardTransactionManager.prepareWriteBlocks(
           eventBlock, StorageCardEventCodec.INSTANCE.encode(buildEvent(card.getEvent())));
     }
 
     cardTransactionManager.processCommands(ChannelControl.KEEP_OPEN);
-    logger.info("StorageCard write completed successfully");
+    logger.debug("Storage card written");
     return 0;
   }
 
@@ -308,7 +307,7 @@ public class CardRepository {
     SecureRegularModeTransactionManager cardTransactionManager =
         initCardTransactionManager(cardReader, calypsoCard, samResource);
 
-    logger.info("Open Calypso Session (PERSONALIZATION)...");
+    logger.debug("Opening the secure session [writeAccessLevel=PERSONALIZATION]");
     cardTransactionManager.prepareOpenSecureSession(WriteAccessLevel.PERSONALIZATION);
 
     // Fill the environment structure with predefined values
@@ -333,13 +332,13 @@ public class CardRepository {
         CalypsoFiles.SFI_COUNTERS, 1, new byte[contractCount * 3]);
 
     cardTransactionManager.prepareCloseSecureSession().processCommands(ChannelControl.KEEP_OPEN);
-    logger.info(CALYPSO_SESSION_CLOSED);
+    logger.debug(SECURE_SESSION_CLOSED);
   }
 
   void personalizeCard(CardReader cardReader, StorageCard storageCard, CardResource samResource) {
 
-    logger.info(
-        "Personalizing StorageCard: ProductType={}, BlockSize={} bytes",
+    logger.debug(
+        "Personalizing the storage card [productType={}, blockSize={}]",
         storageCard.getProductType(),
         storageCard.getProductType().getBlockSize());
 
@@ -351,8 +350,8 @@ public class CardRepository {
 
     // MIFARE Classic requires authentication before writing
     if (storageCard.getProductType().hasAuthentication()) {
-      logger.info(
-          "MIFARE Classic detected - authenticating sector 1 (block 4) with KEY_A, keyNumber=0 before personalization");
+      logger.debug(
+          "Authenticating the MIFARE Classic sector [sector=1, block=4, keyType=KEY_A, keyNumber=0]");
       cardTransactionManager.prepareMifareClassicAuthenticate(4, MifareClassicKeyType.KEY_A, 0);
     }
 
@@ -365,23 +364,23 @@ public class CardRepository {
     int eventBlock = isMifareClassic ? 6 : StorageCardBlocks.EVENT_FIRST_BLOCK;
 
     // Fill the environment structure with predefined values
-    logger.info("Writing environment structure at block {}", environmentBlock);
+    logger.debug("Writing the environment [block={}]", environmentBlock);
     cardTransactionManager.prepareWriteBlocks(
         environmentBlock,
         StorageCardEnvironmentHolderCodec.INSTANCE.encode(buildEnvironmentHolderStructure()));
 
     // Clear the first event (update with a byte array filled with 0 s).
-    logger.info("Clearing event at block {}", eventBlock);
+    logger.debug("Clearing the event [block={}]", eventBlock);
     cardTransactionManager.prepareWriteBlocks(
         eventBlock, new byte[StorageCardBlocks.EVENT_RECORD_SIZE_BYTES]);
 
     // Clear all contracts (update with a byte array filled with 0 s).
-    logger.info("Clearing contract at block {}", contractBlock);
+    logger.debug("Clearing the contract [block={}]", contractBlock);
     cardTransactionManager.prepareWriteBlocks(
         contractBlock, new byte[StorageCardBlocks.CONTRACT_RECORD_SIZE_BYTES]);
 
     cardTransactionManager.processCommands(ChannelControl.KEEP_OPEN);
-    logger.info("StorageCard personalization completed successfully");
+    logger.debug("Storage card personalized");
   }
 
   @NotNull
@@ -485,8 +484,8 @@ public class CardRepository {
     // MIFARE Classic 1K uses a different layout: 1 block of 16 bytes per structure
     // (blocks 4, 5, 6) instead of 4 blocks of 4 bytes (blocks 4-7, 8-11, 12-15)
     if (storageCard.getProductType() == ProductType.MIFARE_CLASSIC_1K) {
-      logger.info(
-          "Parsing MIFARE Classic 1K data: Using single-block layout (block 4=Environment, 5=Contract, 6=Event)");
+      logger.debug(
+          "Parsing the MIFARE Classic 1K data, single-block layout [environmentBlock=4, contractBlock=5, eventBlock=6]");
 
       // Parse environment from block 4 (16 bytes)
       environment = StorageCardEnvironmentHolderCodec.INSTANCE.decode(storageCard.getBlock(4));
@@ -499,8 +498,8 @@ public class CardRepository {
 
     } else {
       // MIFARE Ultralight and ST25 SRT512 use multi-block layout
-      logger.info(
-          "Parsing StorageCard data: ProductType={}, Reading blocks {}-{} for environment",
+      logger.debug(
+          "Parsing the storage card data [productType={}, environmentFirstBlock={}, environmentLastBlock={}]",
           storageCard.getProductType(),
           StorageCardBlocks.ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
           StorageCardBlocks.ENVIRONMENT_AND_HOLDER_LAST_BLOCK);
@@ -512,8 +511,8 @@ public class CardRepository {
                   StorageCardBlocks.ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
                   StorageCardBlocks.ENVIRONMENT_AND_HOLDER_LAST_BLOCK));
 
-      logger.info(
-          "Parsing contract from blocks {}-{}",
+      logger.debug(
+          "Parsing the contract [firstBlock={}, lastBlock={}]",
           StorageCardBlocks.CONTRACT_FIRST_BLOCK,
           StorageCardBlocks.COUNTER_LAST_BLOCK);
 

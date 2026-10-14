@@ -38,7 +38,7 @@ fun main(args: Array<String>) = application {
   for (arg: String in args) {
     if (arg.startsWith("-filter=")) {
       filter = arg.removePrefix("-filter=")
-      Napier.d("Filter reader with: $filter")
+      Napier.d("Reader filter set [filter=$filter]")
     }
   }
 

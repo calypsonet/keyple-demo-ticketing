@@ -90,7 +90,7 @@ public class CardConfigurator {
 
   private void setupCardResourceService(Plugin plugin) {
     logger.info(
-        "Set up CardResourceService for plugin '{}' with readerNameRegex '{}' and samProfileName '{}'",
+        "Card resource service set up [plugin={}, readerNameRegex={}, samProfile={}]",
         plugin.getName(),
         samReaderFilter,
         SAM_RESOURCE_PROFILE_NAME);
@@ -129,7 +129,7 @@ public class CardConfigurator {
       // E.g. no reader connected or no SAM inserted: the card resource service monitors the plugin
       // and its readers, so the SAM resource becomes available as soon as a SAM is detected.
       logger.warn(
-          "No SAM card resource available yet for profile '{}' from reader '{}' in plugin '{}'",
+          "No SAM card resource available yet [samProfile={}, readerNameRegex={}, plugin={}]",
           SAM_RESOURCE_PROFILE_NAME,
           samReaderFilter,
           plugin.getName());
@@ -151,8 +151,7 @@ public class CardConfigurator {
             .setIsoProtocol(PcscReader.IsoProtocol.T0)
             .setSharingMode(PcscReader.SharingMode.SHARED);
       } catch (Exception e) {
-        logger.error(
-            "An error occurred while setting up the SAM reader {}", cardReader.getName(), e);
+        logger.error("Error while setting up the SAM reader [reader={}]", cardReader.getName(), e);
       }
     }
   }
@@ -176,8 +175,7 @@ public class CardConfigurator {
       implements PluginObservationExceptionHandlerSpi {
     @Override
     public void onPluginObservationError(String pluginName, Throwable e) {
-      logger.error(
-          "An error occurred while observing the card reader remote plugin {}", pluginName, e);
+      logger.error("Error while observing the remote plugin [plugin={}]", pluginName, e);
     }
   }
 
@@ -189,7 +187,7 @@ public class CardConfigurator {
       // For a RemotePluginServer, the events can only be of the type READER_CONNECTED.
       // So there is no need to analyze the event type.
       logger.info(
-          "Event received {} {} {}",
+          "Plugin event received [type={}, plugin={}, reader={}]",
           pluginEvent.getType(),
           pluginEvent.getPluginName(),
           pluginEvent.getReaderNames().first());
@@ -220,12 +218,16 @@ public class CardConfigurator {
       implements PluginObservationExceptionHandlerSpi, CardReaderObservationExceptionHandlerSpi {
     @Override
     public void onPluginObservationError(String pluginName, Throwable e) {
-      logger.error("Error while monitoring the SAM plugin: {}", pluginName, e);
+      logger.error("Error while monitoring the SAM plugin [plugin={}]", pluginName, e);
     }
 
     @Override
     public void onReaderObservationError(String contextInfo, String readerName, Throwable e) {
-      logger.error("Error while monitoring the SAM reader: {}/{}", contextInfo, readerName, e);
+      logger.error(
+          "Error while monitoring the SAM reader [context={}, reader={}]",
+          contextInfo,
+          readerName,
+          e);
     }
   }
 }

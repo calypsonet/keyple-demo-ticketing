@@ -264,7 +264,7 @@ class CalypsoCardControlProcedure(
         }
       }
 
-      logger.i("Control procedure result: STATUS_OK")
+      logger.i("Card controlled")
 
       // Step 20 - If a session is open, Close the session
       if (cardTransaction is SecureRegularModeTransactionManager ||
@@ -275,7 +275,7 @@ class CalypsoCardControlProcedure(
       // Step 21 - Return the status of the operation to the upper layer. <Exit process>
       return ControlResult.CardContent(authenticationMode, displayedContract, validation)
     } catch (e: Exception) {
-      logger.e("Control procedure error: ${e.message}")
+      logger.e("Error while controlling the card", e)
       return ControlResult.Failed(TechnicalError.UNEXPECTED, e.message)
     }
   }

@@ -114,10 +114,10 @@ class CardReaderSession(
   /** Ends the processing of the presented card, the reader waiting for its removal. */
   fun endCardProcessing() {
     try {
-      logger.i("endCardProcessing")
+      logger.d("Ending the card processing")
       (terminalReaders.getCardReader() as ObservableCardReader).finalizeCardProcessing()
     } catch (e: Exception) {
-      logger.i("cannot end card processing: $e")
+      logger.w("Error while ending the card processing", e)
     }
   }
 

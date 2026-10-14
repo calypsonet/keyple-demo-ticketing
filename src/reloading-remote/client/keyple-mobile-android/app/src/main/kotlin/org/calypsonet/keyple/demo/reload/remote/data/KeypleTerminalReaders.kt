@@ -185,7 +185,7 @@ class KeypleTerminalReaders @Inject constructor(private val logger: Logger) : Te
     try {
       SmartCardServiceProvider.getService().unregisterPlugin(pluginName)
     } catch (e: Exception) {
-      logger.e("Failed to unregister plugin $pluginName", e)
+      logger.e("Error while unregistering the plugin [plugin=$pluginName]", e)
     }
   }
 
