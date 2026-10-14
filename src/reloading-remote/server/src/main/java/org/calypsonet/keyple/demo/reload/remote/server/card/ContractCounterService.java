@@ -72,7 +72,7 @@ public class ContractCounterService {
       List<ContractStructure> presentContracts = contractAnalysisService.findPresentContracts(card);
 
       for (ContractStructure contractStructure : presentContracts) {
-        output.add(formatContractStructure(contractStructure));
+        output.add(describeContract(contractStructure));
       }
     } catch (CardNotPersonalizedException e) {
       // Refusal logged where it is detected
@@ -162,7 +162,7 @@ public class ContractCounterService {
   }
 
   /** Returns the description of a contract, one field per line, sent as text to the client. */
-  private static String formatContractStructure(ContractStructure contractStructure) {
+  private static String describeContract(ContractStructure contractStructure) {
     StringBuilder builder = new StringBuilder();
 
     builder

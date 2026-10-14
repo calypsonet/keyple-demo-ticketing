@@ -37,5 +37,6 @@ class ReadCardCache {
 
   fun clear() {
     cardContracts = null
+    cardSerialNumber = ""
   }
 }

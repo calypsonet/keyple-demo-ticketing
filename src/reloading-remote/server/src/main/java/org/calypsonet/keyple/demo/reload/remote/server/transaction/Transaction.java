@@ -27,7 +27,7 @@ public class Transaction {
   String startedAt; // when the transaction started
   String type; // type of transaction
   String status; // SUCCESS or FAIL
-  String contractLoaded; // (opt) description of the contract loaded
+  String loadedContract; // (opt) description of the contract loaded
 
   public Transaction() {
     this.id = UUID.randomUUID().toString();
@@ -61,8 +61,8 @@ public class Transaction {
     return startedAt;
   }
 
-  public String getContractLoaded() {
-    return contractLoaded;
+  public String getLoadedContract() {
+    return loadedContract;
   }
 
   public Transaction setCardSerialNumber(String cardSerialNumber) {
@@ -85,8 +85,8 @@ public class Transaction {
     return this;
   }
 
-  public Transaction setContractLoaded(String contractLoaded) {
-    this.contractLoaded = contractLoaded;
+  public Transaction setLoadedContract(String loadedContract) {
+    this.loadedContract = loadedContract;
     return this;
   }
 }

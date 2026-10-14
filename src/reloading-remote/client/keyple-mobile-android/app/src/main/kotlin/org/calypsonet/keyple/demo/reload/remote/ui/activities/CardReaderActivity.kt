@@ -121,7 +121,7 @@ class CardReaderActivity : BaseCardActivity() {
                     result.card.description,
                     result.contracts.map { it.toUi(resources) }),
                 result.card.serialNumber,
-                isFinishActivityAfterResult())
+                shouldFinishActivityAfterResult())
           }
         } else {
           showStatusError(result.card, result.status)
@@ -131,7 +131,7 @@ class CardReaderActivity : BaseCardActivity() {
         showInvalidCard(getString(R.string.undetermined_card_type), "")
       } catch (e: Exception) {
         Timber.e(e, "Error while reading the contracts")
-        showError(getString(R.string.server_error), isFinishActivityAfterResult())
+        showError(getString(R.string.server_error), shouldFinishActivityAfterResult())
       } finally {
         cardReaderSession.endCardProcessing()
       }

@@ -21,7 +21,7 @@ function Row(props) {
       <TableCell align="center">{row.type}</TableCell>
       <TableCell align="center">{row.cardSerialNumber}</TableCell>
       <TableCell align="center">{row.status}</TableCell>
-      <TableCell align="center">{row.contractLoaded}</TableCell>
+      <TableCell align="center">{row.loadedContract}</TableCell>
     </TableRow>
   );
 }

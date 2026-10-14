@@ -105,7 +105,7 @@ abstract class BaseActivity : AppCompatActivity() {
     autoReturnCountdown = null
   }
 
-  private fun updateServerReadyIndicator() {
+  private fun updateServerReadinessIndicator() {
     if (appSettings.lastServerReady)
         toolbarBinding.serverStatus.setImageResource(R.drawable.ic_connection_success)
     else toolbarBinding.serverStatus.setImageResource(R.drawable.ic_connection_wait)
@@ -135,7 +135,7 @@ abstract class BaseActivity : AppCompatActivity() {
         }
       }
       appSettings.lastServerReady = isUp
-      updateServerReadyIndicator()
+      updateServerReadinessIndicator()
     }
   }
 

@@ -51,16 +51,16 @@ public class TransactionRecorder {
    * @param success True if the transaction succeeded.
    * @param type Type of the transaction.
    * @param cardSerialNumber Serial number of the card.
-   * @param contractLoaded Description of the contract loaded, null if not relevant.
+   * @param loadedContract Description of the loaded contract, null if not relevant.
    */
   void record(
-      String plugin, boolean success, String type, String cardSerialNumber, String contractLoaded) {
+      String plugin, boolean success, String type, String cardSerialNumber, String loadedContract) {
     transactionService.push(
         new Transaction()
             .setPlugin(plugin)
             .setStatus(success ? SUCCESS : FAIL)
             .setType(type)
             .setCardSerialNumber(cardSerialNumber)
-            .setContractLoaded(contractLoaded));
+            .setLoadedContract(loadedContract));
   }
 }

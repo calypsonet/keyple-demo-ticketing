@@ -142,10 +142,10 @@ namespace App.domain.api
                 switch (service)
                 {
                     case IS_CONTACTLESS:
-                        jsonBodyString = IsContactless();
+                        jsonBodyString = CreateIsContactlessResponse();
                         break;
                     case IS_CARD_PRESENT:
-                        jsonBodyString = IsCardPresent();
+                        jsonBodyString = CreateIsCardPresentResponse();
                         break;
                     case TRANSMIT_CARD_SELECTION_REQUESTS:
                         jsonBodyString = TransmitCardSelectionRequests(message);
@@ -163,14 +163,14 @@ namespace App.domain.api
             return message;
         }
 
-        private static string IsContactless()
+        private static string CreateIsContactlessResponse()
         {
             IsContactlessRespBody isContactlessRespBody = new IsContactlessRespBody();
             isContactlessRespBody.Result = true;
             return JsonConvert.SerializeObject(isContactlessRespBody, Formatting.None);
         }
 
-        private static string IsCardPresent()
+        private static string CreateIsCardPresentResponse()
         {
             IsCardPresentRespBody isCardPresentRespBody = new IsCardPresentRespBody();
             isCardPresentRespBody.Result = true;

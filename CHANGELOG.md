@@ -129,6 +129,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Method names (third audit): the .NET client builds the responses of the remote reader with
+  `CreateIsContactlessResponse()` and `CreateIsCardPresentResponse()` (instead of `IsContactless()` and
+  `IsCardPresent()`, which returned a JSON text and not a boolean); the description of the loaded contract of a
+  transaction is named `loadedContract` (server and dashboard, JSON key included) instead of `contractLoaded`, which
+  suggested a boolean; the cache of the multiplatform client also clears the serial number of the last card read
+  (`ReadCardCache.clear()`, which only cleared its contracts). Harmonized names: `describeContract()` on the server (as
+  `describeLoadedContract()`, instead of `formatContractStructure()`), `updateServerReadinessIndicator()` and
+  `shouldFinishActivityAfterResult()` in the reloading Android client (instead of `updateServerReadyIndicator()` and
+  `isFinishActivityAfterResult()`), and `AppState.serverReady` in the multiplatform client (instead of `serverOnline`).
 - Method names (second audit): the result screens of the reloading Android client are displayed by
   `displayResult()` (instead of `changeDisplay()`), as in the control and validation apps; the control and validation
   apps request the missing permissions with `PermissionHelper.requestMissingPermissions()` (instead of

@@ -23,7 +23,7 @@ import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleInteropServic
 import org.calypsonet.keyple.demo.reload.remote.data.service.ServerConfigRepository
 import org.calypsonet.keyple.demo.reload.remote.data.service.ServerReadinessChecker
 
-data class AppState(val serverOnline: Boolean = false)
+data class AppState(val serverReady: Boolean = false)
 
 class AppViewModel(
     private val keypleInteropService: KeypleInteropService,
@@ -61,7 +61,7 @@ class AppViewModel(
           }
           lastServerReady = serverReady
         }
-        _state.value = AppState(serverOnline = serverReady)
+        _state.value = AppState(serverReady = serverReady)
         delay(SERVER_CHECK_PERIOD_MS)
       }
     }
