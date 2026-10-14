@@ -226,7 +226,6 @@ class CardReaderActivity : BaseActivity() {
                   }
               if (validationResult is ValidationResult.CardLost) {
                 // Card removed during transaction: silent reset, no display, no sound
-                Timber.i("Card removed during the transaction")
                 currentAppState = AppState.WAIT_CARD
                 cardReaderSession.endCardProcessing()
                 playWaitingAnimation()

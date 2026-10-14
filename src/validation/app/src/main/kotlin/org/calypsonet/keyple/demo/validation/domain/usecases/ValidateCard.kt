@@ -40,6 +40,7 @@ class ValidateCard(
   /** Validates the card selected by the provided selection scenario response. */
   operator fun invoke(selectionResponse: ScheduledCardSelectionsResponse): ValidationResult {
     val result = validate(selectionResponse)
+    log(result)
     when (result) {
       is ValidationResult.Accepted -> userFeedback.displayResultSuccess()
       is ValidationResult.CardLost -> {
@@ -71,6 +72,24 @@ class ValidateCard(
     } catch (e: Exception) {
       logger.e("Error while validating the card", e)
       ValidationResult.Failed(card = null, error = TechnicalError.UNEXPECTED, detail = e.message)
+    }
+  }
+
+  /** Logs the result of the validation, the technical errors being logged where they occur. */
+  private fun log(result: ValidationResult) {
+    when (result) {
+      is ValidationResult.Accepted ->
+          logger.i(
+              "Card validated [card=${result.card}, remainingTrips=${result.remainingTrips}, " +
+                  "passValidityEndDate=${result.passValidityEndDate}]")
+      is ValidationResult.Rejected ->
+          logger.w("Card refused [card=${result.card}, reason=${result.reason}]")
+      is ValidationResult.CardLost ->
+          logger.w("Card removed during the transaction [card=${result.card}]")
+      is ValidationResult.NotSelected ->
+          logger.w(
+              "Card not selected [error=${result.error}, fileStructure=${result.fileStructure}]")
+      is ValidationResult.Failed -> {}
     }
   }
 }

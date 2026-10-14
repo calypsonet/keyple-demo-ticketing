@@ -75,13 +75,8 @@ class StorageCardValidationProcedure(
         }
 
     return try {
-      validate(context, storageCard, card, cardTransaction).also {
-        if (it is ValidationResult.Rejected) {
-          logger.w("Card refused [reason=${it.reason}]")
-        }
-      }
+      validate(context, storageCard, card, cardTransaction)
     } catch (e: SCCardCommunicationException) {
-      logger.w("Card removed during the transaction [productType=${storageCard.productType.name}]")
       ValidationResult.CardLost(card)
     } catch (e: Exception) {
       logger.e(
@@ -297,7 +292,6 @@ class StorageCardValidationProcedure(
 
     cardTransaction.processCommands(ChannelControl.CLOSE_AFTER)
 
-    logger.i("Card validated [productType=${storageCard.productType.name}]")
     return ValidationResult.Accepted(
         card = card,
         dateTime = validationDateTime,

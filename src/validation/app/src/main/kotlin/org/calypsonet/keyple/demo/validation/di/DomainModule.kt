@@ -61,6 +61,6 @@ class DomainModule {
           logger,
           // Validation procedures of the supported card technologies
           listOf(
-              CalypsoCardValidationProcedure(keypopApiProvider),
+              CalypsoCardValidationProcedure(keypopApiProvider, logger),
               StorageCardValidationProcedure(keypopApiProvider, logger)))
 }

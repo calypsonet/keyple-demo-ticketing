@@ -95,7 +95,7 @@ internal class ArriveFeedbackDevice(private val context: Context, private val lo
         }
         deployedUris.add(Uri.fromFile(dest))
       } catch (e: Exception) {
-        logger.e("Error while deploying the sound file [name=$name]", e)
+        logger.e("Error while deploying the sound file [file=$name]", e)
       }
     }
     if (deployedUris.isNotEmpty()) {

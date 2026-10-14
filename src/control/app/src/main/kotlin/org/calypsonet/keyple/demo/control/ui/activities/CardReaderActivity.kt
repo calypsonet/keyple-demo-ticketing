@@ -126,7 +126,7 @@ class CardReaderActivity : BaseActivity() {
   private fun handleAppEvents(appState: AppState, readerEvent: CardReaderEvent?) {
     var newAppState = appState
     Timber.d(
-        "Handling a reader event [state=$currentAppState, newState=$newAppState, event=${readerEvent?.type}]")
+        "Handling a reader event [state=$currentAppState, newState=$newAppState, eventType=${readerEvent?.type}]")
     when (readerEvent?.type) {
       CardReaderEvent.Type.CARD_INSERTED,
       CardReaderEvent.Type.CARD_MATCHED -> {
@@ -179,7 +179,7 @@ class CardReaderActivity : BaseActivity() {
                 // The activity has been destroyed
                 throw e
               } catch (e: IllegalStateException) {
-                Timber.e(e, "Error while controlling the card")
+                Timber.e(e, "Error while displaying the control result")
                 withContext(Dispatchers.Main) { dismissProgress() }
                 displayResult(
                     UiControlResult(resultType = ResultType.ERROR, contractsList = emptyList()))

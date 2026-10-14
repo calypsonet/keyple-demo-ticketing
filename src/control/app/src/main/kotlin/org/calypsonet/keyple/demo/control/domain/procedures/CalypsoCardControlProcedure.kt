@@ -264,8 +264,6 @@ class CalypsoCardControlProcedure(
         }
       }
 
-      logger.i("Card controlled")
-
       // Step 20 - If a session is open, Close the session
       if (cardTransaction is SecureRegularModeTransactionManager ||
           cardTransaction is SecurePkiModeTransactionManager) {

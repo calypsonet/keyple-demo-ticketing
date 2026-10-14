@@ -129,7 +129,9 @@ public class CardSamObserver
 
   private ObservableCardReader searchReader(Plugin plugin) {
     logger.info(
-        "Searching the SAM reader [plugin={}, filter={}]", plugin.getName(), samReaderFilter);
+        "Searching the SAM reader [plugin={}, readerNameRegex={}]",
+        plugin.getName(),
+        samReaderFilter);
     Pattern p = Pattern.compile(samReaderFilter);
     for (CardReader reader : plugin.getReaders()) {
       logger.debug("Checking the reader [reader={}]", reader.getName());

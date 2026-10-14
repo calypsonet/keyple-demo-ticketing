@@ -12,7 +12,6 @@
 using App.domain.api;
 using Newtonsoft.Json;
 using Serilog;
-using Serilog.Events;
 
 namespace App.application
 {
@@ -45,11 +44,7 @@ namespace App.application
         /// </summary>
         public void Start()
         {
-            DisplayAndLog("Waiting for a card...", ConsoleColor.DarkBlue, LogEventLevel.Information, _logger);
-
-            _ticketingService.WaitForCardInsertion();
-
-            DisplayAndLog("Card found!\nContacting server...", ConsoleColor.Green, LogEventLevel.Information, _logger);
+            WaitForCard();
 
             // Select the card and read its content
             string output = _ticketingService.SelectAppAndReadContracts();
@@ -59,20 +54,22 @@ namespace App.application
 
             if (outputDto.OutputData.StatusCode != 0)
             {
-                DisplayAndLog("Reading failed, status code: " + outputDto.OutputData.StatusCode, ConsoleColor.DarkRed, LogEventLevel.Information, _logger);
-                DisplayAndLog(outputDto.OutputData.Message, ConsoleColor.DarkRed, LogEventLevel.Information, _logger);
+                Display("Reading failed, status code: " + outputDto.OutputData.StatusCode, ConsoleColor.DarkRed);
+                Display(outputDto.OutputData.Message, ConsoleColor.DarkRed);
+                _logger.Warning($"Contracts not read [statusCode={outputDto.OutputData.StatusCode}, message={outputDto.OutputData.Message}]");
                 return;
             }
 
-            DisplayAndLog("Reading successful", ConsoleColor.DarkGreen, LogEventLevel.Information, _logger);
+            Display("Reading successful", ConsoleColor.DarkGreen);
 
             List<string> contracts = outputDto.OutputData.Items;
+            _logger.Information($"Contracts read [count={contracts.Count}]");
             int i = 1;
             bool multitripContractPresent = false;
             foreach (string contract in contracts)
             {
                 // Print each item to the console
-                DisplayAndLog($"Contract #{i++}:\r\n" + contract, ConsoleColor.DarkGreen, LogEventLevel.Information, _logger);
+                Display($"Contract #{i++}:\r\n" + contract, ConsoleColor.DarkGreen);
                 if (contract.Contains("MULTI_TRIP"))
                 {
                     multitripContractPresent = true;
@@ -81,7 +78,8 @@ namespace App.application
 
             if (!multitripContractPresent)
             {
-                DisplayAndLog("No MULTI_TRIP contract found.", ConsoleColor.DarkRed, LogEventLevel.Information, _logger);
+                Display("No MULTI_TRIP contract found.", ConsoleColor.DarkRed);
+                _logger.Warning("No multi-trip contract found");
             }
 
             int tripsToLoad;
@@ -96,12 +94,10 @@ namespace App.application
                 }
             } while (tripsToLoad < 1 || tripsToLoad > 20);
 
-            DisplayAndLog($"{tripsToLoad} trip(s) will now be loaded in the card.", ConsoleColor.DarkCyan, LogEventLevel.Information, _logger);
-            DisplayAndLog("Waiting for a card...", ConsoleColor.DarkBlue, LogEventLevel.Information, _logger);
+            Display($"{tripsToLoad} trip(s) will now be loaded in the card.", ConsoleColor.DarkCyan);
+            _logger.Information($"Loading trips [tripsToLoad={tripsToLoad}]");
 
-            _ticketingService.WaitForCardInsertion();
-
-            DisplayAndLog("Card found!\nContacting server...", ConsoleColor.Green, LogEventLevel.Information, _logger);
+            WaitForCard();
 
             // Select the application of the card and increase the contract counter by the number of trips to load
             output = _ticketingService.SelectAppAndIncreaseContractCounter(tripsToLoad);
@@ -110,28 +106,42 @@ namespace App.application
 
             if (outputDto.OutputData.StatusCode == 0)
             {
-                DisplayAndLog("Loading successful", ConsoleColor.DarkGreen, LogEventLevel.Information, _logger);
+                Display("Loading successful", ConsoleColor.DarkGreen);
+                _logger.Information($"Trips loaded [tripsToLoad={tripsToLoad}]");
             }
             else
             {
-                DisplayAndLog("Loading failed, status code: " + outputDto.OutputData.StatusCode, ConsoleColor.DarkRed, LogEventLevel.Information, _logger);
-                DisplayAndLog(outputDto.OutputData.Message, ConsoleColor.DarkRed, LogEventLevel.Information, _logger);
+                Display("Loading failed, status code: " + outputDto.OutputData.StatusCode, ConsoleColor.DarkRed);
+                Display(outputDto.OutputData.Message, ConsoleColor.DarkRed);
+                _logger.Warning($"Trips not loaded [statusCode={outputDto.OutputData.StatusCode}, message={outputDto.OutputData.Message}]");
             }
         }
 
         /// <summary>
-        /// Displays the text in the specified color on the console and logs it with the specified log level using the provided logger.
+        /// Waits for a card, the user being invited to present it.
         /// </summary>
-        /// <param name="text">The text to be displayed and logged.</param>
+        private void WaitForCard()
+        {
+            Display("Waiting for a card...", ConsoleColor.DarkBlue);
+            _logger.Information("Waiting for a card");
+
+            _ticketingService.WaitForCardInsertion();
+
+            Display("Card found!\nContacting server...", ConsoleColor.Green);
+            _logger.Information("Card found");
+        }
+
+        /// <summary>
+        /// Displays the text in the specified color on the console. The texts displayed are written for the user, the
+        /// log messages following the convention of the project (see "Log Messages" in the README of the project).
+        /// </summary>
+        /// <param name="text">The text to be displayed.</param>
         /// <param name="color">The color in which the text will be displayed on the console.</param>
-        /// <param name="logLevel">The log level at which the text will be logged.</param>
-        /// <param name="logger">The logger instance to use for logging.</param>
-        private void DisplayAndLog(string text, ConsoleColor color, LogEventLevel logLevel, ILogger logger)
+        private static void Display(string text, ConsoleColor color)
         {
             Console.ForegroundColor = color;
             Console.WriteLine(text);
             Console.ResetColor();
-            logger.Write(logLevel, text);
         }
     }
 }

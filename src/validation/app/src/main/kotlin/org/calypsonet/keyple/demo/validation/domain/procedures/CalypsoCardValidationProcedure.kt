@@ -27,6 +27,7 @@ import org.calypsonet.keyple.demo.validation.domain.model.RejectionReason
 import org.calypsonet.keyple.demo.validation.domain.model.TechnicalError
 import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
 import org.calypsonet.keyple.demo.validation.domain.spi.KeypopApiProvider
+import org.calypsonet.keyple.demo.validation.domain.spi.Logger
 import org.eclipse.keyple.core.util.HexUtil
 import org.eclipse.keypop.calypso.card.WriteAccessLevel
 import org.eclipse.keypop.calypso.card.card.CalypsoCard
@@ -35,8 +36,10 @@ import org.eclipse.keypop.reader.CardCommunicationException
 import org.eclipse.keypop.reader.ChannelControl
 import org.eclipse.keypop.reader.selection.spi.SmartCard
 
-class CalypsoCardValidationProcedure(private val keypopApiProvider: KeypopApiProvider) :
-    BaseValidationProcedure() {
+class CalypsoCardValidationProcedure(
+    private val keypopApiProvider: KeypopApiProvider,
+    private val logger: Logger
+) : BaseValidationProcedure() {
 
   override fun supports(card: SmartCard): Boolean = card is CalypsoCard
 
@@ -54,6 +57,7 @@ class CalypsoCardValidationProcedure(private val keypopApiProvider: KeypopApiPro
               .createSecureRegularModeTransactionManager(
                   context.cardReader, calypsoCard, cardSecuritySettings)
         } catch (e: Exception) {
+          logger.e("Error while creating the Calypso card transaction", e)
           return ValidationResult.Failed(card, TechnicalError.UNEXPECTED, e.message)
         }
 
@@ -63,6 +67,7 @@ class CalypsoCardValidationProcedure(private val keypopApiProvider: KeypopApiPro
         } catch (e: CardCommunicationException) {
           SessionOutcome(ValidationResult.CardLost(card), closeSession = false)
         } catch (e: Exception) {
+          logger.e("Unexpected error while validating the Calypso card", e)
           SessionOutcome(
               ValidationResult.Failed(card, TechnicalError.UNEXPECTED, e.message),
               closeSession = false)
@@ -82,6 +87,7 @@ class CalypsoCardValidationProcedure(private val keypopApiProvider: KeypopApiPro
       result = ValidationResult.CardLost(card)
     } catch (e: Exception) {
       if (result !is ValidationResult.CardLost) {
+        logger.e("Error while closing the secure session", e)
         result = ValidationResult.Failed(card, TechnicalError.UNEXPECTED, e.message)
       }
     }

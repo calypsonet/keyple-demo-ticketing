@@ -41,6 +41,7 @@ class ControlCard(
   /** Controls the card selected by the provided selection scenario response. */
   operator fun invoke(selectionResponse: ScheduledCardSelectionsResponse): ControlResult {
     val result = control(selectionResponse)
+    log(result)
     if (result is ControlResult.CardContent) {
       userFeedback.displayResultSuccess()
     } else {
@@ -73,6 +74,23 @@ class ControlCard(
     } catch (e: Exception) {
       logger.e("Error while controlling the card", e)
       ControlResult.Failed(TechnicalError.UNEXPECTED, e.message)
+    }
+  }
+
+  /** Logs the result of the control, the technical errors being logged where they occur. */
+  private fun log(result: ControlResult) {
+    when (result) {
+      is ControlResult.CardContent ->
+          logger.i(
+              "Card controlled [authenticationMode=${result.authenticationMode}, " +
+                  "contracts=${result.contracts.size}, " +
+                  "validatedContract=${result.contracts.any { it.isValidated }}]")
+      ControlResult.EmptyCard -> logger.i("Card controlled: card never loaded")
+      is ControlResult.Rejected -> logger.w("Card refused [reason=${result.reason}]")
+      is ControlResult.NotSelected ->
+          logger.w(
+              "Card not selected [error=${result.error}, fileStructure=${result.fileStructure}]")
+      is ControlResult.Failed -> {}
     }
   }
 }

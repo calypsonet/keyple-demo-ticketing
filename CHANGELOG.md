@@ -129,6 +129,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Log messages (second audit): the results of the validation and of the control (card validated, controlled, refused,
+  removed, not selected) are logged once by the `ValidateCard` and `ControlCard` use cases, whatever the type of card
+  (the Calypso validation procedure logged nothing, the storage card one logged its results, and the card removal
+  was logged twice); the Calypso validation procedure logs its technical errors; the .NET client logs messages
+  following the convention, its console texts being no longer copied in the log; the same keys are used for the
+  same information (`readerNameRegex`, `file`, `eventType`).
 - Log messages written in all the components with the same template, `Message [key1=value1, key2=value2]`, described
   in `README.md` (section "Log Messages"): English sentence without final punctuation and without variable value, the
   values being given in the context with the terms of the glossary, no class or method name. The refusals of the

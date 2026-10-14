@@ -251,8 +251,6 @@ class StorageCardControlProcedure(
                 remainingTrips = remainingTrips))
       }
 
-      logger.i("Card controlled")
-
       // Step 20 - Close the transaction
       cardTransaction.processCommands(ChannelControl.CLOSE_AFTER)
 
