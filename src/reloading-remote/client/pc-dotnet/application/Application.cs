@@ -24,20 +24,20 @@ namespace App.application
     {
         private readonly ILogger _logger;
 
-        // Service API to interact with the main service
-        private readonly MainServiceApi _mainService;
+        // API of the ticketing services of the server
+        private readonly TicketingServiceApi _ticketingService;
 
         /// <summary>
         /// Application constructor.
         /// </summary>
-        /// <param name="mainService">Main service API</param>
-        public Application(MainServiceApi mainService)
+        /// <param name="ticketingService">API of the ticketing services</param>
+        public Application(TicketingServiceApi ticketingService)
         {
             // Initialize logger for this context
             _logger = Log.ForContext<Application>();
 
-            // Assign main service instance
-            _mainService = mainService;
+            // Assign the ticketing service instance
+            _ticketingService = ticketingService;
         }
 
         /// <summary>
@@ -47,12 +47,12 @@ namespace App.application
         {
             DisplayAndLog("Waiting for a card...", ConsoleColor.DarkBlue, LogEventLevel.Information, _logger);
 
-            _mainService.WaitForCardInsertion();
+            _ticketingService.WaitForCardInsertion();
 
             DisplayAndLog("Card found!\nContacting server...", ConsoleColor.Green, LogEventLevel.Information, _logger);
 
             // Select the card and read its content
-            string output = _mainService.SelectAppAndReadContracts();
+            string output = _ticketingService.SelectAppAndReadContracts();
 
             // Deserialize the output into a dynamic object
             EndRemoteServiceBody outputDto = JsonConvert.DeserializeObject<EndRemoteServiceBody>(output)!;
@@ -99,12 +99,12 @@ namespace App.application
             DisplayAndLog($"{tripsToLoad} trip(s) will now be loaded in the card.", ConsoleColor.DarkCyan, LogEventLevel.Information, _logger);
             DisplayAndLog("Waiting for a card...", ConsoleColor.DarkBlue, LogEventLevel.Information, _logger);
 
-            _mainService.WaitForCardInsertion();
+            _ticketingService.WaitForCardInsertion();
 
             DisplayAndLog("Card found!\nContacting server...", ConsoleColor.Green, LogEventLevel.Information, _logger);
 
             // Select the application of the card and increase the contract counter by the number of trips to load
-            output = _mainService.SelectAppAndIncreaseContractCounter(tripsToLoad);
+            output = _ticketingService.SelectAppAndIncreaseContractCounter(tripsToLoad);
 
             outputDto = JsonConvert.DeserializeObject<EndRemoteServiceBody>(output)!;
 

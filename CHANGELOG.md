@@ -129,6 +129,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Vocabulary harmonized with the glossary (seventh audit): the theme and the top bar of the multiplatform client
+  are named `AppTheme` and `AppTopBar` (instead of `KeypleTheme` and `KeypleTopAppBar`), the "Keyple" prefix
+  being kept for the integration of the Keyple libraries; the .NET client names its service API
+  `TicketingServiceApi` (instead of `MainServiceApi`, also for its adapter and its provider, whose method is
+  `GetService`) and the input data of its services `ReadContractsInputData` and `IncreaseContractCounterInputData`
+  (instead of `InputDataRead` and `InputDataWrite`); the CI jobs of the multiplatform client are named
+  "Reload Interop (KMP, ...)"; the text styles of the reloading Android client follow the naming of the other
+  styles (`smallRegularDarkBlue`, `smallMediumDarkBlue`, `smallBoldDarkBlue`, `smallRegularGrey`, instead of
+  `buy_text_info_*`).
 - Vocabulary harmonized with the glossary (sixth audit): the status of an expired environment is
   `RemoteServiceStatus.ENVIRONMENT_EXPIRED` (instead of `EXPIRED_ENVIRONMENT`, same code), as the
   `RejectionReason.ENVIRONMENT_EXPIRED` of the Android applications, and the exception of the server

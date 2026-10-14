@@ -22,7 +22,7 @@ namespace App.domain.api
 {
 
 
-    class MainServiceApiAdapter : MainServiceApi
+    class TicketingServiceApiAdapter : TicketingServiceApi
     {
         private readonly ILogger _logger;
         private readonly ReaderSpi _reader;
@@ -47,10 +47,10 @@ namespace App.domain.api
         private const string SELECT_APP_AND_READ_CONTRACTS = "SELECT_APP_AND_READ_CONTRACTS";
         private const string SELECT_APP_AND_INCREASE_CONTRACT_COUNTER = "SELECT_APP_AND_INCREASE_CONTRACT_COUNTER";
 
-        internal MainServiceApiAdapter(ReaderSpi readerSpi, string readerName, ServerSpi serverSpi)
+        internal TicketingServiceApiAdapter(ReaderSpi readerSpi, string readerName, ServerSpi serverSpi)
         {
-            _logger = Log.ForContext<MainServiceApiAdapter>();
-            _logger.Information("Creation of main service...");
+            _logger = Log.ForContext<TicketingServiceApiAdapter>();
+            _logger.Information("Creation of the ticketing service...");
 
             _reader = readerSpi;
             _server = serverSpi;
@@ -85,7 +85,7 @@ namespace App.domain.api
         {
             _logger.Information("Execute remote service to read the card content...");
 
-            return ExecuteRemoteService(SELECT_APP_AND_READ_CONTRACTS, new InputDataRead { });
+            return ExecuteRemoteService(SELECT_APP_AND_READ_CONTRACTS, new ReadContractsInputData { });
         }
 
         /// <inheritdoc/>
@@ -93,7 +93,7 @@ namespace App.domain.api
         {
             _logger.Information("Execute remote service to increase the contract counter...");
 
-            return ExecuteRemoteService(SELECT_APP_AND_INCREASE_CONTRACT_COUNTER, new InputDataWrite { CounterIncrement = counterIncrement.ToString("X") });
+            return ExecuteRemoteService(SELECT_APP_AND_INCREASE_CONTRACT_COUNTER, new IncreaseContractCounterInputData { CounterIncrement = counterIncrement.ToString("X") });
         }
 
         private string ExecuteRemoteService(string serviceId, InputData inputData)

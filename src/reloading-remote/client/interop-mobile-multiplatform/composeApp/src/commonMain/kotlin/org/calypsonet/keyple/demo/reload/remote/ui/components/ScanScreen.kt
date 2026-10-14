@@ -66,7 +66,7 @@ fun ScanScreen(
           Modifier.fillMaxSize().align(Alignment.Center),
           horizontalAlignment = Alignment.CenterHorizontally,
       ) {
-        KeypleTopAppBar(
+        AppTopBar(
             navController = navController,
             appState = appState,
             onBack = onBack,

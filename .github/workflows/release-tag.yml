@@ -19,7 +19,7 @@ jobs:
       working-directory: "./src/control/"
 
   release-reloading-kmp-android:
-    name: "Reload KMP (Android)"
+    name: "Reload Interop (KMP, Android)"
     uses: ./.github/workflows/reusable-android-release.yml
     with:
       component-name: "Reloading Client Interop Mobile Multiplatform"
@@ -57,7 +57,7 @@ jobs:
   # ========================================
 
   release-reloading-kmp-macos:
-    name: "Reload KMP (macOS)"
+    name: "Reload Interop (KMP, macOS)"
     uses: ./.github/workflows/reusable-kmp-desktop-release.yml
     with:
       component-name: "Reloading Client Interop Mobile Multiplatform"
@@ -67,7 +67,7 @@ jobs:
       platform-artifact-pattern: "composeApp/build/compose/binaries/main/dmg/*.dmg"
 
   release-reloading-kmp-linux:
-    name: "Reload KMP (Linux)"
+    name: "Reload Interop (KMP, Linux)"
     uses: ./.github/workflows/reusable-kmp-desktop-release.yml
     with:
       component-name: "Reloading Client Interop Mobile Multiplatform"
@@ -77,7 +77,7 @@ jobs:
       platform-artifact-pattern: "composeApp/build/compose/binaries/main/deb/*.deb"
 
   release-reloading-kmp-windows:
-    name: "Reload KMP (Windows)"
+    name: "Reload Interop (KMP, Windows)"
     uses: ./.github/workflows/reusable-kmp-desktop-release.yml
     with:
       component-name: "Reloading Client Interop Mobile Multiplatform"

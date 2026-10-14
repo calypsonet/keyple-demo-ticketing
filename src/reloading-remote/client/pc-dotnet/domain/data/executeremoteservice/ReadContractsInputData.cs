@@ -15,7 +15,7 @@ namespace App.domain.data.executeremoteservice
     /// Input data used for the read step.
     /// Currently empty.
     /// </summary>
-    class InputDataRead : InputData
+    class ReadContractsInputData : InputData
     {
     }
 }

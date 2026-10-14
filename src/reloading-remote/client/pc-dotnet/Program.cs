@@ -73,13 +73,13 @@ try
     // Get an instance of the ServerSpi implementation
     ServerSpi server = ServerSpiProvider.getInstance(serverHost, serverPort, serverEndpoint);
 
-    // Create an instance of the MainServiceApi using the reader service and server
-    MainServiceApi mainService = MainServiceApiProvider.getService(cardService, readerName, server);
+    // Create an instance of the TicketingServiceApi using the reader service and server
+    TicketingServiceApi ticketingService = TicketingServiceApiProvider.GetService(cardService, readerName, server);
 
     Log.Information("Create and start application...");
 
     // Create an instance of the application and start it
-    Application app = new Application(mainService);
+    Application app = new Application(ticketingService);
     app.Start();
 }
 catch (Exception ex)

@@ -12,31 +12,19 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="buy_text_info_regular">
-        <item name="android:fontFamily">@font/worksans_regular</item>
-        <item name="android:textSize">@dimen/small_text_size</item>
-        <item name="android:textColor">@color/dark_blue</item>
-    </style>
-
-    <style name="buy_text_info_medium">
+    <style name="smallMediumDarkBlue">
         <item name="android:fontFamily">@font/worksans_medium</item>
         <item name="android:textSize">@dimen/small_text_size</item>
         <item name="android:textColor">@color/dark_blue</item>
     </style>
 
-    <style name="buy_text_info_bold">
+    <style name="smallBoldDarkBlue">
         <item name="android:fontFamily">@font/worksans_bold</item>
         <item name="android:textSize">@dimen/small_text_size</item>
         <item name="android:textColor">@color/dark_blue</item>
     </style>
 
-    <style name="buy_text_info_reg_small">
-        <item name="android:fontFamily">@font/worksans_regular</item>
-        <item name="android:textSize">@dimen/small_text_size</item>
-        <item name="android:textColor">@color/dark_blue</item>
-    </style>
-
-    <style name="buy_text_info_reg_small_cc">
+    <style name="smallRegularGrey">
         <item name="android:fontFamily">@font/worksans_regular</item>
         <item name="android:textSize">@dimen/small_text_size</item>
         <item name="android:textColor">@color/grey</item>

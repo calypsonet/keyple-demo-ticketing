@@ -22,7 +22,7 @@ jobs:
       working-directory: "./src/control/"
 
   ci-reloading-kmp-android-macos:
-    name: "Reload KMP (Android/macOS)"
+    name: "Reload Interop (KMP, Android/macOS)"
     uses: ./.github/workflows/reusable-android-ci.yml
     with:
       component-name: "Reloading Client Interop Mobile Multiplatform"
@@ -74,7 +74,7 @@ jobs:
   # ========================================
 
   ci-reloading-kmp-ios-arm64:
-    name: "Reload KMP (iOS-Arm64/macOS)"
+    name: "Reload Interop (KMP, iOS-Arm64/macOS)"
     uses: ./.github/workflows/reusable-kmp-ios-ci.yml
     with:
       component-name: "Reloading Client Interop Mobile Multiplatform"
@@ -82,7 +82,7 @@ jobs:
       gradle-task: "linkDebugFrameworkIosArm64"
 
   ci-reloading-kmp-ios-simulator-arm64:
-    name: "Reload KMP (iOS-SimulatorArm64/macOS)"
+    name: "Reload Interop (KMP, iOS-SimulatorArm64/macOS)"
     uses: ./.github/workflows/reusable-kmp-ios-ci.yml
     with:
       component-name: "Reloading Client Interop Mobile Multiplatform"

@@ -50,7 +50,7 @@ import org.calypsonet.keyple.composeapp.generated.resources.basket_season_pass
 import org.calypsonet.keyple.composeapp.generated.resources.no_contract_label
 import org.calypsonet.keyple.demo.reload.remote.AppState
 import org.calypsonet.keyple.demo.reload.remote.data.dto.SelectAppAndAnalyzeContractsOutputDto.ContractInfo
-import org.calypsonet.keyple.demo.reload.remote.ui.components.KeypleTopAppBar
+import org.calypsonet.keyple.demo.reload.remote.ui.components.AppTopBar
 import org.calypsonet.keyple.demo.reload.remote.ui.model.Product
 import org.calypsonet.keyple.demo.reload.remote.ui.model.ProductType
 import org.calypsonet.keyple.demo.reload.remote.ui.nav.Home
@@ -72,7 +72,7 @@ fun CardContentScreen(
 
   Scaffold(
       topBar = {
-        KeypleTopAppBar(
+        AppTopBar(
             navController = navController,
             appState = appState,
             onBack = {

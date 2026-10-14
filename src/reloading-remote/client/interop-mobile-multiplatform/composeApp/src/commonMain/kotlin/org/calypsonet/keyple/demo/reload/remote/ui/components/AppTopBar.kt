@@ -54,7 +54,7 @@ import org.jetbrains.compose.resources.vectorResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun KeypleTopAppBar(
+fun AppTopBar(
     modifier: Modifier = Modifier,
     navController: NavController,
     appState: AppState,

@@ -44,7 +44,7 @@ import org.calypsonet.keyple.composeapp.generated.resources.ic_logo_calypso
 import org.calypsonet.keyple.composeapp.generated.resources.ic_settings
 import org.calypsonet.keyple.composeapp.generated.resources.keyple_background
 import org.calypsonet.keyple.demo.reload.remote.AppState
-import org.calypsonet.keyple.demo.reload.remote.ui.components.KeypleTopAppBar
+import org.calypsonet.keyple.demo.reload.remote.ui.components.AppTopBar
 import org.calypsonet.keyple.demo.reload.remote.ui.nav.ReadCard
 import org.calypsonet.keyple.demo.reload.remote.ui.nav.SettingsMenu
 import org.calypsonet.keyple.demo.reload.remote.ui.theme.blue
@@ -68,7 +68,7 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier, appS
           Modifier.align(Alignment.Center),
           horizontalAlignment = Alignment.CenterHorizontally,
       ) {
-        KeypleTopAppBar(
+        AppTopBar(
             navController = navController,
             appState = appState,
             showBackArrow = false,

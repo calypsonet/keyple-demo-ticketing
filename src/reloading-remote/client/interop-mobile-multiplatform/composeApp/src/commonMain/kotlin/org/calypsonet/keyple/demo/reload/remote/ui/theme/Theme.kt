@@ -42,7 +42,7 @@ private val DarkColors =
     )
 
 @Composable
-fun KeypleTheme(
+fun AppTheme(
     useDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable() () -> Unit,
 ) {

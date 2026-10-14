@@ -33,8 +33,8 @@ import io.github.alexzhirkevich.compottie.rememberLottieComposition
 import org.calypsonet.keyple.composeapp.generated.resources.Res
 import org.calypsonet.keyple.composeapp.generated.resources.contract_loaded
 import org.calypsonet.keyple.demo.reload.remote.AppState
+import org.calypsonet.keyple.demo.reload.remote.ui.components.AppTopBar
 import org.calypsonet.keyple.demo.reload.remote.ui.components.AutoReturnProgress
-import org.calypsonet.keyple.demo.reload.remote.ui.components.KeypleTopAppBar
 import org.calypsonet.keyple.demo.reload.remote.ui.components.SUCCESS_RETURN_DELAY_MS
 import org.calypsonet.keyple.demo.reload.remote.ui.nav.Home
 import org.calypsonet.keyple.demo.reload.remote.ui.theme.green
@@ -53,9 +53,7 @@ fun SuccessScreen(
   val goHome = { navController.navigate(Home) { popUpTo(Home) { inclusive = true } } }
 
   Scaffold(
-      topBar = {
-        KeypleTopAppBar(navController = navController, appState = appState, onBack = goHome)
-      },
+      topBar = { AppTopBar(navController = navController, appState = appState, onBack = goHome) },
       modifier = modifier,
   ) { innerPadding ->
     Box(Modifier.padding(innerPadding).fillMaxSize().background(green)) {

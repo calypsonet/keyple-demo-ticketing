@@ -46,7 +46,7 @@ import org.calypsonet.keyple.demo.reload.remote.ui.settings.ServerSettingsScreen
 import org.calypsonet.keyple.demo.reload.remote.ui.settings.ServerSettingsScreenViewModel
 import org.calypsonet.keyple.demo.reload.remote.ui.settings.SettingsMenuScreen
 import org.calypsonet.keyple.demo.reload.remote.ui.success.SuccessScreen
-import org.calypsonet.keyple.demo.reload.remote.ui.theme.KeypleTheme
+import org.calypsonet.keyple.demo.reload.remote.ui.theme.AppTheme
 
 @Composable
 @Preview
@@ -75,7 +75,7 @@ fun App(
 
   val state = vm.state.collectAsState()
 
-  KeypleTheme {
+  AppTheme {
     NavHost(navController = navController, startDestination = Home) {
       composable<Home> { HomeScreen(navController = navController, appState = state.value) }
 

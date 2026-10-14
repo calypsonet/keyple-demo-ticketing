@@ -120,9 +120,9 @@ The project follows a clean hexagonal architecture pattern:
 #### Domain Layer (`/domain`)
 
 **API Interfaces** (`/domain/api`):
-- `MainServiceApi`: Main service interface for card operations
-- `MainServiceApiAdapter`: Service adapter implementation
-- `MainServiceApiProvider`: Service provider
+- `TicketingServiceApi`: Interface of the ticketing services of the server (reading of the contracts, loading of trips)
+- `TicketingServiceApiAdapter`: Service adapter implementation
+- `TicketingServiceApiProvider`: Service provider
 
 **SPI Interfaces** (`/domain/spi`):
 - `ReaderSpi`: Card reader abstraction

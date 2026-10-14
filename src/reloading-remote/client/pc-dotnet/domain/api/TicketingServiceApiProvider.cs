@@ -14,20 +14,20 @@ using App.domain.spi;
 namespace App.domain.api
 {
     /// <summary>
-    /// Provider class for creating an instance of the MainServiceApi.
+    /// Provider class for creating an instance of the TicketingServiceApi.
     /// </summary>
-    internal class MainServiceApiProvider
+    internal class TicketingServiceApiProvider
     {
         /// <summary>
-        /// Creates and returns an instance of the MainServiceApi.
+        /// Creates and returns an instance of the TicketingServiceApi.
         /// </summary>
         /// <param name="readerSpi">The ReaderSpi implementation to use.</param>
         /// <param name="readerName">The name of the reader to use.</param>
         /// <param name="serverSpi">The ServerSpi implementation to use.</param>
-        /// <returns>An instance of the MainServiceApi.</returns>
-        public static MainServiceApi getService(ReaderSpi readerSpi, string readerName, ServerSpi serverSpi)
+        /// <returns>An instance of the TicketingServiceApi.</returns>
+        public static TicketingServiceApi GetService(ReaderSpi readerSpi, string readerName, ServerSpi serverSpi)
         {
-            return new MainServiceApiAdapter(readerSpi, readerName, serverSpi);
+            return new TicketingServiceApiAdapter(readerSpi, readerName, serverSpi);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace App.domain.data.executeremoteservice
     /// Input data used for the write step.
     /// Currently empty.
     /// </summary>
-    class InputDataWrite : InputData
+    class IncreaseContractCounterInputData : InputData
     {
         [JsonProperty("counterIncrement")]
         public required string CounterIncrement { get; set; }

@@ -27,7 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import org.calypsonet.keyple.demo.reload.remote.AppState
-import org.calypsonet.keyple.demo.reload.remote.ui.components.KeypleTopAppBar
+import org.calypsonet.keyple.demo.reload.remote.ui.components.AppTopBar
 
 @Composable
 fun ServerSettingsScreen(
@@ -63,7 +63,7 @@ internal fun ServerSettingsScreen(
     onEndpointChanged: (String) -> Unit
 ) {
   Scaffold(
-      topBar = { KeypleTopAppBar(navController = navController, appState = appState) },
+      topBar = { AppTopBar(navController = navController, appState = appState) },
       modifier = modifier,
   ) { innerPadding ->
     Column(

@@ -36,7 +36,7 @@ import org.calypsonet.keyple.composeapp.generated.resources.ic_arrow_right
 import org.calypsonet.keyple.composeapp.generated.resources.ic_server
 import org.calypsonet.keyple.composeapp.generated.resources.ic_sim_card
 import org.calypsonet.keyple.demo.reload.remote.AppState
-import org.calypsonet.keyple.demo.reload.remote.ui.components.KeypleTopAppBar
+import org.calypsonet.keyple.demo.reload.remote.ui.components.AppTopBar
 import org.calypsonet.keyple.demo.reload.remote.ui.nav.PersonalizeCard
 import org.calypsonet.keyple.demo.reload.remote.ui.nav.ServerSettings
 import org.calypsonet.keyple.demo.reload.remote.ui.theme.darkBlue
@@ -50,7 +50,7 @@ fun SettingsMenuScreen(
     appState: AppState
 ) {
   Scaffold(
-      topBar = { KeypleTopAppBar(navController = navController, appState = appState) },
+      topBar = { AppTopBar(navController = navController, appState = appState) },
       modifier = modifier,
   ) { innerPadding ->
     Column(
