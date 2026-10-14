@@ -72,12 +72,6 @@ class CardReaderActivity : BaseCardActivity() {
           showReadInProgress()
           initOmapiReader { lifecycleScope.launch(Dispatchers.Default) { executeRemoteService() } }
         }
-        CardMedium.WEARABLE -> {
-          throw UnsupportedOperationException("Card medium not supported [cardMedium=WEARABLE]")
-        }
-        CardMedium.EMBEDDED -> {
-          throw UnsupportedOperationException("Card medium not supported [cardMedium=EMBEDDED]")
-        }
       }
     } catch (e: ReaderCommunicationException) {
       Timber.e(e, "Reader communication error while initializing the readers")

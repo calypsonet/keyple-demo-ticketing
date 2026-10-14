@@ -129,6 +129,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Reloading Android client: the "Wearable" and "Embedded Secure Element" card media, which had no reader, are
+  removed (`CardMedium.WEARABLE` and `EMBEDDED`, buttons of the home screen, settings of their visibility, texts and
+  images). Selecting them led to an empty card presentation screen, or to a "reader not found" error after the
+  registration of the OMAPI plugin, with fictitious reader names, plugin types and AIDs. The client offers the
+  contactless card (NFC or Bluebird reader) and the SIM card (OMAPI reader).
 - Field names (fourth audit): the loading route of the multiplatform client names `productType` the type of the
   product (instead of `type`) and no longer carries its unused price; the .NET client names `reader` its PC/SC reader
   (instead of `cardService`).

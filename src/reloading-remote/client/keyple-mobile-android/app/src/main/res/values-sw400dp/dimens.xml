@@ -8,8 +8,6 @@
 
     <dimen name="img_contactless_card_width">38dp</dimen>
     <dimen name="img_sim_width">28dp</dimen>
-    <dimen name="img_bracelet_width">39dp</dimen>
-    <dimen name="img_embedded_width">31dp</dimen>
 
     <dimen name="settings_radio_size">20dp</dimen>
 

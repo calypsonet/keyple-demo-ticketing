@@ -176,8 +176,6 @@ class KeypleTerminalReaders @Inject constructor(private val logger: Logger) : Te
             if (terminalType == TerminalType.BLUEBIRD) BluebirdConstants.CARD_READER_NAME
             else AndroidNfcConstants.READER_NAME
         CardMedium.SIM -> AndroidOmapiReader.READER_NAME_SIM_1
-        CardMedium.WEARABLE -> "WEARABLE"
-        CardMedium.EMBEDDED -> "EMBEDDED"
       }
 
   /** Unregisters the given Keyple plugin, logging the failure. */

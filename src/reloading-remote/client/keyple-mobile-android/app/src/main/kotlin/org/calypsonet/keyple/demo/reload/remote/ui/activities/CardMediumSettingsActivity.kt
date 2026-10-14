@@ -36,17 +36,13 @@ class CardMediumSettingsActivity : BaseActivity() {
       onBackPressedDispatcher.onBackPressed()
     }
 
-    CardMedium.values().forEach { updateRadioButtons(it) }
+    CardMedium.entries.forEach { updateRadioButtons(it) }
   }
 
   fun onContactlessRadioButtonClicked(view: View) =
       onRadioButtonClicked(view, CardMedium.CONTACTLESS_CARD)
 
   fun onSimRadioButtonClicked(view: View) = onRadioButtonClicked(view, CardMedium.SIM)
-
-  fun onWearableRadioButtonClicked(view: View) = onRadioButtonClicked(view, CardMedium.WEARABLE)
-
-  fun onEmbeddedRadioButtonClicked(view: View) = onRadioButtonClicked(view, CardMedium.EMBEDDED)
 
   private fun onRadioButtonClicked(view: View, cardMedium: CardMedium) {
     if (view !is RadioButton) {
@@ -72,8 +68,6 @@ class CardMediumSettingsActivity : BaseActivity() {
           CardMedium.CONTACTLESS_CARD ->
               Triple(contactlessCardEnable, contactlessCardDisable, contactlessCardHide)
           CardMedium.SIM -> Triple(simCardEnable, simCardDisable, simCardHide)
-          CardMedium.WEARABLE -> Triple(wearableCardEnable, wearableCardDisable, wearableCardHide)
-          CardMedium.EMBEDDED -> Triple(embeddedCardEnable, embeddedCardDisable, embeddedCardHide)
         }
       }
 

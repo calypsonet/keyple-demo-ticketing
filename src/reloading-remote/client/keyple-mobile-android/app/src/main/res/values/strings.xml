@@ -29,8 +29,6 @@
 
     <string name="contactless_card">Contactless card</string>
     <string name="sim_card">SIM card</string>
-    <string name="wearable">Wearable</string>
-    <string name="embedded_secure_element">Embedded Secure Element</string>
 
 
     <string name="card_medium_selection">Choose a card</string>

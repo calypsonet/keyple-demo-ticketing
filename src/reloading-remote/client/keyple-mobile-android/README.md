@@ -59,10 +59,9 @@ cd keyple-demo-ticketing/src/reloading-remote/client/keyple-mobile-android
 3. Keep screen on during card operations for stable connection
 
 ### Card Reader Selection
-The app supports multiple NFC reader types:
-- **Contactless card**: Standard Android NFC (all devices)
-- **SIM Card**: OMAPI reader access (work in progress)
-- **Wearable**, **Embedded Secure Element**: card media planned, without reader yet
+The app supports two card media, each with its reader:
+- **Contactless card**: Android NFC reader (all devices), or the reader of the Bluebird terminals
+- **SIM Card**: OMAPI reader (work in progress)
 
 ## Usage
 
@@ -249,7 +248,7 @@ curl http://your-server:8080/card/sam-availability
 
 ## Known Limitations
 
-- SIM Card and Embedded SE readers are work in progress
+- The SIM card reader (OMAPI) is a work in progress
 - Payment simulation only - no real payment processing
 - Limited offline capability (server connection required)
 - Single server connection (no failover support)

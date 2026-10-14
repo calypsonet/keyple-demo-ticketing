@@ -70,8 +70,6 @@ class SharedPreferencesAppSettingsRepository(private val preferences: SharedPref
       when (cardMedium) {
         CardMedium.CONTACTLESS_CARD -> CONTACTLESS_VISIBILITY_KEY
         CardMedium.SIM -> SIM_VISIBILITY_KEY
-        CardMedium.WEARABLE -> WEARABLE_VISIBILITY_KEY
-        CardMedium.EMBEDDED -> EMBEDDED_VISIBILITY_KEY
       }
 
   companion object {
@@ -84,8 +82,6 @@ class SharedPreferencesAppSettingsRepository(private val preferences: SharedPref
     private const val DEFAULT_PROTOCOL = "http://"
     private const val CONTACTLESS_VISIBILITY_KEY = "contactless_visibility"
     private const val SIM_VISIBILITY_KEY = "sim_visibility"
-    private const val WEARABLE_VISIBILITY_KEY = "wearable_visibility"
-    private const val EMBEDDED_VISIBILITY_KEY = "embedded_visibility"
     private const val WAS_SERVER_READY_KEY = "was_server_ready"
   }
 }

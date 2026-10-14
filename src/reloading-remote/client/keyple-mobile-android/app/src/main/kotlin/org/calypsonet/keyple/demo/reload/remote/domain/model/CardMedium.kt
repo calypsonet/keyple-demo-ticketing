@@ -12,11 +12,13 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.domain.model
 
+/**
+ * Medium holding the card application: a contactless card (NFC reader) or a SIM card (OMAPI
+ * reader).
+ */
 enum class CardMedium {
   CONTACTLESS_CARD,
-  SIM,
-  WEARABLE,
-  EMBEDDED;
+  SIM;
 
   companion object {
     /** Returns the card medium having the given name, or [CONTACTLESS_CARD] if it is unknown. */

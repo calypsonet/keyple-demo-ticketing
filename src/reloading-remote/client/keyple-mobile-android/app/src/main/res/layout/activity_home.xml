@@ -75,7 +75,6 @@
         android:elevation="@dimen/elevation"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/contactlessCardBtn"
-        app:layout_constraintBottom_toTopOf="@id/wearableBtn"
         android:layout_marginTop="@dimen/home_btn_top_margin"
         android:gravity="center">
 
@@ -92,70 +91,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/card_medium_selection_top_margin"
             android:text="@string/sim_card"
-            style="@style/bigBoldDarkBlue" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/wearableBtn"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/home_card_medium_btn_height"
-        android:orientation="vertical"
-        android:clickable="true"
-        android:focusable="true"
-        android:background="@drawable/white_card"
-        android:layout_marginHorizontal="@dimen/home_horizontal_margin"
-        android:elevation="@dimen/elevation"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/simCardBtn"
-        app:layout_constraintBottom_toTopOf="@id/embeddedElemBtn"
-        android:layout_marginTop="@dimen/home_btn_top_margin"
-        android:gravity="center">
-
-        <ImageView
-            android:layout_width="@dimen/img_bracelet_width"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
-            android:contentDescription="@string/wearable"
-            android:src="@drawable/ic_bracelet" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/card_medium_selection_top_margin"
-            android:text="@string/wearable"
-            style="@style/bigBoldDarkBlue" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/embeddedElemBtn"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/home_card_medium_btn_height"
-        android:orientation="vertical"
-        android:clickable="true"
-        android:focusable="true"
-        android:background="@drawable/white_card"
-        android:layout_marginHorizontal="@dimen/home_horizontal_margin"
-        android:elevation="@dimen/elevation"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/wearableBtn"
-        android:layout_marginTop="@dimen/home_btn_top_margin"
-        android:gravity="center">
-
-        <ImageView
-            android:layout_width="@dimen/img_embedded_width"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
-            android:contentDescription="@string/embedded_secure_element"
-            android:src="@drawable/ic_embedded" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/card_medium_selection_top_margin"
-            android:text="@string/embedded_secure_element"
-            android:gravity="center"
             style="@style/bigBoldDarkBlue" />
     </LinearLayout>
 

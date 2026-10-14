@@ -57,8 +57,6 @@ class HomeActivity : BaseActivity() {
     super.onResume()
     setUpCardMediumButton(activityHomeBinding.contactlessCardBtn, CardMedium.CONTACTLESS_CARD)
     setUpCardMediumButton(activityHomeBinding.simCardBtn, CardMedium.SIM)
-    setUpCardMediumButton(activityHomeBinding.wearableBtn, CardMedium.WEARABLE)
-    setUpCardMediumButton(activityHomeBinding.embeddedElemBtn, CardMedium.EMBEDDED)
   }
 
   private fun setUpCardMediumButton(button: View, cardMedium: CardMedium) {

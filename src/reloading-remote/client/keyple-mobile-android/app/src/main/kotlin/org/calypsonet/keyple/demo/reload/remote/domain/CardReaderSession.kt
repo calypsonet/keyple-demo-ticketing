@@ -174,8 +174,6 @@ class CardReaderSession(
         CardMedium.CONTACTLESS_CARD ->
             if (terminalType == TerminalType.BLUEBIRD) "Bluebird" else "Android NFC"
         CardMedium.SIM -> "Android OMAPI"
-        CardMedium.WEARABLE -> "Android WEARABLE"
-        CardMedium.EMBEDDED -> "Android EMBEDDED"
       }
 
   /** Returns the AIDs of the Calypso applications to select, depending on the card medium. */
@@ -188,7 +186,5 @@ class CardReaderSession(
                 CalypsoAids.CALYPSO_LIGHT,
                 CalypsoAids.NORMALIZED_IDF)
         CardMedium.SIM -> listOf(CalypsoAids.CD_LIGHT_GTML, CalypsoAids.NORMALIZED_IDF)
-        CardMedium.WEARABLE,
-        CardMedium.EMBEDDED -> listOf(CalypsoAids.CD_LIGHT_GTML)
       }
 }
