@@ -99,10 +99,10 @@ class LoadContractActivity : BaseCardActivity() {
         }
       } catch (e: IllegalStateException) {
         Timber.w("Card not supported while loading the contract [cause=${e.message}]")
-        launchInvalidCardResponse(getString(R.string.undetermined_card_type), e.message!!)
+        launchInvalidCardResponse(getString(R.string.undetermined_card_type), "")
       } catch (e: Exception) {
         Timber.e(e, "Error while loading the contract")
-        launchExceptionResponse(e)
+        launchErrorResponse(getString(R.string.error_label))
       } finally {
         cardReaderSession.endCardProcessing()
       }

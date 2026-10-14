@@ -71,7 +71,7 @@ class StorageCardValidationProcedure(
           storageCardApiFactory.createStorageCardTransactionManager(context.cardReader, storageCard)
         } catch (e: Exception) {
           logger.e("Error while creating the storage card transaction", e)
-          return ValidationResult.Failed(card, TechnicalError.UNEXPECTED, e.message)
+          return ValidationResult.Failed(card, TechnicalError.UNEXPECTED)
         }
 
     return try {
@@ -83,7 +83,7 @@ class StorageCardValidationProcedure(
       logger.e(
           "Unexpected error while validating the storage card [productType=${storageCard.productType.name}]",
           e)
-      ValidationResult.Failed(card, technicalError(storageCard.productType, e), e.message)
+      ValidationResult.Failed(card, technicalError(storageCard.productType, e))
     }
   }
 

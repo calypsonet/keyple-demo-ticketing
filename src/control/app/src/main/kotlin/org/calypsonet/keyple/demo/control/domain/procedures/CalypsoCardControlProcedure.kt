@@ -274,7 +274,7 @@ class CalypsoCardControlProcedure(
       return ControlResult.CardContent(authenticationMode, displayedContract, validation)
     } catch (e: Exception) {
       logger.e("Error while controlling the card", e)
-      return ControlResult.Failed(TechnicalError.UNEXPECTED, e.message)
+      return ControlResult.Failed(TechnicalError.UNEXPECTED)
     }
   }
 

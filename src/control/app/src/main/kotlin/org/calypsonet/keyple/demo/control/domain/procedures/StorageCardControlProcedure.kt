@@ -261,7 +261,7 @@ class StorageCardControlProcedure(
       logger.e(
           "Error while controlling the storage card [productType=${storageCard.productType.name}]",
           e)
-      return ControlResult.Failed(technicalError(storageCard.productType, e), e.message)
+      return ControlResult.Failed(technicalError(storageCard.productType, e))
     }
   }
 

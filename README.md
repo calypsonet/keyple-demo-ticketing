@@ -407,8 +407,8 @@ they are often logged (`cause` key) or displayed:
 - The exception is of a specific type (e.g. `IllegalStateException`, `InvalidOperationException`), never `Exception`
   nor `RuntimeException`.
 
-The messages displayed to the users are not the messages of the exceptions: the Android applications display their
-texts (`strings.xml`), and the server returns to the clients which do not use Keyple the messages of the statuses of
+The messages displayed to the users are never the messages of the exceptions: the Android applications display their
+texts (`strings.xml`), a technical error being displayed with a generic text, and the server returns to the clients which do not use Keyple the messages of the statuses of
 its remote services (`RemoteServiceMessages`, texts of the Android applications), the causes being logged.
 
 ### Building from Source

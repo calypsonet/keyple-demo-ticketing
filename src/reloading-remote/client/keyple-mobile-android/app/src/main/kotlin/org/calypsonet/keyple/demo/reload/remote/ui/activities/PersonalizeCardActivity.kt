@@ -128,10 +128,10 @@ class PersonalizeCardActivity : BaseCardActivity() {
         }
       } catch (e: IllegalStateException) {
         Timber.w("Card not supported while personalizing the card [cause=${e.message}]")
-        launchInvalidCardResponse(getString(R.string.undetermined_card_type), e.message!!)
+        launchInvalidCardResponse(getString(R.string.undetermined_card_type), "")
       } catch (e: Exception) {
         Timber.e(e, "Error while personalizing the card")
-        launchExceptionResponse(e)
+        launchErrorResponse(getString(R.string.error_label))
       } finally {
         cardReaderSession.endCardProcessing()
       }

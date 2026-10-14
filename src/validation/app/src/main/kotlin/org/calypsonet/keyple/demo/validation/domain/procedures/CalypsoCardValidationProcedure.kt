@@ -57,7 +57,7 @@ class CalypsoCardValidationProcedure(
                   context.cardReader, calypsoCard, cardSecuritySettings)
         } catch (e: Exception) {
           logger.e("Error while creating the Calypso card transaction", e)
-          return ValidationResult.Failed(card, TechnicalError.UNEXPECTED, e.message)
+          return ValidationResult.Failed(card, TechnicalError.UNEXPECTED)
         }
 
     val outcome =
@@ -69,8 +69,7 @@ class CalypsoCardValidationProcedure(
         } catch (e: Exception) {
           logger.e("Unexpected error while validating the Calypso card", e)
           SessionOutcome(
-              ValidationResult.Failed(card, TechnicalError.UNEXPECTED, e.message),
-              closeSession = false)
+              ValidationResult.Failed(card, TechnicalError.UNEXPECTED), closeSession = false)
         }
     var result = outcome.result
 
@@ -88,7 +87,7 @@ class CalypsoCardValidationProcedure(
     } catch (e: Exception) {
       if (result !is ValidationResult.CardLost) {
         logger.e("Error while closing the secure session", e)
-        result = ValidationResult.Failed(card, TechnicalError.UNEXPECTED, e.message)
+        result = ValidationResult.Failed(card, TechnicalError.UNEXPECTED)
       }
     }
     return result

@@ -129,6 +129,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- The Android applications no longer display the messages of the exceptions: an unexpected technical error is
+  displayed with the generic text of the application ("An error occurred while reading the card." in the control app,
+  "Please try again." in the validation app, "An error occurred" or "Server error" in the reloading client), its
+  cause being logged; the `detail` of the `Failed` results of the control and validation domains is removed, and the
+  error screen of the reloading client receives a text (`launchErrorResponse`) instead of an exception built to carry
+  it (`launchExceptionResponse`).
 - Exception messages written with the template of the log messages (README section "Exception Messages"): English
   sentence without final punctuation nor class or method name, variable values in the context (e.g. "Reader not
   found [reader=...]" instead of "Reader '...' is not found in the list of readers." or "OpenPhysicalChannel: ..."),

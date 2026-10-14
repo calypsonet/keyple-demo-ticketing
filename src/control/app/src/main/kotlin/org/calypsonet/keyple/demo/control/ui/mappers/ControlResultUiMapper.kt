@@ -60,8 +60,7 @@ fun ControlResult.toUi(resources: Resources): UiControlResult =
                         resources.getString(R.string.error_mifare_classic_authentication)
                     TechnicalError.MIFARE_CLASSIC_READING_FAILED ->
                         resources.getString(R.string.error_mifare_classic_reading)
-                    TechnicalError.UNEXPECTED ->
-                        detail ?: resources.getString(R.string.error_card_reading)
+                    TechnicalError.UNEXPECTED -> resources.getString(R.string.error_card_reading)
                   })
     }
 

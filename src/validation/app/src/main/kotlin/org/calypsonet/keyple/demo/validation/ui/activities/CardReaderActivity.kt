@@ -296,13 +296,13 @@ class CardReaderActivity : BaseActivity() {
           })
 
   /** Returns the message displayed for the provided technical error. */
-  private fun errorMessage(result: ValidationResult.Failed): String? =
+  private fun errorMessage(result: ValidationResult.Failed): String =
       when (result.error) {
         TechnicalError.MIFARE_CLASSIC_AUTHENTICATION_FAILED ->
             getString(R.string.error_mifare_classic_authentication)
         TechnicalError.MIFARE_CLASSIC_TRANSACTION_FAILED ->
             getString(R.string.error_mifare_classic_transaction)
-        TechnicalError.UNEXPECTED -> result.detail
+        TechnicalError.UNEXPECTED -> getString(R.string.error_small_desc)
       }
 
   private fun showValidationResult(result: ValidationResult) {

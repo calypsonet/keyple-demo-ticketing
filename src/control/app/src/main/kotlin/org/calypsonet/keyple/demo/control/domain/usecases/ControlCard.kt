@@ -73,7 +73,7 @@ class ControlCard(
               asymmetricCryptoSecuritySetting = cardReaderSession.asymmetricCryptoSecuritySetting))
     } catch (e: Exception) {
       logger.e("Error while controlling the card", e)
-      ControlResult.Failed(TechnicalError.UNEXPECTED, e.message)
+      ControlResult.Failed(TechnicalError.UNEXPECTED)
     }
   }
 

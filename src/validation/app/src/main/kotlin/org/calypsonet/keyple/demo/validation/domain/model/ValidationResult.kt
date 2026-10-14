@@ -57,14 +57,7 @@ sealed interface ValidationResult {
   /** The card has been removed during the transaction. */
   data class CardLost(override val card: CardDescription) : ValidationResult
 
-  /**
-   * A technical error prevented the validation.
-   *
-   * @property detail The message of the error, if any.
-   */
-  data class Failed(
-      override val card: CardDescription?,
-      val error: TechnicalError,
-      val detail: String? = null
-  ) : ValidationResult
+  /** A technical error prevented the validation. */
+  data class Failed(override val card: CardDescription?, val error: TechnicalError) :
+      ValidationResult
 }

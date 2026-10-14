@@ -43,10 +43,6 @@ sealed interface ControlResult {
   /** The card is refused for the provided reason. */
   data class Rejected(val reason: RejectionReason) : ControlResult
 
-  /**
-   * A technical error prevented the control.
-   *
-   * @property detail The message of the error, if any.
-   */
-  data class Failed(val error: TechnicalError, val detail: String? = null) : ControlResult
+  /** A technical error prevented the control. */
+  data class Failed(val error: TechnicalError) : ControlResult
 }

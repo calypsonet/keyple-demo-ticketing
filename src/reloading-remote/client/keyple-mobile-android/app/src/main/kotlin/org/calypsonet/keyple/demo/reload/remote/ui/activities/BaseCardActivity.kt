@@ -135,11 +135,14 @@ abstract class BaseCardActivity :
     }
   }
 
-  fun launchExceptionResponse(e: Exception, finishActivity: Boolean? = false) {
+  /**
+   * Displays an error with the provided text, written for the user (never the message of an
+   * exception).
+   */
+  fun launchErrorResponse(message: String, finishActivity: Boolean? = false) {
     runOnUiThread {
       changeDisplay(
-          UiCardResult(ResultType.ERROR, "", emptyList(), e.message),
-          finishActivity = finishActivity)
+          UiCardResult(ResultType.ERROR, "", emptyList(), message), finishActivity = finishActivity)
     }
   }
 

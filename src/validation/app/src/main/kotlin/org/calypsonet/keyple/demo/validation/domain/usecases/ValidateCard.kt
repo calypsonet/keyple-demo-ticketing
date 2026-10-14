@@ -71,7 +71,7 @@ class ValidateCard(
               cardSecuritySetting = cardReaderSession.cardSecuritySetting))
     } catch (e: Exception) {
       logger.e("Error while validating the card", e)
-      ValidationResult.Failed(card = null, error = TechnicalError.UNEXPECTED, detail = e.message)
+      ValidationResult.Failed(card = null, error = TechnicalError.UNEXPECTED)
     }
   }
 
