@@ -35,7 +35,9 @@ val keypleInteropService =
         reader =
             MultiplatformNfcReader(
                 LocalNfcReader() { error ->
-                  return@LocalNfcReader "Error: ${error.message}"
+                  // Text displayed by the NFC sheet of iOS, the cause being logged
+                  Napier.w("Card reading error [cause=${error.message}]")
+                  return@LocalNfcReader "Card reading error"
                 }),
         clientId = UIDevice.currentDevice.identifierForVendor?.UUIDString() ?: "anon",
         serverConfigRepository = serverConfigRepository)

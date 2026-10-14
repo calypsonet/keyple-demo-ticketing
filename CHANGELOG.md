@@ -129,6 +129,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- The last technical messages displayed are replaced: the NFC sheet of the iOS client displays "Card reading error"
+  (instead of "Error: " and the message of the error, which is logged), and the .NET client no longer displays the
+  message of a fatal exception after the text referring to its log file. The browser console of the dashboard follows
+  the convention of the log messages ("Server ready", "Server not ready [cause=...]", availability of the SAM logged
+  when it changes instead of at each check every 3 s), and the CI checks the JavaScript sources of the dashboard too.
 - The Android applications no longer display the messages of the exceptions: an unexpected technical error is
   displayed with the generic text of the application ("An error occurred while reading the card." in the control app,
   "Please try again." in the validation app, "An error occurred" or "Server error" in the reloading client), its

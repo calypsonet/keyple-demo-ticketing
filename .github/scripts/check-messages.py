@@ -12,6 +12,9 @@ Checked rules:
 - an exception is of a specific type (not `Exception` nor `RuntimeException`), and its cause is chained to it instead of
   being copied in its message (a cause which cannot be chained is given in the `cause` key).
 
+The Kotlin, Java and C# sources are checked, and the JavaScript sources of the dashboard (console messages and errors,
+written between double quotes).
+
 Usage: check-messages.py (from the root of the repository)
 """
 import os
@@ -19,13 +22,14 @@ import re
 import sys
 
 SOURCE_ROOT = "src"
-EXTENSIONS = (".kt", ".java", ".cs")
-EXCLUDED_DIRECTORIES = {"build", "node_modules", "bin", "obj", ".gradle", "test", "androidTest"}
+EXTENSIONS = (".kt", ".java", ".cs", ".js", ".jsx")
+EXCLUDED_DIRECTORIES = {"build", "dist", "node_modules", "bin", "obj", ".gradle", "test", "androidTest"}
 
-# Log calls of SLF4J (logger.info), the Logger port (logger.i), Timber, Napier and Serilog (_logger.Information)
+# Log calls of SLF4J (logger.info), the Logger port (logger.i), Timber, Napier, Serilog (_logger.Information) and of
+# the browser console (dashboard, console.warn)
 LOG_CALL = re.compile(
-    r"\b(?:logger|_logger|Log|Timber|Napier)\."
-    r"(v|d|i|w|e|trace|debug|info|warn|error|Verbose|Debug|Information|Warning|Error|Fatal)\(")
+    r"\b(?:logger|_logger|Log|Timber|Napier|console)\."
+    r"(v|d|i|w|e|trace|debug|info|log|warn|error|Verbose|Debug|Information|Warning|Error|Fatal)\(")
 WARNING_LEVELS = {"w", "warn", "Warning"}
 # String constants used as messages (Java)
 CONSTANT = re.compile(r'static\s+final\s+String\s+([A-Z][A-Z0-9_]*)\s*=\s*("(?:[^"\\]|\\.)*")')
@@ -227,7 +231,8 @@ def main():
         # Exception messages
         for index, exception_type, arguments in exception_messages(path, text):
             exceptions += 1
-            if exception_type in GENERIC_EXCEPTIONS:
+            # Error is the exception type of JavaScript
+            if exception_type in GENERIC_EXCEPTIONS and not (exception_type == "Error" and path.endswith((".js", ".jsx"))):
                 report(path, text, index, "a specific exception type must be thrown instead of %s" % exception_type)
             message = message_text(arguments, constants)
             if message is not None:

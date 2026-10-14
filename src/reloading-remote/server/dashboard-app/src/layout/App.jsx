@@ -34,7 +34,7 @@ export default function App() {
       fetch("/transactions/events")
         .then(response => {
           if (!response.ok) {
-            throw new Error("Response status: " + response.status);
+            throw new Error("Unexpected response [status=" + response.status + "]");
           }
           return response.json();
         })
@@ -45,7 +45,7 @@ export default function App() {
           const newer = streamed.filter(transaction => !historyIds.has(transaction.id));
           setRows([...newer].reverse().concat([...history].reverse()));
         })
-        .catch(e => console.log("Error while loading the transactions: " + e));
+        .catch(e => console.error("Error while loading the transactions [cause=" + e.message + "]"));
     };
 
     eventSource.onmessage = event => {
@@ -56,7 +56,7 @@ export default function App() {
     };
 
     // The browser reconnects automatically
-    eventSource.onerror = () => console.log("Transactions stream interrupted, reconnecting...");
+    eventSource.onerror = () => console.warn("Transactions stream interrupted, reconnecting");
 
     return () => eventSource.close();
   }, []);
@@ -77,26 +77,26 @@ export default function App() {
       fetch("/card/sam-status", requestOptions)
         .then(response => {
           if(response.status === 200){
-            //update server state if required
+            // Only the changes of the readiness are logged, the server being checked periodically
             if(!isServerReady){
+              console.info("Server ready");
               setIsServerReady(true);
             }
             return response.json()
           }else{
-            throw new Error('Request status : ' + response.status);
+            throw new Error("Unexpected response [status=" + response.status + "]");
           }
         })
         .then(json => {
-          console.log("Is Sam Ready : " + json.isSamReady);
-          //update sam state if required
+          // Only the changes of the availability of the SAM are logged
           if(isSamReady !== json.isSamReady){
+            console.info("SAM availability changed [available=" + json.isSamReady + "]");
             setIsSamReady(json.isSamReady)
           }
         })
         .catch(error =>{
-          console.log('Fetch error', error)
-          //update server state if required
           if(isServerReady){
+            console.warn("Server not ready [cause=" + error.message + "]");
             setIsServerReady(false)
           }
 

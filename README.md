@@ -332,8 +332,8 @@ The applications share these conventions, except for the following deliberate di
 
 ### Log Messages
 
-All the components (server, Android applications, multiplatform and .NET clients) write their log messages with the
-same template:
+All the components (server and its dashboard, Android applications, multiplatform and .NET clients) write their log
+messages with the same template:
 
 ```
 Message [key1=value1, key2=value2]

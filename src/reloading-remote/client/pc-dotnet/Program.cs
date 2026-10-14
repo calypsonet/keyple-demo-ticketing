@@ -85,7 +85,6 @@ try
 catch (Exception ex)
 {
     Console.Error.WriteLine("Error while running the application (see log file for details).");
-    Console.Error.WriteLine(ex.Message);
     Log.Fatal(ex, "Application failed");
 }
 finally
