@@ -45,19 +45,19 @@ class CardContentActivity : BaseActivity() {
         IntentCompat.getParcelableExtra(intent, CARD_CONTENT, UiControlResult::class.java)!!
     activityCardContentBinding.lastValidationList.layoutManager = LinearLayoutManager(this)
     activityCardContentBinding.contractsList.layoutManager = LinearLayoutManager(this)
-    if (cardContent.contractsList.isNotEmpty()) {
+    if (cardContent.contracts.isNotEmpty()) {
       activityCardContentBinding.contractsList.adapter =
-          ContractsRecyclerAdapter(cardContent.contractsList)
+          ContractsRecyclerAdapter(cardContent.contracts)
       activityCardContentBinding.contractsList.visibility = View.VISIBLE
       activityCardContentBinding.emptyContract.visibility = View.GONE
     } else {
       activityCardContentBinding.contractsList.visibility = View.GONE
       activityCardContentBinding.emptyContract.visibility = View.VISIBLE
     }
-    if (cardContent.lastValidationsList != null) {
+    if (cardContent.lastValidations != null) {
       activityCardContentBinding.lastValidationListContainer.visibility = View.VISIBLE
       activityCardContentBinding.lastValidationList.adapter =
-          ValidationsRecyclerAdapter(cardContent.lastValidationsList)
+          ValidationsRecyclerAdapter(cardContent.lastValidations)
       activityCardContentBinding.lastValidationList.setDivider(R.drawable.recycler_view_divider)
     } else {
       activityCardContentBinding.lastValidationListContainer.visibility = View.GONE

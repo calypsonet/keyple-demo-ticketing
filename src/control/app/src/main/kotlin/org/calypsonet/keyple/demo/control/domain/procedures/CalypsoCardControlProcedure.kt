@@ -54,7 +54,7 @@ class CalypsoCardControlProcedure(
     val asymmetricCryptoSecuritySetting = context.asymmetricCryptoSecuritySetting
     val locations = context.locations
     val controlLocation = context.location
-    val validationPeriod = context.validationPeriod
+    val validationPeriodMinutes = context.validationPeriodMinutes
 
     var validation: Validation? = null
 
@@ -115,10 +115,10 @@ class CalypsoCardControlProcedure(
       // Step 5 - Read and unpack the last event record.
       cardTransaction
           .prepareReadRecords(
-              CalypsoFiles.SFI_EVENTS_LOG, 1, 1, CalypsoFiles.EVENT_RECORD_SIZE_BYTES)
+              CalypsoFiles.SFI_EVENT_LOG, 1, 1, CalypsoFiles.EVENT_RECORD_SIZE_BYTES)
           .processCommands(ChannelControl.KEEP_OPEN)
 
-      val efEventLog = calypsoCard.getFileBySfi(CalypsoFiles.SFI_EVENTS_LOG)
+      val efEventLog = calypsoCard.getFileBySfi(CalypsoFiles.SFI_EVENT_LOG)
       val event = CalypsoEventCodec.decode(efEventLog.data.content)
 
       // Step 6 - If EventVersionNumber is not the expected one (==1 for the current version),
@@ -138,7 +138,7 @@ class CalypsoCardControlProcedure(
       var contractEventValid = true
       val contractUsed = event.eventContractUsed
 
-      val eventValidityEndDate = event.eventDatetime.plusMinutes(validationPeriod.toLong())
+      val eventValidityEndDate = event.eventDateTime.plusMinutes(validationPeriodMinutes.toLong())
 
       // Step 7 - If EventLocation != value configured in the control terminal, set the validated
       // contract validity flag as false and go to the point CNT_READ.
@@ -147,7 +147,7 @@ class CalypsoCardControlProcedure(
       }
       // Step 8 - Else If EventDateStamp points to a date in the past
       // -> set the validated contract validity flag as false and go to point CNT_READ.
-      else if (event.eventDatetime.isBefore(controlDateTime.toLocalDate().atStartOfDay())) {
+      else if (event.eventDateTime.isBefore(controlDateTime.toLocalDate().atStartOfDay())) {
         contractEventValid = false
       }
 
@@ -240,7 +240,7 @@ class CalypsoCardControlProcedure(
 
           var validationDateTime: LocalDateTime? = null
           if (contractValidated) {
-            validationDateTime = event.eventDatetime
+            validationDateTime = event.eventDateTime
           }
 
           // Step 18 - If the ContractTariff value for the contract is 2, unpack the counter

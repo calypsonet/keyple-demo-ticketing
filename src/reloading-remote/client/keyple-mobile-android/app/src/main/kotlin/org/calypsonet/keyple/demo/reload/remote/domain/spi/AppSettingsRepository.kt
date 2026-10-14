@@ -26,7 +26,7 @@ interface AppSettingsRepository {
   var cardMedium: CardMedium
 
   /** Last known readiness of the server (true if the server is reachable and its SAM available). */
-  var lastServerReady: Boolean
+  var wasServerReady: Boolean
 
   /** Returns the visibility of the given card medium in the home screen. */
   fun getCardMediumVisibility(cardMedium: CardMedium): CardMediumVisibility

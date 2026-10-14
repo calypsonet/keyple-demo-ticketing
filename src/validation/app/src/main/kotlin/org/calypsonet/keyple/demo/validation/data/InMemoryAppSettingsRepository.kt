@@ -21,5 +21,5 @@ import org.calypsonet.keyple.demo.validation.domain.spi.AppSettingsRepository
 class InMemoryAppSettingsRepository @Inject constructor() : AppSettingsRepository {
   override lateinit var terminalType: TerminalType
   override lateinit var location: Location
-  override var batteryPowered: Boolean = true
+  override var isBatteryPowered: Boolean = true
 }

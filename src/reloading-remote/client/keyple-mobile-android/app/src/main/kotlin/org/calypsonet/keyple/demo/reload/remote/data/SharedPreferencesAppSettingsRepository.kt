@@ -20,17 +20,18 @@ import org.calypsonet.keyple.demo.reload.remote.domain.model.ServerConfig
 import org.calypsonet.keyple.demo.reload.remote.domain.spi.AppSettingsRepository
 
 /** Application settings persisted in the shared preferences. */
-class SharedPreferencesAppSettingsRepository(private val prefs: SharedPreferences) :
+class SharedPreferencesAppSettingsRepository(private val preferences: SharedPreferences) :
     AppSettingsRepository {
 
   override var serverConfig: ServerConfig
     get() =
         ServerConfig(
-            protocol = prefs.getString(SERVER_PROTOCOL_KEY, DEFAULT_PROTOCOL) ?: DEFAULT_PROTOCOL,
-            ip = prefs.getString(SERVER_IP_KEY, DEFAULT_SERVER_IP) ?: DEFAULT_SERVER_IP,
-            port = prefs.getInt(SERVER_PORT_KEY, DEFAULT_PORT))
+            protocol =
+                preferences.getString(SERVER_PROTOCOL_KEY, DEFAULT_PROTOCOL) ?: DEFAULT_PROTOCOL,
+            ip = preferences.getString(SERVER_IP_KEY, DEFAULT_SERVER_IP) ?: DEFAULT_SERVER_IP,
+            port = preferences.getInt(SERVER_PORT_KEY, DEFAULT_PORT))
     set(value) {
-      prefs
+      preferences
           .edit()
           .putString(SERVER_PROTOCOL_KEY, value.protocol)
           .putString(SERVER_IP_KEY, value.ip)
@@ -39,27 +40,27 @@ class SharedPreferencesAppSettingsRepository(private val prefs: SharedPreference
     }
 
   override var cardMedium: CardMedium
-    get() = CardMedium.fromName(prefs.getString(CARD_MEDIUM, "") ?: "")
+    get() = CardMedium.fromName(preferences.getString(CARD_MEDIUM_KEY, "") ?: "")
     set(value) {
-      prefs.edit().putString(CARD_MEDIUM, value.toString()).apply()
+      preferences.edit().putString(CARD_MEDIUM_KEY, value.toString()).apply()
     }
 
-  override var lastServerReady: Boolean
-    get() = prefs.getBoolean(LAST_SERVER_READY_KEY, false)
+  override var wasServerReady: Boolean
+    get() = preferences.getBoolean(WAS_SERVER_READY_KEY, false)
     set(value) {
-      prefs.edit().putBoolean(LAST_SERVER_READY_KEY, value).apply()
+      preferences.edit().putBoolean(WAS_SERVER_READY_KEY, value).apply()
     }
 
   override fun getCardMediumVisibility(cardMedium: CardMedium): CardMediumVisibility {
     val defaultVisibility =
         if (cardMedium == CardMedium.CONTACTLESS_CARD) CardMediumVisibility.ENABLE
         else CardMediumVisibility.DISABLE
-    val value = prefs.getString(visibilityKey(cardMedium), null) ?: return defaultVisibility
+    val value = preferences.getString(visibilityKey(cardMedium), null) ?: return defaultVisibility
     return CardMediumVisibility.valueOf(value.uppercase(Locale.ROOT))
   }
 
   override fun setCardMediumVisibility(cardMedium: CardMedium, visibility: CardMediumVisibility) {
-    prefs
+    preferences
         .edit()
         .putString(visibilityKey(cardMedium), visibility.name.lowercase(Locale.ROOT))
         .apply()
@@ -67,24 +68,24 @@ class SharedPreferencesAppSettingsRepository(private val prefs: SharedPreference
 
   private fun visibilityKey(cardMedium: CardMedium): String =
       when (cardMedium) {
-        CardMedium.CONTACTLESS_CARD -> SETTING_CONTACTLESS_VISIBILITY
-        CardMedium.SIM -> SETTING_SIM_VISIBILITY
-        CardMedium.WEARABLE -> SETTING_WEARABLE_VISIBILITY
-        CardMedium.EMBEDDED -> SETTING_EMBEDDED_VISIBILITY
+        CardMedium.CONTACTLESS_CARD -> CONTACTLESS_VISIBILITY_KEY
+        CardMedium.SIM -> SIM_VISIBILITY_KEY
+        CardMedium.WEARABLE -> WEARABLE_VISIBILITY_KEY
+        CardMedium.EMBEDDED -> EMBEDDED_VISIBILITY_KEY
       }
 
   companion object {
     private const val SERVER_IP_KEY = "server_ip_key"
     private const val SERVER_PORT_KEY = "server_port_key"
     private const val SERVER_PROTOCOL_KEY = "server_protocol_key"
-    private const val CARD_MEDIUM = "card_medium"
+    private const val CARD_MEDIUM_KEY = "card_medium"
     private const val DEFAULT_SERVER_IP = "192.168.0.1"
     private const val DEFAULT_PORT = 8080
     private const val DEFAULT_PROTOCOL = "http://"
-    private const val SETTING_CONTACTLESS_VISIBILITY = "setting_contactless_visibility"
-    private const val SETTING_SIM_VISIBILITY = "setting_sim_visibility"
-    private const val SETTING_WEARABLE_VISIBILITY = "setting_wearable_visibility"
-    private const val SETTING_EMBEDDED_VISIBILITY = "setting_embedded_visibility"
-    private const val LAST_SERVER_READY_KEY = "setting_server_last_status_up"
+    private const val CONTACTLESS_VISIBILITY_KEY = "setting_contactless_visibility"
+    private const val SIM_VISIBILITY_KEY = "setting_sim_visibility"
+    private const val WEARABLE_VISIBILITY_KEY = "setting_wearable_visibility"
+    private const val EMBEDDED_VISIBILITY_KEY = "setting_embedded_visibility"
+    private const val WAS_SERVER_READY_KEY = "was_server_ready"
   }
 }

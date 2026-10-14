@@ -98,10 +98,10 @@ fun PulsingDot(state: AppState, modifier: Modifier = Modifier) {
   val dotScale = remember { Animatable(1f) }
   val waves = remember { mutableStateListOf<Wave>() }
 
-  val dotColor = if (state.serverReady) Color.Green else Color.Red
+  val dotColor = if (state.isServerReady) Color.Green else Color.Red
 
-  LaunchedEffect(state.serverReady) {
-    if (state.serverReady) {
+  LaunchedEffect(state.isServerReady) {
+    if (state.isServerReady) {
       while (isActive) {
         // Animate the dot scale
         dotScale.animateTo(

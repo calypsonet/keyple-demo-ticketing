@@ -36,7 +36,7 @@ class CalypsoEventCodecTest {
     assertThat(event.eventDateStamp.value).isEqualTo(4031)
     assertThat(event.eventTimeStamp.value).isEqualTo(840)
     assertThat(event.eventDateStamp.date).isEqualTo(LocalDate.of(2021, 1, 14))
-    assertThat(event.eventDatetime).isEqualTo(LocalDateTime.of(2021, 1, 14, 14, 0, 0))
+    assertThat(event.eventDateTime).isEqualTo(LocalDateTime.of(2021, 1, 14, 14, 0, 0))
     assertThat(event.eventLocation).isEqualTo(1)
     assertThat(event.eventContractUsed).isEqualTo(1)
     assertThat(event.getContractPriority(1)).isEqualTo(PriorityCode.SEASON_PASS)

@@ -51,7 +51,7 @@ class StorageCardControlProcedure(
     val storageCard = context.card as StorageCard
     val locations = context.locations
     val controlLocation = context.location
-    val validationPeriod = context.validationPeriod
+    val validationPeriodMinutes = context.validationPeriodMinutes
 
     var validation: Validation? = null
 
@@ -163,7 +163,7 @@ class StorageCardControlProcedure(
       var contractEventValid = true
       val contractUsed = event.eventContractUsed
 
-      val eventValidityEndDate = event.eventDatetime.plusMinutes(validationPeriod.toLong())
+      val eventValidityEndDate = event.eventDateTime.plusMinutes(validationPeriodMinutes.toLong())
 
       // Step 7 - If EventLocation != value configured in the control terminal, set the validated
       // contract validity flag as false and go to the point CNT_READ.
@@ -172,7 +172,7 @@ class StorageCardControlProcedure(
       }
       // Step 8 - Else If EventDateStamp points to a date in the past
       // -> set the validated contract validity flag as false and go to point CNT_READ.
-      else if (event.eventDatetime.isBefore(controlDateTime.toLocalDate().atStartOfDay())) {
+      else if (event.eventDateTime.isBefore(controlDateTime.toLocalDate().atStartOfDay())) {
         contractEventValid = false
       }
 
@@ -230,7 +230,7 @@ class StorageCardControlProcedure(
 
         var validationDateTime: LocalDateTime? = null
         if (contractValidated) {
-          validationDateTime = event.eventDatetime
+          validationDateTime = event.eventDateTime
         }
 
         // Step 18 - If the ContractTariff value for the contract is 2, extract the counter-value.

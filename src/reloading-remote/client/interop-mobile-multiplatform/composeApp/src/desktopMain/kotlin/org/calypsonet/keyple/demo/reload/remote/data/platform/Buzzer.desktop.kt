@@ -21,6 +21,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
+/** Sample rate of the tones, in Hz. */
+private const val SAMPLE_RATE = 8000f
+
 actual class PlatformBuzzer {
 
   // The tones are played in background, a failing tone not preventing the next ones
@@ -29,8 +32,6 @@ actual class PlatformBuzzer {
   actual fun vibrate() {
     // do nothing on desktop...
   }
-
-  var SAMPLE_RATE: Float = 8000f
 
   /** Plays a tone of the given frequency and duration, in background. */
   @Throws(LineUnavailableException::class)

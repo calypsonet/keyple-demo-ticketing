@@ -40,7 +40,7 @@ data class EventStructure(
   }
 
   /** The date and time of the event. */
-  val eventDatetime: LocalDateTime
+  val eventDateTime: LocalDateTime
     get() = eventDateStamp.date.atStartOfDay().plusMinutes(eventTimeStamp.value.toLong())
 
   /** Returns the priority of the contract record having the provided number (1 to 4). */

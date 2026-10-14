@@ -27,12 +27,12 @@ fun ControlResult.toUi(resources: Resources): UiControlResult =
       is ControlResult.CardContent ->
           UiControlResult(
               resultType = ResultType.CONTRACTS_FOUND,
-              lastValidationsList = lastValidation?.let { listOf(it.toUi()) },
-              contractsList = contracts.map { it.toUi() })
+              lastValidations = lastValidation?.let { listOf(it.toUi()) },
+              contracts = contracts.map { it.toUi() })
       is ControlResult.NotSelected ->
           UiControlResult(
               resultType = ResultType.INVALID_CARD,
-              contractsList = emptyList(),
+              contracts = emptyList(),
               errorMessage =
                   when (error) {
                     SelectionError.CARD_NOT_RECOGNIZED ->
@@ -44,16 +44,16 @@ fun ControlResult.toUi(resources: Resources): UiControlResult =
                             R.string.selection_unsupported_file_structure, fileStructure)
                   })
       ControlResult.EmptyCard ->
-          UiControlResult(resultType = ResultType.EMPTY_CARD, contractsList = emptyList())
+          UiControlResult(resultType = ResultType.EMPTY_CARD, contracts = emptyList())
       is ControlResult.Rejected ->
           UiControlResult(
               resultType = ResultType.ERROR,
-              contractsList = emptyList(),
+              contracts = emptyList(),
               errorMessage = resources.getString(reason.message()))
       is ControlResult.Failed ->
           UiControlResult(
               resultType = ResultType.ERROR,
-              contractsList = emptyList(),
+              contracts = emptyList(),
               errorMessage =
                   when (error) {
                     TechnicalError.MIFARE_CLASSIC_AUTHENTICATION_FAILED ->

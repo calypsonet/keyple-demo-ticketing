@@ -33,7 +33,7 @@ fun buildValidation(
 ): Validation =
     Validation(
         name = contract?.contractTariff?.label ?: "Event",
-        dateTime = event.eventDatetime,
+        dateTime = event.eventDateTime,
         location = findLocation(event, locations))
 
 /** Returns the location of the event, among the provided locations. */

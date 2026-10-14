@@ -28,7 +28,7 @@ public class TransactionRecorder {
   static final String PERSONALIZATION = "PERSONALIZATION";
 
   private static final String SUCCESS = "SUCCESS";
-  private static final String FAIL = "FAIL";
+  private static final String FAILURE = "FAILURE";
 
   @Inject TransactionService transactionService;
 
@@ -58,7 +58,7 @@ public class TransactionRecorder {
     transactionService.push(
         new Transaction()
             .setPlugin(plugin)
-            .setStatus(success ? SUCCESS : FAIL)
+            .setStatus(success ? SUCCESS : FAILURE)
             .setType(type)
             .setCardSerialNumber(cardSerialNumber)
             .setLoadedContract(loadedContract));

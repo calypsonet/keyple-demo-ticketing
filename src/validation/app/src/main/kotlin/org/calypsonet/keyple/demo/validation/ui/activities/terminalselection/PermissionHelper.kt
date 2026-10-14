@@ -17,7 +17,7 @@ import android.content.pm.PackageManager
 
 object PermissionHelper {
 
-  const val MY_PERMISSIONS_REQUEST_ALL = 1000
+  const val PERMISSIONS_REQUEST_CODE = 1000
 
   /**
    * Requests the permissions which are not granted yet, the result being received by the activity.
@@ -31,7 +31,7 @@ object PermissionHelper {
       for ((position, permission) in permissionDenied.withIndex()) {
         permissionsToAsk[position] = permission
       }
-      activity.requestPermissions(permissionsToAsk, MY_PERMISSIONS_REQUEST_ALL)
+      activity.requestPermissions(permissionsToAsk, PERMISSIONS_REQUEST_CODE)
       return false
     }
     return true

@@ -19,7 +19,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class UiControlResult(
     val resultType: ResultType,
-    val lastValidationsList: List<UiValidation>? = null,
-    val contractsList: List<UiContract>,
+    val lastValidations: List<UiValidation>? = null,
+    val contracts: List<UiContract>,
     val errorMessage: String? = null
 ) : Parcelable

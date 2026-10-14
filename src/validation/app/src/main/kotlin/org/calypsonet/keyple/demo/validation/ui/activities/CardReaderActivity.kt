@@ -58,7 +58,7 @@ class CardReaderActivity : BaseActivity() {
 
   private var validationResultBinding: LayoutValidationResultOverlayBinding? = null
   private var validationResultTimer: Timer? = null
-  private var cardInsertedAt = 0L
+  private var cardDetectedAt = 0L
 
   /* application states */
   enum class AppState {
@@ -138,7 +138,7 @@ class CardReaderActivity : BaseActivity() {
     } else {
       cardReaderSession.startCardDetection()
     }
-    if (appSettings.batteryPowered) {
+    if (appSettings.isBatteryPowered) {
       timer = Timer() // Need to reinit timer after cancel
       timer.schedule(
           object : TimerTask() {
@@ -198,7 +198,7 @@ class CardReaderActivity : BaseActivity() {
         if (newAppState == AppState.WAIT_SYSTEM_READY) {
           return
         }
-        cardInsertedAt = System.currentTimeMillis()
+        cardDetectedAt = System.currentTimeMillis()
         newAppState = AppState.CARD_STATUS
       }
       CardReaderEvent.Type.CARD_REMOVED -> {
@@ -308,7 +308,7 @@ class CardReaderActivity : BaseActivity() {
     val b = validationResultBinding!!
 
     // Card type label + transaction time
-    val elapsedMs = System.currentTimeMillis() - cardInsertedAt
+    val elapsedMs = System.currentTimeMillis() - cardDetectedAt
     val card = result.card
     if (card != null) {
       b.cardTypeLabel.visibility = View.VISIBLE
@@ -337,9 +337,9 @@ class CardReaderActivity : BaseActivity() {
                 1 -> getString(R.string.valid_trips_left_single)
                 else -> getString(R.string.valid_trips_left_multiple, remainingTrips)
               }
-        } else if (result.passValidityEndDate != null) {
+        } else if (result.seasonPassValidityEndDate != null) {
           val validityEndDate =
-              result.passValidityEndDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+              result.seasonPassValidityEndDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
           b.smallDesc.text = getString(R.string.valid_season_pass, validityEndDate)
         } else {
           // Recovered broken session: no contract data available
@@ -347,7 +347,7 @@ class CardReaderActivity : BaseActivity() {
         }
         b.mediumText.setText(R.string.valid_last_desc)
         b.mediumText.visibility = View.VISIBLE
-        if (result.remainingTrips != null || result.passValidityEndDate != null) {
+        if (result.remainingTrips != null || result.seasonPassValidityEndDate != null) {
           b.smallDesc.visibility = View.VISIBLE
         }
       }
@@ -421,7 +421,7 @@ class CardReaderActivity : BaseActivity() {
             runOnUiThread { hideResultOverlay() }
           }
         },
-        SUMMARY_DELAY_MS.toLong())
+        VALIDATION_RESULT_DELAY_MS.toLong())
   }
 
   private fun hideResultOverlay() {
@@ -470,7 +470,7 @@ class CardReaderActivity : BaseActivity() {
 
   companion object {
     private const val RETURN_DELAY_MS = 30000
-    private const val SUMMARY_DELAY_MS = 2500
+    private const val VALIDATION_RESULT_DELAY_MS = 2500
   }
 
   private inner class CardReaderObserver : CardReaderObserverSpi {

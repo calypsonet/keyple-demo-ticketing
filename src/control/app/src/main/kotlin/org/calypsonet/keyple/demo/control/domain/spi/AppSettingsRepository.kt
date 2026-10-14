@@ -25,5 +25,5 @@ interface AppSettingsRepository {
   var location: Location
 
   /** The period (in minutes) during which a validation is considered valid. */
-  var validationPeriod: Int
+  var validationPeriodMinutes: Int
 }

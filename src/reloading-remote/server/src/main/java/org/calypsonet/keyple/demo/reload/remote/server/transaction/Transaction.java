@@ -26,7 +26,7 @@ public class Transaction {
   String plugin; // plugin name
   String startedAt; // when the transaction started
   String type; // type of transaction
-  String status; // SUCCESS or FAIL
+  String status; // SUCCESS or FAILURE
   String loadedContract; // (opt) description of the contract loaded
 
   public Transaction() {

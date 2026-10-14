@@ -196,7 +196,7 @@ class StorageCardValidationProcedure(
     }
 
     // Anti-passback: the storage cards have no session to recover
-    if (isWithinAntiPassbackDelay(event.eventDatetime, validationDateTime)) {
+    if (isWithinAntiPassbackDelay(event.eventDateTime, validationDateTime)) {
       return ValidationResult.Rejected(card, RejectionReason.ALREADY_VALIDATED)
     }
 
@@ -229,7 +229,7 @@ class StorageCardValidationProcedure(
     // Contract to write, updated by the validation (counter of a multi-trip contract)
     var contractToWrite = contract
     var remainingTrips: Int? = null
-    var passValidityEndDate: LocalDate? = null
+    var seasonPassValidityEndDate: LocalDate? = null
 
     when (contractPriority) {
       PriorityCode.MULTI_TRIP -> {
@@ -245,7 +245,7 @@ class StorageCardValidationProcedure(
         remainingTrips = newCounterValue
       }
       PriorityCode.SEASON_PASS -> {
-        passValidityEndDate = contract.contractValidityEndDate.date
+        seasonPassValidityEndDate = contract.contractValidityEndDate.date
       }
       PriorityCode.FORBIDDEN,
       PriorityCode.EXPIRED,
@@ -303,6 +303,6 @@ class StorageCardValidationProcedure(
         dateTime = validationDateTime,
         location = context.location,
         remainingTrips = remainingTrips,
-        passValidityEndDate = passValidityEndDate)
+        seasonPassValidityEndDate = seasonPassValidityEndDate)
   }
 }

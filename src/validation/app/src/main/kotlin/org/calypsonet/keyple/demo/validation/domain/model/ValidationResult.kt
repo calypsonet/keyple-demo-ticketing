@@ -28,14 +28,15 @@ sealed interface ValidationResult {
    * @property dateTime The date and time of the validation.
    * @property location The location of the validation (location of the terminal).
    * @property remainingTrips The trips left of the multi-trip contract used, null otherwise.
-   * @property passValidityEndDate The validity end date of the season pass used, null otherwise.
+   * @property seasonPassValidityEndDate The validity end date of the season pass used, null
+   *   otherwise.
    */
   data class Accepted(
       override val card: CardDescription,
       val dateTime: LocalDateTime,
       val location: Location,
       val remainingTrips: Int? = null,
-      val passValidityEndDate: LocalDate? = null
+      val seasonPassValidityEndDate: LocalDate? = null
   ) : ValidationResult
 
   /**

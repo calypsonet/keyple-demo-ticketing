@@ -31,11 +31,11 @@ class AppSettingsModule {
   @Provides
   @Singleton
   fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
-    return context.getSharedPreferences("Keyple-prefs", Context.MODE_PRIVATE)
+    return context.getSharedPreferences("Keyple-preferences", Context.MODE_PRIVATE)
   }
 
   @Provides
   @Singleton
-  fun provideAppSettingsRepository(prefs: SharedPreferences): AppSettingsRepository =
-      SharedPreferencesAppSettingsRepository(prefs)
+  fun provideAppSettingsRepository(preferences: SharedPreferences): AppSettingsRepository =
+      SharedPreferencesAppSettingsRepository(preferences)
 }

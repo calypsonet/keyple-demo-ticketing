@@ -14,7 +14,7 @@ package org.calypsonet.keyple.demo.common.reference
 
 object LocationRepository {
 
-  private val locationList: List<Location> =
+  private val locations: List<Location> =
       listOf(
           Location(0, "Bruxelles"),
           Location(1, "Konstanz"),
@@ -30,6 +30,6 @@ object LocationRepository {
           Location(11, "Barcelona"))
 
   fun getLocations(): List<Location> {
-    return locationList
+    return locations
   }
 }

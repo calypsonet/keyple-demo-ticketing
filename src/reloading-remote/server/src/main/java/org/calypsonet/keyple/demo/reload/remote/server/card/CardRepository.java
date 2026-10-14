@@ -144,7 +144,7 @@ public class CardRepository {
             1,
             1,
             CalypsoFiles.ENVIRONMENT_HOLDER_RECORD_SIZE_BYTES)
-        .prepareReadRecords(CalypsoFiles.SFI_EVENTS_LOG, 1, 1, CalypsoFiles.EVENT_RECORD_SIZE_BYTES)
+        .prepareReadRecords(CalypsoFiles.SFI_EVENT_LOG, 1, 1, CalypsoFiles.EVENT_RECORD_SIZE_BYTES)
         .prepareReadRecords(
             CalypsoFiles.SFI_CONTRACTS, 1, contractCount, CalypsoFiles.CONTRACT_RECORD_SIZE_BYTES)
         .prepareReadCounter(CalypsoFiles.SFI_COUNTERS, contractCount)
@@ -233,7 +233,7 @@ public class CardRepository {
     /* Update event */
     if (Boolean.TRUE.equals(card.isEventUpdated())) {
       cardTransactionManager.prepareUpdateRecord(
-          CalypsoFiles.SFI_EVENTS_LOG,
+          CalypsoFiles.SFI_EVENT_LOG,
           1,
           CalypsoEventCodec.INSTANCE.encode(buildEvent(card.getEvent())));
     }
@@ -318,7 +318,7 @@ public class CardRepository {
 
     // Clear the first event (update with a byte array filled with 0 s).
     cardTransactionManager.prepareUpdateRecord(
-        CalypsoFiles.SFI_EVENTS_LOG, 1, new byte[CalypsoFiles.EVENT_RECORD_SIZE_BYTES]);
+        CalypsoFiles.SFI_EVENT_LOG, 1, new byte[CalypsoFiles.EVENT_RECORD_SIZE_BYTES]);
 
     // Clear all contracts (update with a byte array filled with 0 s).
     int contractCount = getContractCount(calypsoCard);
@@ -463,7 +463,7 @@ public class CardRepository {
     // parse event
     EventStructure event =
         CalypsoEventCodec.INSTANCE.decode(
-            calypsoCard.getFileBySfi(CalypsoFiles.SFI_EVENTS_LOG).getData().getContent());
+            calypsoCard.getFileBySfi(CalypsoFiles.SFI_EVENT_LOG).getData().getContent());
     return new CardData(environment, contracts, event);
   }
 

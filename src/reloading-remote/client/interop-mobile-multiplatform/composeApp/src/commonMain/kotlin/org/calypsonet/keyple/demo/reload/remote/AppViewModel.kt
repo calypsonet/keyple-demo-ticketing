@@ -23,7 +23,7 @@ import org.calypsonet.keyple.demo.reload.remote.data.service.KeypleInteropServic
 import org.calypsonet.keyple.demo.reload.remote.data.service.ServerConfigRepository
 import org.calypsonet.keyple.demo.reload.remote.data.service.ServerReadinessChecker
 
-data class AppState(val serverReady: Boolean = false)
+data class AppState(val isServerReady: Boolean = false)
 
 class AppViewModel(
     private val keypleInteropService: KeypleInteropService,
@@ -40,11 +40,11 @@ class AppViewModel(
     // Periodic check of the server, its configuration being read at each check (address changed in
     // the settings)
     viewModelScope.launch {
-      var lastServerReady: Boolean? = null
+      var wasServerReady: Boolean? = null
       while (true) {
         val serverConfig = serverConfigRepository.load()
         var cause = "SAM not available"
-        val serverReady =
+        val isServerReady =
             try {
               serverReadinessChecker.isServerReady(serverConfig)
             } catch (e: Exception) {
@@ -53,15 +53,15 @@ class AppViewModel(
               false
             }
         // Only the changes of the readiness are logged, the server being checked periodically
-        if (serverReady != lastServerReady) {
-          if (serverReady) {
+        if (isServerReady != wasServerReady) {
+          if (isServerReady) {
             Napier.i("Server ready [url=${serverConfig.baseUrl()}]")
           } else {
             Napier.w("Server not ready [url=${serverConfig.baseUrl()}, cause=$cause]")
           }
-          lastServerReady = serverReady
+          wasServerReady = isServerReady
         }
-        _state.value = AppState(serverReady = serverReady)
+        _state.value = AppState(isServerReady = isServerReady)
         delay(SERVER_CHECK_PERIOD_MS)
       }
     }

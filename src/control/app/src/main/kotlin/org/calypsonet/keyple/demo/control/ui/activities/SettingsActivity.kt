@@ -52,9 +52,9 @@ class SettingsActivity : BaseActivity() {
     }
     activitySettingsBinding.startBtn.setOnClickListener {
       appSettings.location = activitySettingsBinding.spinnerLocationList.selectedItem as Location
-      val validationPeriod = activitySettingsBinding.validationPeriodEdit.text.toString()
-      if (validationPeriod.isNotBlank()) {
-        appSettings.validationPeriod = validationPeriod.toInt()
+      val validationPeriodMinutes = activitySettingsBinding.validationPeriodEdit.text.toString()
+      if (validationPeriodMinutes.isNotBlank()) {
+        appSettings.validationPeriodMinutes = validationPeriodMinutes.toInt()
         startActivity(Intent(this, HomeActivity::class.java))
         finish()
       } else {

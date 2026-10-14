@@ -50,7 +50,7 @@ class CardContentActivity : BaseActivity() {
     contractsLayoutManager = LinearLayoutManager(this)
     activityCardContentBinding.contractsList.layoutManager = contractsLayoutManager
 
-    contractsAdapter = ContractsRecyclerAdapter(cardContent.contractsList)
+    contractsAdapter = ContractsRecyclerAdapter(cardContent.contracts)
     activityCardContentBinding.contractsList.adapter = contractsAdapter
 
     when (cardContent.resultType) {

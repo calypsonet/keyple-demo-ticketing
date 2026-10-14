@@ -68,7 +68,7 @@ class ControlCard(
               dateTime = clock.now(),
               location = appSettings.location,
               locations = LocationRepository.getLocations(),
-              validationPeriod = appSettings.validationPeriod,
+              validationPeriodMinutes = appSettings.validationPeriodMinutes,
               symmetricCryptoSecuritySetting = cardReaderSession.symmetricCryptoSecuritySetting,
               asymmetricCryptoSecuritySetting = cardReaderSession.asymmetricCryptoSecuritySetting))
     } catch (e: Exception) {

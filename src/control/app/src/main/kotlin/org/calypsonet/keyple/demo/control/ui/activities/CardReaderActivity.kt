@@ -182,7 +182,7 @@ class CardReaderActivity : BaseActivity() {
                 Timber.e(e, "Error while displaying the control result")
                 withContext(Dispatchers.Main) { hideProgress() }
                 displayResult(
-                    UiControlResult(resultType = ResultType.ERROR, contractsList = emptyList()))
+                    UiControlResult(resultType = ResultType.ERROR, contracts = emptyList()))
               } finally {
                 cardReaderSession.endCardProcessing()
               }

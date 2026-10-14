@@ -46,8 +46,8 @@ class SettingsActivity : BaseActivity() {
     }
     activitySettingsBinding.startBtn.setOnClickListener {
       appSettings.location = activitySettingsBinding.spinnerLocationList.selectedItem as Location
-      appSettings.batteryPowered = activitySettingsBinding.batteryPoweredBox.isChecked
-      if (appSettings.batteryPowered) {
+      appSettings.isBatteryPowered = activitySettingsBinding.batteryPoweredBox.isChecked
+      if (appSettings.isBatteryPowered) {
         startActivity(Intent(this, HomeActivity::class.java))
         finish()
       } else {

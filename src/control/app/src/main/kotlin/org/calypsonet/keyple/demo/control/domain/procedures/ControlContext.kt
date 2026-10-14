@@ -27,7 +27,7 @@ import org.eclipse.keypop.reader.selection.spi.SmartCard
  * @property dateTime The date and time of the control.
  * @property location The location of the control.
  * @property locations The known locations, to display those of the validations.
- * @property validationPeriod The validity period of a validation, in minutes.
+ * @property validationPeriodMinutes The validity period of a validation, in minutes.
  * @property symmetricCryptoSecuritySetting The security setting of the Calypso secure sessions,
  *   null if no SAM is available.
  * @property asymmetricCryptoSecuritySetting The security setting of the Calypso PKI transactions.
@@ -38,7 +38,7 @@ data class ControlContext(
     val dateTime: LocalDateTime,
     val location: Location,
     val locations: List<Location>,
-    val validationPeriod: Int,
+    val validationPeriodMinutes: Int,
     val symmetricCryptoSecuritySetting: SymmetricCryptoSecuritySetting?,
     val asymmetricCryptoSecuritySetting: AsymmetricCryptoSecuritySetting
 )

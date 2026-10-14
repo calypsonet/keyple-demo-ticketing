@@ -88,7 +88,7 @@ class TerminalSelectionActivity : BaseActivity() {
       grantResults: IntArray
   ) {
     when (requestCode) {
-      PermissionHelper.MY_PERMISSIONS_REQUEST_ALL -> {
+      PermissionHelper.PERMISSIONS_REQUEST_CODE -> {
         if (grantResults.isNotEmpty()) {
           for (grantResult in grantResults) {
             if (grantResult == PackageManager.PERMISSION_DENIED) {

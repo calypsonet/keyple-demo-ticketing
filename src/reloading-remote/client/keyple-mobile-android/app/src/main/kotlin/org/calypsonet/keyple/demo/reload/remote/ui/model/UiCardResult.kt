@@ -19,6 +19,6 @@ import kotlinx.parcelize.Parcelize
 data class UiCardResult(
     val resultType: ResultType,
     val cardType: String,
-    val contractsList: List<UiContract>,
+    val contracts: List<UiContract>,
     val errorMessage: String? = null
 ) : Parcelable

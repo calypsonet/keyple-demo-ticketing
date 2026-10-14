@@ -129,6 +129,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Field names harmonized:
+  - glossary and readability: `CHOOSE_CARD_MEDIUM_FOR_PERSONALIZATION` (instead of `CHOOSE_DEVICE_FOR_PERSO`) in the
+    reloading Android client, `seasonPassValidityEndDate` (instead of `passValidityEndDate`, also in the log of the
+    validation), `VALIDATION_RESULT_DELAY_MS` (instead of `SUMMARY_DELAY_MS`) and `cardDetectedAt` (instead of
+    `cardInsertedAt`) in the validation app, `ENV_VERSION_NUMBER_SIZE` and `ENV_APPLICATION_NUMBER_SIZE` (instead of
+    `ENV_EVN_SIZE` and `ENV_AVN_SIZE`) in the codecs and `EventStructure.eventDateTime` (instead of `eventDatetime`)
+    in the common library;
+  - no type in the names: `contracts` and `lastValidations` in the UI models of the control app and of the reloading
+    Android client (instead of `contractsList` and `lastValidationsList`), `locations` in `LocationRepository`
+    (instead of `locationList`), and `cardSecuritySetting` in the validation app (instead of `cardSecuritySettings`,
+    the property being null until a SAM is selected);
+  - booleans and units: `isBatteryPowered` (validation app), `isServerReady` (`AppState` of the multiplatform client),
+    `shouldCloseSession` (validation app), `wasServerReady` (reloading clients, instead of `lastServerReady`) and
+    `validationPeriodMinutes` (control app, instead of `validationPeriod`). The keys of the preferences of the
+    reloading Android client are all suffixed by `_KEY` (e.g. `CARD_MEDIUM_KEY`, `CONTACTLESS_VISIBILITY_KEY`), the
+    last known readiness of the server being stored under `was_server_ready`;
+  - `SAMPLE_RATE` constant of the desktop buzzer of the multiplatform client (instead of a variable),
+    `PERMISSIONS_REQUEST_CODE` (instead of `MY_PERMISSIONS_REQUEST_ALL`) in the control and validation apps,
+    `CalypsoFiles.SFI_EVENT_LOG` (instead of `SFI_EVENTS_LOG`), `preferences` (instead of `prefs`) in the reloading
+    Android client, and `FAILURE` status of the failed transactions displayed by the dashboard (instead of `FAIL`).
 - Method names (fifth audit): the server creates the card transaction managers with `createCardTransactionManager()`
   (instead of `initCardTransactionManager()`), as the card selection manager (`createCardSelectionManager()`); the
   README describes the `create...` verb.

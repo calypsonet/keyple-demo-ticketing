@@ -106,7 +106,7 @@ abstract class BaseActivity : AppCompatActivity() {
   }
 
   private fun updateServerReadinessIndicator() {
-    if (appSettings.lastServerReady)
+    if (appSettings.wasServerReady)
         toolbarBinding.serverStatus.setImageResource(R.drawable.ic_connection_success)
     else toolbarBinding.serverStatus.setImageResource(R.drawable.ic_connection_wait)
   }
@@ -127,14 +127,14 @@ abstract class BaseActivity : AppCompatActivity() {
             }
           }
       // Only the changes of the readiness are logged, the server being checked at each screen
-      if (isUp != appSettings.lastServerReady) {
+      if (isUp != appSettings.wasServerReady) {
         if (isUp) {
           Timber.i("Server ready [url=${serverConfig.url}]")
         } else {
           Timber.w("Server not ready [url=${serverConfig.url}, cause=$cause]")
         }
       }
-      appSettings.lastServerReady = isUp
+      appSettings.wasServerReady = isUp
       updateServerReadinessIndicator()
     }
   }

@@ -25,5 +25,5 @@ interface AppSettingsRepository {
   var location: Location
 
   /** Indicates whether the terminal is battery powered. */
-  var batteryPowered: Boolean
+  var isBatteryPowered: Boolean
 }

@@ -43,7 +43,7 @@ class HomeActivity : BaseActivity() {
       WindowInsetsCompat.CONSUMED
     }
 
-    if (intent.getBooleanExtra(CHOOSE_DEVICE_FOR_PERSO, false)) {
+    if (intent.getBooleanExtra(CHOOSE_CARD_MEDIUM_FOR_PERSONALIZATION, false)) {
       activityHomeBinding.chooseCardMediumTv.append(" ")
       activityHomeBinding.chooseCardMediumTv.append(getString(R.string.to_be_personalized))
     }
@@ -64,7 +64,7 @@ class HomeActivity : BaseActivity() {
   private fun setUpCardMediumButton(button: View, cardMedium: CardMedium) {
     button.setOnClickListener {
       appSettings.cardMedium = cardMedium
-      if (intent.getBooleanExtra(CHOOSE_DEVICE_FOR_PERSO, false)) {
+      if (intent.getBooleanExtra(CHOOSE_CARD_MEDIUM_FOR_PERSONALIZATION, false)) {
         intent.putExtras(intent)
         startActivity(Intent(this, PersonalizeCardActivity::class.java))
         this.finish()
@@ -88,6 +88,6 @@ class HomeActivity : BaseActivity() {
   }
 
   companion object {
-    const val CHOOSE_DEVICE_FOR_PERSO = "CHOOSE_DEVICE_FOR_PERSO"
+    const val CHOOSE_CARD_MEDIUM_FOR_PERSONALIZATION = "CHOOSE_CARD_MEDIUM_FOR_PERSONALIZATION"
   }
 }

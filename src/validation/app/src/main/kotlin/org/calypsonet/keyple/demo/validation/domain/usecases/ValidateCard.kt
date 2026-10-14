@@ -81,7 +81,7 @@ class ValidateCard(
       is ValidationResult.Accepted ->
           logger.i(
               "Card validated [card=${result.card}, remainingTrips=${result.remainingTrips}, " +
-                  "passValidityEndDate=${result.passValidityEndDate}]")
+                  "seasonPassValidityEndDate=${result.seasonPassValidityEndDate}]")
       is ValidationResult.Rejected ->
           logger.w("Card refused [card=${result.card}, reason=${result.reason}]")
       is ValidationResult.CardLost ->

@@ -52,7 +52,7 @@ class SettingsMenuActivity : BaseActivity() {
 
     activitySettingsMenuBinding.personalizationBtn.setOnClickListener {
       val intent = Intent(this, HomeActivity::class.java)
-      intent.putExtra(HomeActivity.CHOOSE_DEVICE_FOR_PERSO, true)
+      intent.putExtra(HomeActivity.CHOOSE_CARD_MEDIUM_FOR_PERSONALIZATION, true)
       startActivity(intent)
     }
 

@@ -91,7 +91,6 @@ class CardReaderSession(
 
   private lateinit var calypsoSam: LegacySam
   private lateinit var cardSelectionManager: CardSelectionManager
-  private lateinit var cardSecuritySettings: SymmetricCryptoSecuritySetting
 
   /** The last card selected. */
   private var selectedCard: SmartCard? = null
@@ -109,8 +108,8 @@ class CardReaderSession(
     get() = checkNotNull(terminalReaders.getCardReader()) { "Card reader not initialized" }
 
   /** Security setting of the Calypso secure sessions, null if no SAM is available. */
-  val cardSecuritySetting: SymmetricCryptoSecuritySetting?
-    get() = if (::cardSecuritySettings.isInitialized) cardSecuritySettings else null
+  var cardSecuritySetting: SymmetricCryptoSecuritySetting? = null
+    private set
 
   /**
    * Initializes the user feedback, the card reader and the SAM.
@@ -146,8 +145,8 @@ class CardReaderSession(
       if (samReader == null || !selectSam(samReader)) {
         throw IllegalStateException("SAM not available")
       }
-      cardSecuritySettings = createSecuritySetting()
-      cardSecuritySettings.initCryptoContextForNextTransaction()
+      cardSecuritySetting =
+          createSecuritySetting().also { it.initCryptoContextForNextTransaction() }
     }
     isInitialized = true
   }
@@ -201,7 +200,7 @@ class CardReaderSession(
    */
   fun prepareNextTransaction() {
     if (selectedCard is CalypsoCard) {
-      cardSecuritySettings.initCryptoContextForNextTransaction()
+      cardSecuritySetting?.initCryptoContextForNextTransaction()
     }
   }
 
