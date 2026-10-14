@@ -26,11 +26,11 @@ import org.calypsonet.keyple.demo.validation.domain.spi.Logger
 internal class AndroidFeedbackDevice(private val context: Context, private val logger: Logger) :
     FeedbackDevice {
   private var successMedia: MediaPlayer? = null
-  private var errorMedia: MediaPlayer? = null
+  private var failureMedia: MediaPlayer? = null
 
   override fun init(onReady: () -> Unit) {
     successMedia = MediaPlayer.create(context, R.raw.success)
-    errorMedia = MediaPlayer.create(context, R.raw.error)
+    failureMedia = MediaPlayer.create(context, R.raw.error)
     onReady()
   }
 
@@ -39,7 +39,7 @@ internal class AndroidFeedbackDevice(private val context: Context, private val l
   }
 
   override fun signalFailure() {
-    errorMedia?.start()
+    failureMedia?.start()
   }
 
   override fun signalWaiting() {}
@@ -54,12 +54,12 @@ internal class AndroidFeedbackDevice(private val context: Context, private val l
       successMedia = null
     }
     try {
-      errorMedia?.stop()
-      errorMedia?.release()
+      failureMedia?.stop()
+      failureMedia?.release()
     } catch (e: Exception) {
       logger.e("Error while releasing the error sound", e)
     } finally {
-      errorMedia = null
+      failureMedia = null
     }
   }
 }

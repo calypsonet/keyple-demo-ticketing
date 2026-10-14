@@ -38,11 +38,11 @@ internal class ArriveFeedbackDevice(private val context: Context, private val lo
 
   companion object {
     private const val SOUND_SUCCESS = "success.mp3"
-    private const val SOUND_ERROR = "error.mp3"
+    private const val SOUND_FAILURE = "error.mp3"
 
     // Virtual LED IDs for Axio 4 (SysfsLeds driver) — front_led/extra_led are MultiColorLed
     private val LEDS_SUCCESS = listOf("validation_ok")
-    private val LEDS_FAILED = listOf("validation_ko")
+    private val LEDS_FAILURE = listOf("validation_ko")
     private val LEDS_WAITING = listOf("hunting")
     private val LEDS_OFF = listOf("none")
   }
@@ -85,7 +85,7 @@ internal class ArriveFeedbackDevice(private val context: Context, private val lo
         (context.getExternalFilesDir("sounds") ?: File(context.filesDir, "sounds")).also {
           it.mkdirs()
         }
-    val files = listOf(SOUND_SUCCESS, SOUND_ERROR)
+    val files = listOf(SOUND_SUCCESS, SOUND_FAILURE)
     val deployedUris = mutableListOf<Uri>()
     for (name in files) {
       val dest = File(soundDir, name)
@@ -129,8 +129,8 @@ internal class ArriveFeedbackDevice(private val context: Context, private val lo
   }
 
   override fun signalFailure() {
-    setLeds(LEDS_FAILED)
-    playSound(SOUND_ERROR)
+    setLeds(LEDS_FAILURE)
+    playSound(SOUND_FAILURE)
   }
 
   override fun signalWaiting() {

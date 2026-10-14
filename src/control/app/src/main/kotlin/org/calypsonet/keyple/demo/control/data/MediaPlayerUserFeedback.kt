@@ -24,12 +24,12 @@ import org.calypsonet.keyple.demo.control.domain.spi.UserFeedback
 class MediaPlayerUserFeedback @Inject constructor() : UserFeedback {
 
   private var successMedia: MediaPlayer? = null
-  private var errorMedia: MediaPlayer? = null
+  private var failureMedia: MediaPlayer? = null
 
   override fun init(terminalType: TerminalType, uiContext: UiContext) {
     val activity = uiContext.adaptTo(Activity::class.java)
     successMedia = MediaPlayer.create(activity, R.raw.success)
-    errorMedia = MediaPlayer.create(activity, R.raw.error)
+    failureMedia = MediaPlayer.create(activity, R.raw.error)
   }
 
   override fun signalSuccess() {
@@ -37,15 +37,15 @@ class MediaPlayerUserFeedback @Inject constructor() : UserFeedback {
   }
 
   override fun signalFailure() {
-    errorMedia?.start()
+    failureMedia?.start()
   }
 
   override fun release() {
     successMedia?.stop()
     successMedia?.release()
     successMedia = null
-    errorMedia?.stop()
-    errorMedia?.release()
-    errorMedia = null
+    failureMedia?.stop()
+    failureMedia?.release()
+    failureMedia = null
   }
 }

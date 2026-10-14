@@ -129,6 +129,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Field names (third audit): the serial number of the card passed between the screens of the reloading Android
+  client is named `APPLICATION_SERIAL_NUMBER` (instead of `CARD_APPLICATION_NUMBER`, the application number being
+  another data of the card); the multiplatform client names `SERVER_HOST_KEY` and `DEFAULT_SERVER_HOST` the host of
+  the server (instead of `SERVER_IP_KEY` and `DEFAULT_SERVER_IP`); the failure feedback of the terminals is named
+  `failureMedia`, `SOUND_FAILURE` and `LEDS_FAILURE` (instead of `errorMedia`, `SOUND_ERROR` and `LEDS_FAILED`), as
+  `signalFailure()`; `ANIMATION_DURATION_MS` (instead of `ANIMATION_DURATION`) in the top bar of the multiplatform
+  client. The values of the extras of the reloading Android client are in camelCase (e.g. `tripsToLoad` instead of
+  `TRIPS_TO_LOAD`), and the keys of the preferences of the reloading clients are in snake_case without prefix nor
+  suffix (e.g. `server_ip` instead of `server_ip_key`, `contactless_visibility` instead of
+  `setting_contactless_visibility`): the settings saved by a previous version are not read again.
 - Field names (second audit): `host` and `port` in the state of the server settings screen of the multiplatform
   client (instead of `serverHost` and `serverPort`, as `protocol`, `endpoint` and `KeypleServerConfig`),
   `recordNumber` in the contracts of the control app (instead of `record`, which was a number), `NON_KEYPLE_PLUGIN`

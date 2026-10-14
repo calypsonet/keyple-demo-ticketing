@@ -50,7 +50,7 @@ class ServerConfigRepository(private val dataStore: DataStore<Preferences>) {
   /** Saves the address of the server and the endpoint of the remote plugin. */
   suspend fun update(host: String, port: Int, protocol: String, endpoint: String) {
     dataStore.edit { preferences ->
-      preferences[SERVER_IP_KEY] = host
+      preferences[SERVER_HOST_KEY] = host
       preferences[SERVER_PORT_KEY] = port
       preferences[SERVER_PROTOCOL_KEY] = protocol
       preferences[SERVER_ENDPOINT_KEY] = endpoint
@@ -60,18 +60,18 @@ class ServerConfigRepository(private val dataStore: DataStore<Preferences>) {
   /** Returns the URL of the server host (protocol and host). */
   private fun hostUrl(preferences: Preferences): String {
     val protocol = preferences[SERVER_PROTOCOL_KEY] ?: DEFAULT_SERVER_PROTOCOL
-    val host = preferences[SERVER_IP_KEY] ?: DEFAULT_SERVER_IP
+    val host = preferences[SERVER_HOST_KEY] ?: DEFAULT_SERVER_HOST
     return "$protocol://$host"
   }
 
   private companion object {
-    val SERVER_IP_KEY = stringPreferencesKey("server_ip_key")
-    val SERVER_PORT_KEY = intPreferencesKey("server_port_key")
-    val SERVER_PROTOCOL_KEY = stringPreferencesKey("server_protocol_key")
-    val SERVER_ENDPOINT_KEY = stringPreferencesKey("server_endpoint_key")
-    val SERVER_BASIC_AUTH_KEY = stringPreferencesKey("server_basicauth_key")
+    val SERVER_HOST_KEY = stringPreferencesKey("server_host")
+    val SERVER_PORT_KEY = intPreferencesKey("server_port")
+    val SERVER_PROTOCOL_KEY = stringPreferencesKey("server_protocol")
+    val SERVER_ENDPOINT_KEY = stringPreferencesKey("server_endpoint")
+    val SERVER_BASIC_AUTH_KEY = stringPreferencesKey("server_basic_auth")
 
-    const val DEFAULT_SERVER_IP = "82.96.147.205"
+    const val DEFAULT_SERVER_HOST = "82.96.147.205"
     const val DEFAULT_SERVER_PORT = 42080
     const val DEFAULT_SERVER_PROTOCOL = "http"
     const val DEFAULT_SERVER_ENDPOINT = "/card/remote-plugin"

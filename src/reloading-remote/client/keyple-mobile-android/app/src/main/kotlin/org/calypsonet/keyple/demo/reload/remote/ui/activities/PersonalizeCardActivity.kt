@@ -98,7 +98,7 @@ class PersonalizeCardActivity : BaseCardActivity() {
     intent.putExtra(CardOperationResultActivity.RESULT_TYPE, cardResult.resultType.name)
     intent.putExtra(CardOperationResultActivity.MESSAGE, cardResult.errorMessage)
     intent.putExtra(CARD_CONTENT, cardResult)
-    intent.putExtra(CARD_APPLICATION_NUMBER, applicationSerialNumber)
+    intent.putExtra(APPLICATION_SERIAL_NUMBER, applicationSerialNumber)
     startActivity(intent)
     if (finishActivity == true) {
       finish()

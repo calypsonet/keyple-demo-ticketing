@@ -85,7 +85,7 @@ class LoadContractActivity : BaseCardActivity() {
         val tripsToLoad = intent.getIntExtra(SelectProductActivity.TRIPS_TO_LOAD, 0)
         val result =
             loadContract(
-                intent.getStringExtra(CARD_APPLICATION_NUMBER),
+                intent.getStringExtra(APPLICATION_SERIAL_NUMBER),
                 PriorityCode.fromCode(intent.getIntExtra(SelectProductActivity.CONTRACT_TARIFF, 0)),
                 tripsToLoad)
         if (result.status == RemoteServiceStatus.SUCCESS) {
@@ -120,7 +120,7 @@ class LoadContractActivity : BaseCardActivity() {
     intent.putExtra(CardOperationResultActivity.RESULT_TYPE, cardResult.resultType.name)
     intent.putExtra(CardOperationResultActivity.MESSAGE, cardResult.errorMessage)
     intent.putExtra(CARD_CONTENT, cardResult)
-    intent.putExtra(CARD_APPLICATION_NUMBER, applicationSerialNumber)
+    intent.putExtra(APPLICATION_SERIAL_NUMBER, applicationSerialNumber)
     startActivity(intent)
     if (finishActivity == true) {
       finish()

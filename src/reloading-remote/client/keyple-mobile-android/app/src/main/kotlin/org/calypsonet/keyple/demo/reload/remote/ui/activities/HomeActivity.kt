@@ -88,6 +88,6 @@ class HomeActivity : BaseActivity() {
   }
 
   companion object {
-    const val CHOOSE_CARD_MEDIUM_FOR_PERSONALIZATION = "CHOOSE_CARD_MEDIUM_FOR_PERSONALIZATION"
+    const val CHOOSE_CARD_MEDIUM_FOR_PERSONALIZATION = "chooseCardMediumForPersonalization"
   }
 }

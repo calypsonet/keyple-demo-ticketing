@@ -162,7 +162,7 @@ abstract class BaseCardActivity :
   protected abstract fun initReaders()
 
   companion object {
-    const val CARD_APPLICATION_NUMBER = "cardApplicationNumber"
+    const val APPLICATION_SERIAL_NUMBER = "applicationSerialNumber"
     const val CARD_CONTENT = "cardContent"
   }
 }

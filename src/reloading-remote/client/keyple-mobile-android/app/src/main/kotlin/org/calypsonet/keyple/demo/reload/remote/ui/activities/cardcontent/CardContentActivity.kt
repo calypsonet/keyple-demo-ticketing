@@ -133,8 +133,8 @@ class CardContentActivity : BaseActivity() {
     mp.start()
     activityCardContentBinding.buyBtn.setOnClickListener {
       val intent = Intent(this, SelectProductActivity::class.java)
-      getIntent().getStringExtra(BaseCardActivity.CARD_APPLICATION_NUMBER)?.let {
-        intent.putExtra(BaseCardActivity.CARD_APPLICATION_NUMBER, it)
+      getIntent().getStringExtra(BaseCardActivity.APPLICATION_SERIAL_NUMBER)?.let {
+        intent.putExtra(BaseCardActivity.APPLICATION_SERIAL_NUMBER, it)
       }
       startActivity(intent)
       this@CardContentActivity.finish()

@@ -75,17 +75,17 @@ class SharedPreferencesAppSettingsRepository(private val preferences: SharedPref
       }
 
   companion object {
-    private const val SERVER_IP_KEY = "server_ip_key"
-    private const val SERVER_PORT_KEY = "server_port_key"
-    private const val SERVER_PROTOCOL_KEY = "server_protocol_key"
+    private const val SERVER_IP_KEY = "server_ip"
+    private const val SERVER_PORT_KEY = "server_port"
+    private const val SERVER_PROTOCOL_KEY = "server_protocol"
     private const val CARD_MEDIUM_KEY = "card_medium"
     private const val DEFAULT_SERVER_IP = "192.168.0.1"
     private const val DEFAULT_PORT = 8080
     private const val DEFAULT_PROTOCOL = "http://"
-    private const val CONTACTLESS_VISIBILITY_KEY = "setting_contactless_visibility"
-    private const val SIM_VISIBILITY_KEY = "setting_sim_visibility"
-    private const val WEARABLE_VISIBILITY_KEY = "setting_wearable_visibility"
-    private const val EMBEDDED_VISIBILITY_KEY = "setting_embedded_visibility"
+    private const val CONTACTLESS_VISIBILITY_KEY = "contactless_visibility"
+    private const val SIM_VISIBILITY_KEY = "sim_visibility"
+    private const val WEARABLE_VISIBILITY_KEY = "wearable_visibility"
+    private const val EMBEDDED_VISIBILITY_KEY = "embedded_visibility"
     private const val WAS_SERVER_READY_KEY = "was_server_ready"
   }
 }

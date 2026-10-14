@@ -126,7 +126,7 @@ fun PulsingDot(state: AppState, modifier: Modifier = Modifier) {
     if (waves.isNotEmpty()) {
       waves.first().startAnimation()
       // Remove the wave after the animation.
-      delay(Wave.ANIMATION_DURATION)
+      delay(Wave.ANIMATION_DURATION_MS)
       waves.removeAt(0)
     }
   }
@@ -163,13 +163,14 @@ class Wave {
     radius.animateTo(
         targetValue = 30.dp.value,
         animationSpec =
-            tween(durationMillis = ANIMATION_DURATION.toInt(), easing = FastOutSlowInEasing))
+            tween(durationMillis = ANIMATION_DURATION_MS.toInt(), easing = FastOutSlowInEasing))
     alpha.animateTo(
         targetValue = 0f,
-        animationSpec = tween(durationMillis = ANIMATION_DURATION.toInt(), easing = LinearEasing))
+        animationSpec =
+            tween(durationMillis = ANIMATION_DURATION_MS.toInt(), easing = LinearEasing))
   }
 
   companion object {
-    const val ANIMATION_DURATION = 200L
+    const val ANIMATION_DURATION_MS = 200L
   }
 }

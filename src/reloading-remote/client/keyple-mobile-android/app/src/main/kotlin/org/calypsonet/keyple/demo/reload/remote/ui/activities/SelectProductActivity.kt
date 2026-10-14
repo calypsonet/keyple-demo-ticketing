@@ -68,15 +68,15 @@ class SelectProductActivity : BaseActivity() {
     if (tripsToLoad != null) {
       intent.putExtra(TRIPS_TO_LOAD, tripsToLoad)
     }
-    getIntent().getStringExtra(BaseCardActivity.CARD_APPLICATION_NUMBER)?.let {
-      intent.putExtra(BaseCardActivity.CARD_APPLICATION_NUMBER, it)
+    getIntent().getStringExtra(BaseCardActivity.APPLICATION_SERIAL_NUMBER)?.let {
+      intent.putExtra(BaseCardActivity.APPLICATION_SERIAL_NUMBER, it)
     }
     startActivity(intent)
     this@SelectProductActivity.finish()
   }
 
   companion object {
-    const val CONTRACT_TARIFF = "CONTRACT_TARIFF"
-    const val TRIPS_TO_LOAD = "TRIPS_TO_LOAD"
+    const val CONTRACT_TARIFF = "contractTariff"
+    const val TRIPS_TO_LOAD = "tripsToLoad"
   }
 }

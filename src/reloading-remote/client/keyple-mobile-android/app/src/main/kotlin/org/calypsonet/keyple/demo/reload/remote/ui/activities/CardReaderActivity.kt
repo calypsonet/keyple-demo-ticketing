@@ -147,7 +147,7 @@ class CardReaderActivity : BaseCardActivity() {
     activityCardReaderBinding.cardAnimation.cancelAnimation()
     val intent = Intent(this, CardContentActivity::class.java)
     intent.putExtra(CARD_CONTENT, cardResult)
-    intent.putExtra(CARD_APPLICATION_NUMBER, applicationSerialNumber)
+    intent.putExtra(APPLICATION_SERIAL_NUMBER, applicationSerialNumber)
     startActivity(intent)
     if (finishActivity == true) {
       finish()
