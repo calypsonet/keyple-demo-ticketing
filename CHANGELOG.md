@@ -152,6 +152,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   and the other clients) in the reloading Android client; `tripsToLoad` (instead of `trips`), `terminal` and
   `serviceId` (instead of `remote` and `service`, the terminal being also named `service` in a lambda) and `logLevel`
   (instead of `debugLog`) in the multiplatform client.
+- Variable names (ninth audit): in the tests of the codecs, `contract` and `event` (instead of `contractStructure`
+  and `eventStructure`, as in the decoding tests and the server) and `eventDateTime` (instead of `eventDate`, a
+  date and time).
 - Build scripts: in the validation app, the presence of the Parkeon SDK is named `hasParkeonSdk` (instead of
   `hasArriveSdk`, the file being `parkeonSdkFile`), as the build config field `HAS_PARKEON_SDK` (instead of
   `HAS_ARRIVE_SDK`); the

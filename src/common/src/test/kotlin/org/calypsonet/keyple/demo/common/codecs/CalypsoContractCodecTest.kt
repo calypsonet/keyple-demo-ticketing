@@ -47,7 +47,7 @@ class CalypsoContractCodecTest {
     val contractSaleDate = LocalDate.of(2021, 1, 14)
     val contractValidityEndDate = LocalDate.of(2021, 2, 13)
 
-    val contractStructure =
+    val contract =
         ContractStructure(
             contractVersionNumber = VersionNumber.CURRENT_VERSION,
             contractTariff = PriorityCode.SEASON_PASS,
@@ -58,7 +58,7 @@ class CalypsoContractCodecTest {
             contractAuthKvc = 0,
             contractAuthenticator = 0)
 
-    val content = CalypsoContractCodec.encode(contractStructure)
+    val content = CalypsoContractCodec.encode(contract)
 
     assertThat(BytesUtils.bytesToString(content)).isEqualTo(DATA_CONTRACT_1)
   }

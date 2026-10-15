@@ -47,13 +47,13 @@ class CalypsoEventCodecTest {
 
   @Test
   fun encodeSeasonPassEvent() {
-    val eventDate = LocalDateTime.of(2021, 1, 14, 14, 0, 0)
+    val eventDateTime = LocalDateTime.of(2021, 1, 14, 14, 0, 0)
 
-    val eventStructure =
+    val event =
         EventStructure(
             eventVersionNumber = VersionNumber.CURRENT_VERSION,
-            eventDateStamp = DateCompact(eventDate.toLocalDate()),
-            eventTimeStamp = TimeCompact(eventDate),
+            eventDateStamp = DateCompact(eventDateTime.toLocalDate()),
+            eventTimeStamp = TimeCompact(eventDateTime),
             eventLocation = 1,
             eventContractUsed = 1,
             contractPriorities =
@@ -63,7 +63,7 @@ class CalypsoEventCodecTest {
                     PriorityCode.FORBIDDEN,
                     PriorityCode.FORBIDDEN))
 
-    val content = CalypsoEventCodec.encode(eventStructure)
+    val content = CalypsoEventCodec.encode(event)
 
     assertThat(BytesUtils.bytesToString(content)).isEqualTo(DATA_EVENT_1)
   }
