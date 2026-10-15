@@ -41,9 +41,9 @@ class CardOperationResultActivity : BaseActivity() {
     val resultTypeName = intent.getStringExtra(RESULT_TYPE)
     val resultType =
         ResultType.entries.firstOrNull { it.name == resultTypeName } ?: ResultType.ERROR
-    val cardContent: UiCardResult? =
+    val cardResult: UiCardResult? =
         IntentCompat.getParcelableExtra(
-            intent, BaseCardActivity.CARD_CONTENT, UiCardResult::class.java)
+            intent, BaseCardActivity.CARD_RESULT, UiCardResult::class.java)
 
     activityCardOperationResultBinding.tryBtn.setOnClickListener {
       onBackPressedDispatcher.onBackPressed()
@@ -53,10 +53,10 @@ class CardOperationResultActivity : BaseActivity() {
       startActivity(intent)
     }
 
-    if (cardContent != null && !cardContent.cardType.isNullOrBlank()) {
+    if (cardResult != null && !cardResult.cardType.isNullOrBlank()) {
       activityCardOperationResultBinding.cardTypeLabel.visibility = View.VISIBLE
       activityCardOperationResultBinding.cardTypeLabel.text =
-          getString(R.string.card_type, cardContent.cardType)
+          getString(R.string.card_type, cardResult.cardType)
     } else {
       activityCardOperationResultBinding.cardTypeLabel.visibility = View.GONE
     }

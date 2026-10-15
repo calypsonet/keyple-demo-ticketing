@@ -115,7 +115,7 @@ class LoadContractActivity : BaseCardActivity() {
     val intent = Intent(this, CardOperationResultActivity::class.java)
     intent.putExtra(CardOperationResultActivity.RESULT_TYPE, cardResult.resultType.name)
     intent.putExtra(CardOperationResultActivity.MESSAGE, cardResult.errorMessage)
-    intent.putExtra(CARD_CONTENT, cardResult)
+    intent.putExtra(CARD_RESULT, cardResult)
     intent.putExtra(APPLICATION_SERIAL_NUMBER, applicationSerialNumber)
     startActivity(intent)
     if (finishActivity == true) {

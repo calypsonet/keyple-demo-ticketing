@@ -43,24 +43,24 @@ class CardContentActivity : BaseActivity() {
     toolbarBinding = activityCardContentBinding.appBarLayout
     setContentView(activityCardContentBinding.root)
 
-    val cardContent: UiCardResult =
+    val cardResult: UiCardResult =
         IntentCompat.getParcelableExtra(
-            intent, BaseCardActivity.CARD_CONTENT, UiCardResult::class.java)!!
+            intent, BaseCardActivity.CARD_RESULT, UiCardResult::class.java)!!
 
     contractsLayoutManager = LinearLayoutManager(this)
     activityCardContentBinding.contractsList.layoutManager = contractsLayoutManager
 
-    contractsAdapter = ContractsRecyclerAdapter(cardContent.contracts)
+    contractsAdapter = ContractsRecyclerAdapter(cardResult.contracts)
     activityCardContentBinding.contractsList.adapter = contractsAdapter
 
-    when (cardContent.resultType) {
+    when (cardResult.resultType) {
       ResultType.INVALID_CARD -> {
         activityCardContentBinding.animation.setAnimation("error_orange_anim.json")
         activityCardContentBinding.animation.playAnimation()
         activityCardContentBinding.bigText.setText(R.string.card_invalid_label)
         activityCardContentBinding.bigText.setTextColor(
             ContextCompat.getColor(this, R.color.orange))
-        activityCardContentBinding.smallDesc.text = cardContent.errorMessage
+        activityCardContentBinding.smallDesc.text = cardResult.errorMessage
         activityCardContentBinding.smallDesc.setTextColor(
             ContextCompat.getColor(this, R.color.orange))
         activityCardContentBinding.buyBtn.visibility = View.INVISIBLE
@@ -95,8 +95,8 @@ class CardContentActivity : BaseActivity() {
       ResultType.ERROR -> {
         activityCardContentBinding.animation.setAnimation("error_anim.json")
         activityCardContentBinding.animation.playAnimation()
-        if (cardContent.errorMessage != null)
-            activityCardContentBinding.bigText.text = cardContent.errorMessage
+        if (cardResult.errorMessage != null)
+            activityCardContentBinding.bigText.text = cardResult.errorMessage
         else activityCardContentBinding.bigText.setText(R.string.error_label)
         activityCardContentBinding.bigText.setTextColor(ContextCompat.getColor(this, R.color.red))
         activityCardContentBinding.smallDesc.visibility = View.INVISIBLE
@@ -120,10 +120,10 @@ class CardContentActivity : BaseActivity() {
       }
     }
 
-    if (!cardContent.cardType.isNullOrBlank()) {
+    if (!cardResult.cardType.isNullOrBlank()) {
       activityCardContentBinding.cardTypeLabel.visibility = View.VISIBLE
       activityCardContentBinding.cardTypeLabel.text =
-          getString(R.string.card_type, cardContent.cardType)
+          getString(R.string.card_type, cardResult.cardType)
     }
 
     activityCardContentBinding.animation.playAnimation()

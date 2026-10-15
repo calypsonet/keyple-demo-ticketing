@@ -152,6 +152,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   and the other clients) in the reloading Android client; `tripsToLoad` (instead of `trips`), `terminal` and
   `serviceId` (instead of `remote` and `service`, the terminal being also named `service` in a lambda) and `logLevel`
   (instead of `debugLog`) in the multiplatform client.
+- Reloading Android client: the result of a card operation passed between the activities is named `cardResult` on
+  both sides (instead of `cardContent` when received, also in the key of the intent extra, now `CARD_RESULT`), and
+  the contract bound by the adapter of the contracts `contract` (instead of `contractItem`).
 - Validation app: the timer returning to the home screen on the battery powered terminals is named `autoReturnTimer`
   (instead of `timer`), as the auto return of the reloading clients.
 - Validation app: the description of the presented card is named `cardDescription` (instead of `card`, also the name of

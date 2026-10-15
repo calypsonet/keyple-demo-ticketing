@@ -189,7 +189,7 @@ abstract class BaseCardActivity :
 
   companion object {
     const val APPLICATION_SERIAL_NUMBER = "applicationSerialNumber"
-    const val CARD_CONTENT = "cardContent"
+    const val CARD_RESULT = "cardResult"
 
     /** Thread of the releases of the reader, executed one after the other. */
     private val readerScope = CoroutineScope(SupervisorJob() + Dispatchers.IO.limitedParallelism(1))
