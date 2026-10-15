@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material3.OutlinedTextField
@@ -25,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavController
 import org.calypsonet.keyple.demo.reload.remote.AppState
 import org.calypsonet.keyple.demo.reload.remote.ui.components.AppTopBar
@@ -58,7 +60,7 @@ internal fun ServerSettingsScreen(
     modifier: Modifier = Modifier,
     appState: AppState,
     onHostChanged: (String) -> Unit,
-    onPortChanged: (Int) -> Unit,
+    onPortChanged: (String) -> Unit,
     onProtocolChanged: (String) -> Unit,
     onEndpointChanged: (String) -> Unit
 ) {
@@ -76,8 +78,16 @@ internal fun ServerSettingsScreen(
               label = { Text("Server IP") })
 
           OutlinedTextField(
-              value = state.port.toString(),
-              onValueChange = { onPortChanged(it.trim().toInt()) },
+              value = state.port,
+              onValueChange = onPortChanged,
+              keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+              singleLine = true,
+              isError = state.validatedPort == null,
+              supportingText = {
+                if (state.validatedPort == null) {
+                  Text("Enter a port between 1 and 65535")
+                }
+              },
               label = { Text("Server port") })
 
           OutlinedTextField(
@@ -92,7 +102,9 @@ internal fun ServerSettingsScreen(
 
           Spacer(modifier = Modifier.weight(1f))
 
-          Button(onClick = { applyServerSettings() }) { Text("Apply") }
+          Button(onClick = { applyServerSettings() }, enabled = state.validatedPort != null) {
+            Text("Apply")
+          }
         }
   }
 }
