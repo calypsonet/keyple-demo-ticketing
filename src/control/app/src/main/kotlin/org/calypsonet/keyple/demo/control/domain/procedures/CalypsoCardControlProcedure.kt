@@ -189,17 +189,11 @@ class CalypsoCardControlProcedure(
         contracts[it.key] = CalypsoContractCodec.decode(it.value)
       }
 
-      // Retrieve contract used for the last event
-      val eventContract =
-          contracts.toList().filter { it.first == event.eventContractUsed }.map { it.second }
+      // Contract used by the last event, null if it is not present in the card
+      val eventContract = contracts[event.eventContractUsed]
 
       if (isValidEvent(event)) {
-        validation =
-            if (eventContract.isNotEmpty()) {
-              buildValidation(event = event, contract = eventContract[0], locations = locations)
-            } else {
-              buildValidation(event = event, contract = null, locations = locations)
-            }
+        validation = buildValidation(event = event, contract = eventContract, locations = locations)
       }
 
       val displayedContracts = mutableListOf<Contract>()

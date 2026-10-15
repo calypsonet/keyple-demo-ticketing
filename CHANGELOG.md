@@ -152,6 +152,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   and the other clients) in the reloading Android client; `tripsToLoad` (instead of `trips`), `terminal` and
   `serviceId` (instead of `remote` and `service`, the terminal being also named `service` in a lambda) and `logLevel`
   (instead of `debugLog`) in the multiplatform client.
+- Control app: the contract used by the last event (`eventContract`) is read directly in the contracts of the Calypso
+  card, instead of being a list of zero or one contract.
 - Reloading Android client: the callbacks are named after the event, as in the other clients and apps:
   `onPluginRegistered` (instead of `callback`) in the registration of the plugins and the initialization of the
   reader, `onCountdown` and `onAutoReturnCountdown` (instead of `countdown` and `autoReturnCountdown`) in the
