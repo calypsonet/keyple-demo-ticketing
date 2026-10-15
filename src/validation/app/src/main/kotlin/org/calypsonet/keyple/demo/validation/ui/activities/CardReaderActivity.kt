@@ -27,7 +27,9 @@ import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.validation.R
@@ -113,7 +115,7 @@ class CardReaderActivity : BaseActivity() {
 
     if (!cardReaderSession.isInitialized) {
       lifecycleScope.launch {
-        withContext(Dispatchers.IO) {
+        withContext(readerDispatcher) {
           try {
             cardReaderObserver = CardReaderObserver()
             cardReaderSession.init(
@@ -129,7 +131,7 @@ class CardReaderActivity : BaseActivity() {
         }
       }
     } else {
-      cardReaderSession.startCardDetection()
+      readerScope.launch { cardReaderSession.startCardDetection() }
     }
     if (appSettings.isBatteryPowered) {
       timer = Timer() // Need to reinit timer after cancel
@@ -149,15 +151,20 @@ class CardReaderActivity : BaseActivity() {
     timer.cancel()
     validationResultTimer?.cancel()
     validationResultTimer = null
-    if (cardReaderSession.isInitialized) {
-      cardReaderSession.stopCardDetection()
-      Timber.d("Card detection stopped")
+    // Stopped outside the main thread: the stop may be long (about 440 ms on the Bluebird
+    // terminals, end of the monitoring of the card removal)
+    readerScope.launch {
+      if (cardReaderSession.isInitialized) {
+        cardReaderSession.stopCardDetection()
+        Timber.d("Card detection stopped")
+      }
     }
   }
 
   override fun onDestroy() {
     timer.cancel()
-    cardReaderSession.release(cardReaderObserver)
+    val observer = cardReaderObserver
+    readerScope.launch { cardReaderSession.release(observer) }
     cardReaderObserver = null
     super.onDestroy()
   }
@@ -220,7 +227,7 @@ class CardReaderActivity : BaseActivity() {
               if (validationResult is ValidationResult.CardLost) {
                 // Card removed during transaction: silent reset, no display, no sound
                 currentAppState = AppState.WAIT_CARD
-                cardReaderSession.endCardProcessing()
+                readerScope.launch { cardReaderSession.endCardProcessing() }
                 playWaitingAnimation()
               } else {
                 displayResult(validationResult)
@@ -390,7 +397,7 @@ class CardReaderActivity : BaseActivity() {
     // The preparation of the next transaction is performed asynchronously after the end of the
     // previous transaction so that the time spent is not added to the user time.
     if (result !is ValidationResult.NotSelected) {
-      lifecycleScope.launch(Dispatchers.IO) { cardReaderSession.prepareNextTransaction() }
+      readerScope.launch { cardReaderSession.prepareNextTransaction() }
     }
 
     showResultOverlay(animationFile)
@@ -430,7 +437,7 @@ class CardReaderActivity : BaseActivity() {
     activityCardReaderBinding.mainView.setBackgroundResource(R.drawable.ic_img_bg_valideur)
     activityCardReaderBinding.presentCardTv.visibility = View.VISIBLE
     playWaitingAnimation()
-    cardReaderSession.endCardProcessing()
+    readerScope.launch { cardReaderSession.endCardProcessing() }
   }
 
   /** Displays the failure of the initialization of the readers, the application being then quit. */
@@ -461,6 +468,16 @@ class CardReaderActivity : BaseActivity() {
   companion object {
     private const val RETURN_DELAY_MS = 30000
     private const val VALIDATION_RESULT_DELAY_MS = 2500
+
+    /**
+     * Thread of the operations on the readers (initialization, start and stop of the card
+     * detection, preparation of the next transaction, end of the card processing, release),
+     * executed one after the other in their order of request.
+     */
+    private val readerDispatcher = Dispatchers.IO.limitedParallelism(1)
+
+    /** Scope of the operations on the readers which must be completed after the screen is left. */
+    private val readerScope = CoroutineScope(SupervisorJob() + readerDispatcher)
   }
 
   private inner class CardReaderObserver : CardReaderObserverSpi {
