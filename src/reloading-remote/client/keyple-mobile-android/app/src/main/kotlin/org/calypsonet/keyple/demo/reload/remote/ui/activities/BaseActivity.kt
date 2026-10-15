@@ -39,7 +39,7 @@ abstract class BaseActivity : AppCompatActivity() {
   private var autoReturnJob: Job? = null
   private var autoReturnAnimator: ObjectAnimator? = null
   private var autoReturnProgress: ProgressBar? = null
-  private var autoReturnCountdown: ((Int?) -> Unit)? = null
+  private var onAutoReturnCountdown: ((Int?) -> Unit)? = null
 
   override fun onResume() {
     super.onResume()
@@ -58,18 +58,18 @@ abstract class BaseActivity : AppCompatActivity() {
    *
    * @param delayMs The display duration, in milliseconds.
    * @param progress The bar emptied during the delay to show the remaining time, if any.
-   * @param countdown Called with the remaining seconds every second (e.g. to display them in the
+   * @param onCountdown Called with the remaining seconds every second (e.g. to display them in the
    *   label of the button performing the same action), then with null if the automatic return is
    *   cancelled.
    */
   protected fun scheduleAutoReturn(
       delayMs: Long,
       progress: ProgressBar? = null,
-      countdown: ((Int?) -> Unit)? = null
+      onCountdown: ((Int?) -> Unit)? = null
   ) {
     cancelAutoReturn()
     autoReturnProgress = progress
-    autoReturnCountdown = countdown
+    onAutoReturnCountdown = onCountdown
     progress?.let {
       it.max = AUTO_RETURN_PROGRESS_MAX
       it.visibility = View.VISIBLE
@@ -83,7 +83,7 @@ abstract class BaseActivity : AppCompatActivity() {
     autoReturnJob =
         lifecycleScope.launch {
           for (seconds in (delayMs / 1000).toInt() downTo 1) {
-            countdown?.invoke(seconds)
+            onCountdown?.invoke(seconds)
             delay(1000)
           }
           delay(delayMs % 1000)
@@ -97,12 +97,12 @@ abstract class BaseActivity : AppCompatActivity() {
       autoReturnJob?.cancel()
       autoReturnAnimator?.cancel()
       autoReturnProgress?.visibility = View.GONE
-      autoReturnCountdown?.invoke(null)
+      onAutoReturnCountdown?.invoke(null)
     }
     autoReturnJob = null
     autoReturnAnimator = null
     autoReturnProgress = null
-    autoReturnCountdown = null
+    onAutoReturnCountdown = null
   }
 
   private fun updateServerReadinessIndicator() {

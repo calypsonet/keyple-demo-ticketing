@@ -38,7 +38,7 @@ interface TerminalReaders {
       terminalType: TerminalType,
       uiContext: UiContext,
       cardMedium: CardMedium,
-      callback: (() -> Unit)?
+      onPluginRegistered: (() -> Unit)?
   )
 
   fun initCardReader(

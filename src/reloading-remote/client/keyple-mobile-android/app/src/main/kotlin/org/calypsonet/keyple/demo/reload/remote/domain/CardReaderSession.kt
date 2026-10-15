@@ -70,7 +70,7 @@ class CardReaderSession(
    * @param uiContext Platform-specific context used to register the plugins.
    * @param observer Optional observer of the card reader events (contactless cards only).
    * @param readerObservationExceptionHandler Optional handler of the reader observation errors.
-   * @param callback Optional callback invoked once the plugin is registered (asynchronous
+   * @param onPluginRegistered Optional callback invoked once the plugin is registered (asynchronous
    *   registration of the OMAPI plugin).
    */
   fun init(
@@ -79,13 +79,13 @@ class CardReaderSession(
       uiContext: UiContext,
       observer: CardReaderObserverSpi?,
       readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi?,
-      callback: (() -> Unit)?
+      onPluginRegistered: (() -> Unit)?
   ) {
     readerName = terminalReaders.getReaderName(terminalType, cardMedium)
     pluginType = getPluginType(terminalType, cardMedium)
     aids = getAids(cardMedium)
 
-    terminalReaders.registerPlugin(terminalType, uiContext, cardMedium, callback)
+    terminalReaders.registerPlugin(terminalType, uiContext, cardMedium, onPluginRegistered)
     terminalReaders.initCardReader(observer, readerObservationExceptionHandler)
 
     isInitialized = true

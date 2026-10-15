@@ -83,9 +83,14 @@ abstract class BaseCardActivity :
    * trigger process only when the plugin is registered
    */
   @Throws(UnsupportedOperationException::class)
-  fun initOmapiReader(callback: () -> Unit) {
+  fun initOmapiReader(onPluginRegistered: () -> Unit) {
     cardReaderSession.init(
-        terminalType, cardMedium, ActivityUiContext(this@BaseCardActivity), null, null, callback)
+        terminalType,
+        cardMedium,
+        ActivityUiContext(this@BaseCardActivity),
+        null,
+        null,
+        onPluginRegistered)
   }
 
   /**

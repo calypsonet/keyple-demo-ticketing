@@ -93,7 +93,7 @@ class KeypleTerminalReaders @Inject constructor(private val logger: Logger) : Te
       terminalType: TerminalType,
       uiContext: UiContext,
       cardMedium: CardMedium,
-      callback: (() -> Unit)?
+      onPluginRegistered: (() -> Unit)?
   ) {
     this.cardMedium = cardMedium
     val activity = uiContext.adaptTo(Activity::class.java)
@@ -101,7 +101,7 @@ class KeypleTerminalReaders @Inject constructor(private val logger: Logger) : Te
       // The OMAPI plugin factory is provided asynchronously, once the SE service is connected.
       AndroidOmapiPluginFactoryProvider(activity) { factory ->
         SmartCardServiceProvider.getService().registerPlugin(factory)
-        callback?.invoke()
+        onPluginRegistered?.invoke()
       }
       return
     }
