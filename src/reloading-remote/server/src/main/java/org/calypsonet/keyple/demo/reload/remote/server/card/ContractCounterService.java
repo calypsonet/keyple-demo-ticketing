@@ -71,8 +71,8 @@ public class ContractCounterService {
       CardData card = cardRepository.readCard(cardReader, calypsoCard, samResource);
       List<ContractStructure> presentContracts = contractAnalysisService.findPresentContracts(card);
 
-      for (ContractStructure contractStructure : presentContracts) {
-        output.add(describeContract(contractStructure));
+      for (ContractStructure contract : presentContracts) {
+        output.add(describeContract(contract));
       }
     } catch (CardNotPersonalizedException e) {
       // Refusal logged where it is detected
@@ -162,56 +162,56 @@ public class ContractCounterService {
   }
 
   /** Returns the description of a contract, one field per line, sent as text to the client. */
-  private static String describeContract(ContractStructure contractStructure) {
+  private static String describeContract(ContractStructure contract) {
     StringBuilder builder = new StringBuilder();
 
     builder
         .append("Contract Version Number: ")
-        .append(contractStructure.getContractVersionNumber())
+        .append(contract.getContractVersionNumber())
         .append("\n");
 
-    builder.append("Contract Tariff: ").append(contractStructure.getContractTariff()).append("\n");
+    builder.append("Contract Tariff: ").append(contract.getContractTariff()).append("\n");
 
     builder
         .append("Contract Sale Date: ")
-        .append(contractStructure.getContractSaleDate().getDate())
+        .append(contract.getContractSaleDate().getDate())
         .append("\n");
 
     builder
         .append("Contract Validity End Date: ")
-        .append(contractStructure.getContractValidityEndDate().getDate())
+        .append(contract.getContractValidityEndDate().getDate())
         .append("\n");
 
-    if (contractStructure.getContractSaleSam() != null) {
+    if (contract.getContractSaleSam() != null) {
       builder
           .append("Contract Sale Sam: ")
-          .append(contractStructure.getContractSaleSam())
+          .append(contract.getContractSaleSam())
           .append("\n");
     }
 
-    if (contractStructure.getContractSaleCounter() != null) {
+    if (contract.getContractSaleCounter() != null) {
       builder
           .append("Contract Sale Counter: ")
-          .append(contractStructure.getContractSaleCounter())
+          .append(contract.getContractSaleCounter())
           .append("\n");
     }
 
-    if (contractStructure.getContractAuthKvc() != null) {
+    if (contract.getContractAuthKvc() != null) {
       builder
           .append("Contract Auth Kvc: ")
-          .append(contractStructure.getContractAuthKvc())
+          .append(contract.getContractAuthKvc())
           .append("\n");
     }
 
-    if (contractStructure.getContractAuthenticator() != null) {
+    if (contract.getContractAuthenticator() != null) {
       builder
           .append("Contract Authenticator: ")
-          .append(contractStructure.getContractAuthenticator())
+          .append(contract.getContractAuthenticator())
           .append("\n");
     }
 
-    if (contractStructure.getCounterValue() != null) {
-      builder.append("Counter Value: ").append(contractStructure.getCounterValue()).append("\n");
+    if (contract.getCounterValue() != null) {
+      builder.append("Counter Value: ").append(contract.getCounterValue()).append("\n");
     }
 
     return builder.toString();

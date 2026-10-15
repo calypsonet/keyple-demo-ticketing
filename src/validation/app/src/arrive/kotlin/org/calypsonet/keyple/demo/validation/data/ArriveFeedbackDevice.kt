@@ -79,23 +79,23 @@ internal class ArriveFeedbackDevice(private val context: Context, private val lo
     joiner?.bind()
   }
 
-  /** Copies sound files from assets to external files dir so SoundManager can access them. */
+  /** Copies the sound files from the assets to the external files directory (for SoundManager). */
   private fun deploySoundFiles() {
-    val soundDir =
+    val soundDirectory =
         (context.getExternalFilesDir("sounds") ?: File(context.filesDir, "sounds")).also {
           it.mkdirs()
         }
-    val files = listOf(SOUND_SUCCESS, SOUND_FAILURE)
+    val fileNames = listOf(SOUND_SUCCESS, SOUND_FAILURE)
     val deployedUris = mutableListOf<Uri>()
-    for (name in files) {
-      val dest = File(soundDir, name)
+    for (fileName in fileNames) {
+      val destinationFile = File(soundDirectory, fileName)
       try {
-        context.assets.open("default/media/$name").use { input ->
-          dest.outputStream().use { output -> input.copyTo(output) }
+        context.assets.open("default/media/$fileName").use { input ->
+          destinationFile.outputStream().use { output -> input.copyTo(output) }
         }
-        deployedUris.add(Uri.fromFile(dest))
+        deployedUris.add(Uri.fromFile(destinationFile))
       } catch (e: Exception) {
-        logger.e("Error while deploying the sound file [file=$name]", e)
+        logger.e("Error while deploying the sound file [file=$fileName]", e)
       }
     }
     if (deployedUris.isNotEmpty()) {

@@ -25,10 +25,10 @@ object PermissionHelper {
    * @return True if all the permissions are already granted.
    */
   fun requestMissingPermissions(activity: Activity, permissions: Array<String>): Boolean {
-    val permissionDenied = permissions.filter { !isPermissionGranted(activity, it) }
-    if (permissionDenied.isNotEmpty()) {
-      val permissionsToAsk = arrayOfNulls<String>(permissionDenied.size)
-      for ((position, permission) in permissionDenied.withIndex()) {
+    val missingPermissions = permissions.filter { !isPermissionGranted(activity, it) }
+    if (missingPermissions.isNotEmpty()) {
+      val permissionsToAsk = arrayOfNulls<String>(missingPermissions.size)
+      for ((position, permission) in missingPermissions.withIndex()) {
         permissionsToAsk[position] = permission
       }
       activity.requestPermissions(permissionsToAsk, PERMISSIONS_REQUEST_CODE)
