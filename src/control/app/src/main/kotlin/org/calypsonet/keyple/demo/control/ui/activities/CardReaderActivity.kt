@@ -99,8 +99,8 @@ class CardReaderActivity : BaseActivity() {
   override fun onPause() {
     super.onPause()
     activityCardReaderBinding.loadingAnimation.cancelAnimation()
-    // Stopped outside the main thread: the stop waits for the end of the monitoring of the card
-    // removal (about 400 ms), which would delay the display of the result screen
+    // Stopped outside the main thread: the stop may be long (about 440 ms on the Bluebird
+    // terminals, end of the monitoring of the card removal), which would delay the result screen
     readerScope.launch {
       if (cardReaderSession.isInitialized) {
         cardReaderSession.stopCardDetection()
@@ -202,20 +202,18 @@ class CardReaderActivity : BaseActivity() {
     }
 
     runOnUiThread { activityCardReaderBinding.loadingAnimation.cancelAnimation() }
-    when (uiControlResult.resultType) {
-      ResultType.CONTRACTS_FOUND,
-      ResultType.EMPTY_CARD -> {
-        val intent = Intent(this@CardReaderActivity, CardContentActivity::class.java)
-        intent.putExtra(CARD_CONTENT, uiControlResult)
-        startActivity(intent)
-      }
-      ResultType.ERROR,
-      ResultType.INVALID_CARD -> {
-        val intent = Intent(this@CardReaderActivity, InvalidCardActivity::class.java)
-        intent.putExtra(CARD_CONTENT, uiControlResult)
-        startActivity(intent)
-      }
-    }
+    val resultScreen =
+        when (uiControlResult.resultType) {
+          ResultType.CONTRACTS_FOUND,
+          ResultType.EMPTY_CARD -> CardContentActivity::class.java
+          ResultType.ERROR,
+          ResultType.INVALID_CARD -> InvalidCardActivity::class.java
+        }
+    val intent = Intent(this@CardReaderActivity, resultScreen)
+    intent.putExtra(CARD_CONTENT, uiControlResult)
+    // Displayed at once, without the transition animation of the system (about 300 ms)
+    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+    startActivity(intent)
   }
 
   /** Displays the failure of the initialization of the readers, the application being then quit. */

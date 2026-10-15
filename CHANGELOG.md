@@ -142,9 +142,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   of a `MediaPlayer` no longer blocking the thread of the control, and the card detection is stopped once, by the card
   reader screen when it is left, instead of being stopped again on the main thread by the result screens. The
   operations on the readers (initialization, start and stop of the card detection, release) are executed one after
-  the other by a dedicated thread instead of the main thread: the stop of the card detection, which waits for the end
-  of the monitoring of the card removal (about 440 ms measured on Bluebird and Android NFC terminals), no longer
-  delays the display of the result screen.
+  the other by a dedicated thread instead of the main thread: the stop of the card detection, which takes about 440 ms
+  on the Bluebird terminals (end of the monitoring of the card removal and stop of the NFC reader), no longer delays
+  the display of the result screen. The result screens are opened without the transition animation of the system.
 - Control and validation apps: the waiting indicator ("Please wait") is removed. In the control app, displayed without
   transition for the short duration of the control of a card, then hidden before the opening of the result screen, it
   flashed on the screen (since the replacement of the deprecated `ProgressDialog`); it is no longer displayed during
