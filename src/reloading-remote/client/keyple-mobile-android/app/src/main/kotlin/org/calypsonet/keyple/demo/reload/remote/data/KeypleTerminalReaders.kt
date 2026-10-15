@@ -135,13 +135,13 @@ class KeypleTerminalReaders @Inject constructor(private val logger: Logger) : Te
     cardReader =
         SmartCardServiceProvider.getService().getPlugin(cardPluginName)?.getReader(cardReaderName)
 
-    cardReader?.let {
-      cardReaderProtocols.forEach { entry ->
-        (it as ConfigurableCardReader).activateProtocol(entry.key, entry.value)
+    cardReader?.let { reader ->
+      cardReaderProtocols.forEach { (physicalName, logicalName) ->
+        (reader as ConfigurableCardReader).activateProtocol(physicalName, logicalName)
       }
-      (it as ObservableCardReader).setReaderObservationExceptionHandler(
+      (reader as ObservableCardReader).setReaderObservationExceptionHandler(
           readerObservationExceptionHandler)
-      it.addObserver(observer)
+      reader.addObserver(observer)
     }
 
     return cardReader
@@ -152,8 +152,8 @@ class KeypleTerminalReaders @Inject constructor(private val logger: Logger) : Te
   }
 
   private fun clear() {
-    cardReaderProtocols.forEach { entry ->
-      (cardReader as ConfigurableCardReader).deactivateProtocol(entry.key)
+    cardReaderProtocols.keys.forEach { physicalName ->
+      (cardReader as ConfigurableCardReader).deactivateProtocol(physicalName)
     }
 
     if (cardMedium != CardMedium.CONTACTLESS_CARD) {

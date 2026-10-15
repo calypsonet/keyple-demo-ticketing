@@ -157,11 +157,11 @@ constructor(
   override fun initCardReader(): CardReader? {
     cardReader =
         SmartCardServiceProvider.getService().getPlugin(cardPluginName)?.getReader(cardReaderName)
-    cardReader?.let {
-      cardReaderProtocols.forEach { entry ->
-        (it as ConfigurableCardReader).activateProtocol(entry.key, entry.value)
+    cardReader?.let { reader ->
+      cardReaderProtocols.forEach { (physicalName, logicalName) ->
+        (reader as ConfigurableCardReader).activateProtocol(physicalName, logicalName)
       }
-      (cardReader as ObservableCardReader).setReaderObservationExceptionHandler(
+      (reader as ObservableCardReader).setReaderObservationExceptionHandler(
           readerObservationExceptionHandler)
     }
     return cardReader
@@ -213,8 +213,8 @@ constructor(
   }
 
   private fun clear() {
-    cardReaderProtocols.forEach { entry ->
-      (cardReader as ConfigurableCardReader).deactivateProtocol(entry.key)
+    cardReaderProtocols.keys.forEach { physicalName ->
+      (cardReader as ConfigurableCardReader).deactivateProtocol(physicalName)
     }
     samReaders.forEach {
       if (it is ConfigurableCardReader) {

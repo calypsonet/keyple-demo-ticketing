@@ -152,6 +152,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   and the other clients) in the reloading Android client; `tripsToLoad` (instead of `trips`), `terminal` and
   `serviceId` (instead of `remote` and `service`, the terminal being also named `service` in a lambda) and `logLevel`
   (instead of `debugLog`) in the multiplatform client.
+- Variable names (tenth audit): in the adapters of the readers of the Android apps, the card reader is named
+  `reader` in the whole block configuring it (instead of `it` and `cardReader`), and the protocols of the card reader
+  `physicalName` and `logicalName` (instead of `entry.key` and `entry.value`), as those of the SAM reader.
 - Variable names (ninth audit): in the tests of the codecs, `contract` and `event` (instead of `contractStructure`
   and `eventStructure`, as in the decoding tests and the server) and `eventDateTime` (instead of `eventDate`, a
   date and time).
