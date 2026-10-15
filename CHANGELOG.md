@@ -152,6 +152,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   and the other clients) in the reloading Android client; `tripsToLoad` (instead of `trips`), `terminal` and
   `serviceId` (instead of `remote` and `service`, the terminal being also named `service` in a lambda) and `logLevel`
   (instead of `debugLog`) in the multiplatform client.
+- Multiplatform client: the callbacks are named after the event, as the other ones (`onBack`, `onPay`…):
+  `onChooseProduct`, `onAddToBasket`, `onApplyServerSettings` and `onCardConnected` (instead of `chooseProduct`,
+  `addToBasket`, `applyServerSettings` and `cardConnected`). Server: `contractDescriptions` (instead of `output`, the
+  output being the DTO which contains them) in the contract counter service.
 - Control and validation apps: `contract` and `validation` (instead of `contractItem` and `validationItem`) in the
   adapters of the control, as in the reloading client; in the validation, `validationDateTime` (instead of
   `eventDate`, the date and time of the validation), `animationFileName` (instead of `animationFile`, as in the

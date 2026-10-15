@@ -42,7 +42,7 @@ fun ServerSettingsScreen(
 
   ServerSettingsScreen(
       state = state.value,
-      applyServerSettings = viewModel::applyServerSettings,
+      onApplyServerSettings = viewModel::applyServerSettings,
       navController = navController,
       modifier = modifier,
       appState = appState,
@@ -55,7 +55,7 @@ fun ServerSettingsScreen(
 @Composable
 internal fun ServerSettingsScreen(
     state: ServerSettingsScreenState,
-    applyServerSettings: () -> Unit,
+    onApplyServerSettings: () -> Unit,
     navController: NavController,
     modifier: Modifier = Modifier,
     appState: AppState,
@@ -102,7 +102,7 @@ internal fun ServerSettingsScreen(
 
           Spacer(modifier = Modifier.weight(1f))
 
-          Button(onClick = { applyServerSettings() }, enabled = state.validatedPort != null) {
+          Button(onClick = { onApplyServerSettings() }, enabled = state.validatedPort != null) {
             Text("Apply")
           }
         }

@@ -53,7 +53,7 @@ public class ContractCounterService {
   SelectAppAndReadContractsOutputDto selectAppAndReadContracts(CardReader cardReader) {
 
     CalypsoCard calypsoCard = null;
-    List<String> output = new ArrayList<>();
+    List<String> contractDescriptions = new ArrayList<>();
     int statusCode = RemoteServiceStatus.SUCCESS.getCode();
     CardResource samResource = null;
 
@@ -72,7 +72,7 @@ public class ContractCounterService {
       List<ContractStructure> presentContracts = contractAnalysisService.findPresentContracts(card);
 
       for (ContractStructure contract : presentContracts) {
-        output.add(describeContract(contract));
+        contractDescriptions.add(describeContract(contract));
       }
     } catch (CardNotPersonalizedException e) {
       // Refusal logged where it is detected
@@ -98,7 +98,7 @@ public class ContractCounterService {
       }
     }
     return new SelectAppAndReadContractsOutputDto(
-        output,
+        contractDescriptions,
         statusCode,
         RemoteServiceMessages.of(RemoteServiceStatus.fromCode(statusCode), calypsoCard));
   }

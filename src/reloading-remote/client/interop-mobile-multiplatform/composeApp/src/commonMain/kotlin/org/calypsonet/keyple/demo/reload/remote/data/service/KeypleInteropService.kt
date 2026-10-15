@@ -124,8 +124,8 @@ class KeypleInteropService(
     }
   }
 
-  fun waitForCard(cardConnected: () -> Unit) {
-    this.keypleTerminal?.waitForCard(cardConnected)
+  fun waitForCard(onCardConnected: () -> Unit) {
+    this.keypleTerminal?.waitForCard(onCardConnected)
   }
 
   fun setScanMessage(message: String) {

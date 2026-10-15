@@ -102,12 +102,12 @@ fun CardContentScreen(
           CardContent(
               contracts = (state.value as CardContentScreenState.DisplayContent).contracts,
               modifier = modifier,
-              chooseProduct = { viewModel.chooseProduct() })
+              onChooseProduct = { viewModel.chooseProduct() })
         }
         is CardContentScreenState.ChooseProduct -> {
           ProductList(
               products = (state.value as CardContentScreenState.ChooseProduct).products,
-              addToBasket = viewModel::addToBasket)
+              onAddToBasket = viewModel::addToBasket)
         }
         is CardContentScreenState.DisplayBasket -> {
           Basket(
@@ -125,7 +125,7 @@ fun CardContentScreen(
 @Composable
 internal fun ColumnScope.CardContent(
     contracts: List<ContractInfo>,
-    chooseProduct: () -> Unit,
+    onChooseProduct: () -> Unit,
     modifier: Modifier = Modifier
 ) {
   if (contracts.isEmpty()) {
@@ -168,7 +168,7 @@ internal fun ColumnScope.CardContent(
   Spacer(modifier = Modifier.weight(1f))
 
   Button(
-      onClick = { chooseProduct() },
+      onClick = { onChooseProduct() },
       modifier = Modifier.sizeIn(maxWidth = 400.dp, minHeight = 100.dp).padding(16.dp),
       colors = ButtonDefaults.buttonColors(containerColor = blue),
       shape = RoundedCornerShape(4.dp)) {
@@ -276,13 +276,15 @@ internal fun CreditCardDetails() {
 internal fun ProductList(
     products: List<Product>,
     modifier: Modifier = Modifier,
-    addToBasket: (Product) -> Unit
+    onAddToBasket: (Product) -> Unit
 ) {
   LazyColumn(
       modifier = modifier.fillMaxSize(),
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center) {
-        items(products) { product -> ProductCard(product = product, onProductClick = addToBasket) }
+        items(products) { product ->
+          ProductCard(product = product, onProductClick = onAddToBasket)
+        }
       }
 }
 
