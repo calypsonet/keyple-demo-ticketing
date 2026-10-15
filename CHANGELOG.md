@@ -152,6 +152,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   and the other clients) in the reloading Android client; `tripsToLoad` (instead of `trips`), `terminal` and
   `serviceId` (instead of `remote` and `service`, the terminal being also named `service` in a lambda) and `logLevel`
   (instead of `debugLog`) in the multiplatform client.
+- Validation app: the description of the presented card is named `cardDescription` (instead of `card`, also the name of
+  the `SmartCard` of the validation context) in the validation result, the procedures, the use case logs and the UI.
 - Variable names (eleventh audit): `today` (instead of `now`, a date) in the server, as in the other components;
   `requiresAuthentication` (instead of `requiresAuth`) in the storage card procedures; in the control procedures, the
   booleans `isContractExpired`, `isContractValidated` and `isEventValid` (instead of `contractExpired`,

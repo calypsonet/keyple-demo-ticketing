@@ -19,8 +19,8 @@ import org.calypsonet.keyple.demo.common.reference.Location
 /** Result of the validation procedure, translated into texts by the UI. */
 sealed interface ValidationResult {
 
-  /** The presented card, null if it is unknown. */
-  val card: CardDescription?
+  /** The description of the presented card, null if it is unknown. */
+  val cardDescription: CardDescription?
 
   /**
    * The card is validated.
@@ -32,7 +32,7 @@ sealed interface ValidationResult {
    *   otherwise.
    */
   data class Accepted(
-      override val card: CardDescription,
+      override val cardDescription: CardDescription,
       val dateTime: LocalDateTime,
       val location: Location,
       val remainingTrips: Int? = null,
@@ -47,18 +47,18 @@ sealed interface ValidationResult {
    */
   data class NotSelected(val error: SelectionError, val fileStructure: String? = null) :
       ValidationResult {
-    override val card: CardDescription?
+    override val cardDescription: CardDescription?
       get() = null
   }
 
   /** The card is refused for the provided reason. */
-  data class Rejected(override val card: CardDescription, val reason: RejectionReason) :
+  data class Rejected(override val cardDescription: CardDescription, val reason: RejectionReason) :
       ValidationResult
 
   /** The card has been removed during the transaction. */
-  data class CardLost(override val card: CardDescription) : ValidationResult
+  data class CardLost(override val cardDescription: CardDescription) : ValidationResult
 
   /** A technical error prevented the validation. */
-  data class Failed(override val card: CardDescription?, val error: TechnicalError) :
+  data class Failed(override val cardDescription: CardDescription?, val error: TechnicalError) :
       ValidationResult
 }

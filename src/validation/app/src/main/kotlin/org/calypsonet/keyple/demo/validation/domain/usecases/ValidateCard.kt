@@ -71,7 +71,7 @@ class ValidateCard(
               cardSecuritySetting = cardReaderSession.cardSecuritySetting))
     } catch (e: Exception) {
       logger.e("Error while validating the card", e)
-      ValidationResult.Failed(card = null, error = TechnicalError.UNEXPECTED)
+      ValidationResult.Failed(cardDescription = null, error = TechnicalError.UNEXPECTED)
     }
   }
 
@@ -80,12 +80,12 @@ class ValidateCard(
     when (result) {
       is ValidationResult.Accepted ->
           logger.i(
-              "Card validated [card=${result.card}, remainingTrips=${result.remainingTrips}, " +
+              "Card validated [cardDescription=${result.cardDescription}, remainingTrips=${result.remainingTrips}, " +
                   "seasonPassValidityEndDate=${result.seasonPassValidityEndDate}]")
       is ValidationResult.Rejected ->
-          logger.w("Card refused [card=${result.card}, reason=${result.reason}]")
+          logger.w("Card refused [cardDescription=${result.cardDescription}, reason=${result.reason}]")
       is ValidationResult.CardLost ->
-          logger.w("Card removed during the transaction [card=${result.card}]")
+          logger.w("Card removed during the transaction [cardDescription=${result.cardDescription}]")
       is ValidationResult.NotSelected ->
           logger.w(
               "Card not selected [error=${result.error}, fileStructure=${result.fileStructure}]")

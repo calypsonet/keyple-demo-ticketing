@@ -45,7 +45,7 @@ class CalypsoCardValidationProcedure(
 
   override fun execute(context: ValidationContext): ValidationResult {
     val calypsoCard = context.card as CalypsoCard
-    val card = CardDescription.Calypso(HexUtil.toHex(calypsoCard.dfName))
+    val cardDescription = CardDescription.Calypso(HexUtil.toHex(calypsoCard.dfName))
     val cardSecuritySetting = checkNotNull(context.cardSecuritySetting) { "SAM not available" }
 
     // Create a card transaction for validation.
@@ -57,19 +57,19 @@ class CalypsoCardValidationProcedure(
                   context.cardReader, calypsoCard, cardSecuritySetting)
         } catch (e: Exception) {
           logger.e("Error while creating the Calypso card transaction", e)
-          return ValidationResult.Failed(card, TechnicalError.UNEXPECTED)
+          return ValidationResult.Failed(cardDescription, TechnicalError.UNEXPECTED)
         }
 
     val outcome =
         try {
-          validate(context, calypsoCard, card, cardTransaction)
+          validate(context, calypsoCard, cardDescription, cardTransaction)
         } catch (e: CardCommunicationException) {
           // Card removal logged by the use case
-          SessionOutcome(ValidationResult.CardLost(card), shouldCloseSession = false)
+          SessionOutcome(ValidationResult.CardLost(cardDescription), shouldCloseSession = false)
         } catch (e: Exception) {
           logger.e("Unexpected error while validating the Calypso card", e)
           SessionOutcome(
-              ValidationResult.Failed(card, TechnicalError.UNEXPECTED), shouldCloseSession = false)
+              ValidationResult.Failed(cardDescription, TechnicalError.UNEXPECTED), shouldCloseSession = false)
         }
     var result = outcome.result
 
@@ -83,11 +83,11 @@ class CalypsoCardValidationProcedure(
       }
     } catch (e: CardCommunicationException) {
       // Card removed during close/cancel session (e.g. removed while writing)
-      result = ValidationResult.CardLost(card)
+      result = ValidationResult.CardLost(cardDescription)
     } catch (e: Exception) {
       if (result !is ValidationResult.CardLost) {
         logger.e("Error while closing the secure session", e)
-        result = ValidationResult.Failed(card, TechnicalError.UNEXPECTED)
+        result = ValidationResult.Failed(cardDescription, TechnicalError.UNEXPECTED)
       }
     }
     return result
@@ -108,14 +108,14 @@ class CalypsoCardValidationProcedure(
   private fun validate(
       context: ValidationContext,
       calypsoCard: CalypsoCard,
-      card: CardDescription,
+      cardDescription: CardDescription,
       cardTransaction: SecureRegularModeTransactionManager
   ): SessionOutcome {
     val validationDateTime = context.dateTime
 
     // Refusal of the card before any update: the session is cancelled
     fun rejected(reason: RejectionReason) =
-        SessionOutcome(ValidationResult.Rejected(card, reason), shouldCloseSession = false)
+        SessionOutcome(ValidationResult.Rejected(cardDescription, reason), shouldCloseSession = false)
 
     // ***************** Event and Environment Analysis
     // Step 1 - Open a Validation session reading the environment record.
@@ -166,7 +166,7 @@ class CalypsoCardValidationProcedure(
         rejected(RejectionReason.ALREADY_VALIDATED)
       } else {
         SessionOutcome(
-            ValidationResult.Accepted(card, validationDateTime, context.location),
+            ValidationResult.Accepted(cardDescription, validationDateTime, context.location),
             shouldCloseSession = true)
       }
     }
@@ -304,7 +304,7 @@ class CalypsoCardValidationProcedure(
               contractPriorities = contractPriorities.toList())
       result =
           ValidationResult.Accepted(
-              card = card,
+              cardDescription = cardDescription,
               dateTime = validationDateTime,
               location = context.location,
               remainingTrips = remainingTrips,
@@ -313,7 +313,7 @@ class CalypsoCardValidationProcedure(
       // Update the priorities of the event: the card is refused, but its expired or exhausted
       // contracts are no longer analyzed by the next validations
       eventToWrite = event.copy(contractPriorities = contractPriorities.toList())
-      result = ValidationResult.Rejected(card, rejectionReason ?: RejectionReason.NO_VALID_CONTRACT)
+      result = ValidationResult.Rejected(cardDescription, rejectionReason ?: RejectionReason.NO_VALID_CONTRACT)
     }
 
     // Step 13 - Pack the Event structure and append it to the event file

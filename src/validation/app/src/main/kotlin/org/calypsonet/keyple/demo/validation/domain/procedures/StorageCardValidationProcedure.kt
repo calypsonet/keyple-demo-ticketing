@@ -59,7 +59,7 @@ class StorageCardValidationProcedure(
 
   override fun execute(context: ValidationContext): ValidationResult {
     val storageCard = context.card as StorageCard
-    val card = CardDescription.Storage(storageCard.productType.name)
+    val cardDescription = CardDescription.Storage(storageCard.productType.name)
 
     val storageCardApiFactory =
         checkNotNull(keypopApiProvider.getStorageCardApiFactory()) {
@@ -72,19 +72,19 @@ class StorageCardValidationProcedure(
           storageCardApiFactory.createStorageCardTransactionManager(context.cardReader, storageCard)
         } catch (e: Exception) {
           logger.e("Error while creating the storage card transaction", e)
-          return ValidationResult.Failed(card, TechnicalError.UNEXPECTED)
+          return ValidationResult.Failed(cardDescription, TechnicalError.UNEXPECTED)
         }
 
     return try {
-      validate(context, storageCard, card, cardTransaction)
+      validate(context, storageCard, cardDescription, cardTransaction)
     } catch (e: SCCardCommunicationException) {
       // Card removal logged by the use case
-      ValidationResult.CardLost(card)
+      ValidationResult.CardLost(cardDescription)
     } catch (e: Exception) {
       logger.e(
           "Unexpected error while validating the storage card [productType=${storageCard.productType.name}]",
           e)
-      ValidationResult.Failed(card, technicalError(storageCard.productType, e))
+      ValidationResult.Failed(cardDescription, technicalError(storageCard.productType, e))
     }
   }
 
@@ -108,7 +108,7 @@ class StorageCardValidationProcedure(
   private fun validate(
       context: ValidationContext,
       storageCard: StorageCard,
-      card: CardDescription,
+      cardDescription: CardDescription,
       cardTransaction: StorageCardTransactionManager
   ): ValidationResult {
     val validationDateTime = context.dateTime
@@ -177,7 +177,7 @@ class StorageCardValidationProcedure(
             environment.envEndDate.date,
             validationDateTime.toLocalDate())
         ?.let {
-          return ValidationResult.Rejected(card, it)
+          return ValidationResult.Rejected(cardDescription, it)
         }
 
     // Step 5 - Read and unpack the event record (16 bytes)
@@ -192,12 +192,12 @@ class StorageCardValidationProcedure(
 
     // Step 6 - Validate the event version
     eventVersionRejection(event.eventVersionNumber)?.let {
-      return ValidationResult.Rejected(card, it)
+      return ValidationResult.Rejected(cardDescription, it)
     }
 
     // Anti-passback: the storage cards have no session to recover
     if (isWithinAntiPassbackDelay(event.eventDateTime, validationDateTime)) {
-      return ValidationResult.Rejected(card, RejectionReason.ALREADY_VALIDATED)
+      return ValidationResult.Rejected(cardDescription, RejectionReason.ALREADY_VALIDATED)
     }
 
     // Step 7 - Read and unpack the contract record (16 bytes)
@@ -212,13 +212,13 @@ class StorageCardValidationProcedure(
 
     // Validate contract version
     contractVersionRejection(contract.contractVersionNumber)?.let {
-      return ValidationResult.Rejected(card, it)
+      return ValidationResult.Rejected(cardDescription, it)
     }
 
     // Check contract validity
     if (isContractExpired(
         contract.contractValidityEndDate.date, validationDateTime.toLocalDate())) {
-      return ValidationResult.Rejected(card, RejectionReason.EXPIRED_CONTRACT)
+      return ValidationResult.Rejected(cardDescription, RejectionReason.EXPIRED_CONTRACT)
     }
 
     // ========= BUSINESS VALIDATION =========
@@ -233,7 +233,7 @@ class StorageCardValidationProcedure(
         // Check if there are trips left
         val counterValue = contract.counterValue ?: 0
         if (!hasTripsLeft(counterValue)) {
-          return ValidationResult.Rejected(card, RejectionReason.NO_TRIPS_LEFT)
+          return ValidationResult.Rejected(cardDescription, RejectionReason.NO_TRIPS_LEFT)
         }
 
         // Decrement counter
@@ -247,7 +247,7 @@ class StorageCardValidationProcedure(
       PriorityCode.FORBIDDEN,
       PriorityCode.EXPIRED,
       PriorityCode.UNKNOWN -> {
-        return ValidationResult.Rejected(card, RejectionReason.CONTRACT_FORBIDDEN_OR_EXPIRED)
+        return ValidationResult.Rejected(cardDescription, RejectionReason.CONTRACT_FORBIDDEN_OR_EXPIRED)
       }
     }
 
@@ -297,7 +297,7 @@ class StorageCardValidationProcedure(
     cardTransaction.processCommands(ChannelControl.CLOSE_AFTER)
 
     return ValidationResult.Accepted(
-        card = card,
+        cardDescription = cardDescription,
         dateTime = validationDateTime,
         location = context.location,
         remainingTrips = remainingTrips,

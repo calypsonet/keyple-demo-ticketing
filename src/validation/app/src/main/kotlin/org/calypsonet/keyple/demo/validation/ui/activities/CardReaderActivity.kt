@@ -243,16 +243,16 @@ class CardReaderActivity : BaseActivity() {
   }
 
   /** Returns the label of the presented card. */
-  private fun cardTypeLabel(card: CardDescription): String =
-      when (card) {
-        is CardDescription.Calypso -> getString(R.string.card_type_calypso, card.dfName)
+  private fun cardTypeLabel(cardDescription: CardDescription): String =
+      when (cardDescription) {
+        is CardDescription.Calypso -> getString(R.string.card_type_calypso, cardDescription.dfName)
         is CardDescription.Storage ->
-            when (card.productType) {
+            when (cardDescription.productType) {
               "MIFARE_CLASSIC_1K" -> getString(R.string.card_type_mifare_classic_1k)
               "MIFARE_CLASSIC_4K" -> getString(R.string.card_type_mifare_classic_4k)
               "MIFARE_ULTRALIGHT" -> getString(R.string.card_type_mifare_ultralight)
               "ST25_SRT512" -> getString(R.string.card_type_st25_srt512)
-              else -> card.productType.replace('_', ' ')
+              else -> cardDescription.productType.replace('_', ' ')
             }
       }
 
@@ -309,11 +309,11 @@ class CardReaderActivity : BaseActivity() {
 
     // Card type label + transaction time
     val elapsedMs = System.currentTimeMillis() - cardDetectedAt
-    val card = result.card
-    if (card != null) {
+    val cardDescription = result.cardDescription
+    if (cardDescription != null) {
       resultBinding.cardTypeLabel.visibility = View.VISIBLE
       resultBinding.cardTypeLabel.text =
-          getString(R.string.card_type, cardTypeLabel(card)) + " • ${elapsedMs} ms"
+          getString(R.string.card_type, cardTypeLabel(cardDescription)) + " • ${elapsedMs} ms"
     } else {
       resultBinding.cardTypeLabel.visibility = View.GONE
     }
