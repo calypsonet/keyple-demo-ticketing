@@ -83,9 +83,11 @@ class ValidateCard(
               "Card validated [cardDescription=${result.cardDescription}, remainingTrips=${result.remainingTrips}, " +
                   "seasonPassValidityEndDate=${result.seasonPassValidityEndDate}]")
       is ValidationResult.Rejected ->
-          logger.w("Card refused [cardDescription=${result.cardDescription}, reason=${result.reason}]")
+          logger.w(
+              "Card refused [cardDescription=${result.cardDescription}, reason=${result.reason}]")
       is ValidationResult.CardLost ->
-          logger.w("Card removed during the transaction [cardDescription=${result.cardDescription}]")
+          logger.w(
+              "Card removed during the transaction [cardDescription=${result.cardDescription}]")
       is ValidationResult.NotSelected ->
           logger.w(
               "Card not selected [error=${result.error}, fileStructure=${result.fileStructure}]")

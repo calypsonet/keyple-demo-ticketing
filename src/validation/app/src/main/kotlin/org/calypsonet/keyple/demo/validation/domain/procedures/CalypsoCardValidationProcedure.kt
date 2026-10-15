@@ -69,7 +69,8 @@ class CalypsoCardValidationProcedure(
         } catch (e: Exception) {
           logger.e("Unexpected error while validating the Calypso card", e)
           SessionOutcome(
-              ValidationResult.Failed(cardDescription, TechnicalError.UNEXPECTED), shouldCloseSession = false)
+              ValidationResult.Failed(cardDescription, TechnicalError.UNEXPECTED),
+              shouldCloseSession = false)
         }
     var result = outcome.result
 
@@ -115,7 +116,8 @@ class CalypsoCardValidationProcedure(
 
     // Refusal of the card before any update: the session is cancelled
     fun rejected(reason: RejectionReason) =
-        SessionOutcome(ValidationResult.Rejected(cardDescription, reason), shouldCloseSession = false)
+        SessionOutcome(
+            ValidationResult.Rejected(cardDescription, reason), shouldCloseSession = false)
 
     // ***************** Event and Environment Analysis
     // Step 1 - Open a Validation session reading the environment record.
@@ -313,7 +315,9 @@ class CalypsoCardValidationProcedure(
       // Update the priorities of the event: the card is refused, but its expired or exhausted
       // contracts are no longer analyzed by the next validations
       eventToWrite = event.copy(contractPriorities = contractPriorities.toList())
-      result = ValidationResult.Rejected(cardDescription, rejectionReason ?: RejectionReason.NO_VALID_CONTRACT)
+      result =
+          ValidationResult.Rejected(
+              cardDescription, rejectionReason ?: RejectionReason.NO_VALID_CONTRACT)
     }
 
     // Step 13 - Pack the Event structure and append it to the event file

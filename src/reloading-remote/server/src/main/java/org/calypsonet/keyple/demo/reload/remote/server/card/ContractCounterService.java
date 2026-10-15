@@ -183,10 +183,7 @@ public class ContractCounterService {
         .append("\n");
 
     if (contract.getContractSaleSam() != null) {
-      builder
-          .append("Contract Sale Sam: ")
-          .append(contract.getContractSaleSam())
-          .append("\n");
+      builder.append("Contract Sale Sam: ").append(contract.getContractSaleSam()).append("\n");
     }
 
     if (contract.getContractSaleCounter() != null) {
@@ -197,10 +194,7 @@ public class ContractCounterService {
     }
 
     if (contract.getContractAuthKvc() != null) {
-      builder
-          .append("Contract Auth Kvc: ")
-          .append(contract.getContractAuthKvc())
-          .append("\n");
+      builder.append("Contract Auth Kvc: ").append(contract.getContractAuthKvc()).append("\n");
     }
 
     if (contract.getContractAuthenticator() != null) {

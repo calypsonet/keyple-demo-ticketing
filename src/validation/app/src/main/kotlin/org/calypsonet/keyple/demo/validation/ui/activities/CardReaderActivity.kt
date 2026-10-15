@@ -56,7 +56,7 @@ class CardReaderActivity : BaseActivity() {
 
   private var cardReaderObserver: CardReaderObserver? = null
   var currentAppState = AppState.WAIT_SYSTEM_READY
-  private var timer = Timer()
+  private var autoReturnTimer = Timer()
 
   private var validationResultBinding: LayoutValidationResultOverlayBinding? = null
   private var validationResultTimer: Timer? = null
@@ -134,8 +134,8 @@ class CardReaderActivity : BaseActivity() {
       readerScope.launch { cardReaderSession.startCardDetection() }
     }
     if (appSettings.isBatteryPowered) {
-      timer = Timer() // Need to reinit timer after cancel
-      timer.schedule(
+      autoReturnTimer = Timer() // A cancelled timer cannot be reused
+      autoReturnTimer.schedule(
           object : TimerTask() {
             override fun run() {
               runOnUiThread { onBackPressedDispatcher.onBackPressed() }
@@ -148,7 +148,7 @@ class CardReaderActivity : BaseActivity() {
   override fun onPause() {
     super.onPause()
     activityCardReaderBinding.animation.cancelAnimation()
-    timer.cancel()
+    autoReturnTimer.cancel()
     validationResultTimer?.cancel()
     validationResultTimer = null
     // Stopped outside the main thread: the stop may be long (about 440 ms on the Bluebird
@@ -162,7 +162,7 @@ class CardReaderActivity : BaseActivity() {
   }
 
   override fun onDestroy() {
-    timer.cancel()
+    autoReturnTimer.cancel()
     val observer = cardReaderObserver
     readerScope.launch { cardReaderSession.release(observer) }
     cardReaderObserver = null

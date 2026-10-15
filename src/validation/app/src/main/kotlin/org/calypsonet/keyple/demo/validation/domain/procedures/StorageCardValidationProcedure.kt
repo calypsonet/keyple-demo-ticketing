@@ -247,7 +247,8 @@ class StorageCardValidationProcedure(
       PriorityCode.FORBIDDEN,
       PriorityCode.EXPIRED,
       PriorityCode.UNKNOWN -> {
-        return ValidationResult.Rejected(cardDescription, RejectionReason.CONTRACT_FORBIDDEN_OR_EXPIRED)
+        return ValidationResult.Rejected(
+            cardDescription, RejectionReason.CONTRACT_FORBIDDEN_OR_EXPIRED)
       }
     }
 
