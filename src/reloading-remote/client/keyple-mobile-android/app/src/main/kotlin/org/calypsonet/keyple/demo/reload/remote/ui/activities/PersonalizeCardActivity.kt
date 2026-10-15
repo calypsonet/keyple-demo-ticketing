@@ -63,11 +63,7 @@ class PersonalizeCardActivity : BaseCardActivity() {
   override fun onPause() {
     activityPersonalizeCardBinding.cardAnimation.cancelAnimation()
     activityPersonalizeCardBinding.loadingAnimation.cancelAnimation()
-    try {
-      releaseCardReader()
-    } catch (e: Exception) {
-      Timber.e(e, "Error while releasing the readers")
-    }
+    releaseCardReader()
     super.onPause()
   }
 

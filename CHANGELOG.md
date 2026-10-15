@@ -129,6 +129,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Reloading Android client: the reader is released outside the main thread when the card screens (reading, loading,
+  personalization) are left, the stop of the card detection taking about 440 ms on the Bluebird terminals: the next
+  screen (card content, result) is no longer delayed. A card screen displayed again initializes the reader once the
+  release in progress is completed.
 - Control app: the result of the control (card content or invalid card) is displayed in an overlay of the card reader
   screen, as in the validation app, instead of opening a new screen (`CardContentActivity`, `InvalidCardActivity`):
   the result is displayed at once, without the creation of a screen (about 290 ms on the Bluebird terminals) nor the

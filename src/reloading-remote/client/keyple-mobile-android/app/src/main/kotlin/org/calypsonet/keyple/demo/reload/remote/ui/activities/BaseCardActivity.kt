@@ -14,8 +14,15 @@ package org.calypsonet.keyple.demo.reload.remote.ui.activities
 
 import android.os.Build
 import android.os.Bundle
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
 import javax.inject.Inject
 import kotlin.jvm.Throws
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
 import org.calypsonet.keyple.demo.reload.remote.R
 import org.calypsonet.keyple.demo.reload.remote.domain.CardReaderSession
@@ -47,7 +54,14 @@ abstract class BaseCardActivity :
 
   override fun onResume() {
     super.onResume()
-    initReaders()
+    lifecycleScope.launch {
+      // The reader released by the previous screen, in background, is initialized again once
+      // released (immediately, unless the release is still in progress)
+      pendingRelease?.join()
+      if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+        initReaders()
+      }
+    }
   }
 
   /** Android NFC Reader is strongly dependent and Android Activity component. */
@@ -74,12 +88,24 @@ abstract class BaseCardActivity :
         terminalType, cardMedium, ActivityUiContext(this@BaseCardActivity), null, null, callback)
   }
 
-  @Throws(UnsupportedOperationException::class)
+  /**
+   * Releases the reader outside the main thread: the stop of the card detection may be long (about
+   * 440 ms on the Bluebird terminals), which would delay the display of the next screen.
+   */
   fun releaseCardReader() {
-    if (cardMedium == CardMedium.CONTACTLESS_CARD) {
-      cardReaderSession.stopCardDetection()
-    }
-    cardReaderSession.release(this@BaseCardActivity)
+    val isContactlessCard = cardMedium == CardMedium.CONTACTLESS_CARD
+    val observer: CardReaderObserverSpi = this
+    pendingRelease =
+        readerScope.launch {
+          try {
+            if (isContactlessCard) {
+              cardReaderSession.stopCardDetection()
+            }
+            cardReaderSession.release(observer)
+          } catch (e: Exception) {
+            Timber.e(e, "Error while releasing the readers")
+          }
+        }
   }
 
   /** Displays the error corresponding to the status returned by the server for the given card. */
@@ -164,5 +190,11 @@ abstract class BaseCardActivity :
   companion object {
     const val APPLICATION_SERIAL_NUMBER = "applicationSerialNumber"
     const val CARD_CONTENT = "cardContent"
+
+    /** Thread of the releases of the reader, executed one after the other. */
+    private val readerScope = CoroutineScope(SupervisorJob() + Dispatchers.IO.limitedParallelism(1))
+
+    /** Last release of the reader, awaited before initializing it again (main thread only). */
+    private var pendingRelease: Job? = null
   }
 }
