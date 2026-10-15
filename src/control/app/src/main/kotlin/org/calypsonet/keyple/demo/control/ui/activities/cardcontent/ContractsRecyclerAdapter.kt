@@ -20,9 +20,9 @@ import java.util.*
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.databinding.ContractRecyclerRowBinding
-import org.calypsonet.keyple.demo.control.ui.model.UiContract
+import org.calypsonet.keyple.demo.control.domain.model.Contract
 
-class ContractsRecyclerAdapter(private val contracts: List<UiContract>) :
+class ContractsRecyclerAdapter(private val contracts: List<Contract>) :
     RecyclerView.Adapter<ContractsRecyclerAdapter.ContractHolder>() {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContractHolder {
@@ -34,9 +34,9 @@ class ContractsRecyclerAdapter(private val contracts: List<UiContract>) :
   class ContractHolder(private val binding: ContractRecyclerRowBinding) :
       RecyclerView.ViewHolder(binding.root) {
 
-    private var contract: UiContract? = null
+    private var contract: Contract? = null
 
-    fun bindItem(contract: UiContract) {
+    fun bindItem(contract: Contract) {
       val context = binding.root.context
       val contractDescription =
           if (contract.name == PriorityCode.SEASON_PASS.label) {

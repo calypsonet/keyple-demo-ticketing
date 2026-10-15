@@ -12,11 +12,13 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.control.ui.activities
 
-import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
@@ -27,19 +29,29 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.databinding.ActivityCardReaderBinding
+import org.calypsonet.keyple.demo.control.databinding.LayoutCardContentOverlayBinding
+import org.calypsonet.keyple.demo.control.databinding.LayoutInvalidCardOverlayBinding
 import org.calypsonet.keyple.demo.control.databinding.ToolbarBinding
 import org.calypsonet.keyple.demo.control.domain.model.AuthenticationMode
+import org.calypsonet.keyple.demo.control.domain.model.Contract
 import org.calypsonet.keyple.demo.control.domain.model.ControlResult
+import org.calypsonet.keyple.demo.control.domain.model.RejectionReason
+import org.calypsonet.keyple.demo.control.domain.model.SelectionError
+import org.calypsonet.keyple.demo.control.domain.model.TechnicalError
+import org.calypsonet.keyple.demo.control.domain.model.Validation
 import org.calypsonet.keyple.demo.control.domain.usecases.ControlCard
 import org.calypsonet.keyple.demo.control.ui.ActivityUiContext
-import org.calypsonet.keyple.demo.control.ui.activities.cardcontent.CardContentActivity
-import org.calypsonet.keyple.demo.control.ui.mappers.toUi
-import org.calypsonet.keyple.demo.control.ui.model.ResultType
-import org.calypsonet.keyple.demo.control.ui.model.UiControlResult
+import org.calypsonet.keyple.demo.control.ui.activities.cardcontent.ContractsRecyclerAdapter
+import org.calypsonet.keyple.demo.control.ui.activities.cardcontent.ValidationsRecyclerAdapter
+import org.calypsonet.keyple.demo.control.ui.setDivider
 import org.eclipse.keypop.reader.CardReaderEvent
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 import timber.log.Timber
 
+/**
+ * Card reader screen: waits for a card, controls it, then displays the result of the control (card
+ * content or invalid card) in an overlay of the screen, until a new control is requested.
+ */
 @AndroidEntryPoint
 class CardReaderActivity : BaseActivity() {
 
@@ -47,6 +59,8 @@ class CardReaderActivity : BaseActivity() {
 
   private lateinit var activityCardReaderBinding: ActivityCardReaderBinding
   private lateinit var toolbarBinding: ToolbarBinding
+  private lateinit var cardContentBinding: LayoutCardContentOverlayBinding
+  private lateinit var invalidCardBinding: LayoutInvalidCardOverlayBinding
 
   private var cardReaderObserver: CardReaderObserver? = null
   var currentAppState = AppState.WAIT_SYSTEM_READY
@@ -65,6 +79,19 @@ class CardReaderActivity : BaseActivity() {
     toolbarBinding = activityCardReaderBinding.appBarLayout
     setContentView(activityCardReaderBinding.root)
     setSupportActionBar(toolbarBinding.toolbar)
+    onBackPressedDispatcher.addCallback(this, backCallback)
+
+    // The result overlays are inflated in advance, so that the result is displayed at once
+    cardContentBinding =
+        LayoutCardContentOverlayBinding.bind(activityCardReaderBinding.cardContentStub.inflate())
+    cardContentBinding.contractsList.layoutManager = LinearLayoutManager(this)
+    cardContentBinding.lastValidationList.layoutManager = LinearLayoutManager(this)
+    cardContentBinding.lastValidationList.setDivider(R.drawable.recycler_view_divider)
+    cardContentBinding.presentBtn.setOnClickListener { hideResult() }
+    invalidCardBinding =
+        LayoutInvalidCardOverlayBinding.bind(activityCardReaderBinding.invalidCardStub.inflate())
+    invalidCardBinding.appBarLayout.toolbarLogo.setImageResource(R.drawable.ic_logo_white)
+    invalidCardBinding.presentBtn.setOnClickListener { hideResult() }
   }
 
   override fun onResume() {
@@ -99,8 +126,12 @@ class CardReaderActivity : BaseActivity() {
   override fun onPause() {
     super.onPause()
     activityCardReaderBinding.loadingAnimation.cancelAnimation()
+    // The screen is displayed again ready for a new control
+    if (isResultDisplayed) {
+      hideResult()
+    }
     // Stopped outside the main thread: the stop may be long (about 440 ms on the Bluebird
-    // terminals, end of the monitoring of the card removal), which would delay the result screen
+    // terminals, end of the monitoring of the card removal)
     readerScope.launch {
       if (cardReaderSession.isInitialized) {
         cardReaderSession.stopCardDetection()
@@ -115,6 +146,19 @@ class CardReaderActivity : BaseActivity() {
     cardReaderObserver = null
     super.onDestroy()
   }
+
+  /** Back hides the result of the control when it is displayed, otherwise closes the screen. */
+  private val backCallback =
+      object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+          if (isResultDisplayed) {
+            hideResult()
+          } else {
+            isEnabled = false
+            onBackPressedDispatcher.onBackPressed()
+          }
+        }
+      }
 
   /**
    * main app state machine handle
@@ -170,17 +214,16 @@ class CardReaderActivity : BaseActivity() {
                           showToast(getString(R.string.authentication_mode_no_authentication))
                     }
                   }
-                  displayResult(controlResult.toUi(resources))
+                  displayResult(controlResult)
                 }
               } catch (e: CancellationException) {
                 // The activity has been destroyed
                 throw e
               } catch (e: IllegalStateException) {
                 Timber.e(e, "Error while displaying the control result")
-                displayResult(
-                    UiControlResult(resultType = ResultType.ERROR, contracts = emptyList()))
-              } finally {
-                cardReaderSession.endCardProcessing()
+                withContext(Dispatchers.Main) {
+                  displayResult(ControlResult.Failed(TechnicalError.UNEXPECTED))
+                }
               }
             }
           }
@@ -196,25 +239,89 @@ class CardReaderActivity : BaseActivity() {
     Timber.d("Application state changed [state=$currentAppState]")
   }
 
-  private fun displayResult(uiControlResult: UiControlResult?) {
-    if (uiControlResult == null) {
-      return
+  /**
+   * Displays the result of the control above the card reader screen. The processing of the card is
+   * ended when the result is hidden, the next card being detected after a new control is requested.
+   */
+  private fun displayResult(result: ControlResult) {
+    activityCardReaderBinding.loadingAnimation.cancelAnimation()
+    when (result) {
+      is ControlResult.CardContent -> showCardContent(result.contracts, result.lastValidation)
+      ControlResult.EmptyCard -> showCardContent(emptyList(), null)
+      is ControlResult.NotSelected -> showInvalidCard(selectionErrorMessage(result))
+      is ControlResult.Rejected -> showInvalidCard(rejectionMessage(result.reason))
+      is ControlResult.Failed -> showInvalidCard(errorMessage(result.error))
     }
-
-    runOnUiThread { activityCardReaderBinding.loadingAnimation.cancelAnimation() }
-    val resultScreen =
-        when (uiControlResult.resultType) {
-          ResultType.CONTRACTS_FOUND,
-          ResultType.EMPTY_CARD -> CardContentActivity::class.java
-          ResultType.ERROR,
-          ResultType.INVALID_CARD -> InvalidCardActivity::class.java
-        }
-    val intent = Intent(this@CardReaderActivity, resultScreen)
-    intent.putExtra(CARD_CONTENT, uiControlResult)
-    // Displayed at once, without the transition animation of the system (about 300 ms)
-    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-    startActivity(intent)
   }
+
+  /** Shows the content of the card: its contracts and its last validation, if any. */
+  private fun showCardContent(contracts: List<Contract>, lastValidation: Validation?) {
+    cardContentBinding.contractsList.adapter = ContractsRecyclerAdapter(contracts)
+    cardContentBinding.contractsList.visibility =
+        if (contracts.isNotEmpty()) View.VISIBLE else View.GONE
+    cardContentBinding.emptyContract.visibility =
+        if (contracts.isEmpty()) View.VISIBLE else View.GONE
+    if (lastValidation != null) {
+      cardContentBinding.lastValidationList.adapter =
+          ValidationsRecyclerAdapter(listOf(lastValidation))
+      cardContentBinding.lastValidationListContainer.visibility = View.VISIBLE
+    } else {
+      cardContentBinding.lastValidationListContainer.visibility = View.GONE
+    }
+    cardContentBinding.root.visibility = View.VISIBLE
+  }
+
+  /** Shows that the card is invalid, with the reason why. */
+  private fun showInvalidCard(message: String) {
+    invalidCardBinding.invalidDescription.text = message
+    invalidCardBinding.root.visibility = View.VISIBLE
+    invalidCardBinding.animation.playAnimation()
+  }
+
+  /** Hides the result of the control and ends the processing of the card, for a new control. */
+  private fun hideResult() {
+    cardContentBinding.root.visibility = View.GONE
+    invalidCardBinding.root.visibility = View.GONE
+    invalidCardBinding.animation.cancelAnimation()
+    activityCardReaderBinding.loadingAnimation.playAnimation()
+    readerScope.launch { cardReaderSession.endCardProcessing() }
+  }
+
+  /** Indicates whether the result of a control is displayed. */
+  private val isResultDisplayed: Boolean
+    get() =
+        cardContentBinding.root.visibility == View.VISIBLE ||
+            invalidCardBinding.root.visibility == View.VISIBLE
+
+  /** Returns the message displayed when the presented card cannot be selected. */
+  private fun selectionErrorMessage(result: ControlResult.NotSelected): String =
+      when (result.error) {
+        SelectionError.CARD_NOT_RECOGNIZED -> getString(R.string.selection_card_not_recognized)
+        SelectionError.UNEXPECTED_DF_NAME -> getString(R.string.selection_unexpected_df_name)
+        SelectionError.UNSUPPORTED_FILE_STRUCTURE ->
+            getString(R.string.selection_unsupported_file_structure, result.fileStructure)
+      }
+
+  /** Returns the message displayed for the reason why the card is refused. */
+  private fun rejectionMessage(reason: RejectionReason): String =
+      getString(
+          when (reason) {
+            RejectionReason.ENVIRONMENT_WRONG_VERSION ->
+                R.string.rejection_environment_wrong_version
+            RejectionReason.ENVIRONMENT_EXPIRED -> R.string.rejection_environment_expired
+            RejectionReason.EVENT_WRONG_VERSION -> R.string.rejection_event_wrong_version
+            RejectionReason.CONTRACT_WRONG_VERSION -> R.string.rejection_contract_wrong_version
+          })
+
+  /** Returns the message displayed for a technical error. */
+  private fun errorMessage(error: TechnicalError): String =
+      getString(
+          when (error) {
+            TechnicalError.MIFARE_CLASSIC_AUTHENTICATION_FAILED ->
+                R.string.error_mifare_classic_authentication
+            TechnicalError.MIFARE_CLASSIC_READING_FAILED -> R.string.error_mifare_classic_reading
+            TechnicalError.UNEXPECTED -> R.string.error_card_reading
+          })
 
   /** Displays the failure of the initialization of the readers, the application being then quit. */
   private fun showReaderInitializationErrorDialog() {
@@ -228,11 +335,10 @@ class CardReaderActivity : BaseActivity() {
   }
 
   companion object {
-    const val CARD_CONTENT = "cardContent"
-
     /**
      * Thread of the operations on the readers (initialization, start and stop of the card
-     * detection, release), executed one after the other in their order of request.
+     * detection, end of the card processing, release), executed one after the other in their order
+     * of request.
      */
     private val readerDispatcher = Dispatchers.IO.limitedParallelism(1)
 

@@ -14,10 +14,15 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/invalidCardView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activities.InvalidCardActivity"
-    android:background="@color/orange">
+    android:background="@color/orange"
+    android:clickable="true"
+    android:focusable="true"
+    android:visibility="gone"
+    tools:context=".ui.activities.CardReaderActivity"
+    tools:visibility="visible">
 
     <include
         layout="@layout/toolbar"
@@ -84,7 +89,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:lottie_fileName="anim_error_card.json"
-        app:lottie_autoPlay="true"
         app:layout_constraintBottom_toTopOf="@id/invalid_title"
         app:layout_constraintDimensionRatio="w,1:1"
         app:layout_constraintEnd_toEndOf="@id/guideline_right_anim"

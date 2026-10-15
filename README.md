@@ -265,7 +265,7 @@ bash .github/scripts/check-android-twin-files.sh
   - a mapper converts a representation into another one, from a layer to another or from an external
     representation (Keypop card, DTO of the server) to the domain. Extension function of the converted object:
     `to<Type>()` in `domain/mappers` (e.g. `SmartCard.toCardInfo()`, file `CardInfoMapper.kt`), `toUi()` in
-    `ui/mappers` (e.g. `ControlResult.toUi(resources)`, file `ControlResultUiMapper.kt`);
+    `ui/mappers` (e.g. `Contract.toUi(resources)` of the reloading Android client, file `ContractUiMapper.kt`);
   - a builder builds an object from several sources, none of them prevailing (e.g. data read in the card and
     results computed by a procedure). Top-level function `build<Type>(...)` in `domain/builders` (e.g.
     `buildContract(...)`, file `ContractBuilder.kt`).

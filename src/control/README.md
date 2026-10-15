@@ -91,16 +91,15 @@ Terminal Selection → Settings → Home → Card Reader → Card Content or Inv
 - Waits for a card ("Please present a contactless card to be controlled")
 - Selects the card and runs the control procedure supporting it
 - Displays the authentication mode of the card (by the SAM, by PKI, or not authenticated)
-
-**Card Content (`CardContentActivity`)**
-- **Last validation**: date, time and location of the last validation, and contract used
-- **Contracts**: list of the contracts of the card, with their validity period (season pass) or their number of
-  remaining trips (multi-trip ticket); the contract used by the last validation is marked as validated when the
-  validation took place at the location of the control, the same day and within the validation period
-- "No ticket" when the card has never been loaded
-
-**Invalid Card (`InvalidCardActivity`)**
-- Reason why the card is refused (see [Rejection Reasons](#rejection-reasons)) or error message
+- Displays the result of the control above the screen, as the validation app does, until "New control" (or back) is
+  pressed, the next card being then detected:
+  - **Card content**:
+    - **Last validation**: date, time and location of the last validation, and contract used
+    - **Contracts**: list of the contracts of the card, with their validity period (season pass) or their number
+      of remaining trips (multi-trip ticket); the contract used by the last validation is marked as validated when
+      the validation took place at the location of the control, the same day and within the validation period
+    - "No ticket" when the card has never been loaded
+  - **Invalid card**: reason why the card is refused (see [Rejection Reasons](#rejection-reasons)) or error message
 
 ### Rejection Reasons
 
@@ -200,11 +199,9 @@ control/app/
 │   │   │   ├── spi/                         # Ports
 │   │   │   └── usecases/                    # Use cases invoked by the UI
 │   │   └── ui/                              # UI layer
-│   │       ├── activities/                  # Android activities
-│   │       │   ├── cardcontent/             # Card content screen
-│   │       │   └── terminalselection/       # Terminal selection screen
-│   │       ├── mappers/                     # Domain to UI mappers
-│   │       └── model/                       # UI models
+│   │       └── activities/                  # Android activities
+│   │           ├── cardcontent/             # Lists of the card content (contracts, last validation)
+│   │           └── terminalselection/       # Terminal selection screen
 │   ├── res/                                 # Android resources
 │   └── AndroidManifest.xml                  # Application configuration
 ├── build.gradle.kts                         # Build configuration (Kotlin DSL)

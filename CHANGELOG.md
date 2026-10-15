@@ -129,6 +129,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Control app: the result of the control (card content or invalid card) is displayed in an overlay of the card reader
+  screen, as in the validation app, instead of opening a new screen (`CardContentActivity`, `InvalidCardActivity`):
+  the result is displayed at once, without the creation of a screen (about 290 ms on the Bluebird terminals) nor the
+  stop and restart of the card detection. The processing of the card is ended when the result is hidden ("New control"
+  or back), the next card being then detected. The UI models (`UiControlResult`, `UiContract`, `UiValidation`,
+  `UiLocation`, `ResultType`) and their mappers, needed only to pass the result to another screen, are removed: the
+  lists of the card content display the domain models.
 - Variable names harmonized: the same name for the same concept (`efContracts` and `efCounters` in the validation
   procedure as in the control one, `environment` instead of `env`, `uid` instead of `cardUID` as in the logs,
   `isServerReady` instead of `isUp` and `isReady`, `analysisOutput` and `loadingOutput` as `personalizationOutput`,

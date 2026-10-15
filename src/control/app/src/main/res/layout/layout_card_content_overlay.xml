@@ -13,10 +13,15 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardContentView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".ui.activities.cardcontent.CardContentActivity">
+    android:clickable="true"
+    android:focusable="true"
+    android:visibility="gone"
+    tools:context=".ui.activities.CardReaderActivity"
+    tools:visibility="visible">
 
     <include
         android:id="@+id/appBarLayout"

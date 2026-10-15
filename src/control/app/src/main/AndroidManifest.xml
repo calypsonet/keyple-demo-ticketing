@@ -29,16 +29,6 @@
         </activity>
 
         <activity
-            android:name="org.calypsonet.keyple.demo.control.ui.activities.InvalidCardActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:exported="false" />
-        <activity
-            android:name="org.calypsonet.keyple.demo.control.ui.activities.cardcontent.CardContentActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:exported="false" />
-        <activity
             android:name="org.calypsonet.keyple.demo.control.ui.activities.CardReaderActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
