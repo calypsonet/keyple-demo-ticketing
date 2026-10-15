@@ -47,29 +47,29 @@ namespace App.application
             WaitForCard();
 
             // Select the card and read its content
-            string output = _ticketingService.SelectAppAndReadContracts();
+            string outputJson = _ticketingService.SelectAppAndReadContracts();
 
-            // Deserialize the output into a dynamic object
-            EndRemoteServiceBody outputDto = JsonConvert.DeserializeObject<EndRemoteServiceBody>(output)!;
+            // Deserialize the body of the end of the remote service, which contains its output data
+            EndRemoteServiceBody endRemoteServiceBody = JsonConvert.DeserializeObject<EndRemoteServiceBody>(outputJson)!;
 
-            if (outputDto.OutputData.StatusCode != 0)
+            if (endRemoteServiceBody.OutputData.StatusCode != 0)
             {
-                Display("Reading failed, status code: " + outputDto.OutputData.StatusCode, ConsoleColor.DarkRed);
-                Display(outputDto.OutputData.Message, ConsoleColor.DarkRed);
-                _logger.Warning($"Contracts reading failed [statusCode={outputDto.OutputData.StatusCode}, message={outputDto.OutputData.Message}]");
+                Display("Reading failed, status code: " + endRemoteServiceBody.OutputData.StatusCode, ConsoleColor.DarkRed);
+                Display(endRemoteServiceBody.OutputData.Message, ConsoleColor.DarkRed);
+                _logger.Warning($"Contracts reading failed [statusCode={endRemoteServiceBody.OutputData.StatusCode}, message={endRemoteServiceBody.OutputData.Message}]");
                 return;
             }
 
             Display("Reading successful", ConsoleColor.DarkGreen);
 
-            List<string> contracts = outputDto.OutputData.Items;
+            List<string> contracts = endRemoteServiceBody.OutputData.Items;
             _logger.Information($"Contracts read [contracts={contracts.Count}]");
-            int i = 1;
+            int contractNumber = 1;
             bool isMultiTripContractPresent = false;
             foreach (string contract in contracts)
             {
                 // Print each item to the console
-                Display($"Contract #{i++}:\r\n" + contract, ConsoleColor.DarkGreen);
+                Display($"Contract #{contractNumber++}:\r\n" + contract, ConsoleColor.DarkGreen);
                 if (contract.Contains("MULTI_TRIP"))
                 {
                     isMultiTripContractPresent = true;
@@ -100,20 +100,20 @@ namespace App.application
             WaitForCard();
 
             // Select the application of the card and increase the contract counter by the number of trips to load
-            output = _ticketingService.SelectAppAndIncreaseContractCounter(tripsToLoad);
+            outputJson = _ticketingService.SelectAppAndIncreaseContractCounter(tripsToLoad);
 
-            outputDto = JsonConvert.DeserializeObject<EndRemoteServiceBody>(output)!;
+            endRemoteServiceBody = JsonConvert.DeserializeObject<EndRemoteServiceBody>(outputJson)!;
 
-            if (outputDto.OutputData.StatusCode == 0)
+            if (endRemoteServiceBody.OutputData.StatusCode == 0)
             {
                 Display("Loading successful", ConsoleColor.DarkGreen);
                 _logger.Information($"Trips loaded [tripsToLoad={tripsToLoad}]");
             }
             else
             {
-                Display("Loading failed, status code: " + outputDto.OutputData.StatusCode, ConsoleColor.DarkRed);
-                Display(outputDto.OutputData.Message, ConsoleColor.DarkRed);
-                _logger.Warning($"Trips loading failed [statusCode={outputDto.OutputData.StatusCode}, message={outputDto.OutputData.Message}]");
+                Display("Loading failed, status code: " + endRemoteServiceBody.OutputData.StatusCode, ConsoleColor.DarkRed);
+                Display(endRemoteServiceBody.OutputData.Message, ConsoleColor.DarkRed);
+                _logger.Warning($"Trips loading failed [statusCode={endRemoteServiceBody.OutputData.StatusCode}, message={endRemoteServiceBody.OutputData.Message}]");
             }
         }
 

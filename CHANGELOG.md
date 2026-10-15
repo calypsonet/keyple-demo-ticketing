@@ -152,6 +152,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   and the other clients) in the reloading Android client; `tripsToLoad` (instead of `trips`), `terminal` and
   `serviceId` (instead of `remote` and `service`, the terminal being also named `service` in a lambda) and `logLevel`
   (instead of `debugLog`) in the multiplatform client.
+- Variable names (sixth audit), .NET client: the body of the response of the `TRANSMIT_CARD_REQUEST` service is
+  named in the singular, as the service (`TransmitCardRequestRespBody`, as in the Keyple Interop JSON API client
+  library, and `transmitCardRequestCmdBody`); the bodies of the messages are named after their type
+  (`executeRemoteServiceBody` instead of `bodyContent`, `endRemoteServiceBody` instead of `outputDto`), the JSON
+  strings by their content (`outputJson` instead of `output`, `jsonResponse` instead of `result`), and the number of
+  the displayed contracts `contractNumber` (instead of `i`).
 - Variable names (fifth audit): `recordNumber` (instead of `record`, as in the control app) and
   `contractPriorities` (instead of `priorities`, as the field of the event it fills) in the Calypso card validation
   procedure; `networkClient` (instead of `server`) and the lambda parameter `terminal` (instead of `it`) in the

@@ -16,7 +16,7 @@ namespace App.domain.data.response
     /// <summary>
     /// Represents the body of a response for the "TRANSMIT_CARD_REQUEST" service.
     /// </summary>
-    public class TransmitCardRequestsRespBody
+    public class TransmitCardRequestRespBody
     {
         /// <summary>
         /// Core API level.

@@ -50,7 +50,7 @@ namespace App.infrastructure.server
             {
                 _logger.Debug($"JSON request sent [json={jsonRequest}]");
             }
-            string? result = null;
+            string? jsonResponse = null;
             try
             {
                 // Initialize a new HttpClient with the base URL
@@ -65,11 +65,11 @@ namespace App.infrastructure.server
                     if (response.IsSuccessStatusCode)
                     {
                         // If the request was successful, read the content of the response
-                        result = response.Content.ReadAsStringAsync().Result;
+                        jsonResponse = response.Content.ReadAsStringAsync().Result;
 
                         if (_logger.IsEnabled(LogEventLevel.Debug))
                         {
-                            _logger.Debug($"JSON response received [json={result}]");
+                            _logger.Debug($"JSON response received [json={jsonResponse}]");
                         }
                     }
                     else
@@ -85,8 +85,8 @@ namespace App.infrastructure.server
                 throw new ServerIOException("Error while calling the server API", ex);
             }
 
-            // Return the result of the request
-            return result;
+            // Return the JSON response of the server
+            return jsonResponse;
         }
     }
 }

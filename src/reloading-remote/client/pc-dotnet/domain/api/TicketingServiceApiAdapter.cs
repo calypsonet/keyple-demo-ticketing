@@ -100,15 +100,15 @@ namespace App.domain.api
         {
             string sessionId = Guid.NewGuid().ToString();
 
-            // Create and fill ExecuteRemoteServiceBodyContent object
-            ExecuteRemoteServiceBody bodyContent = new ExecuteRemoteServiceBody
+            // Create and fill the body of the remote service execution
+            ExecuteRemoteServiceBody executeRemoteServiceBody = new ExecuteRemoteServiceBody
             {
                 ServiceId = serviceId,
                 InputData = inputData,
                 IsReaderContactless = true
             };
 
-            // Create and fill RemoteServiceDto object
+            // Create and fill the message
             MessageDto message = new MessageDto
             {
                 ApiLevel = ApiInfo.ApiLevel,
@@ -116,7 +116,7 @@ namespace App.domain.api
                 Action = ExecuteRemoteServiceAction,
                 ClientNodeId = _clientNodeId,
                 LocalReaderName = _localReaderName,
-                Body = JsonConvert.SerializeObject(bodyContent, Formatting.None)
+                Body = JsonConvert.SerializeObject(executeRemoteServiceBody, Formatting.None)
             };
 
             string jsonResponse = _server.TransmitRequest(JsonConvert.SerializeObject(message));
@@ -330,14 +330,14 @@ namespace App.domain.api
 
         private string TransmitCardRequest(MessageDto message)
         {
-            TransmitCardRequestsRespBody transmitCardRequestsRespBody = new TransmitCardRequestsRespBody();
-            TransmitCardRequestCmdBody transmitCardRequestsCmdBody = JsonConvert.DeserializeObject<TransmitCardRequestCmdBody>(message.Body)!;
-            CardRequest cardRequest = transmitCardRequestsCmdBody.Parameters.CardRequest;
+            TransmitCardRequestRespBody transmitCardRequestRespBody = new TransmitCardRequestRespBody();
+            TransmitCardRequestCmdBody transmitCardRequestCmdBody = JsonConvert.DeserializeObject<TransmitCardRequestCmdBody>(message.Body)!;
+            CardRequest cardRequest = transmitCardRequestCmdBody.Parameters.CardRequest;
             CardResponse? cardResponse = null;
             Error? error = null;
             try
             {
-                cardResponse = ProcessCardRequest(cardRequest, transmitCardRequestsCmdBody.Parameters.ChannelControl);
+                cardResponse = ProcessCardRequest(cardRequest, transmitCardRequestCmdBody.Parameters.ChannelControl);
             }
             catch (CardIOException ex)
             {
@@ -356,13 +356,13 @@ namespace App.domain.api
             }
             if (error == null)
             {
-                transmitCardRequestsRespBody.Result = cardResponse;
+                transmitCardRequestRespBody.Result = cardResponse;
             }
             else
             {
-                transmitCardRequestsRespBody.Error = error;
+                transmitCardRequestRespBody.Error = error;
             }
-            return JsonConvert.SerializeObject(transmitCardRequestsRespBody, Formatting.None);
+            return JsonConvert.SerializeObject(transmitCardRequestRespBody, Formatting.None);
         }
 
         private CardResponse ProcessCardRequest(CardRequest cardRequest, ChannelControl channelControl)
