@@ -201,11 +201,11 @@ constructor(
 
   override fun getSamReader(): CardReader? {
     return if (samReaders.isNotEmpty()) {
-      val filteredByName = samReaders.filter { it.name == samReaderName }
-      return if (filteredByName.isEmpty()) {
+      val matchingSamReaders = samReaders.filter { it.name == samReaderName }
+      return if (matchingSamReaders.isEmpty()) {
         samReaders.first()
       } else {
-        filteredByName.first()
+        matchingSamReaders.first()
       }
     } else {
       null

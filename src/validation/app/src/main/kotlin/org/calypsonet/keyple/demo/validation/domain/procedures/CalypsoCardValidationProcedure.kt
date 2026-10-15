@@ -186,7 +186,7 @@ class CalypsoCardValidationProcedure(
     // Contract priorities of the event to write, updated by the validation
     val priorities = event.contractPriorities.toMutableList()
     var contractUsed = 0
-    var writeEvent = false
+    var shouldWriteEvent = false
     // Reason of the refusal of the last contract analyzed, if no contract can be used
     var rejectionReason: RejectionReason? = null
     var seasonPassValidityEndDate: LocalDate? = null
@@ -231,7 +231,7 @@ class CalypsoCardValidationProcedure(
           contract.contractValidityEndDate.date, validationDateTime.toLocalDate())) {
         priorities[record - 1] = PriorityCode.EXPIRED
         rejectionReason = RejectionReason.EXPIRED_CONTRACT
-        writeEvent = true
+        shouldWriteEvent = true
         continue
       }
 
@@ -259,7 +259,7 @@ class CalypsoCardValidationProcedure(
         if (!hasTripsLeft(counterValue)) {
           priorities[record - 1] = PriorityCode.EXPIRED
           rejectionReason = RejectionReason.NO_TRIPS_LEFT
-          writeEvent = true
+          shouldWriteEvent = true
           continue
         }
 
@@ -275,11 +275,11 @@ class CalypsoCardValidationProcedure(
 
       // We will create a new event for this contract
       contractUsed = record
-      writeEvent = true
+      shouldWriteEvent = true
       break
     }
 
-    if (!writeEvent) {
+    if (!shouldWriteEvent) {
       return rejected(rejectionReason ?: RejectionReason.NO_VALID_CONTRACT)
     }
 

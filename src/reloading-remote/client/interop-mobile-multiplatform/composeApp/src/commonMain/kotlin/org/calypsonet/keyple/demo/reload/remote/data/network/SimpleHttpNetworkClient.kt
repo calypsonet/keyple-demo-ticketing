@@ -42,7 +42,7 @@ class SimpleHttpNetworkClient(val config: KeypleServerConfig, val httpClient: Ht
 
   override suspend fun sendRequest(message: MessageDto): List<MessageDto> {
     return try {
-      val json: List<MessageDto> =
+      val responseMessages: List<MessageDto> =
           httpClient
               .post(config.serviceUrl()) {
                 headers {
@@ -56,7 +56,7 @@ class SimpleHttpNetworkClient(val config: KeypleServerConfig, val httpClient: Ht
                 setBody(message)
               }
               .body()
-      json
+      responseMessages
     } catch (e: Exception) {
       throw ServerIOException("Communication error [cause=${e.message}]")
     }

@@ -198,7 +198,7 @@ class StorageCardControlProcedure(
         validation = buildValidation(event = event, contract = contract, locations = locations)
       }
 
-      val displayedContract = mutableListOf<Contract>()
+      val displayedContracts = mutableListOf<Contract>()
       val recordNumber = 1 // Storage card has only one contract
       var contractExpired = false
       var contractValidated = false
@@ -242,7 +242,7 @@ class StorageCardControlProcedure(
             }
 
         // Step 19 - Add contract data to the list of contracts read to return to the upper layer.
-        displayedContract.add(
+        displayedContracts.add(
             buildContract(
                 contract = contract,
                 recordNumber = recordNumber,
@@ -257,7 +257,7 @@ class StorageCardControlProcedure(
 
       // Step 21 - Return the status of the operation to the upper layer. <Exit process>
       return ControlResult.CardContent(
-          AuthenticationMode.NO_AUTHENTICATION, displayedContract, validation)
+          AuthenticationMode.NO_AUTHENTICATION, displayedContracts, validation)
     } catch (e: Exception) {
       logger.e(
           "Error while controlling the storage card [productType=${storageCard.productType.name}]",

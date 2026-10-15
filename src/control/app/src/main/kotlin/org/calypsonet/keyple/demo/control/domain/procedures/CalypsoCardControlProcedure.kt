@@ -199,7 +199,7 @@ class CalypsoCardControlProcedure(
             }
       }
 
-      val displayedContract = mutableListOf<Contract>()
+      val displayedContracts = mutableListOf<Contract>()
       contracts.forEach {
         val recordNumber = it.key
         val contract = it.value
@@ -253,7 +253,7 @@ class CalypsoCardControlProcedure(
               }
 
           // Step 19 - Add contract data to the list of contracts read to return to the upper layer.
-          displayedContract.add(
+          displayedContracts.add(
               buildContract(
                   contract = contract,
                   recordNumber = recordNumber,
@@ -271,7 +271,7 @@ class CalypsoCardControlProcedure(
       }
 
       // Step 21 - Return the status of the operation to the upper layer. <Exit process>
-      return ControlResult.CardContent(authenticationMode, displayedContract, validation)
+      return ControlResult.CardContent(authenticationMode, displayedContracts, validation)
     } catch (e: Exception) {
       logger.e("Error while controlling the card", e)
       return ControlResult.Failed(TechnicalError.UNEXPECTED)
