@@ -32,11 +32,12 @@ demonstrates the minimal integration approach while maintaining full functionali
 
 ### Hardware Requirements
 - **PC/SC compatible card reader** connected via USB
-- **Calypso cards** pre-personalized with supported AIDs
+- **Calypso cards** with a supported AID, personalized by another client (this client does not personalize the
+  cards)
 - **Network connectivity** to Keyple demo server
 
 ### Server Requirements
-- Running [Keyple Demo Server](../server/README.md) with SAM integration
+- Running [Keyple Reload Demo server](../../server/README.md) with SAM integration
 - Accessible network endpoint (default: `http://localhost:8080`)
 
 ## Installation
@@ -78,9 +79,11 @@ Configure the server connection and specify your PC/SC reader name.
 ### Workflow
 
 1. **Start Application**: Launch `App.exe`
-2. **Wait for Card**: Application waits for a card to be presented
-3. **Card Processing**: Card is read and processed through server
-4. **Result Display**: Success or error message is displayed
+2. **Read the contracts**: present a card; the server selects its application and reads its contracts, which are
+   displayed
+3. **Load trips**: enter a number of trips between 1 and 20, then present the card again; the server adds the trips to
+   the multi-trip ticket (or loads a new one when the card has none)
+4. **Result**: success, or the status code and the message of the server
 
 ## Technical Architecture
 
@@ -115,7 +118,7 @@ The project follows a clean hexagonal architecture pattern:
 
 #### Application Layer (`/application`)
 - **Application.cs**: Main application logic and card processing workflow
-- **Program.cs**: Application bootstrapping and service configuration
+- **Program.cs** (project root): Entry point, configuration and logging
 
 #### Domain Layer (`/domain`)
 
@@ -144,32 +147,33 @@ The project follows a clean hexagonal architecture pattern:
 - **ServerSpiAdapter**: Server communication adapter
 - **ServerSpiProvider**: Server communication provider
 
-### Keyple Distributed JSON API Integration
+### Keyple Server JSON API Integration
 
-The client implements the Keyple Distributed JSON API without the full SDK:
+The client implements the Keyple Server JSON API without the full SDK. It starts a remote service with an
+`EXECUTE_REMOTE_SERVICE` message, answers the commands of the server (`IS_CONTACTLESS`, `IS_CARD_PRESENT`,
+`TRANSMIT_CARD_SELECTION_REQUESTS`, `TRANSMIT_CARD_REQUEST`), until the `END_REMOTE_SERVICE` message giving the result.
 
-**Card Selection Request**:
+**Body of the `EXECUTE_REMOTE_SERVICE` message** (loading of trips):
 ```json
 {
-  "action": "EXECUTE_REMOTE_SERVICE",
-  "serviceId": "RELOAD_CONTRACT",
-  "inputData": {
-    "cardSelectionRequests": [...],
-    "contractData": {...}
-  }
+  "serviceId": "SELECT_APP_AND_INCREASE_CONTRACT_COUNTER",
+  "inputData": { "counterIncrement": 5 },
+  "isReaderContactless": true
 }
 ```
 
-**Server Response**:
+**Body of the `END_REMOTE_SERVICE` message**:
 ```json
 {
   "outputData": {
-    "cardSelectionResponses": [...],
-    "executionStatus": "SUCCESS",
-    "contractUpdateResult": {...}
+    "statusCode": 0,
+    "message": "..."
   }
 }
 ```
+
+The remote services used are `SELECT_APP_AND_READ_CONTRACTS` (the `items` of its output being the descriptions of the
+contracts) and `SELECT_APP_AND_INCREASE_CONTRACT_COUNTER`.
 
 ### Error Handling
 
@@ -211,9 +215,6 @@ dotnet restore
 # Build project
 dotnet build
 
-# Run tests
-dotnet test
-
 # Create release package
 dotnet publish -c Release -r win-x64 --self-contained
 ```
@@ -246,13 +247,6 @@ dotnet publish -c Release -r win-x64 --self-contained
 - Try different cards to isolate issue
 - Check the APDU exchanges in the log file (`logs/demo-keyple-less-<date>.log`, `DEBUG` level)
 
-
-## Performance Considerations
-
-- **Connection Pooling**: HttpClient reuse for server communication
-- **Card Reader Caching**: Maintain reader connections between operations
-- **Async Operations**: Non-blocking I/O for better responsiveness
-- **Memory Management**: Proper disposal of PC/SC resources
 
 ## Security Notes
 

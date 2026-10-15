@@ -1,17 +1,20 @@
 # Keyple Reload Demo - Kotlin Multiplatform Client
 
-[![Kotlin](https://img.shields.io/badge/kotlin-2.2-blue.svg)](https://kotlinlang.org/)
+[![Kotlin](https://img.shields.io/badge/kotlin-2.3-blue.svg)](https://kotlinlang.org/)
 [![KMP](https://img.shields.io/badge/multiplatform-android%20%7C%20ios%20%7C%20desktop-green.svg)](https://www.jetbrains.com/kotlin-multiplatform/)
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../../../LICENSE)
 
 A Kotlin Multiplatform application demonstrating distributed remote client communications across Android, iOS, and
-desktop platforms using Keyple Distributed Client KMP libraries for seamless cross-platform card operations.
+desktop platforms using the Keyple Interop KMP libraries (JSON API client and local reader) for seamless
+cross-platform card operations.
 
 [⬅️ Back to Main Project](../../../../README.md)
 
 ## Overview
 
-This innovative client showcases the power of Kotlin Multiplatform by providing a single codebase that runs natively on multiple platforms while maintaining full functionality with the Keyple server ecosystem. It demonstrates modern cross-platform development practices for contactless card applications.
+This innovative client showcases the power of Kotlin Multiplatform by providing a single codebase that runs natively on
+multiple platforms while maintaining full functionality with the Keyple server ecosystem. It demonstrates modern
+cross-platform development practices for contactless card applications.
 
 **Supported Platforms**:
 - **Android 8.0+** (API 26+) with native NFC support
@@ -32,7 +35,8 @@ This innovative client showcases the power of Kotlin Multiplatform by providing 
 - Device with NFC capability
 - Android 8.0+ (API level 26+)
 - NFC enabled in system settings
-- Android SDK installed locally, with a `local.properties` file at the project root pointing to it (see [Building the Project](#building-the-project))
+- Android SDK installed locally, with a `local.properties` file at the project root pointing to it (see
+  [Building the Project](#building-the-project))
 
 #### iOS
 - iPhone with NFC support (iPhone 7+)
@@ -48,7 +52,7 @@ This innovative client showcases the power of Kotlin Multiplatform by providing 
   - **Linux**: `pcscd` daemon and `libpcsclite-dev`
 
 ### Server Requirements
-- Running [Keyple Demo Server](../../server/README.md) with SAM integration
+- Running [Keyple Reload Demo server](../../server/README.md) with SAM integration
 - Network connectivity from all target platforms
 
 ## Installation
@@ -62,7 +66,9 @@ cd keyple-demo-ticketing/src/reloading-remote/client/interop-mobile-multiplatfor
 
 #### Android App
 
-Before building for Android, create a `local.properties` file at the root of this project (`interop-mobile-multiplatform/local.properties`) pointing to your local Android SDK installation. This file is not committed to the repository, so each developer must create their own:
+Before building for Android, create a `local.properties` file at the root of this project
+(`interop-mobile-multiplatform/local.properties`) pointing to your local Android SDK installation. This file is not
+committed to the repository, so each developer must create their own:
 
 ```properties
 sdk.dir=/path/to/your/Android/Sdk
@@ -95,12 +101,16 @@ Without this file, Gradle fails with `SDK location not found`.
 ./gradlew :composeApp:run -PcustomArgs="-filter=ACS"
 ```
 
+The filter is a part of the name of the reader, case insensitive. Without filter, or when no reader matches, the first
+reader is used.
+
 ## Configuration
 
 ### Application Configuration
 
 The application configuration is managed through:
-- Server settings UI for configuring server URL
+- Server settings UI for configuring the server address (protocol, host, port, endpoint) and the optional basic
+  authentication
 - Platform-specific datastore for persisting settings
 - Shared network client for server communication
 
@@ -259,7 +269,6 @@ Each platform provides:
    ```xml
    <key>com.apple.developer.nfc.readersession.formats</key>
    <array>
-       <string>NDEF</string>
        <string>TAG</string>
    </array>
    ```
@@ -274,9 +283,9 @@ Each platform provides:
 ./gradlew :composeApp:run
 
 # Run with custom PC/SC filter
-./gradlew :composeApp:run -PcustomArgs="-filter=ACS.*"
+./gradlew :composeApp:run -PcustomArgs="-filter=ACS"
 
-# Package as executable
+# Package as executable (.dmg on macOS, .msi on Windows, .deb on Linux, in build/compose/binaries/main/)
 ./gradlew :composeApp:packageDistributionForCurrentOS
 ```
 
@@ -300,52 +309,14 @@ Each platform provides:
 #### Android
 - **NFC not working**: Check `AndroidManifest.xml` for NFC permissions
 - **App crashes on card detection**: Verify NFC intent filters
-- **Slow card reading**: Adjust discovery timeout settings
 
 #### iOS
 - **Core NFC session errors**: Check entitlements and provisioning profile
-- **App rejection from App Store**: Ensure proper NFC usage description
-- **Session timeout**: Increase Core NFC session duration
 
 #### Desktop
 - **PC/SC service not available**: Start PC/SC daemon (`pcscd` on Linux)
 - **Reader not detected**: Check USB connection and driver installation
 - **Permission denied**: Run with appropriate user permissions
-
-## Performance Optimization
-
-- **Coroutines**: Use structured concurrency for non-blocking operations
-- **Memory Management**: Proper cleanup of platform resources (NFC sessions, PC/SC connections)
-- **Network Caching**: Cache server responses to reduce bandwidth usage
-- **UI Responsiveness**: Offload card operations to background threads
-
-## Deployment
-
-### Android
-```bash
-# Generate signed APK
-./gradlew :androidApp:assembleRelease
-
-# Upload to Google Play Console
-# Or distribute via Firebase App Distribution
-```
-
-### iOS
-1. **Archive in Xcode**: Product → Archive
-2. **Upload to App Store Connect**
-3. **TestFlight Distribution** for beta testing
-4. **App Store Review** and release
-
-### Desktop
-```bash
-# Create platform-specific distributables
-./gradlew :composeApp:packageDistributionForCurrentOS
-
-# Results in build/compose/binaries/main/
-# - .dmg for macOS
-# - .msi for Windows  
-# - .deb/.rpm for Linux
-```
 
 ## Contributing
 

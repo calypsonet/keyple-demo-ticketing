@@ -4,16 +4,19 @@
 [![Release](https://img.shields.io/github/v/release/calypsonet/keyple-demo-ticketing)](https://github.com/calypsonet/keyple-demo-ticketing/releases)
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../../../LICENSE)
 
-Native Android client for the Keyple Reload Demo, enabling secure contract loading onto Calypso cards through a
-distributed architecture with remote server management.
+Native Android client for the Keyple Reload Demo, enabling secure contract loading onto Calypso and storage cards
+through a distributed architecture with remote server management.
 
 [⬅️ Back to Main Project](../../../../README.md)
 
 ## Overview
 
-This Android application demonstrates distributed ticketing where all card operations are managed remotely by a Java server with SAM integration. The mobile client provides the user interface and NFC card communication while delegating all business logic and cryptographic operations to the server.
+This Android application demonstrates distributed ticketing where all card operations are managed remotely by a Java
+server with SAM integration. The mobile client provides the user interface and NFC card communication while delegating
+all business logic and cryptographic operations to the server.
 
-**Role in Ecosystem**: First step in the ticketing workflow - loads Season pass and Multi-trip contracts onto cards for later validation and control.
+**Role in Ecosystem**: First step in the ticketing workflow - loads Season pass and Multi-trip contracts onto cards for
+later validation and control.
 
 ## Prerequisites
 
@@ -21,10 +24,11 @@ This Android application demonstrates distributed ticketing where all card opera
 - Android device with Android 8.0+ (API level 26+)
 - NFC capability for contactless card reading
 - Internet connectivity for server communication
-- Compatible Calypso cards (see [supported AIDs](../../../common/README.md#supported-card-applications))
+- Compatible cards: Calypso cards (see [supported AIDs](../../../common/README.md#supported-card-applications)), or
+  storage cards (MIFARE Ultralight and MIFARE Classic 1K, and ST25 SRT512 with the Bluebird terminals)
 
 ### Server Requirements
-- Running Keyple Demo Server with SAM integration
+- Running [Keyple Reload Demo server](../../server/README.md) with SAM integration
 - Network connectivity between client and server
 - Proper firewall configuration for server access
 
@@ -47,11 +51,10 @@ cd keyple-demo-ticketing/src/reloading-remote/client/keyple-mobile-android
 
 ### Server Connection
 1. Open **Settings** → **Server**
-2. Configure server connection:
-  - **Server URL**: `http://your-server:8080`
-  - **Connection timeout**: 30 seconds (default)
-  - **Read timeout**: 60 seconds (default)
-3. Test connection using **Test Connection** button
+2. Configure the server connection:
+  - **Server IP** and **Server port** (e.g. `192.168.1.10` and `8080`)
+  - **Protocol** (e.g. `http://`)
+3. Check that the server is ready (reachable, with its SAM available) with the **Server state** button, then **Save**
 
 ### NFC Settings
 1. Ensure NFC is enabled in Android settings
@@ -72,7 +75,7 @@ The app supports two card media, each with its reader:
   - Ensure server is running and accessible
 
 2. **Card Personalization** (if needed)
-  - Go to **Settings** → **Personalization**
+  - Go to **Settings** → **Personalization**, then choose the card medium
   - Present the card to personalize (its data is reset)
   - Wait for confirmation message
 
@@ -158,10 +161,10 @@ Splash Screen → Home → Card Reader → Card Content → Select Product → C
 - Responds to card insertion/removal events
 - Triggers appropriate business logic for card processing
 
-**Server Communication**
-- RESTful API client for server interaction
-- Handles authentication and session management
-- Manages secure data transmission for card operations
+**Server Communication** (`data/server`)
+- `KeypleSyncEndpointClient`: synchronous endpoint of the Keyple Distributed client, exchanging the messages with the
+  server (`/card/remote-plugin`)
+- `RestServerReadinessChecker`: checks that the server is reachable with its SAM available (`/card/sam-availability`)
 
 ### Plugin Integration
 
@@ -169,7 +172,10 @@ The application supports multiple reader plugins:
 
 **Standard Plugins** (always available):
 - Android NFC plugin for standard contactless reading
-- OMAPI plugin for SIM card access (development)
+- OMAPI plugin for SIM card access (work in progress)
+
+**Proprietary Plugin** (on request, replaced by a mock by default):
+- Bluebird plugin for the reader of the Bluebird terminals
 
 ### Security Model
 
@@ -184,7 +190,7 @@ The application supports multiple reader plugins:
 ### Building the Project
 
 ```bash
-# Install dependencies
+# Clean build
 ./gradlew clean
 
 # Build debug version
@@ -198,17 +204,16 @@ The application supports multiple reader plugins:
 - Read the logs in Logcat (Timber, all levels)
 
 **Testing**:
-- Unit tests for business logic components
-- Integration tests with mock server
-- NFC simulation for testing without physical cards
+- The business rules of the personalization and of the loading are implemented and unit tested by the server (see the
+  [Server Documentation](../../server/README.md))
 
 ### Adding New Readers
 
 To integrate additional reader types:
 
-1. Add plugin dependency to `build.gradle`
+1. Add plugin dependency to `build.gradle.kts`
 2. Implement reader-specific initialization in `KeypleTerminalReaders`
-3. Add UI selection option in device selection screen
+3. Add the card medium (`CardMedium`) and its button in the home screen
 4. Test with target hardware platform
 
 ## Troubleshooting
@@ -257,7 +262,7 @@ curl http://your-server:8080/card/sam-availability
 
 When contributing to this Android client:
 1. Follow Android development best practices
-2. Maintain compatibility with minimum API level 24
+2. Maintain compatibility with minimum API level 26
 3. Test on various Android devices and versions
 4. Update corresponding server integration if needed
 5. Follow the project's code style and documentation standards

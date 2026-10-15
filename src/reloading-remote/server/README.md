@@ -12,19 +12,19 @@ SAM integration for secure Calypso card operations.
 ## Overview
 
 This Java server implements the business logic for the Keyple Demo ecosystem, managing:
-- Secure card personalization and contract loading
-- SAM (Security Access Module) integration
-- Client authentication and session management
-- Web dashboard for monitoring and administration
-- RESTful API for client applications
+- Secure card personalization and contract loading (Calypso and storage cards)
+- SAM (Secure Access Module) integration
+- Remote services for the clients: Keyple Distributed for the Android client, Keyple Server JSON API for the
+  multiplatform and .NET clients
+- Web dashboard monitoring the transactions
 
 ## Architecture
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│   Web Clients   │     │   Java Server   │     │   PC/SC Reader  │
+│     Clients     │     │   Java Server   │     │   PC/SC Reader  │
 │                 │────>│                 │────>│                 │
-│ Android/iOS/Web │     │ Quarkus + REST  │     │ SAM Integration │
+│ Android/iOS/PC  │     │ Quarkus + REST  │     │ SAM Integration │
 └─────────────────┘     └─────────────────┘     └─────────────────┘
                                   │
                         ┌─────────▼─────────┐
@@ -58,7 +58,7 @@ remote service (`RemoteServiceId`) to the service handling it:
 
 ### Hardware Requirements
 - PC/SC compatible card reader
-- Calypso SAM (Security Access Module) for secure operations
+- Calypso SAM (Secure Access Module) for secure operations
 - USB connection for reader
 
 ### Software Requirements
@@ -77,10 +77,7 @@ remote service (`RemoteServiceId`) to the service handling it:
 
 ### Using Pre-built JAR
 
-1. **Download** the latest release:
-```bash
-wget https://github.com/calypsonet/keyple-demo-ticketing/releases/latest/kdt-reloading-server-X.Y.Z-full.jar
-```
+1. **Download** `kdt-reloading-server-X.Y.Z-full.jar` from the [releases page](https://github.com/calypsonet/keyple-demo-ticketing/releases).
 
 2. **Start** the server:
 ```bash
@@ -195,40 +192,21 @@ Run in development mode with hot reload:
 
 This enables:
 - Automatic code recompilation
-- Live dashboard updates
-- Debug logging
 - Development UI at `http://localhost:8080/q/dev/`
 
 ## Web Dashboard
 
 ### Features
 
-The React-based dashboard provides:
+The React dashboard displays:
 
-**Real-time Monitoring:**
-- Active client connections
-- Transaction history and status
-- SAM reader connectivity status
-- System performance metrics
-
-**Card Management:**
-- View connected cards and their status
-- Monitor ongoing transactions
-- Transaction success/failure rates
-- Error logs and diagnostics
-
-**System Administration:**
-- Server configuration overview
-- Reader management and diagnostics
-- Database status and cleanup
-- Log file access
+- **Server and SAM status**: server reachable and SAM available, checked periodically
+- **Transactions**: transactions of the clients (start time, plugin, type, card serial number, status, loaded
+  contract), updated in real time (Server-Sent Events)
 
 ### Dashboard URLs
 
 - **Main Dashboard**: `http://localhost:8080`
-- **API Documentation**: `http://localhost:8080/q/swagger-ui/`
-- **Health Check**: `http://localhost:8080/q/health`
-- **Metrics**: `http://localhost:8080/q/metrics`
 
 ## API Endpoints
 
@@ -280,67 +258,12 @@ java -Dquarkus.log.category."org.calypsonet.keyple".level=DEBUG -jar kdt-reloadi
 The `TRACE` level cannot be used: the minimum level of Quarkus (`quarkus.log.min-level`, `DEBUG` by default) is fixed at
 build time.
 
-### Health Checks
+### Server State
 
-Monitor system health:
-
-```bash
-# Check overall health
-curl http://localhost:8080/q/health
-
-# Check specific components  
-curl http://localhost:8080/q/health/ready
-curl http://localhost:8080/q/health/live
-```
-
-## Deployment
-
-### Production Checklist
-
-- [ ] Configure logging to external system
-- [ ] Set up monitoring and alerting
-- [ ] Configure firewall rules
-- [ ] Secure physical access to SAM reader
-- [ ] Test PC/SC reader connectivity
-
-### Docker Deployment
-
-```dockerfile
-FROM eclipse-temurin:17-jre
-COPY kdt-reloading-server-X.Y.Z-full.jar /app/server.jar
-EXPOSE 8080
-CMD ["java", "-jar", "/app/server.jar"]
-```
+Check that the server is reachable with its SAM available (as the clients and the dashboard do):
 
 ```bash
-docker build -t keyple-server .
-docker run -p 8080:8080 --device=/dev/bus/usb keyple-server
-```
-
-### Systemd Service
-
-```ini
-[Unit]
-Description=Keyple Demo Server
-After=network.target
-
-[Service]
-Type=simple
-User=keyple
-ExecStart=/usr/bin/java -jar /opt/keyple/server.jar
-Restart=always
-RestartSec=10
-
-[Install]
-WantedBy=multi-user.target
-```
-
-## Performance Tuning
-
-### JVM Options
-
-```bash
-java -Xms512m -Xmx2g -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -jar server.jar
+curl http://localhost:8080/card/sam-availability
 ```
 
 ## Security Considerations

@@ -47,9 +47,6 @@ within the validation period.
 git clone https://github.com/calypsonet/keyple-demo-ticketing.git
 cd keyple-demo-ticketing/src/control  
 ./gradlew assembleDebug
-
-# Unit tests (business rules and card procedures)
-./gradlew testDebugUnitTest
 ```
 
 ## Configuration
@@ -157,6 +154,10 @@ Terminal Selection → Settings → Home → Card Reader → Card Content or Inv
 - Registers the reader plugins of the terminal type, then provides the card reader and the SAM reader
 - Implementation: `KeypleTerminalReaders`
 
+**BaseControlProcedure** (`domain/procedures/BaseControlProcedure.kt`)
+- Business rules common to the control procedures: validity of the last validation (location, day and validation
+  period compared to the minute), validation event displayed
+
 **CalypsoCardControlProcedure** (`domain/procedures/CalypsoCardControlProcedure.kt`)
 - Control procedure of the Calypso cards
 - Secure session when a SAM is available (or PKI secure session), analysis of the environment, of the last event and
@@ -189,7 +190,7 @@ Terminal Selection → Settings → Home → Card Reader → Card Content or Inv
 
 ## Development
 
-### Project Architecture
+### Project Structure
 
 ```
 control/app/
@@ -221,6 +222,9 @@ control/app/
 
 # Build debug version
 ./gradlew assembleDebug
+
+# Unit tests (business rules and card procedures)
+./gradlew testDebugUnitTest
 ```
 
 ## Troubleshooting
@@ -269,7 +273,7 @@ When contributing to this control application:
 ## Related Documentation
 
 - [Main Project Overview](../../README.md)
-- [Common Library](../common/README.md) - Data structures and validation logic
+- [Common Library](../common/README.md) - Data structures and constants
 - [Validation Demo](../validation/README.md) - Previous step in workflow
 - [Reload Demo](../reloading-remote/README.md) - Contract loading procedures
 - [Eclipse Keyple Documentation](https://keyple.org) - SDK reference

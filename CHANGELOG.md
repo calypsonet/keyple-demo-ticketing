@@ -152,6 +152,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   and the other clients) in the reloading Android client; `tripsToLoad` (instead of `trips`), `terminal` and
   `serviceId` (instead of `remote` and `service`, the terminal being also named `service` in a lambda) and `logLevel`
   (instead of `debugLog`) in the multiplatform client.
+- Main README: the logs of Keyple removed by ProGuard below the `INFO` level, the prerequisites of all the components
+  (Node.js version, .NET SDK, Xcode) and the features of the Calypso cards used by the demo (no traceability mode) are
+  given; the NFC entitlements of the iOS client are the ones of the project (`TAG` only).
+- READMEs aligned with the code: server settings, supported cards, plugins and tests of the Android reloading client;
+  workflow and JSON messages of the .NET client; features of the dashboard of the server (the documented health,
+  metrics and Swagger endpoints do not exist); Keyple Interop libraries, reader filter and packages of the
+  multiplatform client; presentation of the reload demo (storage cards, clients). The generic sections not reflecting
+  the project (deployment, performance tuning) are removed, and the headings of the control and validation READMEs
+  harmonized.
 - Unit tests of the business rules, run by the CI (see "Unit Tests" in the README):
   - common library: codecs of the storage cards, data types, event structure, DF name check;
   - server: personalization and contract loading rules (JUnit 5, AssertJ), the current date being provided by an

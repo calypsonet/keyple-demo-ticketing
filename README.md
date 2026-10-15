@@ -36,7 +36,7 @@ Standard Calypso contactless cards supporting:
 - Secure sessions with SAM authentication
 - Multiple contracts (1-4 depending on product type)
 - Cryptographic security operations
-- Full transaction traceability
+- Event log of the validations and counters updated within the secure sessions
 
 ### Storage Cards
 
@@ -77,17 +77,16 @@ management.
 **Server Requirements:**
 
 - Java 17+ with PC/SC reader
-- SAM (Security Access Module) for Calypso cards
+- SAM (Secure Access Module) for Calypso cards
 - Web dashboard for monitoring
 
 ## Quick Start
 
 ### 1. Server Setup
 
-```bash
-# Download latest server release
-wget https://github.com/calypsonet/keyple-demo-ticketing/releases/latest
+Download `kdt-reloading-server-X.Y.Z-full.jar` from the [releases page](https://github.com/calypsonet/keyple-demo-ticketing/releases), then:
 
+```bash
 # Start server (requires PC/SC reader with SAM)
 java -jar kdt-reloading-server-X.Y.Z-full.jar
 
@@ -96,7 +95,7 @@ java -jar kdt-reloading-server-X.Y.Z-full.jar
 
 ### 2. Card Personalization
 
-Use any client application's personalization feature to personalize cards with:
+Use the personalization feature of the Android or multiplatform reloading client to personalize cards with:
 
 - Environment data (validity dates, application number)
 - Clean contract slots
@@ -139,8 +138,9 @@ See [Common Library Documentation](src/common/README.md) for detailed specificat
 ### Prerequisites
 
 - JDK 17 to build the Java and Kotlin components (Android apps, KMP client, server)
-- Android Studio for mobile development
-- Node.js for web dashboard
+- Android Studio for mobile development, and Xcode for the iOS version of the KMP client
+- Node.js 20.19+ or 22.12+ for the web dashboard of the server
+- .NET 10.0 SDK for the .NET client
 - PC/SC compatible readers for testing
 
 ### Project Structure
@@ -351,7 +351,8 @@ Message [key1=value1, key2=value2]
   - unexpected error: `ERROR` level, the exception, when there is one, being attached to the call (stack trace) and
     not copied in the message, e.g. `logger.error("Unexpected error while loading the contract", e)`;
   - expected incident (card refused or removed, server not ready): `WARN` level without stack trace, the message of
-    the exception being given in the `cause` key, e.g. `Card communication error while loading the contract [cause=...]`;
+    the exception being given in the `cause` key, e.g.
+    `Card communication error while loading the contract [cause=...]`;
   - an exception thrown again is not logged: it is logged once, where it is handled.
 
 | Level   | Use                                                                                                                     |
@@ -381,7 +382,7 @@ Where to read the logs:
 | Component            | Logs                                                                   | Default level | To see the `DEBUG` messages                                                |
 |----------------------|------------------------------------------------------------------------|---------------|----------------------------------------------------------------------------|
 | Server               | Console                                                                | `INFO`        | `java -Dquarkus.log.category."org.calypsonet.keyple".level=DEBUG -jar ...` |
-| Android applications | Logcat (Android Studio or `adb logcat`)                                | All levels    | -                                                                          |
+| Android applications | Logcat (Android Studio or `adb logcat`)                                | All levels    | Keyple messages: see [Build Optimization](#build-optimization)             |
 | Multiplatform client | Logcat (Android), console (desktop), Xcode console (iOS)               | All levels    | -                                                                          |
 | .NET client          | File `logs/demo-keyple-less-<date>.log` (kept 7 days), not the console | `DEBUG`       | -                                                                          |
 
@@ -408,8 +409,9 @@ they are often logged (`cause` key) or displayed:
   nor `RuntimeException`.
 
 The messages displayed to the users are never the messages of the exceptions: the Android applications display their
-texts (`strings.xml`), a technical error being displayed with a generic text, and the server returns to the clients which do not use Keyple the messages of the statuses of
-its remote services (`RemoteServiceMessages`, texts of the Android applications), the causes being logged.
+texts (`strings.xml`), a technical error being displayed with a generic text, and the server returns to the clients
+which do not use Keyple the messages of the statuses of its remote services (`RemoteServiceMessages`, texts of the
+Android applications), the causes being logged.
 
 ### Method Names
 
@@ -479,7 +481,8 @@ expected behavior as an executable specification.
 
 The Android applications (`validation`, `control`, and `reloading-remote` client) are configured with ProGuard
 minification enabled for both debug and release builds. This removes SLF4J debug/trace logs from the application and
-third-party libraries (like Keyple), resulting in smaller APKs and better runtime performance. To see full unoptimized
+third-party libraries (like Keyple), resulting in smaller APKs and better runtime performance: the messages of the
+applications (Timber) are all kept, those of Keyple from the `INFO` level only. To see full unoptimized
 logs during debugging, comment out the `debug` build type configuration in the respective `app/build.gradle.kts` files.
 
 ## Card Application Identifiers

@@ -12,9 +12,12 @@ for validation.
 
 ## Overview
 
-This Android application simulates validation terminals found at transportation network entry points (metro gates, bus boarding, etc.). It validates contracts loaded by the [Reload Demo](../reloading-remote/) and creates validation events that can be later verified by the [Control Demo](../control/).
+This Android application simulates validation terminals found at transportation network entry points (metro gates, bus
+boarding, etc.). It validates contracts loaded by the [Reload Demo](../reloading-remote/) and creates validation events
+that can be later verified by the [Control Demo](../control/).
 
-**Role in Ecosystem**: Second step in the ticketing workflow - validates loaded contracts and grants/denies access to transportation networks.
+**Role in Ecosystem**: Second step in the ticketing workflow - validates loaded contracts and grants/denies access to
+transportation networks.
 
 **Validation Flow**: Season pass → Multi-trip ticket (in order of priority)
 
@@ -23,16 +26,12 @@ This Android application simulates validation terminals found at transportation 
 ### Hardware Requirements
 - Android device with Android 8.0+ (API level 26+)
 - NFC capability for contactless card reading
-- **SAM (Secure Access Module)** for the Calypso cards
+- **SAM (Secure Access Module)** for the Calypso cards, matching the keys of the cards (test SAM for the demo cards)
 - Compatible terminal hardware (see [tested terminals](#tested-terminals))
 
-### Software Requirements
-- Cards personalized and loaded using the [Reload Demo](../reloading-remote/)
-- SAM matching the keys of the cards (test SAM for the demo cards)
-
 ### Card Requirements
-- Calypso cards with valid contracts loaded
-- Storage cards with compatible contract structures
+- Cards personalized and loaded using the [Reload Demo](../reloading-remote/)
+- Calypso cards, or storage cards (MIFARE Ultralight, ST25 SRT512, MIFARE Classic)
 - Supported AIDs (see [Common Library](../common/README.md#supported-card-applications))
 
 ## Installation
@@ -48,9 +47,6 @@ This Android application simulates validation terminals found at transportation 
 git clone https://github.com/calypsonet/keyple-demo-ticketing.git
 cd keyple-demo-ticketing/src/validation
 ./gradlew assembleDebug
-
-# Unit tests (business rules and card procedures)
-./gradlew testDebugUnitTest
 ```
 
 ## Configuration
@@ -59,7 +55,8 @@ cd keyple-demo-ticketing/src/validation
 1. Launch application
 2. Select the terminal type from **Terminal Selection** screen:
   - **Famoco**: terminal with a SAM reader
-  - **Arrive**, **Bluebird**: proprietary plugins (grayed out by default, see [Proprietary Plugins](#proprietary-plugins))
+  - **Arrive**, **Bluebird**: proprietary plugins (grayed out by default, see
+    [Proprietary Plugins](#proprietary-plugins))
 
 ### Settings Configuration
 The **Settings** screen, displayed after the terminal selection, configures the validation:
@@ -73,12 +70,12 @@ The **Settings** screen, displayed after the terminal selection, configures the 
 
 #### Battery-Powered Mode (Portable Terminals)
 ```
-Terminal Selection → Settings → Home → Reader Activity → Validation Result
+Terminal Selection → Settings → Home → Card Reader → Validation Result
 ```
 
 #### Fixed Terminal Mode
 ```
-Terminal Selection → Settings → Reader Activity → Validation Result
+Terminal Selection → Settings → Card Reader → Validation Result
 ```
 
 ### Detailed Screen Guide
@@ -93,7 +90,7 @@ Terminal Selection → Settings → Reader Activity → Validation Result
 **Home (`HomeActivity`)** _(Battery-powered mode only)_
 - Start of the validation
 
-**Reader Activity (`CardReaderActivity`)**
+**Card Reader (`CardReaderActivity`)**
 - Waits for a card ("Please present your contactless card for validation")
 - Selects the card and runs the validation procedure supporting it
 
@@ -128,7 +125,7 @@ The validation result overlay of the reader screen (`CardReaderActivity`) displa
 - Access granted
 - No counter decrement
 
-**Multi-trip Validation**:
+**Multi-trip ticket validation**:
 - Card detected with remaining trips
 - Trip counter decremented by 1
 - Access granted
@@ -199,6 +196,10 @@ The validation result overlay of the reader screen (`CardReaderActivity`) displa
 - Registers the reader plugins of the terminal type, then provides the card reader and the SAM reader
 - Implementation: `KeypleTerminalReaders`
 
+**BaseValidationProcedure** (`domain/procedures/BaseValidationProcedure.kt`)
+- Business rules common to the validation procedures: versions, expiration, anti-passback, trips left, order of the
+  contracts
+
 **CalypsoCardValidationProcedure** (`domain/procedures/CalypsoCardValidationProcedure.kt`)
 - Secure validation procedure for Calypso cards with SAM integration
 - Handles contract priority logic (Season pass → Multi-trip ticket)
@@ -246,7 +247,9 @@ Additions to the procedure of the data model:
 - **Refused card**: when no contract can be used, the last event is written with the updated priorities (31 for the
   expired or exhausted contracts), so that the next validations do not read these contracts again.
 
-Not implemented by the demo (steps of the data model): verification of the contract authenticator with the PSO Verify Signature command of the SAM and SAM black list (traceability mode: the contracts loaded by the demo have no authenticator), black list of the card applications, and stored value contracts (`ContractTariff` 3).
+Not implemented by the demo (steps of the data model): verification of the contract authenticator with the PSO
+Verify Signature command of the SAM and SAM black list (traceability mode: the contracts loaded by the demo have no
+authenticator), black list of the card applications, and stored value contracts (`ContractTariff` 3).
 
 ## Hardware Integration
 
@@ -301,9 +304,12 @@ validation/app/
 
 # Debug build
 ./gradlew assembleDebug
+
+# Unit tests (business rules and card procedures)
+./gradlew testDebugUnitTest
 ```
 
-### Common Issues
+## Troubleshooting
 
 **"SAM not detected"**
 - Verify SAM is properly inserted in reader

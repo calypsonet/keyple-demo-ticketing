@@ -34,7 +34,7 @@ by the server build (`check` task), and therefore by the CI.
 
 Serves the production build locally, to check it before packaging.
 
-## Package the application
+## Packaging the Application
 
 The dashboard is built and embedded into the server by the server Gradle build:
 

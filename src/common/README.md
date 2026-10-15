@@ -2,6 +2,8 @@
 
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../LICENSE)
 
+[⬅️ Back to Main Project](../../README.md)
+
 The shared foundation for all Keyple Demo applications, providing standardized data structures, constants, and utilities
 for building interoperable ticketing applications.
 
@@ -243,7 +245,7 @@ Keyple Java BOM (`keypleJavaBom` version of the catalog). It targets Java 17, as
 
 When contributing to this library, ensure:
 - All data structures maintain backward compatibility
-- Version numbers follow semantic versioning
+- The library is versioned with the demo applications (see [Version Compatibility](#version-compatibility))
 - Update all demo applications when making breaking changes
 - Include comprehensive unit tests for new utilities
 
