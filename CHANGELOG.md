@@ -152,6 +152,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   and the other clients) in the reloading Android client; `tripsToLoad` (instead of `trips`), `terminal` and
   `serviceId` (instead of `remote` and `service`, the terminal being also named `service` in a lambda) and `logLevel`
   (instead of `debugLog`) in the multiplatform client.
+- Variable names (fifth audit): `recordNumber` (instead of `record`, as in the control app) and
+  `contractPriorities` (instead of `priorities`, as the field of the event it fills) in the Calypso card validation
+  procedure; `networkClient` (instead of `server`) and the lambda parameter `terminal` (instead of `it`) in the
+  remote service of the multiplatform client.
 - Variable names (fourth audit): the server distinguishes the number of contract records of the card
   (`getContractRecordCount()`, `contractRecordCount`, as in the control and validation apps) from the number of
   contracts read (`contractCount`), and names `recordNumber` the number of the contract record analyzed (instead of

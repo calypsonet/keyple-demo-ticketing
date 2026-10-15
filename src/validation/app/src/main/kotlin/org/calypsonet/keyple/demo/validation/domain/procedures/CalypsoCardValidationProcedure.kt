@@ -184,7 +184,7 @@ class CalypsoCardValidationProcedure(
     }
 
     // Contract priorities of the event to write, updated by the validation
-    val priorities = event.contractPriorities.toMutableList()
+    val contractPriorities = event.contractPriorities.toMutableList()
     var contractUsed = 0
     var shouldWriteEvent = false
     // Reason of the refusal of the last contract analyzed, if no contract can be used
@@ -197,16 +197,19 @@ class CalypsoCardValidationProcedure(
 
     // Step 11 - For each element in the list:
     // The priorities only give the order of the contracts: the type of a contract is its tariff
-    for ((record, _) in sortedPriorities) {
+    for ((recordNumber, _) in sortedPriorities) {
 
       // Step 11.1 - Read and unpack the contract record for the index being iterated.
       cardTransaction
           .prepareReadRecords(
-              CalypsoFiles.SFI_CONTRACTS, record, record, CalypsoFiles.CONTRACT_RECORD_SIZE_BYTES)
+              CalypsoFiles.SFI_CONTRACTS,
+              recordNumber,
+              recordNumber,
+              CalypsoFiles.CONTRACT_RECORD_SIZE_BYTES)
           .processCommands(ChannelControl.KEEP_OPEN)
 
       val efContracts = calypsoCard.getFileBySfi(CalypsoFiles.SFI_CONTRACTS)
-      val contractContent = efContracts.data.allRecordsContent[record]!!
+      val contractContent = efContracts.data.allRecordsContent[recordNumber]!!
       val contract = CalypsoContractCodec.decode(contractContent)
 
       // Step 11.2 - If ContractVersionNumber is not the expected one (==1 for the current version),
@@ -230,7 +233,7 @@ class CalypsoCardValidationProcedure(
       // in the list
       if (isContractExpired(
           contract.contractValidityEndDate.date, validationDateTime.toLocalDate())) {
-        priorities[record - 1] = PriorityCode.EXPIRED
+        contractPriorities[recordNumber - 1] = PriorityCode.EXPIRED
         rejectionReason = RejectionReason.EXPIRED_CONTRACT
         shouldWriteEvent = true
         continue
@@ -253,12 +256,12 @@ class CalypsoCardValidationProcedure(
             .processCommands(ChannelControl.KEEP_OPEN)
 
         val efCounters = calypsoCard.getFileBySfi(CalypsoFiles.SFI_COUNTERS)
-        val counterValue = efCounters.data.getContentAsCounterValue(record)
+        val counterValue = efCounters.data.getContentAsCounterValue(recordNumber)
 
         // Step 11.5.2 - If the counter-value is 0, update the associated ContractPriority field
         // present in the persistent object to 31 and move to the next element in the list
         if (!hasTripsLeft(counterValue)) {
-          priorities[record - 1] = PriorityCode.EXPIRED
+          contractPriorities[recordNumber - 1] = PriorityCode.EXPIRED
           rejectionReason = RejectionReason.NO_TRIPS_LEFT
           shouldWriteEvent = true
           continue
@@ -267,7 +270,7 @@ class CalypsoCardValidationProcedure(
         // Step 11.5.3 - UPDATE COUNTER: Decrement the counter-value by 1.
         val decrement = calculateDecrementAmount(contract.contractTariff)
         if (decrement > 0) {
-          cardTransaction.prepareDecreaseCounter(CalypsoFiles.SFI_COUNTERS, record, decrement)
+          cardTransaction.prepareDecreaseCounter(CalypsoFiles.SFI_COUNTERS, recordNumber, decrement)
           remainingTrips = counterValue - decrement
         }
       } else if (contract.contractTariff == PriorityCode.SEASON_PASS) {
@@ -278,7 +281,7 @@ class CalypsoCardValidationProcedure(
       }
 
       // We will create a new event for this contract
-      contractUsed = record
+      contractUsed = recordNumber
       shouldWriteEvent = true
       break
     }
@@ -298,7 +301,7 @@ class CalypsoCardValidationProcedure(
               eventTimeStamp = TimeCompact(validationDateTime),
               eventLocation = context.location.id,
               eventContractUsed = contractUsed,
-              contractPriorities = priorities.toList())
+              contractPriorities = contractPriorities.toList())
       result =
           ValidationResult.Accepted(
               card = card,
@@ -307,9 +310,9 @@ class CalypsoCardValidationProcedure(
               remainingTrips = remainingTrips,
               seasonPassValidityEndDate = seasonPassValidityEndDate)
     } else {
-      // Update old event's priorities: the card is refused, but its expired or exhausted
+      // Update the priorities of the event: the card is refused, but its expired or exhausted
       // contracts are no longer analyzed by the next validations
-      eventToWrite = event.copy(contractPriorities = priorities.toList())
+      eventToWrite = event.copy(contractPriorities = contractPriorities.toList())
       result = ValidationResult.Rejected(card, rejectionReason ?: RejectionReason.NO_VALID_CONTRACT)
     }
 

@@ -86,20 +86,21 @@ class KeypleInteropService(
   suspend fun start() {
     serverConfig = serverConfigRepository.load()
 
-    val server = SimpleHttpNetworkClient(serverConfig!!, buildHttpClient(LogLevel.ALL))
+    val networkClient = SimpleHttpNetworkClient(serverConfig!!, buildHttpClient(LogLevel.ALL))
 
-    keypleTerminal = KeypleTerminal(reader = reader, clientId = clientId, networkClient = server)
+    keypleTerminal =
+        KeypleTerminal(reader = reader, clientId = clientId, networkClient = networkClient)
 
     launchCardSelectionScenarioRetrieval()
   }
 
   private fun launchCardSelectionScenarioRetrieval() {
-    keypleTerminal?.let {
+    keypleTerminal?.let { terminal ->
       scope.launch {
         try {
           val cardSelectionScenario = retrieveCardSelectionScenario()
           Napier.d("Card selection scenario received [scenario=$cardSelectionScenario]")
-          keypleTerminal?.setCardSelectionScenarioJsonString(cardSelectionScenario)
+          terminal.setCardSelectionScenarioJsonString(cardSelectionScenario)
         } catch (e: Exception) {
           Napier.e("Error while getting the card selection scenario", e)
         }
@@ -170,10 +171,10 @@ class KeypleInteropService(
 
   suspend fun selectAppAndPersonalizeCard(): KeypleResult<String> {
     return withContext(Dispatchers.IO) {
-      keypleTerminal?.let {
+      keypleTerminal?.let { terminal ->
         val result =
             executeRemoteServiceWithStatus(
-                it,
+                terminal,
                 SELECT_APP_AND_PERSONALIZE_CARD,
                 SelectAppAndPersonalizeCardInputDto(),
                 SelectAppAndPersonalizeCardInputDto.serializer(),
@@ -203,10 +204,10 @@ class KeypleInteropService(
       contractTariff: PriorityCode
   ): KeypleResult<String> {
     return withContext(Dispatchers.IO) {
-      keypleTerminal?.let {
+      keypleTerminal?.let { terminal ->
         val result =
             executeRemoteServiceWithStatus(
-                it,
+                terminal,
                 SELECT_APP_AND_LOAD_CONTRACT,
                 SelectAppAndLoadContractInputDto(
                     applicationSerialNumber = expectedSerialNumber,
