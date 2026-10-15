@@ -62,9 +62,9 @@ class SelectProductActivity : BaseActivity() {
     }
   }
 
-  private fun startCheckoutActivity(priorityCode: PriorityCode, tripsToLoad: Int? = null) {
+  private fun startCheckoutActivity(contractTariff: PriorityCode, tripsToLoad: Int? = null) {
     val intent = Intent(this, CheckoutActivity::class.java)
-    intent.putExtra(CONTRACT_TARIFF, priorityCode.code)
+    intent.putExtra(CONTRACT_TARIFF, contractTariff.code)
     if (tripsToLoad != null) {
       intent.putExtra(TRIPS_TO_LOAD, tripsToLoad)
     }

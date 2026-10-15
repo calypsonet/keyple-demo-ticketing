@@ -31,39 +31,39 @@ constructor(private val localServiceClient: LocalServiceClient) : TicketingServe
   override fun analyzeContracts(
       localReaderName: String,
       smartCard: SmartCard,
-      input: AnalyzeContractsInputDto
+      inputData: AnalyzeContractsInputDto
   ): AnalyzeContractsOutputDto {
     return localServiceClient.executeRemoteService(
         RemoteServiceId.READ_CARD_AND_ANALYZE_CONTRACTS.name,
         localReaderName,
         smartCard,
-        input,
+        inputData,
         AnalyzeContractsOutputDto::class.java)
   }
 
   override fun personalizeCard(
       localReaderName: String,
       smartCard: SmartCard,
-      input: PersonalizeCardInputDto
+      inputData: PersonalizeCardInputDto
   ): PersonalizeCardOutputDto {
     return localServiceClient.executeRemoteService(
         RemoteServiceId.PERSONALIZE_CARD.name,
         localReaderName,
         smartCard,
-        input,
+        inputData,
         PersonalizeCardOutputDto::class.java)
   }
 
   override fun loadContract(
       localReaderName: String,
       smartCard: SmartCard,
-      input: LoadContractInputDto
+      inputData: LoadContractInputDto
   ): LoadContractOutputDto {
     return localServiceClient.executeRemoteService(
         RemoteServiceId.READ_CARD_AND_LOAD_CONTRACT.name,
         localReaderName,
         smartCard,
-        input,
+        inputData,
         LoadContractOutputDto::class.java)
   }
 }

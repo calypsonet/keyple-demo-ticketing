@@ -137,10 +137,10 @@ class KeypleInteropService(
 
   suspend fun selectAppAndAnalyzeContracts(): KeypleResult<SelectAppAndAnalyzeContractsOutputDto> {
     return withContext(Dispatchers.IO) {
-      keypleTerminal?.let { service ->
+      keypleTerminal?.let { terminal ->
         val result: KeypleResult<SelectAppAndAnalyzeContractsOutputDto> =
             executeRemoteService(
-                service,
+                terminal,
                 SELECT_APP_AND_ANALYZE_CONTRACTS,
                 SelectAppAndAnalyzeContractsInputDto(),
                 SelectAppAndAnalyzeContractsInputDto.serializer(),
@@ -237,8 +237,8 @@ class KeypleInteropService(
    *   the server.
    */
   private suspend fun <T, R : RemoteServiceOutputDto> executeRemoteServiceWithStatus(
-      remote: KeypleTerminal,
-      service: String,
+      terminal: KeypleTerminal,
+      serviceId: String,
       inputData: T? = null,
       inputSerializer: KSerializer<T>,
       outputSerializer: KSerializer<R>,
@@ -246,10 +246,10 @@ class KeypleInteropService(
       failureLog: String,
   ): KeypleResult<String> {
     when (val result =
-        remote.executeRemoteService(service, inputData, inputSerializer, outputSerializer)) {
+        terminal.executeRemoteService(serviceId, inputData, inputSerializer, outputSerializer)) {
       is KeypleResult.Failure -> {
         Napier.w(
-            "Remote service execution failed [service=$service, status=${result.status}, " +
+            "Remote service execution failed [service=$serviceId, status=${result.status}, " +
                 "message=${result.message}, output=${result.data}]")
         return KeypleResult.Failure(
             status = result.status, message = result.data?.message ?: "Communication error")
@@ -280,8 +280,8 @@ class KeypleInteropService(
   }
 
   private suspend fun <T, R> executeRemoteService(
-      remote: KeypleTerminal,
-      service: String,
+      terminal: KeypleTerminal,
+      serviceId: String,
       inputData: T? = null,
       inputSerializer: KSerializer<T>,
       outputSerializer: KSerializer<R>,
@@ -290,10 +290,10 @@ class KeypleInteropService(
     var inputDataJson: String? = null
     inputData?.let { inputDataJson = json.encodeToString(inputSerializer, inputData) }
 
-    when (val result = remote.executeRemoteService(service, inputDataJson)) {
+    when (val result = terminal.executeRemoteService(serviceId, inputDataJson)) {
       is KeypleResult.Failure -> {
         Napier.w(
-            "Remote service execution failed [service=$service, status=${result.status}, " +
+            "Remote service execution failed [service=$serviceId, status=${result.status}, " +
                 "message=${result.message}, output=${result.data}]")
         return KeypleResult.Failure(result.status, "Communication error")
       }

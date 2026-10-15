@@ -146,6 +146,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   or back), the next card being then detected. The UI models (`UiControlResult`, `UiContract`, `UiValidation`,
   `UiLocation`, `ResultType`) and their mappers, needed only to pass the result to another screen, are removed: the
   lists of the card content display the domain models.
+- Parameter names: `contractTariff` (instead of `priorityCode`) and `inputData` (instead of `input`, as in the server
+  and the other clients) in the reloading Android client; `tripsToLoad` (instead of `trips`), `terminal` and
+  `serviceId` (instead of `remote` and `service`, the terminal being also named `service` in a lambda) and `logLevel`
+  (instead of `debugLog`) in the multiplatform client.
 - Variable names (fourth audit): the server distinguishes the number of contract records of the card
   (`getContractRecordCount()`, `contractRecordCount`, as in the control and validation apps) from the number of
   contracts read (`contractCount`), and names `recordNumber` the number of the contract record analyzed (instead of

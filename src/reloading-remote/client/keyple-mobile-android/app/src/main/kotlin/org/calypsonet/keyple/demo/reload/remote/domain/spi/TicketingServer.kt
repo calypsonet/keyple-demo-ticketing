@@ -28,18 +28,18 @@ interface TicketingServer {
   fun analyzeContracts(
       localReaderName: String,
       smartCard: SmartCard,
-      input: AnalyzeContractsInputDto
+      inputData: AnalyzeContractsInputDto
   ): AnalyzeContractsOutputDto
 
   fun personalizeCard(
       localReaderName: String,
       smartCard: SmartCard,
-      input: PersonalizeCardInputDto
+      inputData: PersonalizeCardInputDto
   ): PersonalizeCardOutputDto
 
   fun loadContract(
       localReaderName: String,
       smartCard: SmartCard,
-      input: LoadContractInputDto
+      inputData: LoadContractInputDto
   ): LoadContractOutputDto
 }

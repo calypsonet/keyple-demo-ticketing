@@ -63,7 +63,7 @@ class SimpleHttpNetworkClient(val config: KeypleServerConfig, val httpClient: Ht
   }
 }
 
-fun buildHttpClient(debugLog: LogLevel): HttpClient {
+fun buildHttpClient(logLevel: LogLevel): HttpClient {
   return HttpClient {
     install(ContentNegotiation) {
       json(
@@ -74,7 +74,7 @@ fun buildHttpClient(debugLog: LogLevel): HttpClient {
             encodeDefaults = true
           })
     }
-    if (debugLog != LogLevel.NONE) {
+    if (logLevel != LogLevel.NONE) {
       install(Logging) {
         logger =
             object : Logger {
@@ -82,7 +82,7 @@ fun buildHttpClient(debugLog: LogLevel): HttpClient {
                 Napier.d(tag = "HTTP", message = message)
               }
             }
-        level = debugLog
+        level = logLevel
       }
     }
     install(HttpTimeout) {
