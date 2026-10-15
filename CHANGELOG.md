@@ -146,6 +146,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   or back), the next card being then detected. The UI models (`UiControlResult`, `UiContract`, `UiValidation`,
   `UiLocation`, `ResultType`) and their mappers, needed only to pass the result to another screen, are removed: the
   lists of the card content display the domain models.
+- Multiplatform client: the contract type passed to `selectAppAndLoadContract()` is named `contractTariff` (instead
+  of `code`), as the field of the input data of the server.
 - Parameter names: `contractTariff` (instead of `priorityCode`) and `inputData` (instead of `input`, as in the server
   and the other clients) in the reloading Android client; `tripsToLoad` (instead of `trips`), `terminal` and
   `serviceId` (instead of `remote` and `service`, the terminal being also named `service` in a lambda) and `logLevel`
@@ -632,6 +634,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   Android 12. The unused `WRITE_EXTERNAL_STORAGE` permission is removed.
 - Calypso cards: contracts of unknown type (contract tariff not supported by the demo) are no longer validated (they
   were accepted without any debit).
+- Calypso cards: the type of the contract used (multi-trip ticket, season pass) is the `ContractTariff` of the contract
+  read, as specified, instead of its `ContractPriority` in the event, which only gives the order of the contracts. Both
+  are equal for a consistent card; a card whose event and contract differ is now validated according to the type of
+  the contract. In the storage card procedure and the business rules, the contract type is named `contractTariff`
+  (instead of `contractPriority` and `priority`).
 - Anti-passback: a card validated again a few seconds after a first validation is refused. The time of the event being
   recorded to the minute, it was compared with the exact time of the new validation: a validation at 10:57:55
   (recorded as 10:57) let a second one be accepted at 10:58:00, debiting a trip twice. The times are now compared to

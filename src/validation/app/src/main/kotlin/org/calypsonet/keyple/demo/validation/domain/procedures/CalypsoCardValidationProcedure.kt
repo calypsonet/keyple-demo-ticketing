@@ -196,7 +196,8 @@ class CalypsoCardValidationProcedure(
     val sortedPriorities = sortContractPriorities(filteredPriorities)
 
     // Step 11 - For each element in the list:
-    for ((record, contractPriority) in sortedPriorities) {
+    // The priorities only give the order of the contracts: the type of a contract is its tariff
+    for ((record, _) in sortedPriorities) {
 
       // Step 11.1 - Read and unpack the contract record for the index being iterated.
       cardTransaction
@@ -236,7 +237,7 @@ class CalypsoCardValidationProcedure(
       }
 
       // Step 11.5 - If the ContractTariff value for the contract read is 2:
-      if (isCounterBasedContract(contractPriority)) {
+      if (isCounterBasedContract(contract.contractTariff)) {
 
         val contractRecordCount =
             when (calypsoCard.productType) {
@@ -264,13 +265,16 @@ class CalypsoCardValidationProcedure(
         }
 
         // Step 11.5.3 - UPDATE COUNTER: Decrement the counter-value by 1.
-        val decrement = calculateDecrementAmount(contractPriority)
+        val decrement = calculateDecrementAmount(contract.contractTariff)
         if (decrement > 0) {
           cardTransaction.prepareDecreaseCounter(CalypsoFiles.SFI_COUNTERS, record, decrement)
           remainingTrips = counterValue - decrement
         }
-      } else if (contractPriority == PriorityCode.SEASON_PASS) {
+      } else if (contract.contractTariff == PriorityCode.SEASON_PASS) {
         seasonPassValidityEndDate = contract.contractValidityEndDate.date
+      } else {
+        // Contract of a type not supported by the demo: not validated
+        continue
       }
 
       // We will create a new event for this contract

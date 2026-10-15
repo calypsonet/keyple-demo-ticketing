@@ -31,11 +31,11 @@ abstract class BaseValidationProcedure : ValidationProcedure {
   /**
    * Calculates the amount to decrement from the counter based on the contract type.
    *
-   * @param contractPriority The contract priority/type
+   * @param contractTariff The tariff of the contract (its type).
    * @return The amount to decrement
    */
-  fun calculateDecrementAmount(contractPriority: PriorityCode): Int {
-    return when (contractPriority) {
+  fun calculateDecrementAmount(contractTariff: PriorityCode): Int {
+    return when (contractTariff) {
       PriorityCode.MULTI_TRIP -> SINGLE_VALIDATION_AMOUNT
       else -> 0
     }
@@ -71,13 +71,13 @@ abstract class BaseValidationProcedure : ValidationProcedure {
   }
 
   /**
-   * Checks if a priority code represents a contract with a counter (MULTI_TRIP).
+   * Indicates whether a contract uses a counter (multi-trip ticket).
    *
-   * @param priority The priority code to check
+   * @param contractTariff The tariff of the contract (its type).
    * @return true if the contract type uses a counter, false otherwise
    */
-  fun isCounterBasedContract(priority: PriorityCode): Boolean {
-    return priority == PriorityCode.MULTI_TRIP
+  fun isCounterBasedContract(contractTariff: PriorityCode): Boolean {
+    return contractTariff == PriorityCode.MULTI_TRIP
   }
 
   // ========== Business rules, returning the reason of the refusal of the card ==========

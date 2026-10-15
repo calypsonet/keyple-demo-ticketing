@@ -200,7 +200,7 @@ class KeypleInteropService(
   suspend fun selectAppAndLoadContract(
       expectedSerialNumber: String,
       tripsToLoad: Int,
-      code: PriorityCode
+      contractTariff: PriorityCode
   ): KeypleResult<String> {
     return withContext(Dispatchers.IO) {
       keypleTerminal?.let {
@@ -210,11 +210,12 @@ class KeypleInteropService(
                 SELECT_APP_AND_LOAD_CONTRACT,
                 SelectAppAndLoadContractInputDto(
                     applicationSerialNumber = expectedSerialNumber,
-                    contractTariff = code,
+                    contractTariff = contractTariff,
                     tripsToLoad = tripsToLoad),
                 SelectAppAndLoadContractInputDto.serializer(),
                 SelectAppAndLoadContractOutputDto.serializer(),
-                successLog = "Contract loaded [contractTariff=$code, tripsToLoad=$tripsToLoad]",
+                successLog =
+                    "Contract loaded [contractTariff=$contractTariff, tripsToLoad=$tripsToLoad]",
                 failureLog = "Contract loading failed")
         when (result) {
           is KeypleResult.Failure -> {

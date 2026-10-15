@@ -222,16 +222,13 @@ class StorageCardValidationProcedure(
     }
 
     // ========= BUSINESS VALIDATION =========
-    // Determine contract priority from contract tariff
-    val contractPriority = contract.contractTariff
-
     val contractUsed = 1 // For storage card, we only have one contract
     // Contract to write, updated by the validation (counter of a multi-trip contract)
     var contractToWrite = contract
     var remainingTrips: Int? = null
     var seasonPassValidityEndDate: LocalDate? = null
 
-    when (contractPriority) {
+    when (contract.contractTariff) {
       PriorityCode.MULTI_TRIP -> {
         // Check if there are trips left
         val counterValue = contract.counterValue ?: 0
@@ -240,7 +237,7 @@ class StorageCardValidationProcedure(
         }
 
         // Decrement counter
-        val newCounterValue = counterValue - calculateDecrementAmount(contractPriority)
+        val newCounterValue = counterValue - calculateDecrementAmount(contract.contractTariff)
         contractToWrite = contract.withCounterValue(newCounterValue)
         remainingTrips = newCounterValue
       }
@@ -263,9 +260,10 @@ class StorageCardValidationProcedure(
             eventTimeStamp = TimeCompact(validationDateTime),
             eventLocation = context.location.id,
             eventContractUsed = contractUsed,
+            // The priority of a contract being its tariff
             contractPriorities =
                 listOf(
-                    contractPriority,
+                    contract.contractTariff,
                     PriorityCode.FORBIDDEN,
                     PriorityCode.FORBIDDEN,
                     PriorityCode.FORBIDDEN))
