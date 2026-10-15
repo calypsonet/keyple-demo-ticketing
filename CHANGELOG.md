@@ -146,6 +146,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   or back), the next card being then detected. The UI models (`UiControlResult`, `UiContract`, `UiValidation`,
   `UiLocation`, `ResultType`) and their mappers, needed only to pass the result to another screen, are removed: the
   lists of the card content display the domain models.
+- Variable names (second audit): the multiplatform client names `appViewModel`, `serverSettingsViewModel` and
+  `appState` the view models and the state of the application (instead of `vm`, `serverSettingsVm` and `state`), and
+  `readerFilter` the filter of the reader name of the desktop client (instead of `filter`).
 - Variable names harmonized: the same name for the same concept (`efContracts` and `efCounters` in the validation
   procedure as in the control one, `environment` instead of `env`, `uid` instead of `cardUID` as in the logs,
   `isServerReady` instead of `isUp` and `isReady`, `analysisOutput` and `loadingOutput` as `personalizationOutput`,

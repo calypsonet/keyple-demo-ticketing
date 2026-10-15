@@ -31,14 +31,14 @@ import org.eclipse.keyple.interop.localreader.nfcmobile.api.MultiplatformNfcRead
 
 fun main(args: Array<String>) = application {
   initLogger()
-  var filter = "*"
+  var readerFilter = "*"
 
   val windowState =
       rememberWindowState(placement = WindowPlacement.Floating, width = 500.dp, height = 850.dp)
   for (arg: String in args) {
     if (arg.startsWith("-filter=")) {
-      filter = arg.removePrefix("-filter=")
-      Napier.d("Reader filter set [filter=$filter]")
+      readerFilter = arg.removePrefix("-filter=")
+      Napier.d("Reader filter set [filter=$readerFilter]")
     }
   }
 
@@ -46,7 +46,7 @@ fun main(args: Array<String>) = application {
   val serverConfigRepository = ServerConfigRepository(createDataStore(DataStorePathProducer()))
   val keypleInteropService =
       KeypleInteropService(
-          reader = MultiplatformNfcReader(LocalNfcReader(filter)),
+          reader = MultiplatformNfcReader(LocalNfcReader(readerFilter)),
           clientId = "SOMEID",
           serverConfigRepository = serverConfigRepository)
   val serverReadinessChecker = ServerReadinessChecker()

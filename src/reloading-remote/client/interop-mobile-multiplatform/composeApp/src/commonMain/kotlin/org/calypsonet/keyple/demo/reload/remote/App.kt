@@ -57,14 +57,14 @@ fun App(
     serverReadinessChecker: ServerReadinessChecker,
     buzzer: Buzzer
 ) {
-  val vm =
+  val appViewModel =
       viewModel<AppViewModel> {
         AppViewModel(
             keypleInteropService = keypleInteropService,
             serverReadinessChecker = serverReadinessChecker,
             serverConfigRepository = serverConfigRepository)
       }
-  val serverSettingsVm =
+  val serverSettingsViewModel =
       viewModel<ServerSettingsScreenViewModel> {
         ServerSettingsScreenViewModel(
             keypleInteropService = keypleInteropService,
@@ -73,14 +73,14 @@ fun App(
 
   val navController = rememberNavController()
 
-  val state = vm.state.collectAsState()
+  val appState = appViewModel.state.collectAsState()
 
   AppTheme {
     NavHost(navController = navController, startDestination = Home) {
-      composable<Home> { HomeScreen(navController = navController, appState = state.value) }
+      composable<Home> { HomeScreen(navController = navController, appState = appState.value) }
 
       composable<SettingsMenu> {
-        SettingsMenuScreen(navController = navController, appState = state.value)
+        SettingsMenuScreen(navController = navController, appState = appState.value)
       }
 
       composable<ReadCard> {
@@ -93,7 +93,7 @@ fun App(
                       readCardCache = readCardCache,
                       buzzer = buzzer)
                 },
-            appState = state.value)
+            appState = appState.value)
       }
 
       composable<LoadContract> { backStackEntry ->
@@ -106,7 +106,7 @@ fun App(
                   LoadContractScreenViewModel(
                       keypleInteropService = keypleInteropService, buzzer = buzzer, route = route)
                 },
-            appState = state.value)
+            appState = appState.value)
       }
 
       composable<PersonalizeCard> {
@@ -117,24 +117,28 @@ fun App(
                   PersonalizeCardScreenViewModel(
                       keypleInteropService = keypleInteropService, buzzer = buzzer)
                 },
-            appState = state.value)
+            appState = appState.value)
       }
 
       composable<CardContent> {
         CardContentScreen(
             navController = navController,
-            appState = state.value,
+            appState = appState.value,
             viewModel =
                 viewModel<CardContentScreenViewModel> {
                   CardContentScreenViewModel(readCardCache = readCardCache)
                 })
       }
 
-      composable<Success> { SuccessScreen(navController = navController, appState = state.value) }
+      composable<Success> {
+        SuccessScreen(navController = navController, appState = appState.value)
+      }
 
       composable<ServerSettings> {
         ServerSettingsScreen(
-            navController = navController, viewModel = serverSettingsVm, appState = state.value)
+            navController = navController,
+            viewModel = serverSettingsViewModel,
+            appState = appState.value)
       }
     }
   }
