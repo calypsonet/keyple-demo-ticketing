@@ -129,10 +129,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
-- Control app: the success and error sounds are played by a dedicated thread (`MediaPlayerUserFeedback`), so that
-  the start of a `MediaPlayer` no longer delays the display of the result (about 500 ms measured between the end of
-  the control and the opening of the result screen), and the card detection is stopped once, by the card reader
-  screen when it is left, instead of being stopped again on the main thread by the result screens.
+- Control app: the success and error sounds are played by a dedicated thread (`MediaPlayerUserFeedback`), the start
+  of a `MediaPlayer` no longer blocking the thread of the control, and the card detection is stopped once, by the card
+  reader screen when it is left, instead of being stopped again on the main thread by the result screens.
 - Control and validation apps: the waiting indicator ("Please wait") is removed. In the control app, displayed without
   transition for the short duration of the control of a card, then hidden before the opening of the result screen, it
   flashed on the screen (since the replacement of the deprecated `ProgressDialog`); it is no longer displayed during
