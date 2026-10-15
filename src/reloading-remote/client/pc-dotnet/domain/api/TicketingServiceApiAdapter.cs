@@ -138,25 +138,25 @@ namespace App.domain.api
 
                 string service = command.Service;
                 _logger.Debug($"Command received [service={service}]");
-                string jsonBodyString = "";
+                string responseBody = "";
                 switch (service)
                 {
                     case IsContactlessService:
-                        jsonBodyString = CreateIsContactlessResponse();
+                        responseBody = CreateIsContactlessResponse();
                         break;
                     case IsCardPresentService:
-                        jsonBodyString = CreateIsCardPresentResponse();
+                        responseBody = CreateIsCardPresentResponse();
                         break;
                     case TransmitCardSelectionRequestsService:
-                        jsonBodyString = TransmitCardSelectionRequests(message);
+                        responseBody = TransmitCardSelectionRequests(message);
                         break;
                     case TransmitCardRequestService:
-                        jsonBodyString = TransmitCardRequest(message);
+                        responseBody = TransmitCardRequest(message);
                         break;
                 }
                 message.ApiLevel = ApiInfo.ApiLevel;
                 message.Action = ResponseAction;
-                message.Body = jsonBodyString;
+                message.Body = responseBody;
                 string jsonResponse = _server.TransmitRequest(JsonConvert.SerializeObject(message, Formatting.None));
                 message = JsonConvert.DeserializeObject<List<MessageDto>>(jsonResponse)![0];
             }

@@ -146,6 +146,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   or back), the next card being then detected. The UI models (`UiControlResult`, `UiContract`, `UiValidation`,
   `UiLocation`, `ResultType`) and their mappers, needed only to pass the result to another screen, are removed: the
   lists of the card content display the domain models.
+- Variable names (fourth audit): the server distinguishes the number of contract records of the card
+  (`getContractRecordCount()`, `contractRecordCount`, as in the control and validation apps) from the number of
+  contracts read (`contractCount`), and names `recordNumber` the number of the contract record analyzed (instead of
+  `contractIndex`, also in the log key); `responseBody` (instead of `jsonBodyString`) in the .NET client and
+  `missedTransactions` (instead of `newer`) in the dashboard.
 - Variable names (third audit): `displayedContracts` (a list) in the control procedures, `shouldWriteEvent` (a
   boolean, as `shouldCloseSession`) in the Calypso validation procedure, `responseMessages` (decoded messages, instead
   of `json`) in the HTTP client of the multiplatform client, and `matchingSamReaders` (instead of `filteredByName`) in

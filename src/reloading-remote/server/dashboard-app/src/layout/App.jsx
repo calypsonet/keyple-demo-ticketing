@@ -42,8 +42,8 @@ export default function App() {
           // The history (oldest first) is authoritative, completed by the transactions streamed
           // after it was read. The table displays the most recent transactions first.
           const historyIds = new Set(history.map(transaction => transaction.id));
-          const newer = streamed.filter(transaction => !historyIds.has(transaction.id));
-          setRows([...newer].reverse().concat([...history].reverse()));
+          const missedTransactions = streamed.filter(transaction => !historyIds.has(transaction.id));
+          setRows([...missedTransactions].reverse().concat([...history].reverse()));
         })
         .catch(e => console.error("Error while loading the transactions [cause=" + e.message + "]"));
     };

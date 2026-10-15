@@ -207,11 +207,11 @@ public class ContractAnalysisService {
     // Iterate through the contracts in the card session
     List<ContractStructure> contracts = card.getContracts();
     List<ContractStructure> presentContracts = new ArrayList<>();
-    int contractIndex = 1;
+    int recordNumber = 1;
     for (ContractStructure contract : contracts) {
       logger.debug(
-          "Contract read [index={}, contractTariff={}, contractSaleDate={}]",
-          contractIndex,
+          "Contract read [recordNumber={}, contractTariff={}, contractSaleDate={}]",
+          recordNumber,
           contract.getContractTariff(),
           contract.getContractSaleDate().getDate());
       if (contract.getContractVersionNumber() == VersionNumber.UNDEFINED) {
@@ -219,14 +219,14 @@ public class ContractAnalysisService {
         // 0 and move on to the next contract.
         if (contract.getContractTariff() != PriorityCode.FORBIDDEN) {
           logger.warn(
-              "Blank contract of an unexpected ContractTariff [index={}, contractTariff={}]",
-              contractIndex,
+              "Blank contract of an unexpected ContractTariff [recordNumber={}, contractTariff={}]",
+              recordNumber,
               contract.getContractTariff());
         }
       } else {
         presentContracts.add(contract);
       }
-      contractIndex++;
+      recordNumber++;
     }
     logger.debug("Contracts present in the card [contracts={}]", presentContracts);
     return presentContracts;
