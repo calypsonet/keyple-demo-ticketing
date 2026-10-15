@@ -438,6 +438,11 @@ All the components name their methods with the same verbs:
   value, as a property (e.g. `technicalError()`, `rejectionMessage()`, `environmentRejection()`), and the Compose
   functions, which describe an element of the screen, are named with a noun (e.g. `SuccessMessage`,
   `PlatformAnimation`).
+- A name without verb promises a value without hidden cost: a function accessing the card, the network or the
+  storage, or making a heavy computation, is named with the verb telling it (e.g. `readCard()`, `findReader()`,
+  `load()`), even when it returns a value.
+- In Kotlin, a value without parameter nor computation is a property rather than a function (e.g.
+  `CardReaderSession.cardReader`, `cardSecuritySetting`, instead of `getCardReader()`).
 - The same operation has the same name in all the components. The methods executing a remote service of the server
   (`JsonApiService` of the server, multiplatform and .NET clients) are named after its identifier
   (`SELECT_APP_AND_PERSONALIZE_CARD`: `selectAppAndPersonalizeCard()`); the ports of the domain are named after the

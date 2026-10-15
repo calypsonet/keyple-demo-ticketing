@@ -129,6 +129,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- README ("Method Names"): a name without verb promises a value without hidden cost (access to the card, the network
+  or the storage, heavy computation), and a Kotlin value without parameter nor computation is a property.
 - Control app: the success and error sounds are played by a dedicated thread (`MediaPlayerUserFeedback`), the start
   of a `MediaPlayer` no longer blocking the thread of the control, and the card detection is stopped once, by the card
   reader screen when it is left, instead of being stopped again on the main thread by the result screens.
