@@ -114,15 +114,15 @@ class StorageCardValidationProcedure(
     val validationDateTime = context.dateTime
 
     // Determine if this card requires authentication (MIFARE Classic)
-    val requiresAuth = storageCard.productType.hasAuthentication()
+    val requiresAuthentication = storageCard.productType.hasAuthentication()
     val isMifareClassic = storageCard.productType == ProductType.MIFARE_CLASSIC_1K
 
     // LOG: Card detected
     logger.d(
-        "Validating the storage card [productType=${storageCard.productType.name}, requiresAuthentication=$requiresAuth, isMifareClassic=$isMifareClassic]")
+        "Validating the storage card [productType=${storageCard.productType.name}, requiresAuthentication=$requiresAuthentication, isMifareClassic=$isMifareClassic]")
 
     // ========= AUTHENTICATION PHASE (MIFARE Classic only) =========
-    if (requiresAuth) {
+    if (requiresAuthentication) {
       logger.d(
           "Authenticating the MIFARE Classic sector [sector=1, keyType=KEY_A, keyNumber=${MifareClassicBlocks.DEFAULT_KEY_NUMBER}]")
       cardTransaction.prepareMifareClassicAuthenticate(
@@ -269,7 +269,7 @@ class StorageCardValidationProcedure(
                     PriorityCode.FORBIDDEN))
 
     // Re-authenticate for MIFARE Classic before writing (best practice)
-    if (requiresAuth) {
+    if (requiresAuthentication) {
       logger.d("Authenticating the MIFARE Classic sector again before writing")
       cardTransaction.prepareMifareClassicAuthenticate(
           MifareClassicBlocks.SECTOR_1_AUTH_BLOCK,

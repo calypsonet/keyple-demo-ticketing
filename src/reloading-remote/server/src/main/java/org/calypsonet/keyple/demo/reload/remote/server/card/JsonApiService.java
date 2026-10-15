@@ -247,10 +247,10 @@ public class JsonApiService {
         isValid = contract.getCounterValue() != null && contract.getCounterValue() >= 1;
         break;
       case SEASON_PASS:
-        LocalDate now = LocalDate.now();
+        LocalDate today = LocalDate.now();
         LocalDate saleDate = contract.getContractSaleDate().getDate();
         LocalDate validityEndDate = contract.getContractValidityEndDate().getDate();
-        boolean isExpired = validityEndDate.isBefore(now);
+        boolean isExpired = validityEndDate.isBefore(today);
         name =
             isExpired
                 ? PriorityCode.SEASON_PASS.getLabel() + " - Expired"
@@ -260,7 +260,7 @@ public class JsonApiService {
                 + saleDate.format(dateTimeFormatter)
                 + "\nto\n"
                 + validityEndDate.format(dateTimeFormatter);
-        isValid = !saleDate.isAfter(now) && !isExpired;
+        isValid = !saleDate.isAfter(today) && !isExpired;
         break;
       case FORBIDDEN:
         name = "FORBIDDEN";

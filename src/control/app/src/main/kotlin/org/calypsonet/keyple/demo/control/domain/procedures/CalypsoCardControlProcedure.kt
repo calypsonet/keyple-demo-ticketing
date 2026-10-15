@@ -136,7 +136,7 @@ class CalypsoCardControlProcedure(
         }
       }
 
-      var contractEventValid = true
+      var isEventValid = true
       val contractUsed = event.eventContractUsed
 
       val eventValidityEndDate = event.eventDateTime.plusMinutes(validationPeriodMinutes.toLong())
@@ -144,12 +144,12 @@ class CalypsoCardControlProcedure(
       // Step 7 - If EventLocation != value configured in the control terminal, set the validated
       // contract validity flag as false and go to the point CNT_READ.
       if (controlLocation.id != event.eventLocation) {
-        contractEventValid = false
+        isEventValid = false
       }
       // Step 8 - Else If EventDateStamp points to a date in the past
       // -> set the validated contract validity flag as false and go to point CNT_READ.
       else if (event.eventDateTime.isBefore(controlDateTime.toLocalDate().atStartOfDay())) {
-        contractEventValid = false
+        isEventValid = false
       }
 
       // Step 9 - Else If (EventTimeStamp + Validation period configure in the control terminal) <
@@ -158,7 +158,7 @@ class CalypsoCardControlProcedure(
       // The time of the event being recorded to the minute, the times are compared to the minute:
       // the validation is valid until the end of the minute of the end of the validation period
       else if (eventValidityEndDate.isBefore(controlDateTime.truncatedTo(ChronoUnit.MINUTES))) {
-        contractEventValid = false
+        isEventValid = false
       }
 
       val contractRecordCount =
@@ -206,8 +206,8 @@ class CalypsoCardControlProcedure(
       contracts.forEach {
         val recordNumber = it.key
         val contract = it.value
-        var contractExpired = false
-        var contractValidated = false
+        var isContractExpired = false
+        var isContractValidated = false
 
         if (contract.contractVersionNumber == VersionNumber.UNDEFINED) {
           // Step 13 - If the ContractVersionNumber == 0, then the contract is blank, move on to the
@@ -232,17 +232,17 @@ class CalypsoCardControlProcedure(
           // Step 16 - If ContractValidityEndDate points to a date in the past mark contract as
           // expired.
           if (contract.contractValidityEndDate.date.isBefore(controlDateTime.toLocalDate())) {
-            contractExpired = true
+            isContractExpired = true
           }
 
           // Step 17 - If EventContractUsed points to the current contract index
           // and not the validity flag is false, then mark it as Validated.
-          if (contractUsed == recordNumber && contractEventValid) {
-            contractValidated = true
+          if (contractUsed == recordNumber && isEventValid) {
+            isContractValidated = true
           }
 
           var validationDateTime: LocalDateTime? = null
-          if (contractValidated) {
+          if (isContractValidated) {
             validationDateTime = event.eventDateTime
           }
 
@@ -260,8 +260,8 @@ class CalypsoCardControlProcedure(
               buildContract(
                   contract = contract,
                   recordNumber = recordNumber,
-                  contractExpired = contractExpired,
-                  contractValidated = contractValidated,
+                  isContractExpired = isContractExpired,
+                  isContractValidated = isContractValidated,
                   validationDateTime = validationDateTime,
                   remainingTrips = remainingTrips))
         }

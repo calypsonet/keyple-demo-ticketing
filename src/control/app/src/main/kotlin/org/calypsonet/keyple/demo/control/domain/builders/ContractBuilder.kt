@@ -26,17 +26,17 @@ import org.calypsonet.keyple.demo.control.domain.model.Contract
 fun buildContract(
     contract: ContractStructure,
     recordNumber: Int,
-    contractValidated: Boolean,
-    contractExpired: Boolean,
+    isContractValidated: Boolean,
+    isContractExpired: Boolean,
     validationDateTime: LocalDateTime?,
     remainingTrips: Int?
 ): Contract =
     Contract(
         name = contract.contractTariff.label,
-        isValidated = contractValidated,
+        isValidated = isContractValidated,
         recordNumber = recordNumber,
         validationDateTime = validationDateTime,
-        isExpired = contractExpired,
+        isExpired = isContractExpired,
         saleDate = contract.contractSaleDate.date,
         validityEndDate = contract.contractValidityEndDate.date,
         remainingTrips = remainingTrips)

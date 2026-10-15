@@ -71,14 +71,14 @@ class StorageCardControlProcedure(
           }
 
       // Determine card type and authentication requirements
-      val requiresAuth = storageCard.productType.hasAuthentication()
+      val requiresAuthentication = storageCard.productType.hasAuthentication()
       val isMifareClassic = storageCard.productType == ProductType.MIFARE_CLASSIC_1K
 
       logger.d(
-          "Reading the storage card [productType=${storageCard.productType.name}, requiresAuthentication=$requiresAuth, isMifareClassic=$isMifareClassic]")
+          "Reading the storage card [productType=${storageCard.productType.name}, requiresAuthentication=$requiresAuthentication, isMifareClassic=$isMifareClassic]")
 
       // ========= AUTHENTICATION PHASE (MIFARE Classic only) =========
-      if (requiresAuth) {
+      if (requiresAuthentication) {
         logger.d(
             "Authenticating the MIFARE Classic sector [sector=1, keyType=KEY_A, keyNumber=${MifareClassicBlocks.DEFAULT_KEY_NUMBER}]")
         cardTransaction.prepareMifareClassicAuthenticate(
@@ -161,7 +161,7 @@ class StorageCardControlProcedure(
         }
       }
 
-      var contractEventValid = true
+      var isEventValid = true
       val contractUsed = event.eventContractUsed
 
       val eventValidityEndDate = event.eventDateTime.plusMinutes(validationPeriodMinutes.toLong())
@@ -169,12 +169,12 @@ class StorageCardControlProcedure(
       // Step 7 - If EventLocation != value configured in the control terminal, set the validated
       // contract validity flag as false and go to the point CNT_READ.
       if (controlLocation.id != event.eventLocation) {
-        contractEventValid = false
+        isEventValid = false
       }
       // Step 8 - Else If EventDateStamp points to a date in the past
       // -> set the validated contract validity flag as false and go to point CNT_READ.
       else if (event.eventDateTime.isBefore(controlDateTime.toLocalDate().atStartOfDay())) {
-        contractEventValid = false
+        isEventValid = false
       }
 
       // Step 9 - Else If (EventTimeStamp + Validation period configure in the control terminal) <
@@ -183,7 +183,7 @@ class StorageCardControlProcedure(
       // The time of the event being recorded to the minute, the times are compared to the minute:
       // the validation is valid until the end of the minute of the end of the validation period
       else if (eventValidityEndDate.isBefore(controlDateTime.truncatedTo(ChronoUnit.MINUTES))) {
-        contractEventValid = false
+        isEventValid = false
       }
 
       // Step 10 - CNT_READ: Read contract data (already read above)
@@ -203,8 +203,8 @@ class StorageCardControlProcedure(
 
       val displayedContracts = mutableListOf<Contract>()
       val recordNumber = 1 // Storage card has only one contract
-      var contractExpired = false
-      var contractValidated = false
+      var isContractExpired = false
+      var isContractValidated = false
 
       if (contract.contractVersionNumber == VersionNumber.UNDEFINED) {
         // Step 13 - If the ContractVersionNumber == 0, then the contract is blank
@@ -222,17 +222,17 @@ class StorageCardControlProcedure(
         // Step 16 - If ContractValidityEndDate points to a date in the past mark contract as
         // expired.
         if (contract.contractValidityEndDate.date.isBefore(controlDateTime.toLocalDate())) {
-          contractExpired = true
+          isContractExpired = true
         }
 
         // Step 17 - If EventContractUsed points to the current contract index
         // and not the validity flag is false, then mark it as Validated.
-        if (contractUsed == recordNumber && contractEventValid) {
-          contractValidated = true
+        if (contractUsed == recordNumber && isEventValid) {
+          isContractValidated = true
         }
 
         var validationDateTime: LocalDateTime? = null
-        if (contractValidated) {
+        if (isContractValidated) {
           validationDateTime = event.eventDateTime
         }
 
@@ -249,8 +249,8 @@ class StorageCardControlProcedure(
             buildContract(
                 contract = contract,
                 recordNumber = recordNumber,
-                contractExpired = contractExpired,
-                contractValidated = contractValidated,
+                isContractExpired = isContractExpired,
+                isContractValidated = isContractValidated,
                 validationDateTime = validationDateTime,
                 remainingTrips = remainingTrips))
       }
