@@ -152,6 +152,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   and the other clients) in the reloading Android client; `tripsToLoad` (instead of `trips`), `terminal` and
   `serviceId` (instead of `remote` and `service`, the terminal being also named `service` in a lambda) and `logLevel`
   (instead of `debugLog`) in the multiplatform client.
+- Variable names (seventh audit): in the .NET client, the host of the server (with its protocol) is named `host`
+  (instead of `baseUrl`, also the name of the field containing the port) as in the configuration and the multiplatform
+  client, and the unused `logLevel` variable (read from a missing `logging` section) is removed; in the dashboard,
+  `error` (instead of `e`) and `samAvailability` (instead of `json`).
 - Variable names (sixth audit), .NET client: the body of the response of the `TRANSMIT_CARD_REQUEST` service is
   named in the singular, as the service (`TransmitCardRequestRespBody`, as in the Keyple Interop JSON API client
   library, and `transmitCardRequestCmdBody`); the bodies of the messages are named after their type

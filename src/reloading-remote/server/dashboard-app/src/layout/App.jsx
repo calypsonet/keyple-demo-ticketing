@@ -45,7 +45,7 @@ export default function App() {
           const missedTransactions = streamed.filter(transaction => !historyIds.has(transaction.id));
           setRows([...missedTransactions].reverse().concat([...history].reverse()));
         })
-        .catch(e => console.error("Error while loading the transactions [cause=" + e.message + "]"));
+        .catch(error => console.error("Error while loading the transactions [cause=" + error.message + "]"));
     };
 
     eventSource.onmessage = event => {
@@ -86,11 +86,11 @@ export default function App() {
             throw new Error("Unexpected response [status=" + response.status + "]");
           }
         })
-        .then(json => {
+        .then(samAvailability => {
           // Only the changes of the availability of the SAM are logged
-          if(isSamAvailable !== json.isSamAvailable){
-            console.info("SAM availability changed [available=" + json.isSamAvailable + "]");
-            setIsSamAvailable(json.isSamAvailable)
+          if(isSamAvailable !== samAvailability.isSamAvailable){
+            console.info("SAM availability changed [available=" + samAvailability.isSamAvailable + "]");
+            setIsSamAvailable(samAvailability.isSamAvailable)
           }
         })
         .catch(error =>{

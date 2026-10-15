@@ -41,7 +41,6 @@ try
     int serverPort = int.TryParse(configuration.GetSection("server")?["port"], out int parsedPort) ? parsedPort : -1;
     string? serverEndpoint = configuration.GetSection("server")?["endpoint"];
     string? readerName = configuration.GetSection("reader")?["name"];
-    string? logLevel = configuration.GetSection("logging")?["loglevel"];
 
     // Handle null or missing values as needed
     if (serverHost == null)

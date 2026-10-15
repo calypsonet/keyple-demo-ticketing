@@ -29,13 +29,13 @@ namespace App.infrastructure.server
         /// <summary>
         /// Initializes a new instance of the ServerSpiAdapter class.
         /// </summary>
-        /// <param name="baseUrl">The base URL of the server to connect to.</param>
+        /// <param name="host">The host of the server to connect to, with its protocol.</param>
         /// <param name="port">The port to connect on.</param>
         /// <param name="endpoint">The endpoint to send requests to.</param>
-        public ServerSpiAdapter(string baseUrl, int port, string endpoint)
+        public ServerSpiAdapter(string host, int port, string endpoint)
         {
             _logger = Log.ForContext<ServerSpiAdapter>();
-            _baseUrl = $"{baseUrl}:{port}";
+            _baseUrl = $"{host}:{port}";
             _endpoint = endpoint;
         }
 
