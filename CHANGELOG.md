@@ -140,7 +140,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   or the storage, heavy computation), and a Kotlin value without parameter nor computation is a property.
 - Control app: the success and error sounds are played by a dedicated thread (`MediaPlayerUserFeedback`), the start
   of a `MediaPlayer` no longer blocking the thread of the control, and the card detection is stopped once, by the card
-  reader screen when it is left, instead of being stopped again on the main thread by the result screens.
+  reader screen when it is left, instead of being stopped again on the main thread by the result screens. The
+  operations on the readers (initialization, start and stop of the card detection, release) are executed one after
+  the other by a dedicated thread instead of the main thread: the stop of the card detection, which waits for the end
+  of the monitoring of the card removal (about 440 ms measured on Bluebird and Android NFC terminals), no longer
+  delays the display of the result screen.
 - Control and validation apps: the waiting indicator ("Please wait") is removed. In the control app, displayed without
   transition for the short duration of the control of a card, then hidden before the opening of the result screen, it
   flashed on the screen (since the replacement of the deprecated `ProgressDialog`); it is no longer displayed during

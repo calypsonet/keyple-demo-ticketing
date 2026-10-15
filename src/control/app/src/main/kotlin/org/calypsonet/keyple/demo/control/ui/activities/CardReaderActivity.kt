@@ -20,7 +20,9 @@ import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.control.R
@@ -70,7 +72,7 @@ class CardReaderActivity : BaseActivity() {
     activityCardReaderBinding.loadingAnimation.playAnimation()
     if (!cardReaderSession.isInitialized) {
       lifecycleScope.launch(Dispatchers.Default) {
-        withContext(Dispatchers.IO) {
+        withContext(readerDispatcher) {
           try {
             cardReaderObserver = CardReaderObserver()
             cardReaderSession.init(
@@ -90,21 +92,26 @@ class CardReaderActivity : BaseActivity() {
         }
       }
     } else {
-      cardReaderSession.startCardDetection()
+      readerScope.launch { cardReaderSession.startCardDetection() }
     }
   }
 
   override fun onPause() {
     super.onPause()
     activityCardReaderBinding.loadingAnimation.cancelAnimation()
-    if (cardReaderSession.isInitialized) {
-      cardReaderSession.stopCardDetection()
-      Timber.d("Card detection stopped")
+    // Stopped outside the main thread: the stop waits for the end of the monitoring of the card
+    // removal (about 400 ms), which would delay the display of the result screen
+    readerScope.launch {
+      if (cardReaderSession.isInitialized) {
+        cardReaderSession.stopCardDetection()
+        Timber.d("Card detection stopped")
+      }
     }
   }
 
   override fun onDestroy() {
-    cardReaderSession.release(cardReaderObserver)
+    val observer = cardReaderObserver
+    readerScope.launch { cardReaderSession.release(observer) }
     cardReaderObserver = null
     super.onDestroy()
   }
@@ -224,6 +231,15 @@ class CardReaderActivity : BaseActivity() {
 
   companion object {
     const val CARD_CONTENT = "cardContent"
+
+    /**
+     * Thread of the operations on the readers (initialization, start and stop of the card
+     * detection, release), executed one after the other in their order of request.
+     */
+    private val readerDispatcher = Dispatchers.IO.limitedParallelism(1)
+
+    /** Scope of the operations on the readers which must be completed after the screen is left. */
+    private val readerScope = CoroutineScope(SupervisorJob() + readerDispatcher)
   }
 
   private inner class CardReaderObserver : CardReaderObserverSpi {
