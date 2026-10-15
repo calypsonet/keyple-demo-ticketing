@@ -40,14 +40,14 @@ dependencies {
   }
 
   // Conditional dependency for the storage card plugin library
-  val pluginStorageCardLibName = "keyple-plugin-cna-storagecard-java-lib-1.1.1"
-  val pluginStorageCardLibFile = file("../../../../../libs/${pluginStorageCardLibName}.jar")
-  if (pluginStorageCardLibFile.exists()) {
-    println("Using private storage card plugin library: ${pluginStorageCardLibFile.name}")
-    implementation(files(pluginStorageCardLibFile))
+  val storageCardPluginLibName = "keyple-plugin-cna-storagecard-java-lib-1.1.1"
+  val storageCardPluginLibFile = file("../../../../../libs/${storageCardPluginLibName}.jar")
+  if (storageCardPluginLibFile.exists()) {
+    println("Using private storage card plugin library: ${storageCardPluginLibFile.name}")
+    implementation(files(storageCardPluginLibFile))
   } else {
     println("Using mock storage card plugin library")
-    implementation(files("../../../../../libs/${pluginStorageCardLibName}-mock.jar"))
+    implementation(files("../../../../../libs/${storageCardPluginLibName}-mock.jar"))
   }
 
   // Bluebird specific components

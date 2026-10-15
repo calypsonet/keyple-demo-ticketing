@@ -86,13 +86,13 @@ val syncPackageVersion =
       inputs.property("version", projectVersion)
       outputs.file(packageJsonFile)
       doLast {
-        val jsonText = packageJsonFile.readText()
+        val packageJsonText = packageJsonFile.readText()
         @Suppress("UNCHECKED_CAST")
-        val json = JsonSlurper().parseText(jsonText) as MutableMap<String, Any>
-        json["version"] = projectVersion
-        val updatedJsonText = JsonOutput.prettyPrint(JsonOutput.toJson(json))
+        val packageJson = JsonSlurper().parseText(packageJsonText) as MutableMap<String, Any>
+        packageJson["version"] = projectVersion
+        val updatedPackageJsonText = JsonOutput.prettyPrint(JsonOutput.toJson(packageJson))
         // Keep the final newline written by npm
-        packageJsonFile.writeText(updatedJsonText + "\n")
+        packageJsonFile.writeText(updatedPackageJsonText + "\n")
         println("Updated package.json version to $projectVersion")
       }
     }

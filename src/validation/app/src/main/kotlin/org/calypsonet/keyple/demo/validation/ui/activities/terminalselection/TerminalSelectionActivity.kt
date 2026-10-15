@@ -67,7 +67,7 @@ class TerminalSelectionActivity : BaseActivity() {
     }
 
     // Arrive
-    if (ArriveConstants.PLUGIN_NAME.contains(MOCK_PLUGIN_MARKER) || !BuildConfig.HAS_ARRIVE_SDK) {
+    if (ArriveConstants.PLUGIN_NAME.contains(MOCK_PLUGIN_MARKER) || !BuildConfig.HAS_PARKEON_SDK) {
       activityTerminalSelectionBinding.arriveBtn.setBackgroundColor(Color.GRAY)
     } else {
       activityTerminalSelectionBinding.arriveBtn.setOnClickListener {

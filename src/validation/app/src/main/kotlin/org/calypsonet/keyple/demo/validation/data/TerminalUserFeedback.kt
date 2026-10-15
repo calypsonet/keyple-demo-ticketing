@@ -21,7 +21,7 @@ import org.calypsonet.keyple.demo.validation.domain.spi.UserFeedback
 
 /**
  * User feedback of the terminal, delegated to the feedback device matching the terminal type
- * (Arrive SDK for Arrive terminals, Android MediaPlayer for the others).
+ * (Parkeon SDK for Arrive terminals, Android MediaPlayer for the others).
  */
 class TerminalUserFeedback @Inject constructor(private val logger: Logger) : UserFeedback {
 

@@ -23,9 +23,9 @@ plugins {
 ///////////////////////////////////////////////////////////////////////////////
 
 val parkeonSdkFile = file("../../../libs/AndroidParkeonCommon-release.aar")
-val hasArriveSdk = parkeonSdkFile.exists()
+val hasParkeonSdk = parkeonSdkFile.exists()
 
-if (hasArriveSdk) {
+if (hasParkeonSdk) {
   println("Parkeon SDK found - Arrive UI features enabled")
 } else {
   println("Parkeon SDK not found - Arrive UI features disabled (mock mode)")
@@ -49,14 +49,14 @@ dependencies {
   }
 
   // Conditional dependency for the storage card plugin library
-  val pluginStorageCardLibName = "keyple-plugin-cna-storagecard-java-lib-1.1.1"
-  val pluginStorageCardLibFile = file("../../../libs/${pluginStorageCardLibName}.jar")
-  if (pluginStorageCardLibFile.exists()) {
-    println("Using private storage card plugin library: ${pluginStorageCardLibFile.name}")
-    implementation(files(pluginStorageCardLibFile))
+  val storageCardPluginLibName = "keyple-plugin-cna-storagecard-java-lib-1.1.1"
+  val storageCardPluginLibFile = file("../../../libs/${storageCardPluginLibName}.jar")
+  if (storageCardPluginLibFile.exists()) {
+    println("Using private storage card plugin library: ${storageCardPluginLibFile.name}")
+    implementation(files(storageCardPluginLibFile))
   } else {
     println("Using mock storage card plugin library")
-    implementation(files("../../../libs/${pluginStorageCardLibName}-mock.jar"))
+    implementation(files("../../../libs/${storageCardPluginLibName}-mock.jar"))
   }
 
   // Bluebird specific components
@@ -83,7 +83,7 @@ dependencies {
 
   // Arrive/Parkeon SDK (UI: LEDs, sounds) — optional, enables ArriveFeedbackDevice real
   // implementation
-  if (hasArriveSdk) {
+  if (hasParkeonSdk) {
     implementation(files(parkeonSdkFile))
   }
 
@@ -167,7 +167,7 @@ android {
     targetSdk = (project.property("androidTargetSdk") as String).toInt()
     versionCode = (project.property("androidAppVersionCode") as String).toInt()
     versionName = project.property("androidAppVersionName") as String
-    buildConfigField("Boolean", "HAS_ARRIVE_SDK", "$hasArriveSdk")
+    buildConfigField("Boolean", "HAS_PARKEON_SDK", "$hasParkeonSdk")
   }
   buildFeatures {
     viewBinding = true
@@ -199,7 +199,7 @@ android {
   sourceSets {
     // ArriveFeedbackDevice: real impl (Parkeon SDK) or no-op stub, mutually exclusive source sets
     getByName("main").kotlin.directories +=
-        if (hasArriveSdk) "src/arrive/kotlin" else "src/arrive-mock/kotlin"
+        if (hasParkeonSdk) "src/arrive/kotlin" else "src/arrive-mock/kotlin"
   }
   packaging {
     resources {

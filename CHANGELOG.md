@@ -152,6 +152,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   and the other clients) in the reloading Android client; `tripsToLoad` (instead of `trips`), `terminal` and
   `serviceId` (instead of `remote` and `service`, the terminal being also named `service` in a lambda) and `logLevel`
   (instead of `debugLog`) in the multiplatform client.
+- Build scripts: in the validation app, the presence of the Parkeon SDK is named `hasParkeonSdk` (instead of
+  `hasArriveSdk`, the file being `parkeonSdkFile`), as the build config field `HAS_PARKEON_SDK` (instead of
+  `HAS_ARRIVE_SDK`); the
+  storage card plugin library is named `storageCardPluginLibName` and `storageCardPluginLibFile` (instead of
+  `pluginStorageCardLib…`, as `bluebirdPluginLibName` and `arrivePluginLibName`) in the Android apps; the content of
+  `package.json` is named `packageJson`, `packageJsonText` and `updatedPackageJsonText` in the server.
 - Variable names (eighth audit): `missingPermissions` (instead of `permissionDenied`, a list) in the control and
   validation apps; `contract` (instead of `contractStructure`, as everywhere else in the server) in the contract counter
   service; `soundDirectory`, `fileNames`, `fileName` and `destinationFile` (instead of `soundDir`, `files`, `name` and
