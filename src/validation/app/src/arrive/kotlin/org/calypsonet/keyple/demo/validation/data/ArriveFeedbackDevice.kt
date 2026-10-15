@@ -115,11 +115,11 @@ internal class ArriveFeedbackDevice(private val context: Context, private val lo
     }
   }
 
-  private fun playSound(filename: String) {
+  private fun playSound(fileName: String) {
     try {
-      soundManager?.startDefaultPlayingFile(filename)
+      soundManager?.startDefaultPlayingFile(fileName)
     } catch (e: Exception) {
-      logger.e("Error while playing the sound [file=$filename]", e)
+      logger.e("Error while playing the sound [file=$fileName]", e)
     }
   }
 

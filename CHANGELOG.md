@@ -152,6 +152,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   and the other clients) in the reloading Android client; `tripsToLoad` (instead of `trips`), `terminal` and
   `serviceId` (instead of `remote` and `service`, the terminal being also named `service` in a lambda) and `logLevel`
   (instead of `debugLog`) in the multiplatform client.
+- Control and validation apps: `contract` and `validation` (instead of `contractItem` and `validationItem`) in the
+  adapters of the control, as in the reloading client; in the validation, `validationDateTime` (instead of
+  `eventDate`, the date and time of the validation), `animationFileName` (instead of `animationFile`, as in the
+  multiplatform client) and `fileName` (instead of `filename`) in the playing of the sounds of the Arrive terminal.
 - Reloading Android client: the result of a card operation passed between the activities is named `cardResult` on
   both sides (instead of `cardContent` when received, also in the key of the intent extra, now `CARD_RESULT`), and
   the contract bound by the adapter of the contracts `contract` (instead of `contractItem`).

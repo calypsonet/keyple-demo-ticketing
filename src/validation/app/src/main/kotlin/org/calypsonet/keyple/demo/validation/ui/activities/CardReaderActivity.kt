@@ -318,18 +318,18 @@ class CardReaderActivity : BaseActivity() {
       resultBinding.cardTypeLabel.visibility = View.GONE
     }
 
-    val animationFile: String
+    val animationFileName: String
     when (result) {
       is ValidationResult.Accepted -> {
-        animationFile = "tick_white.json"
+        animationFileName = "tick_white.json"
         resultBinding.validationResultView.setBackgroundColor(
             ContextCompat.getColor(this, R.color.green))
         resultBinding.bigText.setText(R.string.valid_main_desc)
-        val eventDate =
+        val validationDateTime =
             result.dateTime.format(
                 DateTimeFormatter.ofPattern("dd MMMM yyyy, HH:mm", Locale.ENGLISH))
         resultBinding.locationTime.text =
-            getString(R.string.valid_location_time, result.location.name, eventDate)
+            getString(R.string.valid_location_time, result.location.name, validationDateTime)
         val remainingTrips = result.remainingTrips
         if (remainingTrips != null) {
           resultBinding.smallDesc.text =
@@ -354,7 +354,7 @@ class CardReaderActivity : BaseActivity() {
       }
       is ValidationResult.NotSelected -> {
         // Card not selected (unknown or unsupported card): refused without validation
-        animationFile = "error_white.json"
+        animationFileName = "error_white.json"
         resultBinding.validationResultView.setBackgroundColor(
             ContextCompat.getColor(this, R.color.orange))
         resultBinding.bigText.setText(R.string.card_invalid_main_desc)
@@ -363,7 +363,7 @@ class CardReaderActivity : BaseActivity() {
         resultBinding.smallDesc.visibility = View.INVISIBLE
       }
       is ValidationResult.Rejected -> {
-        animationFile = "error_white.json"
+        animationFileName = "error_white.json"
         if (isInvalidCard(result.reason)) {
           // Card refused (card data)
           resultBinding.validationResultView.setBackgroundColor(
@@ -382,7 +382,7 @@ class CardReaderActivity : BaseActivity() {
       }
       is ValidationResult.Failed,
       is ValidationResult.CardLost -> {
-        animationFile = "error_white.json"
+        animationFileName = "error_white.json"
         resultBinding.validationResultView.setBackgroundColor(
             ContextCompat.getColor(this, R.color.red))
         resultBinding.bigText.setText(R.string.error_main_desc)
@@ -400,7 +400,7 @@ class CardReaderActivity : BaseActivity() {
       readerScope.launch { cardReaderSession.prepareNextTransaction() }
     }
 
-    showResultOverlay(animationFile)
+    showResultOverlay(animationFileName)
   }
 
   /** Returns the message displayed when the presented card cannot be selected. */
@@ -413,10 +413,10 @@ class CardReaderActivity : BaseActivity() {
       }
 
   /** Shows the validation result overlay with the provided animation, hidden after a delay. */
-  private fun showResultOverlay(animationFile: String) {
+  private fun showResultOverlay(animationFileName: String) {
     val resultBinding = validationResultBinding!!
     resultBinding.validationResultView.visibility = View.VISIBLE
-    resultBinding.animation.setAnimation(animationFile)
+    resultBinding.animation.setAnimation(animationFileName)
     resultBinding.animation.playAnimation()
 
     validationResultTimer = Timer()

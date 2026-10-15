@@ -46,7 +46,7 @@ class ValidationsRecyclerAdapter(private val validations: List<Validation>) :
   override fun getItemCount() = validations.size
 
   override fun onBindViewHolder(holder: LastValidationHolder, position: Int) {
-    val validationItem = validations[position]
-    holder.bindItem(validationItem)
+    val validation = validations[position]
+    holder.bindItem(validation)
   }
 }

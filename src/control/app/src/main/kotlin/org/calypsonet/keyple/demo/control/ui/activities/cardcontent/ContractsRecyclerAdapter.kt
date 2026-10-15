@@ -67,7 +67,7 @@ class ContractsRecyclerAdapter(private val contracts: List<Contract>) :
   override fun getItemCount() = contracts.size
 
   override fun onBindViewHolder(holder: ContractHolder, position: Int) {
-    val contractItem = contracts[position]
-    holder.bindItem(contractItem)
+    val contract = contracts[position]
+    holder.bindItem(contract)
   }
 }
