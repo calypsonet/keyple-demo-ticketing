@@ -13,6 +13,7 @@
 package org.calypsonet.keyple.demo.control.domain.procedures
 
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import org.calypsonet.keyple.demo.common.codecs.StorageCardContractCodec
 import org.calypsonet.keyple.demo.common.codecs.StorageCardEnvironmentHolderCodec
 import org.calypsonet.keyple.demo.common.codecs.StorageCardEventCodec
@@ -179,7 +180,9 @@ class StorageCardControlProcedure(
       // Step 9 - Else If (EventTimeStamp + Validation period configure in the control terminal) <
       // current time of the control terminal
       // -> set the validated contract valid flag as false.
-      else if (eventValidityEndDate.isBefore(controlDateTime)) {
+      // The time of the event being recorded to the minute, the times are compared to the minute:
+      // the validation is valid until the end of the minute of the end of the validation period
+      else if (eventValidityEndDate.isBefore(controlDateTime.truncatedTo(ChronoUnit.MINUTES))) {
         contractEventValid = false
       }
 

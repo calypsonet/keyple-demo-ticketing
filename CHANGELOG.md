@@ -628,6 +628,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   Android 12. The unused `WRITE_EXTERNAL_STORAGE` permission is removed.
 - Calypso cards: contracts of unknown type (contract tariff not supported by the demo) are no longer validated (they
   were accepted without any debit).
+- Anti-passback: a card validated again a few seconds after a first validation is refused. The time of the event being
+  recorded to the minute, it was compared with the exact time of the new validation: a validation at 10:57:55
+  (recorded as 10:57) let a second one be accepted at 10:58:00, debiting a trip twice. The times are now compared to
+  the minute, the card being refused until the end of the minute following the delay (effective delay between 1 and 2
+  minutes, never shorter than the configured one), for the Calypso and storage cards.
 ### Control app
 #### Changed
 - Major architectural refactoring to apply the layered architecture with ports and adapters, isolating the business
@@ -651,6 +656,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   Android 12. The unused `WRITE_EXTERNAL_STORAGE` permission is removed.
 - The waiting indicator is now hidden when the control procedure fails, instead of staying displayed when returning to
   the reader screen.
+- Validation period: a validation is considered valid until the end of the minute of the end of the validation period.
+  The time of the validation being recorded to the minute, the period was compared with the exact time of the control,
+  and could end up to 59 seconds too early.
 ### Reloading remote Android client
 #### Changed
 - Major architectural refactoring to apply the layered architecture with ports and adapters: the plugins and readers

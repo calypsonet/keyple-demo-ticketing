@@ -15,6 +15,7 @@ package org.calypsonet.keyple.demo.validation.domain.procedures
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 import org.calypsonet.keyple.demo.validation.domain.model.RejectionReason
@@ -112,13 +113,21 @@ abstract class BaseValidationProcedure : ValidationProcedure {
         else -> RejectionReason.EVENT_WRONG_VERSION
       }
 
-  /** Indicates whether the last event is within the anti-passback delay. */
+  /**
+   * Indicates whether the last event is within the anti-passback delay.
+   *
+   * The time of the event being recorded to the minute (seconds lost), the times are compared to
+   * the minute: the card is refused until the end of the minute following the delay, the effective
+   * delay being never shorter than the configured one (between 1 and 2 minutes for 1 minute).
+   * Comparing the exact time with the truncated one would accept a second validation a few seconds
+   * after the first one, as soon as the minute changes.
+   */
   fun isWithinAntiPassbackDelay(
       lastEventDateTime: LocalDateTime,
       validationDateTime: LocalDateTime
   ): Boolean =
-      Duration.between(lastEventDateTime, validationDateTime).toMinutes() <
-          ANTI_PASSBACK_DELAY_MINUTES
+      Duration.between(lastEventDateTime, validationDateTime.truncatedTo(ChronoUnit.MINUTES))
+          .toMinutes() <= ANTI_PASSBACK_DELAY_MINUTES
 
   /**
    * Checks the version number of a contract.
