@@ -16,6 +16,7 @@ import static org.calypsonet.keyple.demo.reload.remote.server.card.TransactionRe
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import org.calypsonet.keyple.demo.common.constants.CalypsoFiles;
@@ -60,6 +61,7 @@ public class ContractLoadingService {
   private static final int MAX_COUNTER_VALUE = 0xFFFFFF;
 
   @Inject CardRepository cardRepository;
+  @Inject Clock clock;
   @Inject TransactionRecorder transactionRecorder;
 
   LoadContractOutputDto loadContract(
@@ -259,7 +261,7 @@ public class ContractLoadingService {
    */
   private EventStructure withAnalyzedContractPriorities(
       List<ContractStructure> contracts, EventStructure event) {
-    LocalDate today = LocalDate.now();
+    LocalDate today = LocalDate.now(clock);
     EventStructure updatedEvent = event;
     for (int i = 0; i < contracts.size(); i++) {
       ContractStructure contract = contracts.get(i);
@@ -321,7 +323,7 @@ public class ContractLoadingService {
   }
 
   private ContractStructure buildMultiTripContract(DateCompact envEndDate, Integer counterValue) {
-    DateCompact contractSaleDate = new DateCompact(LocalDate.now());
+    DateCompact contractSaleDate = new DateCompact(LocalDate.now(clock));
     return new ContractStructure(
         VersionNumber.CURRENT_VERSION,
         PriorityCode.MULTI_TRIP,
@@ -341,10 +343,13 @@ public class ContractLoadingService {
    * @param renewedSeasonPass The season pass renewed, null for a new season pass.
    */
   private ContractStructure buildSeasonPassContract(ContractStructure renewedSeasonPass) {
-    DateCompact contractSaleDate = new DateCompact(LocalDate.now());
+    DateCompact contractSaleDate = new DateCompact(LocalDate.now(clock));
     DateCompact validityStartDate = contractSaleDate;
     if (renewedSeasonPass != null
-        && !renewedSeasonPass.getContractValidityEndDate().getDate().isBefore(LocalDate.now())) {
+        && !renewedSeasonPass
+            .getContractValidityEndDate()
+            .getDate()
+            .isBefore(LocalDate.now(clock))) {
       validityStartDate = renewedSeasonPass.getContractValidityEndDate();
     }
     DateCompact contractValidityEndDate = new DateCompact(validityStartDate.getValue() + 30);

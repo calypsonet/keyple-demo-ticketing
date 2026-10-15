@@ -16,6 +16,7 @@ import static org.calypsonet.keyple.demo.reload.remote.server.card.TransactionRe
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -66,6 +67,7 @@ public class JsonApiService {
       DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH);
 
   @Inject CardRepository cardRepository;
+  @Inject Clock clock;
   @Inject TransactionRecorder transactionRecorder;
   @Inject ContractAnalysisService contractAnalysisService;
   @Inject ContractLoadingService contractLoadingService;
@@ -247,7 +249,7 @@ public class JsonApiService {
         isValid = contract.getCounterValue() != null && contract.getCounterValue() >= 1;
         break;
       case SEASON_PASS:
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(clock);
         LocalDate saleDate = contract.getContractSaleDate().getDate();
         LocalDate validityEndDate = contract.getContractValidityEndDate().getDate();
         boolean isExpired = validityEndDate.isBefore(today);

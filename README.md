@@ -459,6 +459,22 @@ Each module (e.g., `src/common`, `src/reloading-remote/server`, `src/validation`
 project and should be built using the tools and instructions provided within its own directory. For Gradle-based
 projects, navigate to the module's directory and use its `./gradlew` wrapper.
 
+### Unit Tests
+
+The unit tests check the business rules of the data model, independently of the cards and of the terminals (simulated
+with MockK when a procedure is tested end to end). They are run by the CI:
+
+| Component                     | Tests                                                                                              | Command                                           |
+|-------------------------------|----------------------------------------------------------------------------------------------------|---------------------------------------------------|
+| `src/common`                  | Record codecs, data types, event structure, DF name check                                           | `./gradlew test` (also run by the server build)   |
+| `src/reloading-remote/server` | Personalization and contract loading rules                                                         | `./gradlew test`                                  |
+| `src/validation`              | Validation rules (anti-passback, versions, contracts, priorities) and Calypso validation procedure | `./gradlew testDebugUnitTest`                     |
+| `src/control`                 | Control rules (validity of the last validation), displayed data and Calypso control procedure      | `./gradlew testDebugUnitTest`                     |
+
+The current date is provided by a clock (`Clock` port of the Android applications, `java.time.Clock` of the server),
+replaced by a fixed date in the tests. The domain being transposable to another language, its tests describe the
+expected behavior as an executable specification.
+
 ### Build Optimization
 
 The Android applications (`validation`, `control`, and `reloading-remote` client) are configured with ProGuard

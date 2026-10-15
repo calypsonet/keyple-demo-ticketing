@@ -13,9 +13,22 @@
 package org.calypsonet.keyple.demo.common.codecs
 
 import fr.devnied.bitlib.BitUtils
-import java.math.BigInteger
 
-/** Writes the provided integer value on the provided number of bits. */
+/**
+ * Writes the provided integer value, unsigned, on the provided number of bits (multiple of 8), as
+ * its last bytes in big-endian order (`setNextInteger` of the library being limited to 31 bits).
+ *
+ * The bytes written are exactly those of the field: a sign byte added before a value whose high bit
+ * is set (e.g. by `BigInteger.toByteArray`) would shift the value and truncate it.
+ */
 internal fun BitUtils.setNextValue(value: Int, size: Int) {
-  setNextByte(BigInteger.valueOf(value.toLong()).toByteArray(), size)
+  require(size % Byte.SIZE_BITS == 0) { "Size not a multiple of 8 bits [size=$size]" }
+  val unsignedValue = value.toLong() and 0xFFFFFFFFL
+  val byteCount = size / Byte.SIZE_BITS
+  val bytes =
+      ByteArray(byteCount) {
+        val shift = Byte.SIZE_BITS * (byteCount - 1 - it)
+        if (shift < Long.SIZE_BITS) (unsignedValue ushr shift).toByte() else 0
+      }
+  setNextByte(bytes, size)
 }

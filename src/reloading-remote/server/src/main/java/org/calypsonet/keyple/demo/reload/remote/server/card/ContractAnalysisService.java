@@ -17,6 +17,7 @@ import static org.calypsonet.keyple.demo.reload.remote.server.card.TransactionRe
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,6 +56,7 @@ public class ContractAnalysisService {
       "Unexpected error while analyzing the contracts";
 
   @Inject CardRepository cardRepository;
+  @Inject Clock clock;
   @Inject TransactionRecorder transactionRecorder;
 
   AnalyzeContractsOutputDto analyzeContracts(
@@ -189,7 +191,7 @@ public class ContractAnalysisService {
           environment.getEnvVersionNumber());
       throw new CardNotPersonalizedException();
     }
-    if (environment.getEnvEndDate().getDate().isBefore(LocalDate.now())) {
+    if (environment.getEnvEndDate().getDate().isBefore(LocalDate.now(clock))) {
       logger.warn(
           "Card refused: environment expired [envEndDate={}]",
           environment.getEnvEndDate().getDate());

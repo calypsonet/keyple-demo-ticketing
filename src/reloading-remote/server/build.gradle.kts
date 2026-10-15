@@ -73,6 +73,11 @@ dependencies {
   // implementation is provided by Quarkus (JBoss Log Manager), configured by the "quarkus.log.*"
   // properties.
   implementation(libs.slf4jApi)
+
+  // Unit tests of the business rules
+  testImplementation(libs.junitJupiter)
+  testImplementation(libs.assertjCore)
+  testRuntimeOnly(libs.junitPlatformLauncher)
 }
 
 val syncPackageVersion =
@@ -119,6 +124,10 @@ tasks.register<Exec>("startServer") {
 
 tasks {
   clean { delete("dashboard-app/build") }
+  test {
+    useJUnitPlatform()
+    testLogging { events("passed", "skipped", "failed") }
+  }
   check {
     dependsOn(lintDashboard)
     // The common library being an included build, its checks (code format, unit tests) are not run

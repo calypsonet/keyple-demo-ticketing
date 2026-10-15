@@ -13,13 +13,11 @@
 package org.calypsonet.keyple.demo.control.domain.procedures
 
 import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 import org.calypsonet.keyple.demo.common.codecs.CalypsoContractCodec
 import org.calypsonet.keyple.demo.common.codecs.CalypsoEnvironmentHolderCodec
 import org.calypsonet.keyple.demo.common.codecs.CalypsoEventCodec
 import org.calypsonet.keyple.demo.common.constants.CalypsoFiles
 import org.calypsonet.keyple.demo.common.model.ContractStructure
-import org.calypsonet.keyple.demo.common.model.EventStructure
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 import org.calypsonet.keyple.demo.control.domain.builders.buildContract
@@ -43,7 +41,7 @@ import org.eclipse.keypop.reader.selection.spi.SmartCard
 class CalypsoCardControlProcedure(
     private val keypopApiProvider: KeypopApiProvider,
     private val logger: Logger
-) : ControlProcedure {
+) : BaseControlProcedure() {
 
   override fun supports(card: SmartCard): Boolean = card is CalypsoCard
 
@@ -136,30 +134,13 @@ class CalypsoCardControlProcedure(
         }
       }
 
-      var isEventValid = true
       val contractUsed = event.eventContractUsed
 
-      val eventValidityEndDate = event.eventDateTime.plusMinutes(validationPeriodMinutes.toLong())
-
-      // Step 7 - If EventLocation != value configured in the control terminal, set the validated
-      // contract validity flag as false and go to the point CNT_READ.
-      if (controlLocation.id != event.eventLocation) {
-        isEventValid = false
-      }
-      // Step 8 - Else If EventDateStamp points to a date in the past
-      // -> set the validated contract validity flag as false and go to point CNT_READ.
-      else if (event.eventDateTime.isBefore(controlDateTime.toLocalDate().atStartOfDay())) {
-        isEventValid = false
-      }
-
-      // Step 9 - Else If (EventTimeStamp + Validation period configure in the control terminal) <
-      // current time of the control terminal
-      // -> set the validated contract valid flag as false.
-      // The time of the event being recorded to the minute, the times are compared to the minute:
-      // the validation is valid until the end of the minute of the end of the validation period
-      else if (eventValidityEndDate.isBefore(controlDateTime.truncatedTo(ChronoUnit.MINUTES))) {
-        isEventValid = false
-      }
+      // Steps 7 to 9 - The contract used by the last validation is validated only if this
+      // validation was made at the location of the control, the same day, and within the
+      // validation period
+      val isLastValidationValid =
+          isLastValidationValid(event, controlLocation, controlDateTime, validationPeriodMinutes)
 
       val contractRecordCount =
           when (calypsoCard.productType) {
@@ -192,7 +173,7 @@ class CalypsoCardControlProcedure(
       // Contract used by the last event, null if it is not present in the card
       val eventContract = contracts[event.eventContractUsed]
 
-      if (isValidEvent(event)) {
+      if (isValidationEvent(event)) {
         validation = buildValidation(event = event, contract = eventContract, locations = locations)
       }
 
@@ -210,6 +191,8 @@ class CalypsoCardControlProcedure(
           // Step 14 - If ContractVersionNumber is not the expected one (==1 for the current
           // version), reject the card.
           // <Abort Secure Session if any>
+          cancelSecureSession(cardTransaction)
+          return ControlResult.Rejected(RejectionReason.CONTRACT_WRONG_VERSION)
         } else {
           // Step 15 - If SAM available and ContractAuthenticator is not 0, perform the verification
           // of the value
@@ -231,7 +214,7 @@ class CalypsoCardControlProcedure(
 
           // Step 17 - If EventContractUsed points to the current contract index
           // and not the validity flag is false, then mark it as Validated.
-          if (contractUsed == recordNumber && isEventValid) {
+          if (contractUsed == recordNumber && isLastValidationValid) {
             isContractValidated = true
           }
 
@@ -281,13 +264,5 @@ class CalypsoCardControlProcedure(
         cardTransaction is SecurePkiModeTransactionManager) {
       cardTransaction.prepareCancelSecureSession().processCommands(ChannelControl.CLOSE_AFTER)
     }
-  }
-
-  /**
-   * An event is considered valid for display if an eventTimeStamp or an eventDateStamp has been set
-   * during a previous validation
-   */
-  private fun isValidEvent(event: EventStructure): Boolean {
-    return event.eventTimeStamp.value != 0 || event.eventDateStamp.value != 0
   }
 }

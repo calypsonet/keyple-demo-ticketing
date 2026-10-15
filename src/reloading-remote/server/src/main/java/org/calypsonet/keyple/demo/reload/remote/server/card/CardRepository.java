@@ -13,9 +13,10 @@
 package org.calypsonet.keyple.demo.reload.remote.server.card;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -73,6 +74,8 @@ public class CardRepository {
    */
   private final AtomicInteger nextApplicationNumber =
       new AtomicInteger((int) Instant.now().getEpochSecond());
+
+  @Inject Clock clock;
 
   private static CardSelectionManager createCardSelectionManager() {
     ReaderApiFactory readerApiFactory = SmartCardServiceProvider.getService().getReaderApiFactory();
@@ -416,16 +419,17 @@ public class CardRepository {
         cardReader, calypsoCard, cardSecuritySetting);
   }
 
-  private EnvironmentHolderStructure buildEnvironmentHolder() {
-    // calculate issuing date
-    Instant now = Instant.now();
-    // calculate env end date
-    LocalDate envEndDate =
-        now.atZone(ZoneId.systemDefault()).toLocalDate().withDayOfMonth(1).plusYears(6);
+  /**
+   * Builds the environment of a personalized card: unique application number, issued today, and
+   * valid until the first day of the current month + 6 years.
+   */
+  EnvironmentHolderStructure buildEnvironmentHolder() {
+    LocalDate today = LocalDate.now(clock);
+    LocalDate envEndDate = today.withDayOfMonth(1).plusYears(6);
     return new EnvironmentHolderStructure(
         VersionNumber.CURRENT_VERSION,
         nextApplicationNumber.getAndIncrement(),
-        new DateCompact(LocalDate.now()),
+        new DateCompact(today),
         new DateCompact(envEndDate),
         null,
         null);

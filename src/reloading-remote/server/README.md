@@ -158,7 +158,8 @@ npm install
 cd ..
 ```
 
-3. **Build** the project (compiles Java + React dashboard, produces the runnable JAR):
+3. **Build** the project (compiles Java + React dashboard, runs the unit tests of the server and of the common
+   library, produces the runnable JAR):
 ```bash
 ./gradlew build
 ```

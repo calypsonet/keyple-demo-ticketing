@@ -6,6 +6,7 @@
 # - the domain layer is synchronous: no suspend function;
 # - the data layer logs through the Logger port: Timber is only used by its implementation (TimberLogger);
 # - the ui layer neither accesses the data layer nor handles the Keypop card types.
+# The rules apply to the production code only: the unit tests (src/test) use their test libraries.
 #
 # Compatible with bash 3.2 (default shell of the macOS runners): no mapfile, no arrays.
 #
@@ -35,13 +36,13 @@ while IFS= read -r dir; do
   report "Domain layer must be synchronous: no suspend function, the threads being chosen by the UI ($dir)" \
     "$(grep -rnE --include='*.kt' '(^|[^[:alnum:]_])suspend (fun|\()' "$dir" \
       | grep -vE ':[0-9]+:[[:space:]]*(\*|//|/\*)' || true)"
-done < <(find "$project_dir" -type d -name domain -path '*/src/*' -not -path '*/build/*')
+done < <(find "$project_dir" -type d -name domain -path '*/src/*' -not -path '*/src/test/*' -not -path '*/build/*')
 
 while IFS= read -r dir; do
   data_count=$((data_count + 1))
   report "Data layer must log through the Logger port, Timber is reserved to TimberLogger ($dir)" \
     "$(grep -rnE --include='*.kt' '^import timber\.' "$dir" | grep -v '/TimberLogger\.kt:' || true)"
-done < <(find "$project_dir" -type d -name data -path '*/src/*' -not -path '*/build/*')
+done < <(find "$project_dir" -type d -name data -path '*/src/*' -not -path '*/src/test/*' -not -path '*/build/*')
 
 while IFS= read -r dir; do
   ui_count=$((ui_count + 1))
@@ -50,7 +51,7 @@ while IFS= read -r dir; do
       | grep -v 'org\.calypsonet\.keyple\.demo\.common\.' || true)"
   report "UI layer must not handle the Keypop card types ($dir)" \
     "$(grep -rnE --include='*.kt' '^import org\.eclipse\.keypop\.(calypso|storagecard)\.' "$dir" || true)"
-done < <(find "$project_dir" -type d -name ui -path '*/src/*' -not -path '*/build/*')
+done < <(find "$project_dir" -type d -name ui -path '*/src/*' -not -path '*/src/test/*' -not -path '*/build/*')
 
 if [[ $violations -gt 0 ]]; then
   echo "$violations architecture rule violation(s) found in $project_dir"

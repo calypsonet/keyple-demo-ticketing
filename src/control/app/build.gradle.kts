@@ -124,6 +124,11 @@ dependencies {
   implementation(libs.slf4jApi)
   implementation(libs.slf4jTimber)
   implementation(libs.timber)
+
+  // Unit tests of the domain (business rules and procedures)
+  testImplementation(libs.junit)
+  testImplementation(libs.assertjCore)
+  testImplementation(libs.mockk)
 }
 
 ///////////////////////////////////////////////////////////////////////////////

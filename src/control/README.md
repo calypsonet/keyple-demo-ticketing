@@ -47,6 +47,9 @@ within the validation period.
 git clone https://github.com/calypsonet/keyple-demo-ticketing.git
 cd keyple-demo-ticketing/src/control  
 ./gradlew assembleDebug
+
+# Unit tests (business rules and card procedures)
+./gradlew testDebugUnitTest
 ```
 
 ## Configuration
@@ -110,7 +113,7 @@ Terminal Selection → Settings → Home → Card Reader → Card Content or Inv
 | Environment error: wrong version number      | Card not personalized (environment of an unexpected version)  |
 | Environment error: end date expired          | End date of the environment in the past                       |
 | Event error: wrong version number            | Last event of an unexpected version                           |
-| Ticket error: wrong version number           | Contract of an unexpected version (storage cards)             |
+| Ticket error: wrong version number           | Contract of an unexpected version                             |
 
 ## Technical Architecture
 

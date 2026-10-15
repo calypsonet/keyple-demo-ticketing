@@ -48,6 +48,9 @@ This Android application simulates validation terminals found at transportation 
 git clone https://github.com/calypsonet/keyple-demo-ticketing.git
 cd keyple-demo-ticketing/src/validation
 ./gradlew assembleDebug
+
+# Unit tests (business rules and card procedures)
+./gradlew testDebugUnitTest
 ```
 
 ## Configuration
