@@ -14,12 +14,12 @@ using Newtonsoft.Json;
 namespace App.domain.data.executeremoteservice
 {
     /// <summary>
-    /// Input data used for the write step.
-    /// Currently empty.
+    /// Input data of the remote service SELECT_APP_AND_INCREASE_CONTRACT_COUNTER: number of trips added to the
+    /// multi-trip ticket, as a decimal integer (JSON number).
     /// </summary>
     class IncreaseContractCounterInputData : InputData
     {
         [JsonProperty("counterIncrement")]
-        public required string CounterIncrement { get; set; }
+        public required int CounterIncrement { get; set; }
     }
 }

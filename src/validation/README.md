@@ -216,6 +216,7 @@ The validation procedure processes contracts in priority order:
 |:---------|:--------------|:-----------------------------------|
 | 1        | Season pass   | Check validity date only           |
 | 2        | Multi-trip    | Check counter > 0, decrement       |
+| 3        | Stored value  | Skip (not supported by the demo)   |
 | 31       | Expired       | Skip (automatic marking)           |
 | Other    | Unknown       | Skip (never validated)             |
 
@@ -223,17 +224,26 @@ The validation procedure processes contracts in priority order:
 
 ```
 1. Read environment and validate card expiration
-2. Analyze last event for contract priorities
+2. Analyze last event for contract priorities, and apply the anti-passback
 3. Create ordered list of valid contract priorities
 4. For each contract in priority order:
    a. Read and validate contract record
-   b. Check contract-specific conditions
+   b. Check the conditions of its type (ContractTariff)
    c. If valid, select for validation
-   d. If expired, mark priority as expired
+   d. If expired or exhausted, mark priority as expired
 5. Update selected contract counter
-6. Create new validation event
+6. Create new validation event, or write the updated priorities if the card is refused
 7. Close secure session
 ```
+
+Additions to the procedure of the data model:
+- **Anti-passback**: a card validated again within the anti-passback delay (1 minute, the times being compared to the
+  minute as the event) is refused, unless the previous validation session was interrupted by the removal of the card
+  (session not ratified): this session is then considered as validated, without a new decrement.
+- **Refused card**: when no contract can be used, the last event is written with the updated priorities (31 for the
+  expired or exhausted contracts), so that the next validations do not read these contracts again.
+
+Not implemented by the demo (steps of the data model): verification of the contract authenticator with the PSO Verify Signature command of the SAM and SAM black list (traceability mode: the contracts loaded by the demo have no authenticator), black list of the card applications, and stored value contracts (`ContractTariff` 3).
 
 ## Hardware Integration
 

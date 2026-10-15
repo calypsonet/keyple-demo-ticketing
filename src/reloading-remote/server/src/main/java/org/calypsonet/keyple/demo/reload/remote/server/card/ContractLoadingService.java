@@ -47,7 +47,6 @@ import org.slf4j.LoggerFactory;
 @ApplicationScoped
 public class ContractLoadingService {
 
-  /** Message of the result of a loading refused because the card is full. */
   private static final Logger logger = LoggerFactory.getLogger(ContractLoadingService.class);
 
   private static final String CARD_COMMUNICATION_ERROR_WHILE_LOADING =
@@ -56,6 +55,9 @@ public class ContractLoadingService {
       "Unexpected error while loading the contract";
   private static final String ONLY_SEASON_PASS_OR_MULTI_TRIP_TICKET_CAN_BE_LOADED =
       "Only a season pass or a multi-trip ticket can be loaded";
+
+  /** Maximum value of the counter of a multi-trip ticket (counter of 24 bits). */
+  private static final int MAX_COUNTER_VALUE = 0xFFFFFF;
 
   @Inject CardRepository cardRepository;
   @Inject TransactionRecorder transactionRecorder;
@@ -172,7 +174,7 @@ public class ContractLoadingService {
    * Inserts the new contract in the card data (contract and event), to be written in the card.
    *
    * @throws IllegalArgumentException If the contract is neither a season pass nor a multi-trip
-   *     ticket.
+   *     ticket, or if the number of trips to load is invalid.
    * @throws CardFullException If no record is available for a new contract.
    */
   void insertNewContract(PriorityCode contractTariff, Integer tripsToLoad, CardData card) {
@@ -187,8 +189,9 @@ public class ContractLoadingService {
     ContractStructure newContract;
     int newContractNumber;
 
-    // Contract analysis: the priority of the expired contracts is set to 31 in the event to write
-    currentEvent = withExpiredContractPriorities(contracts, currentEvent);
+    // Contract analysis: the priority of the empty records is set to 0, and the one of the expired
+    // contracts to 31, in the event to write
+    currentEvent = withAnalyzedContractPriorities(contracts, currentEvent);
 
     // Single contract cards support only one contract (contracts.size() == 1)
     boolean isSingleContractCard = contracts.size() == 1;
@@ -202,12 +205,21 @@ public class ContractLoadingService {
       if (PriorityCode.MULTI_TRIP == contractTariff) {
         newContract =
             buildMultiTripContract(
-                environment.getEnvEndDate(), currentContract.getCounterValue() + tripsToLoad);
+                environment.getEnvEndDate(),
+                addTrips(currentContract.getCounterValue(), tripsToLoad));
       } else {
         newContract = buildSeasonPassContract(currentContract);
       }
     } else if (isSingleContractCard) {
-      // Single contract card: new contract type replaces existing one at position 1
+      // Single contract card: the new contract replaces the existing one only if it is empty,
+      // expired or exhausted, as a contract of a multi-contract card
+      if (!isReplaceable(contracts.get(0), currentEvent.getContractPriority(1))) {
+        logger.warn(
+            "Card refused: the contract of the single contract card is still valid [contractTariff={}, newContractTariff={}]",
+            contracts.get(0).getContractTariff(),
+            contractTariff);
+        throw new CardFullException();
+      }
       newContractNumber = 1;
       logger.info(
           "Single contract card: contract replaced [contractTariff={}, newContractTariff={}]",
@@ -215,7 +227,7 @@ public class ContractLoadingService {
           contractTariff);
       // build new contract
       if (PriorityCode.MULTI_TRIP == contractTariff) {
-        newContract = buildMultiTripContract(environment.getEnvEndDate(), tripsToLoad);
+        newContract = buildMultiTripContract(environment.getEnvEndDate(), addTrips(0, tripsToLoad));
       } else {
         newContract = buildSeasonPassContract(null);
       }
@@ -228,7 +240,7 @@ public class ContractLoadingService {
       }
       // build new contract
       if (PriorityCode.MULTI_TRIP == contractTariff) {
-        newContract = buildMultiTripContract(environment.getEnvEndDate(), tripsToLoad);
+        newContract = buildMultiTripContract(environment.getEnvEndDate(), addTrips(0, tripsToLoad));
       } else {
         newContract = buildSeasonPassContract(null);
       }
@@ -241,21 +253,61 @@ public class ContractLoadingService {
   }
 
   /**
-   * Returns the provided event with the priority set to 31 (EXPIRED) for the contracts present in
-   * the card whose validity end date is in the past.
+   * Returns the provided event with the contract priorities of the contract analysis: 0 (FORBIDDEN)
+   * for the empty records (ContractVersionNumber 0), and 31 (EXPIRED) for the contracts whose
+   * validity end date is in the past.
    */
-  private EventStructure withExpiredContractPriorities(
+  private EventStructure withAnalyzedContractPriorities(
       List<ContractStructure> contracts, EventStructure event) {
     LocalDate today = LocalDate.now();
     EventStructure updatedEvent = event;
     for (int i = 0; i < contracts.size(); i++) {
       ContractStructure contract = contracts.get(i);
-      if (contract.getContractVersionNumber() != VersionNumber.UNDEFINED
-          && contract.getContractValidityEndDate().getDate().isBefore(today)) {
+      if (contract.getContractVersionNumber() == VersionNumber.UNDEFINED) {
+        updatedEvent = updatedEvent.withContractPriority(i + 1, PriorityCode.FORBIDDEN);
+      } else if (contract.getContractValidityEndDate().getDate().isBefore(today)) {
         updatedEvent = updatedEvent.withContractPriority(i + 1, PriorityCode.EXPIRED);
       }
     }
     return updatedEvent;
+  }
+
+  /**
+   * Indicates whether a contract can be replaced by a new contract: empty record (ContractPriority
+   * 0), expired or exhausted contract (ContractPriority 31, or multi-trip ticket without trips
+   * left).
+   */
+  private static boolean isReplaceable(ContractStructure contract, PriorityCode contractPriority) {
+    return contractPriority == PriorityCode.FORBIDDEN
+        || contractPriority == PriorityCode.EXPIRED
+        || (contract.getContractTariff() == PriorityCode.MULTI_TRIP
+            && (contract.getCounterValue() == null || contract.getCounterValue() <= 0));
+  }
+
+  /**
+   * Returns the value of the counter of a multi-trip ticket after the loading of the provided
+   * trips.
+   *
+   * @throws IllegalArgumentException If the number of trips to load is not positive, or if the
+   *     counter cannot hold the new value.
+   */
+  private static int addTrips(int counterValue, Integer tripsToLoad) {
+    if (tripsToLoad == null || tripsToLoad < 1) {
+      throw new IllegalArgumentException(
+          "Invalid number of trips to load [tripsToLoad=" + tripsToLoad + "]");
+    }
+    long newCounterValue = (long) counterValue + tripsToLoad;
+    if (newCounterValue > MAX_COUNTER_VALUE) {
+      throw new IllegalArgumentException(
+          "Counter capacity exceeded [counterValue="
+              + counterValue
+              + ", tripsToLoad="
+              + tripsToLoad
+              + ", maxCounterValue="
+              + MAX_COUNTER_VALUE
+              + "]");
+    }
+    return (int) newCounterValue;
   }
 
   private int getContractNumber(PriorityCode contractTariff, List<ContractStructure> contracts) {

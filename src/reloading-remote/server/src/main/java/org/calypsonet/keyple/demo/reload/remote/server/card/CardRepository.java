@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.calypsonet.keyple.card.storagecard.StorageCardExtensionService;
 import org.calypsonet.keyple.demo.common.codecs.CalypsoContractCodec;
 import org.calypsonet.keyple.demo.common.codecs.CalypsoEnvironmentHolderCodec;
@@ -64,6 +65,14 @@ public class CardRepository {
   private static final Logger logger = LoggerFactory.getLogger(CardRepository.class);
 
   private static final String SECURE_SESSION_CLOSED = "Secure session closed";
+
+  /**
+   * Number of the next personalized card application (EnvApplicationNumber, unique identifier in
+   * the system), initialized with the start time of the server in seconds so that the numbers are
+   * not reused after a restart.
+   */
+  private final AtomicInteger nextApplicationNumber =
+      new AtomicInteger((int) Instant.now().getEpochSecond());
 
   private static CardSelectionManager createCardSelectionManager() {
     ReaderApiFactory readerApiFactory = SmartCardServiceProvider.getService().getReaderApiFactory();
@@ -415,7 +424,7 @@ public class CardRepository {
         now.atZone(ZoneId.systemDefault()).toLocalDate().withDayOfMonth(1).plusYears(6);
     return new EnvironmentHolderStructure(
         VersionNumber.CURRENT_VERSION,
-        1,
+        nextApplicationNumber.getAndIncrement(),
         new DateCompact(LocalDate.now()),
         new DateCompact(envEndDate),
         null,

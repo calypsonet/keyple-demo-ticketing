@@ -126,6 +126,8 @@ Terminal Selection → Settings → Home → Card Reader → Card Content or Inv
 5. **Contract Analysis**: reading of the contracts and of the counters, expiration of each contract, contract
    validated by the last event
 6. **Result**: content of the card (`ControlResult.CardContent`) or reason of the refusal
+- **Not implemented** (steps of the data model): verification of the contract authenticator with the PSO Verify
+  Signature command of the SAM and SAM black list (the contracts loaded by the demo have no authenticator)
 
 #### Storage Cards
 **Control Procedure** (MIFARE Ultralight, ST25 SRT512, MIFARE Classic):

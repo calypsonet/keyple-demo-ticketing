@@ -93,7 +93,7 @@ namespace App.domain.api
         {
             _logger.Information("Executing the remote service [service=SELECT_APP_AND_INCREASE_CONTRACT_COUNTER]");
 
-            return ExecuteRemoteService(SelectAppAndIncreaseContractCounterService, new IncreaseContractCounterInputData { CounterIncrement = counterIncrement.ToString("X") });
+            return ExecuteRemoteService(SelectAppAndIncreaseContractCounterService, new IncreaseContractCounterInputData { CounterIncrement = counterIncrement });
         }
 
         private string ExecuteRemoteService(string serviceId, InputData inputData)
