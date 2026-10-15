@@ -298,33 +298,34 @@ class CardReaderActivity : BaseActivity() {
    */
   private fun displayResult(result: ValidationResult) {
     activityCardReaderBinding.animation.cancelAnimation()
-    val b = validationResultBinding!!
+    val resultBinding = validationResultBinding!!
 
     // Card type label + transaction time
     val elapsedMs = System.currentTimeMillis() - cardDetectedAt
     val card = result.card
     if (card != null) {
-      b.cardTypeLabel.visibility = View.VISIBLE
-      b.cardTypeLabel.text =
+      resultBinding.cardTypeLabel.visibility = View.VISIBLE
+      resultBinding.cardTypeLabel.text =
           getString(R.string.card_type, cardTypeLabel(card)) + " • ${elapsedMs} ms"
     } else {
-      b.cardTypeLabel.visibility = View.GONE
+      resultBinding.cardTypeLabel.visibility = View.GONE
     }
 
     val animationFile: String
     when (result) {
       is ValidationResult.Accepted -> {
         animationFile = "tick_white.json"
-        b.validationResultView.setBackgroundColor(ContextCompat.getColor(this, R.color.green))
-        b.bigText.setText(R.string.valid_main_desc)
+        resultBinding.validationResultView.setBackgroundColor(
+            ContextCompat.getColor(this, R.color.green))
+        resultBinding.bigText.setText(R.string.valid_main_desc)
         val eventDate =
             result.dateTime.format(
                 DateTimeFormatter.ofPattern("dd MMMM yyyy, HH:mm", Locale.ENGLISH))
-        b.locationTime.text =
+        resultBinding.locationTime.text =
             getString(R.string.valid_location_time, result.location.name, eventDate)
         val remainingTrips = result.remainingTrips
         if (remainingTrips != null) {
-          b.smallDesc.text =
+          resultBinding.smallDesc.text =
               when (remainingTrips) {
                 0 -> getString(R.string.valid_trips_left_zero)
                 1 -> getString(R.string.valid_trips_left_single)
@@ -333,52 +334,56 @@ class CardReaderActivity : BaseActivity() {
         } else if (result.seasonPassValidityEndDate != null) {
           val validityEndDate =
               result.seasonPassValidityEndDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-          b.smallDesc.text = getString(R.string.valid_season_pass, validityEndDate)
+          resultBinding.smallDesc.text = getString(R.string.valid_season_pass, validityEndDate)
         } else {
           // Recovered broken session: no contract data available
-          b.smallDesc.visibility = View.INVISIBLE
+          resultBinding.smallDesc.visibility = View.INVISIBLE
         }
-        b.mediumText.setText(R.string.valid_last_desc)
-        b.mediumText.visibility = View.VISIBLE
+        resultBinding.mediumText.setText(R.string.valid_last_desc)
+        resultBinding.mediumText.visibility = View.VISIBLE
         if (result.remainingTrips != null || result.seasonPassValidityEndDate != null) {
-          b.smallDesc.visibility = View.VISIBLE
+          resultBinding.smallDesc.visibility = View.VISIBLE
         }
       }
       is ValidationResult.NotSelected -> {
         // Card not selected (unknown or unsupported card): refused without validation
         animationFile = "error_white.json"
-        b.validationResultView.setBackgroundColor(ContextCompat.getColor(this, R.color.orange))
-        b.bigText.setText(R.string.card_invalid_main_desc)
-        b.locationTime.text = selectionErrorMessage(result)
-        b.mediumText.visibility = View.INVISIBLE
-        b.smallDesc.visibility = View.INVISIBLE
+        resultBinding.validationResultView.setBackgroundColor(
+            ContextCompat.getColor(this, R.color.orange))
+        resultBinding.bigText.setText(R.string.card_invalid_main_desc)
+        resultBinding.locationTime.text = selectionErrorMessage(result)
+        resultBinding.mediumText.visibility = View.INVISIBLE
+        resultBinding.smallDesc.visibility = View.INVISIBLE
       }
       is ValidationResult.Rejected -> {
         animationFile = "error_white.json"
         if (isInvalidCard(result.reason)) {
           // Card refused (card data)
-          b.validationResultView.setBackgroundColor(ContextCompat.getColor(this, R.color.orange))
-          b.bigText.setText(R.string.card_invalid_main_desc)
-          b.locationTime.text = rejectionMessage(result.reason)
+          resultBinding.validationResultView.setBackgroundColor(
+              ContextCompat.getColor(this, R.color.orange))
+          resultBinding.bigText.setText(R.string.card_invalid_main_desc)
+          resultBinding.locationTime.text = rejectionMessage(result.reason)
         } else {
           // No contract to use
-          b.validationResultView.setBackgroundColor(ContextCompat.getColor(this, R.color.red))
-          b.bigText.text = rejectionMessage(result.reason)
-          b.locationTime.setText(R.string.no_contract_desc)
+          resultBinding.validationResultView.setBackgroundColor(
+              ContextCompat.getColor(this, R.color.red))
+          resultBinding.bigText.text = rejectionMessage(result.reason)
+          resultBinding.locationTime.setText(R.string.no_contract_desc)
         }
-        b.mediumText.visibility = View.INVISIBLE
-        b.smallDesc.visibility = View.INVISIBLE
+        resultBinding.mediumText.visibility = View.INVISIBLE
+        resultBinding.smallDesc.visibility = View.INVISIBLE
       }
       is ValidationResult.Failed,
       is ValidationResult.CardLost -> {
         animationFile = "error_white.json"
-        b.validationResultView.setBackgroundColor(ContextCompat.getColor(this, R.color.red))
-        b.bigText.setText(R.string.error_main_desc)
-        b.locationTime.text =
+        resultBinding.validationResultView.setBackgroundColor(
+            ContextCompat.getColor(this, R.color.red))
+        resultBinding.bigText.setText(R.string.error_main_desc)
+        resultBinding.locationTime.text =
             (result as? ValidationResult.Failed)?.let { errorMessage(it) }
                 ?: getString(R.string.error_small_desc)
-        b.mediumText.visibility = View.INVISIBLE
-        b.smallDesc.visibility = View.INVISIBLE
+        resultBinding.mediumText.visibility = View.INVISIBLE
+        resultBinding.smallDesc.visibility = View.INVISIBLE
       }
     }
 
@@ -402,10 +407,10 @@ class CardReaderActivity : BaseActivity() {
 
   /** Shows the validation result overlay with the provided animation, hidden after a delay. */
   private fun showResultOverlay(animationFile: String) {
-    val b = validationResultBinding!!
-    b.validationResultView.visibility = View.VISIBLE
-    b.animation.setAnimation(animationFile)
-    b.animation.playAnimation()
+    val resultBinding = validationResultBinding!!
+    resultBinding.validationResultView.visibility = View.VISIBLE
+    resultBinding.animation.setAnimation(animationFile)
+    resultBinding.animation.playAnimation()
 
     validationResultTimer = Timer()
     validationResultTimer!!.schedule(

@@ -204,8 +204,8 @@ class CalypsoCardValidationProcedure(
               CalypsoFiles.SFI_CONTRACTS, record, record, CalypsoFiles.CONTRACT_RECORD_SIZE_BYTES)
           .processCommands(ChannelControl.KEEP_OPEN)
 
-      val efContractParser = calypsoCard.getFileBySfi(CalypsoFiles.SFI_CONTRACTS)
-      val contractContent = efContractParser.data.allRecordsContent[record]!!
+      val efContracts = calypsoCard.getFileBySfi(CalypsoFiles.SFI_CONTRACTS)
+      val contractContent = efContracts.data.allRecordsContent[record]!!
       val contract = CalypsoContractCodec.decode(contractContent)
 
       // Step 11.2 - If ContractVersionNumber is not the expected one (==1 for the current version),
@@ -238,7 +238,7 @@ class CalypsoCardValidationProcedure(
       // Step 11.5 - If the ContractTariff value for the contract read is 2:
       if (isCounterBasedContract(contractPriority)) {
 
-        val nbContractRecords =
+        val contractRecordCount =
             when (calypsoCard.productType) {
               CalypsoCard.ProductType.BASIC -> 1
               CalypsoCard.ProductType.LIGHT -> 2
@@ -248,11 +248,11 @@ class CalypsoCardValidationProcedure(
         // Step 11.5.1 - Read and unpack the counter associated with the contract (1st counter for
         // Contract #1 and so forth).
         cardTransaction
-            .prepareReadCounter(CalypsoFiles.SFI_COUNTERS, nbContractRecords)
+            .prepareReadCounter(CalypsoFiles.SFI_COUNTERS, contractRecordCount)
             .processCommands(ChannelControl.KEEP_OPEN)
 
-        val efCounter = calypsoCard.getFileBySfi(CalypsoFiles.SFI_COUNTERS)
-        val counterValue = efCounter.data.getContentAsCounterValue(record)
+        val efCounters = calypsoCard.getFileBySfi(CalypsoFiles.SFI_COUNTERS)
+        val counterValue = efCounters.data.getContentAsCounterValue(record)
 
         // Step 11.5.2 - If the counter-value is 0, update the associated ContractPriority field
         // present in the persistent object to 31 and move to the next element in the list

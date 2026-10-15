@@ -95,19 +95,19 @@ class CalypsoCardControlProcedure(
           .processCommands(ChannelControl.KEEP_OPEN)
 
       val efEnvironmentHolder = calypsoCard.getFileBySfi(CalypsoFiles.SFI_ENVIRONMENT_AND_HOLDER)
-      val env = CalypsoEnvironmentHolderCodec.decode(efEnvironmentHolder.data.content)
+      val environment = CalypsoEnvironmentHolderCodec.decode(efEnvironmentHolder.data.content)
 
       // Step 3 - If EnvVersionNumber of the Environment structure is not the expected one (==1 for
       // the current version), reject the card.
       // <Abort Secure Session if any>
-      if (env.envVersionNumber != VersionNumber.CURRENT_VERSION) {
+      if (environment.envVersionNumber != VersionNumber.CURRENT_VERSION) {
         cancelSecureSession(cardTransaction)
         return ControlResult.Rejected(RejectionReason.ENVIRONMENT_WRONG_VERSION)
       }
 
       // Step 4 - If EnvEndDate points to a date in the past, reject the card.
       // <Abort Secure Session if any>
-      if (env.envEndDate.date.isBefore(controlDateTime.toLocalDate())) {
+      if (environment.envEndDate.date.isBefore(controlDateTime.toLocalDate())) {
         cancelSecureSession(cardTransaction)
         return ControlResult.Rejected(RejectionReason.ENVIRONMENT_EXPIRED)
       }
@@ -158,7 +158,7 @@ class CalypsoCardControlProcedure(
         contractEventValid = false
       }
 
-      val nbContractRecords =
+      val contractRecordCount =
           when (calypsoCard.productType) {
             CalypsoCard.ProductType.BASIC -> 1
             CalypsoCard.ProductType.LIGHT -> 2
@@ -170,9 +170,9 @@ class CalypsoCardControlProcedure(
           .prepareReadRecords(
               CalypsoFiles.SFI_CONTRACTS,
               1,
-              nbContractRecords,
+              contractRecordCount,
               CalypsoFiles.CONTRACT_RECORD_SIZE_BYTES)
-          .prepareReadCounter(CalypsoFiles.SFI_COUNTERS, nbContractRecords)
+          .prepareReadCounter(CalypsoFiles.SFI_COUNTERS, contractRecordCount)
           .processCommands(ChannelControl.KEEP_OPEN)
 
       val efCounters = calypsoCard.getFileBySfi(CalypsoFiles.SFI_COUNTERS)

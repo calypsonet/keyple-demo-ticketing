@@ -59,14 +59,14 @@ class ServerSettingsActivity : BaseActivity() {
     activityServerSettingsBinding.serverReadinessProgressBar.visibility = View.VISIBLE
     activityServerSettingsBinding.serverReadinessText.visibility = View.INVISIBLE
     lifecycleScope.launch(Dispatchers.Main) {
-      val isReady =
+      val isServerReady =
           withContext(Dispatchers.IO) {
             try {
-              val isReady = serverReadinessChecker.isServerReady(serverConfig)
-              if (!isReady) {
+              val isServerReady = serverReadinessChecker.isServerReady(serverConfig)
+              if (!isServerReady) {
                 Timber.w("Server not ready [url=${serverConfig.url}, cause=SAM not available]")
               }
-              isReady
+              isServerReady
             } catch (e: Exception) {
               Timber.w("Server not ready [url=${serverConfig.url}, cause=${e.message}]")
               false
@@ -75,7 +75,7 @@ class ServerSettingsActivity : BaseActivity() {
       activityServerSettingsBinding.serverReadinessProgressBar.visibility = View.INVISIBLE
       activityServerSettingsBinding.serverReadinessText.visibility = View.VISIBLE
       activityServerSettingsBinding.serverReadinessText.text =
-          getString(if (isReady) R.string.server_ready else R.string.server_not_ready)
+          getString(if (isServerReady) R.string.server_ready else R.string.server_not_ready)
     }
   }
 

@@ -39,8 +39,8 @@ class KeypleSyncEndpointClient(
   private var serverRestApi: ServerRestApi? = null
   private var serverRestApiUrl: String? = null
 
-  override fun sendRequest(msg: MessageDto?): MutableList<MessageDto> {
-    val response = getServerRestApi().sendRequest(msg).execute()
+  override fun sendRequest(message: MessageDto?): MutableList<MessageDto> {
+    val response = getServerRestApi().sendRequest(message).execute()
     if (!response.isSuccessful) {
       throw HttpException(response)
     }

@@ -101,15 +101,17 @@ public class JsonApiService {
     }
 
     // Analyze contracts
-    AnalyzeContractsOutputDto analysis =
+    AnalyzeContractsOutputDto analysisOutput =
         contractAnalysisService.analyzeContracts(
             cardReader, calypsoCard, new AnalyzeContractsInputDto(pluginType));
 
     // Build result
     String applicationSerialNumber = HexUtil.toHex(calypsoCard.getApplicationSerialNumber());
     List<SelectAppAndAnalyzeContractsOutputDto.ContractInfo> contracts =
-        analysis.getContracts().stream().map(this::toContractInfo).collect(Collectors.toList());
-    int statusCode = analysis.getStatusCode();
+        analysisOutput.getContracts().stream()
+            .map(this::toContractInfo)
+            .collect(Collectors.toList());
+    int statusCode = analysisOutput.getStatusCode();
     return new SelectAppAndAnalyzeContractsOutputDto(
         applicationSerialNumber,
         contracts,
@@ -156,7 +158,7 @@ public class JsonApiService {
     }
 
     // Write contract
-    LoadContractOutputDto loading =
+    LoadContractOutputDto loadingOutput =
         contractLoadingService.loadContract(
             cardReader,
             calypsoCard,
@@ -164,7 +166,7 @@ public class JsonApiService {
                 inputData.getContractTariff(), inputData.getTripsToLoad(), pluginType));
 
     // Build result
-    int statusCode = loading.getStatusCode();
+    int statusCode = loadingOutput.getStatusCode();
     return new SelectAppAndLoadContractOutputDto(
         statusCode,
         RemoteServiceMessages.of(RemoteServiceStatus.fromCode(statusCode), calypsoCard));

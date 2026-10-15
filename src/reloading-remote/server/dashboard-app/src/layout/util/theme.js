@@ -2,7 +2,7 @@ import background from '../../img/background.png';
 import { createTheme } from '@mui/material/styles';
 
 // Create base theme
-const muitheme = createTheme({
+const baseTheme = createTheme({
   palette: {
     primary: {
       main: '#fff',
@@ -27,7 +27,7 @@ const muitheme = createTheme({
 });
 
 // Extend with overrides of the components used by the dashboard
-export const theme = createTheme(muitheme, {
+export const theme = createTheme(baseTheme, {
   components: {
     MuiDrawer: {
       styleOverrides: {
@@ -39,7 +39,7 @@ export const theme = createTheme(muitheme, {
     MuiIconButton: {
       styleOverrides: {
         root: {
-          padding: muitheme.spacing(1),
+          padding: baseTheme.spacing(1),
         },
       },
     },
@@ -53,7 +53,7 @@ export const theme = createTheme(muitheme, {
     MuiListItemText: {
       styleOverrides: {
         primary: {
-          fontWeight: muitheme.typography.fontWeightMedium,
+          fontWeight: baseTheme.typography.fontWeightMedium,
         },
       },
     },

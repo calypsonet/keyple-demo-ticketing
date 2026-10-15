@@ -97,9 +97,9 @@ class KeypleInteropService(
     keypleTerminal?.let {
       scope.launch {
         try {
-          val scenarioJsonString = retrieveCardSelectionScenario()
-          Napier.d("Card selection scenario received [scenario=$scenarioJsonString]")
-          keypleTerminal?.setCardSelectionScenarioJsonString(scenarioJsonString)
+          val cardSelectionScenario = retrieveCardSelectionScenario()
+          Napier.d("Card selection scenario received [scenario=$cardSelectionScenario]")
+          keypleTerminal?.setCardSelectionScenarioJsonString(cardSelectionScenario)
         } catch (e: Exception) {
           Napier.e("Error while getting the card selection scenario", e)
         }
@@ -287,10 +287,10 @@ class KeypleInteropService(
       outputSerializer: KSerializer<R>,
   ): KeypleResult<R> {
 
-    var inputDataStr: String? = null
-    inputData?.let { inputDataStr = json.encodeToString(inputSerializer, inputData) }
+    var inputDataJson: String? = null
+    inputData?.let { inputDataJson = json.encodeToString(inputSerializer, inputData) }
 
-    when (val result = remote.executeRemoteService(service, inputDataStr)) {
+    when (val result = remote.executeRemoteService(service, inputDataJson)) {
       is KeypleResult.Failure -> {
         Napier.w(
             "Remote service execution failed [service=$service, status=${result.status}, " +
@@ -298,9 +298,9 @@ class KeypleInteropService(
         return KeypleResult.Failure(result.status, "Communication error")
       }
       is KeypleResult.Success -> {
-        val resStr: String = result.data!!
-        val res = Json.decodeFromString(outputSerializer, resStr)
-        return KeypleResult.Success(res)
+        val outputJson: String = result.data!!
+        val output = Json.decodeFromString(outputSerializer, outputJson)
+        return KeypleResult.Success(output)
       }
     }
   }

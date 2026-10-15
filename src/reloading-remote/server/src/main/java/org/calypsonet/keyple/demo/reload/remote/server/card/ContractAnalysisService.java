@@ -124,12 +124,12 @@ public class ContractAnalysisService {
       CardReader cardReader, StorageCard storageCard, AnalyzeContractsInputDto inputData) {
 
     String pluginType = inputData.getPluginType();
-    String cardUID = HexUtil.toHex(storageCard.getUID());
+    String uid = HexUtil.toHex(storageCard.getUID());
 
     logger.info(
         "Analyzing the contracts of a storage card [plugin={}, uid={}, productType={}, blockSize={}, blockCount={}]",
         pluginType,
-        cardUID,
+        uid,
         storageCard.getProductType(),
         storageCard.getProductType().getBlockSize(),
         storageCard.getProductType().getBlockCount());
@@ -143,26 +143,26 @@ public class ContractAnalysisService {
     try {
       CardData card = cardRepository.readCard(cardReader, storageCard, samResource);
       List<ContractStructure> presentContracts = findPresentContracts(card);
-      transactionRecorder.record(pluginType, true, READ, cardUID);
+      transactionRecorder.record(pluginType, true, READ, uid);
       return new AnalyzeContractsOutputDto(presentContracts, RemoteServiceStatus.SUCCESS.getCode());
     } catch (CardNotPersonalizedException e) {
       // Refusal logged where it is detected
-      transactionRecorder.record(pluginType, false, READ, cardUID);
+      transactionRecorder.record(pluginType, false, READ, uid);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.CARD_NOT_PERSONALIZED.getCode());
     } catch (EnvironmentExpiredException e) {
       // Refusal logged where it is detected
-      transactionRecorder.record(pluginType, false, READ, cardUID);
+      transactionRecorder.record(pluginType, false, READ, uid);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.ENVIRONMENT_EXPIRED.getCode());
     } catch (CardCommunicationException e) {
       logger.warn(CARD_COMMUNICATION_ERROR_WHILE_ANALYZING, e.getMessage());
-      transactionRecorder.record(pluginType, false, READ, cardUID);
+      transactionRecorder.record(pluginType, false, READ, uid);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
       logger.error(UNEXPECTED_ERROR_WHILE_ANALYZING, e);
-      transactionRecorder.record(pluginType, false, READ, cardUID);
+      transactionRecorder.record(pluginType, false, READ, uid);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {

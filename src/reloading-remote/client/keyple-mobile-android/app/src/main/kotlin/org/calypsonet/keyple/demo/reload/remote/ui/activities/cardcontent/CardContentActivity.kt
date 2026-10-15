@@ -129,8 +129,8 @@ class CardContentActivity : BaseActivity() {
     activityCardContentBinding.animation.playAnimation()
 
     // Play sound
-    val mp: MediaPlayer = MediaPlayer.create(this, R.raw.reading_sound)
-    mp.start()
+    val mediaPlayer: MediaPlayer = MediaPlayer.create(this, R.raw.reading_sound)
+    mediaPlayer.start()
     activityCardContentBinding.buyBtn.setOnClickListener {
       val intent = Intent(this, SelectProductActivity::class.java)
       getIntent().getStringExtra(BaseCardActivity.APPLICATION_SERIAL_NUMBER)?.let {

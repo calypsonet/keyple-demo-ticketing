@@ -120,8 +120,8 @@ class CardOperationResultActivity : BaseActivity() {
     }
 
     // Play sound
-    val mp: MediaPlayer = MediaPlayer.create(this, R.raw.reading_sound)
-    mp.start()
+    val mediaPlayer: MediaPlayer = MediaPlayer.create(this, R.raw.reading_sound)
+    mediaPlayer.start()
   }
 
   companion object {

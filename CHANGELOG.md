@@ -129,6 +129,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `personalization_failed_label`). Control app: duplicated texts removed (`start_validation_label`, `card_invalid_aid`).
   Multiplatform client: platform-neutral reading message ("Place your card on the reader") and texts aligned on the
   Android client. Same slogan in all the applications.
+- Variable names harmonized: the same name for the same concept (`efContracts` and `efCounters` in the validation
+  procedure as in the control one, `environment` instead of `env`, `uid` instead of `cardUID` as in the logs,
+  `isServerReady` instead of `isUp` and `isReady`, `analysisOutput` and `loadingOutput` as `personalizationOutput`,
+  `isMultiTripContractPresent`, `smartCardService` and `result` instead of `sc` used for two different values in the
+  .NET client), and no abbreviation nor type in the names (`contractRecordCount` instead of `nbContractRecords`,
+  `resultBinding`, `mediaPlayer`, `expiryDateFormat`, `enableButton`, `message`, `inputDataJson`, `outputJson`,
+  `readerNamePattern`, `transaction`, `cardSelectorCount`, `baseTheme`...).
 - README ("Method Names"): a name without verb promises a value without hidden cost (access to the card, the network
   or the storage, heavy computation), and a Kotlin value without parameter nor computation is a property.
 - Control app: the success and error sounds are played by a dedicated thread (`MediaPlayerUserFeedback`), the start

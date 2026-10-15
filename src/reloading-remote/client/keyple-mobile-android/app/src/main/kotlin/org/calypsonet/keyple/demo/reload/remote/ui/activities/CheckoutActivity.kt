@@ -53,7 +53,7 @@ class CheckoutActivity : BaseActivity() {
     }
 
     val now = Calendar.getInstance().time
-    val sdf = SimpleDateFormat("MM/yy")
-    activityCheckoutBinding.expiryValue.text = sdf.format(now)
+    val expiryDateFormat = SimpleDateFormat("MM/yy")
+    activityCheckoutBinding.expiryValue.text = expiryDateFormat.format(now)
   }
 }

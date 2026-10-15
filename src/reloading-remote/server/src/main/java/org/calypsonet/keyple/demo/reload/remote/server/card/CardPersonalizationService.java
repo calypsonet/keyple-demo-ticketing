@@ -99,12 +99,12 @@ public class CardPersonalizationService {
       CardReader cardReader, StorageCard storageCard, PersonalizeCardInputDto inputData) {
 
     String pluginType = inputData.getPluginType();
-    String cardUID = HexUtil.toHex(storageCard.getUID());
+    String uid = HexUtil.toHex(storageCard.getUID());
 
     logger.info(
         "Personalizing a storage card [plugin={}, uid={}, productType={}]",
         pluginType,
-        cardUID,
+        uid,
         storageCard.getProductType());
 
     // SAM is not currently used for Storage Cards but may be needed in the future
@@ -115,15 +115,15 @@ public class CardPersonalizationService {
     CardResource samResource = null;
     try {
       cardRepository.personalizeCard(cardReader, storageCard, samResource);
-      transactionRecorder.record(pluginType, true, PERSONALIZATION, cardUID);
+      transactionRecorder.record(pluginType, true, PERSONALIZATION, uid);
       return new PersonalizeCardOutputDto(RemoteServiceStatus.SUCCESS.getCode());
     } catch (CardCommunicationException e) {
       logger.warn(CARD_COMMUNICATION_ERROR_WHILE_PERSONALIZING, e.getMessage());
-      transactionRecorder.record(pluginType, false, PERSONALIZATION, cardUID);
+      transactionRecorder.record(pluginType, false, PERSONALIZATION, uid);
       return new PersonalizeCardOutputDto(RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
       logger.error(UNEXPECTED_ERROR_WHILE_PERSONALIZING, e);
-      transactionRecorder.record(pluginType, false, PERSONALIZATION, cardUID);
+      transactionRecorder.record(pluginType, false, PERSONALIZATION, uid);
       return new PersonalizeCardOutputDto(RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
       if (samResource != null) {

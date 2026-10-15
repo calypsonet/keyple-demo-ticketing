@@ -116,7 +116,7 @@ abstract class BaseActivity : AppCompatActivity() {
     val serverConfig = appSettings.serverConfig
     lifecycleScope.launch {
       var cause = "SAM not available"
-      val isUp =
+      val isServerReady =
           withContext(Dispatchers.IO) {
             try {
               serverReadinessChecker.isServerReady(serverConfig)
@@ -127,14 +127,14 @@ abstract class BaseActivity : AppCompatActivity() {
             }
           }
       // Only the changes of the readiness are logged, the server being checked at each screen
-      if (isUp != appSettings.wasServerReady) {
-        if (isUp) {
+      if (isServerReady != appSettings.wasServerReady) {
+        if (isServerReady) {
           Timber.i("Server ready [url=${serverConfig.url}]")
         } else {
           Timber.w("Server not ready [url=${serverConfig.url}, cause=$cause]")
         }
       }
-      appSettings.wasServerReady = isUp
+      appSettings.wasServerReady = isServerReady
       updateServerReadinessIndicator()
     }
   }

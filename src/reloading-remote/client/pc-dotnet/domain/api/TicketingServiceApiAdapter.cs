@@ -183,8 +183,8 @@ namespace App.domain.api
             TransmitCardSelectionRequestsRespBody transmitCardSelectionRequestsRespBody = new TransmitCardSelectionRequestsRespBody();
             List<CardSelectionResponse> cardSelectionResponses = new List<CardSelectionResponse>();
             Error? error = null;
-            int nbIterations = transmitCardSelectionRequestsCmdBody.Parameters.CardSelectors.Length;
-            for (int i = 0; i < nbIterations; i++)
+            int cardSelectorCount = transmitCardSelectionRequestsCmdBody.Parameters.CardSelectors.Length;
+            for (int i = 0; i < cardSelectorCount; i++)
             {
                 try
                 {

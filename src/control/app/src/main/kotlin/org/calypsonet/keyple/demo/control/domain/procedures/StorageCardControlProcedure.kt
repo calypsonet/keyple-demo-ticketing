@@ -125,16 +125,16 @@ class StorageCardControlProcedure(
                 StorageCardBlocks.ENVIRONMENT_AND_HOLDER_FIRST_BLOCK,
                 StorageCardBlocks.ENVIRONMENT_AND_HOLDER_LAST_BLOCK)
           }
-      val env = StorageCardEnvironmentHolderCodec.decode(environmentContent)
+      val environment = StorageCardEnvironmentHolderCodec.decode(environmentContent)
 
       // Step 3 - If EnvVersionNumber of the Environment structure is not the expected one (==1 for
       // the current version), reject the card.
-      if (env.envVersionNumber != VersionNumber.CURRENT_VERSION) {
+      if (environment.envVersionNumber != VersionNumber.CURRENT_VERSION) {
         return ControlResult.Rejected(RejectionReason.ENVIRONMENT_WRONG_VERSION)
       }
 
       // Step 4 - If EnvEndDate points to a date in the past, reject the card.
-      if (env.envEndDate.date.isBefore(controlDateTime.toLocalDate())) {
+      if (environment.envEndDate.date.isBefore(controlDateTime.toLocalDate())) {
         return ControlResult.Rejected(RejectionReason.ENVIRONMENT_EXPIRED)
       }
 

@@ -51,21 +51,21 @@ namespace App.infrastructure.pcscreader
             List<string> readerNames = new List<string>();
 
             // Check if the service is running, if not, start it.
-            ServiceController sc = new ServiceController(SmartCardServiceName);
+            ServiceController smartCardService = new ServiceController(SmartCardServiceName);
 
-            if (sc.Status == ServiceControllerStatus.Stopped)
+            if (smartCardService.Status == ServiceControllerStatus.Stopped)
             {
                 try
                 {
                     // Start the service if the current status is stopped.
-                    sc.Start();
+                    smartCardService.Start();
                 }
                 catch (InvalidOperationException ex)
                 {
                     _logger.Error(ex, "Unable to start the smart card service (SCardSvr)");
                     return readerNames;
                 }
-                sc.WaitForStatus(desiredStatus: ServiceControllerStatus.Running);
+                smartCardService.WaitForStatus(desiredStatus: ServiceControllerStatus.Running);
                 // Establish a new context.
                 _context = _contextFactory.Establish(SCardScope.System);
             }
@@ -95,15 +95,15 @@ namespace App.infrastructure.pcscreader
 
                 while (true)
                 {
-                    SCardError sc = _context.GetStatusChange(timeout: 1000, readerStates);
-                    if (sc == SCardError.Success)
+                    SCardError result = _context.GetStatusChange(timeout: 1000, readerStates);
+                    if (result == SCardError.Success)
                     {
                         if ((readerStates[0].EventState & SCRState.Present) == SCRState.Present)
                         {
                             return true;
                         }
                     }
-                    else if (sc == SCardError.Timeout)
+                    else if (result == SCardError.Timeout)
                     {
                         // Timeout occurred, you can break the loop if you want to stop waiting
                         // or continue to wait for the card

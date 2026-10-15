@@ -121,12 +121,12 @@ public class ContractLoadingService {
       CardReader cardReader, StorageCard storageCard, LoadContractInputDto inputData) {
 
     String pluginType = inputData.getPluginType();
-    String cardUID = HexUtil.toHex(storageCard.getUID());
+    String uid = HexUtil.toHex(storageCard.getUID());
 
     logger.info(
         "Loading a contract in a storage card [plugin={}, uid={}, productType={}, contractTariff={}, tripsToLoad={}]",
         pluginType,
-        cardUID,
+        uid,
         storageCard.getProductType(),
         inputData.getContractTariff(),
         inputData.getTripsToLoad());
@@ -141,20 +141,19 @@ public class ContractLoadingService {
       CardData card = cardRepository.readCard(cardReader, storageCard, samResource);
       insertNewContract(inputData.getContractTariff(), inputData.getTripsToLoad(), card);
       int statusCode = cardRepository.writeCard(cardReader, storageCard, samResource, card);
-      transactionRecorder.record(
-          pluginType, true, LOAD, cardUID, describeLoadedContract(inputData));
+      transactionRecorder.record(pluginType, true, LOAD, uid, describeLoadedContract(inputData));
       return new LoadContractOutputDto(statusCode);
     } catch (CardFullException e) {
       // Refusal logged where it is detected
-      transactionRecorder.record(pluginType, false, LOAD, cardUID, "");
+      transactionRecorder.record(pluginType, false, LOAD, uid, "");
       return new LoadContractOutputDto(RemoteServiceStatus.CARD_FULL.getCode());
     } catch (CardCommunicationException e) {
       logger.warn(CARD_COMMUNICATION_ERROR_WHILE_LOADING, e.getMessage());
-      transactionRecorder.record(pluginType, false, LOAD, cardUID, "");
+      transactionRecorder.record(pluginType, false, LOAD, uid, "");
       return new LoadContractOutputDto(RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode());
     } catch (RuntimeException e) {
       logger.error(UNEXPECTED_ERROR_WHILE_LOADING, e);
-      transactionRecorder.record(pluginType, false, LOAD, cardUID, "");
+      transactionRecorder.record(pluginType, false, LOAD, uid, "");
       return new LoadContractOutputDto(RemoteServiceStatus.SERVER_ERROR.getCode());
     } finally {
       if (samResource != null) {

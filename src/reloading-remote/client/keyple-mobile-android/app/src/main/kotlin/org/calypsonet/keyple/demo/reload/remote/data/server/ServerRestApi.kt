@@ -31,5 +31,5 @@ interface ServerRestApi {
 
   @Headers("Accept: application/json", "Content-Type: application/json; charset=UTF-8")
   @POST("/card/remote-plugin")
-  fun sendRequest(@Body msg: MessageDto?): Call<MutableList<MessageDto>>
+  fun sendRequest(@Body message: MessageDto?): Call<MutableList<MessageDto>>
 }

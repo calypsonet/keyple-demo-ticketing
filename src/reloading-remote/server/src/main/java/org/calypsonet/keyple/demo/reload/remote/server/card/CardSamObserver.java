@@ -132,10 +132,10 @@ public class CardSamObserver
         "Searching the SAM reader [plugin={}, readerNameRegex={}]",
         plugin.getName(),
         samReaderFilter);
-    Pattern p = Pattern.compile(samReaderFilter);
+    Pattern readerNamePattern = Pattern.compile(samReaderFilter);
     for (CardReader reader : plugin.getReaders()) {
       logger.debug("Checking the reader [reader={}]", reader.getName());
-      if (p.matcher(reader.getName()).matches()) {
+      if (readerNamePattern.matcher(reader.getName()).matches()) {
         logger.info("SAM reader found [reader={}]", reader.getName());
         return (ObservableCardReader) reader;
       }

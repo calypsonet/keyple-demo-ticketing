@@ -37,25 +37,25 @@ actual class PlatformBuzzer {
   @Throws(LineUnavailableException::class)
   fun playTone(frequencyHz: Int, durationMs: Int, volume: Double = 1.0) {
     scope.launch {
-      val buf = ByteArray(1)
-      val af =
+      val sample = ByteArray(1)
+      val audioFormat =
           AudioFormat(
               SAMPLE_RATE, // sampleRate
               8, // sampleSizeInBits
               1, // channels
               true, // signed
               false) // bigEndian
-      val sdl = AudioSystem.getSourceDataLine(af)
-      sdl.open(af)
-      sdl.start()
+      val line = AudioSystem.getSourceDataLine(audioFormat)
+      line.open(audioFormat)
+      line.start()
       for (i in 0..<durationMs * 8) {
         val angle = i / (SAMPLE_RATE / frequencyHz) * 2.0 * Math.PI
-        buf[0] = (sin(angle) * 127.0 * volume).toInt().toByte()
-        sdl.write(buf, 0, 1)
+        sample[0] = (sin(angle) * 127.0 * volume).toInt().toByte()
+        line.write(sample, 0, 1)
       }
-      sdl.drain()
-      sdl.stop()
-      sdl.close()
+      line.drain()
+      line.stop()
+      line.close()
     }
   }
 

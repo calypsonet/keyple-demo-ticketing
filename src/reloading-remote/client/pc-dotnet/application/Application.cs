@@ -65,18 +65,18 @@ namespace App.application
             List<string> contracts = outputDto.OutputData.Items;
             _logger.Information($"Contracts read [contracts={contracts.Count}]");
             int i = 1;
-            bool multitripContractPresent = false;
+            bool isMultiTripContractPresent = false;
             foreach (string contract in contracts)
             {
                 // Print each item to the console
                 Display($"Contract #{i++}:\r\n" + contract, ConsoleColor.DarkGreen);
                 if (contract.Contains("MULTI_TRIP"))
                 {
-                    multitripContractPresent = true;
+                    isMultiTripContractPresent = true;
                 }
             }
 
-            if (!multitripContractPresent)
+            if (!isMultiTripContractPresent)
             {
                 Display("No MULTI_TRIP contract found.", ConsoleColor.DarkRed);
                 _logger.Warning("No multi-trip contract found");

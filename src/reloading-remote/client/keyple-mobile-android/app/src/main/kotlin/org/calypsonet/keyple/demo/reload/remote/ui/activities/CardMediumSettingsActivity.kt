@@ -49,12 +49,12 @@ class CardMediumSettingsActivity : BaseActivity() {
       return
     }
     if (view.isChecked) {
-      val (enableBtn, disableBtn, _) = radioButtons(cardMedium)
+      val (enableButton, disableButton, _) = radioButtons(cardMedium)
       appSettings.setCardMediumVisibility(
           cardMedium,
           when (view) {
-            enableBtn -> CardMediumVisibility.ENABLE
-            disableBtn -> CardMediumVisibility.DISABLE
+            enableButton -> CardMediumVisibility.ENABLE
+            disableButton -> CardMediumVisibility.DISABLE
             else -> CardMediumVisibility.HIDE
           })
     }
@@ -73,10 +73,10 @@ class CardMediumSettingsActivity : BaseActivity() {
 
   private fun updateRadioButtons(cardMedium: CardMedium) {
     val visibility = appSettings.getCardMediumVisibility(cardMedium)
-    val (enableBtn, disableBtn, hideBtn) = radioButtons(cardMedium)
-    setRadioButtonChecked(enableBtn, visibility == CardMediumVisibility.ENABLE)
-    setRadioButtonChecked(disableBtn, visibility == CardMediumVisibility.DISABLE)
-    setRadioButtonChecked(hideBtn, visibility == CardMediumVisibility.HIDE)
+    val (enableButton, disableButton, hideButton) = radioButtons(cardMedium)
+    setRadioButtonChecked(enableButton, visibility == CardMediumVisibility.ENABLE)
+    setRadioButtonChecked(disableButton, visibility == CardMediumVisibility.DISABLE)
+    setRadioButtonChecked(hideButton, visibility == CardMediumVisibility.HIDE)
   }
 
   private fun setRadioButtonChecked(radioButton: RadioButton, checked: Boolean) {

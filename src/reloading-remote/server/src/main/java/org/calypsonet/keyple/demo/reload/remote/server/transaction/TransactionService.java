@@ -50,14 +50,14 @@ public class TransactionService {
   /**
    * Stores a new transaction and broadcasts it to all the subscribers.
    *
-   * @param t Transaction object to push.
+   * @param transaction Transaction object to push.
    */
-  public void push(Transaction t) {
-    transactions.add(t);
+  public void push(Transaction transaction) {
+    transactions.add(transaction);
     synchronized (broadcaster) {
-      broadcaster.onNext(t);
+      broadcaster.onNext(transaction);
     }
-    logger.debug("Transaction broadcast [transactionId={}]", t.getId());
+    logger.debug("Transaction broadcast [transactionId={}]", transaction.getId());
   }
 
   /**
