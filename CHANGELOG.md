@@ -18,6 +18,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - "rejected" instead of "refused" in the displayed texts ("Card rejected"), the log messages ("Card rejected: ..."),
     the comments, the test names and the documentation;
   - functional documentation: ratification of an interrupted session, results "Not recognized" and "Card removed".
+- READMEs without duplicates: the supported card applications (AIDs) are listed in the README of the common library,
+  the installation of the proprietary components is described once in the main README (each application listing the
+  components it uses), and the main README refers to the functional documentation and to the applications for the
+  terminals supported by each application. The README of the common library refers to the procedures of the reload
+  demo instead of summarizing them, and the README of the validation app describes the validation of the Calypso
+  cards once (best contract search algorithm). The READMEs of the validation and inspection apps refer to the
+  functional documentation for the content of the results and of the inspection screen, keeping the behavior of the
+  screens, and the functional documentation refers to the README of the server for the web dashboard.
 - Android applications: layered architecture with ports and adapters, documented in the README ("Android Application
   Architecture") and checked by the CI (`.github/scripts/check-android-architecture.sh`) for the domain, data and ui
   layers. The domain layer no longer depends on Android, Timber or the dependency injection framework: the domain

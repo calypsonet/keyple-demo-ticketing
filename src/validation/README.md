@@ -100,21 +100,16 @@ Terminal Selection → Settings → Card Reader → Validation Result
 The validation result overlay of the reader screen (`CardReaderActivity`) displays both success and failure results
 (`ValidationResult`):
 
-**Success Screen** (`ValidationResult.Accepted`):
-- **Location**: Where validation occurred
-- **Date/Time**: When validation was processed
-- **Contract Details**:
-  - Season pass: Shows validity end date
-  - Multi-trip ticket: Shows the number of remaining trips
-- **Visual Feedback**: Green background with success animation
-
-**Failure Screens**:
-- **Invalid Card** (`ValidationResult.Rejected`, card data rejected: environment, versions, already validated): Orange
-  background with the reason of the rejection
-- **No Ticket** (`ValidationResult.Rejected`, no contract to use: no valid contract, expired contract, no trips left):
-  Red background with the reason of the rejection
-- **Other Errors** (`ValidationResult.Failed`): Red background with the error message
-- **Visual Feedback**: Error animation, with the sounds and LEDs of the terminal
+The content and the messages of each result are described in the
+[Functional Documentation](../../docs/functional-documentation/index.adoc#validation-results). The overlay shows:
+- **Accepted** (`ValidationResult.Accepted`): green background with the success animation
+- **Invalid card** (`ValidationResult.Rejected`, card data rejected: environment, versions, already validated; or
+  `ValidationResult.NotRecognized`): orange background with the error animation
+- **No ticket** (`ValidationResult.Rejected`, no contract to use: no valid contract, expired contract, no trips left):
+  red background with the error animation
+- **Other errors** (`ValidationResult.CardRemoved`, `ValidationResult.Failed`): red background with the error
+  animation
+- The sounds and LEDs of the terminal signal the success or the failure
 
 ### Validation Scenarios
 
@@ -130,13 +125,7 @@ The accepted and rejected validations, with the messages displayed, are describe
 - Secure session with the `DEBIT` access level, authenticated by the SAM
 - Support for multiple contracts (1-4 depending on card type)
 
-**Processing Flow**:
-1. Card detection and AID selection
-2. Environment record validation
-3. Event analysis and contract priority evaluation
-4. Best contract search
-5. Counter update within the secure session
-6. Event creation and session closure
+**Processing Flow**: see the [Best Contract Search Algorithm](#best-contract-search-algorithm)
 
 #### Storage Cards
 **Simplified Model**:
@@ -182,12 +171,10 @@ The accepted and rejected validations, with the messages displayed, are describe
 
 ### Validation Procedure Details
 
-#### Contract Priority System
+#### Best Contract Search Algorithm
 
 The contracts are processed in the order of their priorities, described in the
-[Functional Documentation](../../docs/functional-documentation/index.adoc#ticket-priority).
-
-#### Best Contract Search Algorithm
+[Functional Documentation](../../docs/functional-documentation/index.adoc#ticket-priority):
 
 ```
 1. Read environment and validate card expiration
@@ -297,23 +284,14 @@ validation/app/
 
 ## Proprietary Plugins
 
-### Activation Process
-
-By default, the proprietary plugins and libraries are replaced by mocks: their terminal types are grayed out, and the
-storage cards are not supported. To enable:
-
-1. **Request Access**: Contact [CNA](https://calypsonet.org/contact-us/) for desired plugin
-2. **Install Plugin**: Copy the provided library (`.aar` or `.jar` file) to the `libs` directory at the root of the
-   repository: the build uses it instead of the corresponding mock (`-mock.aar` or `-mock.jar` file)
-3. **Arrive Feedback**: For the LEDs and sounds of the Arrive terminal, also copy the Parkeon SDK
-   (`AndroidParkeonCommon-release.aar`) to the `libs` directory: the build then uses the `arrive` source set instead
-   of `arrive-mock`
-4. **Build Project**: Execute `./gradlew assembleDebug`
-
-### Available Proprietary Plugins
+The proprietary components used by this application are available on request and replaced by mocks by default (their
+terminal types being then grayed out, and the storage cards not supported). They are installed as described in the
+[main README](../../README.md#proprietary-plugins-available-on-request):
 
 - **Bluebird EF501**
-- **Arrive Axio 4**
+- **Arrive Axio 4**: for the LEDs and sounds of the terminal, also copy the Parkeon SDK
+  (`AndroidParkeonCommon-release.aar`) to the `libs` directory: the build then uses the `arrive` source set instead of
+  `arrive-mock`
 - **Storage cards**: storage card extension (`keyple-card-cna-storagecard-java-lib`) and reader plugin
   (`keyple-plugin-cna-storagecard-java-lib`)
 

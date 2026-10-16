@@ -93,12 +93,10 @@ Terminal Selection → Settings → Home → Card Reader → Card Content or Inv
 - Displays the authentication mode of the card (by the SAM, by PKI, or not authenticated)
 - Displays the result of the inspection above the screen, as the validation app does, until "New inspection" (or
   back) is pressed, the next card being then detected:
-  - **Card content**:
-    - **Last validation**: date, time and location of the last validation, and contract used
-    - **Contracts**: list of the contracts of the card, with their validity period (season pass) or their number
-      of remaining trips (multi-trip ticket); the contract used by the last validation is marked as validated when
-      the validation took place at the location of the inspection, the same day and within the validation period
-    - "No ticket" when the card has never been loaded
+  - **Card content**: last validation and contracts of the card, the contract used by the last validation being
+    marked as validated when the rules of the inspection are met (see the Functional Documentation:
+    [Information displayed](../../docs/functional-documentation/index.adoc#inspection-display),
+    [What inspection checks](../../docs/functional-documentation/index.adoc#inspection-checks))
   - **Invalid card**: reason why the card is rejected (see [Rejection Reasons](#rejection-reasons)) or error message
 
 ### Rejection Reasons
@@ -244,16 +242,10 @@ inspection/app/
 
 ## Proprietary Plugins
 
-By default, the proprietary plugins and libraries are replaced by mocks: their terminal types are grayed out, and the
-storage cards are not supported.
+The proprietary components used by this application are available on request and replaced by mocks by default (their
+terminal types being then grayed out, and the storage cards not supported). They are installed as described in the
+[main README](../../README.md#proprietary-plugins-available-on-request):
 
-**Activation Process**:
-1. **Request Plugin**: Contact [CNA](https://calypsonet.org/contact-us/) for the desired proprietary plugin
-2. **Install Plugin**: Copy the provided library (`.aar` or `.jar` file) to the `libs` directory at the root of the
-   repository: the build uses it instead of the corresponding mock (`-mock.aar` or `-mock.jar` file)
-3. **Rebuild Application**: Execute `./gradlew assembleDebug`
-
-**Available Proprietary Plugins**:
 - **Bluebird EF501**
 - **Storage cards**: storage card extension (`keyple-card-cna-storagecard-java-lib`) and reader plugin
   (`keyple-plugin-cna-storagecard-java-lib`)

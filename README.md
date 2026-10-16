@@ -14,7 +14,7 @@ ticketing workflow:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│   RELOAD DEMO   │────>│ VALIDATION DEMO │────>│  CONTROL DEMO   │
+│   RELOAD DEMO   │────>│ VALIDATION DEMO │────>│ INSPECTION DEMO │
 │                 │     │                 │     │                 │
 │ Load contracts  │     │ Validate entry  │     │ Check validity  │
 │ onto cards      │     │ to transport    │     │ after use       │
@@ -51,10 +51,8 @@ Simple storage cards featuring:
 - Single contract storage
 - Simplified validation procedures
 - **Note**: This demo implementation is intentionally basic for demonstration purposes
-- **Proprietary libraries**: the storage cards are supported with the storage card extension of CNA
-  (`keyple-card-cna-storagecard-java-lib`) and, in the Android applications, its reader plugin
-  (`keyple-plugin-cna-storagecard-java-lib`). Available on request, they are replaced by mocks by default: the storage
-  cards are then not supported (see [Proprietary Plugins](#proprietary-plugins-available-on-request))
+- **Proprietary libraries**: required to support the storage cards (see
+  [Proprietary Plugins](#proprietary-plugins-available-on-request))
 
 **Security Consideration**: Storage Card implementations in this demo lack production-level security mechanisms.
 Production deployments should implement appropriate cryptographic protections, signature verification, and secure key
@@ -120,19 +118,29 @@ Use the personalization feature of the Android or multiplatform reload client to
 
 ### Tested Terminals
 
-- **Famoco FX205** - Enterprise NFC terminal
-- **Standard NFC Smartphones** - Consumer devices
-- **PC/SC Readers** - Desktop integration
+The terminals supported by each application (Famoco FX205, Bluebird EF501, Arrive Axio 4, any Android device with NFC)
+are listed in the [Functional Documentation](docs/functional-documentation/index.adoc#tested-terminals), and their
+reader plugins in the README of each application ([validation](src/validation/README.md#tested-terminals),
+[inspection](src/inspection/README.md#tested-terminals),
+[reload Android client](src/reload-remote/client/keyple-mobile-android/README.md#plugin-integration)). The server and
+the desktop clients use PC/SC readers.
 
 ### Proprietary Plugins (Available on Request)
 
 - Bluebird EF501 (reader plugin)
 - Arrive Axio 4 (reader plugin)
-- Storage cards (card extension and reader plugin)
+- Storage cards: card extension (`keyple-card-cna-storagecard-java-lib`) and, in the Android applications, reader
+  plugin (`keyple-plugin-cna-storagecard-java-lib`)
 
-Contact [CNA](https://calypsonet.org/contact-us/) for access to the proprietary components. By default, they are replaced by mocks (`libs`
-directory): the corresponding terminals are grayed out, and the storage cards are not supported. To use a component,
-copy the provided library to the `libs` directory at the root of the repository, then rebuild the applications.
+By default, they are replaced by mocks (`libs` directory): the corresponding terminals are grayed out, and the storage
+cards are not supported. To use a component:
+
+1. Request it from [CNA](https://calypsonet.org/contact-us/)
+2. Copy the provided library (`.aar` or `.jar` file) to the `libs` directory at the root of the repository: the build
+   uses it instead of the corresponding mock (`-mock.aar` or `-mock.jar` file)
+3. Rebuild the applications (e.g. `./gradlew assembleDebug`)
+
+The README of each application lists the components it uses.
 
 ## Data Model
 
@@ -505,14 +513,9 @@ logs during debugging, comment out the `debug` build type configuration in the r
 
 ## Card Application Identifiers
 
-Compatible Calypso card AIDs:
-
-- `A000000291FF9101` - Keyple Generic test card
-- `315449432E49434131` - CD Light/GTML Compatibility
-- `315449432E49434133` - Calypso Light
-- `A0000004040125090101` - Navigo IDF
-
-Test cards available in the [CNA Test Kit](https://calypsonet.org/technical-support-documentation/).
+The Calypso card applications supported by the demos, those of the test cards of the
+[CNA Test Kit](https://calypsonet.org/technical-support-documentation/), are listed in the
+[Common Library documentation](src/common/README.md#supported-card-applications).
 
 ## Contributing
 

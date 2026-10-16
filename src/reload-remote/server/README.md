@@ -66,8 +66,8 @@ remote service (`RemoteServiceId`) to the service handling it:
 - **Node.js 20.19+ or 22.12+** (for dashboard development, as required by Vite)
 - **Compatible PC/SC reader drivers**
 - **Storage card extension** of [CNA](https://calypsonet.org/contact-us/) (`keyple-card-cna-storagecard-java-lib`, on request) to process the storage
-  cards: copy it to the `libs` directory at the root of the repository (replaced by a mock by default, the storage
-  cards being then not supported)
+  cards (replaced by a mock by default, the storage cards being then not supported; installed as described in the
+  [main README](../../../README.md#proprietary-plugins-available-on-request))
 
 ### Tested Readers
 - Cherry TC series

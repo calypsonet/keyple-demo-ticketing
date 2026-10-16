@@ -175,8 +175,8 @@ The application supports multiple reader plugins:
 - Android NFC plugin for standard contactless reading
 - OMAPI plugin for SIM card access (work in progress)
 
-**Proprietary Components** (on request, replaced by mocks by default; to use one, copy the provided library to the
-`libs` directory at the root of the repository):
+**Proprietary Components** (on request, replaced by mocks by default; installed as described in the
+[main README](../../../../README.md#proprietary-plugins-available-on-request)):
 - Bluebird plugin for the reader of the Bluebird terminals
 - Storage card extension (`keyple-card-cna-storagecard-java-lib`) and reader plugin
   (`keyple-plugin-cna-storagecard-java-lib`), without which the storage cards are not supported

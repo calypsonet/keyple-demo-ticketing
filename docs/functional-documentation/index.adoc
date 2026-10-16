@@ -106,7 +106,7 @@ The ecosystem consists of four distinct applications, each covering a specific r
 | Application | Functional role
 
 | *Reload — Server*
-| Hosts the security module (SAM) and performs cryptographic operations. Exposes remote reload services. Its web dashboard (`http://localhost:8080`) displays the status of the server and of the SAM, and the transactions of the clients in real time (type, card serial number, status, loaded ticket).
+| Hosts the security module (SAM) and performs cryptographic operations. Exposes remote reload services. Its web dashboard (`http://localhost:8080`) displays the status of the server and of the SAM, and the transactions of the clients in real time (see the link:../../src/reload-remote/server/README.md#web-dashboard[server README]).
 
 | *Reload — Clients*
 | Android, multiplatform (Android, iOS, desktop) or .NET application used by a sales agent or a passenger to load a new transit ticket. The Android and multiplatform clients also personalize blank cards.
@@ -372,6 +372,7 @@ Unlike validation, inspection can operate *without a SAM* thanks to two fallback
 | None — data read without cryptographic verification
 |===
 
+[[inspection-checks]]
 ==== What inspection checks
 
 * The *general validity* of the card (version, dates)
@@ -381,6 +382,7 @@ Unlike validation, inspection can operate *without a SAM* thanks to two fallback
 ** Did it take place the same day, within the configured validation period?
 * Which ticket was used during the last validation
 
+[[inspection-display]]
 ==== Information displayed to the inspector
 
 The inspector sees:
@@ -402,6 +404,7 @@ plantuml::diagrams/inspection.puml[target=inspection,format=svg,alt="Inspection 
 
 This section summarizes the hardware supported by each application. The reader plugins, the installation and the prerequisites of each component are detailed in the link:../../README.md[README of the repository] and in the README of each application (link:../../src/validation/README.md[validation], link:../../src/inspection/README.md[inspection], link:../../src/reload-remote/README.md[reload]).
 
+[[tested-terminals]]
 === Tested Android terminals
 
 [cols="2,4,^1,^1,^1", options="header"]
