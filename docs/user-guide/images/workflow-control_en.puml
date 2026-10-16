@@ -27,7 +27,7 @@ endif
 
 :Read contracts 1 to 4\n+ counters 1 to 4;
 
-:For each contract :\n- version, expiration\n- PSO VerifySignature\n- contractExpired / contractValidated;
+:For each contract :\n- version, expiration\n- contractExpired / contractValidated;
 
 :Session closure;
 

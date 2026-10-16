@@ -11,7 +11,7 @@ endif
 
 :Card presentation;
 
-:Writing Environment\nEnvVersionNumber=1\nEnvEndDate = today + 6 years;
+:Writing Environment\nEnvVersionNumber=1\nEnvEndDate = 1st day of the month + 6 years;
 
 :Data wiping\nEvents - Contracts - Counters;
 

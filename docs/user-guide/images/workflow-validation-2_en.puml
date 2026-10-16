@@ -18,27 +18,48 @@ if (Env version=1 and\nEndDate valid ?) then (No)
 else (Yes)
 endif
 
-if (Event version=1 ?) then (No)
+if (Event version == 0 ?) then (Yes)
+  :Empty card;<<#yellow>>
+  stop
+elseif (Event version == 1 ?) then (No)
   :Invalid card;<<#red>>
   stop
 else (Yes)
 endif
 
-if (Contract version=1\nand EndDate valid ?) then (No)
+if (Anti-passback\nΔt <= 1 min ?) then (Yes)
+  :Invalid card\n(already validated);<<#red>>
+  stop
+else (No)
+endif
+
+if (Contract version == 1 ?) then (No)
   :Invalid card;<<#red>>
   stop
 else (Yes)
 endif
 
-if (Counter > 0 ?) then (No)
-  :Invalid card;<<#red>>
+if (Contract EndDate valid ?) then (No)
+  :Expired ticket;<<#yellow>>
   stop
 else (Yes)
 endif
 
-:Write contract\nblock 5;
+if (Ticket type ?) then (forbidden, expired\nor unknown)
+  :Ticket forbidden\nor expired;<<#yellow>>
+  stop
+else (SEASON_PASS or\nMULTI_TRIP)
+endif
 
-:Write Event\nblock 6;
+if (MULTI_TRIP and\nCounter == 0 ?) then (Yes)
+  :No trip left;<<#yellow>>
+  stop
+else (No)
+endif
+
+:Write contract\n(counter decremented if MULTI_TRIP);
+
+:Write Event;
 
 :Validation done;<<#green>>
 

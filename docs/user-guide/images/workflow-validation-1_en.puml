@@ -13,16 +13,25 @@ endif
 
 :Read event SFI 0x08;
 
-if (EventVersion == 1 ?) then (No)
+if (EventVersion == 0 ?) then (Yes)
+  :Empty card;<<#yellow>>
+  stop
+elseif (EventVersion == 1 ?) then (No)
   :Invalid card;<<#red>>
   stop
 else (Yes)
 endif
 
-if (Anti-passback\nΔt > 1 min ?) then (No)
-  :Invalid card;<<#red>>
-  stop
-else (Yes)
+if (Anti-passback\nΔt <= 1 min ?) then (Yes)
+  if (Previous session ratified ?) then (Yes)
+    :Invalid card\n(already validated);<<#red>>
+    stop
+  else (No)
+    :Session closure\n(recovery, no new debit);
+    :Validation done;<<#green>>
+    stop
+  endif
+else (No)
 endif
 
 :Read priorities;
@@ -34,11 +43,11 @@ else (No)
 endif
 
 repeat
-  if (ContractValidityEndDate\n≥ today ?) then (No -> write expired)
+  if (ContractValidityEndDate\n≥ today ?) then (No -> priority 31)
   else (Yes)
-    if (Counter > 0 ?) then (No -> next contract)
-    else (Yes)
-      :Decrement counter\n(if MULTI_TRIP / STORED_VALUE);
+    if (MULTI_TRIP and\nCounter == 0 ?) then (Yes -> priority 31)
+    else (No)
+      :Decrement counter\n(if MULTI_TRIP);
 
       :Write EventStructure\ndate - time - location - used contract;
 
@@ -50,5 +59,13 @@ repeat
     endif
   endif
 repeat while (next contract)
+
+:Write priorities\n(expired or exhausted contracts);
+
+:Session closure;
+
+:No valid ticket;<<#yellow>>
+
+stop
 
 @enduml

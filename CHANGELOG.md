@@ -152,6 +152,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   and the other clients) in the reloading Android client; `tripsToLoad` (instead of `trips`), `terminal` and
   `serviceId` (instead of `remote` and `service`, the terminal being also named `service` in a lambda) and `logLevel`
   (instead of `debugLog`) in the multiplatform client.
+- Functional documentation (`docs/user-guide`, English only) aligned with the demo: tested terminals of each
+  application (Coppernic C-One 2 removed), validation results and messages, Stored Value and traceability mode not
+  implemented, renewal of an expired season pass, single-ticket cards, storage card libraries, iOS 15.3+; diagrams of
+  the personalization, loading, validation (empty card, anti-passback recovery, refused card) and control.
 - READMEs: download of the released packages of the multiplatform client (Android APK, desktop packages and JARs);
   contributing section of the main README linking `CONTRIBUTING.md`, the conventions and the checks of the CI.
 - READMEs: the storage cards require the storage card extension and reader plugin of CNA, available on request and
