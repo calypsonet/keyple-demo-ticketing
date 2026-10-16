@@ -7,6 +7,12 @@ start
 
 :Card presented;
 
+if (Card recognized ?\n(supported application\nand file structure)) then (No)
+  :Card not recognized;<<#F5B7B1>>
+  stop
+else (Yes)
+endif
+
 if (MIFARE Classic ?) then (Yes)
   :Authentication\nof the sector;
 else (No)

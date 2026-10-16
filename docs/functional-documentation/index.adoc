@@ -124,6 +124,15 @@ plantuml::diagrams/overview.puml[target=overview,format=svg,alt="Keyple Demo Tic
 
 NOTE: The Validation terminal and the Inspection terminal do not communicate over the network. Information is exchanged between these two applications *exclusively through the passenger's card*.
 
+[[scope]]
+=== Scope of the demo
+
+The demo covers the personalization of the cards, and the loading, validation and inspection of Season Pass and Multi-trip tickets. The following elements of the Calypso data model are not covered:
+
+* *Stored Value tickets*: they cannot be loaded, and a Stored Value ticket present on a card (priority 3) is ignored at validation
+* *Traceability mode*: the tickets are loaded without the cryptographic authenticator signed by the SAM, and no authenticator is verified at inspection
+* *Black lists* of the cards and of the SAMs
+
 [[cards]]
 == Contactless cards and media
 
@@ -133,7 +142,6 @@ The Calypso card is the primary medium of the ecosystem. It is a smart card comp
 
 * Storage of *up to 4 transit tickets simultaneously*, depending on the card product (1 on the Calypso Basic cards, 2 on the Calypso Light cards)
 * *Secure transactions* guaranteeing data integrity (via a SAM security module or asymmetric PKI cryptography)
-* *Traceability* of reload operations (not implemented by the demo)
 
 The Calypso card stores in memory:
 
@@ -171,7 +179,7 @@ WARNING: This demo is only intended to demonstrate that memory cards can be hand
 
 == Transit tickets
 
-The data model defines three ticket types, two of which are implemented by the demo:
+Two ticket types can be loaded onto a card:
 
 === Season Pass
 
@@ -186,10 +194,6 @@ The data model defines three ticket types, two of which are implemented by the d
 * Valid until the *card expiry date* (EnvEndDate)
 * Reloadable by adding extra units (up to 16,777,215)
 * Remaining trips are visible during inspection
-
-=== Stored Value
-
-*Not implemented* by the demo: this ticket type cannot be loaded, and a Stored Value ticket present on a card is ignored at validation.
 
 [[ticket-priority]]
 === Ticket priority (Calypso card only)
@@ -208,10 +212,6 @@ When several tickets are present on a Calypso card, the validation terminal auto
 | Multi-trip
 | Selected if no valid Season Pass is present and trips are left
 
-| 3
-| Stored Value
-| Ignored (not implemented)
-
 | 31
 | Expired
 | Ignored during validation
@@ -220,6 +220,8 @@ When several tickets are present on a Calypso card, the validation terminal auto
 | Empty slot
 | Ignored
 |===
+
+NOTE: The priority 3 of the data model (Stored Value) is not covered by the demo (see <<scope>>).
 
 == Use cases
 
@@ -254,11 +256,9 @@ This operation requires the *SAM security module* to be present on the server si
 ==== Process
 
 . The sales agent or the passenger presents the card to the reader of the client (NFC reader of the mobile device, or PC/SC reader of the desktop).
-. The application checks that the card is valid (version, expiry date).
-. Existing tickets are analyzed and displayed.
+. The server checks that the card is valid (personalized, not expired, last event of a known version), then reads its tickets, which are displayed.
 . The user selects the ticket to load.
-. The transaction is sent to the server, which performs the secured operation.
-. The new ticket is written to the card; the counter is updated if necessary.
+. The card is presented again: the server checks that a slot is available (with the multiplatform client, that the card is the one read before), then writes the new ticket, the counter being updated if necessary.
 
 ==== Business rules
 
@@ -266,7 +266,7 @@ This operation requires the *SAM security module* to be present on the server si
 |===
 | Situation | Behavior
 
-| Expired card
+| Card not personalized, expired card, or last event of an unexpected version
 | Loading rejected
 
 | Calypso card without free or expired slot
@@ -289,9 +289,6 @@ This operation requires the *SAM security module* to be present on the server si
 
 | New ticket on an expired slot
 | Replaces the expired ticket at the lowest index
-
-| Traceability mode (cryptographic authenticator of the ticket, signed by the SAM)
-| Not implemented by the demo: the tickets have no authenticator
 |===
 
 ==== Diagram
@@ -394,8 +391,6 @@ The inspector sees:
 * "No ticket" when the card has never been loaded
 
 When the card is rejected, the terminal displays "Not valid on this network" with the reason (see <<inspection-rejection-conditions>>).
-
-NOTE: The verification of the ticket authenticator (traceability mode) is not implemented by the demo.
 
 ==== Diagram
 
@@ -580,7 +575,7 @@ Each validation produces one of the following results:
 | Transit ticket stored on the card. A Calypso card can hold up to 4 contracts simultaneously, depending on the card product.
 
 | *Contract priority*
-| Numerical value determining the selection order of tickets during validation (1 = Season Pass, 2 = Multi-trip, 3 = Stored Value (not implemented), 31 = expired).
+| Numerical value determining the selection order of tickets during validation (1 = Season Pass, 2 = Multi-trip, 31 = expired, 0 = empty slot).
 
 | *Counter*
 | Memory area on the card storing the remaining trips of a Multi-trip ticket.

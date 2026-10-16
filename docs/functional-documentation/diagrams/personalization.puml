@@ -5,13 +5,19 @@ title Personalization (card issuance)
 
 start
 
-if (Server connected\nwith its SAM ?) then (No)
+:Card presented;
+
+if (Server reachable\nwith its SAM ?) then (No)
   :Server error;<<#F5B7B1>>
   stop
 else (Yes)
 endif
 
-:Card presented;
+if (Card recognized ?\n(supported application\nand file structure)) then (No)
+  :Card rejected;<<#F5B7B1>>
+  stop
+else (Yes)
+endif
 
 :Write the card environment\n(issuance date, end date =\n1st day of the month + 6 years);
 

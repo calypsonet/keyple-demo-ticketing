@@ -7,6 +7,12 @@ start
 
 :Card presented;
 
+if (Card recognized ?\n(supported application\nand file structure)) then (No)
+  :Not valid on this network;<<#F5B7B1>>
+  stop
+else (Yes)
+endif
+
 :Authentication mode\nSAM, PKI or none;<<#D7BDE2>>
 
 if (Card personalized\nand not expired ?) then (No)

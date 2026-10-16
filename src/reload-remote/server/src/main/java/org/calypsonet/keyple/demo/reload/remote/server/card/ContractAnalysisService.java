@@ -107,6 +107,11 @@ public class ContractAnalysisService {
       transactionRecorder.record(pluginType, false, SECURED_READ, applicationSerialNumber);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.ENVIRONMENT_EXPIRED.getCode());
+    } catch (EventWrongVersionException e) {
+      // Rejection logged where it is detected
+      transactionRecorder.record(pluginType, false, SECURED_READ, applicationSerialNumber);
+      return new AnalyzeContractsOutputDto(
+          Collections.emptyList(), RemoteServiceStatus.EVENT_WRONG_VERSION.getCode());
     } catch (CardCommunicationException e) {
       logger.warn(CARD_COMMUNICATION_ERROR_WHILE_ANALYZING, e.getMessage());
       transactionRecorder.record(pluginType, false, SECURED_READ, applicationSerialNumber);
@@ -157,6 +162,11 @@ public class ContractAnalysisService {
       transactionRecorder.record(pluginType, false, READ, uid);
       return new AnalyzeContractsOutputDto(
           Collections.emptyList(), RemoteServiceStatus.ENVIRONMENT_EXPIRED.getCode());
+    } catch (EventWrongVersionException e) {
+      // Rejection logged where it is detected
+      transactionRecorder.record(pluginType, false, READ, uid);
+      return new AnalyzeContractsOutputDto(
+          Collections.emptyList(), RemoteServiceStatus.EVENT_WRONG_VERSION.getCode());
     } catch (CardCommunicationException e) {
       logger.warn(CARD_COMMUNICATION_ERROR_WHILE_ANALYZING, e.getMessage());
       transactionRecorder.record(pluginType, false, READ, uid);
@@ -181,6 +191,8 @@ public class ContractAnalysisService {
    *
    * @throws CardNotPersonalizedException If the environment has not the current version.
    * @throws EnvironmentExpiredException If the environment has expired.
+   * @throws EventWrongVersionException If the last event has neither the current version nor the
+   *     undefined one (clean card).
    */
   List<ContractStructure> findPresentContracts(CardData card) {
     // Check environment
@@ -202,9 +214,9 @@ public class ContractAnalysisService {
     if (lastEvent.getEventVersionNumber() != VersionNumber.CURRENT_VERSION
         && lastEvent.getEventVersionNumber() != VersionNumber.UNDEFINED) {
       logger.warn(
-          "No contract analyzed: unexpected EventVersionNumber [eventVersionNumber={}]",
+          "Card rejected: unexpected EventVersionNumber [eventVersionNumber={}]",
           lastEvent.getEventVersionNumber());
-      return Collections.emptyList();
+      throw new EventWrongVersionException();
     }
     // Iterate through the contracts in the card session
     List<ContractStructure> contracts = card.getContracts();

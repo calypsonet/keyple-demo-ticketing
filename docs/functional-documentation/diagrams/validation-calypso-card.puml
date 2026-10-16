@@ -7,6 +7,12 @@ start
 
 :Card presented;
 
+if (Card recognized ?\n(supported application\nand file structure)) then (No)
+  :Card not recognized;<<#F5B7B1>>
+  stop
+else (Yes)
+endif
+
 if (Card personalized\nand not expired ?) then (No)
   :Invalid card;<<#F5B7B1>>
   stop
@@ -67,11 +73,13 @@ repeat
   endif
 repeat while (Next ticket ?)
 
-:Write the updated priorities;
-
-:End of the secure session;
-
-:Expired ticket\nor no trip left;<<#F9E79F>>
+if (Tickets marked expired ?) then (Yes)
+  :Write the updated priorities;
+  :End of the secure session;
+  :Expired ticket\nor no trip left;<<#F9E79F>>
+else (No)
+  :No valid ticket;<<#F9E79F>>
+endif
 
 stop
 

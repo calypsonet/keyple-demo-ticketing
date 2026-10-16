@@ -51,6 +51,8 @@ final class RemoteServiceMessages {
         return "Environment error: end date expired";
       case DIFFERENT_CARD:
         return "Not the same card";
+      case EVENT_WRONG_VERSION:
+        return "Event error: wrong version number";
       case CARD_FULL:
         return "No space left on the card for a new ticket";
       case SERVER_ERROR:

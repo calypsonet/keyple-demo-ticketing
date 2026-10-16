@@ -39,7 +39,9 @@ enum class RemoteServiceStatus(val code: Int) {
    * The contract cannot be loaded: the card has no empty contract record nor expired or exhausted
    * contract to replace.
    */
-  CARD_FULL(7);
+  CARD_FULL(7),
+  /** The last event of the card has an unexpected version. */
+  EVENT_WRONG_VERSION(8);
 
   companion object {
     /**

@@ -5,49 +5,79 @@ title Ticket loading
 
 start
 
-if (Server connected\nwith its SAM ?) then (No)
-  :Server error;<<#F5B7B1>>
-  stop
-else (Yes)
-endif
+partition "Reading of the card" {
+  :Card presented;
 
-:Card presented;
+  if (Server reachable\nwith its SAM ?) then (No)
+    :Server error;<<#F5B7B1>>
+    stop
+  else (Yes)
+  endif
 
-if (Card personalized\nand not expired ?) then (No)
-  :Card rejected;<<#F5B7B1>>
-  stop
-else (Yes)
-endif
+  if (Card recognized ?\n(supported application\nand file structure)) then (No)
+    :Card rejected;<<#F5B7B1>>
+    stop
+  else (Yes)
+  endif
 
-if (Last event of\na known version ?) then (No)
-  :Card rejected;<<#F5B7B1>>
-  stop
-else (Yes)
-endif
+  if (Card personalized\nand not expired ?) then (No)
+    :Card rejected;<<#F5B7B1>>
+    stop
+  else (Yes)
+  endif
 
-:Read the tickets\n(expired tickets identified);
+  if (Last event of\na known version ?) then (No)
+    :Card rejected;<<#F5B7B1>>
+    stop
+  else (Yes)
+  endif
+
+  :Read and display the tickets\n(expired tickets identified);
+}
 
 :User choice\nof the ticket to load;<<#FAD7A0>>
 note right: User interaction
 
-if (Slot available ?\nsame type, empty or expired\n(single-ticket card: other ticket not usable)) then (No)
-  :Card rejected;<<#F5B7B1>>
-  stop
-else (Yes)
-endif
+partition "Loading of the ticket" {
+  :Card presented again;
 
-:Write the ticket\n(Season Pass renewal: +30 days if not expired);
+  if (Server reachable\nwith its SAM ?) then (No)
+    :Server error;<<#F5B7B1>>
+    stop
+  else (Yes)
+  endif
 
-:Add the trips to the counter\n(Multi-trip ticket);
+  if (Card recognized ?\n(supported application\nand file structure)) then (No)
+    :Card rejected;<<#F5B7B1>>
+    stop
+  else (Yes)
+  endif
 
-if (Ticket priorities changed ?) then (Yes)
-  :Update the priorities\nin the last event;
-else (No)
-endif
+  if (Same card as the one read ?\n(multiplatform client)) then (No)
+    :Not the same card;<<#F5B7B1>>
+    stop
+  else (Yes)
+  endif
 
-:End of the secure session\n(Calypso card);
+  if (Slot available ?\nsame type, empty or expired\n(single-ticket card: other ticket not usable)) then (No)
+    :Card rejected\n(no space left);<<#F5B7B1>>
+    stop
+  else (Yes)
+  endif
 
-:Ticket loaded;<<#ABEBC6>>
+  :Write the ticket\n(Season Pass renewal: +30 days if not expired);
+
+  :Add the trips to the counter\n(Multi-trip ticket);
+
+  if (Ticket priorities changed ?) then (Yes)
+    :Update the priorities\nin the last event;
+  else (No)
+  endif
+
+  :End of the secure session\n(Calypso card);
+
+  :Ticket loaded;<<#ABEBC6>>
+}
 
 stop
 

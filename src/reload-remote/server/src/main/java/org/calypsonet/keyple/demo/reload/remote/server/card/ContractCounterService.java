@@ -80,6 +80,9 @@ public class ContractCounterService {
     } catch (EnvironmentExpiredException e) {
       // Rejection logged where it is detected
       statusCode = RemoteServiceStatus.ENVIRONMENT_EXPIRED.getCode();
+    } catch (EventWrongVersionException e) {
+      // Rejection logged where it is detected
+      statusCode = RemoteServiceStatus.EVENT_WRONG_VERSION.getCode();
     } catch (CardCommunicationException e) {
       statusCode = RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode();
       logger.warn(

@@ -380,7 +380,7 @@ with MockK when a procedure is tested end to end). They are run by the CI:
 | Component                  | Tests                                                                                               | Command                                         |
 |----------------------------|-----------------------------------------------------------------------------------------------------|-------------------------------------------------|
 | `src/common`               | Record codecs, data types, event structure, DF name check                                           | `./gradlew test` (also run by the server build) |
-| `src/reload-remote/server` | Personalization and contract loading rules                                                          | `./gradlew test`                                |
+| `src/reload-remote/server` | Contract analysis, personalization and contract loading rules                                       | `./gradlew test`                                |
 | `src/validation`           | Validation rules (anti-passback, versions, contracts, priorities) and Calypso validation procedure  | `./gradlew testDebugUnitTest`                   |
 | `src/inspection`           | Inspection rules (validity of the last validation), displayed data and Calypso inspection procedure | `./gradlew testDebugUnitTest`                   |
 

@@ -129,6 +129,8 @@ abstract class BaseCardActivity :
           showInvalidCard(card.description, getString(R.string.rejection_environment_wrong_version))
       RemoteServiceStatus.ENVIRONMENT_EXPIRED ->
           showInvalidCard(card.description, getString(R.string.rejection_environment_expired))
+      RemoteServiceStatus.EVENT_WRONG_VERSION ->
+          showInvalidCard(card.description, getString(R.string.rejection_event_wrong_version))
       RemoteServiceStatus.DIFFERENT_CARD ->
           showInvalidCard(card.description, getString(R.string.not_the_same_card))
       RemoteServiceStatus.CARD_FULL ->
