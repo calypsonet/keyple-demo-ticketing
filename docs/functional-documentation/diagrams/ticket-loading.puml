@@ -9,7 +9,7 @@ if (Server connected\nwith its SAM ?) then (No)
 else (Yes)
 endif
 
-:Card presentation;
+:Card presented;
 
 if (Card personalized\nand not expired ?) then (No)
   :Card refused;<<#red>>
@@ -34,9 +34,9 @@ if (Slot available ?\nsame type, empty or expired\n(single-ticket card: other ti
 else (Yes)
 endif
 
-:Write the ticket\n(season pass renewal: +30 days if not expired);
+:Write the ticket\n(Season Pass renewal: +30 days if not expired);
 
-:Add the trips to the counter\n(multi-trip ticket);
+:Add the trips to the counter\n(Multi-trip ticket);
 
 if (Ticket priorities changed ?) then (Yes)
   :Update the priorities\nin the last event;

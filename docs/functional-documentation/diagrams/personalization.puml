@@ -9,7 +9,7 @@ if (Server connected\nwith its SAM ?) then (No)
 else (Yes)
 endif
 
-:Card presentation;
+:Card presented;
 
 :Write the card environment\n(issuance date, end date =\n1st day of the month + 6 years);
 

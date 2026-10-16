@@ -3,7 +3,7 @@ title Validation of a Calypso card
 
 start
 
-:Card presentation;
+:Card presented;
 
 if (Card personalized\nand not expired ?) then (No)
   :Invalid card;<<#red>>
@@ -27,8 +27,8 @@ if (Validated less than\n1 minute ago ?) then (Yes)
     :Invalid card\n(already validated);<<#red>>
     stop
   else (No)
-    :Session recovery\n(no new debit);
-    :Validation done;<<#green>>
+    :Session recovery\n(no new deduction);
+    :Validation completed;<<#green>>
     stop
   endif
 else (No)
@@ -52,13 +52,13 @@ repeat
   else (No)
     if (Multi-trip ticket\nwithout trips left ?) then (Yes -> marked expired)
     else (No)
-      :Debit 1 trip\n(multi-trip ticket);
+      :Deduct 1 trip\n(Multi-trip ticket);
 
       :Write the validation event\n(date, time, location, ticket used);
 
       :End of the secure session;
 
-      :Validation done;<<#green>>
+      :Validation completed;<<#green>>
 
       stop
     endif

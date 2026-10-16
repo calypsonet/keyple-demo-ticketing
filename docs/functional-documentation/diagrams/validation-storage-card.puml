@@ -3,7 +3,7 @@ title Validation of a storage card
 
 start
 
-:Card presentation;
+:Card presented;
 
 if (MIFARE Classic ?) then (Yes)
   :Authentication\nof the sector;
@@ -45,7 +45,7 @@ if (Ticket expired ?) then (Yes)
 else (No)
 endif
 
-if (Season pass or\nmulti-trip ticket ?) then (No)
+if (Season Pass or\nMulti-trip ticket ?) then (No)
   :Ticket forbidden\nor expired;<<#yellow>>
   stop
 else (Yes)
@@ -57,11 +57,11 @@ if (Multi-trip ticket\nwithout trips left ?) then (Yes)
 else (No)
 endif
 
-:Write the ticket\n(1 trip debited for a multi-trip ticket);
+:Write the ticket\n(1 trip deducted for a Multi-trip ticket);
 
 :Write the validation event;
 
-:Validation done;<<#green>>
+:Validation completed;<<#green>>
 
 stop
 
