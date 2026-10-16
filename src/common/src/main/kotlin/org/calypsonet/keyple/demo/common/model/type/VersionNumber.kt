@@ -12,20 +12,21 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.common.model.type
 
-enum class VersionNumber constructor(val key: Int, val value: String) {
+/**
+ * Version number of a structure of the card (EnvVersionNumber, EventVersionNumber and
+ * ContractVersionNumber fields): see the data model in the README.
+ *
+ * @property code The value stored in the card.
+ * @property label The description of the version.
+ */
+enum class VersionNumber(val code: Int, val label: String) {
   UNDEFINED(0, "Forbidden (undefined)"),
   CURRENT_VERSION(1, "Current version"),
   RESERVED(255, "Forbidden (reserved)"),
   UNKNOWN(-1, "Unknown");
 
   companion object {
-    fun findEnumByKey(key: Int): VersionNumber {
-      for (versionNumber in values()) {
-        if (versionNumber.key == key) {
-          return versionNumber
-        }
-      }
-      return UNKNOWN
-    }
+    /** Returns the version number having the provided value, or [UNKNOWN] if there is none. */
+    @JvmStatic fun fromCode(code: Int): VersionNumber = entries.find { it.code == code } ?: UNKNOWN
   }
 }

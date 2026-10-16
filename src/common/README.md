@@ -2,27 +2,33 @@
 
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../LICENSE)
 
+[⬅️ Back to Main Project](../../README.md)
+
 The shared foundation for all Keyple Demo applications, providing standardized data structures, constants, and utilities
 for building interoperable ticketing applications.
 
 ## Overview
 
 This library defines the common elements used across the Keyple Demo ecosystem:
-- Data model structures (EnvironmentHolderStructure, EventStructure, ContractStructure)
-- Structure parser utilities
-- Priority codes and enumeration types
-- Date/time compact format types
-- Card application identifiers
+- `model`: data model structures of the card (EnvironmentHolderStructure, EventStructure, ContractStructure), and
+  `model/type`: types of their fields (priority codes, compact date and time, version number)
+- `codecs`: record codecs (decoding and encoding of the card records)
+- `constants`: organization of the card (application identifiers, files, blocks, key identifiers) and PKI test
+  certificates
+- `dto`: protocol of the remote services between the clients and the server (service identifiers, input and
+  output data, status codes)
+- `reference`: reference data of the network (locations)
 
 ## Used By
 
-- [Keyple Reload Demo](../reloading-remote)
+- [Keyple Reload Demo](../reload-remote)
 - [Keyple Validation Demo](../validation)
-- [Keyple Control Demo](../control)
+- [Keyple Inspection Demo](../inspection)
 
 ## Installation
 
-This library is automatically referenced by the various demos.
+This library is included in the builds of the applications using it (Gradle included build, `includeBuild` in their
+`settings.gradle.kts`): it is built with them and does not need to be installed.
 
 ## Data Structures
 
@@ -59,7 +65,7 @@ Records validation events and transaction history.
 
 ### Contract Structure
 
-Defines transportation titles and their properties.
+Defines the contracts (tickets) and their properties.
 
 | Field Name              | Bits | Description                          |        Type         |  Status   |
 |:------------------------|-----:|:-------------------------------------|:-------------------:|:---------:|
@@ -73,13 +79,17 @@ Defines transportation titles and their properties.
 | ContractAuthenticator   |   24 | Security authenticator               | Authenticator (Int) | Optional  | 
 | ContractPadding         |   96 | Padding (bits to 0)                  |       Binary        | Optional  | 
 
-### Counter Field
+### Counter Structure
 
-The `ContractStructure` includes a `counterValue` field for tracking usage:
+Counts the trips left of a multi-trip ticket.
 
-| Field Name   | Bits | Description     | Type |  Status  |
-|:-------------|-----:|:----------------|:----:|:---------|
-| counterValue |   24 | Number of trips | Int  | Optional | 
+| Field Name   | Bits | Description     | Type |  Status   |
+|:-------------|-----:|:----------------|:----:|:---------:|
+| CounterValue |   24 | Number of trips | Int  | Mandatory |
+
+The counter of a contract is stored in a separate file on the Calypso cards (one counter per contract record), and in
+the contract record on the storage cards. `ContractStructure` carries it in its `counterValue` field, null for a
+contract without counter (season pass).
 
 ## Data Types
 
@@ -93,16 +103,43 @@ The `ContractStructure` includes a `counterValue` field for tracking usage:
 
 ### Priority Codes
 
-Contract types and status indicators used throughout the system:
+Contract types and status indicators of the event. The code 3 (stored value) is defined by the data model but not
+supported by the demo: it is read as `UNKNOWN`. The use of the codes by the validation is described in the
+[Functional Documentation](../../docs/functional-documentation/index.adoc#ticket-priority).
 
-| Code | Name         | Description                    | Usage                           |
-|-----:|:-------------|:-------------------------------|:--------------------------------|
-|    0 | FORBIDDEN    | Prohibited usage               | Clean records only              |
-|    1 | SEASON_PASS  | Unlimited travel period        | Highest priority validation     |
-|    2 | MULTI_TRIP   | Count-based ticket             | Decremented per journey         |
-|    3 | STORED_VALUE | Monetary value storage         | Decremented by fare amount      |
-| 4-30 | RFU          | Reserved for future use        | -                               |
-|   31 | EXPIRED      | Contract has expired           | Automatically set by system     |
+| Code | Name        | Description             |
+|-----:|:------------|:------------------------|
+|    0 | FORBIDDEN   | Prohibited usage        |
+|    1 | SEASON_PASS | Unlimited travel period |
+|    2 | MULTI_TRIP  | Count-based ticket      |
+|    3 | -           | Stored value            |
+| 4-30 | RFU         | Reserved for future use |
+|   31 | EXPIRED     | Contract has expired    |
+
+## Record Codecs
+
+The records of the card are decoded and encoded by codecs implementing `RecordCodec<T>` (`decode` and `encode`
+methods), one per structure and card technology:
+
+| Structure                    | Calypso cards (29-byte records)  | Storage cards (16-byte records)     |
+|------------------------------|----------------------------------|-------------------------------------|
+| `EnvironmentHolderStructure` | `CalypsoEnvironmentHolderCodec`  | `StorageCardEnvironmentHolderCodec` |
+| `EventStructure`             | `CalypsoEventCodec`              | `StorageCardEventCodec`             |
+| `ContractStructure`          | `CalypsoContractCodec`           | `StorageCardContractCodec`          |
+
+The counter of a contract is stored in a separate file on the Calypso cards, and in the contract record on the storage
+cards.
+
+## Card Constants
+
+| Object                | Content                                                                          |
+|-----------------------|----------------------------------------------------------------------------------|
+| `CalypsoAids`         | AIDs of the Calypso applications, and the DF name check (`matches`)              |
+| `CalypsoFiles`        | SFIs and record sizes of the Calypso files, supported file structures            |
+| `DefaultKifs`         | KIFs of the SAM keys used by the secure sessions                                 |
+| `StorageCardBlocks`   | Layout of the storage cards with 4-byte blocks (MIFARE Ultralight, ST25 SRT512)  |
+| `MifareClassicBlocks` | Layout of the MIFARE Classic 1K cards (sector 1)                                 |
+| `PkiTestCertificates` | Test certificates of the PKI                                                     |
 
 ## Supported Card Applications
 
@@ -115,41 +152,6 @@ The demos work with cards from the [CNA Test Kit](https://calypsonet.org/technic
 | 315449432E49434133   | Calypso Light                  | Standard Calypso       |
 | A0000004040125090101 | Navigo IDF                     | Paris transport system |
 
-## Common Procedures
-
-### Card Personalization Process
-
-Prepares cards for use by initializing data structures:
-
-1. **Application Selection** using configured AID
-2. **Environment Setup**:
-    - Set `EnvVersionNumber` = 1 (current version)
-    - Assign unique `EnvApplicationNumber`
-    - Set issuing and expiration dates
-    - Clear holder information
-3. **File Initialization**:
-    - Clear event log (set to zeros)
-    - Clear all contract records
-    - Reset counter files
-4. **Session Management**: Close secure session if applicable
-
-### Contract Loading Process
-
-Loads new transportation titles or extends existing contracts:
-
-1. **Environment Validation**:
-    - Verify version compatibility
-    - Check card expiration status
-2. **Contract Analysis**:
-    - Identify available contract slots
-    - Validate existing contract states
-    - Determine priority assignments
-3. **Contract Writing**:
-    - Set contract metadata (type, dates, SAM info)
-    - Update associated counters if applicable
-    - Assign priority levels
-4. **Event Logging**: Update priority information in event log
-
 ## Usage Examples
 
 ### Environment Structure Creation
@@ -159,7 +161,7 @@ val env = EnvironmentHolderStructure(
     envVersionNumber = VersionNumber.CURRENT_VERSION,
     envApplicationNumber = generateUniqueNumber(),
     envIssuingDate = DateCompact(LocalDate.now()),
-    envEndDate = DateCompact(LocalDate.now().plusYears(6)),
+    envEndDate = DateCompact(LocalDate.now().withDayOfMonth(1).plusYears(6)),
     holderCompany = null,
     holderIdNumber = null
 )
@@ -174,12 +176,12 @@ val event = EventStructure(
     eventTimeStamp = TimeCompact(LocalDateTime.now()),
     eventLocation = validatorLocationId,
     eventContractUsed = selectedContractIndex,
-    contractPriority1 = PriorityCode.FORBIDDEN,
-    contractPriority2 = PriorityCode.FORBIDDEN,
-    contractPriority3 = PriorityCode.FORBIDDEN,
-    contractPriority4 = PriorityCode.FORBIDDEN
+    contractPriorities = List(EventStructure.CONTRACT_COUNT) { PriorityCode.FORBIDDEN }
 )
 ```
+
+The structures are immutable: a modified structure is a copy, e.g.
+`event.withContractPriority(1, PriorityCode.EXPIRED)` or `contract.withCounterValue(10)`.
 
 ### Working with Compact Date/Time
 
@@ -189,46 +191,30 @@ val dateCompact = DateCompact(LocalDate.now())
 val dateValue: Int = dateCompact.value
 
 // Convert back to LocalDate
-val localDate: LocalDate = dateCompact.getDate()
+val localDate: LocalDate = dateCompact.date
 
 // Create compact time from LocalDateTime
 val timeCompact = TimeCompact(LocalDateTime.now())
 val timeValue: Int = timeCompact.value
 ```
 
-## Structure Parsers
+## Common Procedures
 
-### EnvironmentHolderStructureParser
-
-- Parses binary data to `EnvironmentHolderStructure`
-- Generates binary data from structure
-- Implements `Parser<EnvironmentHolderStructure>` interface
-
-### EventStructureParser
-
-- Parses binary data to `EventStructure`
-- Generates binary data from structure
-- Implements `Parser<EventStructure>` interface
-
-### ContractStructureParser
-
-- Parses binary data to `ContractStructure`
-- Generates binary data from structure
-- Implements `Parser<ContractStructure>` interface
+The procedures using these structures, the personalization of the cards and the loading of the contracts, are executed
+by the server of the reload demo, as described in its
+[README](../reload-remote/README.md#card-personalization-and-contract-loading-procedures).
 
 ## Version Compatibility
 
-| Library Version | Demo Applications | Keyple Middleware | Notes                    |
-|:----------------|:------------------|:------------------|:-------------------------|
-| 1.0.x           | 1.0.x             | 2.x               | Initial release          |
-| 1.1.x           | 1.1.x             | 2.x               | Enhanced Storage Card    |
-| 2.0.x           | 2.0.x             | 3.x               | Breaking changes         |
+The library is not published on its own: it is versioned and released with the demo applications (`project` version
+of the `libs.versions.toml` version catalog, replaced by the release tag), and uses the Keyple components of the same
+Keyple Java BOM (`keypleJavaBom` version of the catalog). It targets Java 17, as the applications using it.
 
 ## Contributing
 
 When contributing to this library, ensure:
 - All data structures maintain backward compatibility
-- Version numbers follow semantic versioning
+- The library is versioned with the demo applications (see [Version Compatibility](#version-compatibility))
 - Update all demo applications when making breaking changes
 - Include comprehensive unit tests for new utilities
 

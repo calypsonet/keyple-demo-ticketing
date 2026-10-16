@@ -1,0 +1,294 @@
+<!-- =========================================================================
+  Calypso Networks Association — docinfo (Asciidoctor HTML output)
+  ---------------------------------------------------------------------------
+  Maintenance notes:
+  * All brand colors and layout dimensions are defined once as CSS custom
+    properties in :root below. Edit them there only — never hardcode a hex
+    value further down. Keep the palette in sync with the `brand` key of
+    pdf-theme.yml (PDF output); ideally both files are generated from a
+    shared design-token file by the CI toolchain.
+  * Fonts are self-hosted so the rendered HTML looks identical offline and
+    no reader IP is sent to a third-party CDN. Ship the .woff2 files listed
+    in the @font-face section in a `fonts/` directory next to the published
+    HTML (provided by the toolchain repository), or inline them as base64
+    at build time for a fully self-contained document. This file uses the
+    inlined-base64 variant (the data: URIs in the @font-face rules below).
+  * This docinfo is injected AFTER Asciidoctor's default stylesheet, so
+    rules of equal specificity win without `!important`. It is kept only
+    where a default rule uses a more specific selector; each occurrence is
+    annotated. When upgrading Asciidoctor, re-check those spots against the
+    new default stylesheet.
+  * The header logo is product-specific: it is injected through the
+    \{logo-product-datauri} attribute, defined in the per-product attributes file
+    that the document header includes. This docinfo stays product-agnostic — a
+    new product logo changes only that attributes file, never this one. The data
+    URI is generated (SVGO-optimized) from the product's SVG, ideally by the CI
+    toolchain.
+========================================================================== -->
+
+<link rel="icon" type="image/png" href="{favicon-datauri}">
+
+<style>
+/* --- Design tokens ------------------------------------------------------- */
+/* Single source of truth for the HTML output.
+   Mirror of the `brand` palette in pdf-theme.yml. */
+:root {
+    --cna-primary:   #039EFD;   /* Calypso blue    */
+    --cna-secondary: #EF8B3A;   /* Calypso orange  */
+    --cna-muted:     #9D9D9D;   /* Calypso grey    */
+    --cna-ink:       #333333;   /* body text       */
+    --cna-code-bg:   #F7F7F8;   /* code background */
+    --cna-example:   #EBEBEB;   /* example block background */
+    --cna-black:     #000000;
+    --cna-white:     #FFFFFF;
+
+    --cna-font-body: 'Montserrat', sans-serif;
+    --cna-font-code: 'JetBrains Mono', monospace;
+
+    --cna-toc-width: 25em;    /* fixed sidebar TOC width               */
+    --cna-toc-gap: 1em;       /* safety gap between TOC and body text  */
+}
+
+/* --- Self-hosted fonts --------------------------------------------------- */
+/* Weights consistent with the PDF theme. */
+/* Montserrat-Regular.woff2 */
+@font-face {
+    font-family: 'Montserrat';
+    src: url('{font-montserrat-regular}') format('woff2');
+    font-weight: 400; font-style: normal; font-display: swap;
+}
+/* Montserrat-Italic.woff2 */
+@font-face {
+    font-family: 'Montserrat';
+    src: url('{font-montserrat-italic}') format('woff2');
+    font-weight: 400; font-style: italic; font-display: swap;
+}
+/* Montserrat-BoldItalic.woff2 */
+@font-face {
+    font-family: 'Montserrat';
+    src: url('{font-montserrat-bolditalic}') format('woff2');
+    font-weight: 600; font-style: normal; font-display: swap;
+}
+/* Montserrat-Bold.woff2 */
+@font-face {
+    font-family: 'Montserrat';
+    src: url('{font-montserrat-bold}') format('woff2');
+    font-weight: 700; font-style: normal; font-display: swap;
+}
+/* JetBrainsMono-Regular.woff2 */
+@font-face {
+    font-family: 'JetBrains Mono';
+    src: url('{font-jetbrainsmono-regular}') format('woff2');
+    font-weight: 400; font-style: normal; font-display: swap;
+}
+/* JetBrainsMono-Italic.woff2 */
+@font-face {
+    font-family: 'JetBrains Mono';
+    src: url('{font-jetbrainsmono-italic}') format('woff2');
+    font-weight: 400; font-style: italic; font-display: swap;
+}
+/* JetBrainsMono-BoldItalic.woff2 */
+@font-face {
+    font-family: 'JetBrains Mono';
+    src: url('{font-jetbrainsmono-bolditalic}') format('woff2');
+    font-weight: 700; font-style: italic; font-display: swap;
+}
+/* JetBrainsMono-Bold.woff2 */
+@font-face {
+    font-family: 'JetBrains Mono';
+    src: url('{font-jetbrainsmono-bold}') format('woff2');
+    font-weight: 700; font-style: normal; font-display: swap;
+}
+
+/* --- Typography ---------------------------------------------------------- */
+/* Montserrat on every textual element. Equal-specificity rules override the
+   default stylesheet without !important because this docinfo loads after it.
+   !important is only needed against the default's more specific selectors
+   (compound selector / #id), annotated below. */
+body, h1, h2, h3, h4, h5, h6 {
+    font-family: var(--cna-font-body);
+}
+#toctitle,
+#toc ul {
+    font-family: var(--cna-font-body) !important;
+}
+
+/* --- Document header ----------------------------------------------------- */
+/* Centred title with the product logo above it, pulled from the
+   \{logo-product-datauri} attribute (see #header h1::before) — nothing embedded here. */
+#header h1, #header .details {
+    display: block;
+    text-align: center;
+}
+#header h1::before {
+    content: "";
+    display: block;
+    height: 1.3em;
+    background-image: url("{logo-product-datauri}");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin-bottom: 1em;
+}
+/* Extra spacing below the author / revision details line. */
+#header .details {
+    padding-bottom: 4em;
+}
+
+/* --- Colophon / license notice ------------------------------------------- */
+/* Front-matter colophon page: the copyright line (.license-header) and the
+   license body (.license-content, small grey italic). Mirror of the
+   `license-header` / `license-content` roles in pdf-theme.yml -- update both
+   files together. The roles are applied per block in the AsciiDoc source
+   because the [license] open block does not cascade role styling to its
+   children in the PDF output. */
+.license-header {
+    color: var(--cna-muted);
+}
+.license-content {
+    color: var(--cna-muted);
+    font-style: italic;
+}
+/* Colophon "Link and Contact" icons: fixed height in the HTML output only.
+   (The PDF sizes them via the `pdfwidth` attribute on the image macro; this
+   role is ignored there.) Applied through the `colophon-icon` role set on the
+   {icon-web-image} / {icon-mail-image} inline images. Horizontal alignment is
+   handled by the AsciiDoc column spec in _colophon.adoc, not here. */
+.image.colophon-icon img {
+    height: 4em;
+}
+
+/* --- Heading & TOC color scale ------------------------------------------- */
+/* CNA brand palette. Each level shares its color with the matching TOC entry:
+   h1/h5 = brand blue, h2 = black, h3 = orange, h4 = grey italic,
+   deeper section levels = blue italic.
+   Mirror of the heading-h* / toc-h* rules in pdf-theme.yml -- update both
+   files together when changing the scale.
+   !important required: the default stylesheet colors headings and TOC links
+   through more specific selectors (h1 > a, #toc a, ...). */
+h1,
+h1 > a {
+    color: var(--cna-primary) !important;
+}
+h2,
+h2 > a,
+.sectlevel1 > li > a {
+    color: var(--cna-black) !important;
+}
+h3,
+h3 > a,
+.sectlevel2 > li > a {
+    color: var(--cna-secondary) !important;
+}
+h4,
+h4 > a,
+.sectlevel3 > li > a {
+    color: var(--cna-muted) !important;
+    font-style: italic;
+}
+h5,
+h5 > a {
+    color: var(--cna-primary) !important;
+    font-weight: bold;
+    font-style: italic;
+}
+.sectlevel4 > li > a {
+    color: var(--cna-primary) !important;
+    font-style: italic;
+}
+
+/* --- Block captions ------------------------------------------------------ */
+/* Center the title of every captioned block (figure / table / listing ...).
+   PDF counterpart: the `caption: align: center` key in pdf-theme.yml -- update both. */
+.imageblock > .title,
+table.tableblock > caption.title,
+.listingblock > .title,
+.literalblock > .title,
+.exampleblock > .title {
+    font-family: var(--cna-font-body);
+    color: var(--cna-muted);
+    text-align: center;
+}
+
+/* --- Code & literal ------------------------------------------------------ */
+/* Brand monospace font for all pre/code. Font sizes are intentionally left to
+   Asciidoctor's defaults: it sizes inline code and listing / literal blocks with
+   more-specific selectors that would override any font-size set here anyway. */
+pre,
+code {
+    font-family: var(--cna-font-code);
+}
+/* Inline code: pure-black ink (the default is 90% black) and the brand background. */
+code {
+    color: var(--cna-black);
+    background: var(--cna-code-bg) !important; /* !important beats the default's p.tableblock>code:only-child{background:none}, which strips the background from code-only table cells */
+}
+
+/* --- Links --------------------------------------------------------------- */
+a {
+    color: var(--cna-primary);
+}
+
+/* --- Tables -------------------------------------------------------------- */
+/* Smaller base font for the dense API tables. */
+table {
+    font-size: 0.92em;
+}
+/* An AsciiDoc-style cell (a|) renders its content through the block
+   converter, so its <p>/<ul>/<ol> carry Asciidoctor's absolute font-size
+   (1rem) and ignore the 0.92em set on tables above. Realign them on the
+   cell's own size so that a| and | cells match. */
+.tableblock .content p,
+.tableblock .content ul,
+.tableblock .content ol,
+.tableblock .content li {
+    font-size: inherit;
+}
+/* Header row: brand-blue background with white text (mirror of table.head
+   in the PDF theme). !important required against the default's
+   `table thead th` selector. */
+table.tableblock th,
+table.tableblock th p {
+    background-color: var(--cna-primary) !important;
+    color: var(--cna-white) !important;
+}
+
+/* --- Example blocks ------------------------------------------------------ */
+.exampleblock>.content {
+    background-color: var(--cna-example);
+}
+
+/* --- Images -------------------------------------------------------------- */
+/* Center every block image (diagrams, figures). PDF counterpart: the
+   `image: align: center` key in pdf-theme.yml -- update both. */
+.imageblock > .content {
+    text-align: center;
+}
+
+/* --- Footer -------------------------------------------------------------- */
+/* Brand-blue band.
+   Note: white on --cna-primary sits around a 3:1 contrast ratio, below the
+   WCAG AA threshold (4.5:1) for small text. Revisit if accessibility of
+   published documents becomes a requirement. */
+#footer {
+    background-color: var(--cna-primary);
+    color: var(--cna-white);
+}
+
+/* --- Wide screens (>= 768px) --------------------------------------------- */
+/* Pin the TOC as a fixed left sidebar, offset the body accordingly, and let
+   header / content / footer span the full width. The sidebar width is defined
+   once (--cna-toc-width), so the TOC and the body padding cannot drift apart.
+   !important required against the default's #id rules and media queries. */
+@media screen and (min-width: 768px) {
+    #toc.toc2 {
+        width: var(--cna-toc-width) !important;
+    }
+    body.toc2 {
+        padding-left: calc(var(--cna-toc-width) + var(--cna-toc-gap)) !important;
+    }
+    #header, #content, #footnotes, #footer {
+        max-width: 100% !important;
+    }
+}
+</style>

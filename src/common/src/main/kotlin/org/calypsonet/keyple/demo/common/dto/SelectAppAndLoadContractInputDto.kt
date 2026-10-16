@@ -17,6 +17,6 @@ import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 data class SelectAppAndLoadContractInputDto(
     var applicationSerialNumber: String,
     var contractTariff: PriorityCode,
-    var ticketToLoad: Int,
+    var tripsToLoad: Int,
     var pluginType: String
 )

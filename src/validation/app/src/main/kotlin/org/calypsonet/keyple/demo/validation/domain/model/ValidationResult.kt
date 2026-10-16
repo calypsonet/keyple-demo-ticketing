@@ -14,14 +14,51 @@ package org.calypsonet.keyple.demo.validation.domain.model
 
 import java.time.LocalDate
 import java.time.LocalDateTime
+import org.calypsonet.keyple.demo.common.reference.Location
 
-data class ValidationResult(
-    val status: Status,
-    val cardType: String,
-    val nbTicketsLeft: Int? = null,
-    val contract: String?,
-    val validationData: ValidationData?,
-    val eventDateTime: LocalDateTime? = null,
-    val passValidityEndDate: LocalDate? = null,
-    val errorMessage: String? = null
-)
+/** Result of the validation procedure, translated into texts by the UI. */
+sealed interface ValidationResult {
+
+  /** The description of the presented card, null if it is unknown. */
+  val cardDescription: CardDescription?
+
+  /**
+   * The card is validated.
+   *
+   * @property dateTime The date and time of the validation.
+   * @property location The location of the validation (location of the terminal).
+   * @property remainingTrips The trips left of the multi-trip contract used, null otherwise.
+   * @property seasonPassValidityEndDate The validity end date of the season pass used, null
+   *   otherwise.
+   */
+  data class Accepted(
+      override val cardDescription: CardDescription,
+      val dateTime: LocalDateTime,
+      val location: Location,
+      val remainingTrips: Int? = null,
+      val seasonPassValidityEndDate: LocalDate? = null
+  ) : ValidationResult
+
+  /**
+   * The presented card cannot be selected (unknown or unsupported card).
+   *
+   * @property fileStructure The file structure of the Calypso application, in hexadecimal, when it
+   *   is not supported.
+   */
+  data class NotRecognized(val error: SelectionError, val fileStructure: String? = null) :
+      ValidationResult {
+    override val cardDescription: CardDescription?
+      get() = null
+  }
+
+  /** The card is rejected for the provided reason. */
+  data class Rejected(override val cardDescription: CardDescription, val reason: RejectionReason) :
+      ValidationResult
+
+  /** The card has been removed during the transaction. */
+  data class CardRemoved(override val cardDescription: CardDescription) : ValidationResult
+
+  /** A technical error prevented the validation. */
+  data class Failed(override val cardDescription: CardDescription?, val error: TechnicalError) :
+      ValidationResult
+}

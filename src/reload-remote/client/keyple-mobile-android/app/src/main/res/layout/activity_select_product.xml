@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/block_space"
+    android:clipToPadding="false">
+
+    <include
+        layout="@layout/toolbar"
+        android:id="@+id/appBarLayout" />
+
+    <TextView
+        android:id="@+id/chooseProductTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/choose_product"
+        style="@style/smallRegularDarkBlue"
+        android:layout_marginHorizontal="@dimen/home_horizontal_margin"
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout"
+        android:layout_marginTop="@dimen/home_choose_margin_top"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/multiTrip1Btn"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/product_button_height"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="@drawable/btn_blue_light"
+        android:elevation="@dimen/elevation"
+        android:layout_marginStart="@dimen/content_title_padding"
+        android:layout_marginEnd="@dimen/content_title_padding"
+        app:layout_constraintTop_toBottomOf="@id/chooseProductTv"
+        app:layout_constraintBottom_toTopOf="@id/multiTrip2Btn"
+        app:layout_constraintVertical_chainStyle="spread"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/multiTrip1Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/smallBoldDarkBlue"
+            android:text="@string/product_price"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/multiTrip1Price"
+            app:layout_constraintVertical_chainStyle="packed"/>
+
+        <TextView
+            android:id="@+id/multiTrip1Price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/smallRegularDarkBlue"
+            android:text="@string/product_price"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/multiTrip1Label"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/multiTrip2Btn"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/product_button_height"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="@drawable/btn_blue_light"
+        android:elevation="@dimen/elevation"
+        android:layout_marginStart="@dimen/content_title_padding"
+        android:layout_marginEnd="@dimen/content_title_padding"
+        app:layout_constraintTop_toBottomOf="@id/multiTrip1Btn"
+        app:layout_constraintBottom_toTopOf="@id/multiTrip3Btn"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/multiTrip2Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/smallBoldDarkBlue"
+            android:text="@string/product_price"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/multiTrip2Price"
+            app:layout_constraintVertical_chainStyle="packed"/>
+
+        <TextView
+            android:id="@+id/multiTrip2Price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/smallRegularDarkBlue"
+            android:text="@string/product_price"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/multiTrip2Label"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/multiTrip3Btn"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/product_button_height"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="@drawable/btn_blue_light"
+        android:elevation="@dimen/elevation"
+        android:layout_marginStart="@dimen/content_title_padding"
+        android:layout_marginEnd="@dimen/content_title_padding"
+        app:layout_constraintTop_toBottomOf="@id/multiTrip2Btn"
+        app:layout_constraintBottom_toTopOf="@id/multiTrip4Btn"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/multiTrip3Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/smallBoldDarkBlue"
+            android:text="@string/product_price"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/multiTrip3Price"
+            app:layout_constraintVertical_chainStyle="packed"/>
+
+        <TextView
+            android:id="@+id/multiTrip3Price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/smallRegularDarkBlue"
+            android:text="@string/product_price"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/multiTrip3Label"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/multiTrip4Btn"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/product_button_height"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="@drawable/btn_blue_light"
+        android:elevation="@dimen/elevation"
+        android:layout_marginStart="@dimen/content_title_padding"
+        android:layout_marginEnd="@dimen/content_title_padding"
+        app:layout_constraintTop_toBottomOf="@id/multiTrip3Btn"
+        app:layout_constraintBottom_toTopOf="@+id/seasonPassBtn"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/multiTrip4Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/smallBoldDarkBlue"
+            android:text="@string/product_price"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/multiTrip4Price"
+            app:layout_constraintVertical_chainStyle="packed"/>
+
+        <TextView
+            android:id="@+id/multiTrip4Price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/smallRegularDarkBlue"
+            android:text="@string/product_price"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/multiTrip4Label"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/seasonPassBtn"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/product_button_height"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="@drawable/btn_blue_light"
+        android:elevation="@dimen/elevation"
+        android:layout_marginStart="@dimen/content_title_padding"
+        android:layout_marginEnd="@dimen/content_title_padding"
+        app:layout_constraintTop_toBottomOf="@id/multiTrip4Btn"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/seasonPassLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/smallBoldDarkBlue"
+            android:text="@string/season_pass_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/seasonPassPrice"
+            app:layout_constraintVertical_chainStyle="packed"/>
+
+        <TextView
+            android:id="@+id/seasonPassPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/smallRegularDarkBlue"
+            android:text="@string/product_price"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/seasonPassLabel"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

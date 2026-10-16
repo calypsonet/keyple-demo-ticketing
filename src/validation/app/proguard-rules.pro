@@ -8,15 +8,6 @@
     public boolean isDebugEnabled() return false;
 }
 
-# Keep demo app classes
--keep class org.calypsonet.keyple.demo.common.model.Location { *; }
-
-# Keep Keyple library classes
--keep class org.calypsonet.keyple.plugin.coppernic.ParagonReader { *; }
-
-# Keep Coppernic SDK classes
--keep public class fr.coppernic.sdk.** { *; }
-
 # Keep Bluebird NFC library classes
 -keep class com.bluebird.extnfc.** { *; }
 -keep interface com.bluebird.extnfc.** { *; }
@@ -45,7 +36,7 @@
 -dontwarn com.bluebird.payment.sam.SamInterface
 -dontwarn org.eclipse.keyple.core.plugin.storagecard.internal.KeyStorageType
 
-# Keep Parkeon SDK classes used by ArriveUiManager
+# Keep Parkeon SDK classes used by ArriveFeedbackDevice
 -keep class com.parkeon.app.ui.UiManager { *; }
 -keep interface com.parkeon.system.LedInterface { *; }
 -keep interface com.parkeon.sound.SoundManager { *; }

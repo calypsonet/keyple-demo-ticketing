@@ -12,33 +12,30 @@ for validation.
 
 ## Overview
 
-This Android application simulates validation terminals found at transportation network entry points (metro gates, bus boarding, etc.). It validates contracts loaded by the [Reload Demo](../reloading-remote/) and creates validation events that can be later verified by the [Control Demo](../control/).
+This Android application simulates validation terminals found at transportation network entry points (metro gates, bus
+boarding, etc.). It validates contracts loaded by the [Reload Demo](../reload-remote/) and creates validation events
+that can be later verified by the [Inspection Demo](../inspection/).
 
-**Role in Ecosystem**: Second step in the ticketing workflow - validates loaded contracts and grants/denies access to transportation networks.
-
-**Validation Flow**: Season Pass → Multi-trip Ticket → Stored Value (in order of priority)
+**Role in Ecosystem**: Second step in the ticketing workflow - validates loaded contracts and grants/denies access to
+transportation networks.
 
 ## Prerequisites
 
 ### Hardware Requirements
 - Android device with Android 8.0+ (API level 26+)
 - NFC capability for contactless card reading
-- **SAM (Security Access Module)** for Calypso card operations
+- **SAM (Secure Access Module)** for the Calypso cards, matching the keys of the cards (test SAM for the demo cards)
 - Compatible terminal hardware (see [tested terminals](#tested-terminals))
 
-### Software Requirements
-- Cards personalized using the [Reload Demo](../reloading-remote/)
-- Proper SAM configuration matching card security keys
-- Network connectivity (optional, for centralized logging)
-
 ### Card Requirements
-- Calypso cards with valid contracts loaded
-- Storage cards with compatible contract structures
+- Cards personalized and loaded using the [Reload Demo](../reload-remote/)
+- Calypso cards, or storage cards (MIFARE Ultralight, ST25 SRT512, MIFARE Classic) with the storage card
+  libraries (see [Proprietary Plugins](#proprietary-plugins))
 - Supported AIDs (see [Common Library](../common/README.md#supported-card-applications))
 
 ## Installation
 
-### Download APK
+### Download
 1. Visit [Releases page](https://github.com/calypsonet/keyple-demo-ticketing/releases)
 2. Download latest `kdt-validation-app-X.Y.Z-debug.apk`
 3. Enable "Install from unknown sources" in Android settings
@@ -53,32 +50,18 @@ cd keyple-demo-ticketing/src/validation
 
 ## Configuration
 
-### Device Selection
+### Terminal Selection
 1. Launch application
-2. Select device type from **Device Selection** screen:
-  - **Famoco FX205**: Enterprise terminal with dual readers
-  - **Coppernic C-One 2**: Rugged Android terminal
-  - **Standard NFC**: Consumer Android device
-  - Proprietary terminals (grayed out by default)
+2. Select the terminal type from **Terminal Selection** screen:
+  - **Famoco**: terminal with a SAM reader
+  - **Arrive**, **Bluebird**: proprietary plugins (grayed out by default, see
+    [Proprietary Plugins](#proprietary-plugins))
 
-### Settings Configuration
-1. Open **Settings** from main menu
-2. Configure validation parameters:
-
-**Location Settings**:
-- **Validation Location**: Unique identifier for this terminal
-- **Location Name**: Human-readable location description
-- Used for validation event logging and control verification
-
-**Operational Settings**:
-- **Battery Powered**: Enable for portable terminals (shows Home screen)
-- **Validation Amount**: Cost for stored value contracts (default: 1 unit)
-- **Auto-validation**: Immediate validation on card detection
-
-**Security Settings**:
-- **SAM Authentication**: Require SAM for all operations (recommended)
-- **Event Logging**: Enable transaction history storage
-- **Debug Mode**: Detailed logging for troubleshooting
+### Validation Settings
+The **Settings** screen, displayed after the terminal selection, configures the validation:
+- **Battery powered mode**: for the portable terminals, which display the Home screen before each validation
+- **Location**: location of the terminal, written in the validation event and checked by the inspection
+- **Time and date**: shortcut to the date and time settings of Android
 
 ## Usage
 
@@ -86,94 +69,45 @@ cd keyple-demo-ticketing/src/validation
 
 #### Battery-Powered Mode (Portable Terminals)
 ```
-Device Selection → Settings → Home → Reader Activity → Validation Result
+Terminal Selection → Settings → Home → Card Reader → Validation Result
 ```
 
 #### Fixed Terminal Mode
 ```
-Device Selection → Settings → Reader Activity → Validation Result
+Terminal Selection → Settings → Card Reader → Validation Result
 ```
 
 ### Detailed Screen Guide
 
-**Device Selection (`DeviceSelectionActivity`)**
+**Terminal Selection (`TerminalSelectionActivity`)**
 - Choose appropriate hardware plugin
 - Proprietary plugins require additional setup (see [Proprietary Plugins](#proprietary-plugins))
 
 **Settings (`SettingsActivity`)**
-- Configure location identifier and operational parameters
-- Set battery mode and validation amounts
-- Access diagnostic and debug options
+- Battery powered mode, location of the terminal, access to the date and time settings
 
 **Home (`HomeActivity`)** _(Battery-powered mode only)_
-- Displays current terminal status
-- Quick access to settings and diagnostics
-- Manual trigger for card detection phase
+- Start of the validation
 
-**Reader Activity (`ReaderActivity`)**
-- Initializes selected Keyple plugin and SAM integration
-- Displays "Present Card" message to user
-- Shows real-time status during card processing
-- Handles card detection and validation procedure
+**Card Reader (`CardReaderActivity`)**
+- Waits for a card ("Please present your contactless card for validation")
+- Selects the card and runs the validation procedure supporting it
 
-**Validation Results (`CardSummaryActivity`)**
+**Validation Result**
 
-The `CardSummaryActivity` displays both success and failure results:
+The validation result overlay of the reader screen (`CardReaderActivity`) displays both success and failure results
+(`ValidationResult`):
 
-**Success Screen** (Status.SUCCESS):
-- **Location**: Where validation occurred
-- **Date/Time**: When validation was processed
-- **Contract Details**:
-  - Season Pass: Shows validity end date
-  - Multi-trip: Shows remaining ticket count
-  - Stored Value: Shows remaining balance
-- **Visual Feedback**: Green background with success animation
-
-**Failure Screens**:
-- **Invalid Card** (Status.INVALID_CARD): Orange background with error details
-- **Empty Card** (Status.EMPTY_CARD): Red background showing no tickets available
-- **Other Errors**: Red background with specific error message
-- **Visual Feedback**: Error animation with sound/haptic feedback
-
-### Validation Scenarios
-
-#### Successful Validations
-
-**Season Pass Validation**:
-- Card detected with valid Season Pass
-- Contract validity date checked
-- Access granted immediately
-- No counter decrementation
-
-**Multi-trip Validation**:
-- Card detected with remaining trips
-- Trip counter decremented by 1
-- Access granted
-- Remaining count displayed
-
-**Stored Value Validation**:
-- Card detected with sufficient balance
-- Balance decremented by validation amount
-- Access granted
-- Remaining balance displayed
-
-#### Failed Validations
-
-**Insufficient Funds/Trips**:
-- Multi-trip counter = 0
-- Stored value < validation amount
-- Access denied with balance information
-
-**Expired Contracts**:
-- Season Pass validity date passed
-- Contract marked as expired
-- Access denied with expiration information
-
-**Invalid Cards**:
-- Unsupported AID or card type
-- Corrupted data structures
-- Hardware communication errors
-- Access denied with error details
+The content and the messages of each result are described in the
+[Functional Documentation](../../docs/functional-documentation/index.adoc#validation-results). The overlay shows:
+- **Accepted** (`ValidationResult.Accepted`): green background with the success animation
+- **Invalid card** (`ValidationResult.Rejected`, card data rejected: environment, versions, already validated; or
+  `ValidationResult.NotRecognized`): orange background with the error animation
+- **No ticket** (`ValidationResult.Rejected`, no contract to use: no valid contract, expired contract, no trips left):
+  red background with the error animation
+- **Other errors** (`ValidationResult.CardRemoved`, `ValidationResult.Failed`): red background with the error
+  animation
+- The sounds and LEDs of the terminal signal the success or the failure
 
 ## Technical Architecture
 
@@ -181,25 +115,16 @@ The `CardSummaryActivity` displays both success and failure results:
 
 #### Calypso Cards
 **Security Model**:
-- Mandatory SAM authentication for all operations
-- Secure session management with cryptographic verification
-- Full transaction traceability and audit logging
+- Secure session with the `DEBIT` access level, authenticated by the SAM
 - Support for multiple contracts (1-4 depending on card type)
 
-**Processing Flow**:
-1. Card detection and AID selection
-2. Environment record validation
-3. Event analysis and contract priority evaluation
-4. Best contract search with cryptographic verification
-5. Counter updates within secure session
-6. Event creation and session closure
+**Processing Flow**: see the [Best Contract Search Algorithm](#best-contract-search-algorithm)
 
 #### Storage Cards
 **Simplified Model**:
-- Basic read/write operations without SAM requirements
+- Reading and writing without cryptographic operation
 - Single contract per card
 - Streamlined validation procedure
-- **Note**: Production implementations should add appropriate security measures
 
 **Processing Flow**:
 1. Card detection and data reading
@@ -207,58 +132,60 @@ The `CardSummaryActivity` displays both success and failure results:
 3. Counter updates for applicable contract types
 4. Event creation and data writing
 
-### Key Classes
-
-**TicketingService** (`domain/TicketingService.kt`)
-- Orchestrates reader initialization, card selection and validation flows
-- Manages card and SAM reader lifecycle
-- Schedules card selection scenarios for supported cards
-- Executes validation procedures based on detected card type
-
-**ReaderManager** (`domain/spi/ReaderManager.kt`)
-- Interface for managing card and SAM readers
-- Handles plugin registration and reader initialization
-- Provides UI feedback hooks (success/failure)
-- Implementation: `ReaderManagerImpl`
-
-**CalypsoCardValidationManager** (`domain/managers/CalypsoCardValidationManager.kt`)
-- Secure validation procedure for Calypso cards with SAM integration
-- Handles contract priority logic (Season Pass → Multi-trip → Stored Value)
-- Creates cryptographically verified validation events
-
-**StorageCardValidationManager** (`domain/managers/StorageCardValidationManager.kt`)
-- Simplified validation for storage cards (MIFARE Ultralight, ST25 SRT512)
-- Direct read/write operations without SAM requirements
-- Single contract processing per card
-
 ### Validation Procedure Details
-
-#### Contract Priority System
-
-The validation procedure processes contracts in priority order:
-
-| Priority | Contract Type | Validation Logic                   |
-|:---------|:--------------|:-----------------------------------|
-| 1        | Season Pass   | Check validity date only           |
-| 2        | Multi-trip    | Check counter > 0, decrement       |
-| 3        | Stored Value  | Check balance >= amount, decrement |
-| 31       | Expired       | Skip (automatic marking)           |
 
 #### Best Contract Search Algorithm
 
+The contracts are processed in the order of their priorities, described in the
+[Functional Documentation](../../docs/functional-documentation/index.adoc#ticket-priority):
+
 ```
 1. Read environment and validate card expiration
-2. Analyze last event for contract priorities
+2. Analyze last event for contract priorities, and apply the anti-passback
 3. Create ordered list of valid contract priorities
 4. For each contract in priority order:
    a. Read and validate contract record
-   b. Check contract-specific conditions
+   b. Check the conditions of its type (ContractTariff)
    c. If valid, select for validation
-   d. If expired, mark priority as expired
+   d. If expired or exhausted, mark priority as expired
 5. Update selected contract counter
-6. Create new validation event
+6. Create new validation event, or write the updated priorities if the card is rejected
 7. Close secure session
 ```
+
+Additions to the procedure of the data model, described in the Functional Documentation:
+- [Anti-passback](../../docs/functional-documentation/index.adoc#anti-passback-rule), with the ratification of a
+  session interrupted by the removal of the card
+- [Rejected card](../../docs/functional-documentation/index.adoc#rejected-card): priorities of the expired or
+  exhausted contracts written on the card
+
+Not implemented by the demo (steps of the data model): verification of the contract authenticator with the PSO
+Verify Signature command of the SAM and SAM black list (traceability mode: the contracts loaded by the demo have no
+authenticator), black list of the card applications, and stored value contracts (`ContractTariff` 3).
+
+### Key Classes
+
+**CardReaderSession** (`domain/CardReaderSession.kt`)
+- Manages card and SAM reader lifecycle, and the user feedback devices
+- Schedules card selection scenarios for supported cards, and selects the presented card
+
+**ValidateCard** (`domain/usecases/ValidateCard.kt`)
+- Validates the presented card: selection, execution of the validation procedure supporting it and user feedback of
+  the result (`ValidationResult`)
+
+**BaseValidationProcedure** (`domain/procedures/BaseValidationProcedure.kt`)
+- Business rules common to the validation procedures: versions, expiration, anti-passback, trips left, order of the
+  contracts
+
+**CalypsoCardValidationProcedure** (`domain/procedures/CalypsoCardValidationProcedure.kt`)
+- Secure validation procedure for Calypso cards with SAM integration
+- Handles contract priority logic (Season pass → Multi-trip ticket)
+- Writes the validation event within the secure session
+
+**StorageCardValidationProcedure** (`domain/procedures/StorageCardValidationProcedure.kt`)
+- Simplified validation for storage cards (MIFARE Ultralight, ST25 SRT512, MIFARE Classic)
+- Direct reading and writing, without cryptographic operation
+- Single contract processing per card
 
 ## Hardware Integration
 
@@ -267,32 +194,32 @@ The validation procedure processes contracts in priority order:
 #### Standard Plugins (Open Source)
 
 **Famoco FX205**
-- **Readers**: Dual NFC + SAM reader
+- **Readers**: NFC reader and SAM reader
 - **Plugins**: [Famoco Plugin](https://github.com/calypsonet/keyple-famoco) + [Android NFC](https://keyple.org/components/standard-reader-plugins/keyple-plugin-android-nfc-lib/)
-- **Features**: Enterprise-grade security, robust construction
-- **Use Case**: Fixed terminal installations
-
-**Coppernic C-One 2**
-- **Plugin**: [Coppernic Plugin](https://github.com/calypsonet/keyple-android-plugin-coppernic)
-- **Features**: Rugged design, multiple connectivity options
-- **Use Case**: Mobile validation scenarios
-
-**Standard NFC Smartphones**
-- **Plugin**: [Android NFC Plugin](https://keyple.org/components/standard-reader-plugins/keyple-plugin-android-nfc-lib/)
-- **Limitations**: No SAM support (Storage Cards only)
-- **Use Case**: Development and testing
 
 #### Proprietary Plugins (On Request)
 
 **Bluebird EF501**
 - **Plugin**: [Bluebird Plugin](https://github.com/calypsonet/keyple-plugin-cna-bluebird-specific-nfc-java-lib)
-- **Features**: Integrated barcode scanning, enterprise management
 - **Access**: Contact [CNA](https://calypsonet.org/contact-us/) for plugin
 
 **Arrive Axio 4**
 - **Plugin**: [Arrive Plugin](https://github.com/calypsonet/keyple-plugin-cna-arrive-android-jvm-lib)
-- **Features**: Transportation-specific design, multiple payment methods
+- **Feedback**: LEDs and sounds of the terminal through the Parkeon SDK (`AndroidParkeonCommon-release.aar`)
 - **Access**: Contact [CNA](https://calypsonet.org/contact-us/) for plugin
+
+### Proprietary Plugins
+
+The proprietary components used by this application are available on request and replaced by mocks by default (their
+terminal types being then grayed out, and the storage cards not supported). They are installed as described in the
+[main README](../../README.md#proprietary-plugins-available-on-request):
+
+- **Bluebird EF501**
+- **Arrive Axio 4**: for the LEDs and sounds of the terminal, also copy the Parkeon SDK
+  (`AndroidParkeonCommon-release.aar`) to the `libs` directory: the build then uses the `arrive` source set instead of
+  `arrive-mock`
+- **Storage cards**: storage card extension (`keyple-card-cna-storagecard-java-lib`) and reader plugin
+  (`keyple-plugin-cna-storagecard-java-lib`)
 
 ## Development
 
@@ -303,19 +230,15 @@ validation/app/
 ├── src/main/
 │   ├── kotlin/org/calypsonet/keyple/demo/validation/
 │   │   ├── data/                        # Data layer implementations
-│   │   ├── di/                          # Dependency injection (Dagger)
-│   │   │   └── scope/                   # DI scopes
+│   │   ├── di/                          # Dependency injection (Hilt modules)
 │   │   ├── domain/                      # Business logic layer
-│   │   │   ├── builders/                # Data builders
-│   │   │   ├── managers/                # Validation managers (Calypso, Storage)
 │   │   │   ├── model/                   # Domain models
-│   │   │   └── spi/                     # Service provider interfaces
+│   │   │   ├── procedures/              # Validation procedures (Calypso, Storage)
+│   │   │   ├── spi/                     # Ports
+│   │   │   └── usecases/                # Use cases invoked by the UI
 │   │   └── ui/                          # UI layer
-│   │       ├── activities/              # Android activities
-│   │       │   └── deviceselection/     # Device selection screens
-│   │       ├── adapters/                # UI adapters
-│   │       ├── mappers/                 # Domain to UI mappers
-│   │       └── model/                   # UI models
+│   │       └── activities/              # Android activities
+│   │           └── terminalselection/   # Terminal selection screen
 │   ├── res/                             # Android resources
 │   └── AndroidManifest.xml              # App configuration
 ├── build.gradle.kts                     # Build configuration (Kotlin DSL)
@@ -330,102 +253,34 @@ validation/app/
 
 # Debug build
 ./gradlew assembleDebug
+
+# Unit tests (business rules and card procedures)
+./gradlew testDebugUnitTest
 ```
 
-### Common Issues
+## Troubleshooting
 
-**"SAM not detected"**
-- Verify SAM is properly inserted in reader
-- Check SAM compatibility with cards (Test vs Production keys)
-- Ensure SAM reader is powered and connected
-- Validate SAM status in terminal diagnostics
+The common issues of the Android applications (NFC, SAM, terminal type) are described in the
+[main README](../../README.md#troubleshooting).
 
 **"Card validation failed"**
 - Check card has valid contracts loaded via Reload Demo
 - Verify card AID is supported by application
 - Ensure contract validity dates are current
-- Check sufficient balance/trips for validation
-
-**"NFC detection not working"**
-- Enable NFC in Android system settings
-- Grant NFC permissions to application
-- Keep device stable during card reading
-- Try different card positioning on NFC antenna
-
-**"Plugin initialization failed"**
-- Ensure proper plugin libraries are included
-- Check hardware drivers are installed
-- Verify device compatibility with selected plugin
-- Review device selection matches actual hardware
-
-### Performance Optimization
-
-**Card Reading Speed**:
-- Minimize APDU command exchanges
-- Use efficient file reading strategies
-- Cache frequently accessed data
-- Optimize secure session management
-
-**Battery Life** (for portable terminals):
-- Implement sleep mode between validations
-- Manage NFC discovery cycles efficiently
-- Reduce screen brightness during idle
-- Use background processing for non-critical tasks
-
-## Proprietary Plugins
-
-### Activation Process
-
-By default, proprietary plugins are deactivated. To enable:
-
-1. **Request Access**: Contact [CNA](https://calypsonet.org/contact-us/) for desired plugin
-2. **Install Plugin**: Copy provided `.aar` file to `/libs/` directory
-3. **Remove Mock**: Delete corresponding `-mock.aar` file from `/libs/`
-4. **Build Project**: Execute `./gradlew assembleDebug` to compile with new plugin
-5. **Deploy**: Install updated APK on target device
-
-### Available Proprietary Plugins
-
-- **Bluebird EF501**: Enterprise terminal with barcode integration
-- **Arrive Axio 4**: Transportation-specific validation terminal
-- **Additional terminals**: Contact CNA for availability
-
-## Security Considerations
-
-### SAM Security
-- Use production SAMs only in live environments
-- Secure physical access to SAM readers
-- Implement SAM lifecycle management procedures
-- Monitor SAM authentication failures
-
-### Data Protection
-- All validation events are cryptographically secured
-- Card data transmission uses secure channels
-- No sensitive data stored on mobile device
-- Audit logging for compliance and forensics
-
-### Network Security
-- Use HTTPS for any server communication
-- Implement certificate pinning for production
-- Secure API endpoints with proper authentication
-- Monitor for unusual transaction patterns
+- Check trips left for validation
 
 ## Contributing
 
-When contributing to this validation application:
-
-1. **Follow Android best practices** for UI and architecture
-2. **Test on multiple terminal types** to ensure compatibility
-3. **Validate with both Calypso and Storage cards**
-4. **Maintain security standards** for cryptographic operations
-5. **Update documentation** for new features or terminals
+See the [Contributing](../../README.md#contributing) section of the main README. Specific to this application: validate
+the changes with Calypso cards and storage cards, on the supported terminal types.
 
 ## Related Documentation
 
 - [Main Project Overview](../../README.md)
+- [Functional Documentation](../../docs/functional-documentation/index.adoc) - Use cases and business rules
 - [Common Library](../common/README.md) - Data structures and constants
-- [Reload Demo](../reloading-remote/README.md) - Contract loading process
-- [Control Demo](../control/README.md) - Post-validation verification
+- [Reload Demo](../reload-remote/README.md) - Contract loading process
+- [Inspection Demo](../inspection/README.md) - Post-validation verification
 - [Eclipse Keyple Documentation](https://keyple.org)
 
 ## License

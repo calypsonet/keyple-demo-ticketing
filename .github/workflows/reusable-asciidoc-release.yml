@@ -1,0 +1,59 @@
+name: Reusable AsciiDoc Release
+
+on:
+  workflow_call:
+    inputs:
+      component-name:
+        description: 'Name of the document being built'
+        required: true
+        type: string
+      working-directory:
+        description: 'Directory of the AsciiDoc document'
+        required: true
+        type: string
+      document:
+        description: 'AsciiDoc document to build, relative to the working directory'
+        required: true
+        type: string
+      archive-name-prefix:
+        description: 'Prefix of the names of the PDF and HTML files attached to the release'
+        required: true
+        type: string
+
+jobs:
+  release-asciidoc:
+    runs-on: ubuntu-latest
+
+    # Same toolchain as the CNA specifications (calypsonet-actions): Asciidoctor, Asciidoctor PDF and Asciidoctor
+    # Diagram (PlantUML)
+    container:
+      image: asciidoctor/docker-asciidoctor:latest
+
+    steps:
+      - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
+        uses: actions/checkout@v5
+
+      - name: Generate the PDF and standalone HTML of ${{ inputs.component-name }} ${{ github.ref_name }}
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+          version="${{ github.ref_name }}"
+          release_date=$(date -u +%Y-%m-%d)
+          # The document reference of the header starts with the YYMMDD placeholder, replaced by the release date
+          doc_ref=$(sed -n 's/^:doc-ref:[[:space:]]*//p' "${{ inputs.document }}" | sed "s/^YYMMDD/$(date -u +%y%m%d)/")
+          for converter in asciidoctor asciidoctor-pdf; do
+            "$converter" -r asciidoctor-diagram \
+              -a revnumber="$version" -a revdate="$release_date" -a doc-ref="$doc_ref" \
+              -D generated "${{ inputs.document }}"
+          done
+          base="generated/$(basename "${{ inputs.document }}" .adoc)"
+          output="generated/${{ inputs.archive-name-prefix }}-${version}"
+          mv "$base.html" "$output.html"
+          mv "$base.pdf" "$output.pdf"
+
+      - name: Upload ${{ inputs.component-name }} to GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ${{ inputs.working-directory }}/generated/${{ inputs.archive-name-prefix }}-${{ github.ref_name }}.pdf
+            ${{ inputs.working-directory }}/generated/${{ inputs.archive-name-prefix }}-${{ github.ref_name }}.html
+          token: ${{ secrets.GITHUB_TOKEN }}

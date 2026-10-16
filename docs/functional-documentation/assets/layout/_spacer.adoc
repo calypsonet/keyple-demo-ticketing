@@ -1,0 +1,6 @@
+// PDF layout resource: a transparent 1:1 SVG spacer, encoded as a data URI so
+// the output stays self-contained. Rendered via an `image::` macro whose
+// `pdfwidth` controls the (fixed) vertical gap. Consumed by the colophon to
+// push the license notice down towards the page footer.
+:spacer-datauri: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9Im5vbmUiLz48L3N2Zz4=
+

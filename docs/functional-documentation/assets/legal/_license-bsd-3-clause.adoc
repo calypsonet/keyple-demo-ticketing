@@ -1,0 +1,11 @@
+// License identity for the BSD 3-Clause License, the license of the Keyple Demo Ticketing
+// repository (same structure as the license files of the CNA documentation toolchain).
+// NOTE: keep this file free of blank lines -- it is included in the AsciiDoc
+// document header, where a blank line would terminate the header prematurely.
+:doc-license: BSD 3-Clause License
+:doc-license-short: BSD-3-Clause
+:doc-license-url: https://opensource.org/license/bsd-3-clause
+:doc-license-notice: assets/legal/_license-notice-bsd-3-clause.adoc
+// PDF colophon spacer height (consumed by the image::{spacer-datauri} macro).
+// Tuned per license, since the notice length changes where the gap must end.
+:spacer-pdfwidth: 520pt

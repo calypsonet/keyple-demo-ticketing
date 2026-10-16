@@ -13,34 +13,12 @@
 package org.calypsonet.keyple.demo.common.model.type
 
 import java.time.LocalDateTime
-import java.util.*
 
 /** Time in minutes, value = hour * 60 + minute (0 to 1,439). */
-class TimeCompact {
+data class TimeCompact(val value: Int) {
 
-  val value: Int
+  /** Creates the compact time of the time of the provided date and time. */
+  constructor(dateTime: LocalDateTime) : this(dateTime.hour * 60 + dateTime.minute)
 
-  constructor(value: Int) {
-    this.value = value
-  }
-
-  constructor(date: LocalDateTime) {
-    this.value = (date.minute + (date.hour * 60))
-  }
-
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (javaClass != other?.javaClass) return false
-    other as TimeCompact
-    if (value != other.value) return false
-    return true
-  }
-
-  override fun hashCode(): Int {
-    return value
-  }
-
-  override fun toString(): String {
-    return "$value"
-  }
+  override fun toString(): String = "$value"
 }
