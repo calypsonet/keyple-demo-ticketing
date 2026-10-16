@@ -17,17 +17,9 @@ The server, using the [Eclipse Keyple](https://keyple.org) SDK and a SAM, person
 
 ## Keyple Demos
 
-This demo is part of a set of three demos:
-* Keyple Reload Demo (this project)
-* [Keyple Validation Demo](../validation)
-* [Keyple Inspection Demo](../inspection)
-
-These demos are all based on a common library that defines elements such as constants and data structures implemented
-for the logic of the ticketing application: 
-[Keyple Demo Common Library](../common).
-
-Please refer to the [README](../common/README.md)
-file of this library to discover these data structures.
+This demo is part of the Keyple Demo Ticketing ecosystem, described in the [main README](../../README.md) with the
+validation and inspection demos, and uses the [common library](../common/README.md) defining the data structures of
+the card.
 
 ## Code Organization
 

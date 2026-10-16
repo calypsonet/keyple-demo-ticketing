@@ -141,9 +141,10 @@ See [Common Library Documentation](src/common/README.md) for detailed specificat
 
 - JDK 17 to build the Java and Kotlin components (Android apps, KMP client, server)
 - Android Studio for mobile development, and Xcode for the iOS version of the KMP client
-- Node.js 20.19+ or 22.12+ for the web dashboard of the server
-- .NET 10.0 SDK for the .NET client
+- Node.js for the web dashboard of the server, and the .NET SDK for the .NET client
 - PC/SC compatible readers for testing
+
+The versions required by each component are given in its README.
 
 ### Project Structure
 
