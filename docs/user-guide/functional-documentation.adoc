@@ -11,7 +11,6 @@ Calypso Networks Association
 :icons: font
 :figure-caption: Figure
 :table-caption: Table
-:source-highlighter: highlight.js
 // All the generated files are placed in the generated directory, the diagrams being generated from their PlantUML
 // sources (diagrams directory). Rendering, from this directory:
 // asciidoctor -r asciidoctor-diagram -D generated functional-documentation.adoc
@@ -39,7 +38,7 @@ The ecosystem consists of four distinct applications, each covering a specific r
 | Application | Functional role
 
 | *Reload — Server*
-| Hosts the security module (SAM) and performs cryptographic operations. Exposes remote reload services.
+| Hosts the security module (SAM) and performs cryptographic operations. Exposes remote reload services. Its web dashboard (`http://localhost:8080`) displays the status of the server and of the SAM, and the transactions of the clients in real time (type, card serial number, status, loaded ticket).
 
 | *Reload — Clients*
 | Android, multiplatform (Android, iOS, desktop) or .NET application used by an agent or traveler to load a new transit ticket. The Android and multiplatform clients also personalize blank cards.
@@ -350,41 +349,51 @@ plantuml::diagrams/workflow-control.puml[target=workflow-control,format=svg,alt=
 
 | Bluebird EF501
 | Specialist NFC terminal
-| icon:adjust[role=orange] On request
-| icon:adjust[role=orange] On request
-| icon:adjust[role=orange] On request
+| icon:adjust[role=olive] On request
+| icon:adjust[role=olive] On request
+| icon:adjust[role=olive] On request
 
 | Arrive Axio 4
 | Transit Android terminal
 | icon:times[role=red]
-| icon:adjust[role=orange] On request
+| icon:adjust[role=olive] On request
 | icon:times[role=red]
 |===
 
-icon:times[role=red] Unsupported
-icon:check[role=green] Natively supported —
-icon:adjust[role=orange] Proprietary library available on request from CNA
+* icon:check[role=green] Natively supported
+* icon:adjust[role=olive] Proprietary library available on request from CNA
+* icon:times[role=red] Unsupported
+
+=== Server and desktop hardware
+
+* *Reload server*: PC/SC reader holding a Calypso SAM, required for personalization and ticket loading
+* *Desktop reload clients* (multiplatform and .NET): contactless PC/SC reader
 
 === Available reload clients
 
 Three types of clients can connect to the reload server:
 
-[cols="2,3,3", options="header"]
+[cols="2,3,3,3", options="header"]
 |===
-| Client | Platforms | Notes
+| Client | Platforms | Products | Notes
 
 | *Native Android application*
 | Android 8.0+
+| Multi-trip (1 to 4 trips), Season Pass; card personalization
 | Full Keyple framework integration
 
 | *Multiplatform application*
 | Android · iOS 15.3+ · Desktop (Windows, macOS, Linux)
+| Multi-trip (1 to 4 trips), Season Pass; card personalization
 | Shared UI across all platforms
 
 | *.NET desktop client*
 | Windows
+| Multi-trip only (1 to 20 trips, entered by the user)
 | Demonstrates the Keyple Server JSON API (HTTP) without the Keyple framework
 |===
+
+NOTE: The prices displayed by the clients are fictitious.
 
 == Results and functional messages
 
