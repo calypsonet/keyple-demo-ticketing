@@ -317,7 +317,7 @@ The agent sees:
 
 * The authentication mode used during inspection ("Card authenticated by the SAM", "Card authenticated by PKI" or "Card not authenticated")
 * The *last validation*: date, time, location and ticket used
-* For each ticket present on the card: its type, its validity end date (season pass) or its number of remaining trips (multi-trip), and its status (valid, expired, or validated by the last validation)
+* For each ticket present on the card: its type, its validity period (season pass) or its number of remaining trips (multi-trip), and its status (valid, expired, or validated by the last validation)
 * "No ticket" when the card has never been loaded
 
 When the card is refused, the terminal displays "Not valid on this network" with the reason (see <<Inspection rejection conditions>>).
@@ -383,7 +383,7 @@ Three types of clients can connect to the reload server:
 
 | *.NET desktop client*
 | Windows
-| Demonstrates REST interoperability without the Keyple framework
+| Demonstrates the Keyple Server JSON API (HTTP) without the Keyple framework
 |===
 
 == Results and functional messages
@@ -481,7 +481,7 @@ Each validation produces one of the following results:
 | Application Identifier. Unique identifier of the Calypso card application, used when the terminal selects the card.
 
 | *Anti-passback*
-| Mechanism preventing a traveler from presenting their card twice within less than one minute, in order to avoid fraudulent tailgating.
+| Mechanism preventing a traveler from presenting their card twice within less than one minute, in order to prevent the card from being passed back to another traveler for a second entry.
 
 | *Calypso*
 | Open standard for contactless smart cards in ticketing systems, maintained by the Calypso Networks Association.
@@ -499,7 +499,7 @@ Each validation produces one of the following results:
 | Record of the last validation operation performed on the card (date, time, location, ticket used).
 
 | *Keyple*
-| Open source Eclipse middleware facilitating the development of contactless ticketing applications. See keyple.org.
+| Open source Eclipse middleware facilitating the development of contactless ticketing applications. See https://keyple.org[keyple.org].
 
 | *PKI*
 | Public Key Infrastructure. Asymmetric authentication mode (RSA 2048-bit) that does not require a physical SAM. The demo uses test certificates: a real deployment requires the certificates of its own PKI.
@@ -522,4 +522,4 @@ Each validation produces one of the following results:
 
 ---
 
-_Published by the Calypso Networks Association — calypsonet.org — BSD 3-Clause License_
+_Published by the Calypso Networks Association — https://calypsonet.org[calypsonet.org] — BSD 3-Clause License_

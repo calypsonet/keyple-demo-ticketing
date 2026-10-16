@@ -15,7 +15,7 @@ endif
 
 :Clear the events, tickets\nand counters;
 
-:End of the secure session;
+:End of the secure session\n(Calypso card);
 
 :Card ready;<<#green>>
 

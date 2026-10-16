@@ -43,7 +43,7 @@ if (Ticket priorities changed ?) then (Yes)
 else (No)
 endif
 
-:End of the secure session;
+:End of the secure session\n(Calypso card);
 
 :Ticket loaded;<<#green>>
 
