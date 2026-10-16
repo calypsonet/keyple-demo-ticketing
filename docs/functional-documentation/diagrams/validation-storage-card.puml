@@ -1,5 +1,6 @@
 @startuml validation-storage-card
-' The normal flow (Yes) goes down, the exits (No) leave on the side and end there (detach).
+' Nested tests: the exit (No, then branch, drawn on the left) stops, the normal flow (Yes, else branch,
+' drawn on the right) contains the rest of the procedure.
 ' Pastel background colors: red F5B7B1 (error), yellow F9E79F (no ticket), green ABEBC6 (success),
 ' purple D7BDE2 (mode), orange FAD7A0 (user interaction)
 title Validation of a storage card
@@ -10,71 +11,62 @@ start
 
 if (Card recognized ?\n(supported storage card type)) then (No)
   :Card not recognized;<<#F5B7B1>>
-  detach
+  stop
 else (Yes)
+  if (MIFARE Classic ?) then (No)
+  else (Yes)
+    :Authentication\nof the sector;
+  endif
+
+  :Read the environment,\nthe ticket and the event;
+
+  if (Card personalized\nand not expired ?) then (No)
+    :Card rejected;<<#F5B7B1>>
+    stop
+  else (Yes)
+    if (Card loaded\nat least once ?) then (No)
+      :No valid ticket;<<#F9E79F>>
+      stop
+    else (Yes)
+      if (Last event of\na known version ?) then (No)
+        :Card rejected;<<#F5B7B1>>
+        stop
+      else (Yes)
+        if (Last validation more\nthan 1 minute ago ?) then (No)
+          :Card rejected\n(already validated);<<#F5B7B1>>
+          stop
+        else (Yes)
+          if (Ticket of a\nknown version ?) then (No)
+            :Card rejected;<<#F5B7B1>>
+            stop
+          else (Yes)
+            if (Ticket still valid ?) then (No)
+              :Expired ticket;<<#F9E79F>>
+              stop
+            else (Yes)
+              if (Season Pass or\nMulti-trip ticket ?) then (No)
+                :Ticket forbidden\nor expired;<<#F9E79F>>
+                stop
+              else (Yes)
+                if (Season Pass,\nor trips left ?) then (No)
+                  :No trip left;<<#F9E79F>>
+                  stop
+                else (Yes)
+                  :Write the ticket\n(1 trip deducted for a Multi-trip ticket);
+
+                  :Write the validation event\n(date, time, location, ticket used);
+
+                  :Validation completed;<<#ABEBC6>>
+
+                  stop
+                endif
+              endif
+            endif
+          endif
+        endif
+      endif
+    endif
+  endif
 endif
-
-if (MIFARE Classic ?) then (No)
-else (Yes)
-  :Authentication\nof the sector;
-endif
-
-:Read the environment,\nthe ticket and the event;
-
-if (Card personalized\nand not expired ?) then (No)
-  :Card rejected;<<#F5B7B1>>
-  detach
-else (Yes)
-endif
-
-if (Card loaded\nat least once ?) then (No)
-  :No valid ticket;<<#F9E79F>>
-  detach
-else (Yes)
-endif
-
-if (Last event of\na known version ?) then (No)
-  :Card rejected;<<#F5B7B1>>
-  detach
-else (Yes)
-endif
-
-if (Last validation more\nthan 1 minute ago ?) then (No)
-  :Card rejected\n(already validated);<<#F5B7B1>>
-  detach
-else (Yes)
-endif
-
-if (Ticket of a\nknown version ?) then (No)
-  :Card rejected;<<#F5B7B1>>
-  detach
-else (Yes)
-endif
-
-if (Ticket still valid ?) then (No)
-  :Expired ticket;<<#F9E79F>>
-  detach
-else (Yes)
-endif
-
-if (Season Pass or\nMulti-trip ticket ?) then (No)
-  :Ticket forbidden\nor expired;<<#F9E79F>>
-  detach
-else (Yes)
-endif
-
-if (Season Pass,\nor trips left ?) then (No)
-  :No trip left;<<#F9E79F>>
-  detach
-else (Yes)
-endif
-
-:Write the ticket\n(1 trip deducted for a Multi-trip ticket);
-
-:Write the validation event\n(date, time, location, ticket used);
-
-:Validation completed;<<#ABEBC6>>
-
-stop
 
 @enduml

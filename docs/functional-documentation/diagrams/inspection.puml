@@ -1,5 +1,6 @@
 @startuml inspection
-' The normal flow (Yes) goes down, the exits (No) leave on the side and end there (detach).
+' Nested tests: the exit (No, then branch, drawn on the left) stops, the normal flow (Yes, else branch,
+' drawn on the right) contains the rest of the procedure.
 ' Pastel background colors: red F5B7B1 (error), yellow F9E79F (no ticket), green ABEBC6 (success),
 ' purple D7BDE2 (mode), orange FAD7A0 (user interaction)
 title Inspection
@@ -10,48 +11,43 @@ start
 
 if (Card recognized ?\n(supported Calypso application\nor storage card type)) then (No)
   :Not valid on this network;<<#F5B7B1>>
-  detach
+  stop
 else (Yes)
+  :Open the reading session\n(authentication: SAM,\nPKI or none);<<#D7BDE2>>
+
+  if (Card personalized\nand not expired ?) then (No)
+    :Not valid on this network;<<#F5B7B1>>
+    stop
+  else (Yes)
+    :Read the last event;
+
+    if (Card loaded\nat least once ?) then (No)
+      :No ticket;<<#F9E79F>>
+      stop
+    else (Yes)
+      if (Last event of\na known version ?) then (No)
+        :Not valid on this network;<<#F5B7B1>>
+        stop
+      else (Yes)
+        :Check the last validation\n(location, same day, validation period);
+
+        :Read the tickets\nand their counters;
+
+        if (Tickets of a\nknown version ?) then (No)
+          :Not valid on this network;<<#F5B7B1>>
+          stop
+        else (Yes)
+          :Status of each ticket\n(valid, expired, validated\nby the last validation);
+
+          :End of the reading session;
+
+          :Card content displayed;<<#ABEBC6>>
+
+          stop
+        endif
+      endif
+    endif
+  endif
 endif
-
-:Open the reading session\n(authentication: SAM,\nPKI or none);<<#D7BDE2>>
-
-if (Card personalized\nand not expired ?) then (No)
-  :Not valid on this network;<<#F5B7B1>>
-  detach
-else (Yes)
-endif
-
-:Read the last event;
-
-if (Card loaded\nat least once ?) then (No)
-  :No ticket;<<#F9E79F>>
-  detach
-else (Yes)
-endif
-
-if (Last event of\na known version ?) then (No)
-  :Not valid on this network;<<#F5B7B1>>
-  detach
-else (Yes)
-endif
-
-:Check the last validation\n(location, same day, validation period);
-
-:Read the tickets\nand their counters;
-
-if (Tickets of a\nknown version ?) then (No)
-  :Not valid on this network;<<#F5B7B1>>
-  detach
-else (Yes)
-endif
-
-:Status of each ticket\n(valid, expired, validated\nby the last validation);
-
-:End of the reading session;
-
-:Card content displayed;<<#ABEBC6>>
-
-stop
 
 @enduml
