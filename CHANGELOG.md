@@ -152,6 +152,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   and the other clients) in the reloading Android client; `tripsToLoad` (instead of `trips`), `terminal` and
   `serviceId` (instead of `remote` and `service`, the terminal being also named `service` in a lambda) and `logLevel`
   (instead of `debugLog`) in the multiplatform client.
+- READMEs: download of the released packages of the multiplatform client (Android APK, desktop packages and JARs);
+  contributing section of the main README linking `CONTRIBUTING.md`, the conventions and the checks of the CI.
+- READMEs: the storage cards require the storage card extension and reader plugin of CNA, available on request and
+  replaced by mocks by default (the storage cards being then not supported), as the proprietary terminal plugins; the
+  project structure of the main README shows the `libs` directory, the version catalog and the CI.
 - Main README: the logs of Keyple removed by ProGuard below the `INFO` level, the prerequisites of all the components
   (Node.js version, .NET SDK, Xcode) and the features of the Calypso cards used by the demo (no traceability mode) are
   given; the NFC entitlements of the iOS client are the ones of the project (`TAG` only).

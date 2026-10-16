@@ -57,6 +57,15 @@ cross-platform development practices for contactless card applications.
 
 ## Installation
 
+### Download
+
+From the [Releases page](https://github.com/calypsonet/keyple-demo-ticketing/releases):
+- **Android**: `kdt-reloading-multiplatform-app-android-X.Y.Z-debug.apk` (enable "Install from unknown sources" in
+  the Android settings to install it)
+- **Desktop**: the package of your system (`.dmg` for macOS, `.msi` for Windows, `.deb` for Linux), or the executable
+  JAR of your system (`kdt-reloading-multiplatform-app-...jar`), run with Java 17+
+- **iOS**: not published, the application is built with Xcode (see [iOS App](#ios-app))
+
 ### Building the Project
 
 ```bash

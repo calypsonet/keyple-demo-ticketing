@@ -31,7 +31,8 @@ transportation networks.
 
 ### Card Requirements
 - Cards personalized and loaded using the [Reload Demo](../reloading-remote/)
-- Calypso cards, or storage cards (MIFARE Ultralight, ST25 SRT512, MIFARE Classic)
+- Calypso cards, or storage cards (MIFARE Ultralight, ST25 SRT512, MIFARE Classic) with the storage card
+  libraries (see [Proprietary Plugins](#proprietary-plugins))
 - Supported AIDs (see [Common Library](../common/README.md#supported-card-applications))
 
 ## Installation
@@ -337,11 +338,12 @@ validation/app/
 
 ### Activation Process
 
-By default, the proprietary plugins are replaced by mocks, and their terminal types are grayed out. To enable:
+By default, the proprietary plugins and libraries are replaced by mocks: their terminal types are grayed out, and the
+storage cards are not supported. To enable:
 
 1. **Request Access**: Contact [CNA](https://calypsonet.org/contact-us/) for desired plugin
-2. **Install Plugin**: Copy the provided `.aar` file to the `libs` directory at the root of the repository: the build
-   uses it instead of the corresponding `-mock.aar` file
+2. **Install Plugin**: Copy the provided library (`.aar` or `.jar` file) to the `libs` directory at the root of the
+   repository: the build uses it instead of the corresponding mock (`-mock.aar` or `-mock.jar` file)
 3. **Arrive Feedback**: For the LEDs and sounds of the Arrive terminal, also copy the Parkeon SDK
    (`AndroidParkeonCommon-release.aar`) to the `libs` directory: the build then uses the `arrive` source set instead
    of `arrive-mock`
@@ -351,6 +353,8 @@ By default, the proprietary plugins are replaced by mocks, and their terminal ty
 
 - **Bluebird EF501**
 - **Arrive Axio 4**
+- **Storage cards**: storage card extension (`keyple-card-cna-storagecard-java-lib`) and reader plugin
+  (`keyple-plugin-cna-storagecard-java-lib`)
 
 ## Contributing
 

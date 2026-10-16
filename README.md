@@ -46,6 +46,10 @@ Simple storage cards featuring:
 - Single contract storage
 - Simplified validation procedures
 - **Note**: This demo implementation is intentionally basic for demonstration purposes
+- **Proprietary libraries**: the storage cards are supported with the storage card extension of CNA
+  (`keyple-card-cna-storagecard-java-lib`) and, in the Android applications, its reader plugin
+  (`keyple-plugin-cna-storagecard-java-lib`). Available on request, they are replaced by mocks by default: the storage
+  cards are then not supported (see [Proprietary Plugins](#proprietary-plugins-available-on-request))
 
 **Security Consideration**: Storage Card implementations in this demo lack production-level security mechanisms.
 Production deployments should implement appropriate cryptographic protections, signature verification, and secure key
@@ -117,10 +121,13 @@ Use the personalization feature of the Android or multiplatform reloading client
 
 ### Proprietary Plugins (Available on Request)
 
-- Bluebird EF501
-- Arrive Axio 4
+- Bluebird EF501 (reader plugin)
+- Arrive Axio 4 (reader plugin)
+- Storage cards (card extension and reader plugin)
 
-Contact [CNA](https://calypsonet.org/contact-us/) for access to proprietary terminal plugins.
+Contact [CNA](https://calypsonet.org/contact-us/) for access to the proprietary components. By default, they are replaced by mocks (`libs`
+directory): the corresponding terminals are grayed out, and the storage cards are not supported. To use a component,
+copy the provided library to the `libs` directory at the root of the repository, then rebuild the applications.
 
 ## Data Model
 
@@ -149,7 +156,10 @@ See [Common Library Documentation](src/common/README.md) for detailed specificat
 keyple-demo-ticketing/
 ├── README.md                               # This file
 ├── CHANGELOG.md                            # Changes of the demo since the repository merge
+├── .github/                                # CI workflows and checks (messages, architecture, twin files)
 ├── docs/history/                           # Changelogs of the archived repositories (before the merge)
+├── libs/                                   # Proprietary libraries (on request) and their mocks
+├── libs.versions.toml                      # Version catalog shared by the Gradle projects
 ├── src/common/                             # Shared data structures and utilities
 ├── src/reloading-remote/                   # Remote reload clients and server
 │   ├── server/                             # Java server application
@@ -257,7 +267,9 @@ bash .github/scripts/check-android-twin-files.sh
 
 - Application class `DemoApplication`, start screen `SplashActivity`, base activity `BaseActivity` (and
   `BaseCardActivity` for the card screens of the reloading client), card presentation screen `CardReaderActivity`.
-- Layouts named after their activity (`activity_<name>.xml`), shared toolbar `toolbar.xml`.
+- Layouts named after their activity (`activity_<name>.xml`), shared toolbar `toolbar.xml`, result overlays
+  `layout_<name>_overlay.xml`, rows of the lists `<item>_recycler_row.xml` and items of the drop-down lists
+  `spinner_item_<item>.xml`.
 - Hilt modules named after what they provide (e.g. `AppSettingsModule`, `DomainModule`, `ReaderModule`), with
   `provide<Type>` methods.
 - Enums named without suffix (e.g. `TerminalType`, `CardProtocol`, `ResultType`).
@@ -420,7 +432,7 @@ All the components name their methods with the same verbs:
 | Verb                     | Use                                                                  | Examples                                                                       |
 |--------------------------|----------------------------------------------------------------------|--------------------------------------------------------------------------------|
 | `display...`             | Display of the result of an operation                                | `displayResult(result)` (control and validation apps), `DisplaySuccess` state  |
-| `show...` / `hide...`    | Display or masking of an element of the screen                       | `showProgress()` / `hideProgress()`, `showResultOverlay()`, `showError(text)`  |
+| `show...` / `hide...`    | Display or masking of an element of the screen                       | `showResultOverlay()` / `hideResultOverlay()`, `showError(message)`            |
 | `signal...`              | User feedback of the terminal (sounds, LEDs)                         | `signalSuccess()`, `signalFailure()`, `signalWaiting()`                        |
 | `init...` / `release...` | Technical start and stop of a component (plugin, reader, resources)  | `initCardReader()`, `initSamPlugin()`, `releaseCardReader()`                   |
 | `start...` / `stop...`   | Start and stop of a continuous activity (detection, monitoring)      | `startCardDetection()`, `startReaderMonitoring()`                              |
@@ -498,11 +510,18 @@ Test cards available in the [CNA Test Kit](https://calypsonet.org/technical-supp
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Follow the coding standards and documentation templates
-4. Submit a pull request with clear description
-5. Ensure all tests pass and documentation is updated
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the procedure (fork, feature branch, signed-off commits, pull request).
+
+A contribution follows the conventions of this README
+([Android Application Architecture](#android-application-architecture), [Log Messages](#log-messages),
+[Exception Messages](#exception-messages), [Method Names](#method-names)), updates the documentation of the components
+concerned, and passes the checks of the CI:
+
+- Code format: `./gradlew spotlessCheck` in each Gradle project
+- Unit tests: see [Unit Tests](#unit-tests)
+- Log and exception messages: `python3 .github/scripts/check-messages.py`
+- Architecture and twin files of the Android applications: `.github/scripts/check-android-architecture.sh` and
+  `.github/scripts/check-android-twin-files.sh`
 
 ## License
 

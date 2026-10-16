@@ -25,7 +25,8 @@ later validation and control.
 - NFC capability for contactless card reading
 - Internet connectivity for server communication
 - Compatible cards: Calypso cards (see [supported AIDs](../../../common/README.md#supported-card-applications)), or
-  storage cards (MIFARE Ultralight and MIFARE Classic 1K, and ST25 SRT512 with the Bluebird terminals)
+  storage cards (MIFARE Ultralight and MIFARE Classic 1K, and ST25 SRT512 with the Bluebird terminals), with the
+  storage card libraries (see [Plugin Integration](#plugin-integration))
 
 ### Server Requirements
 - Running [Keyple Reload Demo server](../../server/README.md) with SAM integration
@@ -174,8 +175,11 @@ The application supports multiple reader plugins:
 - Android NFC plugin for standard contactless reading
 - OMAPI plugin for SIM card access (work in progress)
 
-**Proprietary Plugin** (on request, replaced by a mock by default):
+**Proprietary Components** (on request, replaced by mocks by default; to use one, copy the provided library to the
+`libs` directory at the root of the repository):
 - Bluebird plugin for the reader of the Bluebird terminals
+- Storage card extension (`keyple-card-cna-storagecard-java-lib`) and reader plugin
+  (`keyple-plugin-cna-storagecard-java-lib`), without which the storage cards are not supported
 
 ### Security Model
 

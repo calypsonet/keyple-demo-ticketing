@@ -57,7 +57,7 @@ cd keyple-demo-ticketing/src/control
   - **Famoco**: terminal with a SAM reader
   - **NFC terminal**: any Android device with NFC (no SAM: the Calypso cards are authenticated by PKI when they
     support it, otherwise not authenticated); the MIFARE Ultralight and MIFARE Classic storage cards are also
-    supported
+    supported (with the storage card libraries, see [Proprietary Plugins](#proprietary-plugins))
   - **Bluebird**: proprietary plugin (grayed out by default, see [Proprietary Plugins](#proprietary-plugins))
 
 ### Control Settings
@@ -249,16 +249,19 @@ control/app/
 
 ## Proprietary Plugins
 
-By default, the proprietary plugins are replaced by mocks, and their terminal types are grayed out.
+By default, the proprietary plugins and libraries are replaced by mocks: their terminal types are grayed out, and the
+storage cards are not supported.
 
 **Activation Process**:
 1. **Request Plugin**: Contact [CNA](https://calypsonet.org/contact-us/) for the desired proprietary plugin
-2. **Install Plugin**: Copy the provided `.aar` file to the `libs` directory at the root of the repository: the
-   build uses it instead of the corresponding `-mock.aar` file
+2. **Install Plugin**: Copy the provided library (`.aar` or `.jar` file) to the `libs` directory at the root of the
+   repository: the build uses it instead of the corresponding mock (`-mock.aar` or `-mock.jar` file)
 3. **Rebuild Application**: Execute `./gradlew assembleDebug`
 
 **Available Proprietary Plugins**:
 - **Bluebird EF501**
+- **Storage cards**: storage card extension (`keyple-card-cna-storagecard-java-lib`) and reader plugin
+  (`keyple-plugin-cna-storagecard-java-lib`)
 
 ## Contributing
 
