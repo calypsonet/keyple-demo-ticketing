@@ -67,7 +67,7 @@ endif
 
 :Write the ticket\n(1 trip deducted for a Multi-trip ticket);
 
-:Write the validation event;
+:Write the validation event\n(date, time, location, ticket used);
 
 :Validation completed;<<#ABEBC6>>
 
