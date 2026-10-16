@@ -1,0 +1,43 @@
+@startuml workflow-reload_en
+title Reload
+
+start
+
+if (Connected to server\nand is SAM present ?) then (No)
+  :Timeout exception;<<#red>>
+  stop
+else (Yes)
+endif
+
+:Card presentation;
+
+if (EnvVersionNumber=1\nand EnvEndDate valid ?) then (No)
+  :Card refused;<<#red>>
+  stop
+else (Yes)
+endif
+
+if (EventVersionNumber\n∈ {0, 1} ?) then (No)
+  :Card refused;<<#red>>
+  stop
+else (Yes)
+endif
+
+:Read contracts 1 to 4\nDates verification + authenticators;
+
+:User choice\nticket to load;<<#orange>>
+note right: User interaction
+
+:Build ContractStructure\n+ PSO GenerateSignature if traceability;
+
+:Read contract\n+ Increment counter if MULTI_TRIP/STORED_VALUE;
+
+:Update EventStructure\n(ContractPriority 1 to 4);
+
+:Session closure;
+
+:Ticket loaded;<<#green>>
+
+stop
+
+@enduml

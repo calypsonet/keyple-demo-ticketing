@@ -1,0 +1,484 @@
+= Keyple Demo Ticketing — Functional Documentation
+Calypso Networks Association
+:revdate: 2026-06-09
+:revnumber: 1.0
+:lang: en
+:toc: left
+:toc-title: Table of Contents
+:toclevels: 3
+:sectnums:
+:sectnumlevels: 3
+:icons: font
+:figure-caption: Figure
+:table-caption: Table
+:source-highlighter: highlight.js
+:imagesdir: images
+
+_This document describes the Keyple Demo Ticketing ecosystem from a functional and business perspective. It is intended for project managers, functional architects and business teams who want to understand the covered use cases without going into technical implementation details._
+
+---
+
+== Overview
+
+=== Purpose
+
+The Keyple Demo Ticketing is a complete ecosystem illustrating the lifecycle of a contactless transit ticket, from card issuance through access validation to inspection.
+
+It is made available by the *Calypso Networks Association (CNA)* as a starting point for integrators who want to build their own ticketing system based on the Eclipse Keyple middleware.
+
+=== The components
+
+The ecosystem consists of four distinct applications, each covering a specific role in the ticketing chain:
+
+[options="header"]
+|===
+| Application | Functional role
+
+| *Reload — Server*
+| Hosts the security module (SAM) and performs cryptographic operations. Exposes remote reload services.
+
+| *Reload — Mobile client*
+| Mobile application used by an agent or traveller to personalise a blank card or load a new transit ticket.
+
+| *Validation*
+| Terminal installed at access points (gates, validators). Reads the traveller's card, selects the most suitable ticket and records the entry event.
+
+| *Control*
+| Terminal used by inspection agents. Reads the card, displays ticket details and verifies the compliance of the last validation.
+|===
+
+=== Overview
+
+image::workflow-overview_en.svg[Keyple Demo Ticketing ecosystem flow,align="center"]
+
+NOTE: The Validation terminal and the Control terminal do not communicate over the network. Information is exchanged between these two applications *exclusively through the traveller's card*.
+
+== Contactless cards and media
+
+=== Calypso card
+
+The Calypso card is the primary medium of the ecosystem. It is a smart card compliant with the Calypso standard, enabling:
+
+* Storage of *up to 4 transit tickets simultaneously*
+* *Secure transactions* guaranteeing data integrity (via a SAM security module or asymmetric PKI cryptography)
+* *Traceability* of reload operations
+
+The Calypso card stores in memory:
+
+* Information about the *cardholder and card validity* (issuance date, expiry date)
+* Loaded *contracts* (transit tickets)
+* The *last recorded validation event*
+* *Counters* associated with unit-based tickets
+
+=== Storage cards
+
+Storage cards are simpler memory media without a Calypso security system. They allow lightweight scenarios to be demonstrated:
+
+[cols="2,3,2", options="header"]
+|===
+| Type | Characteristics | Authentication
+
+| MIFARE Ultralight
+| Lightweight memory card, read/write in 4-byte blocks
+| None
+
+| ST25 SRT512
+| ST memory card, read/write in 4-byte blocks
+| None
+
+| MIFARE Classic 1K
+| Sectored memory card, 16-byte blocks
+| Secret key KEY_A (sector 1)
+|===
+
+NOTE: Storage cards support only *one transit ticket*. They do not benefit from the same security guarantees as Calypso cards.
+
+WARNING: This demo is only intended to demonstrate that memory cards can be handled.
+
+== Transit tickets
+
+Three types of tickets can be loaded onto a card:
+
+=== Season Pass
+
+* Ticket valid for a *30-day period* from the date of sale
+* Provides *unlimited access* during its validity period
+* *Reloadable*: a 30-day extension can be added before or after expiry
+* No counter decrement at validation
+
+=== Multi-trip
+
+* *Unit-based* ticket: each validation consumes *1 unit*
+* Valid until the *card expiry date* (EnvEndDate)
+* Reloadable by adding extra units
+* Remaining balance is visible during inspection
+
+=== Stored Value
+
+**Not implemented**
+
+=== Ticket priority (Calypso card only)
+
+When several tickets are present on a Calypso card, the validation terminal automatically selects *the highest-priority valid ticket* according to the following ranking:
+
+[cols="^1,3,4", options="header"]
+|===
+| Priority | Ticket type | Behaviour
+
+| 1 (highest)
+| Season Pass
+| Selected first if valid
+
+| 2
+| Multi-trip
+| Selected if no valid Season Pass is present
+
+| 3
+| Stored Value
+| Selected as a last resort
+
+| 31
+| Expired
+| Ignored during validation
+
+| 0
+| Empty slot
+| Ignored
+|===
+
+== Use cases
+
+=== Card issuance and personalisation
+
+==== Functional description
+
+Before being used, a blank card must be *personalised*: this operation initialises the card data and sets its validity period.
+
+Issuance is performed from the reload application (mobile client + server).
+
+==== What personalisation does
+
+* Assigns a *unique application number*
+* Records the *issuance date*
+* Calculates and records the *expiry date*: first day of the current month + 6 years
+* Resets all ticket slots, events and counters to zero
+
+==== Diagram
+
+image::workflow-personalization_en.svg[Card personalisation workflow,align="center"]
+
+---
+
+=== Loading a ticket
+
+==== Functional description
+
+Loading consists of writing a new transit ticket onto the card, or reloading an existing one.
+This operation requires the *SAM security module* to be present on the server side.
+
+==== Process
+
+. The agent or traveller presents the card to the NFC reader of the mobile client.
+. The application checks that the card is valid (version, expiry date).
+. Existing tickets are analysed and displayed.
+. The user selects the ticket to load.
+. The transaction is sent to the server, which performs the secured operation.
+. The new ticket is written to the card; the counter is updated if necessary.
+
+==== Business rules
+
+[cols="3,4", options="header"]
+|===
+| Situation | Behaviour
+
+| Expired card
+| Loading refused
+
+| Card with 4 active tickets (no free or expired slot)
+| Loading refused — no slot available
+
+| Reloading a Season Pass
+| The end date is extended by 30 days from the current end date
+
+| New ticket on an empty slot
+| Written to the first available slot
+
+| New ticket on an expired slot
+| Replaces the expired ticket at the lowest index
+
+| Traceability mode enabled
+| A cryptographic authenticator is added to the ticket (SAM signature)
+|===
+
+==== Diagram
+
+image::workflow-reload_en.svg[Ticket loading workflow,align="center"]
+
+---
+
+=== Access validation
+
+==== Functional description
+
+Validation is the operation performed by the terminal installed at the access point (door, gate, validator) when a traveller presents their card.
+
+The terminal automatically selects the best available ticket, updates the card data and records the entry event.
+
+==== Prerequisites
+
+* The SAM must be present and operational in the terminal.
+* Without a SAM, the terminal cannot validate (no fallback mode).
+
+==== Process
+
+. The traveller presents their card to the NFC reader.
+. The terminal checks the general validity of the card.
+. The terminal analyses the last recorded event (anti-passback).
+. The terminal searches for the best valid ticket among those present.
+. If a valid ticket is found: the counter is decremented if applicable, and a new event is recorded on the card.
+. The result is displayed to the traveller (access granted or denied).
+
+==== Anti-passback rule
+
+If the card has already been presented to a terminal within the previous minute, validation is *refused* to prevent multiple entries. A message prompts the traveller to wait.
+
+NOTE: Special case: if the previous session was abnormally interrupted (card pulled away), re-presenting within one minute is accepted as a transaction recovery.
+
+==== Diagrams
+
+===== Calypso card validation
+
+image::workflow-validation-1_en.svg[Calypso card validation workflow,align="center"]
+
+===== Storage card validation
+
+image::workflow-validation-2_en.svg[Stockage card validation workflow,align="center"]
+
+---
+
+=== Ticket inspection
+
+==== Functional description
+
+Inspection is carried out by an agent equipped with a mobile terminal. It allows the agent to *verify the traveller's compliance* without modifying the card.
+
+==== Authentication modes
+
+Unlike validation, inspection can operate *without a SAM* thanks to two fallback modes:
+
+[cols="1,3,4", options="header"]
+|===
+| Mode | Activation condition | Level of guarantee
+
+| SAM
+| SAM present and available
+| Maximum — secure session, cryptographic verification
+
+| PKI
+| No SAM, but the card supports PKI mode
+| Maximum — asymmetric authentication without external hardware
+
+| No authentication
+| Neither SAM nor PKI available
+| None — data read without cryptographic verification
+|===
+
+==== What inspection checks
+
+* The *general validity* of the card (version, dates)
+* The *detail of each ticket*: type, validity dates, remaining balance
+* The *compliance of the last validation event*:
+** Did the event take place at the correct location (configured network / location)?
+** Is the event within the configured validity window?
+* Which ticket was used during the last validation
+
+==== Information displayed to the agent
+
+For each ticket present on the card, the agent sees:
+
+* The ticket type and its dates
+* Its status: valid, expired, or used during the last entry
+* The remaining balance (for multi-trip and stored value tickets)
+* The authentication mode used during inspection
+
+==== Diagram
+
+image::workflow-control_en.svg[Inspection workflow,align="center"]
+
+== Compatible terminals and hardware
+
+=== Tested Android terminals
+
+[cols="2,4,^1,^1,^1", options="header"]
+|===
+| Terminal | Description | Reload | Validation | Control
+
+| Standard Android smartphones
+| Any Android 8.0+ smartphone with NFC
+| icon:check[role=green]
+| icon:times[role=red]
+| icon:check[role=green]
+
+| Famoco FX205
+| Rugged enterprise NFC terminal
+| icon:check[role=green]
+| icon:check[role=green]
+| icon:check[role=green]
+
+| Coppernic C-One 2
+| Rugged multi-purpose Android terminal
+| icon:check[role=green]
+| icon:check[role=green]
+| icon:check[role=green]
+
+| Bluebird EF501
+| Specialist NFC terminal
+| icon:adjust[role=orange] On request
+| icon:adjust[role=orange] On request
+| icon:adjust[role=orange] On request
+
+| Arrive Axio 4
+| Transit Android terminal
+| icon:adjust[role=orange] On request
+| icon:adjust[role=orange] On request
+| icon:adjust[role=orange] On request
+|===
+
+icon:times[role=red] Unsupported
+icon:check[role=green] Natively supported —
+icon:adjust[role=orange] Proprietary library available on request from CNA
+
+=== Available reload clients
+
+Three types of clients can connect to the reload server:
+
+[cols="2,3,3", options="header"]
+|===
+| Client | Platforms | Notes
+
+| *Native Android application*
+| Android 8.0+
+| Full Keyple framework integration
+
+| *Multiplatform application*
+| Android · iOS 14+ · Desktop
+| Shared UI across all platforms
+
+| *.NET desktop client*
+| Windows
+| Demonstrates REST interoperability without the Keyple framework
+|===
+
+== Results and functional messages
+
+=== Result codes
+
+Each interaction with the card produces one of the following results:
+
+[cols="2,5", options="header"]
+|===
+| Result | Functional meaning
+
+| *SUCCESS*
+| Operation successful. During validation: access granted, ticket debited if applicable.
+
+| *EMPTY_CARD*
+| No usable ticket. The card is blank, all tickets are expired or counters are exhausted.
+
+| *INVALID_CARD*
+| Card rejected. The card itself is invalid (expired, incorrect structure) or the anti-passback rule is active.
+
+| *CARD_LOST*
+| Communication interrupted during the transaction (card removed too early).
+
+| *ERROR*
+| Unexpected error during the transaction.
+|===
+
+=== Validation rejection conditions
+
+[cols="4,2,4", options="header"]
+|===
+| Situation | Result | Traveller message
+
+| Expired card
+| INVALID_CARD
+| Card application expired
+
+| Incorrect card structure
+| INVALID_CARD
+| Card not recognised
+
+| Card presented less than one minute ago
+| INVALID_CARD
+| Card already presented — please wait
+
+| No ticket on the card
+| EMPTY_CARD
+| No valid ticket
+
+| All tickets are expired
+| EMPTY_CARD
+| No valid ticket
+
+| Multi-trip exhausted (0 trips remaining)
+| EMPTY_CARD
+| No trips remaining
+
+| Insufficient balance (Stored Value)
+| EMPTY_CARD
+| Insufficient balance
+|===
+
+== Glossary
+
+[cols="2,5", options="header"]
+|===
+| Term | Definition
+
+| *AID*
+| Application Identifier. Unique identifier of the Calypso card application, used when the terminal selects the card.
+
+| *Anti-passback*
+| Mechanism preventing a traveller from presenting their card twice within less than one minute, in order to avoid fraudulent tailgating.
+
+| *Calypso*
+| Open standard for contactless smart cards in ticketing systems, maintained by the Calypso Networks Association.
+
+| *Contract*
+| Transit ticket stored on the card. A Calypso card can hold up to 4 contracts simultaneously.
+
+| *Counter*
+| Memory area on the card storing the balance of a unit-based ticket (multi-trip or stored value).
+
+| *EnvEndDate*
+| Expiry date of the card application (not of an individual ticket). Set to 6 years at personalisation.
+
+| *Event*
+| Record of the last validation operation performed on the card (date, time, location, ticket used).
+
+| *Keyple*
+| Open source Eclipse middleware facilitating the development of contactless ticketing applications. See keyple.org.
+
+| *PKI*
+| Public Key Infrastructure. Asymmetric authentication mode (RSA 2048-bit) that does not require a physical SAM.
+
+| *Contract priority*
+| Numerical value determining the selection order of tickets during validation (1 = Season Pass, 2 = Multi-trip, 3 = Stored Value, 31 = expired).
+
+| *SAM*
+| Security Access Module. Cryptographic hardware module used to secure Calypso transactions. Required for validation and reload.
+
+| *Secure session*
+| Calypso mechanism guaranteeing the integrity and authenticity of data exchanged between the terminal and the card, using a SAM or PKI.
+
+| *Slot*
+| Memory location available on the card to hold a contract. A Calypso card has 4 slots.
+
+| *Storage card*
+| Simple memory card (MIFARE Ultralight, ST25, MIFARE Classic) that does not support the Calypso protocol. Only one ticket possible, no Calypso secure session.
+|===
+
+---
+
+_Published by the Calypso Networks Association — calypsonet.org — BSD 3-Clause Licence_

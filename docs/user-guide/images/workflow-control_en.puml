@@ -1,0 +1,38 @@
+@startuml workflow-control_en
+title Control
+
+start
+
+:Card presentation;
+
+:Selection mode\nSAM - PKI - Free;<<#6a00ff>>
+
+:Open session\n+ Read Environment SFI 0x07;
+
+if (Env valid ?) then (No)
+  :Error;<<#red>>
+  stop
+else (Yes)
+endif
+
+:Read Event SFI 0x08;
+
+if (EventVersion == 0 ?) then (Yes)
+  :Empty card;<<#yellow>>
+  stop
+else (No)
+endif
+
+:Evaluate contractEventValid\nLocation - date - validity period;
+
+:Read contracts 1 to 4\n+ counters 1 to 4;
+
+:For each contract :\n- version, expiration\n- PSO VerifySignature\n- contractExpired / contractValidated;
+
+:Session closure;
+
+:Result;<<#orange>>
+
+stop
+
+@enduml

@@ -1,0 +1,24 @@
+@startuml workflow-personalization_en
+title Personalization / Card issuance
+
+start
+
+if (Connected to server\nand is SAM present ?) then (No)
+  :Timeout exception;<<#red>>
+  stop
+else (Yes)
+endif
+
+:Card presentation;
+
+:Writing Environment\nEnvVersionNumber=1\nEnvEndDate = today + 6 years;
+
+:Data wiping\nEvents - Contracts - Counters;
+
+:Session closure;
+
+:Card ready;<<#green>>
+
+stop
+
+@enduml

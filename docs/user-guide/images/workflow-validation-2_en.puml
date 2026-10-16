@@ -1,0 +1,47 @@
+@startuml workflow-validation-2_en
+title Validation storage card
+
+start
+
+:Card presentation;
+
+if (MIFARE Classic ?) then (Yes)
+  :Authentication\nKEY_A sector 1;
+else (No)
+endif
+
+:Single Pass Read\nEnvironment - Contract+Counter - Event;
+
+if (Env version=1 and\nEndDate valid ?) then (No)
+  :Invalid card;<<#red>>
+  stop
+else (Yes)
+endif
+
+if (Event version=1 ?) then (No)
+  :Invalid card;<<#red>>
+  stop
+else (Yes)
+endif
+
+if (Contract version=1\nand EndDate valid ?) then (No)
+  :Invalid card;<<#red>>
+  stop
+else (Yes)
+endif
+
+if (Counter > 0 ?) then (No)
+  :Invalid card;<<#red>>
+  stop
+else (Yes)
+endif
+
+:Write contract\nblock 5;
+
+:Write Event\nblock 6;
+
+:Validation done;<<#green>>
+
+stop
+
+@enduml

@@ -1,0 +1,43 @@
+@startuml workflow-reload_fr
+title Chargement d'un titre
+
+start
+
+if (Serveur connecté\net SAM présent ?) then (Non)
+  :Timeout exception;<<#red>>
+  stop
+else (Oui)
+endif
+
+:Présentation carte;
+
+if (EnvVersionNumber=1\net EnvEndDate valide ?) then (Non)
+  :Carte rejetée;<<#red>>
+  stop
+else (Oui)
+endif
+
+if (EventVersionNumber\n∈ {0, 1} ?) then (Non)
+  :Carte rejetée;<<#red>>
+  stop
+else (Oui)
+endif
+
+:Lecture contrats 1 à 4\nVérification dates + authenticateurs;
+
+:Choix utilisateur\ntitre à charger;<<#orange>>
+note right: Interaction utilisateur
+
+:Construction ContractStructure\n+ PSO GenerateSignature si traçabilité;
+
+:Écriture contrat\n+ Incrément compteur si MULTI_TRIP/STORED_VALUE;
+
+:Mise à jour EventStructure\n(ContractPriority 1 à 4);
+
+:Fermeture session;
+
+:Titre chargé;<<#green>>
+
+stop
+
+@enduml

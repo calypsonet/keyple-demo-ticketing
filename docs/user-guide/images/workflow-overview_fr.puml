@@ -1,0 +1,16 @@
+@startuml workflow-overview_fr
+title Vue d'ensemble des flux fonctionnels
+
+start
+
+:Personnalisation\n/ Émission de carte;
+
+:Chargement d'un titre;
+
+:Validation;
+
+:Contrôle;
+
+stop
+
+@enduml

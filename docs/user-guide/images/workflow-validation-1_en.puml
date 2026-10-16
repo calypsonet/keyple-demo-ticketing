@@ -1,0 +1,54 @@
+@startuml workflow-validation-1_en
+title Validation Calypso card
+
+start
+
+:Card presentation;
+
+if (EnvVersion=1 and\nEnvEndDate valid ?) then (No)
+  :Invalid card;<<#red>>
+  stop
+else (Yes)
+endif
+
+:Read event SFI 0x08;
+
+if (EventVersion == 1 ?) then (No)
+  :Invalid card;<<#red>>
+  stop
+else (Yes)
+endif
+
+if (Anti-passback\nΔt > 1 min ?) then (No)
+  :Invalid card;<<#red>>
+  stop
+else (Yes)
+endif
+
+:Read priorities;
+
+if (Empty list ?) then (Yes)
+  :Empty card;<<#yellow>>
+  stop
+else (No)
+endif
+
+repeat
+  if (ContractValidityEndDate\n≥ today ?) then (No -> write expired)
+  else (Yes)
+    if (Counter > 0 ?) then (No -> next contract)
+    else (Yes)
+      :Decrement counter\n(if MULTI_TRIP / STORED_VALUE);
+
+      :Write EventStructure\ndate - time - location - used contract;
+
+      :Session closure;
+
+      :Validation done;<<#green>>
+
+      stop
+    endif
+  endif
+repeat while (next contract)
+
+@enduml
