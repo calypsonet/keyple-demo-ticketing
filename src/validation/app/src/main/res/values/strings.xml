@@ -37,7 +37,7 @@
     <string name="calypso">Calypso Networks Association</string>
 
     <!-- Errors of the validation result -->
-    <string name="card_invalid_main_desc">Card refused</string>
+    <string name="card_invalid_main_desc">Card rejected</string>
 
     <!-- MIFARE Classic specific errors -->
 

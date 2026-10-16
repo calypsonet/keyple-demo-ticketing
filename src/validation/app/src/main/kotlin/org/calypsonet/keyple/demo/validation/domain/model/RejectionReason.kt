@@ -12,7 +12,7 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.validation.domain.model
 
-/** Reason why a card is refused by the validation procedure. */
+/** Reason why a card is rejected by the validation procedure. */
 enum class RejectionReason {
   /** The version number of the environment is not the current one. */
   ENVIRONMENT_WRONG_VERSION,

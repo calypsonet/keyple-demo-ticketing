@@ -7,7 +7,7 @@ Checked rules:
   punctuation, without class name prefix ("SomeClass: ..."), its context being at its end between square brackets;
 - the keys of the context are in camelCase;
 - a warning is logged without stack trace (its cause is given in the `cause` key);
-- a catch block logs the exception, throws an exception, or explains in a comment why it does not log (e.g. refusal
+- a catch block logs the exception, throws an exception, or explains in a comment why it does not log (e.g. rejection
   already logged where it is detected);
 - an exception is of a specific type (not `Exception` nor `RuntimeException`), and its cause is chained to it instead of
   being copied in its message (a cause which cannot be chained is given in the `cause` key).

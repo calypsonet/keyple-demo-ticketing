@@ -79,7 +79,7 @@ class StorageCardValidationProcedure(
       validate(context, storageCard, cardDescription, cardTransaction)
     } catch (e: SCCardCommunicationException) {
       // Card removal logged by the use case
-      ValidationResult.CardLost(cardDescription)
+      ValidationResult.CardRemoved(cardDescription)
     } catch (e: Exception) {
       logger.e(
           "Unexpected error while validating the storage card [productType=${storageCard.productType.name}]",

@@ -5,6 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 ### Changed
+- English ticketing terms in all the layers of the demo, the terms of the Calypso data model (environment, event,
+  contract, counter, ratification...) and the names of the Keyple APIs being kept:
+  - "inspection" instead of "control": `src/inspection` directory, `kdt-inspection-app` artifact, application id and
+    package `org.calypsonet.keyple.demo.inspection` (installed as a new application), `InspectCard` use case,
+    `InspectionResult`, `InspectionContext`, `InspectionProcedure` and its implementations, variables and displayed
+    texts ("Keyple Demo - Inspection", "Start inspection", "New inspection"), CI jobs and documentation;
+  - "reload" instead of "reloading": `src/reload-remote` directory, `kdt-reload-server`, `kdt-reload-android-app`,
+    `kdt-reload-multiplatform-app` and `kdt-reload-pc-dotnet-app` artifacts, CI jobs and documentation;
+  - results of the validation and inspection procedures: `NotRecognized` (instead of `NotSelected`) and, in the
+    validation, `CardRemoved` (instead of `CardLost`, a "lost card" being a card lost by its holder);
+  - "rejected" instead of "refused" in the displayed texts ("Card rejected"), the log messages ("Card rejected: ..."),
+    the comments, the test names and the documentation;
+  - functional documentation: ratification of an interrupted session, results "Not recognized" and "Card removed".
 - Android applications: layered architecture with ports and adapters, documented in the README ("Android Application
   Architecture") and checked by the CI (`.github/scripts/check-android-architecture.sh`) for the domain, data and ui
   layers. The domain layer no longer depends on Android, Timber or the dependency injection framework: the domain

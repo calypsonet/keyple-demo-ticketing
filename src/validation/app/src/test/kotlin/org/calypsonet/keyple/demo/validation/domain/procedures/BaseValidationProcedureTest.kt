@@ -38,13 +38,13 @@ class BaseValidationProcedureTest {
   // ========== Environment and versions ==========
 
   @Test
-  fun environment_isRefused_whenItsVersionIsNotTheCurrentOne() {
+  fun environment_isRejected_whenItsVersionIsNotTheCurrentOne() {
     assertThat(rules.environmentRejection(VersionNumber.UNDEFINED, today.plusYears(1), today))
         .isEqualTo(RejectionReason.ENVIRONMENT_WRONG_VERSION)
   }
 
   @Test
-  fun environment_isRefused_whenItsEndDateIsInThePast() {
+  fun environment_isRejected_whenItsEndDateIsInThePast() {
     assertThat(rules.environmentRejection(VersionNumber.CURRENT_VERSION, today.minusDays(1), today))
         .isEqualTo(RejectionReason.ENVIRONMENT_EXPIRED)
   }
@@ -61,14 +61,14 @@ class BaseValidationProcedureTest {
   }
 
   @Test
-  fun eventOfAnUnexpectedVersion_isRefused() {
+  fun eventOfAnUnexpectedVersion_isRejected() {
     assertThat(rules.eventVersionRejection(VersionNumber.RESERVED))
         .isEqualTo(RejectionReason.EVENT_WRONG_VERSION)
     assertThat(rules.eventVersionRejection(VersionNumber.CURRENT_VERSION)).isNull()
   }
 
   @Test
-  fun contractOfAnUnexpectedVersion_isRefused() {
+  fun contractOfAnUnexpectedVersion_isRejected() {
     assertThat(rules.contractVersionRejection(VersionNumber.UNDEFINED))
         .isEqualTo(RejectionReason.CONTRACT_WRONG_VERSION)
     assertThat(rules.contractVersionRejection(VersionNumber.CURRENT_VERSION)).isNull()
@@ -80,19 +80,19 @@ class BaseValidationProcedureTest {
   private val lastEventDateTime = LocalDateTime.of(2026, 10, 15, 8, 30)
 
   @Test
-  fun antiPassback_refusesASecondValidation_inTheSameMinute() {
+  fun antiPassback_rejectsASecondValidation_inTheSameMinute() {
     assertThat(rules.isWithinAntiPassbackDelay(lastEventDateTime, at(8, 30, 59))).isTrue()
   }
 
   @Test
-  fun antiPassback_refusesASecondValidation_aFewSecondsAfterAChangeOfMinute() {
+  fun antiPassback_rejectsASecondValidation_aFewSecondsAfterAChangeOfMinute() {
     // First validation at 08:30:59 (recorded 08:30), second one 2 seconds later: the double
-    // validation of the same ticket must be refused
+    // validation of the same ticket must be rejected
     assertThat(rules.isWithinAntiPassbackDelay(lastEventDateTime, at(8, 31, 1))).isTrue()
   }
 
   @Test
-  fun antiPassback_refusesUntilTheEndOfTheMinuteFollowingTheDelay() {
+  fun antiPassback_rejectsUntilTheEndOfTheMinuteFollowingTheDelay() {
     assertThat(rules.isWithinAntiPassbackDelay(lastEventDateTime, at(8, 31, 59))).isTrue()
   }
 

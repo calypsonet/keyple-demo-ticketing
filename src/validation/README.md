@@ -13,8 +13,8 @@ for validation.
 ## Overview
 
 This Android application simulates validation terminals found at transportation network entry points (metro gates, bus
-boarding, etc.). It validates contracts loaded by the [Reload Demo](../reloading-remote/) and creates validation events
-that can be later verified by the [Control Demo](../control/).
+boarding, etc.). It validates contracts loaded by the [Reload Demo](../reload-remote/) and creates validation events
+that can be later verified by the [Inspection Demo](../inspection/).
 
 **Role in Ecosystem**: Second step in the ticketing workflow - validates loaded contracts and grants/denies access to
 transportation networks.
@@ -30,7 +30,7 @@ transportation networks.
 - Compatible terminal hardware (see [tested terminals](#tested-terminals))
 
 ### Card Requirements
-- Cards personalized and loaded using the [Reload Demo](../reloading-remote/)
+- Cards personalized and loaded using the [Reload Demo](../reload-remote/)
 - Calypso cards, or storage cards (MIFARE Ultralight, ST25 SRT512, MIFARE Classic) with the storage card
   libraries (see [Proprietary Plugins](#proprietary-plugins))
 - Supported AIDs (see [Common Library](../common/README.md#supported-card-applications))
@@ -62,7 +62,7 @@ cd keyple-demo-ticketing/src/validation
 ### Settings Configuration
 The **Settings** screen, displayed after the terminal selection, configures the validation:
 - **Battery powered mode**: for the portable terminals, which display the Home screen before each validation
-- **Location**: location of the terminal, written in the validation event and checked by the control
+- **Location**: location of the terminal, written in the validation event and checked by the inspection
 - **Time and date**: shortcut to the date and time settings of Android
 
 ## Usage
@@ -109,16 +109,16 @@ The validation result overlay of the reader screen (`CardReaderActivity`) displa
 - **Visual Feedback**: Green background with success animation
 
 **Failure Screens**:
-- **Invalid Card** (`ValidationResult.Rejected`, card data refused: environment, versions, already validated): Orange
-  background with the reason of the refusal
+- **Invalid Card** (`ValidationResult.Rejected`, card data rejected: environment, versions, already validated): Orange
+  background with the reason of the rejection
 - **No Ticket** (`ValidationResult.Rejected`, no contract to use: no valid contract, expired contract, no trips left):
-  Red background with the reason of the refusal
+  Red background with the reason of the rejection
 - **Other Errors** (`ValidationResult.Failed`): Red background with the error message
 - **Visual Feedback**: Error animation, with the sounds and LEDs of the terminal
 
 ### Validation Scenarios
 
-The accepted and refused validations, with the messages displayed, are described in the
+The accepted and rejected validations, with the messages displayed, are described in the
 [Functional Documentation](../../docs/functional-documentation/index.adoc#validation-results).
 
 ## Technical Architecture
@@ -199,14 +199,14 @@ The contracts are processed in the order of their priorities, described in the
    c. If valid, select for validation
    d. If expired or exhausted, mark priority as expired
 5. Update selected contract counter
-6. Create new validation event, or write the updated priorities if the card is refused
+6. Create new validation event, or write the updated priorities if the card is rejected
 7. Close secure session
 ```
 
 Additions to the procedure of the data model, described in the Functional Documentation:
-- [Anti-passback](../../docs/functional-documentation/index.adoc#anti-passback-rule), with the recovery of an
-  interrupted session
-- [Refused card](../../docs/functional-documentation/index.adoc#refused-card): priorities of the expired or
+- [Anti-passback](../../docs/functional-documentation/index.adoc#anti-passback-rule), with the ratification of a
+  session interrupted by the removal of the card
+- [Rejected card](../../docs/functional-documentation/index.adoc#rejected-card): priorities of the expired or
   exhausted contracts written on the card
 
 Not implemented by the demo (steps of the data model): verification of the contract authenticator with the PSO
@@ -332,8 +332,8 @@ When contributing to this validation application:
 - [Main Project Overview](../../README.md)
 - [Functional Documentation](../../docs/functional-documentation/index.adoc) - Use cases and business rules
 - [Common Library](../common/README.md) - Data structures and constants
-- [Reload Demo](../reloading-remote/README.md) - Contract loading process
-- [Control Demo](../control/README.md) - Post-validation verification
+- [Reload Demo](../reload-remote/README.md) - Contract loading process
+- [Inspection Demo](../inspection/README.md) - Post-validation verification
 - [Eclipse Keyple Documentation](https://keyple.org)
 
 ## License

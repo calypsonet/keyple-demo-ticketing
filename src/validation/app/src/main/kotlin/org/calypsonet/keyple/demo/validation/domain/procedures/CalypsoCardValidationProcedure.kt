@@ -65,7 +65,7 @@ class CalypsoCardValidationProcedure(
           validate(context, calypsoCard, cardDescription, cardTransaction)
         } catch (e: CardCommunicationException) {
           // Card removal logged by the use case
-          SessionOutcome(ValidationResult.CardLost(cardDescription), shouldCloseSession = false)
+          SessionOutcome(ValidationResult.CardRemoved(cardDescription), shouldCloseSession = false)
         } catch (e: Exception) {
           logger.e("Unexpected error while validating the Calypso card", e)
           SessionOutcome(
@@ -75,7 +75,7 @@ class CalypsoCardValidationProcedure(
     var result = outcome.result
 
     // Step 14 - END: Close the session when the event has to be written (validated card, or
-    // contract priorities updated for a refused card), cancel it otherwise
+    // contract priorities updated for a rejected card), cancel it otherwise
     try {
       if (outcome.shouldCloseSession) {
         cardTransaction.prepareCloseSecureSession().processCommands(ChannelControl.CLOSE_AFTER)
@@ -84,9 +84,9 @@ class CalypsoCardValidationProcedure(
       }
     } catch (e: CardCommunicationException) {
       // Card removed during close/cancel session (e.g. removed while writing)
-      result = ValidationResult.CardLost(cardDescription)
+      result = ValidationResult.CardRemoved(cardDescription)
     } catch (e: Exception) {
-      if (result !is ValidationResult.CardLost) {
+      if (result !is ValidationResult.CardRemoved) {
         logger.e("Error while closing the secure session", e)
         result = ValidationResult.Failed(cardDescription, TechnicalError.UNEXPECTED)
       }
@@ -114,7 +114,7 @@ class CalypsoCardValidationProcedure(
   ): SessionOutcome {
     val validationDateTime = context.dateTime
 
-    // Refusal of the card before any update: the session is cancelled
+    // Rejection of the card before any update: the session is cancelled
     fun rejected(reason: RejectionReason) =
         SessionOutcome(
             ValidationResult.Rejected(cardDescription, reason), shouldCloseSession = false)
@@ -161,7 +161,7 @@ class CalypsoCardValidationProcedure(
     }
 
     // Step 6.2 - anti-passback management and communication failure recovery: within the
-    // anti-passback delay, the card is refused if the last validation session has been ratified,
+    // anti-passback delay, the card is rejected if the last validation session has been ratified,
     // otherwise this session, interrupted by the removal of the card, is considered as validated.
     if (isWithinAntiPassbackDelay(event.eventDateTime, validationDateTime)) {
       return if (calypsoCard.isDfRatified) {
@@ -189,7 +189,7 @@ class CalypsoCardValidationProcedure(
     val contractPriorities = event.contractPriorities.toMutableList()
     var contractUsed = 0
     var shouldWriteEvent = false
-    // Reason of the refusal of the last contract analyzed, if no contract can be used
+    // Reason of the rejection of the last contract analyzed, if no contract can be used
     var rejectionReason: RejectionReason? = null
     var seasonPassValidityEndDate: LocalDate? = null
     var remainingTrips: Int? = null
@@ -312,7 +312,7 @@ class CalypsoCardValidationProcedure(
               remainingTrips = remainingTrips,
               seasonPassValidityEndDate = seasonPassValidityEndDate)
     } else {
-      // Update the priorities of the event: the card is refused, but its expired or exhausted
+      // Update the priorities of the event: the card is rejected, but its expired or exhausted
       // contracts are no longer analyzed by the next validations
       eventToWrite = event.copy(contractPriorities = contractPriorities.toList())
       result =

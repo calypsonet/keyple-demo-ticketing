@@ -12,9 +12,9 @@ set -euo pipefail
 # Kotlin source root of each application
 app_root() {
   case "$1" in
-    control) echo "src/control/app/src/main/kotlin/org/calypsonet/keyple/demo/control" ;;
+    inspection) echo "src/inspection/app/src/main/kotlin/org/calypsonet/keyple/demo/inspection" ;;
     validation) echo "src/validation/app/src/main/kotlin/org/calypsonet/keyple/demo/validation" ;;
-    reload) echo "src/reloading-remote/client/keyple-mobile-android/app/src/main/kotlin/org/calypsonet/keyple/demo/reload/remote" ;;
+    reload) echo "src/reload-remote/client/keyple-mobile-android/app/src/main/kotlin/org/calypsonet/keyple/demo/reload/remote" ;;
     *) echo "Unknown application: $1" >&2; exit 2 ;;
   esac
 }
@@ -23,7 +23,7 @@ app_root() {
 normalize() {
   tr -d '\r' < "$1" \
     | awk 'header_done { print; next } /^ \*+ \*\/$/ { header_done = 1 }' \
-    | sed -E 's/org\.calypsonet\.keyple\.demo\.(control|validation|reload\.remote)/org.calypsonet.keyple.demo.APP/g'
+    | sed -E 's/org\.calypsonet\.keyple\.demo\.(inspection|validation|reload\.remote)/org.calypsonet.keyple.demo.APP/g'
 }
 
 violations=0
@@ -54,22 +54,22 @@ while read -r path apps; do
   checked=$((checked + 1))
 done <<'EOF'
 # Shared by the three applications
-DemoApplication.kt                                        control validation reload
-data/DemoMifareClassicKeyProvider.kt                      control validation reload
-data/JavaTimeClock.kt                                     control validation reload
-data/TimberLogger.kt                                      control validation reload
-di/ClockModule.kt                                         control validation reload
-di/KeypopApiModule.kt                                     control validation reload
-di/LoggerModule.kt                                        control validation reload
-domain/spi/Clock.kt                                       control validation reload
-domain/spi/Logger.kt                                      control validation reload
-domain/spi/UiContext.kt                                   control validation reload
-ui/ActivityUiContext.kt                                   control validation reload
-# Shared by the control and validation applications
-domain/model/CardProtocol.kt                              control validation
-domain/model/SelectionError.kt                            control validation
-ui/activities/terminalselection/PermissionDeniedDialog.kt control validation
-ui/activities/terminalselection/PermissionHelper.kt       control validation
+DemoApplication.kt                                        inspection validation reload
+data/DemoMifareClassicKeyProvider.kt                      inspection validation reload
+data/JavaTimeClock.kt                                     inspection validation reload
+data/TimberLogger.kt                                      inspection validation reload
+di/ClockModule.kt                                         inspection validation reload
+di/KeypopApiModule.kt                                     inspection validation reload
+di/LoggerModule.kt                                        inspection validation reload
+domain/spi/Clock.kt                                       inspection validation reload
+domain/spi/Logger.kt                                      inspection validation reload
+domain/spi/UiContext.kt                                   inspection validation reload
+ui/ActivityUiContext.kt                                   inspection validation reload
+# Shared by the inspection and validation applications
+domain/model/CardProtocol.kt                              inspection validation
+domain/model/SelectionError.kt                            inspection validation
+ui/activities/terminalselection/PermissionDeniedDialog.kt inspection validation
+ui/activities/terminalselection/PermissionHelper.kt       inspection validation
 EOF
 
 if [[ $violations -gt 0 ]]; then

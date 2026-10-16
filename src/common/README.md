@@ -21,9 +21,9 @@ This library defines the common elements used across the Keyple Demo ecosystem:
 
 ## Used By
 
-- [Keyple Reload Demo](../reloading-remote)
+- [Keyple Reload Demo](../reload-remote)
 - [Keyple Validation Demo](../validation)
-- [Keyple Control Demo](../control)
+- [Keyple Inspection Demo](../inspection)
 
 ## Installation
 
@@ -161,7 +161,7 @@ Loads new contracts, or adds trips to or renews existing ones:
     - Update associated counters if applicable (positive number of trips, counter limited to 16,777,215: 24 bits)
     - Assign priority levels
     - On the single contract cards (Calypso Basic, storage cards), replace a contract of another type only if it is
-      empty, expired or exhausted: the card is refused otherwise
+      empty, expired or exhausted: the card is rejected otherwise
 4. **Event Logging**: Update priority information in event log
 
 ## Usage Examples

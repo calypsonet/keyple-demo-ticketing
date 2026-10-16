@@ -43,7 +43,7 @@ class ValidateCard(
     log(result)
     when (result) {
       is ValidationResult.Accepted -> userFeedback.signalSuccess()
-      is ValidationResult.CardLost -> {
+      is ValidationResult.CardRemoved -> {
         // Card removed during the transaction: no feedback
       }
       else -> userFeedback.signalFailure()
@@ -56,7 +56,7 @@ class ValidateCard(
         when (val selection = cardReaderSession.selectCard(selectionResponse)) {
           is CardSelection.Selected -> selection.card
           is CardSelection.NotSelected ->
-              return ValidationResult.NotSelected(selection.error, selection.fileStructure)
+              return ValidationResult.NotRecognized(selection.error, selection.fileStructure)
         }
     return try {
       val procedure =
@@ -84,11 +84,11 @@ class ValidateCard(
                   "seasonPassValidityEndDate=${result.seasonPassValidityEndDate}]")
       is ValidationResult.Rejected ->
           logger.w(
-              "Card refused [cardDescription=${result.cardDescription}, reason=${result.reason}]")
-      is ValidationResult.CardLost ->
+              "Card rejected [cardDescription=${result.cardDescription}, reason=${result.reason}]")
+      is ValidationResult.CardRemoved ->
           logger.w(
               "Card removed during the transaction [cardDescription=${result.cardDescription}]")
-      is ValidationResult.NotSelected ->
+      is ValidationResult.NotRecognized ->
           logger.w(
               "Card not selected [error=${result.error}, fileStructure=${result.fileStructure}]")
       is ValidationResult.Failed -> {}

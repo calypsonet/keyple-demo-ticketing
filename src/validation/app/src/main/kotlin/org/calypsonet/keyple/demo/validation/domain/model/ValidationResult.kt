@@ -45,18 +45,18 @@ sealed interface ValidationResult {
    * @property fileStructure The file structure of the Calypso application, in hexadecimal, when it
    *   is not supported.
    */
-  data class NotSelected(val error: SelectionError, val fileStructure: String? = null) :
+  data class NotRecognized(val error: SelectionError, val fileStructure: String? = null) :
       ValidationResult {
     override val cardDescription: CardDescription?
       get() = null
   }
 
-  /** The card is refused for the provided reason. */
+  /** The card is rejected for the provided reason. */
   data class Rejected(override val cardDescription: CardDescription, val reason: RejectionReason) :
       ValidationResult
 
   /** The card has been removed during the transaction. */
-  data class CardLost(override val cardDescription: CardDescription) : ValidationResult
+  data class CardRemoved(override val cardDescription: CardDescription) : ValidationResult
 
   /** A technical error prevented the validation. */
   data class Failed(override val cardDescription: CardDescription?, val error: TechnicalError) :

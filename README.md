@@ -23,9 +23,10 @@ ticketing workflow:
 
 ### Application Roles
 
-- **[Reload Demo](src/reloading-remote/)**: Remote contract loading using distributed client/server architecture
+- **[Reload Demo](src/reload-remote/)**: Remote contract loading using distributed client/server architecture
 - **[Validation Demo](src/validation/)**: Entry validation for transportation networks
-- **[Control Demo](src/control/)**: Post-validation card inspection and compliance checking
+- **[Inspection Demo](src/inspection/)**: Post-validation ticket inspection, checking the validity of the last
+  validation
 
 The use cases and business rules are described for a functional audience (project managers, functional architects)
 in the [Functional Documentation](docs/functional-documentation/index.adoc), also attached as PDF and HTML files
@@ -92,18 +93,18 @@ management.
 
 ### 1. Server Setup
 
-Download `kdt-reloading-server-X.Y.Z-full.jar` from the [releases page](https://github.com/calypsonet/keyple-demo-ticketing/releases), then:
+Download `kdt-reload-server-X.Y.Z-full.jar` from the [releases page](https://github.com/calypsonet/keyple-demo-ticketing/releases), then:
 
 ```bash
 # Start server (requires PC/SC reader with SAM)
-java -jar kdt-reloading-server-X.Y.Z-full.jar
+java -jar kdt-reload-server-X.Y.Z-full.jar
 
 # Access dashboard at http://localhost:8080
 ```
 
 ### 2. Card Personalization
 
-Use the personalization feature of the Android or multiplatform reloading client to personalize cards with:
+Use the personalization feature of the Android or multiplatform reload client to personalize cards with:
 
 - Environment data (validity dates, application number)
 - Clean contract slots
@@ -113,7 +114,7 @@ Use the personalization feature of the Android or multiplatform reloading client
 
 1. **Load Contracts**: Use Reload Demo to add Season pass or Multi-trip tickets
 2. **Validate Entry**: Present card to Validation Demo terminal
-3. **Control Check**: Verify card status using Control Demo
+3. **Ticket Inspection**: Verify card status using the Inspection Demo
 
 ## Supported Hardware
 
@@ -166,19 +167,19 @@ keyple-demo-ticketing/
 ├── libs/                                   # Proprietary libraries (on request) and their mocks
 ├── libs.versions.toml                      # Version catalog shared by the Gradle projects
 ├── src/common/                             # Shared data structures and utilities
-├── src/reloading-remote/                   # Remote reload clients and server
+├── src/reload-remote/                      # Remote reload clients and server
 │   ├── server/                             # Java server application
 │   ├── client/
 │   │   ├── keyple-mobile-android/          # Android native client
 │   │   ├── pc-dotnet/                      # .NET desktop client  
 │   │   └── interop-mobile-multiplatform/   # Kotlin Multiplatform client
 ├── src/validation/                         # Android validation terminal
-└── src/control/                            # Android control terminal
+└── src/inspection/                         # Android inspection terminal
 ```
 
 ### Android Application Architecture
 
-The Android applications (`validation`, `control` and `reloading-remote/client/keyple-mobile-android`) follow a
+The Android applications (`validation`, `inspection` and `reload-remote/client/keyple-mobile-android`) follow a
 **layered architecture with ports and adapters** (hexagonal style). They do not use the MVVM pattern: the activities
 drive the user flow and call the domain directly.
 
@@ -191,12 +192,12 @@ platform, terminal configuration, permissions...) is assumed. The files which mu
 the CI (`.github/scripts/check-android-twin-files.sh`): a change of one of them must be reported in each
 application.
 
-| Package  | Content                                                                                               |
-|----------|-------------------------------------------------------------------------------------------------------|
+| Package  | Content                                                                                                                                             |
+|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
 | `domain` | Business logic: `CardReaderSession` and `usecases` (entry points of the UI), `procedures`, `model`, `mappers` and `builders`, and the ports (`spi`) |
-| `data`   | Adapters implementing the ports (readers, Keypop API factories, user feedback, settings, clock, logging...) |
-| `ui`     | Activities, UI-bound adapters (`ActivityUiContext`), and UI models with their mappers when needed     |
-| `di`     | Hilt modules binding the adapters to the ports and providing the domain services                      |
+| `data`   | Adapters implementing the ports (readers, Keypop API factories, user feedback, settings, clock, logging...)                                         |
+| `ui`     | Activities, UI-bound adapters (`ActivityUiContext`), and UI models with their mappers when needed                                                   |
+| `di`     | Hilt modules binding the adapters to the ports and providing the domain services                                                                    |
 
 **Dependency rules**
 
@@ -223,20 +224,20 @@ application.
 - The `di` layer is the only place where adapters are bound to ports. The domain services (`CardReaderSession`, the
   use cases and the procedures) carry no annotation and are provided by the `DomainModule`. The stable dependencies of
   the procedures are injected through their constructor; only the data of the current transaction is passed to them
-  (`ControlContext`, `ValidationContext`). The bindings are application-wide singletons (`SingletonComponent`); the
+  (`InspectionContext`, `ValidationContext`). The bindings are application-wide singletons (`SingletonComponent`); the
   application is annotated `@HiltAndroidApp`, and each activity receiving dependencies `@AndroidEntryPoint`.
 
 **Domain services**
 
 - `CardReaderSession` manages the readers of the terminal: initialization of the readers and of the SAM (and of the
   user feedback devices), detection of the cards, selection of the presented card, end of its processing.
-- One use case per user operation (`domain/usecases`), invoked by the UI: `ControlCard` (control app), `ValidateCard`
-  (validation app), `ReadContracts`, `LoadContract` and `PersonalizeCard` (reloading client). The use cases of the
-  control and validation apps select the card, execute the procedure supporting it and give the user feedback (sound,
+- One use case per user operation (`domain/usecases`), invoked by the UI: `InspectCard` (inspection app), `ValidateCard`
+  (validation app), `ReadContracts`, `LoadContract` and `PersonalizeCard` (reload client). The use cases of the
+  inspection and validation apps select the card, execute the procedure supporting it and give the user feedback (sound,
   LEDs) of the result.
-- The control and validation procedures implement a common interface (`ControlProcedure`, `ValidationProcedure`), one
-  implementation per card technology: the use case executes the procedure supporting the selected card, a new card
-  technology only requiring a new procedure.
+- The inspection and validation procedures implement a common interface (`InspectionProcedure`,
+  `ValidationProcedure`), one implementation per card technology: the use case executes the procedure supporting the
+  selected card, a new card technology only requiring a new procedure.
 - The application settings are accessed through the `AppSettingsRepository` port, never through a global object.
 
 **Logging**
@@ -256,22 +257,22 @@ application.
 
 - The domain produces no text displayed to the users. The procedures return typed results (`sealed interface`, e.g.
   `ValidationResult.Accepted`, `Rejected(reason)` or `Failed(error)`), and the UI translates them into the texts of
-  `strings.xml`, as the reloading client does with the status codes of the server (`RemoteServiceStatus`).
-- The refusal of a card by a business rule is a result (`RejectionReason`), not an exception: the exceptions are kept
+  `strings.xml`, as the reload client does with the status codes of the server (`RemoteServiceStatus`).
+- The rejection of a card by a business rule is a result (`RejectionReason`), not an exception: the exceptions are kept
   for the technical errors (card communication...).
 
 These rules are checked by the CI (`.github/scripts/check-android-architecture.sh`, and
 `.github/scripts/check-android-twin-files.sh` for the twin files), which can also be run locally:
 
 ```sh
-bash .github/scripts/check-android-architecture.sh src/control
+bash .github/scripts/check-android-architecture.sh src/inspection
 bash .github/scripts/check-android-twin-files.sh
 ```
 
 **Naming conventions**
 
 - Application class `DemoApplication`, start screen `SplashActivity`, base activity `BaseActivity` (and
-  `BaseCardActivity` for the card screens of the reloading client), card presentation screen `CardReaderActivity`.
+  `BaseCardActivity` for the card screens of the reload client), card presentation screen `CardReaderActivity`.
 - Layouts named after their activity (`activity_<name>.xml`), shared toolbar `toolbar.xml`, result overlays
   `layout_<name>_overlay.xml`, rows of the lists `<item>_recycler_row.xml` and items of the drop-down lists
   `spinner_item_<item>.xml`.
@@ -282,7 +283,7 @@ bash .github/scripts/check-android-twin-files.sh
   - a mapper converts a representation into another one, from a layer to another or from an external
     representation (Keypop card, DTO of the server) to the domain. Extension function of the converted object:
     `to<Type>()` in `domain/mappers` (e.g. `SmartCard.toCardInfo()`, file `CardInfoMapper.kt`), `toUi()` in
-    `ui/mappers` (e.g. `Contract.toUi(resources)` of the reloading Android client, file `ContractUiMapper.kt`);
+    `ui/mappers` (e.g. `Contract.toUi(resources)` of the reload Android client, file `ContractUiMapper.kt`);
   - a builder builds an object from several sources, none of them prevailing (e.g. data read in the card and
     results computed by a procedure). Top-level function `build<Type>(...)` in `domain/builders` (e.g.
     `buildContract(...)`, file `ContractBuilder.kt`).
@@ -293,15 +294,15 @@ bash .github/scripts/check-android-twin-files.sh
 
 The applications use the same business terms, in the code and in the displayed texts:
 
-| Concept                                   | In the code                                   | Displayed to the users                                   |
-|-------------------------------------------|-----------------------------------------------|----------------------------------------------------------|
-| Right recorded in the card                | `Contract` (contract record)                  | "ticket", or the name of the ticket                      |
-| What is sold (type, price, quantity)      | `Product`, `ProductType`                      | "ticket", or the name of the ticket                      |
-| Names of the two tickets                  | `SEASON_PASS`, `MULTI_TRIP` (`PriorityCode`)  | "Season pass", "Multi-trip ticket"                        |
-| Unit of the counter of a multi-trip ticket | `trip` (`remainingTrips`, `tripsToLoad`)      | "trip", "trips"                                          |
-| Medium holding the card application       | `CardMedium`                                  | "card" (contactless card, SIM card...)                   |
-| Terminal running the application          | `TerminalType`                                | name of the terminal (Bluebird, Famoco, Arrive...)       |
-| Sounds and LEDs of the terminal           | `UserFeedback`                                | -                                                        |
+| Concept                                    | In the code                                  | Displayed to the users                             |
+|--------------------------------------------|----------------------------------------------|----------------------------------------------------|
+| Right recorded in the card                 | `Contract` (contract record)                 | "ticket", or the name of the ticket                |
+| What is sold (type, price, quantity)       | `Product`, `ProductType`                     | "ticket", or the name of the ticket                |
+| Names of the two tickets                   | `SEASON_PASS`, `MULTI_TRIP` (`PriorityCode`) | "Season pass", "Multi-trip ticket"                 |
+| Unit of the counter of a multi-trip ticket | `trip` (`remainingTrips`, `tripsToLoad`)     | "trip", "trips"                                    |
+| Medium holding the card application        | `CardMedium`                                 | "card" (contactless card, SIM card...)             |
+| Terminal running the application           | `TerminalType`                               | name of the terminal (Bluebird, Famoco, Arrive...) |
+| Sounds and LEDs of the terminal            | `UserFeedback`                               | -                                                  |
 
 - A product becomes a contract when it is loaded in the card ("load a contract").
 - "Ticket" is only used in the displayed texts, as the word understood by the users; in the code, it is ambiguous
@@ -320,15 +321,15 @@ The operations are named in the same way in all the components:
 | Extension of a season pass by a loading | `renewedSeasonPass`                                 | -                                      |
 | Preparation of a card for the demo      | `PersonalizeCard`, `personalizeCard`                | "Personalization", "Card personalized" |
 | Use of a contract at the entry          | `ValidateCard`, `ValidationResult`                  | "Validation"                           |
-| Check of the card by an inspector       | `ControlCard`, `ControlResult`                      | "Control"                              |
+| Check of the card by an inspector       | `InspectCard`, `InspectionResult`                   | "Inspection"                           |
 
-- "Reload" is only the name of the reloading demo: the operation is "load", including when trips are added to a
+- "Reload" is only the name of the reload demo: the operation is "load", including when trips are added to a
   multi-trip ticket or when a season pass is renewed.
 - "Issuance" and "initialization" do not designate the personalization ("initialization" only designates the
   technical start of a component, e.g. a reader plugin).
 - "Write" only designates the technical operation (writing of a record), never the business operation.
 - The secure sessions are named after their Calypso access level: `PERSONALIZATION` (personalization), `LOAD`
-  (loading) and `DEBIT` (validation, control).
+  (loading) and `DEBIT` (validation, inspection).
 
 The terms of the card data model (`EnvironmentHolder`, `Event`, `Contract`, `ContractTariff`, `ContractPriority`,
 `PriorityCode`) follow its specification (see the `common` library).
@@ -337,15 +338,15 @@ The terms of the card data model (`EnvironmentHolder`, `Event`, `Contract`, `Con
 
 The applications share these conventions, except for the following deliberate differences:
 
-| Difference                                                                                                         | Reason                                                                                                                                  |
-|--------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
-| Validation app: free orientation, `arrive`/`arrive-mock` source sets and `com.parkeon.app.customer` action          | Arrive (Parkeon) terminal: landscape screen, optional proprietary SDK, application launched by the terminal                             |
-| Reloading Android client: reader detected from the device, no terminal selection screen                           | Only the Bluebird terminals use a specific reader; the other devices use the Android NFC reader                                         |
-| Reloading Android client: settings persisted (`SharedPreferences`), in memory in the control and validation apps   | The server address must survive a restart; the control and validation apps ask for the terminal at each startup                         |
-| Reloading Android client: no local SAM, but NFC and OMAPI (SIM) readers                                            | The SAM is managed by the server (Keyple Distributed)                                                                                   |
-| KMP client: `ui` and `data` packages without `domain` layer (MVVM), without Hilt nor the `common` library          | Compose code shared by Android, desktop and iOS; the `common` library relies on Java libraries (bit-lib4j, Keyple utilities) unavailable on iOS |
-| KMP client: Android APK suffixed `-android-`                                                                       | The same project name is used by the desktop packages                                                                                   |
-| Directory and project names (`reloading-remote`, `keyple-mobile-android`, `kdt-...`) differing from the packages   | Referenced by the CI, the names of the released artifacts and the existing links                                                        |
+| Difference                                                                                                       | Reason                                                                                                                                          |
+|------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| Validation app: free orientation, `arrive`/`arrive-mock` source sets and `com.parkeon.app.customer` action       | Arrive (Parkeon) terminal: landscape screen, optional proprietary SDK, application launched by the terminal                                     |
+| Reload Android client: reader detected from the device, no terminal selection screen                             | Only the Bluebird terminals use a specific reader; the other devices use the Android NFC reader                                                 |
+| Reload Android client: settings persisted (`SharedPreferences`), in memory in the inspection and validation apps | The server address must survive a restart; the inspection and validation apps ask for the terminal at each startup                              |
+| Reload Android client: no local SAM, but NFC and OMAPI (SIM) readers                                             | The SAM is managed by the server (Keyple Distributed)                                                                                           |
+| KMP client: `ui` and `data` packages without `domain` layer (MVVM), without Hilt nor the `common` library        | Compose code shared by Android, desktop and iOS; the `common` library relies on Java libraries (bit-lib4j, Keyple utilities) unavailable on iOS |
+| KMP client: Android APK suffixed `-android-`                                                                     | The same project name is used by the desktop packages                                                                                           |
+| Directory and project names (`reload-remote`, `keyple-mobile-android`, `kdt-...`) differing from the packages    | Referenced by the CI, the names of the released artifacts and the existing links                                                                |
 
 ### Log Messages
 
@@ -367,17 +368,17 @@ Message [key1=value1, key2=value2]
 - **Exceptions**:
   - unexpected error: `ERROR` level, the exception, when there is one, being attached to the call (stack trace) and
     not copied in the message, e.g. `logger.error("Unexpected error while loading the contract", e)`;
-  - expected incident (card refused or removed, server not ready): `WARN` level without stack trace, the message of
+  - expected incident (card rejected or removed, server not ready): `WARN` level without stack trace, the message of
     the exception being given in the `cause` key, e.g.
     `Card communication error while loading the contract [cause=...]`;
   - an exception thrown again is not logged: it is logged once, where it is handled.
 
-| Level   | Use                                                                                                                     |
-|---------|-------------------------------------------------------------------------------------------------------------------------|
-| `ERROR` | Unexpected error, with the stack trace                                                                                  |
-| `WARN`  | Refusal or expected incident (card refused or removed, SAM or server unavailable), without stack trace                  |
-| `INFO`  | One line per business operation (e.g. `Loading a contract in a Calypso card [...]`) and main events of the life cycle   |
-| `DEBUG` | Technical details (blocks read or written, secure session, states of the screens) and repetitive events                 |
+| Level   | Use                                                                                                                   |
+|---------|-----------------------------------------------------------------------------------------------------------------------|
+| `ERROR` | Unexpected error, with the stack trace                                                                                |
+| `WARN`  | Rejection or expected incident (card rejected or removed, SAM or server unavailable), without stack trace             |
+| `INFO`  | One line per business operation (e.g. `Loading a contract in a Calypso card [...]`) and main events of the life cycle |
+| `DEBUG` | Technical details (blocks read or written, secure session, states of the screens) and repetitive events               |
 
 The `TRACE` level is not used. A repetitive event (e.g. periodic check of the server) is logged at the `DEBUG` level,
 or only when its state changes (e.g. "Server ready", "Server not ready").
@@ -392,7 +393,7 @@ python3 .github/scripts/check-messages.py
 It checks the form of the messages (capital letter, final punctuation, class name, variable values and keys in
 camelCase in the context at the end), the warnings logged without stack trace, and the catch blocks: a catch block
 logs the exception, throws an exception, or explains in a comment why it does not log it (e.g.
-`// Refusal logged where it is detected`).
+`// Rejection logged where it is detected`).
 
 Where to read the logs:
 
@@ -407,7 +408,7 @@ Examples:
 
 ```
 INFO  Loading a contract in a Calypso card [plugin=Android NFC, serialNumber=0000000011223344, productType=PRIME_REVISION_3, contractTariff=MULTI_TRIP, tripsToLoad=10]
-WARN  Card refused: environment expired [envEndDate=2025-05-01]
+WARN  Card rejected: environment expired [envEndDate=2025-05-01]
 WARN  Card communication error while loading the contract [cause=Card removed]
 ERROR Unexpected error while loading the contract
 ```
@@ -434,21 +435,21 @@ Android applications), the causes being logged.
 
 All the components name their methods with the same verbs:
 
-| Verb                     | Use                                                                  | Examples                                                                       |
-|--------------------------|----------------------------------------------------------------------|--------------------------------------------------------------------------------|
-| `display...`             | Display of the result of an operation                                | `displayResult(result)` (control and validation apps), `DisplaySuccess` state  |
-| `show...` / `hide...`    | Display or masking of an element of the screen                       | `showResultOverlay()` / `hideResultOverlay()`, `showError(message)`            |
-| `signal...`              | User feedback of the terminal (sounds, LEDs)                         | `signalSuccess()`, `signalFailure()`, `signalWaiting()`                        |
-| `init...` / `release...` | Technical start and stop of a component (plugin, reader, resources)  | `initCardReader()`, `initSamPlugin()`, `releaseCardReader()`                   |
-| `start...` / `stop...`   | Start and stop of a continuous activity (detection, monitoring)      | `startCardDetection()`, `startReaderMonitoring()`                              |
-| `wait...`                | Blocking or suspending wait                                          | `waitForCard()` (multiplatform client), `WaitForCard()` (.NET client)          |
-| `execute...`             | Execution of a procedure or of a remote service                      | `execute(context)`, `executeRemoteService()`                                   |
-| `find...`                | Search of an element, which may not be found                         | `findReader()`, `findLocation()`, `findAvailablePosition()`                    |
-| `build...` / `to...`     | Building from several sources / conversion                           | `buildContract()`, `buildSeasonPassContract()`, `toCardInfo()`, `toUi()`       |
-| `create...`              | Creation of a new object, returned to the caller                     | `createCardSelectionManager()`, `createSecuritySetting()`, `createDataStore()` |
-| `decode` / `encode`      | Conversion between the content of the card and its structures        | codecs of the `common` library, `decodeCardData()`                             |
-| `is...` / `has...`       | Boolean                                                              | `isServerReady()`, `isSamAvailable()`, `hasTripsLeft()`                        |
-| `...Rejection`           | Reason of the refusal of the card by a rule, null if the rule is met | `environmentRejection()`, `contractVersionRejection()`                         |
+| Verb                     | Use                                                                    | Examples                                                                         |
+|--------------------------|------------------------------------------------------------------------|----------------------------------------------------------------------------------|
+| `display...`             | Display of the result of an operation                                  | `displayResult(result)` (inspection and validation apps), `DisplaySuccess` state |
+| `show...` / `hide...`    | Display or masking of an element of the screen                         | `showResultOverlay()` / `hideResultOverlay()`, `showError(message)`              |
+| `signal...`              | User feedback of the terminal (sounds, LEDs)                           | `signalSuccess()`, `signalFailure()`, `signalWaiting()`                          |
+| `init...` / `release...` | Technical start and stop of a component (plugin, reader, resources)    | `initCardReader()`, `initSamPlugin()`, `releaseCardReader()`                     |
+| `start...` / `stop...`   | Start and stop of a continuous activity (detection, monitoring)        | `startCardDetection()`, `startReaderMonitoring()`                                |
+| `wait...`                | Blocking or suspending wait                                            | `waitForCard()` (multiplatform client), `WaitForCard()` (.NET client)            |
+| `execute...`             | Execution of a procedure or of a remote service                        | `execute(context)`, `executeRemoteService()`                                     |
+| `find...`                | Search of an element, which may not be found                           | `findReader()`, `findLocation()`, `findAvailablePosition()`                      |
+| `build...` / `to...`     | Building from several sources / conversion                             | `buildContract()`, `buildSeasonPassContract()`, `toCardInfo()`, `toUi()`         |
+| `create...`              | Creation of a new object, returned to the caller                       | `createCardSelectionManager()`, `createSecuritySetting()`, `createDataStore()`   |
+| `decode` / `encode`      | Conversion between the content of the card and its structures          | codecs of the `common` library, `decodeCardData()`                               |
+| `is...` / `has...`       | Boolean                                                                | `isServerReady()`, `isSamAvailable()`, `hasTripsLeft()`                          |
+| `...Rejection`           | Reason of the rejection of the card by a rule, null if the rule is met | `environmentRejection()`, `contractVersionRejection()`                           |
 
 - A method is named after what it does for the user or the domain, not after its technical effect (e.g.
   `applyServerSettings()` saves the settings and reconnects the client, `showReadInProgress()` displays "Read in
@@ -474,7 +475,7 @@ All the components name their methods with the same verbs:
 
 ### Building from Source
 
-Each module (e.g., `src/common`, `src/reloading-remote/server`, `src/validation`, `src/control`) is an independent
+Each module (e.g., `src/common`, `src/reload-remote/server`, `src/validation`, `src/inspection`) is an independent
 project and should be built using the tools and instructions provided within its own directory. For Gradle-based
 projects, navigate to the module's directory and use its `./gradlew` wrapper.
 
@@ -483,12 +484,12 @@ projects, navigate to the module's directory and use its `./gradlew` wrapper.
 The unit tests check the business rules of the data model, independently of the cards and of the terminals (simulated
 with MockK when a procedure is tested end to end). They are run by the CI:
 
-| Component                     | Tests                                                                                              | Command                                           |
-|-------------------------------|----------------------------------------------------------------------------------------------------|---------------------------------------------------|
-| `src/common`                  | Record codecs, data types, event structure, DF name check                                           | `./gradlew test` (also run by the server build)   |
-| `src/reloading-remote/server` | Personalization and contract loading rules                                                         | `./gradlew test`                                  |
-| `src/validation`              | Validation rules (anti-passback, versions, contracts, priorities) and Calypso validation procedure | `./gradlew testDebugUnitTest`                     |
-| `src/control`                 | Control rules (validity of the last validation), displayed data and Calypso control procedure      | `./gradlew testDebugUnitTest`                     |
+| Component                  | Tests                                                                                               | Command                                         |
+|----------------------------|-----------------------------------------------------------------------------------------------------|-------------------------------------------------|
+| `src/common`               | Record codecs, data types, event structure, DF name check                                           | `./gradlew test` (also run by the server build) |
+| `src/reload-remote/server` | Personalization and contract loading rules                                                          | `./gradlew test`                                |
+| `src/validation`           | Validation rules (anti-passback, versions, contracts, priorities) and Calypso validation procedure  | `./gradlew testDebugUnitTest`                   |
+| `src/inspection`           | Inspection rules (validity of the last validation), displayed data and Calypso inspection procedure | `./gradlew testDebugUnitTest`                   |
 
 The current date is provided by a clock (`Clock` port of the Android applications, `java.time.Clock` of the server),
 replaced by a fixed date in the tests. The domain being transposable to another language, its tests describe the
@@ -496,7 +497,7 @@ expected behavior as an executable specification.
 
 ### Build Optimization
 
-The Android applications (`validation`, `control`, and `reloading-remote` client) are configured with ProGuard
+The Android applications (`validation`, `inspection`, and `reload-remote` client) are configured with ProGuard
 minification enabled for both debug and release builds. This removes SLF4J debug/trace logs from the application and
 third-party libraries (like Keyple), resulting in smaller APKs and better runtime performance: the messages of the
 applications (Timber) are all kept, those of Keyple from the `INFO` level only. To see full unoptimized

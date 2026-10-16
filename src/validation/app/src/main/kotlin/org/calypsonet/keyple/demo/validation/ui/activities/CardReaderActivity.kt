@@ -224,7 +224,7 @@ class CardReaderActivity : BaseActivity() {
                   withContext(Dispatchers.IO) {
                     validateCard(readerEvent.scheduledCardSelectionsResponse)
                   }
-              if (validationResult is ValidationResult.CardLost) {
+              if (validationResult is ValidationResult.CardRemoved) {
                 // Card removed during transaction: silent reset, no display, no sound
                 currentAppState = AppState.WAIT_CARD
                 readerScope.launch { cardReaderSession.endCardProcessing() }
@@ -257,7 +257,7 @@ class CardReaderActivity : BaseActivity() {
       }
 
   /**
-   * Indicates whether the card is refused because of its data (displayed as an invalid card),
+   * Indicates whether the card is rejected because of its data (displayed as an invalid card),
    * instead of having no contract to use.
    */
   private fun isInvalidCard(reason: RejectionReason): Boolean =
@@ -352,8 +352,8 @@ class CardReaderActivity : BaseActivity() {
           resultBinding.smallDesc.visibility = View.VISIBLE
         }
       }
-      is ValidationResult.NotSelected -> {
-        // Card not selected (unknown or unsupported card): refused without validation
+      is ValidationResult.NotRecognized -> {
+        // Card not selected (unknown or unsupported card): rejected without validation
         animationFileName = "error_white.json"
         resultBinding.validationResultView.setBackgroundColor(
             ContextCompat.getColor(this, R.color.orange))
@@ -365,7 +365,7 @@ class CardReaderActivity : BaseActivity() {
       is ValidationResult.Rejected -> {
         animationFileName = "error_white.json"
         if (isInvalidCard(result.reason)) {
-          // Card refused (card data)
+          // Card rejected (card data)
           resultBinding.validationResultView.setBackgroundColor(
               ContextCompat.getColor(this, R.color.orange))
           resultBinding.bigText.setText(R.string.card_invalid_main_desc)
@@ -381,7 +381,7 @@ class CardReaderActivity : BaseActivity() {
         resultBinding.smallDesc.visibility = View.INVISIBLE
       }
       is ValidationResult.Failed,
-      is ValidationResult.CardLost -> {
+      is ValidationResult.CardRemoved -> {
         animationFileName = "error_white.json"
         resultBinding.validationResultView.setBackgroundColor(
             ContextCompat.getColor(this, R.color.red))
@@ -396,7 +396,7 @@ class CardReaderActivity : BaseActivity() {
 
     // The preparation of the next transaction is performed asynchronously after the end of the
     // previous transaction so that the time spent is not added to the user time.
-    if (result !is ValidationResult.NotSelected) {
+    if (result !is ValidationResult.NotRecognized) {
       readerScope.launch { cardReaderSession.prepareNextTransaction() }
     }
 
@@ -404,7 +404,7 @@ class CardReaderActivity : BaseActivity() {
   }
 
   /** Returns the message displayed when the presented card cannot be selected. */
-  private fun selectionErrorMessage(result: ValidationResult.NotSelected): String =
+  private fun selectionErrorMessage(result: ValidationResult.NotRecognized): String =
       when (result.error) {
         SelectionError.CARD_NOT_RECOGNIZED -> getString(R.string.selection_card_not_recognized)
         SelectionError.UNEXPECTED_DF_NAME -> getString(R.string.selection_unexpected_df_name)

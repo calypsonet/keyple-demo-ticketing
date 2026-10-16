@@ -25,11 +25,11 @@ else (Yes)
 endif
 
 if (Validated less than\n1 minute ago ?) then (Yes)
-  if (Previous session\ncompleted ?) then (Yes)
+  if (Previous session\nratified ?) then (Yes)
     :Invalid card\n(already validated);<<#F5B7B1>>
     stop
   else (No)
-    :Session recovery\n(no new deduction);
+    :Ratification of the\nprevious session\n(no new deduction);
     :Validation completed;<<#ABEBC6>>
     stop
   endif

@@ -80,13 +80,13 @@ abstract class BaseValidationProcedure : ValidationProcedure {
     return contractTariff == PriorityCode.MULTI_TRIP
   }
 
-  // ========== Business rules, returning the reason of the refusal of the card ==========
+  // ========== Business rules, returning the reason of the rejection of the card ==========
 
   /**
    * Checks the environment: its version number must be the current one, and its end date must not
    * be in the past.
    *
-   * @return The reason why the card is refused, null if the environment is valid.
+   * @return The reason why the card is rejected, null if the environment is valid.
    */
   fun environmentRejection(
       envVersionNumber: VersionNumber,
@@ -104,7 +104,7 @@ abstract class BaseValidationProcedure : ValidationProcedure {
    * Checks the version number of the last event: an undefined version means that the card has never
    * been loaded.
    *
-   * @return The reason why the card is refused, null if the version is the current one.
+   * @return The reason why the card is rejected, null if the version is the current one.
    */
   fun eventVersionRejection(eventVersionNumber: VersionNumber): RejectionReason? =
       when (eventVersionNumber) {
@@ -117,7 +117,7 @@ abstract class BaseValidationProcedure : ValidationProcedure {
    * Indicates whether the last event is within the anti-passback delay.
    *
    * The time of the event being recorded to the minute (seconds lost), the times are compared to
-   * the minute: the card is refused until the end of the minute following the delay, the effective
+   * the minute: the card is rejected until the end of the minute following the delay, the effective
    * delay being never shorter than the configured one (between 1 and 2 minutes for 1 minute).
    * Comparing the exact time with the truncated one would accept a second validation a few seconds
    * after the first one, as soon as the minute changes.
@@ -132,7 +132,7 @@ abstract class BaseValidationProcedure : ValidationProcedure {
   /**
    * Checks the version number of a contract.
    *
-   * @return The reason why the card is refused, null if the version is the current one.
+   * @return The reason why the card is rejected, null if the version is the current one.
    */
   fun contractVersionRejection(contractVersionNumber: VersionNumber): RejectionReason? =
       if (contractVersionNumber != VersionNumber.CURRENT_VERSION)

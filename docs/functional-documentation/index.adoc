@@ -114,7 +114,7 @@ The ecosystem consists of four distinct applications, each covering a specific r
 | *Validation*
 | Terminal installed at access points (gates, validators). Reads the passenger's card, selects the most suitable ticket and records the entry event.
 
-| *Control*
+| *Inspection*
 | Terminal used by ticket inspectors. Reads the card, displays ticket details and checks the validity of the last validation.
 |===
 
@@ -122,7 +122,7 @@ The ecosystem consists of four distinct applications, each covering a specific r
 
 plantuml::diagrams/overview.puml[target=overview,format=svg,alt="Keyple Demo Ticketing ecosystem flow",align="center"]
 
-NOTE: The Validation terminal and the Control terminal do not communicate over the network. Information is exchanged between these two applications *exclusively through the passenger's card*.
+NOTE: The Validation terminal and the Inspection terminal do not communicate over the network. Information is exchanged between these two applications *exclusively through the passenger's card*.
 
 == Contactless cards and media
 
@@ -266,13 +266,13 @@ This operation requires the *SAM security module* to be present on the server si
 | Situation | Behavior
 
 | Expired card
-| Loading refused
+| Loading rejected
 
 | Calypso card without free or expired slot
-| Loading refused — no slot available
+| Loading rejected — no slot available
 
 | Single-ticket card (storage card, Calypso Basic) holding a ticket of another type that is still usable (Season Pass not expired, Multi-trip with trips left)
-| Loading refused
+| Loading rejected
 
 | Ticket of the same type already on the card
 | The existing ticket is updated in its slot
@@ -324,12 +324,12 @@ The terminal automatically selects the best available ticket, updates the card d
 [[anti-passback-rule]]
 ==== Anti-passback rule
 
-If the card has already been validated within the previous minute, validation is *refused* to prevent multiple entries. A message prompts the passenger to wait. The times being recorded to the minute, the effective delay is between 1 and 2 minutes.
+If the card has already been validated within the previous minute, validation is *rejected* to prevent multiple entries. A message prompts the passenger to wait. The times being recorded to the minute, the effective delay is between 1 and 2 minutes.
 
-NOTE: Special case (Calypso cards only): if the previous validation session was abnormally interrupted (card pulled away), re-presenting the card within the delay is accepted as a transaction recovery, without a new deduction.
+NOTE: Special case (Calypso cards only): if the previous validation session was not ratified (card removed before the end of the session), the card presented again within the delay is accepted without a new deduction, the previous session being then ratified.
 
-[[refused-card]]
-==== Refused card
+[[rejected-card]]
+==== Rejected card
 
 When no ticket of a Calypso card can be used, the expired or exhausted tickets are marked as such on the card (priority 31), so that the next validations no longer analyze them.
 
@@ -390,7 +390,7 @@ The inspector sees:
 * For each ticket present on the card: its type, its validity period (Season Pass) or its number of remaining trips (Multi-trip), and its status (valid, expired, or validated by the last validation)
 * "No ticket" when the card has never been loaded
 
-When the card is refused, the terminal displays "Not valid on this network" with the reason (see <<inspection-rejection-conditions>>).
+When the card is rejected, the terminal displays "Not valid on this network" with the reason (see <<inspection-rejection-conditions>>).
 
 NOTE: The verification of the ticket authenticator (traceability mode) is not implemented by the demo.
 
@@ -400,13 +400,13 @@ plantuml::diagrams/inspection.puml[target=inspection,format=svg,alt="Inspection 
 
 == Compatible terminals and hardware
 
-This section summarizes the hardware supported by each application. The reader plugins, the installation and the prerequisites of each component are detailed in the link:../../README.md[README of the repository] and in the README of each application (link:../../src/validation/README.md[validation], link:../../src/control/README.md[control], link:../../src/reloading-remote/README.md[reload]).
+This section summarizes the hardware supported by each application. The reader plugins, the installation and the prerequisites of each component are detailed in the link:../../README.md[README of the repository] and in the README of each application (link:../../src/validation/README.md[validation], link:../../src/inspection/README.md[inspection], link:../../src/reload-remote/README.md[reload]).
 
 === Tested Android terminals
 
 [cols="2,4,^1,^1,^1", options="header"]
 |===
-| Terminal | Description | Reload | Validation | Control
+| Terminal | Description | Reload | Validation | Inspection
 
 | Standard Android devices
 | Any Android 8.0+ device with NFC (no SAM: inspection by PKI or without authentication)
@@ -483,12 +483,12 @@ Each validation produces one of the following results:
 | Access granted, one trip deducted for a Multi-trip ticket. The terminal displays "Validation completed!" with the remaining trips (Multi-trip) or the end date (Season Pass).
 
 | *Rejected*
-| Card refused by a business rule (see below).
+| Card rejected by a business rule (see below).
 
-| *Not selected*
+| *Not recognized*
 | Card not recognized: no supported application, or unsupported file structure ("Selection error: card not recognized").
 
-| *Card lost*
+| *Card removed*
 | Communication interrupted during the transaction (card removed too early): "An error occurred. Please try again."
 
 | *Failed*
@@ -503,16 +503,16 @@ Each validation produces one of the following results:
 | Situation | Message displayed
 
 | Card not personalized (environment of an unexpected version)
-| Card refused — Environment error: wrong version number
+| Card rejected — Environment error: wrong version number
 
 | Expired card
-| Card refused — Environment error: end date expired
+| Card rejected — Environment error: end date expired
 
 | Last event or ticket of an unexpected version
-| Card refused — Event error / Ticket error: wrong version number
+| Card rejected — Event error / Ticket error: wrong version number
 
 | Card validated less than one minute ago
-| Card refused — Card already tapped. Please wait before retrying.
+| Card rejected — Card already tapped. Please wait before retrying.
 
 | Card never loaded, or no usable ticket
 | No valid ticket detected — Please load a ticket.
@@ -594,6 +594,9 @@ Each validation produces one of the following results:
 
 | *PKI*
 | Public Key Infrastructure. Asymmetric authentication mode (RSA 2048-bit) that does not require a physical SAM. The demo uses test certificates: a real deployment requires the certificates of its own PKI.
+
+| *Ratification*
+| Calypso confirmation that a secure session has been completed. A session interrupted before its ratification (card removed too early) is ratified at the next presentation of the card.
 
 | *SAM*
 | Secure Access Module. Cryptographic hardware module used to secure Calypso transactions. Required for validation and reload.

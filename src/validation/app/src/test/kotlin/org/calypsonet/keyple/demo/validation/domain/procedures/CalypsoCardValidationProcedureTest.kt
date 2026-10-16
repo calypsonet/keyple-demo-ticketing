@@ -128,10 +128,10 @@ class CalypsoCardValidationProcedureTest {
     verify(exactly = 0) { transaction.prepareDecreaseCounter(any(), any(), any()) }
   }
 
-  // ========== Refused cards ==========
+  // ========== Rejected cards ==========
 
   @Test
-  fun expiredSeasonPass_isRefused_andMarkedExpiredInTheEvent() {
+  fun expiredSeasonPass_isRejected_andMarkedExpiredInTheEvent() {
     val result =
         validate(
             event(priorities = listOf(PriorityCode.SEASON_PASS)),
@@ -147,7 +147,7 @@ class CalypsoCardValidationProcedureTest {
   }
 
   @Test
-  fun exhaustedMultiTripTicket_isRefused_andMarkedExpiredInTheEvent() {
+  fun exhaustedMultiTripTicket_isRejected_andMarkedExpiredInTheEvent() {
     val result =
         validate(
             event(priorities = listOf(PriorityCode.MULTI_TRIP)),
@@ -161,7 +161,7 @@ class CalypsoCardValidationProcedureTest {
   }
 
   @Test
-  fun cardNeverLoaded_isRefused_withoutWriting() {
+  fun cardNeverLoaded_isRejected_withoutWriting() {
     val result =
         validate(
             event(priorities = emptyList()).copy(eventVersionNumber = VersionNumber.UNDEFINED),
@@ -174,7 +174,7 @@ class CalypsoCardValidationProcedureTest {
   }
 
   @Test
-  fun expiredEnvironment_isRefused() {
+  fun expiredEnvironment_isRejected() {
     val result =
         validate(
             event(priorities = listOf(PriorityCode.SEASON_PASS)),
@@ -189,7 +189,7 @@ class CalypsoCardValidationProcedureTest {
   // ========== Anti-passback ==========
 
   @Test
-  fun secondValidationInTheSameMinute_isRefused() {
+  fun secondValidationInTheSameMinute_isRejected() {
     val result =
         validate(
             event(

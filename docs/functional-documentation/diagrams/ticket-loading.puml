@@ -14,13 +14,13 @@ endif
 :Card presented;
 
 if (Card personalized\nand not expired ?) then (No)
-  :Card refused;<<#F5B7B1>>
+  :Card rejected;<<#F5B7B1>>
   stop
 else (Yes)
 endif
 
 if (Last event of\na known version ?) then (No)
-  :Card refused;<<#F5B7B1>>
+  :Card rejected;<<#F5B7B1>>
   stop
 else (Yes)
 endif
@@ -31,7 +31,7 @@ endif
 note right: User interaction
 
 if (Slot available ?\nsame type, empty or expired\n(single-ticket card: other ticket not usable)) then (No)
-  :Card refused;<<#F5B7B1>>
+  :Card rejected;<<#F5B7B1>>
   stop
 else (Yes)
 endif

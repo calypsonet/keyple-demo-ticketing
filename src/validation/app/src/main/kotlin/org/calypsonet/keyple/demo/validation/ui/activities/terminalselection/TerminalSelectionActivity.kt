@@ -47,7 +47,7 @@ class TerminalSelectionActivity : BaseActivity() {
       activityTerminalSelectionBinding.bluebirdBtn.setOnClickListener {
         appSettings.terminalType = TerminalType.BLUEBIRD
         val permissions = mutableListOf("com.bluebird.permission.SAM_DEVICE_ACCESS")
-        // Storage permission refused without prompt since Android 13 (declared up to Android 12)
+        // Storage permission denied without prompt since Android 13 (declared up to Android 12)
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
           permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
