@@ -122,6 +122,7 @@ The data model defines three ticket types, two of which are implemented by the d
 
 *Not implemented* by the demo: this ticket type cannot be loaded, and a Stored Value ticket present on a card is ignored at validation.
 
+[[ticket-priority]]
 === Ticket priority (Calypso card only)
 
 When several tickets are present on a Calypso card, the validation terminal automatically selects *the highest-priority valid ticket* according to the following ranking:
@@ -252,12 +253,14 @@ The terminal automatically selects the best available ticket, updates the card d
 . If a valid ticket is found: the counter is decremented if applicable, and a new event is recorded on the card.
 . The result is displayed to the traveler (access granted or denied).
 
+[[anti-passback-rule]]
 ==== Anti-passback rule
 
 If the card has already been validated within the previous minute, validation is *refused* to prevent multiple entries. A message prompts the traveler to wait. The times being recorded to the minute, the effective delay is between 1 and 2 minutes.
 
 NOTE: Special case (Calypso cards only): if the previous validation session was abnormally interrupted (card pulled away), re-presenting the card within the delay is accepted as a transaction recovery, without a new debit.
 
+[[refused-card]]
 ==== Refused card
 
 When no ticket of a Calypso card can be used, the expired or exhausted tickets are marked as such on the card (priority 31), so that the next validations no longer analyze them.
@@ -319,7 +322,7 @@ The agent sees:
 * For each ticket present on the card: its type, its validity period (season pass) or its number of remaining trips (multi-trip), and its status (valid, expired, or validated by the last validation)
 * "No ticket" when the card has never been loaded
 
-When the card is refused, the terminal displays "Not valid on this network" with the reason (see <<Inspection rejection conditions>>).
+When the card is refused, the terminal displays "Not valid on this network" with the reason (see <<inspection-rejection-conditions>>).
 
 NOTE: The verification of the ticket authenticator (traceability mode) is not implemented by the demo.
 
@@ -328,6 +331,8 @@ NOTE: The verification of the ticket authenticator (traceability mode) is not im
 plantuml::diagrams/inspection.puml[target=inspection,format=svg,alt="Inspection workflow",align="center"]
 
 == Compatible terminals and hardware
+
+This section summarizes the hardware supported by each application. The reader plugins, the installation and the prerequisites of each component are detailed in the link:../../README.md[README of the repository] and in the README of each application (link:../../src/validation/README.md[validation], link:../../src/control/README.md[control], link:../../src/reloading-remote/README.md[reload]).
 
 === Tested Android terminals
 
@@ -397,6 +402,7 @@ NOTE: The prices displayed by the clients are fictitious.
 
 == Results and functional messages
 
+[[validation-results]]
 === Validation results
 
 Each validation produces one of the following results:
@@ -421,6 +427,7 @@ Each validation produces one of the following results:
 | Unexpected technical error, or failed authentication of a MIFARE Classic card.
 |===
 
+[[validation-rejection-conditions]]
 === Validation rejection conditions
 
 [cols="4,4", options="header"]
@@ -452,6 +459,7 @@ Each validation produces one of the following results:
 | Ticket forbidden or expired — Please load a ticket.
 |===
 
+[[inspection-rejection-conditions]]
 === Inspection rejection conditions
 
 [cols="4,4", options="header"]

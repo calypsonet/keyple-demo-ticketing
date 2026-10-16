@@ -103,14 +103,8 @@ Terminal Selection → Settings → Home → Card Reader → Card Content or Inv
 
 ### Rejection Reasons
 
-| Displayed text                              | Cause                                                          |
-|:--------------------------------------------|:---------------------------------------------------------------|
-| Selection error: card not recognized         | No supported application in the card                          |
-| Invalid card - File structure not supported | File structure of the Calypso application not supported       |
-| Environment error: wrong version number      | Card not personalized (environment of an unexpected version)  |
-| Environment error: end date expired          | End date of the environment in the past                       |
-| Event error: wrong version number            | Last event of an unexpected version                           |
-| Ticket error: wrong version number           | Contract of an unexpected version                             |
+The reasons why a card is refused, with the messages displayed, are described in the
+[Functional Documentation](../../docs/user-guide/functional-documentation.adoc#inspection-rejection-conditions).
 
 ## Technical Architecture
 
@@ -276,6 +270,7 @@ When contributing to this control application:
 ## Related Documentation
 
 - [Main Project Overview](../../README.md)
+- [Functional Documentation](../../docs/user-guide/functional-documentation.adoc) - Use cases and business rules
 - [Common Library](../common/README.md) - Data structures and constants
 - [Validation Demo](../validation/README.md) - Previous step in workflow
 - [Reload Demo](../reloading-remote/README.md) - Contract loading procedures

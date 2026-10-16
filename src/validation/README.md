@@ -118,39 +118,8 @@ The validation result overlay of the reader screen (`CardReaderActivity`) displa
 
 ### Validation Scenarios
 
-#### Successful Validations
-
-**Season pass validation**:
-- Card detected with valid Season pass
-- Contract validity date checked
-- Access granted
-- No counter decrement
-
-**Multi-trip ticket validation**:
-- Card detected with remaining trips
-- Trip counter decremented by 1
-- Access granted
-- Remaining count displayed
-
-#### Failed Validations
-
-**No Trip Left**:
-- Multi-trip counter = 0
-- Access denied
-
-**Already Validated**:
-- Card validated again within the anti-passback delay
-- Access denied
-
-**Expired Contracts**:
-- Season pass validity date passed
-- Contract marked as expired
-- Access denied with expiration information
-
-**Invalid Cards**:
-- Unsupported AID or card type
-- Data of an unexpected version, or environment expired
-- Access denied with the reason of the refusal
+The accepted and refused validations, with the messages displayed, are described in the
+[Functional Documentation](../../docs/user-guide/functional-documentation.adoc#validation-results).
 
 ## Technical Architecture
 
@@ -215,15 +184,8 @@ The validation result overlay of the reader screen (`CardReaderActivity`) displa
 
 #### Contract Priority System
 
-The validation procedure processes contracts in priority order:
-
-| Priority | Contract Type | Validation Logic                   |
-|:---------|:--------------|:-----------------------------------|
-| 1        | Season pass   | Check validity date only           |
-| 2        | Multi-trip    | Check counter > 0, decrement       |
-| 3        | Stored value  | Skip (not supported by the demo)   |
-| 31       | Expired       | Skip (automatic marking)           |
-| Other    | Unknown       | Skip (never validated)             |
+The contracts are processed in the order of their priorities, described in the
+[Functional Documentation](../../docs/user-guide/functional-documentation.adoc#ticket-priority).
 
 #### Best Contract Search Algorithm
 
@@ -241,12 +203,11 @@ The validation procedure processes contracts in priority order:
 7. Close secure session
 ```
 
-Additions to the procedure of the data model:
-- **Anti-passback**: a card validated again within the anti-passback delay (1 minute, the times being compared to the
-  minute as the event) is refused, unless the previous validation session was interrupted by the removal of the card
-  (session not ratified): this session is then considered as validated, without a new decrement.
-- **Refused card**: when no contract can be used, the last event is written with the updated priorities (31 for the
-  expired or exhausted contracts), so that the next validations do not read these contracts again.
+Additions to the procedure of the data model, described in the Functional Documentation:
+- [Anti-passback](../../docs/user-guide/functional-documentation.adoc#anti-passback-rule), with the recovery of an
+  interrupted session
+- [Refused card](../../docs/user-guide/functional-documentation.adoc#refused-card): priorities of the expired or
+  exhausted contracts written on the card
 
 Not implemented by the demo (steps of the data model): verification of the contract authenticator with the PSO
 Verify Signature command of the SAM and SAM black list (traceability mode: the contracts loaded by the demo have no
@@ -369,6 +330,7 @@ When contributing to this validation application:
 ## Related Documentation
 
 - [Main Project Overview](../../README.md)
+- [Functional Documentation](../../docs/user-guide/functional-documentation.adoc) - Use cases and business rules
 - [Common Library](../common/README.md) - Data structures and constants
 - [Reload Demo](../reloading-remote/README.md) - Contract loading process
 - [Control Demo](../control/README.md) - Post-validation verification
