@@ -46,8 +46,10 @@ docs/functional-documentation/
 ```
 
 The `pdf-theme.yml`, `docinfo.html`, `title-page-background.svg`, `fonts` and `layout` files are copies of the shared
-resources of the CNA documents (CNA documentation toolchain): keep them in sync with their source. The `logos` and
-`legal` partials are specific to this document.
+resources of the CNA documents (CNA documentation toolchain): keep them in sync with their source. Two adaptations of
+`pdf-theme.yml` are specific to this document: the `green` and `olive` roles (icons of the terminal table), and the
+license of the document in the page footer, instead of the reproduction prohibition of the CNA specifications. The
+`logos` and `legal` partials are specific to this document.
 
 ## Preview in the IDE
 

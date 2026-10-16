@@ -1,4 +1,6 @@
 @startuml validation-calypso-card
+' Pastel background colors: red F5B7B1 (error), yellow F9E79F (no ticket), green ABEBC6 (success),
+' purple D7BDE2 (mode), orange FAD7A0 (user interaction)
 title Validation of a Calypso card
 
 start
@@ -6,7 +8,7 @@ start
 :Card presented;
 
 if (Card personalized\nand not expired ?) then (No)
-  :Invalid card;<<#red>>
+  :Invalid card;<<#F5B7B1>>
   stop
 else (Yes)
 endif
@@ -14,21 +16,21 @@ endif
 :Read the last event;
 
 if (Card never loaded ?) then (Yes)
-  :No valid ticket;<<#yellow>>
+  :No valid ticket;<<#F9E79F>>
   stop
 elseif (Last event of\na known version ?) then (No)
-  :Invalid card;<<#red>>
+  :Invalid card;<<#F5B7B1>>
   stop
 else (Yes)
 endif
 
 if (Validated less than\n1 minute ago ?) then (Yes)
   if (Previous session\ncompleted ?) then (Yes)
-    :Invalid card\n(already validated);<<#red>>
+    :Invalid card\n(already validated);<<#F5B7B1>>
     stop
   else (No)
     :Session recovery\n(no new deduction);
-    :Validation completed;<<#green>>
+    :Validation completed;<<#ABEBC6>>
     stop
   endif
 else (No)
@@ -37,14 +39,14 @@ endif
 :List the usable tickets\nin priority order;
 
 if (No usable ticket ?) then (Yes)
-  :No valid ticket;<<#yellow>>
+  :No valid ticket;<<#F9E79F>>
   stop
 else (No)
 endif
 
 repeat
   if (Ticket of a\nknown version ?) then (No)
-    :Invalid card;<<#red>>
+    :Invalid card;<<#F5B7B1>>
     stop
   else (Yes)
   endif
@@ -58,7 +60,7 @@ repeat
 
       :End of the secure session;
 
-      :Validation completed;<<#green>>
+      :Validation completed;<<#ABEBC6>>
 
       stop
     endif
@@ -69,7 +71,7 @@ repeat while (Next ticket ?)
 
 :End of the secure session;
 
-:Expired ticket\nor no trip left;<<#yellow>>
+:Expired ticket\nor no trip left;<<#F9E79F>>
 
 stop
 

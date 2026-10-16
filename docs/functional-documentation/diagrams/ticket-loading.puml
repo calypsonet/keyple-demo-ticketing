@@ -1,10 +1,12 @@
 @startuml ticket-loading
+' Pastel background colors: red F5B7B1 (error), yellow F9E79F (no ticket), green ABEBC6 (success),
+' purple D7BDE2 (mode), orange FAD7A0 (user interaction)
 title Ticket loading
 
 start
 
 if (Server connected\nwith its SAM ?) then (No)
-  :Server error;<<#red>>
+  :Server error;<<#F5B7B1>>
   stop
 else (Yes)
 endif
@@ -12,24 +14,24 @@ endif
 :Card presented;
 
 if (Card personalized\nand not expired ?) then (No)
-  :Card refused;<<#red>>
+  :Card refused;<<#F5B7B1>>
   stop
 else (Yes)
 endif
 
 if (Last event of\na known version ?) then (No)
-  :Card refused;<<#red>>
+  :Card refused;<<#F5B7B1>>
   stop
 else (Yes)
 endif
 
 :Read the tickets\n(expired tickets identified);
 
-:User choice\nof the ticket to load;<<#orange>>
+:User choice\nof the ticket to load;<<#FAD7A0>>
 note right: User interaction
 
 if (Slot available ?\nsame type, empty or expired\n(single-ticket card: other ticket not usable)) then (No)
-  :Card refused;<<#red>>
+  :Card refused;<<#F5B7B1>>
   stop
 else (Yes)
 endif
@@ -45,7 +47,7 @@ endif
 
 :End of the secure session\n(Calypso card);
 
-:Ticket loaded;<<#green>>
+:Ticket loaded;<<#ABEBC6>>
 
 stop
 

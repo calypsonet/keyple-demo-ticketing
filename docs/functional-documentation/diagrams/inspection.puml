@@ -1,14 +1,16 @@
 @startuml inspection
+' Pastel background colors: red F5B7B1 (error), yellow F9E79F (no ticket), green ABEBC6 (success),
+' purple D7BDE2 (mode), orange FAD7A0 (user interaction)
 title Inspection
 
 start
 
 :Card presented;
 
-:Authentication mode\nSAM, PKI or none;<<#6a00ff>>
+:Authentication mode\nSAM, PKI or none;<<#D7BDE2>>
 
 if (Card personalized\nand not expired ?) then (No)
-  :Not valid on this network;<<#red>>
+  :Not valid on this network;<<#F5B7B1>>
   stop
 else (Yes)
 endif
@@ -16,10 +18,10 @@ endif
 :Read the last event;
 
 if (Card never loaded ?) then (Yes)
-  :No ticket;<<#yellow>>
+  :No ticket;<<#F9E79F>>
   stop
 elseif (Last event of\na known version ?) then (No)
-  :Not valid on this network;<<#red>>
+  :Not valid on this network;<<#F5B7B1>>
   stop
 else (Yes)
 endif
@@ -29,7 +31,7 @@ endif
 :Read the tickets\nand their counters;
 
 if (Tickets of a\nknown version ?) then (No)
-  :Not valid on this network;<<#red>>
+  :Not valid on this network;<<#F5B7B1>>
   stop
 else (Yes)
 endif
@@ -38,7 +40,7 @@ endif
 
 :End of the reading session;
 
-:Card content displayed;<<#green>>
+:Card content displayed;<<#ABEBC6>>
 
 stop
 

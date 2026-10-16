@@ -1,4 +1,6 @@
 @startuml validation-storage-card
+' Pastel background colors: red F5B7B1 (error), yellow F9E79F (no ticket), green ABEBC6 (success),
+' purple D7BDE2 (mode), orange FAD7A0 (user interaction)
 title Validation of a storage card
 
 start
@@ -13,46 +15,46 @@ endif
 :Read the environment,\nthe ticket and the event;
 
 if (Card personalized\nand not expired ?) then (No)
-  :Invalid card;<<#red>>
+  :Invalid card;<<#F5B7B1>>
   stop
 else (Yes)
 endif
 
 if (Card never loaded ?) then (Yes)
-  :No valid ticket;<<#yellow>>
+  :No valid ticket;<<#F9E79F>>
   stop
 elseif (Last event of\na known version ?) then (No)
-  :Invalid card;<<#red>>
+  :Invalid card;<<#F5B7B1>>
   stop
 else (Yes)
 endif
 
 if (Validated less than\n1 minute ago ?) then (Yes)
-  :Invalid card\n(already validated);<<#red>>
+  :Invalid card\n(already validated);<<#F5B7B1>>
   stop
 else (No)
 endif
 
 if (Ticket of a\nknown version ?) then (No)
-  :Invalid card;<<#red>>
+  :Invalid card;<<#F5B7B1>>
   stop
 else (Yes)
 endif
 
 if (Ticket expired ?) then (Yes)
-  :Expired ticket;<<#yellow>>
+  :Expired ticket;<<#F9E79F>>
   stop
 else (No)
 endif
 
 if (Season Pass or\nMulti-trip ticket ?) then (No)
-  :Ticket forbidden\nor expired;<<#yellow>>
+  :Ticket forbidden\nor expired;<<#F9E79F>>
   stop
 else (Yes)
 endif
 
 if (Multi-trip ticket\nwithout trips left ?) then (Yes)
-  :No trip left;<<#yellow>>
+  :No trip left;<<#F9E79F>>
   stop
 else (No)
 endif
@@ -61,7 +63,7 @@ endif
 
 :Write the validation event;
 
-:Validation completed;<<#green>>
+:Validation completed;<<#ABEBC6>>
 
 stop
 

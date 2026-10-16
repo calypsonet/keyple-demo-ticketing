@@ -1,10 +1,12 @@
 @startuml personalization
+' Pastel background colors: red F5B7B1 (error), yellow F9E79F (no ticket), green ABEBC6 (success),
+' purple D7BDE2 (mode), orange FAD7A0 (user interaction)
 title Personalization (card issuance)
 
 start
 
 if (Server connected\nwith its SAM ?) then (No)
-  :Server error;<<#red>>
+  :Server error;<<#F5B7B1>>
   stop
 else (Yes)
 endif
@@ -17,7 +19,7 @@ endif
 
 :End of the secure session\n(Calypso card);
 
-:Card ready;<<#green>>
+:Card ready;<<#ABEBC6>>
 
 stop
 

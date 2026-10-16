@@ -80,6 +80,8 @@ base:
 #   text-uppercase  - upper-cases text; used by the header document type.
 #   silver          - greyed-out text; apdu extension (optional / de-emphasised).
 #   red             - error text; apdu extension (missing or invalid rows).
+#   green, olive    - icon colors of the terminal table of the Keyple Demo
+#                     Ticketing functional documentation (supported / on request).
 #   license-header  - copyright line of the colophon page (muted grey).
 #   license-content - license body of the colophon page (muted grey italic).
 # The two license-* roles are applied per block in the AsciiDoc source: the
@@ -98,6 +100,13 @@ role:
     font-color: '909090'
   red:
     font-color: 'BF0000'
+  # Specific to the Keyple Demo Ticketing functional documentation: mirror of
+  # Asciidoctor's default HTML colour roles (`.green` #008000, `.olive` #808000),
+  # so that the icons of the terminal table look the same in PDF and HTML.
+  green:
+    font-color: '008000'
+  olive:
+    font-color: '808000'
   license-header:
     font-color: $brand_muted
   license-content:
@@ -250,6 +259,6 @@ footer:
     right:
       content: |
         [.color-primary]#{page-number} / {page-count}# +
-        _© Calypso Networks Association {docyear} -- Reproduction is prohibited without prior written agreement_
+        _© Calypso Networks Association {docyear} -- {doc-license-short}_
       valign: center
   verso: *footer-content
