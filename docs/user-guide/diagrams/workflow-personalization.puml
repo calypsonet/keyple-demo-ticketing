@@ -1,21 +1,21 @@
 @startuml workflow-personalization
-title Personalization / Card issuance
+title Personalization (card issuance)
 
 start
 
-if (Connected to server\nand is SAM present ?) then (No)
-  :Timeout exception;<<#red>>
+if (Server connected\nwith its SAM ?) then (No)
+  :Server error;<<#red>>
   stop
 else (Yes)
 endif
 
 :Card presentation;
 
-:Writing Environment\nEnvVersionNumber=1\nEnvEndDate = 1st day of the month + 6 years;
+:Write the card environment\n(issuance date, end date =\n1st day of the month + 6 years);
 
-:Data wiping\nEvents - Contracts - Counters;
+:Clear the events, tickets\nand counters;
 
-:Session closure;
+:End of the secure session;
 
 :Card ready;<<#green>>
 

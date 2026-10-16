@@ -1,70 +1,75 @@
 @startuml workflow-validation-1
-title Validation Calypso card
+title Validation of a Calypso card
 
 start
 
 :Card presentation;
 
-if (EnvVersion=1 and\nEnvEndDate valid ?) then (No)
+if (Card personalized\nand not expired ?) then (No)
   :Invalid card;<<#red>>
   stop
 else (Yes)
 endif
 
-:Read event SFI 0x08;
+:Read the last event;
 
-if (EventVersion == 0 ?) then (Yes)
-  :Empty card;<<#yellow>>
+if (Card never loaded ?) then (Yes)
+  :No valid ticket;<<#yellow>>
   stop
-elseif (EventVersion == 1 ?) then (No)
+elseif (Last event of\na known version ?) then (No)
   :Invalid card;<<#red>>
   stop
 else (Yes)
 endif
 
-if (Anti-passback\nΔt <= 1 min ?) then (Yes)
-  if (Previous session ratified ?) then (Yes)
+if (Validated less than\n1 minute ago ?) then (Yes)
+  if (Previous session\ncompleted ?) then (Yes)
     :Invalid card\n(already validated);<<#red>>
     stop
   else (No)
-    :Session closure\n(recovery, no new debit);
+    :Session recovery\n(no new debit);
     :Validation done;<<#green>>
     stop
   endif
 else (No)
 endif
 
-:Read priorities;
+:List the usable tickets\nin priority order;
 
-if (Empty list ?) then (Yes)
-  :Empty card;<<#yellow>>
+if (No usable ticket ?) then (Yes)
+  :No valid ticket;<<#yellow>>
   stop
 else (No)
 endif
 
 repeat
-  if (ContractValidityEndDate\n≥ today ?) then (No -> priority 31)
+  if (Ticket of a\nknown version ?) then (No)
+    :Invalid card;<<#red>>
+    stop
   else (Yes)
-    if (MULTI_TRIP and\nCounter == 0 ?) then (Yes -> priority 31)
+  endif
+  if (Ticket expired ?) then (Yes -> marked expired)
+  else (No)
+    if (Multi-trip ticket\nwithout trips left ?) then (Yes -> marked expired)
     else (No)
-      :Decrement counter\n(if MULTI_TRIP);
+      :Debit 1 trip\n(multi-trip ticket);
 
-      :Write EventStructure\ndate - time - location - used contract;
+      :Write the validation event\n(date, time, location, ticket used);
 
-      :Session closure;
+      :End of the secure session;
 
       :Validation done;<<#green>>
 
       stop
     endif
   endif
-repeat while (next contract)
+repeat while (Next ticket ?)
 
-:Write priorities\n(expired or exhausted contracts);
+:Write the updated priorities;
 
-:Session closure;
+:End of the secure session;
 
-:No valid ticket;<<#yellow>>
+:Expired ticket\nor no trip left;<<#yellow>>
 
 stop
 

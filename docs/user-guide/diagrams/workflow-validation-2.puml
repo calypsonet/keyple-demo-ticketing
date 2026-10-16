@@ -1,65 +1,65 @@
 @startuml workflow-validation-2
-title Validation storage card
+title Validation of a storage card
 
 start
 
 :Card presentation;
 
 if (MIFARE Classic ?) then (Yes)
-  :Authentication\nKEY_A sector 1;
+  :Authentication\nof the sector;
 else (No)
 endif
 
-:Single Pass Read\nEnvironment - Contract+Counter - Event;
+:Read the environment,\nthe ticket and the event;
 
-if (Env version=1 and\nEndDate valid ?) then (No)
+if (Card personalized\nand not expired ?) then (No)
   :Invalid card;<<#red>>
   stop
 else (Yes)
 endif
 
-if (Event version == 0 ?) then (Yes)
-  :Empty card;<<#yellow>>
+if (Card never loaded ?) then (Yes)
+  :No valid ticket;<<#yellow>>
   stop
-elseif (Event version == 1 ?) then (No)
+elseif (Last event of\na known version ?) then (No)
   :Invalid card;<<#red>>
   stop
 else (Yes)
 endif
 
-if (Anti-passback\nΔt <= 1 min ?) then (Yes)
+if (Validated less than\n1 minute ago ?) then (Yes)
   :Invalid card\n(already validated);<<#red>>
   stop
 else (No)
 endif
 
-if (Contract version == 1 ?) then (No)
+if (Ticket of a\nknown version ?) then (No)
   :Invalid card;<<#red>>
   stop
 else (Yes)
 endif
 
-if (Contract EndDate valid ?) then (No)
+if (Ticket expired ?) then (Yes)
   :Expired ticket;<<#yellow>>
+  stop
+else (No)
+endif
+
+if (Season pass or\nmulti-trip ticket ?) then (No)
+  :Ticket forbidden\nor expired;<<#yellow>>
   stop
 else (Yes)
 endif
 
-if (Ticket type ?) then (forbidden, expired\nor unknown)
-  :Ticket forbidden\nor expired;<<#yellow>>
-  stop
-else (SEASON_PASS or\nMULTI_TRIP)
-endif
-
-if (MULTI_TRIP and\nCounter == 0 ?) then (Yes)
+if (Multi-trip ticket\nwithout trips left ?) then (Yes)
   :No trip left;<<#yellow>>
   stop
 else (No)
 endif
 
-:Write contract\n(counter decremented if MULTI_TRIP);
+:Write the ticket\n(1 trip debited for a multi-trip ticket);
 
-:Write Event;
+:Write the validation event;
 
 :Validation done;<<#green>>
 

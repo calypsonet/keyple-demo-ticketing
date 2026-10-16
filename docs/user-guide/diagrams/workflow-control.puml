@@ -1,37 +1,44 @@
 @startuml workflow-control
-title Control
+title Inspection
 
 start
 
 :Card presentation;
 
-:Selection mode\nSAM - PKI - Free;<<#6a00ff>>
+:Authentication mode\nSAM, PKI or none;<<#6a00ff>>
 
-:Open session\n+ Read Environment SFI 0x07;
-
-if (Env valid ?) then (No)
-  :Error;<<#red>>
+if (Card personalized\nand not expired ?) then (No)
+  :Not valid on this network;<<#red>>
   stop
 else (Yes)
 endif
 
-:Read Event SFI 0x08;
+:Read the last event;
 
-if (EventVersion == 0 ?) then (Yes)
-  :Empty card;<<#yellow>>
+if (Card never loaded ?) then (Yes)
+  :No ticket;<<#yellow>>
   stop
-else (No)
+elseif (Last event of\na known version ?) then (No)
+  :Not valid on this network;<<#red>>
+  stop
+else (Yes)
 endif
 
-:Evaluate contractEventValid\nLocation - date - validity period;
+:Check the last validation\n(location, same day, validation period);
 
-:Read contracts 1 to 4\n+ counters 1 to 4;
+:Read the tickets\nand their counters;
 
-:For each contract :\n- version, expiration\n- contractExpired / contractValidated;
+if (Tickets of a\nknown version ?) then (No)
+  :Not valid on this network;<<#red>>
+  stop
+else (Yes)
+endif
 
-:Session closure;
+:Status of each ticket\n(valid, expired, validated\nby the last validation);
 
-:Result;<<#orange>>
+:End of the reading session;
+
+:Card content displayed;<<#green>>
 
 stop
 

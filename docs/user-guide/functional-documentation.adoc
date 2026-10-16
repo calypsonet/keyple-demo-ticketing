@@ -1,7 +1,7 @@
 = Keyple Demo Ticketing — Functional Documentation
 Calypso Networks Association
-:revdate: 2026-06-09
-:revnumber: 1.0
+:revdate: 2026-10-16
+:revnumber: 1.1
 :lang: en
 :toc: left
 :toc-title: Table of Contents
@@ -41,21 +41,21 @@ The ecosystem consists of four distinct applications, each covering a specific r
 | *Reload — Server*
 | Hosts the security module (SAM) and performs cryptographic operations. Exposes remote reload services.
 
-| *Reload — Mobile client*
-| Mobile application used by an agent or traveller to personalise a blank card or load a new transit ticket.
+| *Reload — Clients*
+| Android, multiplatform (Android, iOS, desktop) or .NET application used by an agent or traveler to load a new transit ticket. The Android and multiplatform clients also personalize blank cards.
 
 | *Validation*
-| Terminal installed at access points (gates, validators). Reads the traveller's card, selects the most suitable ticket and records the entry event.
+| Terminal installed at access points (gates, validators). Reads the traveler's card, selects the most suitable ticket and records the entry event.
 
 | *Control*
 | Terminal used by inspection agents. Reads the card, displays ticket details and verifies the compliance of the last validation.
 |===
 
-=== Overview
+=== Ecosystem flow
 
 plantuml::diagrams/workflow-overview.puml[target=workflow-overview,format=svg,alt="Keyple Demo Ticketing ecosystem flow",align="center"]
 
-NOTE: The Validation terminal and the Control terminal do not communicate over the network. Information is exchanged between these two applications *exclusively through the traveller's card*.
+NOTE: The Validation terminal and the Control terminal do not communicate over the network. Information is exchanged between these two applications *exclusively through the traveler's card*.
 
 == Contactless cards and media
 
@@ -65,7 +65,7 @@ The Calypso card is the primary medium of the ecosystem. It is a smart card comp
 
 * Storage of *up to 4 transit tickets simultaneously*, depending on the card product (1 on the Calypso Basic cards, 2 on the Calypso Light cards)
 * *Secure transactions* guaranteeing data integrity (via a SAM security module or asymmetric PKI cryptography)
-* *Traceability* of reload operations
+* *Traceability* of reload operations (not implemented by the demo)
 
 The Calypso card stores in memory:
 
@@ -103,7 +103,7 @@ WARNING: This demo is only intended to demonstrate that memory cards can be hand
 
 == Transit tickets
 
-Three types of tickets can be loaded onto a card:
+The data model defines three ticket types, two of which are implemented by the demo:
 
 === Season Pass
 
@@ -117,12 +117,11 @@ Three types of tickets can be loaded onto a card:
 * *Unit-based* ticket: each validation consumes *1 unit*
 * Valid until the *card expiry date* (EnvEndDate)
 * Reloadable by adding extra units (up to 16,777,215)
-* Remaining balance is visible during inspection
+* Remaining trips are visible during inspection
 
 === Stored Value
 
-*Not implemented* by the demo: this ticket type cannot be loaded, and a Stored Value ticket present on a card is ignored
-at validation.
+*Not implemented* by the demo: this ticket type cannot be loaded, and a Stored Value ticket present on a card is ignored at validation.
 
 === Ticket priority (Calypso card only)
 
@@ -130,7 +129,7 @@ When several tickets are present on a Calypso card, the validation terminal auto
 
 [cols="^1,3,4", options="header"]
 |===
-| Priority | Ticket type | Behaviour
+| Priority | Ticket type | Behavior
 
 | 1 (highest)
 | Season Pass
@@ -155,15 +154,15 @@ When several tickets are present on a Calypso card, the validation terminal auto
 
 == Use cases
 
-=== Card issuance and personalisation
+=== Card issuance and personalization
 
 ==== Functional description
 
-Before being used, a blank card must be *personalised*: this operation initialises the card data and sets its validity period.
+Before being used, a blank card must be *personalized*: this operation initializes the card data and sets its validity period.
 
-Issuance is performed from the reload application (mobile client + server).
+Issuance is performed from the Android or multiplatform reload client, connected to the server (the .NET client does not personalize cards).
 
-==== What personalisation does
+==== What personalization does
 
 * Assigns a *unique application number*
 * Records the *issuance date*
@@ -172,7 +171,7 @@ Issuance is performed from the reload application (mobile client + server).
 
 ==== Diagram
 
-plantuml::diagrams/workflow-personalization.puml[target=workflow-personalization,format=svg,alt="Card personalisation workflow",align="center"]
+plantuml::diagrams/workflow-personalization.puml[target=workflow-personalization,format=svg,alt="Card personalization workflow",align="center"]
 
 ---
 
@@ -185,9 +184,9 @@ This operation requires the *SAM security module* to be present on the server si
 
 ==== Process
 
-. The agent or traveller presents the card to the NFC reader of the mobile client.
+. The agent or traveler presents the card to the reader of the client (NFC reader of the mobile device, or PC/SC reader of the desktop).
 . The application checks that the card is valid (version, expiry date).
-. Existing tickets are analysed and displayed.
+. Existing tickets are analyzed and displayed.
 . The user selects the ticket to load.
 . The transaction is sent to the server, which performs the secured operation.
 . The new ticket is written to the card; the counter is updated if necessary.
@@ -196,7 +195,7 @@ This operation requires the *SAM security module* to be present on the server si
 
 [cols="3,4", options="header"]
 |===
-| Situation | Behaviour
+| Situation | Behavior
 
 | Expired card
 | Loading refused
@@ -236,7 +235,7 @@ plantuml::diagrams/workflow-reload.puml[target=workflow-reload,format=svg,alt="T
 
 ==== Functional description
 
-Validation is the operation performed by the terminal installed at the access point (door, gate, validator) when a traveller presents their card.
+Validation is the operation performed by the terminal installed at the access point (door, gate, validator) when a traveler presents their card.
 
 The terminal automatically selects the best available ticket, updates the card data and records the entry event.
 
@@ -247,22 +246,22 @@ The terminal automatically selects the best available ticket, updates the card d
 
 ==== Process
 
-. The traveller presents their card to the NFC reader.
+. The traveler presents their card to the NFC reader.
 . The terminal checks the general validity of the card.
-. The terminal analyses the last recorded event (anti-passback).
+. The terminal analyzes the last recorded event (anti-passback).
 . The terminal searches for the best valid ticket among those present.
 . If a valid ticket is found: the counter is decremented if applicable, and a new event is recorded on the card.
-. The result is displayed to the traveller (access granted or denied).
+. The result is displayed to the traveler (access granted or denied).
 
 ==== Anti-passback rule
 
-If the card has already been validated within the previous minute, validation is *refused* to prevent multiple entries. A message prompts the traveller to wait. The times being recorded to the minute, the effective delay is between 1 and 2 minutes.
+If the card has already been validated within the previous minute, validation is *refused* to prevent multiple entries. A message prompts the traveler to wait. The times being recorded to the minute, the effective delay is between 1 and 2 minutes.
 
 NOTE: Special case (Calypso cards only): if the previous validation session was abnormally interrupted (card pulled away), re-presenting the card within the delay is accepted as a transaction recovery, without a new debit.
 
 ==== Refused card
 
-When no ticket of a Calypso card can be used, the expired or exhausted tickets are marked as such on the card (priority 31), so that the next validations no longer analyse them.
+When no ticket of a Calypso card can be used, the expired or exhausted tickets are marked as such on the card (priority 31), so that the next validations no longer analyze them.
 
 ==== Diagrams
 
@@ -280,7 +279,7 @@ plantuml::diagrams/workflow-validation-2.puml[target=workflow-validation-2,forma
 
 ==== Functional description
 
-Inspection is carried out by an agent equipped with a mobile terminal. It allows the agent to *verify the traveller's compliance* without modifying the card.
+Inspection is carried out by an agent equipped with a mobile terminal. It allows the agent to *verify the traveler's compliance* without modifying the card.
 
 ==== Authentication modes
 
@@ -296,7 +295,7 @@ Unlike validation, inspection can operate *without a SAM* thanks to two fallback
 
 | PKI
 | No SAM, but the card supports PKI mode
-| Maximum — asymmetric authentication without external hardware
+| Maximum — asymmetric authentication without external hardware (test certificates in the demo)
 
 | No authentication
 | Neither SAM nor PKI available
@@ -308,18 +307,20 @@ Unlike validation, inspection can operate *without a SAM* thanks to two fallback
 * The *general validity* of the card (version, dates)
 * The *detail of each ticket*: type, validity dates, remaining trips
 * The *compliance of the last validation event*:
-** Did the event take place at the correct location (configured network / location)?
-** Is the event within the configured validity window?
+** Did the event take place at the location configured on the inspection terminal?
+** Did it take place the same day, within the configured validation period?
 * Which ticket was used during the last validation
 
 ==== Information displayed to the agent
 
-For each ticket present on the card, the agent sees:
+The agent sees:
 
-* The ticket type and its dates
-* Its status: valid, expired, or used during the last entry
-* The number of remaining trips (for multi-trip tickets)
-* The authentication mode used during inspection
+* The authentication mode used during inspection ("Card authenticated by the SAM", "Card authenticated by PKI" or "Card not authenticated")
+* The *last validation*: date, time, location and ticket used
+* For each ticket present on the card: its type, its validity end date (season pass) or its number of remaining trips (multi-trip), and its status (valid, expired, or validated by the last validation)
+* "No ticket" when the card has never been loaded
+
+When the card is refused, the terminal displays "Not valid on this network" with the reason (see <<Inspection rejection conditions>>).
 
 NOTE: The verification of the ticket authenticator (traceability mode) is not implemented by the demo.
 
@@ -402,7 +403,7 @@ Each validation produces one of the following results:
 | Card refused by a business rule (see below).
 
 | *Not selected*
-| Card not recognised: no supported application, or unsupported file structure ("Selection error: card not recognized").
+| Card not recognized: no supported application, or unsupported file structure ("Selection error: card not recognized").
 
 | *Card lost*
 | Communication interrupted during the transaction (card removed too early): "An error occurred. Please try again."
@@ -417,7 +418,7 @@ Each validation produces one of the following results:
 |===
 | Situation | Message displayed
 
-| Card not personalised (environment of an unexpected version)
+| Card not personalized (environment of an unexpected version)
 | Card refused — Environment error: wrong version number
 
 | Expired card
@@ -432,7 +433,7 @@ Each validation produces one of the following results:
 | Card never loaded, or no usable ticket
 | No valid ticket detected — Please load a ticket.
 
-| Last analysed ticket expired
+| Last analyzed ticket expired
 | Expired ticket — Please load a ticket.
 
 | Multi-trip exhausted (0 trips remaining)
@@ -440,6 +441,34 @@ Each validation produces one of the following results:
 
 | Ticket of a storage card forbidden or expired
 | Ticket forbidden or expired — Please load a ticket.
+|===
+
+=== Inspection rejection conditions
+
+[cols="4,4", options="header"]
+|===
+| Situation | Message displayed (below "Not valid on this network")
+
+| No supported application in the card
+| Selection error: card not recognized
+
+| File structure of the Calypso application not supported
+| Invalid card — File structure not supported
+
+| Card not personalized (environment of an unexpected version)
+| Environment error: wrong version number
+
+| Expired card
+| Environment error: end date expired
+
+| Last event of an unexpected version
+| Event error: wrong version number
+
+| Ticket of an unexpected version
+| Ticket error: wrong version number
+
+| Reading error (e.g. card removed too early)
+| An error occurred while reading the card.
 |===
 
 == Glossary
@@ -452,7 +481,7 @@ Each validation produces one of the following results:
 | Application Identifier. Unique identifier of the Calypso card application, used when the terminal selects the card.
 
 | *Anti-passback*
-| Mechanism preventing a traveller from presenting their card twice within less than one minute, in order to avoid fraudulent tailgating.
+| Mechanism preventing a traveler from presenting their card twice within less than one minute, in order to avoid fraudulent tailgating.
 
 | *Calypso*
 | Open standard for contactless smart cards in ticketing systems, maintained by the Calypso Networks Association.
@@ -464,7 +493,7 @@ Each validation produces one of the following results:
 | Memory area on the card storing the remaining trips of a multi-trip ticket.
 
 | *EnvEndDate*
-| Expiry date of the card application (not of an individual ticket). Set to 6 years at personalisation.
+| Expiry date of the card application (not of an individual ticket). Set at personalization to the first day of the current month + 6 years.
 
 | *Event*
 | Record of the last validation operation performed on the card (date, time, location, ticket used).
@@ -473,7 +502,7 @@ Each validation produces one of the following results:
 | Open source Eclipse middleware facilitating the development of contactless ticketing applications. See keyple.org.
 
 | *PKI*
-| Public Key Infrastructure. Asymmetric authentication mode (RSA 2048-bit) that does not require a physical SAM.
+| Public Key Infrastructure. Asymmetric authentication mode (RSA 2048-bit) that does not require a physical SAM. The demo uses test certificates: a real deployment requires the certificates of its own PKI.
 
 | *Contract priority*
 | Numerical value determining the selection order of tickets during validation (1 = Season Pass, 2 = Multi-trip, 3 = Stored Value (not implemented), 31 = expired).
@@ -493,4 +522,4 @@ Each validation produces one of the following results:
 
 ---
 
-_Published by the Calypso Networks Association — calypsonet.org — BSD 3-Clause Licence_
+_Published by the Calypso Networks Association — calypsonet.org — BSD 3-Clause License_

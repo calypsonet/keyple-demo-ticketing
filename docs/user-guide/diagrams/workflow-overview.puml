@@ -1,15 +1,15 @@
 @startuml workflow-overview
-title Overview of functional workflows
+title Overview of the functional workflows
 
 start
 
-:Personalization\n/ Card issuance;
+:Personalization\n(card issuance);
 
-:Reload;
+:Ticket loading;
 
 :Validation;
 
-:Control;
+:Inspection;
 
 stop
 

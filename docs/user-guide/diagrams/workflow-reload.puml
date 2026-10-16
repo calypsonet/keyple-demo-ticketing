@@ -1,31 +1,31 @@
 @startuml workflow-reload
-title Reload
+title Ticket loading
 
 start
 
-if (Connected to server\nand is SAM present ?) then (No)
-  :Timeout exception;<<#red>>
+if (Server connected\nwith its SAM ?) then (No)
+  :Server error;<<#red>>
   stop
 else (Yes)
 endif
 
 :Card presentation;
 
-if (EnvVersionNumber=1\nand EnvEndDate valid ?) then (No)
+if (Card personalized\nand not expired ?) then (No)
   :Card refused;<<#red>>
   stop
 else (Yes)
 endif
 
-if (EventVersionNumber\n∈ {0, 1} ?) then (No)
+if (Last event of\na known version ?) then (No)
   :Card refused;<<#red>>
   stop
 else (Yes)
 endif
 
-:Read contracts 1 to 4\nDates verification + authenticators;
+:Read the tickets\n(expired tickets identified);
 
-:User choice\nticket to load;<<#orange>>
+:User choice\nof the ticket to load;<<#orange>>
 note right: User interaction
 
 if (Slot available ?\nsame type, empty or expired\n(single-ticket card: other ticket not usable)) then (No)
@@ -34,16 +34,16 @@ if (Slot available ?\nsame type, empty or expired\n(single-ticket card: other ti
 else (Yes)
 endif
 
-:Build ContractStructure\n(Season Pass renewal: +30 days if not expired);
+:Write the ticket\n(season pass renewal: +30 days if not expired);
 
-:Write contract\n+ Increment counter if MULTI_TRIP;
+:Add the trips to the counter\n(multi-trip ticket);
 
-if (ContractPriority changed ?) then (Yes)
-  :Update EventStructure\n(ContractPriority 1 to 4);
+if (Ticket priorities changed ?) then (Yes)
+  :Update the priorities\nin the last event;
 else (No)
 endif
 
-:Session closure;
+:End of the secure session;
 
 :Ticket loaded;<<#green>>
 
