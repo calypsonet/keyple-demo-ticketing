@@ -124,6 +124,7 @@ plantuml::diagrams/overview.puml[target=overview,format=svg,alt="Keyple Demo Tic
 
 NOTE: The Validation terminal and the Inspection terminal do not communicate over the network. Information is exchanged between these two applications *exclusively through the passenger's card*.
 
+[[cards]]
 == Contactless cards and media
 
 === Calypso card
@@ -445,6 +446,7 @@ This section summarizes the hardware supported by each application. The reader p
 * *Reload server*: PC/SC reader holding a Calypso SAM, required for personalization and ticket loading
 * *Desktop reload clients* (multiplatform and .NET): contactless PC/SC reader
 
+[[reload-clients]]
 === Available reload clients
 
 Three types of clients can connect to the reload server:

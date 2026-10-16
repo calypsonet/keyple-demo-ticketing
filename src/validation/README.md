@@ -19,8 +19,6 @@ that can be later verified by the [Inspection Demo](../inspection/).
 **Role in Ecosystem**: Second step in the ticketing workflow - validates loaded contracts and grants/denies access to
 transportation networks.
 
-**Validation Flow**: Season pass → Multi-trip ticket (in order of priority)
-
 ## Prerequisites
 
 ### Hardware Requirements
@@ -111,11 +109,6 @@ The content and the messages of each result are described in the
   animation
 - The sounds and LEDs of the terminal signal the success or the failure
 
-### Validation Scenarios
-
-The accepted and rejected validations, with the messages displayed, are described in the
-[Functional Documentation](../../docs/functional-documentation/index.adoc#validation-results).
-
 ## Technical Architecture
 
 ### Supported Card Types
@@ -132,7 +125,6 @@ The accepted and rejected validations, with the messages displayed, are describe
 - Reading and writing without cryptographic operation
 - Single contract per card
 - Streamlined validation procedure
-- **Note**: Production implementations should add appropriate security measures
 
 **Processing Flow**:
 1. Card detection and data reading
@@ -149,11 +141,6 @@ The accepted and rejected validations, with the messages displayed, are describe
 **ValidateCard** (`domain/usecases/ValidateCard.kt`)
 - Validates the presented card: selection, execution of the validation procedure supporting it and user feedback of
   the result (`ValidationResult`)
-
-**TerminalReaders** (`domain/spi/TerminalReaders.kt`)
-- Port giving access to the readers of the terminal
-- Registers the reader plugins of the terminal type, then provides the card reader and the SAM reader
-- Implementation: `KeypleTerminalReaders`
 
 **BaseValidationProcedure** (`domain/procedures/BaseValidationProcedure.kt`)
 - Business rules common to the validation procedures: versions, expiration, anti-passback, trips left, order of the
@@ -260,27 +247,14 @@ validation/app/
 
 ## Troubleshooting
 
-**"SAM not detected"**
-- Verify SAM is properly inserted in reader
-- Check SAM compatibility with cards (Test vs Production keys)
-- Ensure SAM reader is powered and connected
+The common issues of the Android applications (NFC, SAM, terminal type) are described in the
+[main README](../../README.md#troubleshooting).
 
 **"Card validation failed"**
 - Check card has valid contracts loaded via Reload Demo
 - Verify card AID is supported by application
 - Ensure contract validity dates are current
 - Check trips left for validation
-
-**"NFC detection not working"**
-- Enable NFC in Android system settings
-- Grant NFC permissions to application
-- Keep device stable during card reading
-- Try different card positioning on NFC antenna
-
-**"Plugin initialization failed"**
-- Ensure proper plugin libraries are included
-- Check hardware drivers are installed
-- Verify that the selected terminal type matches the actual hardware
 
 ## Proprietary Plugins
 
@@ -297,13 +271,8 @@ terminal types being then grayed out, and the storage cards not supported). They
 
 ## Contributing
 
-When contributing to this validation application:
-
-1. **Follow Android best practices** for UI and architecture
-2. **Test on multiple terminal types** to ensure compatibility
-3. **Validate with both Calypso and Storage cards**
-4. **Maintain security standards** for cryptographic operations
-5. **Update documentation** for new features or terminals
+See the [Contributing](../../README.md#contributing) section of the main README. Specific to this application: validate
+the changes with Calypso cards and storage cards, on the supported terminal types.
 
 ## Related Documentation
 

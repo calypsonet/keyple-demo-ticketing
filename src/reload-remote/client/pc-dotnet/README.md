@@ -219,7 +219,6 @@ dotnet build
 dotnet publish -c Release -r win-x64 --self-contained
 ```
 
-
 ## Troubleshooting
 
 ### Common Issues
@@ -247,14 +246,6 @@ dotnet publish -c Release -r win-x64 --self-contained
 - Try different cards to isolate issue
 - Check the APDU exchanges in the log file (`logs/demo-keyple-less-<date>.log`, `DEBUG` level)
 
-
-## Security Notes
-
-- **No Local Cryptography**: All security operations performed on server
-- **Data Transmission**: Use HTTPS for production server communication
-- **Card Data**: Sensitive information never persisted locally
-- **Authentication**: Implement server authentication for production use
-
 ## Extending to Other Platforms
 
 This implementation can serve as a template for other platforms:
@@ -266,12 +257,8 @@ This implementation can serve as a template for other platforms:
 
 ## Contributing
 
-When contributing to this .NET client:
-1. Maintain the hexagonal architecture pattern
-2. Follow C# coding conventions and best practices
-3. Add unit tests for new functionality
-4. Update documentation for API changes
-5. Test on different Windows versions and reader types
+See the [Contributing](../../../../README.md#contributing) section of the main README. Specific to this client: keep the
+hexagonal architecture, without dependency on the Keyple middleware.
 
 ## Related Documentation
 

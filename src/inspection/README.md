@@ -5,8 +5,7 @@
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../LICENSE)
 
 Android inspection terminal application, checking after their validation the cards of the passengers. This application
-represents the last step of the ticketing workflow: it displays the contracts of the card and indicates which one has
-been validated at the location of the inspection within the validation period.
+represents the last step of the ticketing workflow.
 
 [⬅️ Back to Main Project](../../README.md)
 
@@ -18,8 +17,8 @@ passengers have validated their trip. It analyzes the validation events written 
 
 **Role in Ecosystem**: Last step of the ticketing workflow - checks the cards after their validation.
 
-**Inspection Purpose**: Check that the last validation used a contract of the card, at the location of the inspection
-and within the validation period.
+**Inspection Rules**: see [What inspection checks](../../docs/functional-documentation/index.adoc#inspection-checks)
+in the Functional Documentation.
 
 ## Prerequisites
 
@@ -125,27 +124,18 @@ The reasons why a card is rejected, with the messages displayed, are described i
 **Inspection Procedure** (MIFARE Ultralight, ST25 SRT512, MIFARE Classic):
 1. **Reading**: reading of the environment, of the event and of the contract, without cryptographic operation
 2. **Analysis**: same checks as for the Calypso cards, on the single contract of the card
-- **Note**: Production implementations should add security measures
 
 ### Key Classes
 
 **CardReaderSession** (`domain/CardReaderSession.kt`)
-- **Purpose**: Manages the readers of the terminal
-- **Responsibilities**:
-  - Plugin, reader and SAM initialization
-  - Card detection and selection
-- **Integration**: Works with both SAM-enabled and SAM-less configurations
+- Manages the readers of the terminal, the SAM being optional: without SAM, the Calypso cards are authenticated by PKI
+  when they support it, otherwise read without authentication
 
 **InspectCard** (`domain/usecases/InspectCard.kt`)
 - **Purpose**: Inspects the presented card
 - **Responsibilities**: Selection of the card, execution of the inspection procedure supporting it
   (`CalypsoCardInspectionProcedure`, `StorageCardInspectionProcedure`) and user feedback of the result
   (`InspectionResult`)
-
-**TerminalReaders** (`domain/spi/TerminalReaders.kt`)
-- Port giving access to the readers of the terminal
-- Registers the reader plugins of the terminal type, then provides the card reader and the SAM reader
-- Implementation: `KeypleTerminalReaders`
 
 **BaseInspectionProcedure** (`domain/procedures/BaseInspectionProcedure.kt`)
 - Business rules common to the inspection procedures: validity of the last validation (location, day and validation
@@ -222,23 +212,13 @@ inspection/app/
 
 ## Troubleshooting
 
+The common issues of the Android applications (NFC, SAM, terminal type) are described in the
+[main README](../../README.md#troubleshooting).
+
 **No contract marked as validated**
 - The card has not been validated, or the last validation used another contract
 - The location of the validation differs from the location of the inspection
 - The validation did not take place the same day, or is older than the validation period
-
-**"SAM not available"**
-- Check that the SAM is properly inserted in the SAM reader of the terminal
-- Check that the SAM matches the keys of the cards (test SAM for the demo cards)
-- Restart the application to initialize the SAM reader again
-
-**Card reading intermittent**
-- Ensure the card is held steady during the reading
-- Check for interference from other NFC devices
-
-**Terminal type not available**
-- Confirm that the selected terminal type matches the actual hardware
-- Proprietary terminals require their plugin (see [Proprietary Plugins](#proprietary-plugins))
 
 ## Proprietary Plugins
 
@@ -252,13 +232,8 @@ terminal types being then grayed out, and the storage cards not supported). They
 
 ## Contributing
 
-When contributing to this inspection application:
-
-1. **Keep the inspection flow simple**: one presentation of the card, one result
-2. **Test Inspection Scenarios**: Verify the results after validations at various locations and times
-3. **Hardware Compatibility**: Test on supported terminal types
-4. **Security Standards**: Maintain or enhance existing security measures
-5. **Documentation Updates**: Keep this document consistent with the application
+See the [Contributing](../../README.md#contributing) section of the main README. Specific to this application: keep one
+presentation of the card for one result, and verify the results after validations at various locations and times.
 
 ## Related Documentation
 

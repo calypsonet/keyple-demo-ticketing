@@ -34,29 +34,11 @@ to each [release](https://github.com/calypsonet/keyple-demo-ticketing/releases).
 
 ## Supported Card Technologies
 
-### Calypso Cards
-
-Standard Calypso contactless cards supporting:
-
-- Secure sessions with SAM authentication
-- Multiple contracts (1-4 depending on product type)
-- Cryptographic security operations
-- Event log of the validations and counters updated within the secure sessions
-
-### Storage Cards
-
-Simple storage cards featuring:
-
-- Basic read/write operations without SAM requirements
-- Single contract storage
-- Simplified validation procedures
-- **Note**: This demo implementation is intentionally basic for demonstration purposes
-- **Proprietary libraries**: required to support the storage cards (see
-  [Proprietary Plugins](#proprietary-plugins-available-on-request))
-
-**Security Consideration**: Storage Card implementations in this demo lack production-level security mechanisms.
-Production deployments should implement appropriate cryptographic protections, signature verification, and secure key
-management.
+The demo supports Calypso cards, with secure sessions authenticated by a SAM (or by PKI for the inspection), and
+storage cards (MIFARE Ultralight, ST25 SRT512, MIFARE Classic), read and written without cryptographic operation and
+supported with the proprietary storage card libraries (see
+[Proprietary Plugins](#proprietary-plugins-available-on-request)). Their features and the tickets they hold are
+described in the [Functional Documentation](docs/functional-documentation/index.adoc#cards).
 
 ## Architecture
 
@@ -516,6 +498,38 @@ logs during debugging, comment out the `debug` build type configuration in the r
 The Calypso card applications supported by the demos, those of the test cards of the
 [CNA Test Kit](https://calypsonet.org/technical-support-documentation/), are listed in the
 [Common Library documentation](src/common/README.md#supported-card-applications).
+
+## Security Considerations
+
+The demo is not a production system:
+
+- The cryptographic operations of the Calypso cards are performed by a SAM: by the server for the reload clients,
+  which hold no cryptographic material, and by the terminal for the validation and inspection apps (the inspection
+  authenticating the cards by PKI when the terminal has no SAM).
+- The storage cards are read and written without cryptographic protection: a production system adds signature
+  verification and secure key management.
+- The SAMs and the cards of the demo use test keys: a production system uses the keys of its own network, stored and
+  renewed securely.
+- The server is designed for a local network (HTTP): a production system uses HTTPS and authenticates the clients and
+  the administrative functions (dashboard).
+
+## Troubleshooting
+
+Common issues of the Android applications (validation, inspection and reload Android client), the README of each
+component giving its specific issues:
+
+**NFC detection not working**
+- Enable NFC in the Android settings and grant the NFC permission to the application
+- Keep the card steady during the reading, and try different positions on the NFC antenna
+
+**SAM not detected or not available** (validation and inspection apps)
+- Check that the SAM is properly inserted in the SAM reader of the terminal
+- Check that the SAM matches the keys of the cards (test SAM for the demo cards)
+- Restart the application to initialize the SAM reader again
+
+**Terminal type not available**
+- Check that the selected terminal type matches the actual hardware
+- The proprietary terminals require their plugin (see [Proprietary Plugins](#proprietary-plugins-available-on-request))
 
 ## Contributing
 

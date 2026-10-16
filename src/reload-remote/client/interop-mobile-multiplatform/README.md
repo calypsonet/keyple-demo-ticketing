@@ -298,7 +298,6 @@ Each platform provides:
 ./gradlew :composeApp:packageDistributionForCurrentOS
 ```
 
-
 ## Troubleshooting
 
 ### Common Issues Across Platforms
@@ -329,13 +328,8 @@ Each platform provides:
 
 ## Contributing
 
-When contributing to this KMP client:
-
-1. **Maintain platform parity**: Ensure features work across all supported platforms
-2. **Follow KMP best practices**: Keep platform-specific code minimal
-3. **Test on all platforms**: Verify changes work on Android, iOS, and desktop
-4. **Update documentation**: Include platform-specific setup instructions
-5. **Performance considerations**: Profile on resource-constrained mobile devices
+See the [Contributing](../../../../README.md#contributing) section of the main README. Specific to this client: keep the
+same features on Android, iOS and desktop, the platform-specific code being minimal.
 
 ## Related Documentation
 

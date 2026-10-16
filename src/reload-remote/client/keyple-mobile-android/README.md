@@ -122,7 +122,8 @@ Splash Screen → Home → Card Reader → Card Content → Select Product → C
 - Option to load additional contracts
 
 **Select Product (`SelectProductActivity`)**
-- Lists the products for sale: multi-trip tickets (1 to 4 trips) and season pass
+- Lists the products for sale (see the
+  [Functional Documentation](../../../../docs/functional-documentation/index.adoc#reload-clients))
 - Shows their prices
 - Product selection for purchase
 
@@ -181,14 +182,6 @@ The application supports multiple reader plugins:
 - Storage card extension (`keyple-card-cna-storagecard-java-lib`) and reader plugin
   (`keyple-plugin-cna-storagecard-java-lib`), without which the storage cards are not supported
 
-### Security Model
-
-**Distributed Security Architecture**:
-- All cryptographic operations performed on server
-- Client transmits card data securely to server
-- Server manages SAM integration and secure sessions
-- No sensitive cryptographic material stored on mobile device
-
 ## Development
 
 ### Building the Project
@@ -224,15 +217,13 @@ To integrate additional reader types:
 
 ### Common Issues
 
+The common issues of the Android applications (NFC, terminal type) are described in the
+[main README](../../../../README.md#troubleshooting).
+
 **"Server connection failed"**
 - Verify server URL and network connectivity
 - Check firewall settings on server and client
 - Ensure server is running with proper configuration
-
-**"NFC not working"**
-- Enable NFC in Android system settings
-- Grant NFC permission to application
-- Keep device stable during card reading
 
 **"Card not recognized"**
 - Verify card contains supported AID
@@ -264,12 +255,8 @@ curl http://your-server:8080/card/sam-availability
 
 ## Contributing
 
-When contributing to this Android client:
-1. Follow Android development best practices
-2. Maintain compatibility with minimum API level 26
-3. Test on various Android devices and versions
-4. Update corresponding server integration if needed
-5. Follow the project's code style and documentation standards
+See the [Contributing](../../../../README.md#contributing) section of the main README. Specific to this client: keep the
+compatibility with the API level 26, and update the server when a remote service changes.
 
 ## Related Documentation
 

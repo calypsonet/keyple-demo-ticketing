@@ -103,18 +103,18 @@ contract without counter (season pass).
 
 ### Priority Codes
 
-Contract types and status indicators used throughout the system. The code 3 (stored value) is defined by the data
-model but not supported by the demo: it is read as `UNKNOWN`, and such a contract is never validated.
+Contract types and status indicators of the event. The code 3 (stored value) is defined by the data model but not
+supported by the demo: it is read as `UNKNOWN`. The use of the codes by the validation is described in the
+[Functional Documentation](../../docs/functional-documentation/index.adoc#ticket-priority).
 
-
-| Code | Name         | Description                    | Usage                           |
-|-----:|:-------------|:-------------------------------|:--------------------------------|
-|    0 | FORBIDDEN    | Prohibited usage               | Clean records only              |
-|    1 | SEASON_PASS  | Unlimited travel period        | Highest priority validation     |
-|    2 | MULTI_TRIP   | Count-based ticket             | Decremented per trip            |
-|    3 | -            | Stored value                   | Not supported by the demo       |
-| 4-30 | RFU          | Reserved for future use        | -                               |
-|   31 | EXPIRED      | Contract has expired           | Automatically set by system     |
+| Code | Name        | Description             |
+|-----:|:------------|:------------------------|
+|    0 | FORBIDDEN   | Prohibited usage        |
+|    1 | SEASON_PASS | Unlimited travel period |
+|    2 | MULTI_TRIP  | Count-based ticket      |
+|    3 | -           | Stored value            |
+| 4-30 | RFU         | Reserved for future use |
+|   31 | EXPIRED     | Contract has expired    |
 
 ## Supported Card Applications
 

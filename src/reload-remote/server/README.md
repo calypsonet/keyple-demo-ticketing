@@ -271,11 +271,7 @@ curl http://localhost:8080/card/sam-availability
 
 ## Security Considerations
 
-- **SAM Security**: Ensure SAMs contain appropriate keys for your environment
-- **Network Security**: Use HTTPS in production environments
-- **Access Control**: Implement authentication for administrative functions
-- **Audit Logging**: Enable comprehensive transaction logging
-- **Key Management**: Secure storage and rotation of cryptographic keys
+See the [Security Considerations](../../../README.md#security-considerations) of the main README.
 
 ## License
 
