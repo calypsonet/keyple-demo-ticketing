@@ -1,0 +1,255 @@
+# =============================================================================
+# Calypso Networks Association — Asciidoctor PDF theme
+# -----------------------------------------------------------------------------
+# Maintenance notes:
+#   * Color values MUST be hex strings WITHOUT the leading "#" and ALWAYS
+#     quoted. In YAML, a "#" preceded by a space starts a comment, so an
+#     unquoted `#039EFD` would be silently parsed as a null value. Quotes are
+#     also required for all-digit values (an unquoted `333333` would be read
+#     as an integer).
+#   * The brand palette is defined once under the `brand` key and referenced
+#     everywhere as `$brand_<name>`. To update the visual identity, edit the
+#     palette below — do not hardcode colors elsewhere in this file.
+#   * Keep the `brand` palette in sync with the `:root` custom properties in
+#     docinfo.html (HTML output). Ideally both are generated from a shared
+#     design-token file by the CI toolchain.
+#   * Document attributes expected at build time (set in the .adoc header or
+#     injected by the CI workflow):
+#       :doc-type:           document type, upper-cased in the page header (e.g. "Specification")
+#       :doc-name:           document name (page header)
+#       :doc-ref:            document reference (page header)
+#       :doc-classification:  e.g. "Public" (page header; the reusable CI
+#                             workflow should provide "Public" as default)
+#     `{docyear}` (build year) and `{revnumber}` / `{revdate}` are provided
+#     by Asciidoctor itself.
+#   * Font files listed in the catalog must be shipped alongside this theme
+#     (same directory or `pdf-fontsdir`). Keep weights consistent with the
+#     web fonts used by docinfo.html.
+# =============================================================================
+
+extends: default
+
+# --- Brand palette (custom keys, referenced as $brand_*) ---------------------
+brand:
+  primary: '039EFD'   # Calypso blue
+  secondary: 'EF8B3A' # Calypso orange
+  muted: '9D9D9D'     # Calypso grey
+  ink: '333333'       # body text
+  codebg: 'F7F7F8'    # code background
+  example: 'EBEBEB'   # example block background
+  black: '000000'
+  white: 'FFFFFF'
+
+# --- Page layout -------------------------------------------------------------
+page:
+  margin: [1.0in, 0.67in, 0.67in, 0.67in]
+  numbering:
+    start-at: title
+
+# --- Fonts -------------------------------------------------------------------
+font:
+  catalog:
+    Montserrat: &montserrat
+      regular: Montserrat-Regular.ttf
+      bold: Montserrat-Bold.ttf
+      italic: Montserrat-Italic.ttf
+      bold_italic: Montserrat-BoldItalic.ttf
+    JetBrains Mono: &jetbrains
+      regular: JetBrainsMono-Regular.ttf
+      bold: JetBrainsMono-Bold.ttf
+      italic: JetBrainsMono-Italic.ttf
+      bold_italic: JetBrainsMono-BoldItalic.ttf
+    # "M+ 1mn" is the monospaced font of the default theme: aliasing it
+    # ensures everything inheriting from it renders with JetBrains Mono.
+    "M+ 1mn": *jetbrains
+  # Fallback font for glyphs missing from the base font (Montserrat).
+  # JetBrains Mono supplies the geometric symbols Montserrat lacks -- notably
+  # the nested unordered-list markers (white bullet U+25E6, small square U+25AA).
+  fallbacks: [JetBrains Mono]
+
+# --- Base styles -------------------------------------------------------------
+base:
+  font-family: Montserrat
+  font-size: 9
+  font-color: $brand_ink
+
+# --- Custom roles ------------------------------------------------------------
+# Custom inline roles, applied as [.role]#text# (the positional [role]#text#
+# form works too — that is what the apdu extension emits):
+#   color-primary   - brand-blue text; used by the footer page counter.
+#   text-uppercase  - upper-cases text; used by the header document type.
+#   silver          - greyed-out text; apdu extension (optional / de-emphasised).
+#   red             - error text; apdu extension (missing or invalid rows).
+#   license-header  - copyright line of the colophon page (muted grey).
+#   license-content - license body of the colophon page (muted grey italic).
+# The two license-* roles are applied per block in the AsciiDoc source: the
+# [license] open block does not cascade role styling to its children in the PDF
+# output. They mirror the .license-header / .license-content rules in
+# docinfo.html (HTML output) — update both files together.
+role:
+  color-primary:
+    font-color: $brand_primary
+  text-uppercase:
+    text-transform: uppercase
+  # Neither is a brand colour: both mirror Asciidoctor's default HTML colour
+  # roles (`.silver` #909090, `.red` #bf0000) so the extension's greyed / error
+  # markers look the same in PDF and HTML.
+  silver:
+    font-color: '909090'
+  red:
+    font-color: 'BF0000'
+  license-header:
+    font-color: $brand_muted
+  license-content:
+    font-color: $brand_muted
+    font-style: italic
+
+# --- Title page --------------------------------------------------------------
+title_page:
+  align: center
+  background-image: image:title-page-background.svg[]
+  logo:
+    align: center
+    top: 43%
+  title:
+    align: center
+    font-size: 14
+    font-color: $brand_black
+    text-transform: uppercase
+    top: 40%
+  subtitle:
+    align: center
+    font-size: 18
+    font-color: $brand_primary
+    margin-top: 70
+    font-style: normal
+  authors:
+    display: none
+    align: center
+    margin-top: 15
+  revision:
+    align: center
+    margin-top: 15
+    font-style: italic
+    font-color: $brand_muted
+
+# --- Table of contents -------------------------------------------------------
+# Each toc-h* entry mirrors the color of the matching heading-h* below.
+# When changing a heading level color, update both places (or better: keep
+# this pairing in mind when refactoring).
+toc-h2:
+  font-color: $brand_black
+toc-h3:
+  font-color: $brand_secondary
+toc-h4:
+  font-color: $brand_muted
+  font-style: italic
+toc-h5:
+  font-color: $brand_primary
+  font-style: italic
+
+# --- Headings ----------------------------------------------------------------
+# Level color scale: h1/h5 = brand blue, h2 = black, h3 = orange,
+# h4 = grey italic. Mirrored by the heading/TOC rules in docinfo.html.
+heading:
+  font-color: $brand_primary
+  font-style: normal
+heading-h2:
+  font-color: $brand_black
+heading-h3:
+  font-color: $brand_secondary
+heading-h4:
+  font-color: $brand_muted
+  font-style: italic
+heading-h5:
+  font-color: $brand_primary
+  font-style: bold_italic
+
+# --- Block captions ----------------------------------------------------------
+# Applies to every captioned block below (figures, tables, examples, listings).
+# HTML counterpart: the `.title` centering rule in docinfo.html -- update both.
+caption:
+  font-color: $brand_muted
+  align: center
+
+# --- Code and literal blocks -------------------------------------------------
+# asciidoctor-pdf styles literal blocks (....) like listing/source blocks (----):
+# both take the code background below, so verbatim content is consistent in the
+# PDF. (In HTML, .literalblock has no background by default -- see docinfo.html.)
+code:
+  font-family: JetBrains Mono
+  background-color: $brand_codebg
+
+literal:
+  font-family: JetBrains Mono
+  font-color: $brand_black
+  background-color: $brand_codebg
+
+# --- Links -------------------------------------------------------------------
+link:
+  font-color: $brand_primary
+  text-decoration: underline
+
+# --- Tables ------------------------------------------------------------------
+table:
+  font-size: 8
+  head:
+    background-color: $brand_primary
+    font-color: $brand_white
+    border-bottom-width: 0.5
+
+# --- Example blocks ----------------------------------------------------------
+example:
+  background-color: $brand_example
+
+# --- Images ------------------------------------------------------------------
+# Center every block image (diagrams, figures). HTML counterpart: the
+# `.imageblock > .content` centering rule in docinfo.html -- update both.
+image:
+  align: center
+
+# --- Running content (headers, footers, page numbers) ------------------------
+running-content:
+  start-at: title
+
+header:
+  height: 0.8in
+  border-color: $brand_muted
+  border-width: 0.5
+  padding: [16, 0, 4, 0]
+  font-family: Montserrat
+  font-size: 7
+  font-color: $brand_muted
+  recto: &header-content
+    left:
+      content: image:logos/calypso.svg[pdfwidth=1.5in]
+      valign: center
+    right:
+      content: |
+        [.text-uppercase]#{doc-type}# +
+        {doc-classification} +
+        {doc-name} +
+        _{doc-ref}_
+      valign: center
+  verso: *header-content
+
+footer:
+  height: 0.4in
+  border-color: $brand_muted
+  border-width: 0.5
+  padding: [4, 0, 4, 0]
+  font-family: Montserrat
+  font-size: 7
+  font-color: $brand_muted
+  recto: &footer-content
+    left:
+      content: |
+        Version {nbsp} {revnumber} +
+        Date {nbsp}{nbsp}{nbsp}{nbsp}{nbsp}{nbsp} {revdate}
+      valign: center
+    right:
+      content: |
+        [.color-primary]#{page-number} / {page-count}# +
+        _© Calypso Networks Association {docyear} -- Reproduction is prohibited without prior written agreement_
+      valign: center
+  verso: *footer-content

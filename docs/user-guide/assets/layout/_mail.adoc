@@ -1,0 +1,6 @@
+// Per-icon data URI, included by the document header.
+// Regenerate from assets/layout/mail.svg if the source icon changes.
+:icon-mail-datauri: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4NCiAgPGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9IiMwMDlFRkYiLz4NCiAgPHJlY3QgeD0iMzAiIHk9IjM4IiB3aWR0aD0iNDAiIGhlaWdodD0iMjYiIHJ4PSIyLjUiDQogICAgICAgIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIzLjIiLz4NCiAgPHBhdGggZD0iTTMxLjUgNDAgTDUwIDU0IEw2OC41IDQwIg0KICAgICAgICBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMy4yIg0KICAgICAgICBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjwvc3ZnPg0K
+// Inline icon image -- reuses the data URI above so both the HTML and PDF stay
+// self-contained. Consumed by the colophon "Link and Contact" table.
+:icon-mail-image: image:{icon-mail-datauri}[Support,pdfwidth=0.45in,role=colophon-icon]

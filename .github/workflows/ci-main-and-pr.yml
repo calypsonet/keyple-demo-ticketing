@@ -114,3 +114,15 @@ jobs:
     with:
       component-name: "Reloading Client PC .NET"
       working-directory: "./src/reloading-remote/client/pc-dotnet/"
+
+  # ========================================
+  # DOCUMENTATION
+  # ========================================
+
+  ci-functional-documentation:
+    name: "Functional documentation (PDF, HTML)"
+    uses: ./.github/workflows/reusable-asciidoc-ci.yml
+    with:
+      component-name: "Functional documentation"
+      working-directory: "./docs/user-guide/"
+      document: "functional-documentation.adoc"

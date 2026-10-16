@@ -1,0 +1,43 @@
+// Colophon (legal notice), shared by every CNA Terminal API spec. A discrete
+// heading keeps it out of the TOC in both outputs. In the PDF it is the first
+// content after the title page (page 2); the TOC is then rendered right after
+// it via the `toc::[]` macro below.
+// Uses global attributes from the document header ({icon-web-image},
+// {icon-mail-image}, {spacer-datauri}, {spacer-pdfwidth}, {doc-license-notice}).
+// Nested includes are prefixed with {docdir}/ so they resolve relative to the
+// including document, not to this file's location.
+[discrete]
+== Link and Contact
+
+// Icon columns (1 & 3) are right-aligned (>) so each icon sits next to its
+// adjacent label column; text columns (2 & 4) stay centered. `.^` keeps every
+// cell vertically centered.
+[cols=">.^1,^.^2,>.^1,^.^2", frame=none, grid=none, stripes=none]
+|===
+| {icon-web-image}
+| Website +
+https://calypsonet.org
+| {icon-mail-image}
+| Support +
+support@calypsonet.org
+|===
+
+// PDF only: transparent SVG spacer that pushes the license notice down so it
+// sits just above the page footer of the colophon page. Asciidoctor PDF has no
+// dynamic "anchor to bottom", so the gap is a FIXED height controlled by the
+// `pdfwidth` value below (the SVG is a 1:1 square, so its rendered height equals
+// pdfwidth). Adjust that single value if the content above/below changes.
+ifdef::backend-pdf[]
+include::{docdir}/assets/layout/_spacer.adoc[]
+image::{spacer-datauri}[pdfwidth={spacer-pdfwidth}]
+endif::[]
+
+include::{docdir}/{doc-license-notice}[]
+
+// PDF only: render the TOC after the colophon so the page order is
+// title page -> colophon -> TOC.
+ifdef::backend-pdf[]
+<<<
+toc::[]
+endif::[]
+

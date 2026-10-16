@@ -1,25 +1,93 @@
-= Keyple Demo Ticketing — Functional Documentation
-Calypso Networks Association
-:revdate: 2026-10-16
+= {doc-title} — {doc-subtitle}
+//
+// Header structured as the documents of the CNA documentation toolchain (CNA graphic charter): the
+// assets directory holds the shared theme (pdf-theme.yml, docinfo.html), fonts, layout and legal partials.
+//
+// Rendering, from this directory (all the generated files are placed in the generated directory):
+//   asciidoctor -r asciidoctor-diagram -D generated functional-documentation.adoc
+//   asciidoctor-pdf -r asciidoctor-diagram -D generated functional-documentation.adoc
+// The release workflow overrides revnumber, revdate and doc-ref with the release tag and date.
+//
+// ============================================================================
+// Document identity
+// ============================================================================
+//
+:doc-topic: Keyple Demo Ticketing
+:doc-name: Keyple Demo Ticketing
+:doc-type: Functional Documentation
+:doc-classification: Public
+:doc-ref: YYMMDD-FD-KeypleDemoTicketing
+:doc-repo: https://github.com/calypsonet/keyple-demo-ticketing
+include::assets/logos/_calypso.adoc[]
+include::assets/legal/_license-bsd-3-clause.adoc[]
+//
+// Revision (set from the release tag by the release workflow)
 :revnumber: 1.1
+:revdate: 2026-10-16
+//
+// ============================================================================
+// Shared / fixed -- identical to the CNA documents
+// ============================================================================
+//
+// Title composition
+:doc-title: {doc-type}
+:doc-subtitle: {doc-topic}
+:title-separator: —
+//
+// Publisher and authorship
+:organization: Calypso Networks Association
+:author: Calypso_Networks_Association
+:email: https://calypsonet.org
+//
+// Build (works with revdate for deterministic output)
+:reproducible:
+//
+// Output & rendering
 :lang: en
+:doctype: book
 :toc: left
 :toc-title: Table of Contents
+// PDF only: manual TOC placement, so that the colophon sits between the title page and the TOC
+ifdef::backend-pdf[:toc: macro]
 :toclevels: 3
 :sectnums:
 :sectnumlevels: 3
+:sectanchors:
+:sectlinks:
 :icons: font
+:data-uri:
+:webfonts!:
+//
+// Assets & theming
+:docinfodir: {docdir}/assets
+:docinfo: shared-head
+:docinfo-subs: attributes
+:imagesoutdir: {docdir}/generated
+:diagram-cachedir: {docdir}/generated/.asciidoctor/diagram
+:pdf-themesdir: {docdir}/assets
+:pdf-theme: pdf
+:pdf-fontsdir: {docdir}/assets/fonts
+// Web fonts (base64 woff2) of the HTML output
+include::assets/fonts/_fonts.adoc[]
+// Favicon (HTML) and icons of the colophon
+include::assets/layout/_favicon.adoc[]
+include::assets/layout/_web.adoc[]
+include::assets/layout/_mail.adoc[]
+//
+// Captions & sectioning
+:appendix-caption: Annex
+:example-caption: Example
 :figure-caption: Figure
 :table-caption: Table
-// All the generated files are placed in the generated directory, the diagrams being generated from their PlantUML
-// sources (diagrams directory). Rendering, from this directory:
-// asciidoctor -r asciidoctor-diagram -D generated functional-documentation.adoc
-:imagesoutdir: generated
-:diagram-cachedir: generated/.asciidoctor/diagram
+:!chapter-signifier:
 
-_This document describes the Keyple Demo Ticketing ecosystem from a functional and business perspective. It is intended for project managers, functional architects and business teams who want to understand the covered use cases without going into technical implementation details._
+// Colophon (link, contact and license notice), followed by the TOC in the PDF
+include::assets/layout/_colophon.adoc[]
 
----
+[abstract]
+== Abstract
+
+This document describes the Keyple Demo Ticketing ecosystem from a functional and business perspective. It is intended for project managers, functional architects and business teams who want to understand the covered use cases without going into technical implementation details.
 
 == Overview
 
@@ -536,7 +604,3 @@ Each validation produces one of the following results:
 | *Storage card*
 | Simple memory card (MIFARE Ultralight, ST25, MIFARE Classic) that does not support the Calypso protocol. Only one ticket possible, no Calypso secure session.
 |===
-
----
-
-_Published by the Calypso Networks Association — https://calypsonet.org[calypsonet.org] — BSD 3-Clause License_

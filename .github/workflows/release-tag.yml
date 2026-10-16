@@ -97,3 +97,16 @@ jobs:
       component-name: "Reloading Client PC .NET"
       working-directory: "./src/reloading-remote/client/pc-dotnet/"
       archive-name-prefix: "kdt-reloading-pc-dotnet-app"
+
+  # ========================================
+  # DOCUMENTATION
+  # ========================================
+
+  release-functional-documentation:
+    name: "Functional documentation (PDF, HTML)"
+    uses: ./.github/workflows/reusable-asciidoc-release.yml
+    with:
+      component-name: "Functional documentation"
+      working-directory: "./docs/user-guide/"
+      document: "functional-documentation.adoc"
+      archive-name-prefix: "kdt-functional-documentation"
