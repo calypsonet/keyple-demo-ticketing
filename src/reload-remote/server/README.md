@@ -18,7 +18,129 @@ This Java server implements the business logic for the Keyple Demo ecosystem, ma
   multiplatform and .NET clients
 - Web dashboard monitoring the transactions
 
-## Architecture
+## Prerequisites
+
+### Hardware Requirements
+- PC/SC compatible card reader
+- Calypso SAM (Secure Access Module) for secure operations
+- USB connection for reader
+
+### Software Requirements
+- **JDK 17+** (OpenJDK recommended)
+- **Node.js 20.19+ or 22.12+** (for dashboard development, as required by Vite)
+- **Compatible PC/SC reader drivers**
+- **Storage card extension** of [CNA](https://calypsonet.org/contact-us/) (`keyple-card-cna-storagecard-java-lib`, on request) to process the storage
+  cards (replaced by a mock by default, the storage cards being then not supported; installed as described in the
+  [main README](../../../README.md#proprietary-plugins-available-on-request))
+
+### Tested Readers
+- Cherry TC series
+- SCM Microsystems
+- Identive CLOUD series
+- HID Global readers
+- Generic PC/SC compatible devices
+
+## Installation
+
+### Download
+
+1. **Download** `kdt-reload-server-X.Y.Z-full.jar` from the [releases page](https://github.com/calypsonet/keyple-demo-ticketing/releases).
+
+2. **Start** the server:
+```bash
+java -jar kdt-reload-server-X.Y.Z-full.jar
+```
+
+3. **Access** the web dashboard at `http://localhost:8080`
+
+### Build from Source
+
+See [Building and Testing](#building-and-testing).
+
+## Configuration
+
+### Custom Reader Configuration
+
+If your PC/SC reader name doesn't match the default filter, specify a custom pattern:
+
+**Windows Command Prompt:**
+```cmd
+java "-Dsam.pcsc.reader.filter=Identive CLOUD 2700 R Smart Card Reader.*" -jar kdt-reload-server-X.Y.Z-full.jar
+```
+
+**Windows PowerShell:**
+```powershell
+java '-Dsam.pcsc.reader.filter=Identive CLOUD 2700 R Smart Card Reader.*' -jar .\kdt-reload-server-X.Y.Z-full.jar
+```
+
+**Linux/macOS:**
+```bash
+java -Dsam.pcsc.reader.filter=".*ACS.*" -jar kdt-reload-server-X.Y.Z-full.jar
+```
+
+### Application Properties
+
+The server uses the following default configuration in `application.properties`:
+
+```properties
+# CORS Configuration (for web clients)
+quarkus.http.cors.enabled=true
+quarkus.http.cors.origins=/.*/
+
+# Package Configuration
+quarkus.package.jar.type=uber-jar
+quarkus.package.runner-suffix=-full
+
+# Logging Configuration
+quarkus.log.level=INFO
+quarkus.log.category."org.calypsonet.keyple".level=INFO
+quarkus.log.category."org.eclipse.keyple".level=INFO
+
+# PC/SC Reader Filter (regex format)
+sam.pcsc.reader.filter=.*(Cherry TC|SCM Microsystems|Identive|HID|Generic).*
+```
+
+### Environment Variables
+
+Override configuration using environment variables:
+
+```bash
+export SAM_PCSC_READER_FILTER=".*Your Reader Name.*"
+export QUARKUS_LOG_LEVEL=DEBUG
+```
+
+## Web Dashboard
+
+### Features
+
+The React dashboard displays:
+
+- **Server and SAM status**: server reachable and SAM available, checked periodically
+- **Transactions**: transactions of the clients (start time, plugin, type, card serial number, status, loaded
+  contract), updated in real time (Server-Sent Events)
+
+### Dashboard URLs
+
+- **Main Dashboard**: `http://localhost:8080`
+
+## API Endpoints
+
+### Card Operations
+
+```http
+GET  /card/export-card-selection-scenario
+POST /card/remote-plugin
+GET  /card/sam-availability
+```
+
+### Transaction Monitoring
+
+```http
+GET  /transactions           # all the transactions (JSON)
+GET  /transactions/stream    # new transactions (Server-Sent Events, one JSON transaction per event)
+```
+
+## Technical Architecture
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -54,96 +176,9 @@ remote service (`RemoteServiceId`) to the service handling it:
   displayed by the
   dashboard, and `CardConfigurator` sets up the Keyple infrastructure (SAM and remote plugins).
 
-## Prerequisites
+## Development
 
-### Hardware Requirements
-- PC/SC compatible card reader
-- Calypso SAM (Secure Access Module) for secure operations
-- USB connection for reader
-
-### Software Requirements
-- **JDK 17+** (OpenJDK recommended)
-- **Node.js 20.19+ or 22.12+** (for dashboard development, as required by Vite)
-- **Compatible PC/SC reader drivers**
-- **Storage card extension** of [CNA](https://calypsonet.org/contact-us/) (`keyple-card-cna-storagecard-java-lib`, on request) to process the storage
-  cards (replaced by a mock by default, the storage cards being then not supported; installed as described in the
-  [main README](../../../README.md#proprietary-plugins-available-on-request))
-
-### Tested Readers
-- Cherry TC series
-- SCM Microsystems
-- Identive CLOUD series
-- HID Global readers
-- Generic PC/SC compatible devices
-
-## Quick Start
-
-### Using Pre-built JAR
-
-1. **Download** `kdt-reload-server-X.Y.Z-full.jar` from the [releases page](https://github.com/calypsonet/keyple-demo-ticketing/releases).
-
-2. **Start** the server:
-```bash
-java -jar kdt-reload-server-X.Y.Z-full.jar
-```
-
-3. **Access** the web dashboard at `http://localhost:8080`
-
-### Custom Reader Configuration
-
-If your PC/SC reader name doesn't match the default filter, specify a custom pattern:
-
-**Windows Command Prompt:**
-```cmd
-java "-Dsam.pcsc.reader.filter=Identive CLOUD 2700 R Smart Card Reader.*" -jar kdt-reload-server-X.Y.Z-full.jar
-```
-
-**Windows PowerShell:**
-```powershell
-java '-Dsam.pcsc.reader.filter=Identive CLOUD 2700 R Smart Card Reader.*' -jar .\kdt-reload-server-X.Y.Z-full.jar
-```
-
-**Linux/macOS:**
-```bash
-java -Dsam.pcsc.reader.filter=".*ACS.*" -jar kdt-reload-server-X.Y.Z-full.jar
-```
-
-## Configuration
-
-### Application Properties
-
-The server uses the following default configuration in `application.properties`:
-
-```properties
-# CORS Configuration (for web clients)
-quarkus.http.cors.enabled=true
-quarkus.http.cors.origins=/.*/
-
-# Package Configuration
-quarkus.package.jar.type=uber-jar
-quarkus.package.runner-suffix=-full
-
-# Logging Configuration
-quarkus.log.level=INFO
-quarkus.log.category."org.calypsonet.keyple".level=INFO
-quarkus.log.category."org.eclipse.keyple".level=INFO
-
-# PC/SC Reader Filter (regex format)
-sam.pcsc.reader.filter=.*(Cherry TC|SCM Microsystems|Identive|HID|Generic).*
-```
-
-### Environment Variables
-
-Override configuration using environment variables:
-
-```bash
-export SAM_PCSC_READER_FILTER=".*Your Reader Name.*"
-export QUARKUS_LOG_LEVEL=DEBUG
-```
-
-## Development Setup
-
-### Building from Source
+### Building and Testing
 
 1. **Clone** the repository:
 ```bash
@@ -166,7 +201,7 @@ cd ..
 
 4. **Choose a run mode:**
 
-**Development mode** (hot reload, no prior build required):
+**Development mode** (hot reload, no prior build required, development UI at `http://localhost:8080/q/dev/`):
 ```bash
 ./gradlew quarkusDev
 ```
@@ -184,49 +219,6 @@ npm start
 ./gradlew startServer
 ```
 > Launches the self-contained JAR from `build/`. The React dashboard is embedded.
-
-### Development Mode
-
-Run in development mode with hot reload:
-
-```bash
-./gradlew quarkusDev
-```
-
-This enables:
-- Automatic code recompilation
-- Development UI at `http://localhost:8080/q/dev/`
-
-## Web Dashboard
-
-### Features
-
-The React dashboard displays:
-
-- **Server and SAM status**: server reachable and SAM available, checked periodically
-- **Transactions**: transactions of the clients (start time, plugin, type, card serial number, status, loaded
-  contract), updated in real time (Server-Sent Events)
-
-### Dashboard URLs
-
-- **Main Dashboard**: `http://localhost:8080`
-
-## API Endpoints
-
-### Card Operations
-
-```http
-GET  /card/export-card-selection-scenario
-POST /card/remote-plugin
-GET  /card/sam-availability
-```
-
-### Transaction Monitoring
-
-```http
-GET  /transactions           # all the transactions (JSON)
-GET  /transactions/stream    # new transactions (Server-Sent Events, one JSON transaction per event)
-```
 
 ## Troubleshooting
 
@@ -272,6 +264,21 @@ curl http://localhost:8080/card/sam-availability
 ## Security Considerations
 
 See the [Security Considerations](../../../README.md#security-considerations) of the main README.
+
+## Contributing
+
+See the [Contributing](../../../README.md#contributing) section of the main README. Specific to this server: the
+business rules of the personalization and of the loading are unit tested (see
+[Unit Tests](../../../README.md#unit-tests)), and a change of a remote service is reported in the clients using it.
+
+## Related Documentation
+
+- [Main Project Overview](../../../README.md)
+- [Functional Documentation](../../../docs/functional-documentation/index.adoc) - Use cases and business rules
+- [Reload Demo](../README.md) - Card personalization and contract loading procedures
+- [Common Library](../../common/README.md) - Data structures and remote services
+- Clients: [Android](../client/keyple-mobile-android/README.md),
+  [multiplatform](../client/interop-mobile-multiplatform/README.md), [.NET](../client/pc-dotnet/README.md)
 
 ## License
 

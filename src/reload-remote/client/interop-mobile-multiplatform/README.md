@@ -36,7 +36,7 @@ cross-platform development practices for contactless card applications.
 - Android 8.0+ (API level 26+)
 - NFC enabled in system settings
 - Android SDK installed locally, with a `local.properties` file at the project root pointing to it (see
-  [Building the Project](#building-the-project))
+  [Build from Source](#build-from-source))
 
 #### iOS
 - iPhone with NFC support (iPhone 7+)
@@ -64,16 +64,14 @@ From the [Releases page](https://github.com/calypsonet/keyple-demo-ticketing/rel
   the Android settings to install it)
 - **Desktop**: the package of your system (`.dmg` for macOS, `.msi` for Windows, `.deb` for Linux), or the executable
   JAR of your system (`kdt-reload-multiplatform-app-...jar`), run with Java 17+
-- **iOS**: not published, the application is built with Xcode (see [iOS App](#ios-app))
+- **iOS**: not published, the application is built with Xcode (see [iOS Development](#ios-development))
 
-### Building the Project
+### Build from Source
 
 ```bash
 git clone https://github.com/calypsonet/keyple-demo-ticketing.git
 cd keyple-demo-ticketing/src/reload-remote/client/interop-mobile-multiplatform
 ```
-
-#### Android App
 
 Before building for Android, create a `local.properties` file at the root of this project
 (`interop-mobile-multiplatform/local.properties`) pointing to your local Android SDK installation. This file is not
@@ -87,31 +85,7 @@ On Windows, escape backslashes in the path, e.g. `sdk.dir=C\:\\Users\\<user>\\Ap
 
 Without this file, Gradle fails with `SDK location not found`.
 
-```bash
-./gradlew :androidApp:assembleDebug
-
-# Install on connected device
-./gradlew :androidApp:installDebug
-```
-
-#### iOS App
-1. Open `iosApp/iosApp.xcodeproj` in Xcode
-2. Configure signing in "Signing & Capabilities"
-3. Enable "Automatically manage signing"
-4. Select your development team
-5. Build and run on connected iPhone
-
-#### Desktop App
-```bash
-# Windows/Mac/Linux
-./gradlew :composeApp:run
-
-# With PC/SC reader filter (example for ACS reader)
-./gradlew :composeApp:run -PcustomArgs="-filter=ACS"
-```
-
-The filter is a part of the name of the reader, case insensitive. Without filter, or when no reader matches, the first
-reader is used.
+The build commands of each platform are given in [Building for Different Platforms](#building-for-different-platforms).
 
 ## Configuration
 
@@ -220,7 +194,7 @@ androidApp/src/main/              # Android application (activity, manifest, lau
 The Android application is a separate module: the Android Gradle plugin 9 does not support the Kotlin
 Multiplatform and Android application plugins in the same module.
 
-### Key Components
+### Key Classes
 
 #### Shared Business Logic (`commonMain`)
 
@@ -271,7 +245,8 @@ Each platform provides:
 #### iOS Development
 1. **Xcode Setup**:
   - Open `iosApp/iosApp.xcodeproj`
-  - Configure development team in signing
+  - Configure the signing in `Signing & Capabilities`: enable "Automatically manage signing" and select your
+    development team
   - Add NFC capability: `Signing & Capabilities` → `Near Field Communication Tag Reading`
 
 2. **Entitlements** (`iosApp/iosApp/iosApp.entitlements`):
@@ -297,6 +272,9 @@ Each platform provides:
 # Package as executable (.dmg on macOS, .msi on Windows, .deb on Linux, in build/compose/binaries/main/)
 ./gradlew :composeApp:packageDistributionForCurrentOS
 ```
+
+The filter is a part of the name of the reader, case insensitive. Without filter, or when no reader matches, the first
+reader is used.
 
 ## Troubleshooting
 

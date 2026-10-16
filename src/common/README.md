@@ -116,6 +116,31 @@ supported by the demo: it is read as `UNKNOWN`. The use of the codes by the vali
 | 4-30 | RFU         | Reserved for future use |
 |   31 | EXPIRED     | Contract has expired    |
 
+## Record Codecs
+
+The records of the card are decoded and encoded by codecs implementing `RecordCodec<T>` (`decode` and `encode`
+methods), one per structure and card technology:
+
+| Structure                    | Calypso cards (29-byte records)  | Storage cards (16-byte records)     |
+|------------------------------|----------------------------------|-------------------------------------|
+| `EnvironmentHolderStructure` | `CalypsoEnvironmentHolderCodec`  | `StorageCardEnvironmentHolderCodec` |
+| `EventStructure`             | `CalypsoEventCodec`              | `StorageCardEventCodec`             |
+| `ContractStructure`          | `CalypsoContractCodec`           | `StorageCardContractCodec`          |
+
+The counter of a contract is stored in a separate file on the Calypso cards, and in the contract record on the storage
+cards.
+
+## Card Constants
+
+| Object                | Content                                                                          |
+|-----------------------|----------------------------------------------------------------------------------|
+| `CalypsoAids`         | AIDs of the Calypso applications, and the DF name check (`matches`)              |
+| `CalypsoFiles`        | SFIs and record sizes of the Calypso files, supported file structures            |
+| `DefaultKifs`         | KIFs of the SAM keys used by the secure sessions                                 |
+| `StorageCardBlocks`   | Layout of the storage cards with 4-byte blocks (MIFARE Ultralight, ST25 SRT512)  |
+| `MifareClassicBlocks` | Layout of the MIFARE Classic 1K cards (sector 1)                                 |
+| `PkiTestCertificates` | Test certificates of the PKI                                                     |
+
 ## Supported Card Applications
 
 The demos work with cards from the [CNA Test Kit](https://calypsonet.org/technical-support-documentation/) containing these application identifiers:
@@ -126,12 +151,6 @@ The demos work with cards from the [CNA Test Kit](https://calypsonet.org/technic
 | 315449432E49434131   | CD Light/GTML Compatibility    | Legacy system support  |
 | 315449432E49434133   | Calypso Light                  | Standard Calypso       |
 | A0000004040125090101 | Navigo IDF                     | Paris transport system |
-
-## Common Procedures
-
-The procedures using these structures, the personalization of the cards and the loading of the contracts, are executed
-by the server of the reload demo, as described in its
-[README](../reload-remote/README.md#card-personalization-and-contract-loading-procedures).
 
 ## Usage Examples
 
@@ -179,30 +198,11 @@ val timeCompact = TimeCompact(LocalDateTime.now())
 val timeValue: Int = timeCompact.value
 ```
 
-## Record Codecs
+## Common Procedures
 
-The records of the card are decoded and encoded by codecs implementing `RecordCodec<T>` (`decode` and `encode`
-methods), one per structure and card technology:
-
-| Structure                    | Calypso cards (29-byte records)  | Storage cards (16-byte records)     |
-|------------------------------|----------------------------------|-------------------------------------|
-| `EnvironmentHolderStructure` | `CalypsoEnvironmentHolderCodec`  | `StorageCardEnvironmentHolderCodec` |
-| `EventStructure`             | `CalypsoEventCodec`              | `StorageCardEventCodec`             |
-| `ContractStructure`          | `CalypsoContractCodec`           | `StorageCardContractCodec`          |
-
-The counter of a contract is stored in a separate file on the Calypso cards, and in the contract record on the storage
-cards.
-
-## Card Constants
-
-| Object                | Content                                                                          |
-|-----------------------|----------------------------------------------------------------------------------|
-| `CalypsoAids`         | AIDs of the Calypso applications, and the DF name check (`matches`)              |
-| `CalypsoFiles`        | SFIs and record sizes of the Calypso files, supported file structures            |
-| `DefaultKifs`         | KIFs of the SAM keys used by the secure sessions                                 |
-| `StorageCardBlocks`   | Layout of the storage cards with 4-byte blocks (MIFARE Ultralight, ST25 SRT512)  |
-| `MifareClassicBlocks` | Layout of the MIFARE Classic 1K cards (sector 1)                                 |
-| `PkiTestCertificates` | Test certificates of the PKI                                                     |
+The procedures using these structures, the personalization of the cards and the loading of the contracts, are executed
+by the server of the reload demo, as described in its
+[README](../reload-remote/README.md#card-personalization-and-contract-loading-procedures).
 
 ## Version Compatibility
 

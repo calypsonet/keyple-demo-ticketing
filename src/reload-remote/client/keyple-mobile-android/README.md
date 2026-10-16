@@ -35,7 +35,7 @@ later validation and inspection.
 
 ## Installation
 
-### Download APK
+### Download
 1. Visit [Releases page](https://github.com/calypsonet/keyple-demo-ticketing/releases)
 2. Download latest `kdt-reload-android-app-X.Y.Z-debug.apk`
 3. Enable "Install from unknown sources" in Android settings
@@ -136,6 +136,13 @@ Splash Screen → Home → Card Reader → Card Content → Select Product → C
 - **Card Operation Result (`CardOperationResultActivity`)**: Shows the success or failure of the loading or of the
   personalization
 
+## Known Limitations
+
+- The SIM card reader (OMAPI) is a work in progress
+- Payment simulation only - no real payment processing
+- Limited offline capability (server connection required)
+- Single server connection (no failover support)
+
 ## Technical Architecture
 
 ### Key Classes
@@ -184,7 +191,7 @@ The application supports multiple reader plugins:
 
 ## Development
 
-### Building the Project
+### Building and Testing
 
 ```bash
 # Clean build
@@ -194,15 +201,14 @@ The application supports multiple reader plugins:
 ./gradlew assembleDebug
 ```
 
+The business rules of the personalization and of the loading are implemented and unit tested by the server (see the
+[Server Documentation](../../server/README.md)).
+
 ### Development Configuration
 
 **Debug Settings**:
 - Use test server URL for development
 - Read the logs in Logcat (Timber, all levels)
-
-**Testing**:
-- The business rules of the personalization and of the loading are implemented and unit tested by the server (see the
-  [Server Documentation](../../server/README.md))
 
 ### Adding New Readers
 
@@ -245,13 +251,6 @@ Test server connection:
 # From development machine
 curl http://your-server:8080/card/sam-availability
 ```
-
-## Known Limitations
-
-- The SIM card reader (OMAPI) is a work in progress
-- Payment simulation only - no real payment processing
-- Limited offline capability (server connection required)
-- Single server connection (no failover support)
 
 ## Contributing
 

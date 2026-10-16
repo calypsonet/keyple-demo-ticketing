@@ -35,7 +35,7 @@ in the Functional Documentation.
 
 ## Installation
 
-### Download APK
+### Download
 1. Visit [Releases page](https://github.com/calypsonet/keyple-demo-ticketing/releases)
 2. Download latest `kdt-inspection-app-X.Y.Z-debug.apk`
 3. Enable "Install from unknown sources" in Android settings
@@ -96,12 +96,9 @@ Terminal Selection → Settings → Home → Card Reader → Card Content or Inv
     marked as validated when the rules of the inspection are met (see the Functional Documentation:
     [Information displayed](../../docs/functional-documentation/index.adoc#inspection-display),
     [What inspection checks](../../docs/functional-documentation/index.adoc#inspection-checks))
-  - **Invalid card**: reason why the card is rejected (see [Rejection Reasons](#rejection-reasons)) or error message
-
-### Rejection Reasons
-
-The reasons why a card is rejected, with the messages displayed, are described in the
-[Functional Documentation](../../docs/functional-documentation/index.adoc#inspection-rejection-conditions).
+  - **Invalid card**: reason why the card is rejected (see
+    [Inspection rejection conditions](../../docs/functional-documentation/index.adoc#inspection-rejection-conditions)
+    in the Functional Documentation) or error message
 
 ## Technical Architecture
 
@@ -171,6 +168,16 @@ The reasons why a card is rejected, with the messages displayed, are described i
 - **Plugin**: [Bluebird Plugin](https://github.com/calypsonet/keyple-plugin-cna-bluebird-specific-nfc-java-lib)
 - **Access**: Contact [CNA](https://calypsonet.org/contact-us/) for plugin
 
+### Proprietary Plugins
+
+The proprietary components used by this application are available on request and replaced by mocks by default (their
+terminal types being then grayed out, and the storage cards not supported). They are installed as described in the
+[main README](../../README.md#proprietary-plugins-available-on-request):
+
+- **Bluebird EF501**
+- **Storage cards**: storage card extension (`keyple-card-cna-storagecard-java-lib`) and reader plugin
+  (`keyple-plugin-cna-storagecard-java-lib`)
+
 ## Development
 
 ### Project Structure
@@ -219,16 +226,6 @@ The common issues of the Android applications (NFC, SAM, terminal type) are desc
 - The card has not been validated, or the last validation used another contract
 - The location of the validation differs from the location of the inspection
 - The validation did not take place the same day, or is older than the validation period
-
-## Proprietary Plugins
-
-The proprietary components used by this application are available on request and replaced by mocks by default (their
-terminal types being then grayed out, and the storage cards not supported). They are installed as described in the
-[main README](../../README.md#proprietary-plugins-available-on-request):
-
-- **Bluebird EF501**
-- **Storage cards**: storage card extension (`keyple-card-cna-storagecard-java-lib`) and reader plugin
-  (`keyple-plugin-cna-storagecard-java-lib`)
 
 ## Contributing
 

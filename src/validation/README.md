@@ -35,7 +35,7 @@ transportation networks.
 
 ## Installation
 
-### Download APK
+### Download
 1. Visit [Releases page](https://github.com/calypsonet/keyple-demo-ticketing/releases)
 2. Download latest `kdt-validation-app-X.Y.Z-debug.apk`
 3. Enable "Install from unknown sources" in Android settings
@@ -57,7 +57,7 @@ cd keyple-demo-ticketing/src/validation
   - **Arrive**, **Bluebird**: proprietary plugins (grayed out by default, see
     [Proprietary Plugins](#proprietary-plugins))
 
-### Settings Configuration
+### Validation Settings
 The **Settings** screen, displayed after the terminal selection, configures the validation:
 - **Battery powered mode**: for the portable terminals, which display the Home screen before each validation
 - **Location**: location of the terminal, written in the validation event and checked by the inspection
@@ -132,30 +132,6 @@ The content and the messages of each result are described in the
 3. Counter updates for applicable contract types
 4. Event creation and data writing
 
-### Key Classes
-
-**CardReaderSession** (`domain/CardReaderSession.kt`)
-- Manages card and SAM reader lifecycle, and the user feedback devices
-- Schedules card selection scenarios for supported cards, and selects the presented card
-
-**ValidateCard** (`domain/usecases/ValidateCard.kt`)
-- Validates the presented card: selection, execution of the validation procedure supporting it and user feedback of
-  the result (`ValidationResult`)
-
-**BaseValidationProcedure** (`domain/procedures/BaseValidationProcedure.kt`)
-- Business rules common to the validation procedures: versions, expiration, anti-passback, trips left, order of the
-  contracts
-
-**CalypsoCardValidationProcedure** (`domain/procedures/CalypsoCardValidationProcedure.kt`)
-- Secure validation procedure for Calypso cards with SAM integration
-- Handles contract priority logic (Season pass → Multi-trip ticket)
-- Writes the validation event within the secure session
-
-**StorageCardValidationProcedure** (`domain/procedures/StorageCardValidationProcedure.kt`)
-- Simplified validation for storage cards (MIFARE Ultralight, ST25 SRT512, MIFARE Classic)
-- Direct reading and writing, without cryptographic operation
-- Single contract processing per card
-
 ### Validation Procedure Details
 
 #### Best Contract Search Algorithm
@@ -187,6 +163,30 @@ Not implemented by the demo (steps of the data model): verification of the contr
 Verify Signature command of the SAM and SAM black list (traceability mode: the contracts loaded by the demo have no
 authenticator), black list of the card applications, and stored value contracts (`ContractTariff` 3).
 
+### Key Classes
+
+**CardReaderSession** (`domain/CardReaderSession.kt`)
+- Manages card and SAM reader lifecycle, and the user feedback devices
+- Schedules card selection scenarios for supported cards, and selects the presented card
+
+**ValidateCard** (`domain/usecases/ValidateCard.kt`)
+- Validates the presented card: selection, execution of the validation procedure supporting it and user feedback of
+  the result (`ValidationResult`)
+
+**BaseValidationProcedure** (`domain/procedures/BaseValidationProcedure.kt`)
+- Business rules common to the validation procedures: versions, expiration, anti-passback, trips left, order of the
+  contracts
+
+**CalypsoCardValidationProcedure** (`domain/procedures/CalypsoCardValidationProcedure.kt`)
+- Secure validation procedure for Calypso cards with SAM integration
+- Handles contract priority logic (Season pass → Multi-trip ticket)
+- Writes the validation event within the secure session
+
+**StorageCardValidationProcedure** (`domain/procedures/StorageCardValidationProcedure.kt`)
+- Simplified validation for storage cards (MIFARE Ultralight, ST25 SRT512, MIFARE Classic)
+- Direct reading and writing, without cryptographic operation
+- Single contract processing per card
+
 ## Hardware Integration
 
 ### Tested Terminals
@@ -207,6 +207,19 @@ authenticator), black list of the card applications, and stored value contracts 
 - **Plugin**: [Arrive Plugin](https://github.com/calypsonet/keyple-plugin-cna-arrive-android-jvm-lib)
 - **Feedback**: LEDs and sounds of the terminal through the Parkeon SDK (`AndroidParkeonCommon-release.aar`)
 - **Access**: Contact [CNA](https://calypsonet.org/contact-us/) for plugin
+
+### Proprietary Plugins
+
+The proprietary components used by this application are available on request and replaced by mocks by default (their
+terminal types being then grayed out, and the storage cards not supported). They are installed as described in the
+[main README](../../README.md#proprietary-plugins-available-on-request):
+
+- **Bluebird EF501**
+- **Arrive Axio 4**: for the LEDs and sounds of the terminal, also copy the Parkeon SDK
+  (`AndroidParkeonCommon-release.aar`) to the `libs` directory: the build then uses the `arrive` source set instead of
+  `arrive-mock`
+- **Storage cards**: storage card extension (`keyple-card-cna-storagecard-java-lib`) and reader plugin
+  (`keyple-plugin-cna-storagecard-java-lib`)
 
 ## Development
 
@@ -255,19 +268,6 @@ The common issues of the Android applications (NFC, SAM, terminal type) are desc
 - Verify card AID is supported by application
 - Ensure contract validity dates are current
 - Check trips left for validation
-
-## Proprietary Plugins
-
-The proprietary components used by this application are available on request and replaced by mocks by default (their
-terminal types being then grayed out, and the storage cards not supported). They are installed as described in the
-[main README](../../README.md#proprietary-plugins-available-on-request):
-
-- **Bluebird EF501**
-- **Arrive Axio 4**: for the LEDs and sounds of the terminal, also copy the Parkeon SDK
-  (`AndroidParkeonCommon-release.aar`) to the `libs` directory: the build then uses the `arrive` source set instead of
-  `arrive-mock`
-- **Storage cards**: storage card extension (`keyple-card-cna-storagecard-java-lib`) and reader plugin
-  (`keyple-plugin-cna-storagecard-java-lib`)
 
 ## Contributing
 

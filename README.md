@@ -8,6 +8,13 @@ A comprehensive open source ticketing ecosystem demonstrating the [Eclipse Keypl
 real-world use cases. This project is provided by the [Calypso Networks Association](https://calypsonet.org) and serves
 as a foundation for building contactless card and NFC smartphone-based ticketing systems.
 
+**Contents**: [Overview](#overview) · [Quick Start](#quick-start) ·
+[Supported Card Technologies](#supported-card-technologies) · [Data Model](#data-model) ·
+[Supported Hardware](#supported-hardware) · [Architecture](#architecture) ·
+[Security Considerations](#security-considerations) · [Development](#development) ·
+[Coding Conventions](#coding-conventions) · [Troubleshooting](#troubleshooting) · [Contributing](#contributing) ·
+[Support](#support) · [Related Projects](#related-projects) · [License](#license)
+
 ## Overview
 The Keyple Demo Ecosystem consists of three interconnected applications that simulate a complete public transportation
 ticketing workflow:
@@ -31,43 +38,6 @@ ticketing workflow:
 The use cases and business rules are described for a functional audience (project managers, functional architects)
 in the [Functional Documentation](docs/functional-documentation/index.adoc), also attached as PDF and HTML files
 to each [release](https://github.com/calypsonet/keyple-demo-ticketing/releases).
-
-## Supported Card Technologies
-
-The demo supports Calypso cards, with secure sessions authenticated by a SAM (or by PKI for the inspection), and
-storage cards (MIFARE Ultralight, ST25 SRT512, MIFARE Classic), read and written without cryptographic operation and
-supported with the proprietary storage card libraries (see
-[Proprietary Plugins](#proprietary-plugins-available-on-request)). Their features and the tickets they hold are
-described in the [Functional Documentation](docs/functional-documentation/index.adoc#cards).
-
-## Architecture
-
-### Distributed Client/Server Model
-
-```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│   Mobile/Web    │     │   Java Server   │     │      SAM        │
-│    Clients      │────>│   + Dashboard   │────>│   (Security)    │
-│                 │     │                 │     │                 │
-│ User Interface  │     │ Business Logic  │     │ Cryptographic   │
-│ Card Interface  │     │ Data Management │     │   Operations    │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
-```
-
-### Supported Platforms
-
-**Client Applications:**
-
-- Android 8.0+ (Native and KMP)
-- iOS 15.3+ (KMP)
-- Windows Desktop (.NET 10.0)
-- JVM Desktop (Kotlin Multiplatform)
-
-**Server Requirements:**
-
-- Java 17+ with PC/SC reader
-- SAM (Secure Access Module) for Calypso cards
-- Web dashboard for monitoring
 
 ## Quick Start
 
@@ -95,6 +65,31 @@ Use the personalization feature of the Android or multiplatform reload client to
 1. **Load Contracts**: Use Reload Demo to add Season pass or Multi-trip tickets
 2. **Validate Entry**: Present card to Validation Demo terminal
 3. **Ticket Inspection**: Verify card status using the Inspection Demo
+
+## Supported Card Technologies
+
+The demo supports Calypso cards, with secure sessions authenticated by a SAM (or by PKI for the inspection), and
+storage cards (MIFARE Ultralight, ST25 SRT512, MIFARE Classic), read and written without cryptographic operation and
+supported with the proprietary storage card libraries (see
+[Proprietary Plugins](#proprietary-plugins-available-on-request)). Their features and the tickets they hold are
+described in the [Functional Documentation](docs/functional-documentation/index.adoc#cards).
+
+### Card Application Identifiers
+
+The Calypso card applications supported by the demos, those of the test cards of the
+[CNA Test Kit](https://calypsonet.org/technical-support-documentation/), are listed in the
+[Common Library documentation](src/common/README.md#supported-card-applications).
+
+## Data Model
+
+The ecosystem uses standardized data structures defined in the [Common Library](src/common/):
+
+- **Environment Record**: Card metadata and validity information
+- **Event Log**: Transaction history and validation events
+- **Contract Records**: Contracts (tickets) and their properties
+- **Counter Files**: Usage tracking for multi-trip tickets
+
+See [Common Library Documentation](src/common/README.md) for detailed specifications.
 
 ## Supported Hardware
 
@@ -124,49 +119,34 @@ cards are not supported. To use a component:
 
 The README of each application lists the components it uses.
 
-## Data Model
+## Architecture
 
-The ecosystem uses standardized data structures defined in the [Common Library](src/common/):
-
-- **Environment Record**: Card metadata and validity information
-- **Event Log**: Transaction history and validation events
-- **Contract Records**: Contracts (tickets) and their properties
-- **Counter Files**: Usage tracking for multi-trip tickets
-
-See [Common Library Documentation](src/common/README.md) for detailed specifications.
-
-## Development
-
-### Prerequisites
-
-- JDK 17 to build the Java and Kotlin components (Android apps, KMP client, server)
-- Android Studio for mobile development, and Xcode for the iOS version of the KMP client
-- Node.js for the web dashboard of the server, and the .NET SDK for the .NET client
-- PC/SC compatible readers for testing
-
-The versions required by each component are given in its README.
-
-### Project Structure
+### Distributed Client/Server Model
 
 ```
-keyple-demo-ticketing/
-├── README.md                               # This file
-├── CHANGELOG.md                            # Changes of the demo since the repository merge
-├── .github/                                # CI workflows and checks (messages, architecture, twin files)
-├── docs/history/                           # Changelogs of the archived repositories (before the merge)
-├── docs/functional-documentation/          # Functional documentation (AsciiDoc, PlantUML diagrams, CNA charter)
-├── libs/                                   # Proprietary libraries (on request) and their mocks
-├── libs.versions.toml                      # Version catalog shared by the Gradle projects
-├── src/common/                             # Shared data structures and utilities
-├── src/reload-remote/                      # Remote reload clients and server
-│   ├── server/                             # Java server application
-│   ├── client/
-│   │   ├── keyple-mobile-android/          # Android native client
-│   │   ├── pc-dotnet/                      # .NET desktop client  
-│   │   └── interop-mobile-multiplatform/   # Kotlin Multiplatform client
-├── src/validation/                         # Android validation terminal
-└── src/inspection/                         # Android inspection terminal
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│   Mobile/Web    │     │   Java Server   │     │      SAM        │
+│    Clients      │────>│   + Dashboard   │────>│   (Security)    │
+│                 │     │                 │     │                 │
+│ User Interface  │     │ Business Logic  │     │ Cryptographic   │
+│ Card Interface  │     │ Data Management │     │   Operations    │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
 ```
+
+### Supported Platforms
+
+**Client Applications:**
+
+- Android 8.0+ (Native and KMP)
+- iOS 15.3+ (KMP)
+- Windows Desktop (.NET 10.0)
+- JVM Desktop (Kotlin Multiplatform)
+
+**Server Requirements:**
+
+- Java 17+ with PC/SC reader
+- SAM (Secure Access Module) for Calypso cards
+- Web dashboard for monitoring
 
 ### Android Application Architecture
 
@@ -339,6 +319,88 @@ The applications share these conventions, except for the following deliberate di
 | KMP client: Android APK suffixed `-android-`                                                                     | The same project name is used by the desktop packages                                                                                           |
 | Directory and project names (`reload-remote`, `keyple-mobile-android`, `kdt-...`) differing from the packages    | Referenced by the CI, the names of the released artifacts and the existing links                                                                |
 
+## Security Considerations
+
+The demo is not a production system:
+
+- The cryptographic operations of the Calypso cards are performed by a SAM: by the server for the reload clients,
+  which hold no cryptographic material, and by the terminal for the validation and inspection apps (the inspection
+  authenticating the cards by PKI when the terminal has no SAM).
+- The storage cards are read and written without cryptographic protection: a production system adds signature
+  verification and secure key management.
+- The SAMs and the cards of the demo use test keys: a production system uses the keys of its own network, stored and
+  renewed securely.
+- The server is designed for a local network (HTTP): a production system uses HTTPS and authenticates the clients and
+  the administrative functions (dashboard).
+
+## Development
+
+### Prerequisites
+
+- JDK 17 to build the Java and Kotlin components (Android apps, KMP client, server)
+- Android Studio for mobile development, and Xcode for the iOS version of the KMP client
+- Node.js for the web dashboard of the server, and the .NET SDK for the .NET client
+- PC/SC compatible readers for testing
+
+The versions required by each component are given in its README.
+
+### Project Structure
+
+```
+keyple-demo-ticketing/
+├── README.md                               # This file
+├── CHANGELOG.md                            # Changes of the demo since the repository merge
+├── .github/                                # CI workflows and checks (messages, architecture, twin files)
+├── docs/history/                           # Changelogs of the archived repositories (before the merge)
+├── docs/functional-documentation/          # Functional documentation (AsciiDoc, PlantUML diagrams, CNA charter)
+├── libs/                                   # Proprietary libraries (on request) and their mocks
+├── libs.versions.toml                      # Version catalog shared by the Gradle projects
+├── src/common/                             # Shared data structures and utilities
+├── src/reload-remote/                      # Remote reload clients and server
+│   ├── server/                             # Java server application
+│   ├── client/
+│   │   ├── keyple-mobile-android/          # Android native client
+│   │   ├── pc-dotnet/                      # .NET desktop client  
+│   │   └── interop-mobile-multiplatform/   # Kotlin Multiplatform client
+├── src/validation/                         # Android validation terminal
+└── src/inspection/                         # Android inspection terminal
+```
+
+### Building from Source
+
+Each module (e.g., `src/common`, `src/reload-remote/server`, `src/validation`, `src/inspection`) is an independent
+project and should be built using the tools and instructions provided within its own directory. For Gradle-based
+projects, navigate to the module's directory and use its `./gradlew` wrapper.
+
+### Unit Tests
+
+The unit tests check the business rules of the data model, independently of the cards and of the terminals (simulated
+with MockK when a procedure is tested end to end). They are run by the CI:
+
+| Component                  | Tests                                                                                               | Command                                         |
+|----------------------------|-----------------------------------------------------------------------------------------------------|-------------------------------------------------|
+| `src/common`               | Record codecs, data types, event structure, DF name check                                           | `./gradlew test` (also run by the server build) |
+| `src/reload-remote/server` | Personalization and contract loading rules                                                          | `./gradlew test`                                |
+| `src/validation`           | Validation rules (anti-passback, versions, contracts, priorities) and Calypso validation procedure  | `./gradlew testDebugUnitTest`                   |
+| `src/inspection`           | Inspection rules (validity of the last validation), displayed data and Calypso inspection procedure | `./gradlew testDebugUnitTest`                   |
+
+The current date is provided by a clock (`Clock` port of the Android applications, `java.time.Clock` of the server),
+replaced by a fixed date in the tests. The domain being transposable to another language, its tests describe the
+expected behavior as an executable specification.
+
+### Build Optimization
+
+The Android applications (`validation`, `inspection`, and `reload-remote` client) are configured with ProGuard
+minification enabled for both debug and release builds. This removes SLF4J debug/trace logs from the application and
+third-party libraries (like Keyple), resulting in smaller APKs and better runtime performance: the messages of the
+applications (Timber) are all kept, those of Keyple from the `INFO` level only. To see full unoptimized
+logs during debugging, comment out the `debug` build type configuration in the respective `app/build.gradle.kts` files.
+
+## Coding Conventions
+
+Conventions followed by the code of all the components, checked by the CI where possible (see
+[Contributing](#contributing)).
+
 ### Log Messages
 
 All the components (server and its dashboard, Android applications, multiplatform and .NET clients) write their log
@@ -464,56 +526,6 @@ All the components name their methods with the same verbs:
 - The names imposed by the frameworks and by the Keyple interfaces (`onCreate`, `onPluginEvent`, `setupReader`...)
   are kept.
 
-### Building from Source
-
-Each module (e.g., `src/common`, `src/reload-remote/server`, `src/validation`, `src/inspection`) is an independent
-project and should be built using the tools and instructions provided within its own directory. For Gradle-based
-projects, navigate to the module's directory and use its `./gradlew` wrapper.
-
-### Unit Tests
-
-The unit tests check the business rules of the data model, independently of the cards and of the terminals (simulated
-with MockK when a procedure is tested end to end). They are run by the CI:
-
-| Component                  | Tests                                                                                               | Command                                         |
-|----------------------------|-----------------------------------------------------------------------------------------------------|-------------------------------------------------|
-| `src/common`               | Record codecs, data types, event structure, DF name check                                           | `./gradlew test` (also run by the server build) |
-| `src/reload-remote/server` | Personalization and contract loading rules                                                          | `./gradlew test`                                |
-| `src/validation`           | Validation rules (anti-passback, versions, contracts, priorities) and Calypso validation procedure  | `./gradlew testDebugUnitTest`                   |
-| `src/inspection`           | Inspection rules (validity of the last validation), displayed data and Calypso inspection procedure | `./gradlew testDebugUnitTest`                   |
-
-The current date is provided by a clock (`Clock` port of the Android applications, `java.time.Clock` of the server),
-replaced by a fixed date in the tests. The domain being transposable to another language, its tests describe the
-expected behavior as an executable specification.
-
-### Build Optimization
-
-The Android applications (`validation`, `inspection`, and `reload-remote` client) are configured with ProGuard
-minification enabled for both debug and release builds. This removes SLF4J debug/trace logs from the application and
-third-party libraries (like Keyple), resulting in smaller APKs and better runtime performance: the messages of the
-applications (Timber) are all kept, those of Keyple from the `INFO` level only. To see full unoptimized
-logs during debugging, comment out the `debug` build type configuration in the respective `app/build.gradle.kts` files.
-
-## Card Application Identifiers
-
-The Calypso card applications supported by the demos, those of the test cards of the
-[CNA Test Kit](https://calypsonet.org/technical-support-documentation/), are listed in the
-[Common Library documentation](src/common/README.md#supported-card-applications).
-
-## Security Considerations
-
-The demo is not a production system:
-
-- The cryptographic operations of the Calypso cards are performed by a SAM: by the server for the reload clients,
-  which hold no cryptographic material, and by the terminal for the validation and inspection apps (the inspection
-  authenticating the cards by PKI when the terminal has no SAM).
-- The storage cards are read and written without cryptographic protection: a production system adds signature
-  verification and secure key management.
-- The SAMs and the cards of the demo use test keys: a production system uses the keys of its own network, stored and
-  renewed securely.
-- The server is designed for a local network (HTTP): a production system uses HTTPS and authenticates the clients and
-  the administrative functions (dashboard).
-
 ## Troubleshooting
 
 Common issues of the Android applications (validation, inspection and reload Android client), the README of each
@@ -547,10 +559,6 @@ concerned, and passes the checks of the CI:
 - Architecture and twin files of the Android applications: `.github/scripts/check-android-architecture.sh` and
   `.github/scripts/check-android-twin-files.sh`
 
-## License
-
-This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICENSE) file for details.
-
 ## Support
 
 - **Documentation**: [keyple.org](https://keyple.org)
@@ -563,3 +571,7 @@ This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICE
 - [Eclipse Keyple middleware](https://keyple.org) - Core SDK and plugins
 - [Calypso Card Specification](https://calypsonet.org/technical-support-documentation/)
 - [Keyple Distributed JSON API](https://keyple.org/user-guides/non-keyple-client/server-json-api/)
+
+## License
+
+This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICENSE) file for details.

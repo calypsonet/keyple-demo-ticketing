@@ -42,12 +42,12 @@ demonstrates the minimal integration approach while maintaining full functionali
 
 ## Installation
 
-### Option 1: Pre-built Release
+### Download
 1. Download latest `kdt-reload-pc-dotnet-app-X.Y.Z.zip` from [releases](https://github.com/calypsonet/keyple-demo-ticketing/releases)
 2. Extract to desired directory
 3. Run `App.exe`
 
-### Option 2: Build from Source
+### Build from Source
 ```bash
 git clone https://github.com/calypsonet/keyple-demo-ticketing.git
 cd keyple-demo-ticketing/src/reload-remote/client/pc-dotnet
@@ -114,7 +114,7 @@ The project follows a clean hexagonal architecture pattern:
 └─────────────────────────────────────────┘
 ```
 
-### Key Components
+### Key Classes
 
 #### Application Layer (`/application`)
 - **Application.cs**: Main application logic and card processing workflow
@@ -185,6 +185,15 @@ The application handles various exceptions:
 - `ReaderNotFoundException`: Reader not found
 - `UnexpectedStatusWordException`: Unexpected card response
 
+## Extending to Other Platforms
+
+This implementation can serve as a template for other platforms:
+
+- **macOS/Linux**: Replace PC/SC implementation with platform-specific APIs
+- **Web Applications**: Adapt HTTP client for browser-based JavaScript
+- **Mobile Platforms**: Use platform NFC APIs instead of PC/SC
+- **Other Languages**: Translate architecture patterns to Python, Go, etc.
+
 ## Development
 
 ### Project Structure
@@ -245,15 +254,6 @@ dotnet publish -c Release -r win-x64 --self-contained
 - Check card is properly positioned on reader
 - Try different cards to isolate issue
 - Check the APDU exchanges in the log file (`logs/demo-keyple-less-<date>.log`, `DEBUG` level)
-
-## Extending to Other Platforms
-
-This implementation can serve as a template for other platforms:
-
-- **macOS/Linux**: Replace PC/SC implementation with platform-specific APIs
-- **Web Applications**: Adapt HTTP client for browser-based JavaScript
-- **Mobile Platforms**: Use platform NFC APIs instead of PC/SC
-- **Other Languages**: Translate architecture patterns to Python, Go, etc.
 
 ## Contributing
 

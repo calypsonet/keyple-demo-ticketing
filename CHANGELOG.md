@@ -30,7 +30,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   model not implemented), and conventions (log and exception messages, method names, ticketing vocabulary). The
   functional content is in the functional documentation only, the security considerations, the common troubleshooting
   of the Android applications and the contribution rules in the main README, the README of each component keeping
-  its specifics. The generic sections not reflecting the project are removed.
+  its specifics. The generic sections not reflecting the project are removed, the sections of the READMEs follow the
+  same order and headings (main README with a table of contents and a "Coding Conventions" section).
 - Android applications: layered architecture with ports and adapters, documented in the README ("Android Application
   Architecture") and checked by the CI (`.github/scripts/check-android-architecture.sh`) for the domain, data and ui
   layers. The domain layer no longer depends on Android, Timber or the dependency injection framework: the domain
