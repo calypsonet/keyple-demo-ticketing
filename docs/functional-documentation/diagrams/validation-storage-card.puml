@@ -7,7 +7,7 @@ start
 
 :Card presented;
 
-if (Card recognized ?\n(supported application\nand file structure)) then (No)
+if (Card recognized ?\n(supported storage card type)) then (No)
   :Card not recognized;<<#F5B7B1>>
   stop
 else (Yes)
@@ -21,7 +21,7 @@ endif
 :Read the environment,\nthe ticket and the event;
 
 if (Card personalized\nand not expired ?) then (No)
-  :Invalid card;<<#F5B7B1>>
+  :Card rejected;<<#F5B7B1>>
   stop
 else (Yes)
 endif
@@ -30,19 +30,19 @@ if (Card never loaded ?) then (Yes)
   :No valid ticket;<<#F9E79F>>
   stop
 elseif (Last event of\na known version ?) then (No)
-  :Invalid card;<<#F5B7B1>>
+  :Card rejected;<<#F5B7B1>>
   stop
 else (Yes)
 endif
 
 if (Validated less than\n1 minute ago ?) then (Yes)
-  :Invalid card\n(already validated);<<#F5B7B1>>
+  :Card rejected\n(already validated);<<#F5B7B1>>
   stop
 else (No)
 endif
 
 if (Ticket of a\nknown version ?) then (No)
-  :Invalid card;<<#F5B7B1>>
+  :Card rejected;<<#F5B7B1>>
   stop
 else (Yes)
 endif

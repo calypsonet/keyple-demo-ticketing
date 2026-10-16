@@ -7,7 +7,7 @@ start
 
 :Card presented;
 
-if (Card recognized ?\n(supported application\nand file structure)) then (No)
+if (Card recognized ?\n(supported Calypso application\nor storage card type)) then (No)
   :Not valid on this network;<<#F5B7B1>>
   stop
 else (Yes)

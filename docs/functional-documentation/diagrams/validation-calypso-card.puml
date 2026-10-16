@@ -14,7 +14,7 @@ else (Yes)
 endif
 
 if (Card personalized\nand not expired ?) then (No)
-  :Invalid card;<<#F5B7B1>>
+  :Card rejected;<<#F5B7B1>>
   stop
 else (Yes)
 endif
@@ -25,14 +25,14 @@ if (Card never loaded ?) then (Yes)
   :No valid ticket;<<#F9E79F>>
   stop
 elseif (Last event of\na known version ?) then (No)
-  :Invalid card;<<#F5B7B1>>
+  :Card rejected;<<#F5B7B1>>
   stop
 else (Yes)
 endif
 
 if (Validated less than\n1 minute ago ?) then (Yes)
   if (Previous session\nratified ?) then (Yes)
-    :Invalid card\n(already validated);<<#F5B7B1>>
+    :Card rejected\n(already validated);<<#F5B7B1>>
     stop
   else (No)
     :Ratification of the\nprevious session\n(no new deduction);
@@ -52,7 +52,7 @@ endif
 
 repeat
   if (Ticket of a\nknown version ?) then (No)
-    :Invalid card;<<#F5B7B1>>
+    :Card rejected;<<#F5B7B1>>
     stop
   else (Yes)
   endif

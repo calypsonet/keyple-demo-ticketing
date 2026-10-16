@@ -7,13 +7,13 @@ start
 
 :Card presented;
 
-if (Server reachable\nwith its SAM ?) then (No)
+if (Server reachable\n(with its SAM for a\nCalypso card) ?) then (No)
   :Server error;<<#F5B7B1>>
   stop
 else (Yes)
 endif
 
-if (Card recognized ?\n(supported application\nand file structure)) then (No)
+if (Card recognized ?\n(supported Calypso application\nor storage card type)) then (No)
   :Card rejected;<<#F5B7B1>>
   stop
 else (Yes)
@@ -25,7 +25,7 @@ endif
 
 :End of the secure session\n(Calypso card);
 
-:Card ready;<<#ABEBC6>>
+:Card personalized;<<#ABEBC6>>
 
 stop
 
