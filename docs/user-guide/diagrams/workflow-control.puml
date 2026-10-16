@@ -1,4 +1,4 @@
-@startuml workflow-control_en
+@startuml workflow-control
 title Control
 
 start

@@ -1,4 +1,4 @@
-@startuml workflow-personalization_en
+@startuml workflow-personalization
 title Personalization / Card issuance
 
 start

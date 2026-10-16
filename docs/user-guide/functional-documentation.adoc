@@ -12,7 +12,11 @@ Calypso Networks Association
 :figure-caption: Figure
 :table-caption: Table
 :source-highlighter: highlight.js
-:imagesdir: images
+// All the generated files are placed in the generated directory, the diagrams being generated from their PlantUML
+// sources (diagrams directory). Rendering, from this directory:
+// asciidoctor -r asciidoctor-diagram -D generated functional-documentation.adoc
+:imagesoutdir: generated
+:diagram-cachedir: generated/.asciidoctor/diagram
 
 _This document describes the Keyple Demo Ticketing ecosystem from a functional and business perspective. It is intended for project managers, functional architects and business teams who want to understand the covered use cases without going into technical implementation details._
 
@@ -49,7 +53,7 @@ The ecosystem consists of four distinct applications, each covering a specific r
 
 === Overview
 
-image::workflow-overview_en.svg[Keyple Demo Ticketing ecosystem flow,align="center"]
+plantuml::diagrams/workflow-overview.puml[target=workflow-overview,format=svg,alt="Keyple Demo Ticketing ecosystem flow",align="center"]
 
 NOTE: The Validation terminal and the Control terminal do not communicate over the network. Information is exchanged between these two applications *exclusively through the traveller's card*.
 
@@ -168,7 +172,7 @@ Issuance is performed from the reload application (mobile client + server).
 
 ==== Diagram
 
-image::workflow-personalization_en.svg[Card personalisation workflow,align="center"]
+plantuml::diagrams/workflow-personalization.puml[target=workflow-personalization,format=svg,alt="Card personalisation workflow",align="center"]
 
 ---
 
@@ -224,7 +228,7 @@ This operation requires the *SAM security module* to be present on the server si
 
 ==== Diagram
 
-image::workflow-reload_en.svg[Ticket loading workflow,align="center"]
+plantuml::diagrams/workflow-reload.puml[target=workflow-reload,format=svg,alt="Ticket loading workflow",align="center"]
 
 ---
 
@@ -264,11 +268,11 @@ When no ticket of a Calypso card can be used, the expired or exhausted tickets a
 
 ===== Calypso card validation
 
-image::workflow-validation-1_en.svg[Calypso card validation workflow,align="center"]
+plantuml::diagrams/workflow-validation-1.puml[target=workflow-validation-1,format=svg,alt="Calypso card validation workflow",align="center"]
 
 ===== Storage card validation
 
-image::workflow-validation-2_en.svg[Storage card validation workflow,align="center"]
+plantuml::diagrams/workflow-validation-2.puml[target=workflow-validation-2,format=svg,alt="Storage card validation workflow",align="center"]
 
 ---
 
@@ -321,7 +325,7 @@ NOTE: The verification of the ticket authenticator (traceability mode) is not im
 
 ==== Diagram
 
-image::workflow-control_en.svg[Inspection workflow,align="center"]
+plantuml::diagrams/workflow-control.puml[target=workflow-control,format=svg,alt="Inspection workflow",align="center"]
 
 == Compatible terminals and hardware
 

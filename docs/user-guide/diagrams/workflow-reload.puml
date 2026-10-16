@@ -1,4 +1,4 @@
-@startuml workflow-reload_en
+@startuml workflow-reload
 title Reload
 
 start

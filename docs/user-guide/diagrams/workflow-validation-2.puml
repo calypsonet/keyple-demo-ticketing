@@ -1,4 +1,4 @@
-@startuml workflow-validation-2_en
+@startuml workflow-validation-2
 title Validation storage card
 
 start
