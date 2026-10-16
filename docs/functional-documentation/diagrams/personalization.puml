@@ -1,4 +1,5 @@
 @startuml personalization
+' The normal flow (Yes) goes down, the exits (No) leave on the side and end there (detach).
 ' Pastel background colors: red F5B7B1 (error), yellow F9E79F (no ticket), green ABEBC6 (success),
 ' purple D7BDE2 (mode), orange FAD7A0 (user interaction)
 title Personalization (card issuance)
@@ -9,15 +10,17 @@ start
 
 if (Server reachable\n(with its SAM for a\nCalypso card) ?) then (No)
   :Server error;<<#F5B7B1>>
-  stop
+  detach
 else (Yes)
 endif
 
 if (Card recognized ?\n(supported Calypso application\nor storage card type)) then (No)
   :Card rejected;<<#F5B7B1>>
-  stop
+  detach
 else (Yes)
 endif
+
+:Open the secure session\n(Calypso card);
 
 :Write the card environment\n(issuance date, end date =\n1st day of the month + 6 years);
 

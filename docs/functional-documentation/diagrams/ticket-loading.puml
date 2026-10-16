@@ -1,4 +1,5 @@
 @startuml ticket-loading
+' The normal flow (Yes) goes down, the exits (No) leave on the side and end there (detach).
 ' Pastel background colors: red F5B7B1 (error), yellow F9E79F (no ticket), green ABEBC6 (success),
 ' purple D7BDE2 (mode), orange FAD7A0 (user interaction)
 title Ticket loading
@@ -10,29 +11,31 @@ partition "Reading of the card" {
 
   if (Server reachable\n(with its SAM for a\nCalypso card) ?) then (No)
     :Server error;<<#F5B7B1>>
-    stop
+    detach
   else (Yes)
   endif
 
   if (Card recognized ?\n(supported Calypso application\nor storage card type)) then (No)
     :Card rejected;<<#F5B7B1>>
-    stop
+    detach
   else (Yes)
   endif
 
+  :Read the card\n(secure session for a\nCalypso card);
+
   if (Card personalized\nand not expired ?) then (No)
     :Card rejected;<<#F5B7B1>>
-    stop
+    detach
   else (Yes)
   endif
 
   if (Last event of\na known version ?) then (No)
     :Card rejected;<<#F5B7B1>>
-    stop
+    detach
   else (Yes)
   endif
 
-  :Read and display the tickets\n(expired tickets identified);
+  :Display the tickets\n(expired tickets identified);
 }
 
 :User choice\nof the ticket to load;<<#FAD7A0>>
@@ -43,35 +46,39 @@ partition "Loading of the ticket" {
 
   if (Server reachable\n(with its SAM for a\nCalypso card) ?) then (No)
     :Server error;<<#F5B7B1>>
-    stop
+    detach
   else (Yes)
   endif
 
   if (Card recognized ?\n(supported Calypso application\nor storage card type)) then (No)
     :Card rejected;<<#F5B7B1>>
-    stop
+    detach
   else (Yes)
   endif
 
   if (Same card as the one read ?\n(multiplatform client)) then (No)
     :Not the same card;<<#F5B7B1>>
-    stop
+    detach
   else (Yes)
   endif
 
+  :Read the card\n(secure session for a\nCalypso card);
+
   if (Slot available ?\nsame type, empty or expired\n(single-ticket card: other ticket not usable)) then (No)
     :Card rejected\n(no space left);<<#F5B7B1>>
-    stop
+    detach
   else (Yes)
   endif
+
+  :Open the secure session\n(Calypso card);
 
   :Write the ticket\n(Season Pass renewal: +30 days if not expired);
 
   :Add the trips to the counter\n(Multi-trip ticket);
 
-  if (Ticket priorities changed ?) then (Yes)
+  if (Ticket priorities changed ?) then (No)
+  else (Yes)
     :Update the priorities\nin the last event;
-  else (No)
   endif
 
   :End of the secure session\n(Calypso card);

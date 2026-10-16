@@ -1,4 +1,5 @@
 @startuml validation-storage-card
+' The normal flow (Yes) goes down, the exits (No) leave on the side and end there (detach).
 ' Pastel background colors: red F5B7B1 (error), yellow F9E79F (no ticket), green ABEBC6 (success),
 ' purple D7BDE2 (mode), orange FAD7A0 (user interaction)
 title Validation of a storage card
@@ -9,60 +10,63 @@ start
 
 if (Card recognized ?\n(supported storage card type)) then (No)
   :Card not recognized;<<#F5B7B1>>
-  stop
+  detach
 else (Yes)
 endif
 
-if (MIFARE Classic ?) then (Yes)
+if (MIFARE Classic ?) then (No)
+else (Yes)
   :Authentication\nof the sector;
-else (No)
 endif
 
 :Read the environment,\nthe ticket and the event;
 
 if (Card personalized\nand not expired ?) then (No)
   :Card rejected;<<#F5B7B1>>
-  stop
+  detach
 else (Yes)
 endif
 
-if (Card never loaded ?) then (Yes)
+if (Card loaded\nat least once ?) then (No)
   :No valid ticket;<<#F9E79F>>
-  stop
-elseif (Last event of\na known version ?) then (No)
-  :Card rejected;<<#F5B7B1>>
-  stop
+  detach
 else (Yes)
 endif
 
-if (Validated less than\n1 minute ago ?) then (Yes)
+if (Last event of\na known version ?) then (No)
+  :Card rejected;<<#F5B7B1>>
+  detach
+else (Yes)
+endif
+
+if (Last validation more\nthan 1 minute ago ?) then (No)
   :Card rejected\n(already validated);<<#F5B7B1>>
-  stop
-else (No)
+  detach
+else (Yes)
 endif
 
 if (Ticket of a\nknown version ?) then (No)
   :Card rejected;<<#F5B7B1>>
-  stop
+  detach
 else (Yes)
 endif
 
-if (Ticket expired ?) then (Yes)
+if (Ticket still valid ?) then (No)
   :Expired ticket;<<#F9E79F>>
-  stop
-else (No)
+  detach
+else (Yes)
 endif
 
 if (Season Pass or\nMulti-trip ticket ?) then (No)
   :Ticket forbidden\nor expired;<<#F9E79F>>
-  stop
+  detach
 else (Yes)
 endif
 
-if (Multi-trip ticket\nwithout trips left ?) then (Yes)
+if (Season Pass,\nor trips left ?) then (No)
   :No trip left;<<#F9E79F>>
-  stop
-else (No)
+  detach
+else (Yes)
 endif
 
 :Write the ticket\n(1 trip deducted for a Multi-trip ticket);

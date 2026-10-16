@@ -1,4 +1,5 @@
 @startuml inspection
+' The normal flow (Yes) goes down, the exits (No) leave on the side and end there (detach).
 ' Pastel background colors: red F5B7B1 (error), yellow F9E79F (no ticket), green ABEBC6 (success),
 ' purple D7BDE2 (mode), orange FAD7A0 (user interaction)
 title Inspection
@@ -9,26 +10,29 @@ start
 
 if (Card recognized ?\n(supported Calypso application\nor storage card type)) then (No)
   :Not valid on this network;<<#F5B7B1>>
-  stop
+  detach
 else (Yes)
 endif
 
-:Authentication mode\nSAM, PKI or none;<<#D7BDE2>>
+:Open the reading session\n(authentication: SAM,\nPKI or none);<<#D7BDE2>>
 
 if (Card personalized\nand not expired ?) then (No)
   :Not valid on this network;<<#F5B7B1>>
-  stop
+  detach
 else (Yes)
 endif
 
 :Read the last event;
 
-if (Card never loaded ?) then (Yes)
+if (Card loaded\nat least once ?) then (No)
   :No ticket;<<#F9E79F>>
-  stop
-elseif (Last event of\na known version ?) then (No)
+  detach
+else (Yes)
+endif
+
+if (Last event of\na known version ?) then (No)
   :Not valid on this network;<<#F5B7B1>>
-  stop
+  detach
 else (Yes)
 endif
 
@@ -38,7 +42,7 @@ endif
 
 if (Tickets of a\nknown version ?) then (No)
   :Not valid on this network;<<#F5B7B1>>
-  stop
+  detach
 else (Yes)
 endif
 
