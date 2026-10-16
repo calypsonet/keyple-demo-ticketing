@@ -119,7 +119,7 @@ The validation result overlay of the reader screen (`CardReaderActivity`) displa
 ### Validation Scenarios
 
 The accepted and refused validations, with the messages displayed, are described in the
-[Functional Documentation](../../docs/user-guide/functional-documentation.adoc#validation-results).
+[Functional Documentation](../../docs/functional-documentation/index.adoc#validation-results).
 
 ## Technical Architecture
 
@@ -185,7 +185,7 @@ The accepted and refused validations, with the messages displayed, are described
 #### Contract Priority System
 
 The contracts are processed in the order of their priorities, described in the
-[Functional Documentation](../../docs/user-guide/functional-documentation.adoc#ticket-priority).
+[Functional Documentation](../../docs/functional-documentation/index.adoc#ticket-priority).
 
 #### Best Contract Search Algorithm
 
@@ -204,9 +204,9 @@ The contracts are processed in the order of their priorities, described in the
 ```
 
 Additions to the procedure of the data model, described in the Functional Documentation:
-- [Anti-passback](../../docs/user-guide/functional-documentation.adoc#anti-passback-rule), with the recovery of an
+- [Anti-passback](../../docs/functional-documentation/index.adoc#anti-passback-rule), with the recovery of an
   interrupted session
-- [Refused card](../../docs/user-guide/functional-documentation.adoc#refused-card): priorities of the expired or
+- [Refused card](../../docs/functional-documentation/index.adoc#refused-card): priorities of the expired or
   exhausted contracts written on the card
 
 Not implemented by the demo (steps of the data model): verification of the contract authenticator with the PSO
@@ -330,7 +330,7 @@ When contributing to this validation application:
 ## Related Documentation
 
 - [Main Project Overview](../../README.md)
-- [Functional Documentation](../../docs/user-guide/functional-documentation.adoc) - Use cases and business rules
+- [Functional Documentation](../../docs/functional-documentation/index.adoc) - Use cases and business rules
 - [Common Library](../common/README.md) - Data structures and constants
 - [Reload Demo](../reloading-remote/README.md) - Contract loading process
 - [Control Demo](../control/README.md) - Post-validation verification

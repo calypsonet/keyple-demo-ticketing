@@ -28,7 +28,7 @@ ticketing workflow:
 - **[Control Demo](src/control/)**: Post-validation card inspection and compliance checking
 
 The use cases and business rules are described for a functional audience (project managers, functional architects)
-in the [Functional Documentation](docs/user-guide/functional-documentation.adoc), also attached as PDF and HTML files
+in the [Functional Documentation](docs/functional-documentation/index.adoc), also attached as PDF and HTML files
 to each [release](https://github.com/calypsonet/keyple-demo-ticketing/releases).
 
 ## Supported Card Technologies
@@ -162,7 +162,7 @@ keyple-demo-ticketing/
 ├── CHANGELOG.md                            # Changes of the demo since the repository merge
 ├── .github/                                # CI workflows and checks (messages, architecture, twin files)
 ├── docs/history/                           # Changelogs of the archived repositories (before the merge)
-├── docs/user-guide/                        # Functional documentation (AsciiDoc, PlantUML diagrams, CNA charter)
+├── docs/functional-documentation/          # Functional documentation (AsciiDoc, PlantUML diagrams, CNA charter)
 ├── libs/                                   # Proprietary libraries (on request) and their mocks
 ├── libs.versions.toml                      # Version catalog shared by the Gradle projects
 ├── src/common/                             # Shared data structures and utilities

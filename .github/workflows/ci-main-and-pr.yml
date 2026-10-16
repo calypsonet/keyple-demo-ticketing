@@ -124,5 +124,5 @@ jobs:
     uses: ./.github/workflows/reusable-asciidoc-ci.yml
     with:
       component-name: "Functional documentation"
-      working-directory: "./docs/user-guide/"
-      document: "functional-documentation.adoc"
+      working-directory: "./docs/functional-documentation/"
+      document: "index.adoc"

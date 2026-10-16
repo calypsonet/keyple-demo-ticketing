@@ -107,6 +107,6 @@ jobs:
     uses: ./.github/workflows/reusable-asciidoc-release.yml
     with:
       component-name: "Functional documentation"
-      working-directory: "./docs/user-guide/"
-      document: "functional-documentation.adoc"
+      working-directory: "./docs/functional-documentation/"
+      document: "index.adoc"
       archive-name-prefix: "kdt-functional-documentation"

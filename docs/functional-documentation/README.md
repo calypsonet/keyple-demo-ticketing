@@ -1,7 +1,7 @@
 # Functional Documentation
 
 Source of the functional documentation of the Keyple Demo Ticketing
-([`functional-documentation.adoc`](functional-documentation.adoc)), written in AsciiDoc with the graphic charter of
+([`index.adoc`](index.adoc)), written in AsciiDoc with the graphic charter of
 the CNA documents.
 
 ## Publication
@@ -23,8 +23,8 @@ With [Asciidoctor](https://asciidoctor.org/), Asciidoctor PDF and Asciidoctor Di
 the `asciidoctor/docker-asciidoctor` image used by the CI, from this directory:
 
 ```bash
-asciidoctor -r asciidoctor-diagram -D generated functional-documentation.adoc
-asciidoctor-pdf -r asciidoctor-diagram -D generated functional-documentation.adoc
+asciidoctor -r asciidoctor-diagram -D generated index.adoc
+asciidoctor-pdf -r asciidoctor-diagram -D generated index.adoc
 ```
 
 All the generated files (HTML, PDF, diagrams, cache) are placed in the `generated` directory, ignored by Git.
@@ -32,8 +32,8 @@ All the generated files (HTML, PDF, diagrams, cache) are placed in the `generate
 ## Structure
 
 ```
-docs/user-guide/
-├── functional-documentation.adoc   # Document
+docs/functional-documentation/
+├── index.adoc                      # Document
 ├── diagrams/                       # PlantUML sources of the diagrams, generated at rendering
 └── assets/                         # CNA graphic charter
     ├── pdf-theme.yml               # Theme of the PDF output

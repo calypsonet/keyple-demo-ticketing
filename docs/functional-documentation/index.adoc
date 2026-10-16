@@ -4,8 +4,8 @@
 // assets directory holds the shared theme (pdf-theme.yml, docinfo.html), fonts, layout and legal partials.
 //
 // Rendering, from this directory (all the generated files are placed in the generated directory):
-//   asciidoctor -r asciidoctor-diagram -D generated functional-documentation.adoc
-//   asciidoctor-pdf -r asciidoctor-diagram -D generated functional-documentation.adoc
+//   asciidoctor -r asciidoctor-diagram -D generated index.adoc
+//   asciidoctor-pdf -r asciidoctor-diagram -D generated index.adoc
 // The release workflow overrides revnumber, revdate and doc-ref with the release tag and date.
 //
 // ============================================================================

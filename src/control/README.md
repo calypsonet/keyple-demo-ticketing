@@ -104,7 +104,7 @@ Terminal Selection → Settings → Home → Card Reader → Card Content or Inv
 ### Rejection Reasons
 
 The reasons why a card is refused, with the messages displayed, are described in the
-[Functional Documentation](../../docs/user-guide/functional-documentation.adoc#inspection-rejection-conditions).
+[Functional Documentation](../../docs/functional-documentation/index.adoc#inspection-rejection-conditions).
 
 ## Technical Architecture
 
@@ -270,7 +270,7 @@ When contributing to this control application:
 ## Related Documentation
 
 - [Main Project Overview](../../README.md)
-- [Functional Documentation](../../docs/user-guide/functional-documentation.adoc) - Use cases and business rules
+- [Functional Documentation](../../docs/functional-documentation/index.adoc) - Use cases and business rules
 - [Common Library](../common/README.md) - Data structures and constants
 - [Validation Demo](../validation/README.md) - Previous step in workflow
 - [Reload Demo](../reloading-remote/README.md) - Contract loading procedures
