@@ -90,7 +90,7 @@ class ValidateCard(
               "Card removed during the transaction [cardDescription=${result.cardDescription}]")
       is ValidationResult.NotRecognized ->
           logger.w(
-              "Card not selected [error=${result.error}, fileStructure=${result.fileStructure}]")
+              "Card not recognized [error=${result.error}, fileStructure=${result.fileStructure}]")
       is ValidationResult.Failed -> {}
     }
   }

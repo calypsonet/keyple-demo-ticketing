@@ -160,7 +160,7 @@ class CalypsoCardValidationProcedure(
       return rejected(it)
     }
 
-    // Step 6.2 - anti-passback management and communication failure recovery: within the
+    // Step 6.2 - anti-passback management and ratification of an interrupted session: within the
     // anti-passback delay, the card is rejected if the last validation session has been ratified,
     // otherwise this session, interrupted by the removal of the card, is considered as validated.
     if (isWithinAntiPassbackDelay(event.eventDateTime, validationDateTime)) {

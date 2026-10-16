@@ -343,7 +343,7 @@ class CardReaderActivity : BaseActivity() {
               result.seasonPassValidityEndDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
           resultBinding.smallDesc.text = getString(R.string.valid_season_pass, validityEndDate)
         } else {
-          // Recovered broken session: no contract data available
+          // Ratification of an interrupted session: no contract data available
           resultBinding.smallDesc.visibility = View.INVISIBLE
         }
         resultBinding.mediumText.setText(R.string.valid_last_desc)
@@ -353,7 +353,7 @@ class CardReaderActivity : BaseActivity() {
         }
       }
       is ValidationResult.NotRecognized -> {
-        // Card not selected (unknown or unsupported card): rejected without validation
+        // Card not recognized (unknown or unsupported card): rejected without validation
         animationFileName = "error_white.json"
         resultBinding.validationResultView.setBackgroundColor(
             ContextCompat.getColor(this, R.color.orange))

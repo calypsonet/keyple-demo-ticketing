@@ -90,7 +90,7 @@ class InspectCard(
       is InspectionResult.Rejected -> logger.w("Card rejected [reason=${result.reason}]")
       is InspectionResult.NotRecognized ->
           logger.w(
-              "Card not selected [error=${result.error}, fileStructure=${result.fileStructure}]")
+              "Card not recognized [error=${result.error}, fileStructure=${result.fileStructure}]")
       is InspectionResult.Failed -> {}
     }
   }

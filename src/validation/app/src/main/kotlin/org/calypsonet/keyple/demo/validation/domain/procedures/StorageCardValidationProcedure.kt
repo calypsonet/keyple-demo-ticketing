@@ -195,7 +195,7 @@ class StorageCardValidationProcedure(
       return ValidationResult.Rejected(cardDescription, it)
     }
 
-    // Anti-passback: the storage cards have no session to recover
+    // Anti-passback: the storage cards have no session to ratify
     if (isWithinAntiPassbackDelay(event.eventDateTime, validationDateTime)) {
       return ValidationResult.Rejected(cardDescription, RejectionReason.ALREADY_VALIDATED)
     }
