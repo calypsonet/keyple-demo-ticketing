@@ -1,7 +1,7 @@
 # Keyple Reload Demo - Kotlin Multiplatform Client
 
 [![Kotlin](https://img.shields.io/badge/kotlin-2.3-blue.svg)](https://kotlinlang.org/)
-[![KMP](https://img.shields.io/badge/multiplatform-android%20%7C%20ios%20%7C%20desktop-green.svg)](https://www.jetbrains.com/kotlin-multiplatform/)
+[![KMP](https://img.shields.io/badge/multiplatform-android%20%7C%20ios%20%7C%20desktop-green.svg)](https://kotlinlang.org/multiplatform/)
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../../../LICENSE)
 
 A Kotlin Multiplatform application demonstrating distributed remote client communications across Android, iOS, and
@@ -311,8 +311,8 @@ same features on Android, iOS and desktop, the platform-specific code being mini
 
 ## Related Documentation
 
-- [Kotlin Multiplatform Documentation](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)
-- [Compose Multiplatform](https://www.jetbrains.com/lp/compose-multiplatform/)
+- [Kotlin Multiplatform Documentation](https://kotlinlang.org/docs/multiplatform/get-started.html)
+- [Compose Multiplatform](https://kotlinlang.org/compose-multiplatform/)
 - [Keyple Interop JSON API Client KMP Library](https://github.com/eclipse-keyple/keyple-interop-jsonapi-client-kmp-lib)
 - [Keyple Interop Local Reader NFC Mobile KMP Library](https://github.com/eclipse-keyple/keyple-interop-localreader-nfcmobile-kmp-lib)
 - [Main Project Overview](../../../../README.md)

@@ -1,7 +1,7 @@
 # Keyple Demo Ticketing Ecosystem
 
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](LICENSE)
-[![Java](https://img.shields.io/badge/java-17%2B-orange.svg)](https://openjdk.java.net/)
+[![Java](https://img.shields.io/badge/java-17%2B-orange.svg)](https://openjdk.org/)
 [![Android](https://img.shields.io/badge/android-8.0%2B-green.svg)](https://developer.android.com/)
 
 A comprehensive open source ticketing ecosystem demonstrating the [Eclipse Keyple middleware](https://keyple.org) in
@@ -569,8 +569,8 @@ concerned, and passes the checks of the CI:
 ## Related Projects
 
 - [Eclipse Keyple middleware](https://keyple.org) - Core SDK and plugins
-- [Calypso Card Specification](https://calypsonet.org/technical-support-documentation/)
-- [Keyple Distributed JSON API](https://keyple.org/user-guides/non-keyple-client/server-json-api/)
+- [Calypso Specifications](https://calypsonet.org/calypso-specifications/)
+- [Keyple Server JSON API](https://keyple.org/user-guides/non-keyple-client/server-json-api/)
 
 ## License
 

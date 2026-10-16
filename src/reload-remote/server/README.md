@@ -1,6 +1,6 @@
 # Keyple Reload Demo - Java Server
 
-[![Java](https://img.shields.io/badge/java-17%2B-orange.svg)](https://openjdk.java.net/)
+[![Java](https://img.shields.io/badge/java-17%2B-orange.svg)](https://openjdk.org/)
 [![Quarkus](https://img.shields.io/badge/quarkus-3.40-blue.svg)](https://quarkus.io/)
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../../LICENSE)
 

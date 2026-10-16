@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../LICENSE)
 
 Client/server demonstration of the
-[Eclipse Keyple Distributed Solution](https://keyple.org/docs/developer-guide/distributed-application/), where all the
+[Eclipse Keyple Distributed Solution](https://keyple.org/learn/user-guide/distributed-application/), where all the
 ticketing procedures and sessions are managed by the server, the clients only giving access to the card.
 
 [⬅️ Back to Main Project](../../README.md)
