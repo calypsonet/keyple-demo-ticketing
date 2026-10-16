@@ -1,4 +1,4 @@
-@startuml workflow-overview
+@startuml overview
 title Overview of the functional workflows
 
 start

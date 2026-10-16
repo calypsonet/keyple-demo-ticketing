@@ -1,4 +1,4 @@
-@startuml workflow-validation-1
+@startuml validation-calypso-card
 title Validation of a Calypso card
 
 start

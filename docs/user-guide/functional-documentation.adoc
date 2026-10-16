@@ -52,7 +52,7 @@ The ecosystem consists of four distinct applications, each covering a specific r
 
 === Ecosystem flow
 
-plantuml::diagrams/workflow-overview.puml[target=workflow-overview,format=svg,alt="Keyple Demo Ticketing ecosystem flow",align="center"]
+plantuml::diagrams/overview.puml[target=overview,format=svg,alt="Keyple Demo Ticketing ecosystem flow",align="center"]
 
 NOTE: The Validation terminal and the Control terminal do not communicate over the network. Information is exchanged between these two applications *exclusively through the traveler's card*.
 
@@ -170,7 +170,7 @@ Issuance is performed from the Android or multiplatform reload client, connected
 
 ==== Diagram
 
-plantuml::diagrams/workflow-personalization.puml[target=workflow-personalization,format=svg,alt="Card personalization workflow",align="center"]
+plantuml::diagrams/personalization.puml[target=personalization,format=svg,alt="Card personalization workflow",align="center"]
 
 ---
 
@@ -226,7 +226,7 @@ This operation requires the *SAM security module* to be present on the server si
 
 ==== Diagram
 
-plantuml::diagrams/workflow-reload.puml[target=workflow-reload,format=svg,alt="Ticket loading workflow",align="center"]
+plantuml::diagrams/ticket-loading.puml[target=ticket-loading,format=svg,alt="Ticket loading workflow",align="center"]
 
 ---
 
@@ -266,11 +266,11 @@ When no ticket of a Calypso card can be used, the expired or exhausted tickets a
 
 ===== Calypso card validation
 
-plantuml::diagrams/workflow-validation-1.puml[target=workflow-validation-1,format=svg,alt="Calypso card validation workflow",align="center"]
+plantuml::diagrams/validation-calypso-card.puml[target=validation-calypso-card,format=svg,alt="Calypso card validation workflow",align="center"]
 
 ===== Storage card validation
 
-plantuml::diagrams/workflow-validation-2.puml[target=workflow-validation-2,format=svg,alt="Storage card validation workflow",align="center"]
+plantuml::diagrams/validation-storage-card.puml[target=validation-storage-card,format=svg,alt="Storage card validation workflow",align="center"]
 
 ---
 
@@ -325,7 +325,7 @@ NOTE: The verification of the ticket authenticator (traceability mode) is not im
 
 ==== Diagram
 
-plantuml::diagrams/workflow-control.puml[target=workflow-control,format=svg,alt="Inspection workflow",align="center"]
+plantuml::diagrams/inspection.puml[target=inspection,format=svg,alt="Inspection workflow",align="center"]
 
 == Compatible terminals and hardware
 

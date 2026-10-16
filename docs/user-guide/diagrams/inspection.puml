@@ -1,4 +1,4 @@
-@startuml workflow-control
+@startuml inspection
 title Inspection
 
 start

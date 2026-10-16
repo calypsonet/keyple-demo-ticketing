@@ -1,4 +1,4 @@
-@startuml workflow-reload
+@startuml ticket-loading
 title Ticket loading
 
 start
