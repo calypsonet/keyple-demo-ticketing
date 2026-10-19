@@ -9,23 +9,23 @@ start
 
 :Card presented;
 
-if (Card recognized ?\n(supported Calypso application\nor storage card type)) then (No)
+if (Card recognized?\n(supported Calypso application\nor storage card type)) then (No)
   :Not valid on this network;<<#F5B7B1>>
   stop
 else (Yes)
   :Open the reading session\n(authentication: SAM,\nPKI or none);<<#D7BDE2>>
 
-  if (Card personalized\nand not expired ?) then (No)
+  if (Card personalized\nand not expired?) then (No)
     :Not valid on this network;<<#F5B7B1>>
     stop
   else (Yes)
     :Read the last event;
 
-    if (Card loaded\nat least once ?) then (No)
+    if (Card loaded\nat least once?) then (No)
       :No ticket;<<#F9E79F>>
       stop
     else (Yes)
-      if (Last event of\na known version ?) then (No)
+      if (Last event of\na known version?) then (No)
         :Not valid on this network;<<#F5B7B1>>
         stop
       else (Yes)
@@ -33,7 +33,7 @@ else (Yes)
 
         :Read the tickets\nand their counters;
 
-        if (Tickets of a\nknown version ?) then (No)
+        if (Tickets of a\nknown version?) then (No)
           :Not valid on this network;<<#F5B7B1>>
           stop
         else (Yes)

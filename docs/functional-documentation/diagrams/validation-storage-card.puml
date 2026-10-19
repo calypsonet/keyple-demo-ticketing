@@ -9,46 +9,46 @@ start
 
 :Card presented;
 
-if (Card recognized ?\n(supported storage card type)) then (No)
+if (Card recognized?\n(supported storage card type)) then (No)
   :Card not recognized;<<#F5B7B1>>
   stop
 else (Yes)
-  if (MIFARE Classic ?) then (No)
+  if (MIFARE Classic?) then (No)
   else (Yes)
     :Authentication\nof the sector;
   endif
 
   :Read the environment,\nthe ticket and the event;
 
-  if (Card personalized\nand not expired ?) then (No)
+  if (Card personalized\nand not expired?) then (No)
     :Card rejected;<<#F5B7B1>>
     stop
   else (Yes)
-    if (Card loaded\nat least once ?) then (No)
+    if (Card loaded\nat least once?) then (No)
       :No valid ticket;<<#F9E79F>>
       stop
     else (Yes)
-      if (Last event of\na known version ?) then (No)
+      if (Last event of\na known version?) then (No)
         :Card rejected;<<#F5B7B1>>
         stop
       else (Yes)
-        if (Last validation more\nthan 1 minute ago ?) then (No)
+        if (Last validation more\nthan 1 minute ago?) then (No)
           :Card rejected\n(already validated);<<#F5B7B1>>
           stop
         else (Yes)
-          if (Ticket of a\nknown version ?) then (No)
+          if (Ticket of a\nknown version?) then (No)
             :Card rejected;<<#F5B7B1>>
             stop
           else (Yes)
-            if (Ticket still valid ?) then (No)
+            if (Ticket still valid?) then (No)
               :Expired ticket;<<#F9E79F>>
               stop
             else (Yes)
-              if (Season pass or\nmulti-trip ticket ?) then (No)
+              if (Season pass or\nmulti-trip ticket?) then (No)
                 :Ticket forbidden\nor expired;<<#F9E79F>>
                 stop
               else (Yes)
-                if (Season pass,\nor trips left ?) then (No)
+                if (Season pass,\nor trips left?) then (No)
                   :No trip left;<<#F9E79F>>
                   stop
                 else (Yes)

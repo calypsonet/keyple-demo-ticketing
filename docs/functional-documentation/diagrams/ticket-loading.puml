@@ -10,21 +10,21 @@ start
 partition "Reading of the card" {
   :Card presented;
 
-  if (Server reachable\n(with its SAM for a\nCalypso card) ?) then (No)
+  if (Server reachable\n(with its SAM for a\nCalypso card)?) then (No)
     :Server error;<<#F5B7B1>>
     stop
   else (Yes)
-    if (Card recognized ?\n(supported Calypso application\nor storage card type)) then (No)
+    if (Card recognized?\n(supported Calypso application\nor storage card type)) then (No)
       :Card rejected;<<#F5B7B1>>
       stop
     else (Yes)
       :Read the card\n(secure session for a\nCalypso card);
 
-      if (Card personalized\nand not expired ?) then (No)
+      if (Card personalized\nand not expired?) then (No)
         :Card rejected;<<#F5B7B1>>
         stop
       else (Yes)
-        if (Last event of\na known version ?) then (No)
+        if (Last event of\na known version?) then (No)
           :Card rejected;<<#F5B7B1>>
           stop
         else (Yes)
@@ -42,31 +42,31 @@ note right: User interaction
 partition "Loading of the ticket" {
   :Card presented again;
 
-  if (Server reachable\n(with its SAM for a\nCalypso card) ?) then (No)
+  if (Server reachable\n(with its SAM for a\nCalypso card)?) then (No)
     :Server error;<<#F5B7B1>>
     stop
   else (Yes)
-    if (Card recognized ?\n(supported Calypso application\nor storage card type)) then (No)
+    if (Card recognized?\n(supported Calypso application\nor storage card type)) then (No)
       :Card rejected;<<#F5B7B1>>
       stop
     else (Yes)
-      if (Same card as the one read ?\n(multiplatform client)) then (No)
+      if (Same card as the one read?\n(multiplatform client)) then (No)
         :Not the same card;<<#F5B7B1>>
         stop
       else (Yes)
         :Read the card\n(secure session for a\nCalypso card);
 
-        if (Slot available ?\nsame type, empty or expired\n(single-ticket card: other ticket not usable)) then (No)
+        if (Slot available?\nsame type, empty or expired\n(single-ticket card: other ticket not usable)) then (No)
           :Card rejected\n(no space left);<<#F5B7B1>>
           stop
         else (Yes)
           :Open the secure session\n(Calypso card);
 
-          :Write the ticket\n(Season pass renewal: +30 days if not expired);
+          :Write the ticket\n(season pass renewal: +30 days if not expired);
 
           :Add the trips to the counter\n(multi-trip ticket);
 
-          if (Ticket priorities changed ?) then (No)
+          if (Ticket priorities changed?) then (No)
           else (Yes)
             :Update the priorities\nin the last event;
           endif

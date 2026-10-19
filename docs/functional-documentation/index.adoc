@@ -105,10 +105,10 @@ The ecosystem consists of four distinct applications, each covering a specific r
 |===
 | Application | Functional role
 
-| *Reload — Server*
+| *Reload — server*
 | Hosts the security module (SAM) and performs cryptographic operations. Exposes remote reload services. Its web dashboard (`http://localhost:8080`) displays the status of the server and of the SAM, and the transactions of the clients in real time (see the link:../../src/reload-remote/server/README.md#web-dashboard[server README]).
 
-| *Reload — Clients*
+| *Reload — clients*
 | Android, multiplatform (Android, iOS, desktop) or .NET application used by a sales agent or a passenger to load a new transit ticket. The Android and multiplatform clients also personalize blank cards.
 
 | *Validation*

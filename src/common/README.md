@@ -36,7 +36,7 @@ This library is included in the builds of the applications using it (Gradle incl
 
 Stores card metadata and holder information.
 
-| Field Name           | Bits | Description                                        |     Type      |  Status   |
+| Field name           | Bits | Description                                        |     Type      |  Status   |
 |:---------------------|-----:|:---------------------------------------------------|:-------------:|:---------:|
 | EnvVersionNumber     |    8 | Data structure version number                      | VersionNumber | Mandatory | 
 | EnvApplicationNumber |   32 | Card application number (unique system identifier) |      Int      | Mandatory |
@@ -50,7 +50,7 @@ Stores card metadata and holder information.
 
 Records validation events and transaction history.
 
-| Field Name         | Bits | Description                                   |     Type      |  Status   |
+| Field name         | Bits | Description                                   |     Type      |  Status   |
 |:-------------------|-----:|:----------------------------------------------|:-------------:|:---------:|
 | EventVersionNumber |    8 | Data structure version number                 | VersionNumber | Mandatory | 
 | EventDateStamp     |   16 | Date of the event                             |  DateCompact  | Mandatory | 
@@ -67,7 +67,7 @@ Records validation events and transaction history.
 
 Defines the contracts (tickets) and their properties.
 
-| Field Name              | Bits | Description                          |        Type         |  Status   |
+| Field name              | Bits | Description                          |        Type         |  Status   |
 |:------------------------|-----:|:-------------------------------------|:-------------------:|:---------:|
 | ContractVersionNumber   |    8 | Data structure version number        |    VersionNumber    | Mandatory | 
 | ContractTariff          |    8 | Contract Type                        |    PriorityCode     | Mandatory | 
@@ -83,7 +83,7 @@ Defines the contracts (tickets) and their properties.
 
 Counts the trips left of a multi-trip ticket.
 
-| Field Name   | Bits | Description     | Type |  Status   |
+| Field name   | Bits | Description     | Type |  Status   |
 |:-------------|-----:|:----------------|:----:|:---------:|
 | CounterValue |   24 | Number of trips | Int  | Mandatory |
 

@@ -9,11 +9,11 @@ start
 
 :Card presented;
 
-if (Server reachable\n(with its SAM for a\nCalypso card) ?) then (No)
+if (Server reachable\n(with its SAM for a\nCalypso card)?) then (No)
   :Server error;<<#F5B7B1>>
   stop
 else (Yes)
-  if (Card recognized ?\n(supported Calypso application\nor storage card type)) then (No)
+  if (Card recognized?\n(supported Calypso application\nor storage card type)) then (No)
     :Card rejected;<<#F5B7B1>>
     stop
   else (Yes)
