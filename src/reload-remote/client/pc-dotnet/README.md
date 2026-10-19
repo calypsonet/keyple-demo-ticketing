@@ -156,8 +156,8 @@ The client implements the Keyple Server JSON API without the full SDK. It starts
 **Body of the `EXECUTE_REMOTE_SERVICE` message** (loading of trips):
 ```json
 {
-  "serviceId": "SELECT_APP_AND_INCREASE_CONTRACT_COUNTER",
-  "inputData": { "counterIncrement": 5 },
+  "serviceId": "SELECT_APP_AND_LOAD_TRIPS",
+  "inputData": { "tripsToLoad": 5 },
   "isReaderContactless": true
 }
 ```
@@ -173,7 +173,7 @@ The client implements the Keyple Server JSON API without the full SDK. It starts
 ```
 
 The remote services used are `SELECT_APP_AND_READ_CONTRACTS` (the `items` of its output being the descriptions of the
-contracts) and `SELECT_APP_AND_INCREASE_CONTRACT_COUNTER`.
+contracts) and `SELECT_APP_AND_LOAD_TRIPS`.
 
 ### Error handling
 

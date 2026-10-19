@@ -32,11 +32,11 @@ namespace App.domain.api
         string SelectAppAndReadContracts();
 
         /// <summary>
-        /// Selects the application of the card and increases the counter of its MULTI_TRIP contract if it exists.
+        /// Selects the application of the card and loads trips onto its multi-trip ticket.
         /// The transaction is fully operated by the server.
         /// </summary>
-        /// <param name="counterIncrement">The amount by which to increase the contract's counter.</param>
+        /// <param name="tripsToLoad">The number of trips to load.</param>
         /// <returns>A string representation of the status of the operation.</returns>
-        string SelectAppAndIncreaseContractCounter(int counterIncrement);
+        string SelectAppAndLoadTrips(int tripsToLoad);
     }
 }

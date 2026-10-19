@@ -34,6 +34,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   found." and "3 trip(s) will now be loaded in the card."). The log messages follow the same typography: serial
   comma, American spelling ("signaled"), "Server started" (instead of "Keyple Demo - Reload Server started"), and
   "Physical channel opened" as the other events.
+- Reload demo: the remote service of the .NET client adding trips to the multi-trip ticket is named after the
+  business operation ("load"): `SELECT_APP_AND_LOAD_TRIPS` (instead of `SELECT_APP_AND_INCREASE_CONTRACT_COUNTER`),
+  `SelectAppAndLoadTripsInputDto`/`OutputDto` with a `tripsToLoad` field (instead of `counterIncrement`, also in the
+  JSON message), `JsonApiContractService` on the server (instead of `ContractCounterService`), and
+  `SelectAppAndLoadTrips()`/`LoadTripsInputData` in the .NET client. The functional documentation no longer uses
+  "reload" for the operation, "Reload" only being the name of the demo.
 - READMEs reviewed against the code and the build, each information being described in a single place (main README,
   README of the component, or functional documentation): features, settings, supported cards and terminals,
   proprietary components (including the storage card libraries), prerequisites and versions, released packages, unit

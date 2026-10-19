@@ -167,7 +167,7 @@ remote service (`RemoteServiceId`) to the service handling it:
 | `ContractLoadingService`     | `READ_CARD_AND_LOAD_CONTRACT`                                                                         | Android (Keyple)         |
 | `CardPersonalizationService` | `PERSONALIZE_CARD`                                                                                    | Android (Keyple)         |
 | `JsonApiService`             | `SELECT_APP_AND_ANALYZE_CONTRACTS`, `SELECT_APP_AND_LOAD_CONTRACT`, `SELECT_APP_AND_PERSONALIZE_CARD` | Multiplatform (JSON API) |
-| `ContractCounterService`     | `SELECT_APP_AND_READ_CONTRACTS`, `SELECT_APP_AND_INCREASE_CONTRACT_COUNTER`                           | .NET                     |
+| `JsonApiContractService`     | `SELECT_APP_AND_READ_CONTRACTS`, `SELECT_APP_AND_LOAD_TRIPS`                                          | .NET                     |
 
 - With the Keyple clients, the client selects the application of the card. With the other clients, the server
   selects it: `JsonApiService` selects the application, then delegates to the analysis, loading, or

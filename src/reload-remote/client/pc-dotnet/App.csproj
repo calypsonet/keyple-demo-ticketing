@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <Title>Keyple Demo - Reload (.NET)</Title>
+    <Title>Keyple Demo — Reload (.NET)</Title>
     <Company>Calypso Networks Association</Company>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <AssemblyVersion>99.99.99</AssemblyVersion>

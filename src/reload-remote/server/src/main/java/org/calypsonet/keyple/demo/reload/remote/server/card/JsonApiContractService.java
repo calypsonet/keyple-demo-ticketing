@@ -20,8 +20,8 @@ import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus;
-import org.calypsonet.keyple.demo.common.dto.SelectAppAndIncreaseContractCounterInputDto;
-import org.calypsonet.keyple.demo.common.dto.SelectAppAndIncreaseContractCounterOutputDto;
+import org.calypsonet.keyple.demo.common.dto.SelectAppAndLoadTripsInputDto;
+import org.calypsonet.keyple.demo.common.dto.SelectAppAndLoadTripsOutputDto;
 import org.calypsonet.keyple.demo.common.dto.SelectAppAndReadContractsOutputDto;
 import org.calypsonet.keyple.demo.common.model.ContractStructure;
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode;
@@ -37,12 +37,12 @@ import org.slf4j.LoggerFactory;
 /**
  * Services of the .NET client, the application of the card being selected by the server: reading of
  * the contracts as text (remote service {@code SELECT_APP_AND_READ_CONTRACTS}) and loading of trips
- * on the multi-trip ticket (remote service {@code SELECT_APP_AND_INCREASE_CONTRACT_COUNTER}).
+ * on the multi-trip ticket (remote service {@code SELECT_APP_AND_LOAD_TRIPS}).
  */
 @ApplicationScoped
-public class ContractCounterService {
+public class JsonApiContractService {
 
-  private static final Logger logger = LoggerFactory.getLogger(ContractCounterService.class);
+  private static final Logger logger = LoggerFactory.getLogger(JsonApiContractService.class);
   private static final String NON_KEYPLE_PLUGIN = "Non Keyple plugin";
 
   @Inject CardRepository cardRepository;
@@ -106,8 +106,8 @@ public class ContractCounterService {
         RemoteServiceMessages.of(RemoteServiceStatus.fromCode(statusCode), calypsoCard));
   }
 
-  SelectAppAndIncreaseContractCounterOutputDto selectAppAndIncreaseContractCounter(
-      CardReader cardReader, SelectAppAndIncreaseContractCounterInputDto inputData) {
+  SelectAppAndLoadTripsOutputDto selectAppAndLoadTrips(
+      CardReader cardReader, SelectAppAndLoadTripsInputDto inputData) {
 
     CalypsoCard calypsoCard = null;
     CardResource samResource = null;
@@ -115,10 +115,10 @@ public class ContractCounterService {
     try {
       calypsoCard = cardRepository.selectCard(cardReader);
       logger.info(
-          "Increasing the contract counter [plugin={}, serialNumber={}, counterIncrement={}]",
+          "Loading trips [plugin={}, serialNumber={}, tripsToLoad={}]",
           NON_KEYPLE_PLUGIN,
           HexUtil.toHex(calypsoCard.getApplicationSerialNumber()),
-          inputData.getCounterIncrement());
+          inputData.getTripsToLoad());
 
       samResource =
           CardResourceServiceProvider.getService()
@@ -126,7 +126,7 @@ public class ContractCounterService {
 
       CardData card = cardRepository.readCard(cardReader, calypsoCard, samResource);
       contractLoadingService.insertNewContract(
-          PriorityCode.MULTI_TRIP, inputData.getCounterIncrement(), card);
+          PriorityCode.MULTI_TRIP, inputData.getTripsToLoad(), card);
       statusCode = cardRepository.writeCard(cardReader, calypsoCard, samResource, card);
     } catch (CardFullException e) {
       // Rejection logged where it is detected
@@ -139,12 +139,10 @@ public class ContractCounterService {
       statusCode = RemoteServiceStatus.ENVIRONMENT_EXPIRED.getCode();
     } catch (CardCommunicationException e) {
       statusCode = RemoteServiceStatus.CARD_COMMUNICATION_ERROR.getCode();
-      logger.warn(
-          "Card communication error while increasing the contract counter [cause={}]",
-          e.getMessage());
+      logger.warn("Card communication error while loading the trips [cause={}]", e.getMessage());
     } catch (RuntimeException e) {
       statusCode = RemoteServiceStatus.SERVER_ERROR.getCode();
-      logger.error("Unexpected error while increasing the contract counter", e);
+      logger.error("Unexpected error while loading the trips", e);
     } finally {
       boolean success = statusCode == RemoteServiceStatus.SUCCESS.getCode();
       transactionRecorder.record(
@@ -152,14 +150,12 @@ public class ContractCounterService {
           success,
           LOAD,
           calypsoCard == null ? "-" : HexUtil.toHex(calypsoCard.getApplicationSerialNumber()),
-          success
-              ? PriorityCode.MULTI_TRIP.getLabel() + ": " + inputData.getCounterIncrement()
-              : null);
+          success ? PriorityCode.MULTI_TRIP.getLabel() + ": " + inputData.getTripsToLoad() : null);
       if (samResource != null) {
         CardResourceServiceProvider.getService().releaseCardResource(samResource);
       }
     }
-    return new SelectAppAndIncreaseContractCounterOutputDto(
+    return new SelectAppAndLoadTripsOutputDto(
         statusCode,
         RemoteServiceMessages.of(RemoteServiceStatus.fromCode(statusCode), calypsoCard));
   }

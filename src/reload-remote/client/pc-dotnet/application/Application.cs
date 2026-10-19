@@ -99,8 +99,8 @@ namespace App.application
 
             WaitForCard();
 
-            // Select the application of the card and increase the contract counter by the number of trips to load
-            outputJson = _ticketingService.SelectAppAndIncreaseContractCounter(tripsToLoad);
+            // Select the application of the card and load the trips
+            outputJson = _ticketingService.SelectAppAndLoadTrips(tripsToLoad);
 
             endRemoteServiceBody = JsonConvert.DeserializeObject<EndRemoteServiceBody>(outputJson)!;
 

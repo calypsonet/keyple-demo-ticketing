@@ -20,8 +20,8 @@ import org.calypsonet.keyple.demo.common.dto.LoadContractInputDto;
 import org.calypsonet.keyple.demo.common.dto.PersonalizeCardInputDto;
 import org.calypsonet.keyple.demo.common.dto.RemoteServiceId;
 import org.calypsonet.keyple.demo.common.dto.SelectAppAndAnalyzeContractsInputDto;
-import org.calypsonet.keyple.demo.common.dto.SelectAppAndIncreaseContractCounterInputDto;
 import org.calypsonet.keyple.demo.common.dto.SelectAppAndLoadContractInputDto;
+import org.calypsonet.keyple.demo.common.dto.SelectAppAndLoadTripsInputDto;
 import org.calypsonet.keyple.demo.common.dto.SelectAppAndPersonalizeCardInputDto;
 import org.eclipse.keyple.distributed.RemoteReaderServer;
 import org.eclipse.keypop.reader.CardReader;
@@ -36,7 +36,7 @@ import org.eclipse.keypop.reader.selection.spi.SmartCard;
 @ApplicationScoped
 public class RemoteServiceDispatcher {
 
-  @Inject ContractCounterService contractCounterService;
+  @Inject JsonApiContractService jsonApiContractService;
   @Inject ContractAnalysisService contractAnalysisService;
   @Inject ContractLoadingService contractLoadingService;
   @Inject CardPersonalizationService cardPersonalizationService;
@@ -63,11 +63,10 @@ public class RemoteServiceDispatcher {
     switch (serviceId) {
       // Services of the .NET client (selection of the application by the server)
       case SELECT_APP_AND_READ_CONTRACTS:
-        return contractCounterService.selectAppAndReadContracts(reader);
-      case SELECT_APP_AND_INCREASE_CONTRACT_COUNTER:
-        return contractCounterService.selectAppAndIncreaseContractCounter(
-            reader,
-            readerExtension.getInputData(SelectAppAndIncreaseContractCounterInputDto.class));
+        return jsonApiContractService.selectAppAndReadContracts(reader);
+      case SELECT_APP_AND_LOAD_TRIPS:
+        return jsonApiContractService.selectAppAndLoadTrips(
+            reader, readerExtension.getInputData(SelectAppAndLoadTripsInputDto.class));
       // Services of the Android client (selection of the application by the client)
       case READ_CARD_AND_ANALYZE_CONTRACTS:
         return contractAnalysisService.analyzeContracts(

@@ -16,7 +16,7 @@ enum class RemoteServiceId {
 
   // Suitable for C# Keyple-less clients
   SELECT_APP_AND_READ_CONTRACTS,
-  SELECT_APP_AND_INCREASE_CONTRACT_COUNTER,
+  SELECT_APP_AND_LOAD_TRIPS,
 
   // Suitable for Android Keyple clients
   READ_CARD_AND_ANALYZE_CONTRACTS,

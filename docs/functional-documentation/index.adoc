@@ -101,12 +101,12 @@ It is made available by the *Calypso Networks Association (CNA)* as a starting p
 
 The ecosystem consists of four distinct applications, each covering a specific role in the ticketing system:
 
-[options="header"]
+[cols="^1,3", options="header"]
 |===
 | Application | Functional role
 
 | *Reload — server*
-| Hosts the security module (SAM) and performs cryptographic operations. Exposes remote reload services. Its web dashboard (`http://localhost:8080`) displays the status of the server and of the SAM, and the transactions of the clients in real time (see the link:../../src/reload-remote/server/README.md#web-dashboard[server README]).
+| Hosts the security module (SAM) and performs cryptographic operations. Exposes the remote services of reading, loading, and personalization. Its web dashboard (`http://localhost:8080`) displays the status of the server and of the SAM, and the transactions of the clients in real time (see the link:../../src/reload-remote/server/README.md#web-dashboard[server README]).
 
 | *Reload — clients*
 | Android, multiplatform (Android, iOS, desktop), or .NET application used by a sales agent or a passenger to load a new transit ticket. The Android and multiplatform clients also personalize blank cards.
@@ -154,7 +154,7 @@ The Calypso card stores in memory:
 
 Storage cards are simpler memory media without a Calypso security system. They allow lightweight scenarios to be demonstrated:
 
-[cols="2,3,2", options="header"]
+[cols="^2,3,2", options="header"]
 |===
 | Type | Characteristics | Authentication
 
@@ -192,7 +192,7 @@ Two ticket types can be loaded onto a card:
 
 * *Unit-based* ticket: each validation consumes *1 unit*
 * Valid until the *card expiry date* (EnvEndDate)
-* Reloadable by adding extra units (up to 16,777,215)
+* Trips can be added by a new loading (up to 16,777,215)
 * Remaining trips are visible during inspection
 
 [[ticket-priority]]
@@ -244,13 +244,13 @@ Issuance is performed from the Android or multiplatform reload client, connected
 
 plantuml::diagrams/personalization.puml[target=personalization,format=svg,alt="Card personalization workflow",align="center"]
 
----
+'''
 
 === Loading a ticket
 
 ==== Functional description
 
-Loading consists of writing a new transit ticket onto the card, or reloading an existing one.
+Loading consists of writing a new transit ticket onto the card, or adding trips to or renewing an existing one.
 This operation requires the *SAM security module* to be present on the server side.
 
 ==== Process
@@ -281,7 +281,7 @@ This operation requires the *SAM security module* to be present on the server si
 | Renewing a season pass
 | Not expired: the end date is extended by 30 days from the current end date; expired: new 30-day period from the date of sale
 
-| Reloading a multi-trip ticket
+| Loading trips onto an existing multi-trip ticket
 | The trips are added to the counter (up to 16,777,215)
 
 | New ticket on an empty slot
@@ -295,7 +295,7 @@ This operation requires the *SAM security module* to be present on the server si
 
 plantuml::diagrams/ticket-loading.puml[target=ticket-loading,format=svg,alt="Ticket loading workflow",align="center"]
 
----
+'''
 
 === Access validation
 
@@ -341,7 +341,7 @@ plantuml::diagrams/validation-calypso-card.puml[target=validation-calypso-card,f
 
 plantuml::diagrams/validation-storage-card.puml[target=validation-storage-card,format=svg,alt="Storage card validation workflow",align="center"]
 
----
+'''
 
 === Ticket inspection
 
@@ -353,7 +353,7 @@ Inspection is carried out by a ticket inspector equipped with a mobile terminal.
 
 Unlike validation, inspection can operate *without a SAM* thanks to two fallback modes:
 
-[cols="1,3,4", options="header"]
+[cols="^1,3,4", options="header"]
 |===
 | Mode | Activation condition | Level of guarantee
 
@@ -403,7 +403,7 @@ This section summarizes the hardware supported by each application. The reader p
 [[tested-terminals]]
 === Tested Android terminals
 
-[cols="2,4,^1,^1,^1", options="header"]
+[cols="^2,4,^1,^1,^1", options="header"]
 |===
 | Terminal | Description | Reload | Validation | Inspection
 
@@ -446,7 +446,7 @@ This section summarizes the hardware supported by each application. The reader p
 
 Three types of clients can connect to the reload server:
 
-[cols="2,3,3,3", options="header"]
+[cols="^2,3,3,3", options="header"]
 |===
 | Client | Platforms | Products | Notes
 
@@ -475,7 +475,7 @@ NOTE: The prices displayed by the clients are fictitious.
 
 Each validation produces one of the following results:
 
-[cols="2,5", options="header"]
+[cols="^2,5", options="header"]
 |===
 | Result | Functional meaning
 
@@ -599,7 +599,7 @@ Each validation produces one of the following results:
 | Calypso confirmation that a secure session has been completed. A session interrupted before its ratification (card removed too early) is ratified at the next presentation of the card.
 
 | *SAM*
-| Secure Access Module. Cryptographic hardware module used to secure Calypso transactions. Required for validation and reload.
+| Secure Access Module. Cryptographic hardware module used to secure Calypso transactions. Required for personalization, loading, and validation.
 
 | *Secure session*
 | Calypso mechanism guaranteeing the integrity and authenticity of data exchanged between the terminal and the card, using a SAM or PKI.

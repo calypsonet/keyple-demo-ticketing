@@ -45,7 +45,7 @@ namespace App.domain.api
         private const string TransmitCardRequestService = "TRANSMIT_CARD_REQUEST";
 
         private const string SelectAppAndReadContractsService = "SELECT_APP_AND_READ_CONTRACTS";
-        private const string SelectAppAndIncreaseContractCounterService = "SELECT_APP_AND_INCREASE_CONTRACT_COUNTER";
+        private const string SelectAppAndLoadTripsService = "SELECT_APP_AND_LOAD_TRIPS";
 
         internal TicketingServiceApiAdapter(ReaderSpi readerSpi, string readerName, ServerSpi serverSpi)
         {
@@ -89,11 +89,11 @@ namespace App.domain.api
         }
 
         /// <inheritdoc/>
-        public string SelectAppAndIncreaseContractCounter(int counterIncrement)
+        public string SelectAppAndLoadTrips(int tripsToLoad)
         {
-            _logger.Information("Executing the remote service [service=SELECT_APP_AND_INCREASE_CONTRACT_COUNTER]");
+            _logger.Information("Executing the remote service [service=SELECT_APP_AND_LOAD_TRIPS]");
 
-            return ExecuteRemoteService(SelectAppAndIncreaseContractCounterService, new IncreaseContractCounterInputData { CounterIncrement = counterIncrement });
+            return ExecuteRemoteService(SelectAppAndLoadTripsService, new LoadTripsInputData { TripsToLoad = tripsToLoad });
         }
 
         private string ExecuteRemoteService(string serviceId, InputData inputData)

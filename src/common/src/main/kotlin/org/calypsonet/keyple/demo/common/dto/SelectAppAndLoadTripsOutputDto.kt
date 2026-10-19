@@ -17,4 +17,4 @@ package org.calypsonet.keyple.demo.common.dto
  *   (server error), 4 (card not personalized), 5 (environment expired), 7 (card full).
  * - message: Status message.
  */
-data class SelectAppAndIncreaseContractCounterOutputDto(var statusCode: Int, var message: String)
+data class SelectAppAndLoadTripsOutputDto(var statusCode: Int, var message: String)

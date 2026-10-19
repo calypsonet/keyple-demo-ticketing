@@ -12,4 +12,4 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.common.dto
 
-data class SelectAppAndIncreaseContractCounterInputDto(var counterIncrement: Int)
+data class SelectAppAndLoadTripsInputDto(var tripsToLoad: Int)
