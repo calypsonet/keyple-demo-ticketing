@@ -56,7 +56,7 @@ partition "Loading of the ticket" {
       else (Yes)
         :Read the card\n(secure session for a\nCalypso card);
 
-        if (Slot available?\nsame type, empty or expired\n(single-ticket card: other ticket not usable)) then (No)
+        if (Slot available?\nsame type, empty, or expired\n(single-ticket card: other ticket not usable)) then (No)
           :Card rejected\n(no space left);<<#F5B7B1>>
           stop
         else (Yes)

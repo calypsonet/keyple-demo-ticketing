@@ -13,7 +13,7 @@ if (Card recognized?\n(supported Calypso application\nor storage card type)) the
   :Not valid on this network;<<#F5B7B1>>
   stop
 else (Yes)
-  :Open the reading session\n(authentication: SAM,\nPKI or none);<<#D7BDE2>>
+  :Open the reading session\n(authentication: SAM,\nPKI, or none);<<#D7BDE2>>
 
   if (Card personalized\nand not expired?) then (No)
     :Not valid on this network;<<#F5B7B1>>

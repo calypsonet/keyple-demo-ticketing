@@ -21,7 +21,7 @@ else (Yes)
 
     :Write the card environment\n(issuance date, end date =\n1st day of the month + 6 years);
 
-    :Clear the events, tickets\nand counters;
+    :Clear the events, tickets,\nand counters;
 
     :End of the secure session\n(Calypso card);
 

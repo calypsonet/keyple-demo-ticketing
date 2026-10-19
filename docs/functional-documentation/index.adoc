@@ -87,7 +87,7 @@ include::assets/layout/_colophon.adoc[]
 [abstract]
 == Abstract
 
-This document describes the Keyple Demo Ticketing ecosystem from a functional and business perspective. It is intended for project managers, functional architects and business teams who want to understand the covered use cases without going into technical implementation details.
+This document describes the Keyple Demo Ticketing ecosystem from a functional and business perspective. It is intended for project managers, functional architects, and business teams who want to understand the covered use cases without going into technical implementation details.
 
 == Overview
 
@@ -109,13 +109,13 @@ The ecosystem consists of four distinct applications, each covering a specific r
 | Hosts the security module (SAM) and performs cryptographic operations. Exposes remote reload services. Its web dashboard (`http://localhost:8080`) displays the status of the server and of the SAM, and the transactions of the clients in real time (see the link:../../src/reload-remote/server/README.md#web-dashboard[server README]).
 
 | *Reload — clients*
-| Android, multiplatform (Android, iOS, desktop) or .NET application used by a sales agent or a passenger to load a new transit ticket. The Android and multiplatform clients also personalize blank cards.
+| Android, multiplatform (Android, iOS, desktop), or .NET application used by a sales agent or a passenger to load a new transit ticket. The Android and multiplatform clients also personalize blank cards.
 
 | *Validation*
-| Terminal installed at access points (gates, validators). Reads the passenger's card, selects the most suitable ticket and records the entry event.
+| Terminal installed at access points (gates, validators). Reads the passenger's card, selects the most suitable ticket, and records the entry event.
 
 | *Inspection*
-| Terminal used by ticket inspectors. Reads the card, displays ticket details and checks the validity of the last validation.
+| Terminal used by ticket inspectors. Reads the card, displays ticket details, and checks the validity of the last validation.
 |===
 
 === Ecosystem flow
@@ -127,7 +127,7 @@ NOTE: The validation terminal and the inspection terminal do not communicate ove
 [[scope]]
 === Scope of the demo
 
-The demo covers the personalization of the cards, and the loading, validation and inspection of season passes and multi-trip tickets. The following elements of the Calypso data model are not covered:
+The demo covers the personalization of the cards, and the loading, validation, and inspection of season passes and multi-trip tickets. The following elements of the Calypso data model are not covered:
 
 * *Stored value tickets*: they cannot be loaded, and a stored value ticket present on a card (priority 3) is ignored at validation
 * *Traceability mode*: the tickets are loaded without the cryptographic authenticator signed by the SAM, and no authenticator is verified at inspection
@@ -171,7 +171,7 @@ Storage cards are simpler memory media without a Calypso security system. They a
 | Secret key KEY_A (sector 1)
 |===
 
-NOTE: Storage cards support only *one transit ticket*. They do not benefit from the same security guarantees as Calypso cards.
+NOTE: Storage cards support only *1 transit ticket*. They do not benefit from the same security guarantees as Calypso cards.
 
 IMPORTANT: Storage cards are handled with the storage card extension and reader plugin of CNA, available on request. Without them (default build), the applications do not support storage cards. With the reload Android client, the ST25 SRT512 cards are supported on the Bluebird terminals only.
 
@@ -238,7 +238,7 @@ Issuance is performed from the Android or multiplatform reload client, connected
 * Assigns a *unique application number*
 * Records the *issuance date*
 * Calculates and records the *expiry date*: first day of the current month + 6 years
-* Resets all ticket slots, events and counters to zero
+* Resets all ticket slots, events, and counters to zero
 
 ==== Diagram
 
@@ -279,7 +279,7 @@ This operation requires the *SAM security module* to be present on the server si
 | The existing ticket is updated in its slot
 
 | Renewing a season pass
-| Not expired: the end date is extended by 30 days from the current end date. Expired: new 30-day period from the date of sale
+| Not expired: the end date is extended by 30 days from the current end date; expired: new 30-day period from the date of sale
 
 | Reloading a multi-trip ticket
 | The trips are added to the counter (up to 16,777,215)
@@ -303,7 +303,7 @@ plantuml::diagrams/ticket-loading.puml[target=ticket-loading,format=svg,alt="Tic
 
 Validation is the operation performed by the terminal installed at the access point (gate, validator) when a passenger presents their card.
 
-The terminal automatically selects the best available ticket, updates the card data and records the entry event.
+The terminal automatically selects the best available ticket, updates the card data, and records the entry event.
 
 ==== Prerequisites
 
@@ -385,12 +385,12 @@ Unlike validation, inspection can operate *without a SAM* thanks to two fallback
 
 The inspector sees:
 
-* The authentication mode used during inspection ("Card authenticated by the SAM", "Card authenticated by PKI" or "Card not authenticated")
-* The *last validation*: date, time, location and ticket used
+* The authentication mode used during inspection ("`Card authenticated by the SAM`", "`Card authenticated by PKI`", or "`Card not authenticated`")
+* The *last validation*: date, time, location, and ticket used
 * For each ticket present on the card: its type, its validity period (season pass) or its number of remaining trips (multi-trip ticket), and its status (valid, expired, or validated by the last validation)
-* "No ticket" when the card has never been loaded
+* "`No ticket`" when the card has never been loaded
 
-When the card is rejected, the terminal displays "Not valid on this network" with the reason (see <<inspection-rejection-conditions>>).
+When the card is rejected, the terminal displays "`Not valid on this network`" with the reason (see <<inspection-rejection-conditions>>).
 
 ==== Diagram
 
@@ -398,7 +398,7 @@ plantuml::diagrams/inspection.puml[target=inspection,format=svg,alt="Inspection 
 
 == Compatible terminals and hardware
 
-This section summarizes the hardware supported by each application. The reader plugins, the installation and the prerequisites of each component are detailed in the link:../../README.md[README of the repository] and in the README of each application (link:../../src/validation/README.md[validation], link:../../src/inspection/README.md[inspection], link:../../src/reload-remote/README.md[reload]).
+This section summarizes the hardware supported by each application. The reader plugins, the installation, and the prerequisites of each component are detailed in the link:../../README.md[README of the repository] and in the README of each application (link:../../src/validation/README.md[validation], link:../../src/inspection/README.md[inspection], link:../../src/reload-remote/README.md[reload]).
 
 [[tested-terminals]]
 === Tested Android terminals
@@ -420,7 +420,7 @@ This section summarizes the hardware supported by each application. The reader p
 | icon:check[role=green]
 
 | Bluebird EF501
-| Specialist NFC terminal
+| Specialized NFC terminal
 | icon:adjust[role=olive] On request
 | icon:adjust[role=olive] On request
 | icon:adjust[role=olive] On request
@@ -456,7 +456,7 @@ Three types of clients can connect to the reload server:
 | Full Keyple framework integration
 
 | *Multiplatform application*
-| Android · iOS 15.3+ · Desktop (Windows, macOS, Linux)
+| Android, iOS 15.3+, desktop (Windows, macOS, Linux)
 | Multi-trip ticket (1 to 4 trips), Season pass; card personalization
 | Shared UI across all platforms
 
@@ -480,16 +480,16 @@ Each validation produces one of the following results:
 | Result | Functional meaning
 
 | *Accepted*
-| Access granted, one trip deducted for a multi-trip ticket. The terminal displays "Validation completed!" with the remaining trips (multi-trip ticket) or the end date (season pass).
+| Access granted, 1 trip deducted for a multi-trip ticket. The terminal displays "`Validation completed!`" with the remaining trips (multi-trip ticket) or the end date (season pass).
 
 | *Rejected*
 | Card rejected by a business rule (see below).
 
 | *Not recognized*
-| Card not recognized: no supported application, or unsupported file structure ("Selection error: card not recognized").
+| Card not recognized: no supported application, or unsupported file structure ("`Selection error: card not recognized`").
 
 | *Card removed*
-| Communication interrupted during the transaction (card removed too early): "An error occurred. Please try again."
+| Communication interrupted during the transaction (card removed too early): "`An error occurred. Please try again.`"
 
 | *Failed*
 | Unexpected technical error, or failed authentication of a MIFARE Classic card.
@@ -511,7 +511,7 @@ Each validation produces one of the following results:
 | Last event or ticket of an unexpected version
 | Card rejected — Event error / Ticket error: wrong version number
 
-| Card validated less than one minute ago
+| Card validated less than 1 minute ago
 | Card rejected — Card already tapped. Please wait before retrying.
 
 | Card never loaded, or no usable ticket
@@ -532,7 +532,7 @@ Each validation produces one of the following results:
 
 [cols="4,4", options="header"]
 |===
-| Situation | Message displayed (below "Not valid on this network")
+| Situation | Message displayed (below "`Not valid on this network`")
 
 | No supported application in the card
 | Selection error: card not recognized
@@ -552,7 +552,7 @@ Each validation produces one of the following results:
 | Ticket of an unexpected version
 | Ticket error: wrong version number
 
-| Reading error (e.g. card removed too early)
+| Reading error (for example, card removed too early)
 | An error occurred while reading the card.
 |===
 
@@ -566,7 +566,7 @@ Each validation produces one of the following results:
 | Application Identifier. Unique identifier of the Calypso card application, used when the terminal selects the card.
 
 | *Anti-passback*
-| Mechanism preventing a passenger from presenting their card twice within less than one minute, in order to prevent the card from being passed back to another passenger for a second entry.
+| Mechanism preventing a passenger from presenting their card twice within 1 minute, in order to prevent the card from being passed back to another passenger for a second entry.
 
 | *Calypso*
 | Open standard for contactless smart cards in ticketing systems, maintained by the Calypso Networks Association.
@@ -584,7 +584,7 @@ Each validation produces one of the following results:
 | Expiry date of the card application (not of an individual ticket). Set at personalization to the first day of the current month + 6 years.
 
 | *Environment*
-| Record of the card application holding its version, issuance date and expiry date (EnvEndDate), written at personalization.
+| Record of the card application holding its version, issuance date, and expiry date (EnvEndDate), written at personalization.
 
 | *Event*
 | Record of the last validation operation performed on the card (date, time, location, ticket used).
@@ -608,5 +608,5 @@ Each validation produces one of the following results:
 | Memory location available on the card to hold a contract. A Calypso card has up to 4 slots, depending on the card product.
 
 | *Storage card*
-| Simple memory card (MIFARE Ultralight, ST25, MIFARE Classic) that does not support the Calypso protocol. Only one ticket possible, no Calypso secure session.
+| Simple memory card (MIFARE Ultralight, ST25, MIFARE Classic) that does not support the Calypso protocol. Only 1 ticket possible, no Calypso secure session.
 |===

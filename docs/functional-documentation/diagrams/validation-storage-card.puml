@@ -18,7 +18,7 @@ else (Yes)
     :Authentication\nof the sector;
   endif
 
-  :Read the environment,\nthe ticket and the event;
+  :Read the environment,\nthe ticket, and the event;
 
   if (Card personalized\nand not expired?) then (No)
     :Card rejected;<<#F5B7B1>>
