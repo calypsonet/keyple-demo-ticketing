@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+
+## [26.10.19]
 ### Breaking changes
 - Components renamed with the English ticketing terms, the applications being installed as new applications (the
   previous ones are to be uninstalled, and their settings are not taken over):
@@ -13,7 +15,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     Sales", "Keyple Demo — Sales (Interop)", and "Keyple Demo — Sales (.NET)".
 - Build requirements: Java 17 for all the Java and Kotlin components, .NET 10 for the .NET client, and Node.js 24 for
   the dashboard.
-
 ### Added
 - Functional documentation (`docs/functional-documentation`): use cases, business rules, and messages of the demo, with
   diagrams and a glossary, in the graphic charter of the CNA documents, attached as PDF and HTML files to each release.
@@ -21,7 +22,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   the log and exception messages, of the architecture of the Android applications, and of the dashboard code.
 - Validation app: anti-passback check for the storage cards.
 - Sales clients: the result screens return automatically after 5 seconds, the remaining time being displayed.
-
 ### Changed
 - All the applications: same English ticketing vocabulary in the displayed texts ("ticket", "card", "Season pass",
   "Multi-trip ticket", "Card rejected", etc.) and English typography; technical messages are no longer displayed (the
@@ -36,7 +36,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   sales server split by business operation, remote services and data named after the business operations, same log
   template in all the components, and conventions described in the README.
 - READMEs reviewed against the code; the changelogs of the archived repositories are moved to `docs/history/`.
-
 ### Fixed
 - Common library: a field value whose high bit is set was truncated when encoded (for example, a counter of 16,777,215
   written as 65,535 on a storage card).
@@ -61,7 +60,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   stuck on the loading animation).
 - Sales multiplatform client: an error of the server when reading the card is displayed, instead of an empty card.
 - Sales .NET client: the number of trips was sent in hexadecimal (10 trips were refused and 20 trips loaded 14).
-
 ### Upgraded
 - `keyple-java-bom`: `2026.03.19` -> `2026.10.14` (`keyple-card-calypso-java-lib` `3.3.0`, fixing the session signature
   of the PKI cards when the CA certificate is not registered).
@@ -69,7 +67,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Multiplatform client: Compose Multiplatform `1.8.2` -> `1.11.1`.
 - Sales server: Quarkus `1.8.1.Final` -> `3.40.1` (LTS); dashboard: React `18.2` -> `19.3`, Material UI `5.17` -> `9.4`.
 - Sales .NET client: `net7.0` -> `net10.0`.
-
 ### Removed
 - Coppernic C-One 2 terminal support (plugin not updated since 2022).
 - Stored value contract type, which could not be created by the demo.
@@ -136,7 +133,8 @@ It brings together previously independent projects into a unified codebase to si
   - [Validation App](https://github.com/calypsonet/keyple-demo-ticketing-validation-app)
   - [Control App](https://github.com/calypsonet/keyple-demo-ticketing-control-app)
 
-[Unreleased]: https://github.com/calypsonet/keyple-demo-ticketing/compare/26.03.26...HEAD
+[Unreleased]: https://github.com/calypsonet/keyple-demo-ticketing/compare/26.10.19...HEAD
+[26.10.19]: https://github.com/calypsonet/keyple-demo-ticketing/compare/26.03.26...26.10.19
 [26.03.26]: https://github.com/calypsonet/keyple-demo-ticketing/compare/25.12.01...26.03.26
 [25.12.01]: https://github.com/calypsonet/keyple-demo-ticketing/compare/25.10.30...25.12.01
 [25.10.30]: https://github.com/calypsonet/keyple-demo-ticketing/compare/25.09.10...25.10.30
