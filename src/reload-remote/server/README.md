@@ -224,7 +224,7 @@ npm start
 
 ### Common issues
 
-**"SAM Resource is not available" in the dashboard**
+**"SAM resource is not available" in the dashboard**
 
 The server starts even if no SAM reader is connected or no SAM is inserted, and the dashboard displays this message
 until a SAM is detected (no restart needed once the reader is connected and the SAM inserted). If the message persists:

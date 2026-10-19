@@ -69,7 +69,7 @@ namespace App.application
             foreach (string contract in contracts)
             {
                 // Print each item to the console
-                Display($"Contract #{contractNumber++}:\r\n" + contract, ConsoleColor.DarkGreen);
+                Display($"Ticket #{contractNumber++}:\r\n" + contract, ConsoleColor.DarkGreen);
                 if (contract.Contains("MULTI_TRIP"))
                 {
                     isMultiTripContractPresent = true;
@@ -78,7 +78,7 @@ namespace App.application
 
             if (!isMultiTripContractPresent)
             {
-                Display("No MULTI_TRIP contract found.", ConsoleColor.DarkRed);
+                Display("No multi-trip ticket found.", ConsoleColor.DarkRed);
                 _logger.Warning("No multi-trip contract found");
             }
 
@@ -94,7 +94,7 @@ namespace App.application
                 }
             } while (tripsToLoad < 1 || tripsToLoad > 20);
 
-            Display($"{tripsToLoad} trip(s) will now be loaded in the card.", ConsoleColor.DarkCyan);
+            Display($"{tripsToLoad} {(tripsToLoad == 1 ? "trip" : "trips")} will now be loaded onto the card.", ConsoleColor.DarkCyan);
             _logger.Information($"Loading trips [tripsToLoad={tripsToLoad}]");
 
             WaitForCard();
@@ -127,7 +127,7 @@ namespace App.application
 
             _ticketingService.WaitForCard();
 
-            Display("Card found!\nContacting server...", ConsoleColor.Green);
+            Display("Card found!\nContacting the server...", ConsoleColor.Green);
             _logger.Information("Card found");
         }
 

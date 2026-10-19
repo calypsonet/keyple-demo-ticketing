@@ -56,7 +56,7 @@ class PersonalizeCardScreenViewModel(
         val cardFound = keypleInteropService.waitForCard()
         buzzer.beepAndVibrate()
         if (cardFound) {
-          keypleInteropService.setScanMessage("Stay still...")
+          keypleInteropService.setScanMessage("Stay still…")
           personalizeCard()
         } else {
           _state.value = PersonalizeCardScreenState.DisplayError("No card found")

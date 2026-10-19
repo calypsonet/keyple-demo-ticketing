@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Keyple Demo - Reload</string>
+    <string name="app_name">Keyple Demo — Reload</string>
     <string name="eclipse_foundation">Eclipse Foundation</string>
 
     <string name="splash_title">Open Source API for Smart Ticketing</string>
@@ -56,7 +56,7 @@
     <string name="present_card_personalization">Please present the contactless card to be personalized</string>
 
     <string name="season_pass_label">Season pass</string>
-    <string name="product_price">%d,00 €</string>
+    <string name="product_price">€%d.00</string>
     <plurals name="trips_count">
         <item quantity="one">%d trip</item>
         <item quantity="other">%d trips</item>
@@ -100,7 +100,7 @@
     </plurals>
     <string name="no_counter">No counter</string>
     <string name="contract_season_pass">Season pass</string>
-    <string name="contract_season_pass_expired">Season pass - Expired</string>
+    <string name="contract_season_pass_expired">Season pass (expired)</string>
     <string name="contract_forbidden">Forbidden</string>
     <string name="contract_unknown">Unknown</string>
     <string name="validity_period">From %1$s to %2$s</string>

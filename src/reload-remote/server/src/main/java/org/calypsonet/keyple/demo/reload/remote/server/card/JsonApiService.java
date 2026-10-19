@@ -255,7 +255,7 @@ public class JsonApiService {
         boolean isExpired = validityEndDate.isBefore(today);
         name =
             isExpired
-                ? PriorityCode.SEASON_PASS.getLabel() + " - Expired"
+                ? PriorityCode.SEASON_PASS.getLabel() + " (expired)"
                 : PriorityCode.SEASON_PASS.getLabel();
         description =
             "From\n"

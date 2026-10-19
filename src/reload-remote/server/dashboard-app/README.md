@@ -1,4 +1,4 @@
-# Keyple Reload Demo — Server dashboard
+# Keyple Reload Demo — server dashboard
 
 React application monitoring the Keyple Reload Demo server, built with [Vite](https://vite.dev/).
 

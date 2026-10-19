@@ -60,7 +60,7 @@ class LoadContractScreenViewModel(
         val cardFound = keypleInteropService.waitForCard()
         buzzer.beepAndVibrate()
         if (cardFound) {
-          keypleInteropService.setScanMessage("Stay still...")
+          keypleInteropService.setScanMessage("Stay still…")
           loadContract(route)
         } else {
           _state.value = LoadContractScreenState.DisplayError("No card found")

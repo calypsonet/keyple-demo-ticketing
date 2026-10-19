@@ -59,7 +59,7 @@ cd keyple-demo-ticketing/src/validation
 
 ### Validation settings
 The **Settings** screen, displayed after the terminal selection, configures the validation:
-- **Battery powered mode**: for the portable terminals, which display the Home screen before each validation
+- **Battery-powered mode**: for the portable terminals, which display the Home screen before each validation
 - **Location**: location of the terminal, written in the validation event and checked by the inspection
 - **Time and date**: shortcut to the date and time settings of Android
 
@@ -84,7 +84,7 @@ Terminal selection → Settings → Card reader → Validation result
 - Proprietary plugins require additional setup (see [Proprietary plugins](#proprietary-plugins))
 
 **Settings (`SettingsActivity`)**
-- Battery powered mode, location of the terminal, access to the date and time settings
+- Battery-powered mode, location of the terminal, access to the date and time settings
 
 **Home (`HomeActivity`)** _(Battery-powered mode only)_
 - Start of the validation

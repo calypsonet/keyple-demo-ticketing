@@ -173,7 +173,7 @@ internal fun ColumnScope.CardContent(
       colors = ButtonDefaults.buttonColors(containerColor = blue),
       shape = RoundedCornerShape(4.dp)) {
         Text(
-            "BUY TICKET",
+            "Buy ticket",
             modifier = Modifier.fillMaxWidth(),
             color = Color.White,
             fontWeight = FontWeight.Bold,
@@ -314,7 +314,7 @@ internal fun ProductCard(
               textAlign = TextAlign.Center,
           )
           Text(
-              text = "${product.price},00 €",
+              text = "€${product.price}.00",
               color = blue,
               textAlign = TextAlign.Center,
           )

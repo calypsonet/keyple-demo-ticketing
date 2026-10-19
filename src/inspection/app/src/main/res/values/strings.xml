@@ -11,7 +11,7 @@
   -->
 
 <resources>
-    <string name="app_name">Keyple Demo - Inspection</string>
+    <string name="app_name">Keyple Demo — Inspection</string>
 
 
     <string name="error_title">Error</string>
@@ -22,12 +22,12 @@
     <!-- Settings screen -->
     <string name="location_label">Set location</string>
     <string name="validation_period_label">Validation period (min)</string>
-    <string name="validation_period_hint">E.g. 10 min</string>
+    <string name="validation_period_hint">For example, 10</string>
     <string name="time_label">Set time and date</string>
     <string name="start_label">Start</string>
     <string name="start_inspection_label">Start inspection</string>
     <string name="inspection_info">Inspection information</string>
-    <string name="msg_location_period_empty">Please fill in validation period</string>
+    <string name="msg_location_period_empty">Please fill in the validation period</string>
 
     <!-- Terminal selection screen -->
     <string name="terminal_title">Select the terminal</string>
@@ -52,11 +52,11 @@
     <string name="last_validation_title">Last validation</string>
     <string name="new_inspection">New inspection</string>
     <string name="empty_contract_list">No ticket</string>
-    <string name="card_content_description_season_pass">From %1$s\n to %2$s</string>
+    <string name="card_content_description_season_pass">From %1$s\nto %2$s</string>
     <string name="card_content_description_multi_trip_zero">no trip left</string>
     <string name="card_content_description_multi_trip_single">%d trip left</string>
     <string name="card_content_description_multi_trip_multiple">%d trips left</string>
-    <string name="status_unspecified">An error occurred during card reading, please try again.</string>
+    <string name="status_unspecified">An error occurred while reading the card. Please try again.</string>
 
     <!-- Invalid card screen -->
     <string name="card_invalid_title">Not valid on this network</string>

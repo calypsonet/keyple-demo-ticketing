@@ -58,7 +58,7 @@ class ReadCardScreenViewModel(
       keypleInteropService.setScanMessage("Place your card on the reader")
       try {
         keypleInteropService.waitForCard {
-          keypleInteropService.setScanMessage("Stay still...")
+          keypleInteropService.setScanMessage("Stay still…")
           buzzer.beepAndVibrate()
           viewModelScope.launch(Dispatchers.IO) { readContracts() }
         }

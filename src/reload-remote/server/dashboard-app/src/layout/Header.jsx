@@ -18,8 +18,8 @@ export default function Header(props) {
   const { onDrawerToggle, isSamAvailable, isServerReady } = props;
   return (
     <React.Fragment>
-      <AlertDialog show={isServerReady && !isSamAvailable} title="SAM Resource is not available" text="Please ensure that the SAM is inserted into the SAM Reader"/>
-      <AlertDialog show={!isServerReady} title="Cannot reach the Keyple Demo - Reload Server" text="Keyple Distributed server is not reachable. Please ensure that the Server process is running. Restart it if needed."/>
+      <AlertDialog show={isServerReady && !isSamAvailable} title="SAM resource is not available" text="Please ensure that the SAM is inserted into the SAM reader."/>
+      <AlertDialog show={!isServerReady} title="Cannot reach the Keyple Demo — Reload Server" text="Keyple Distributed server is not reachable. Please ensure that the server process is running. Restart it if needed."/>
       <AppBar color="primary" position="sticky" elevation={0}>
         <Toolbar>
           <Grid container spacing={1} sx={{ alignItems: 'center', flex: 1 }}>
