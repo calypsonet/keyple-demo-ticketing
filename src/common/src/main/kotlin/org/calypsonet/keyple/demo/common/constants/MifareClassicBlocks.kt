@@ -13,7 +13,7 @@
 package org.calypsonet.keyple.demo.common.constants
 
 /**
- * Layout of the MIFARE Classic 1K cards, in the sector 1 only (16-byte blocks): blocks 4, 5 and 6
+ * Layout of the MIFARE Classic 1K cards, in the sector 1 only (16-byte blocks): blocks 4, 5, and 6
  * are used, block 7 being the sector trailer (reserved).
  */
 object MifareClassicBlocks {

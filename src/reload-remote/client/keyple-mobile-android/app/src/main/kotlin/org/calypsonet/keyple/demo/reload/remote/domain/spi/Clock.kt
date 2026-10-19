@@ -18,7 +18,7 @@ import java.time.LocalDateTime
  * Source of the current date and time of the terminal.
  *
  * The domain never reads the system clock directly: the clock is a platform service, provided by an
- * adapter, which can be replaced by a fixed date (e.g. in the tests).
+ * adapter, which can be replaced by a fixed date (for example, in the tests).
  */
 interface Clock {
 

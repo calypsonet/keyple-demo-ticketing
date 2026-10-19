@@ -62,7 +62,7 @@ public class CardConfigurator {
 
   private void registerCardExtensions() {
     // Card extensions outside the "org.eclipse.keyple" package must be registered so that the
-    // types they provide (e.g. the initial card content) can be rebuilt from JSON data.
+    // types they provide (for example, the initial card content) can be rebuilt from JSON data.
     StorageCardExtensionService storageCardExtension = StorageCardExtensionService.getInstance();
     if (storageCardExtension == null) {
       // E.g. mocked storage card library

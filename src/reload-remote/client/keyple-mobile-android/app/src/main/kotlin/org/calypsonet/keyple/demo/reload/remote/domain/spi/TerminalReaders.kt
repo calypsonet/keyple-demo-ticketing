@@ -22,7 +22,7 @@ import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
  * Readers of the terminal: registration of the reader plugins of the platform, then access to the
  * reader of the card medium (contactless reader or OMAPI reader).
  *
- * The readers are driven (card detection, selection and processing) by the `CardReaderSession` of
+ * The readers are driven (card detection, selection, and processing) by the `CardReaderSession` of
  * the domain.
  */
 interface TerminalReaders {
@@ -30,7 +30,7 @@ interface TerminalReaders {
    * Returns the name of the reader to use for the given terminal type and card medium.
    *
    * @param terminalType The type of terminal.
-   * @param cardMedium The card medium (contactless card, SIM...) to read.
+   * @param cardMedium The card medium (contactless card, SIM, etc.) to read.
    */
   fun getReaderName(terminalType: TerminalType, cardMedium: CardMedium): String
 

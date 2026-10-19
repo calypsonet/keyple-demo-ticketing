@@ -83,7 +83,7 @@ class CalypsoCardInspectionProcedure(
         cardTransaction.prepareOpenSecureSession()
       }
 
-      // Step 2 - Read and unpack environment structure from the binary present in the environment
+      // Step 2: Read and unpack environment structure from the binary present in the environment
       // record.
       cardTransaction
           .prepareReadRecords(
@@ -96,7 +96,7 @@ class CalypsoCardInspectionProcedure(
       val efEnvironmentHolder = calypsoCard.getFileBySfi(CalypsoFiles.SFI_ENVIRONMENT_AND_HOLDER)
       val environment = CalypsoEnvironmentHolderCodec.decode(efEnvironmentHolder.data.content)
 
-      // Step 3 - If EnvVersionNumber of the Environment structure is not the expected one (==1 for
+      // Step 3: If EnvVersionNumber of the Environment structure is not the expected one (==1 for
       // the current version), reject the card.
       // <Abort Secure Session if any>
       if (environment.envVersionNumber != VersionNumber.CURRENT_VERSION) {
@@ -104,14 +104,14 @@ class CalypsoCardInspectionProcedure(
         return InspectionResult.Rejected(RejectionReason.ENVIRONMENT_WRONG_VERSION)
       }
 
-      // Step 4 - If EnvEndDate points to a date in the past, reject the card.
+      // Step 4: If EnvEndDate points to a date in the past, reject the card.
       // <Abort Secure Session if any>
       if (environment.envEndDate.date.isBefore(inspectionDateTime.toLocalDate())) {
         cancelSecureSession(cardTransaction)
         return InspectionResult.Rejected(RejectionReason.ENVIRONMENT_EXPIRED)
       }
 
-      // Step 5 - Read and unpack the last event record.
+      // Step 5: Read and unpack the last event record.
       cardTransaction
           .prepareReadRecords(
               CalypsoFiles.SFI_EVENT_LOG, 1, 1, CalypsoFiles.EVENT_RECORD_SIZE_BYTES)
@@ -120,7 +120,7 @@ class CalypsoCardInspectionProcedure(
       val efEventLog = calypsoCard.getFileBySfi(CalypsoFiles.SFI_EVENT_LOG)
       val event = CalypsoEventCodec.decode(efEventLog.data.content)
 
-      // Step 6 - If EventVersionNumber is not the expected one (==1 for the current version),
+      // Step 6: If EventVersionNumber is not the expected one (==1 for the current version),
       // reject
       // the card (if ==0 return error status indicating clean card).
       // <Abort Secure Session if any>
@@ -136,7 +136,7 @@ class CalypsoCardInspectionProcedure(
 
       val contractUsed = event.eventContractUsed
 
-      // Steps 7 to 9 - The contract used by the last validation is validated only if this
+      // Steps 7 to 9: The contract used by the last validation is validated only if this
       // validation was made at the location of the inspection, the same day, and within the
       // validation period
       val isLastValidationValid =
@@ -150,7 +150,7 @@ class CalypsoCardInspectionProcedure(
             else -> 4
           }
 
-      // Step 10 - CNT_READ: Read all contracts and the counter-file
+      // Step 10 (CNT_READ): Read all contracts and the counter-file
       cardTransaction
           .prepareReadRecords(
               CalypsoFiles.SFI_CONTRACTS,
@@ -165,9 +165,9 @@ class CalypsoCardInspectionProcedure(
       val efContracts = calypsoCard.getFileBySfi(CalypsoFiles.SFI_CONTRACTS)
       val contracts = mutableMapOf<Int, ContractStructure>()
 
-      // Step 11 - For each contract:
+      // Step 11: For each contract:
       efContracts.data.allRecordsContent.forEach {
-        // Step 12 - Unpack the contract
+        // Step 12: Unpack the contract
         contracts[it.key] = CalypsoContractCodec.decode(it.value)
       }
 
@@ -186,34 +186,34 @@ class CalypsoCardInspectionProcedure(
         var isContractValidated = false
 
         if (contract.contractVersionNumber == VersionNumber.UNDEFINED) {
-          // Step 13 - If the ContractVersionNumber == 0, then the contract is blank, move on to the
+          // Step 13: If the ContractVersionNumber == 0, then the contract is blank, move on to the
           // next contract.
         } else if (contract.contractVersionNumber != VersionNumber.CURRENT_VERSION) {
-          // Step 14 - If ContractVersionNumber is not the expected one (==1 for the current
+          // Step 14: If ContractVersionNumber is not the expected one (==1 for the current
           // version), reject the card.
           // <Abort Secure Session if any>
           cancelSecureSession(cardTransaction)
           return InspectionResult.Rejected(RejectionReason.CONTRACT_WRONG_VERSION)
         } else {
-          // Step 15 - If SAM available and ContractAuthenticator is not 0, perform the verification
+          // Step 15: If SAM available and ContractAuthenticator is not 0, perform the verification
           // of the value
           // by using the PSO Verify Signature command of the SAM.
           @Suppress("ControlFlowWithEmptyBody")
           if (contract.contractAuthenticator != 0) {
-            // Step 15.1 - If the value is wrong reject the card.
+            // Step 15.1: If the value is wrong reject the card.
             // <Abort Secure Session if any>
-            // Step 15.2 - If the value of ContractSaleSam is present in the SAM Black List reject
+            // Step 15.2: If the value of ContractSaleSam is present in the SAM Black List reject
             // the card.
             // <Abort Secure Session if any>
-            // TODO: steps 15.1 & 15.2
+            // TODO: steps 15.1 and 15.2
           }
-          // Step 16 - If ContractValidityEndDate points to a date in the past mark contract as
+          // Step 16: If ContractValidityEndDate points to a date in the past mark contract as
           // expired.
           if (contract.contractValidityEndDate.date.isBefore(inspectionDateTime.toLocalDate())) {
             isContractExpired = true
           }
 
-          // Step 17 - If EventContractUsed points to the current contract index
+          // Step 17: If EventContractUsed points to the current contract index
           // and not the validity flag is false, then mark it as Validated.
           if (contractUsed == recordNumber && isLastValidationValid) {
             isContractValidated = true
@@ -224,7 +224,7 @@ class CalypsoCardInspectionProcedure(
             validationDateTime = event.eventDateTime
           }
 
-          // Step 18 - If the ContractTariff value for the contract is 2, unpack the counter
+          // Step 18: If the ContractTariff value for the contract is 2, unpack the counter
           // associated with the contract to extract the counter-value.
           val remainingTrips =
               if (contract.contractTariff == PriorityCode.MULTI_TRIP) {
@@ -233,7 +233,7 @@ class CalypsoCardInspectionProcedure(
                 null
               }
 
-          // Step 19 - Add contract data to the list of contracts read to return to the upper layer.
+          // Step 19: Add contract data to the list of contracts read to return to the upper layer.
           displayedContracts.add(
               buildContract(
                   contract = contract,
@@ -245,13 +245,13 @@ class CalypsoCardInspectionProcedure(
         }
       }
 
-      // Step 20 - If a session is open, Close the session
+      // Step 20: If a session is open, close the session
       if (cardTransaction is SecureRegularModeTransactionManager ||
           cardTransaction is SecurePkiModeTransactionManager) {
         cardTransaction.prepareCloseSecureSession().processCommands(ChannelControl.CLOSE_AFTER)
       }
 
-      // Step 21 - Return the status of the operation to the upper layer. <Exit process>
+      // Step 21: Return the status of the operation to the upper layer. <Exit process>
       return InspectionResult.CardContent(authenticationMode, displayedContracts, validation)
     } catch (e: Exception) {
       logger.e("Error while inspecting the card", e)

@@ -249,7 +249,7 @@ public class ContractLoadingService {
     }
     currentEvent =
         currentEvent.withContractPriority(newContractNumber, newContract.getContractTariff());
-    // Update contract & Event
+    // Update the contract and the event
     card.setContract(newContractNumber - 1, newContract);
     card.setEvent(currentEvent);
   }

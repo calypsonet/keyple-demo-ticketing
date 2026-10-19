@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Personalization of a card (remote service {@code PERSONALIZE_CARD}): writing of a new
- * environment, and clearing of the event, of the contracts and of the counters.
+ * environment, and clearing of the event, of the contracts, and of the counters.
  */
 @ApplicationScoped
 public class CardPersonalizationService {

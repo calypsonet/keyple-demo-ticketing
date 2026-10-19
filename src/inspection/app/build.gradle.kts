@@ -116,7 +116,8 @@ dependencies {
   }
 
   // Logging libraries used in the project:
-  // - SLF4J API provides a common logging interface for the app and third-party libraries (e.g.,
+  // - SLF4J API provides a common logging interface for the app and third-party libraries (for
+  // example,
   //   Keyple).
   // - slf4j-timber bridges SLF4J calls to Timber for Android logging.
   // - Timber is used as the primary Android logging framework, offering lightweight and flexible
@@ -155,10 +156,11 @@ android {
   buildTypes {
     // Configuration for the debug build variant:
     // - Code and resource shrinking are enabled with the ProGuard rules of the release build, to
-    //   detect the missing keep rules during development (e.g. classes used by reflection, such as
+    //   detect the missing keep rules during development (for example, classes used by reflection,
+    // such as
     //   the DTOs serialized with Gson).
     // - The build being debuggable, R8 neither optimizes nor obfuscates the code: the stack traces
-    //   and the debug logs are kept, and the effects of the optimizations (e.g. the
+    //   and the debug logs are kept, and the effects of the optimizations (for example, the
     //   "-assumenosideeffects" rules) can only be observed with the release build.
     getByName("debug") {
       isMinifyEnabled = true
@@ -177,7 +179,8 @@ android {
   }
   packaging {
     resources {
-      // Files included by several dependencies, conflicting when packaged in the APK (e.g. the
+      // Files included by several dependencies, conflicting when packaged in the APK (for example,
+      // the
       // OSGi manifest of the Bouncy Castle JARs, used by the PKI extension)
       excludes.add("META-INF/NOTICE.md")
       excludes.add("META-INF/versions/9/OSGI-INF/MANIFEST.MF")

@@ -22,7 +22,7 @@ interface AppSettingsRepository {
   /** Address of the reload server. */
   var serverConfig: ServerConfig
 
-  /** Card medium (contactless card, SIM...) chosen by the user. */
+  /** Card medium (contactless card, SIM, etc.) chosen by the user. */
   var cardMedium: CardMedium
 
   /** Last known readiness of the server (true if the server is reachable and its SAM available). */

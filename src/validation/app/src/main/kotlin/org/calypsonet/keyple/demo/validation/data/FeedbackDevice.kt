@@ -24,10 +24,10 @@ internal interface FeedbackDevice {
    */
   fun init(onReady: () -> Unit = {})
 
-  /** Signals a successful result to the user (sound, LEDs...). */
+  /** Signals a successful result to the user (sound, LEDs, etc.). */
   fun signalSuccess()
 
-  /** Signals a failed result to the user (sound, LEDs...). */
+  /** Signals a failed result to the user (sound, LEDs, etc.). */
   fun signalFailure()
 
   /** Signals that the terminal is waiting for a card. */

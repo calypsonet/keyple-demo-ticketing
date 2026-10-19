@@ -14,7 +14,7 @@ package org.calypsonet.keyple.demo.reload.remote.ui.model
 
 import kotlinx.serialization.Serializable
 
-/** Product proposed for sale: type, price and quantity (number of trips). */
+/** Product proposed for sale: type, price, and quantity (number of trips). */
 @Serializable
 enum class ProductType {
   MULTI_TRIP,

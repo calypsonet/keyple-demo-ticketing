@@ -101,7 +101,8 @@ class CardReaderActivity : BaseActivity() {
   override fun onResume() {
     super.onResume()
 
-    // If the validation result overlay is visible (e.g. app returned from background), dismiss it
+    // If the validation result overlay is visible (for example, app returned from background),
+    // dismiss it
     // first
     validationResultBinding?.root?.let {
       if (it.visibility == View.VISIBLE) {
@@ -134,7 +135,7 @@ class CardReaderActivity : BaseActivity() {
       readerScope.launch { cardReaderSession.startCardDetection() }
     }
     if (appSettings.isBatteryPowered) {
-      autoReturnTimer = Timer() // A cancelled timer cannot be reused
+      autoReturnTimer = Timer() // A canceled timer cannot be reused
       autoReturnTimer.schedule(
           object : TimerTask() {
             override fun run() {

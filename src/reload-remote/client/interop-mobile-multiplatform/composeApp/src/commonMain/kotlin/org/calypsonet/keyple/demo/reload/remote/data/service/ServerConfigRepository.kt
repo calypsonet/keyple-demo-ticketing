@@ -24,7 +24,7 @@ import org.calypsonet.keyple.demo.reload.remote.data.network.KeypleServerConfig
 
 /**
  * Server configuration of the client, persisted in the preferences data store: address of the
- * server (protocol, host and port), endpoint of the remote plugin and basic authentication.
+ * server (protocol, host, and port), endpoint of the remote plugin and basic authentication.
  */
 class ServerConfigRepository(private val dataStore: DataStore<Preferences>) {
 

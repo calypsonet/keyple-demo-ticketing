@@ -30,7 +30,7 @@ actual class PlatformBuzzer {
   private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
   actual fun vibrate() {
-    // do nothing on desktop...
+    // Nothing to do on desktop
   }
 
   /** Plays a tone of the given frequency and duration, in background. */

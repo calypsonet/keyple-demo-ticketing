@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Remote services of the JSON API, used by the clients without Keyple (multiplatform client): the
- * server selects the application of the card, executes the business service and returns a result
+ * server selects the application of the card, executes the business service, and returns a result
  * ready to be displayed (remote services {@code SELECT_APP_AND_ANALYZE_CONTRACTS}, {@code
  * SELECT_APP_AND_LOAD_CONTRACT} and {@code SELECT_APP_AND_PERSONALIZE_CARD}).
  */

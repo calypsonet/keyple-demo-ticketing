@@ -24,7 +24,7 @@ enum class RejectionReason {
   CONTRACT_WRONG_VERSION,
   /** The card has already been validated within the anti-passback delay. */
   ALREADY_VALIDATED,
-  /** The card has no contract that can be used (e.g. card never loaded). */
+  /** The card has no contract that can be used (for example, card never loaded). */
   NO_VALID_CONTRACT,
   /** The validity end date of the contract is in the past. */
   EXPIRED_CONTRACT,

@@ -43,7 +43,7 @@ import org.junit.Test
 
 /**
  * Validation procedure of the Calypso cards, the card and its transaction being simulated: data
- * read, counter decreased and event written.
+ * read, counter decreased, and event written.
  */
 class CalypsoCardValidationProcedureTest {
 

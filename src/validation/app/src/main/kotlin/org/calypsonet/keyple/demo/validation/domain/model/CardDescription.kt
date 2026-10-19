@@ -18,6 +18,6 @@ sealed interface CardDescription {
   /** Calypso card, identified by the DF name of its application, in hexadecimal. */
   data class Calypso(val dfName: String) : CardDescription
 
-  /** Storage card, identified by the name of its product type (e.g. MIFARE_ULTRALIGHT). */
+  /** Storage card, identified by the name of its product type (for example, MIFARE_ULTRALIGHT). */
   data class Storage(val productType: String) : CardDescription
 }

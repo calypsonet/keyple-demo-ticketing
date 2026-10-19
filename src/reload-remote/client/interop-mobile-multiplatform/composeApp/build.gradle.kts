@@ -31,7 +31,8 @@ val javaTargetLevel = project.property("javaTargetLevel") as String
 
 kotlin {
   jvmToolchain(jvmToolchainVersion.toInt())
-  // The platform specific implementations (e.g. Buzzer, DataStore) use expect/actual classes
+  // The platform specific implementations (for example, Buzzer, DataStore) use expect/actual
+  // classes
   compilerOptions { freeCompilerArgs.add("-Xexpect-actual-classes") }
   if (System.getProperty("os.name").lowercase().contains("mac")) {
     // Apple Silicon targets only: Compose Multiplatform 1.11 no longer supports the Intel simulator

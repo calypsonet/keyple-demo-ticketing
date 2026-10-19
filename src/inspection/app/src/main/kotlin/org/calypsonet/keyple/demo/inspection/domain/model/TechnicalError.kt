@@ -18,6 +18,6 @@ enum class TechnicalError {
   MIFARE_CLASSIC_AUTHENTICATION_FAILED,
   /** The reading of the MIFARE Classic card failed. */
   MIFARE_CLASSIC_READING_FAILED,
-  /** Unexpected error (card, reader or SAM). */
+  /** Unexpected error (card, reader, or SAM). */
   UNEXPECTED
 }

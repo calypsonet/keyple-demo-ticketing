@@ -61,7 +61,7 @@ namespace App.domain.spi
         /// In the case of a contactless reader, the reader decides what this data is. Contactless
         /// readers provide a virtual ATR (partially standardized by the PC/SC standard), but other devices
         /// can have their own definition, including for example elements from the anti-collision stage of
-        /// the ISO14443 protocol (ATQA, ATQB, ATS, SAK, etc).
+        /// the ISO14443 protocol (ATQA, ATQB, ATS, SAK, etc.).
         /// 
         /// These data being variable from one reader to another, they are defined here in string format
         /// which can be either a hexadecimal string or any other relevant information.

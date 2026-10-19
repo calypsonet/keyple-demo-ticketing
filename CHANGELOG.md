@@ -45,7 +45,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   same order and headings (main README with a table of contents and a "Coding conventions" section), the headings and
   the bold labels being written in sentence case (only the first word and the proper names capitalized). The READMEs
   and the functional documentation follow the English typography of the Google and Microsoft style guides (serial
-  comma, "for example" instead of "e.g.", no space before the question marks).
+  comma, "for example" instead of "e.g.", no space before the question marks), as the code comments ("Step 2:"
+  instead of "Step 2 -" in the card procedures, ", etc." instead of "...", American spelling, no first person).
 - Android applications: layered architecture with ports and adapters, documented in the README ("Android application
   architecture") and checked by the CI (`.github/scripts/check-android-architecture.sh`) for the domain, data, and ui
   layers. The domain layer no longer depends on Android, Timber, or the dependency injection framework: the domain

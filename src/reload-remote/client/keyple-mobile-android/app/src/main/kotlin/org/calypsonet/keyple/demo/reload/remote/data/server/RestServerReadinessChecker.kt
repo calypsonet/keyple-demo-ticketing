@@ -22,8 +22,8 @@ import retrofit2.converter.gson.GsonConverterFactory
  * Requests the availability of the SAM of the server through its REST API
  * (`/card/sam-availability`).
  *
- * The client is built at each request, the server address being provided by the caller (e.g. an
- * address being entered in the settings).
+ * The client is built at each request, the server address being provided by the caller (for
+ * example, an address being entered in the settings).
  */
 class RestServerReadinessChecker : ServerReadinessChecker {
 

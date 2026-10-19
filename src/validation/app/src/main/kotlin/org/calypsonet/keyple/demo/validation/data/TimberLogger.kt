@@ -42,7 +42,7 @@ class TimberLogger : Logger {
   /**
    * Returns the simple name of the first class of the call stack outside of the logger (this
    * adapter and the port, which holds the default arguments), without the suffix of the nested or
-   * anonymous classes (e.g. lambdas, coroutines).
+   * anonymous classes (for example, lambdas, coroutines).
    */
   private fun callerTag(): String {
     val caller =

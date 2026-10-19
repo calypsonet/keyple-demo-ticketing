@@ -44,7 +44,7 @@ import org.eclipse.keypop.storagecard.card.ProductType.ST25_SRT512
 import org.eclipse.keypop.storagecard.card.StorageCard
 
 /**
- * Session of the card reader of the terminal: initialization of the readers, of the SAM and of the
+ * Session of the card reader of the terminal: initialization of the readers, of the SAM, and of the
  * user feedback devices, detection and selection of the presented cards.
  *
  * The operations are blocking calls, made by the UI outside of the main thread (the choice of the
@@ -112,7 +112,7 @@ class CardReaderSession(
     private set
 
   /**
-   * Initializes the user feedback, the card reader and the SAM.
+   * Initializes the user feedback, the card reader, and the SAM.
    *
    * Steps:
    * - Registers the appropriate reader plugin according to [terminalType].

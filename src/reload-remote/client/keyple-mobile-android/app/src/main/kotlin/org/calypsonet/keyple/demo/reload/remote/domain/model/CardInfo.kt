@@ -14,7 +14,9 @@ package org.calypsonet.keyple.demo.reload.remote.domain.model
 
 /** Information about the card presented to the terminal. */
 data class CardInfo(
-    /** Description of the card type (e.g. "CALYPSO: DF name ..." or the storage card type). */
+    /**
+     * Description of the card type (for example, "CALYPSO: DF name ..." or the storage card type).
+     */
     val description: String,
     /** Application serial number of a Calypso card, or UID of a storage card (hexadecimal). */
     val serialNumber: String,

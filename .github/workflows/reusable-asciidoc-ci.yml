@@ -20,7 +20,7 @@ jobs:
   ci-asciidoc:
     runs-on: ubuntu-latest
 
-    # Same toolchain as the CNA specifications (calypsonet-actions): Asciidoctor, Asciidoctor PDF and Asciidoctor
+    # Same toolchain as the CNA specifications (calypsonet-actions): Asciidoctor, Asciidoctor PDF, and Asciidoctor
     # Diagram (PlantUML)
     container:
       image: asciidoctor/docker-asciidoctor:latest

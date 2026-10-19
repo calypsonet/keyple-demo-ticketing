@@ -61,7 +61,8 @@ android {
   buildTypes {
     // Configuration for the debug build variant:
     // - Code and resource shrinking are enabled with the ProGuard rules of the release build, to
-    //   detect the missing keep rules during development (e.g. classes loaded by reflection or by a
+    //   detect the missing keep rules during development (for example, classes loaded by reflection
+    // or by a
     //   service loader).
     // - The build being debuggable, R8 neither optimizes nor obfuscates the code: the stack traces
     //   and the debug logs are kept.

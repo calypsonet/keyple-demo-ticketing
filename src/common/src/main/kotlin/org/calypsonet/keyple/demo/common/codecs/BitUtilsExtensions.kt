@@ -19,7 +19,7 @@ import fr.devnied.bitlib.BitUtils
  * its last bytes in big-endian order (`setNextInteger` of the library being limited to 31 bits).
  *
  * The bytes written are exactly those of the field: a sign byte added before a value whose high bit
- * is set (e.g. by `BigInteger.toByteArray`) would shift the value and truncate it.
+ * is set (for example, by `BigInteger.toByteArray`) would shift the value and truncate it.
  */
 internal fun BitUtils.setNextValue(value: Int, size: Int) {
   require(size % Byte.SIZE_BITS == 0) { "Size not a multiple of 8 bits [size=$size]" }

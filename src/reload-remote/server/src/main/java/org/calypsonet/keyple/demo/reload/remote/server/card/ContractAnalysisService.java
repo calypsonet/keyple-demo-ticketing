@@ -186,7 +186,7 @@ public class ContractAnalysisService {
 
   /**
    * Returns the contracts present in the card (ContractVersionNumber different from 0), as recorded
-   * in the card: their expiry is evaluated from their dates by the users of the result, the
+   * in the card: their expiration is evaluated from their dates by the users of the result, the
    * ContractTariff field keeping the type of the contract.
    *
    * @throws CardNotPersonalizedException If the environment has not the current version.

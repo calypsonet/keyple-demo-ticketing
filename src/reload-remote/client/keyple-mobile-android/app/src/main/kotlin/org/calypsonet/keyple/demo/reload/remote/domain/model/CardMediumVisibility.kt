@@ -12,7 +12,7 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.reload.remote.domain.model
 
-/** Visibility of a card medium (contactless card, SIM...) in the home screen. */
+/** Visibility of a card medium (contactless card, SIM, etc.) in the home screen. */
 enum class CardMediumVisibility {
   /** The card medium is displayed and can be selected. */
   ENABLE,

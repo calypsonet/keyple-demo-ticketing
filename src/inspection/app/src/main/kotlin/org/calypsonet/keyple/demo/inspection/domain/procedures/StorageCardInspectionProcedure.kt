@@ -86,7 +86,7 @@ class StorageCardInspectionProcedure(
       }
 
       // ========= READ DATA =========
-      // Step 2 - Read environment, event and contract structures based on card type
+      // Step 2: Read environment, event, and contract structures based on card type
       if (isMifareClassic) {
         logger.d(
             "Reading the MIFARE Classic blocks [environmentBlock=${MifareClassicBlocks.ENVIRONMENT_AND_HOLDER_BLOCK}, contractBlock=${MifareClassicBlocks.CONTRACT_BLOCK}, eventBlock=${MifareClassicBlocks.EVENT_BLOCK}]")
@@ -115,7 +115,7 @@ class StorageCardInspectionProcedure(
 
       logger.d("Storage card read")
 
-      // Step 2 - Unpack environment structure
+      // Step 2: Unpack environment structure
       val environmentContent =
           if (isMifareClassic) {
             storageCard.getBlock(MifareClassicBlocks.ENVIRONMENT_AND_HOLDER_BLOCK)
@@ -126,18 +126,18 @@ class StorageCardInspectionProcedure(
           }
       val environment = StorageCardEnvironmentHolderCodec.decode(environmentContent)
 
-      // Step 3 - If EnvVersionNumber of the Environment structure is not the expected one (==1 for
+      // Step 3: If EnvVersionNumber of the Environment structure is not the expected one (==1 for
       // the current version), reject the card.
       if (environment.envVersionNumber != VersionNumber.CURRENT_VERSION) {
         return InspectionResult.Rejected(RejectionReason.ENVIRONMENT_WRONG_VERSION)
       }
 
-      // Step 4 - If EnvEndDate points to a date in the past, reject the card.
+      // Step 4: If EnvEndDate points to a date in the past, reject the card.
       if (environment.envEndDate.date.isBefore(inspectionDateTime.toLocalDate())) {
         return InspectionResult.Rejected(RejectionReason.ENVIRONMENT_EXPIRED)
       }
 
-      // Step 5 - Read and unpack the event record
+      // Step 5: Read and unpack the event record
       val eventContent =
           if (isMifareClassic) {
             storageCard.getBlock(MifareClassicBlocks.EVENT_BLOCK)
@@ -147,7 +147,7 @@ class StorageCardInspectionProcedure(
           }
       val event = StorageCardEventCodec.decode(eventContent)
 
-      // Step 6 - If EventVersionNumber is not the expected one (==1 for the current version),
+      // Step 6: If EventVersionNumber is not the expected one (==1 for the current version),
       // reject
       // the card (if ==0 return error status indicating clean card).
       val eventVersionNumber = event.eventVersionNumber
@@ -161,14 +161,14 @@ class StorageCardInspectionProcedure(
 
       val contractUsed = event.eventContractUsed
 
-      // Steps 7 to 9 - The contract used by the last validation is validated only if this
+      // Steps 7 to 9: The contract used by the last validation is validated only if this
       // validation was made at the location of the inspection, the same day, and within the
       // validation period
       val isLastValidationValid =
           isLastValidationValid(
               event, inspectionLocation, inspectionDateTime, validationPeriodMinutes)
 
-      // Step 10 - CNT_READ: Read contract data (already read above)
+      // Step 10 (CNT_READ): Read contract data (already read above)
       val contractContent =
           if (isMifareClassic) {
             storageCard.getBlock(MifareClassicBlocks.CONTRACT_BLOCK)
@@ -189,25 +189,25 @@ class StorageCardInspectionProcedure(
       var isContractValidated = false
 
       if (contract.contractVersionNumber == VersionNumber.UNDEFINED) {
-        // Step 13 - If the ContractVersionNumber == 0, then the contract is blank
+        // Step 13: If the ContractVersionNumber == 0, then the contract is blank
       } else if (contract.contractVersionNumber != VersionNumber.CURRENT_VERSION) {
-        // Step 14 - If ContractVersionNumber is not the expected one (==1 for the current
+        // Step 14: If ContractVersionNumber is not the expected one (==1 for the current
         // version), reject the card.
         return InspectionResult.Rejected(RejectionReason.CONTRACT_WRONG_VERSION)
       } else {
-        // Step 15 - If ContractAuthenticator is not 0, perform the verification
+        // Step 15: If ContractAuthenticator is not 0, perform the verification
         @Suppress("ControlFlowWithEmptyBody")
         if (contract.contractAuthenticator != 0) {
-          // Step 15.1 & 15.2 - TODO: SAM verification steps
+          // Steps 15.1 and 15.2: TODO SAM verification steps
         }
 
-        // Step 16 - If ContractValidityEndDate points to a date in the past mark contract as
+        // Step 16: If ContractValidityEndDate points to a date in the past mark contract as
         // expired.
         if (contract.contractValidityEndDate.date.isBefore(inspectionDateTime.toLocalDate())) {
           isContractExpired = true
         }
 
-        // Step 17 - If EventContractUsed points to the current contract index
+        // Step 17: If EventContractUsed points to the current contract index
         // and not the validity flag is false, then mark it as Validated.
         if (contractUsed == recordNumber && isLastValidationValid) {
           isContractValidated = true
@@ -218,7 +218,7 @@ class StorageCardInspectionProcedure(
           validationDateTime = event.eventDateTime
         }
 
-        // Step 18 - If the ContractTariff value for the contract is 2, extract the counter-value.
+        // Step 18: If the ContractTariff value for the contract is 2, extract the counter-value.
         val remainingTrips =
             if (contract.contractTariff == PriorityCode.MULTI_TRIP) {
               contract.counterValue
@@ -226,7 +226,7 @@ class StorageCardInspectionProcedure(
               null
             }
 
-        // Step 19 - Add contract data to the list of contracts read to return to the upper layer.
+        // Step 19: Add contract data to the list of contracts read to return to the upper layer.
         displayedContracts.add(
             buildContract(
                 contract = contract,
@@ -237,10 +237,10 @@ class StorageCardInspectionProcedure(
                 remainingTrips = remainingTrips))
       }
 
-      // Step 20 - Close the transaction
+      // Step 20: Close the transaction
       cardTransaction.processCommands(ChannelControl.CLOSE_AFTER)
 
-      // Step 21 - Return the status of the operation to the upper layer. <Exit process>
+      // Step 21: Return the status of the operation to the upper layer. <Exit process>
       return InspectionResult.CardContent(
           AuthenticationMode.NO_AUTHENTICATION, displayedContracts, validation)
     } catch (e: Exception) {

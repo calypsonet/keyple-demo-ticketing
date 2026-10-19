@@ -30,7 +30,7 @@ data class SelectAppAndAnalyzeContractsOutputDto(
     override val statusCode: Int,
 ) : RemoteServiceOutputDto {
 
-  /** Contract of the card: name, description and validity. */
+  /** Contract of the card: name, description, and validity. */
   @Serializable
   data class ContractInfo(
       val name: String,

@@ -45,7 +45,7 @@ public class Main {
 
     @Override
     public int run(String... args) throws Exception {
-      // Start the SAM & Calypso Card configuration
+      // Start the SAM and Calypso card configuration
       cardConfigurator.init();
       // Open the dashboard in the default browser
       URI webappUri = new URI("http://localhost:" + assignedPort + "/");

@@ -66,7 +66,7 @@ class CardReaderSession(
    * Initializes the reader of the given card medium.
    *
    * @param terminalType The type of terminal.
-   * @param cardMedium The card medium (contactless card, SIM...) to read.
+   * @param cardMedium The card medium (contactless card, SIM, etc.) to read.
    * @param uiContext Platform-specific context used to register the plugins.
    * @param observer Optional observer of the card reader events (contactless cards only).
    * @param readerObservationExceptionHandler Optional handler of the reader observation errors.

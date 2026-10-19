@@ -104,7 +104,7 @@ class StorageCardValidationProcedure(
         else -> TechnicalError.UNEXPECTED
       }
 
-  /** Reads the card, applies the validation rules and writes the validation in the card. */
+  /** Reads the card, applies the validation rules, and writes the validation in the card. */
   private fun validate(
       context: ValidationContext,
       storageCard: StorageCard,
@@ -160,7 +160,7 @@ class StorageCardValidationProcedure(
 
     logger.d("Storage card read")
 
-    // Step 2 - Unpack environment structure (16 bytes regardless of card type)
+    // Step 2: Unpack environment structure (16 bytes regardless of card type)
     val environmentContent =
         if (isMifareClassic) {
           storageCard.getBlock(MifareClassicBlocks.ENVIRONMENT_AND_HOLDER_BLOCK)
@@ -171,7 +171,7 @@ class StorageCardValidationProcedure(
         }
     val environment = StorageCardEnvironmentHolderCodec.decode(environmentContent)
 
-    // Steps 3 and 4 - Validate the environment version and end date
+    // Steps 3 and 4: Validate the environment version and end date
     environmentRejection(
             environment.envVersionNumber,
             environment.envEndDate.date,
@@ -180,7 +180,7 @@ class StorageCardValidationProcedure(
           return ValidationResult.Rejected(cardDescription, it)
         }
 
-    // Step 5 - Read and unpack the event record (16 bytes)
+    // Step 5: Read and unpack the event record (16 bytes)
     val eventContent =
         if (isMifareClassic) {
           storageCard.getBlock(MifareClassicBlocks.EVENT_BLOCK)
@@ -190,7 +190,7 @@ class StorageCardValidationProcedure(
         }
     val event = StorageCardEventCodec.decode(eventContent)
 
-    // Step 6 - Validate the event version
+    // Step 6: Validate the event version
     eventVersionRejection(event.eventVersionNumber)?.let {
       return ValidationResult.Rejected(cardDescription, it)
     }
@@ -200,7 +200,7 @@ class StorageCardValidationProcedure(
       return ValidationResult.Rejected(cardDescription, RejectionReason.ALREADY_VALIDATED)
     }
 
-    // Step 7 - Read and unpack the contract record (16 bytes)
+    // Step 7: Read and unpack the contract record (16 bytes)
     val contractContent =
         if (isMifareClassic) {
           storageCard.getBlock(MifareClassicBlocks.CONTRACT_BLOCK)
@@ -222,7 +222,7 @@ class StorageCardValidationProcedure(
     }
 
     // ========= BUSINESS VALIDATION =========
-    val contractUsed = 1 // For storage card, we only have one contract
+    val contractUsed = 1 // A storage card holds only one contract
     // Contract to write, updated by the validation (counter of a multi-trip contract)
     var contractToWrite = contract
     var remainingTrips: Int? = null

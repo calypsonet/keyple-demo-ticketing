@@ -74,7 +74,7 @@ class CalypsoCardValidationProcedure(
         }
     var result = outcome.result
 
-    // Step 14 - END: Close the session when the event has to be written (validated card, or
+    // Step 14 (END): Close the session when the event has to be written (validated card, or
     // contract priorities updated for a rejected card), cancel it otherwise
     try {
       if (outcome.shouldCloseSession) {
@@ -83,7 +83,7 @@ class CalypsoCardValidationProcedure(
         cardTransaction.prepareCancelSecureSession().processCommands(ChannelControl.CLOSE_AFTER)
       }
     } catch (e: CardCommunicationException) {
-      // Card removed during close/cancel session (e.g. removed while writing)
+      // Card removed during close/cancel session (for example, removed while writing)
       result = ValidationResult.CardRemoved(cardDescription)
     } catch (e: Exception) {
       if (result !is ValidationResult.CardRemoved) {
@@ -98,7 +98,7 @@ class CalypsoCardValidationProcedure(
    * Result of the steps 1 to 13 of the validation procedure.
    *
    * @property shouldCloseSession Indicates whether the secure session has to be closed to write the
-   *   event prepared, or cancelled.
+   *   event prepared, or canceled.
    */
   private data class SessionOutcome(val result: ValidationResult, val shouldCloseSession: Boolean)
 
@@ -114,13 +114,13 @@ class CalypsoCardValidationProcedure(
   ): SessionOutcome {
     val validationDateTime = context.dateTime
 
-    // Rejection of the card before any update: the session is cancelled
+    // Rejection of the card before any update: the session is canceled
     fun rejected(reason: RejectionReason) =
         SessionOutcome(
             ValidationResult.Rejected(cardDescription, reason), shouldCloseSession = false)
 
     // ***************** Event and Environment Analysis
-    // Step 1 - Open a Validation session reading the environment record.
+    // Step 1: Open a validation session reading the environment record.
     cardTransaction
         .prepareOpenSecureSession(WriteAccessLevel.DEBIT)
         .prepareReadRecords(
@@ -130,14 +130,14 @@ class CalypsoCardValidationProcedure(
             CalypsoFiles.ENVIRONMENT_HOLDER_RECORD_SIZE_BYTES)
         .processCommands(ChannelControl.KEEP_OPEN)
 
-    // Step 2 - Unpack environment structure from the binary present in the environment record.
+    // Step 2: Unpack environment structure from the binary present in the environment record.
     val efEnvironmentHolder = calypsoCard.getFileBySfi(CalypsoFiles.SFI_ENVIRONMENT_AND_HOLDER)
     val environment = CalypsoEnvironmentHolderCodec.decode(efEnvironmentHolder.data.content)
 
-    // Step 3 - If EnvVersionNumber of the Environment structure is not the expected one (==1 for
+    // Step 3: If EnvVersionNumber of the Environment structure is not the expected one (==1 for
     // the
     // current version), reject the card. <Abort Secure Session>
-    // Step 4 - If EnvEndDate points to a date in the past, reject the card. <Abort Secure Session>
+    // Step 4: If EnvEndDate points to a date in the past, reject the card. <Abort Secure Session>
     environmentRejection(
             environment.envVersionNumber,
             environment.envEndDate.date,
@@ -146,7 +146,7 @@ class CalypsoCardValidationProcedure(
           return rejected(it)
         }
 
-    // Step 5 - Read and unpack the last event record.
+    // Step 5: Read and unpack the last event record.
     cardTransaction
         .prepareReadRecords(CalypsoFiles.SFI_EVENT_LOG, 1, 1, CalypsoFiles.EVENT_RECORD_SIZE_BYTES)
         .processCommands(ChannelControl.KEEP_OPEN)
@@ -154,13 +154,13 @@ class CalypsoCardValidationProcedure(
     val efEventLog = calypsoCard.getFileBySfi(CalypsoFiles.SFI_EVENT_LOG)
     val event = CalypsoEventCodec.decode(efEventLog.data.content)
 
-    // Step 6 - If EventVersionNumber is not the expected one (==1 for the current version), reject
+    // Step 6: If EventVersionNumber is not the expected one (==1 for the current version), reject
     // the card. <Abort Secure Session>
     eventVersionRejection(event.eventVersionNumber)?.let {
       return rejected(it)
     }
 
-    // Step 6.2 - anti-passback management and ratification of an interrupted session: within the
+    // Step 6.2: anti-passback management and ratification of an interrupted session: within the
     // anti-passback delay, the card is rejected if the last validation session has been ratified,
     // otherwise this session, interrupted by the removal of the card, is considered as validated.
     if (isWithinAntiPassbackDelay(event.eventDateTime, validationDateTime)) {
@@ -174,13 +174,13 @@ class CalypsoCardValidationProcedure(
     }
 
     // ***************** Best Contract Search
-    // Step 7 - Create a list of PriorityCode fields that are different from FORBIDDEN, EXPIRED and
+    // Step 7: Create a list of PriorityCode fields that are different from FORBIDDEN, EXPIRED and
     // UNKNOWN.
     val allPriorities =
         event.contractPriorities.mapIndexed { index, priority -> Pair(index + 1, priority) }
     val filteredPriorities = filterValidContractPriorities(allPriorities)
 
-    // Step 9 - If the list is empty, go to END.
+    // Step 9: If the list is empty, go to END.
     if (filteredPriorities.isEmpty()) {
       return rejected(RejectionReason.NO_VALID_CONTRACT)
     }
@@ -194,14 +194,14 @@ class CalypsoCardValidationProcedure(
     var seasonPassValidityEndDate: LocalDate? = null
     var remainingTrips: Int? = null
 
-    // Step 10 - For each element in the list:
+    // Step 10: For each element in the list:
     val sortedPriorities = sortContractPriorities(filteredPriorities)
 
-    // Step 11 - For each element in the list:
+    // Step 11: For each element in the list:
     // The priorities only give the order of the contracts: the type of a contract is its tariff
     for ((recordNumber, _) in sortedPriorities) {
 
-      // Step 11.1 - Read and unpack the contract record for the index being iterated.
+      // Step 11.1: Read and unpack the contract record for the index being iterated.
       cardTransaction
           .prepareReadRecords(
               CalypsoFiles.SFI_CONTRACTS,
@@ -214,23 +214,23 @@ class CalypsoCardValidationProcedure(
       val contractContent = efContracts.data.allRecordsContent[recordNumber]!!
       val contract = CalypsoContractCodec.decode(contractContent)
 
-      // Step 11.2 - If ContractVersionNumber is not the expected one (==1 for the current version),
+      // Step 11.2: If ContractVersionNumber is not the expected one (==1 for the current version),
       // reject the card. <Abort Secure Session>
       contractVersionRejection(contract.contractVersionNumber)?.let {
         return rejected(it)
       }
 
-      // Step 11.3 - ' If ContractAuthenticator is not 0, perform the verification of the value by
+      // Step 11.3: If ContractAuthenticator is not 0, perform the verification of the value by
       // using the PSO Verify Signature command of the SAM.
       @Suppress("ControlFlowWithEmptyBody")
       if (contract.contractAuthenticator != 0) {
-        // Step 11.3.1 - If the value is wrong reject the card. <Abort Secure Session>
-        // Step 11.3.2 - If the value of ContractSaleSam is present in the SAM Black List reject the
+        // Step 11.3.1: If the value is wrong reject the card. <Abort Secure Session>
+        // Step 11.3.2: If the value of ContractSaleSam is present in the SAM Black List reject the
         // card. <Abort Secure Session>
-        // TODO: steps 11.3.1 & 11.3.2
+        // TODO: steps 11.3.1 and 11.3.2
       }
 
-      // Step 11.4 - If ContractValidityEndDate points to a date in the past, update the associated
+      // Step 11.4: If ContractValidityEndDate points to a date in the past, update the associated
       // ContractPriority field present in the persistent object to 31 and move to the next element
       // in the list
       if (isContractExpired(
@@ -241,7 +241,7 @@ class CalypsoCardValidationProcedure(
         continue
       }
 
-      // Step 11.5 - If the ContractTariff value for the contract read is 2:
+      // Step 11.5: If the ContractTariff value for the contract read is 2:
       if (isCounterBasedContract(contract.contractTariff)) {
 
         val contractRecordCount =
@@ -251,7 +251,7 @@ class CalypsoCardValidationProcedure(
               else -> 4
             }
 
-        // Step 11.5.1 - Read and unpack the counter associated with the contract (1st counter for
+        // Step 11.5.1: Read and unpack the counter associated with the contract (1st counter for
         // Contract #1 and so forth).
         cardTransaction
             .prepareReadCounter(CalypsoFiles.SFI_COUNTERS, contractRecordCount)
@@ -260,7 +260,7 @@ class CalypsoCardValidationProcedure(
         val efCounters = calypsoCard.getFileBySfi(CalypsoFiles.SFI_COUNTERS)
         val counterValue = efCounters.data.getContentAsCounterValue(recordNumber)
 
-        // Step 11.5.2 - If the counter-value is 0, update the associated ContractPriority field
+        // Step 11.5.2: If the counter-value is 0, update the associated ContractPriority field
         // present in the persistent object to 31 and move to the next element in the list
         if (!hasTripsLeft(counterValue)) {
           contractPriorities[recordNumber - 1] = PriorityCode.EXPIRED
@@ -269,7 +269,7 @@ class CalypsoCardValidationProcedure(
           continue
         }
 
-        // Step 11.5.3 - UPDATE COUNTER: Decrement the counter-value by 1.
+        // Step 11.5.3 (UPDATE COUNTER): Decrement the counter-value by 1.
         val decrement = calculateDecrementAmount(contract.contractTariff)
         if (decrement > 0) {
           cardTransaction.prepareDecreaseCounter(CalypsoFiles.SFI_COUNTERS, recordNumber, decrement)
@@ -320,7 +320,7 @@ class CalypsoCardValidationProcedure(
               cardDescription, rejectionReason ?: RejectionReason.NO_VALID_CONTRACT)
     }
 
-    // Step 13 - Pack the Event structure and append it to the event file
+    // Step 13: Pack the Event structure and append it to the event file
     val eventBytesToWrite = CalypsoEventCodec.encode(eventToWrite)
     cardTransaction.prepareUpdateRecord(CalypsoFiles.SFI_EVENT_LOG, 1, eventBytesToWrite)
     return SessionOutcome(result, shouldCloseSession = true)

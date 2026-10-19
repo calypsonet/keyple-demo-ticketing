@@ -20,7 +20,7 @@ import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
  * Readers of the terminal: registration of the reader plugins of the platform, then access to the
  * card reader and to the SAM reader.
  *
- * The readers are driven (card detection, selection and processing) by the `CardReaderSession` of
+ * The readers are driven (card detection, selection, and processing) by the `CardReaderSession` of
  * the domain.
  */
 interface TerminalReaders {
@@ -30,7 +30,7 @@ interface TerminalReaders {
    * called before initializing readers. Blocking call (creation and registration of the plugins),
    * to be made outside of the main thread.
    *
-   * @param terminalType The type of reader to use (e.g. contactless reader).
+   * @param terminalType The type of reader to use (for example, contactless reader).
    * @param uiContext UI context used to access platform-specific facilities.
    */
   fun registerPlugin(terminalType: TerminalType, uiContext: UiContext)
@@ -52,7 +52,9 @@ interface TerminalReaders {
   /** Returns the selected SAM reader, if any. */
   fun getSamReader(): CardReader?
 
-  /** Indicates whether storage cards (e.g., MIFARE Ultralight, ST25 SRT512) are supported. */
+  /**
+   * Indicates whether storage cards (for example, MIFARE Ultralight, ST25 SRT512) are supported.
+   */
   fun isStorageCardSupported(): Boolean
 
   /**

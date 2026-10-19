@@ -39,7 +39,7 @@ public class TransactionController {
 
   /**
    * Server-Sent Events stream of the new transactions, each event being a JSON {@link Transaction}.
-   * Every subscriber (e.g. each open dashboard) receives all the new transactions.
+   * Every subscriber (for example, each open dashboard) receives all the new transactions.
    *
    * @return The stream of the new transactions.
    */

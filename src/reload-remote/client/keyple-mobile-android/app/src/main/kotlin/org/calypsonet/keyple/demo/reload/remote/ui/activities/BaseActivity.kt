@@ -48,19 +48,20 @@ abstract class BaseActivity : AppCompatActivity() {
 
   override fun onPause() {
     super.onPause()
-    // The automatic return is abandoned when the user leaves the screen (e.g. with a button)
+    // The automatic return is abandoned when the user leaves the screen (for example, with a
+    // button)
     cancelAutoReturn()
   }
 
   /**
-   * Closes the screen after the provided delay, returning to the previous screen (e.g. the card
-   * presentation screen to try again, or the home screen).
+   * Closes the screen after the provided delay, returning to the previous screen (for example, the
+   * card presentation screen to try again, or the home screen).
    *
    * @param delayMs The display duration, in milliseconds.
    * @param progress The bar emptied during the delay to show the remaining time, if any.
-   * @param onCountdown Called with the remaining seconds every second (e.g. to display them in the
-   *   label of the button performing the same action), then with null if the automatic return is
-   *   cancelled.
+   * @param onCountdown Called with the remaining seconds every second (for example, to display them
+   *   in the label of the button performing the same action), then with null if the automatic
+   *   return is canceled.
    */
   protected fun scheduleAutoReturn(
       delayMs: Long,

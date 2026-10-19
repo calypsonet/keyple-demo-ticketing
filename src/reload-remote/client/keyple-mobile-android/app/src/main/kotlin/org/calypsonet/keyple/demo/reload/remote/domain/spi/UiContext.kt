@@ -23,7 +23,7 @@ interface UiContext {
 
   /**
    * Returns an adapter view of this UI context for the requested type.
-   * - On Android, typical adapters may include Activity, Context or FragmentManager.
+   * - On Android, typical adapters may include Activity, Context, or FragmentManager.
    * - On desktop or server, this may return other toolkit-specific objects.
    *
    * Implementations should throw an exception if the requested adapter type is not supported.

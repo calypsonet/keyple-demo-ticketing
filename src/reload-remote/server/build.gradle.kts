@@ -69,7 +69,8 @@ dependencies {
   // Google GSON
   implementation(libs.gson)
 
-  // Logging: SLF4J API used by the server and third-party libraries (e.g., Keyple). The SLF4J
+  // Logging: SLF4J API used by the server and third-party libraries (for example, Keyple). The
+  // SLF4J
   // implementation is provided by Quarkus (JBoss Log Manager), configured by the "quarkus.log.*"
   // properties.
   implementation(libs.slf4jApi)
@@ -131,7 +132,8 @@ tasks {
   check {
     dependsOn(lintDashboard)
     // The common library being an included build, its checks (code format, unit tests) are not run
-    // by the builds of the applications: they are run with those of the server (e.g. by the CI)
+    // by the builds of the applications: they are run with those of the server (for example, by the
+    // CI)
     dependsOn(gradle.includedBuild("common").task(":check"))
   }
   // The dashboard is served by Quarkus as static resources (META-INF/resources)

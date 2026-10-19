@@ -438,7 +438,7 @@ public class CardRepository {
   /**
    * Builds the event to write: the last event with the current version number, and its contract
    * priorities. Only the priority of the loaded contract is updated (by the contract loading): the
-   * other priorities are kept (e.g. 31 for an expired or exhausted contract).
+   * other priorities are kept (for example, 31 for an expired or exhausted contract).
    */
   private EventStructure buildEvent(EventStructure event) {
     return new EventStructure(

@@ -14,7 +14,7 @@ package org.calypsonet.keyple.demo.inspection.domain.spi
 
 import org.calypsonet.keyple.demo.inspection.domain.model.TerminalType
 
-/** Port providing the user feedback of the terminal (sounds, LEDs...). */
+/** Port providing the user feedback of the terminal (sounds, LEDs, etc.). */
 interface UserFeedback {
 
   /**
@@ -25,10 +25,10 @@ interface UserFeedback {
    */
   fun init(terminalType: TerminalType, uiContext: UiContext)
 
-  /** Signals a successful result to the user (sound, LEDs...). */
+  /** Signals a successful result to the user (sound, LEDs, etc.). */
   fun signalSuccess()
 
-  /** Signals a failed result to the user (sound, LEDs...). */
+  /** Signals a failed result to the user (sound, LEDs, etc.). */
   fun signalFailure()
 
   /** Releases the feedback resources. */

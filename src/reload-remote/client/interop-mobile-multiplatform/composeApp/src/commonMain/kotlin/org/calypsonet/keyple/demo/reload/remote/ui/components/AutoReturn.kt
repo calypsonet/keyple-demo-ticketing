@@ -45,8 +45,8 @@ data class AutoReturn(val delayMs: Long, val color: Color)
 
 /**
  * Calls [onReturn] after [delayMs], the remaining time being shown by a bar emptied during the
- * delay. The automatic return is abandoned when the bar leaves the screen (e.g. when the user goes
- * back before).
+ * delay. The automatic return is abandoned when the bar leaves the screen (for example, when the
+ * user goes back before).
  */
 @Composable
 internal fun AutoReturnProgress(

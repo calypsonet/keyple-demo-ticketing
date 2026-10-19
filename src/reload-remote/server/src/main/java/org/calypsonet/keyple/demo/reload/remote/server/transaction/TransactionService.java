@@ -22,8 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Stores the transactions and broadcasts each new transaction to all the subscribers (e.g. the
- * dashboards).
+ * Stores the transactions and broadcasts each new transaction to all the subscribers (for example,
+ * the dashboards).
  */
 @ApplicationScoped
 public class TransactionService {

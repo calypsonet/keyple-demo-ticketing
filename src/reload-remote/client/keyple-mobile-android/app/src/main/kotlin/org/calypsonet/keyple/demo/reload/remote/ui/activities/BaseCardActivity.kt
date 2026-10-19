@@ -79,8 +79,8 @@ abstract class BaseCardActivity :
   }
 
   /**
-   * Initialisation of AndroidOmapiPlugin is async and take time and cannot be observed. So we'll
-   * trigger process only when the plugin is registered
+   * Initialization of AndroidOmapiPlugin is asynchronous, takes time, and cannot be observed: the
+   * process is triggered only when the plugin is registered.
    */
   @Throws(UnsupportedOperationException::class)
   fun initOmapiReader(onPluginRegistered: () -> Unit) {
@@ -177,7 +177,7 @@ abstract class BaseCardActivity :
     }
   }
 
-  /** Only with NFC we can come back to the 'present the card' screen after a result. */
+  /** Only with NFC can the user come back to the 'present the card' screen after a result. */
   protected fun shouldFinishActivityAfterResult(): Boolean =
       cardMedium != CardMedium.CONTACTLESS_CARD
 

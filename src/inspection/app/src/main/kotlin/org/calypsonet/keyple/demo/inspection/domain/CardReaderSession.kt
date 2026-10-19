@@ -44,7 +44,7 @@ import org.eclipse.keypop.storagecard.card.ProductType
 import org.eclipse.keypop.storagecard.card.StorageCard
 
 /**
- * Session of the card reader of the terminal: initialization of the readers, of the SAM and of the
+ * Session of the card reader of the terminal: initialization of the readers, of the SAM, and of the
  * user feedback devices, detection and selection of the presented cards.
  *
  * The operations are blocking calls, made by the UI outside of the main thread (the choice of the
@@ -121,7 +121,7 @@ class CardReaderSession(
   private var indexOfMifareClassic1KCardSelection = 0
 
   /**
-   * Initializes the user feedback, the card reader and the SAM, if available.
+   * Initializes the user feedback, the card reader, and the SAM, if available.
    *
    * Steps:
    * - Registers the appropriate reader plugin according to [terminalType].

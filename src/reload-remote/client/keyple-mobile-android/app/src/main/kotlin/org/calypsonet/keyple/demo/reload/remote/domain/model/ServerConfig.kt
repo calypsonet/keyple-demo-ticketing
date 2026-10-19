@@ -15,7 +15,7 @@ package org.calypsonet.keyple.demo.reload.remote.domain.model
 /** Address of the reload server. */
 data class ServerConfig(val protocol: String, val ip: String, val port: Int) {
 
-  /** Base URL of the server (e.g. "http://192.168.0.1:8080"). */
+  /** Base URL of the server (for example, "http://192.168.0.1:8080"). */
   val url: String
     get() = "$protocol$ip:$port"
 }

@@ -259,7 +259,7 @@ namespace App.domain.api
                 selectApplicationCommand[1] = 0xA4; // INS
                 selectApplicationCommand[2] = 0x04; // P1: select by name
                                                     // P2: b0,b1 define the File occurrence, b2,b3 define the File control information
-                                                    // we use the bitmask defined in the respective enums
+                                                    // the bitmasks defined in the respective enums are used
                 selectApplicationCommand[3] =
                     ComputeSelectApplicationP2(
                         cardSelector.FileOccurrence, cardSelector.FileControlInformation);

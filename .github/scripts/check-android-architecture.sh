@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Checks the layering rules of the Android applications (see "Android Application Architecture" in README.md):
 # - the domain layer, meant to be transposable to another language, only imports the Kotlin standard library, the
-#   java.time date types, the Keypop APIs, the Keyple utilities, the common library and its own packages (allowlist):
-#   no Android, Timber, dependency injection, coroutines or JVM-specific API, and no data, ui or di layer;
+#   java.time date types, the Keypop APIs, the Keyple utilities, the common library, and its own packages (allowlist):
+#   no Android, Timber, dependency injection, coroutines, or JVM-specific API, and no data, ui, or di layer;
 # - the domain layer is synchronous: no suspend function;
 # - the data layer logs through the Logger port: Timber is only used by its implementation (TimberLogger);
 # - the ui layer neither accesses the data layer nor handles the Keypop card types.

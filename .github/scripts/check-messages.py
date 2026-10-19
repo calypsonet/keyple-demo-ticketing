@@ -7,12 +7,12 @@ Checked rules:
   punctuation, without class name prefix ("SomeClass: ..."), its context being at its end between square brackets;
 - the keys of the context are in camelCase;
 - a warning is logged without stack trace (its cause is given in the `cause` key);
-- a catch block logs the exception, throws an exception, or explains in a comment why it does not log (e.g. rejection
-  already logged where it is detected);
+- a catch block logs the exception, throws an exception, or explains in a comment why it does not log (for example,
+  rejection already logged where it is detected);
 - an exception is of a specific type (not `Exception` nor `RuntimeException`), and its cause is chained to it instead of
   being copied in its message (a cause which cannot be chained is given in the `cause` key).
 
-The Kotlin, Java and C# sources are checked, and the JavaScript sources of the dashboard (console messages and errors,
+The Kotlin, Java, and C# sources are checked, and the JavaScript sources of the dashboard (console messages and errors,
 written between double quotes).
 
 Usage: check-messages.py (from the root of the repository)
@@ -25,7 +25,7 @@ SOURCE_ROOT = "src"
 EXTENSIONS = (".kt", ".java", ".cs", ".js", ".jsx")
 EXCLUDED_DIRECTORIES = {"build", "dist", "node_modules", "bin", "obj", ".gradle", "test", "androidTest"}
 
-# Log calls of SLF4J (logger.info), the Logger port (logger.i), Timber, Napier, Serilog (_logger.Information) and of
+# Log calls of SLF4J (logger.info), the Logger port (logger.i), Timber, Napier, Serilog (_logger.Information), and of
 # the browser console (dashboard, console.warn)
 LOG_CALL = re.compile(
     r"\b(?:logger|_logger|Log|Timber|Napier|console)\."
@@ -154,7 +154,7 @@ def message_violations(message):
     context = re.search(r"\[(.*)\]\s*$", message)
     if "[" in text and not context:
         violations.append("the context must be at the end of the message, between square brackets")
-    # Out of the context, only a whole variable message is allowed (e.g. "$failureLog [statusCode=...]")
+    # Out of the context, only a whole variable message is allowed (for example, "$failureLog [statusCode=...]")
     head = re.sub(r"^(\$\{[^}]*\}|\$\w+|\{[^}]*\})", "", message[:context.start()] if context else message)
     if re.search(r"\$\{[^}]*\}|\$\w+|\{[^}]*\}", head):
         violations.append("the variable values must be given in the context, between square brackets")
