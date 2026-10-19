@@ -1,4 +1,4 @@
-# Keyple Reload Demo - .NET desktop client
+# Keyple Reload Demo — .NET desktop client
 
 [![.NET](https://img.shields.io/badge/.NET-10.0-purple.svg)](https://dotnet.microsoft.com/)
 [![Release](https://img.shields.io/github/v/release/calypsonet/keyple-demo-ticketing)](https://github.com/calypsonet/keyple-demo-ticketing/releases)
@@ -118,7 +118,7 @@ The project follows a clean hexagonal architecture pattern:
 
 #### Application layer (`/application`)
 - **Application.cs**: Main application logic and card processing workflow
-- **Program.cs** (project root): Entry point, configuration and logging
+- **Program.cs** (project root): Entry point, configuration, and logging
 
 #### Domain layer (`/domain`)
 

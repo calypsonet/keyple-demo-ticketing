@@ -1,4 +1,4 @@
-# Keyple Reload Demo - Java server
+# Keyple Reload Demo — Java server
 
 [![Java](https://img.shields.io/badge/java-17%2B-orange.svg)](https://openjdk.org/)
 [![Quarkus](https://img.shields.io/badge/quarkus-3.40-blue.svg)](https://quarkus.io/)
@@ -170,7 +170,7 @@ remote service (`RemoteServiceId`) to the service handling it:
 | `ContractCounterService`     | `SELECT_APP_AND_READ_CONTRACTS`, `SELECT_APP_AND_INCREASE_CONTRACT_COUNTER`                           | .NET                     |
 
 - With the Keyple clients, the client selects the application of the card. With the other clients, the server
-  selects it: `JsonApiService` selects the application, then delegates to the analysis, loading or
+  selects it: `JsonApiService` selects the application, then delegates to the analysis, loading, or
   personalization service and converts the result into a message ready to be displayed.
 - `CardRepository` reads and writes the card files (`CardData`), `TransactionRecorder` records the transactions
   displayed by the
@@ -274,9 +274,9 @@ business rules of the personalization and of the loading are unit tested (see
 ## Related documentation
 
 - [Main Project Overview](../../../README.md)
-- [Functional Documentation](../../../docs/functional-documentation/index.adoc) - Use cases and business rules
-- [Reload Demo](../README.md) - Card personalization and contract loading procedures
-- [Common Library](../../common/README.md) - Data structures and remote services
+- [Functional Documentation](../../../docs/functional-documentation/index.adoc): Use cases and business rules
+- [Reload Demo](../README.md): Card personalization and contract loading procedures
+- [Common Library](../../common/README.md): Data structures and remote services
 - Clients: [Android](../client/keyple-mobile-android/README.md),
   [multiplatform](../client/interop-mobile-multiplatform/README.md), [.NET](../client/pc-dotnet/README.md)
 

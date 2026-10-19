@@ -1,4 +1,4 @@
-# Keyple Reload Demo - Kotlin Multiplatform client
+# Keyple Reload Demo — Kotlin Multiplatform client
 
 [![Kotlin](https://img.shields.io/badge/kotlin-2.3-blue.svg)](https://kotlinlang.org/)
 [![KMP](https://img.shields.io/badge/multiplatform-android%20%7C%20ios%20%7C%20desktop-green.svg)](https://kotlinlang.org/multiplatform/)
@@ -81,7 +81,7 @@ committed to the repository, so each developer must create their own:
 sdk.dir=/path/to/your/Android/Sdk
 ```
 
-On Windows, escape backslashes in the path, e.g. `sdk.dir=C\:\\Users\\<user>\\AppData\\Local\\Android\\Sdk`.
+On Windows, escape backslashes in the path, for example, `sdk.dir=C\:\\Users\\<user>\\AppData\\Local\\Android\\Sdk`.
 
 Without this file, Gradle fails with `SDK location not found`.
 
@@ -199,28 +199,28 @@ Multiplatform and Android application plugins in the same module.
 #### Shared business logic (`commonMain`)
 
 **Services** (`data/service`):
-- `KeypleInteropService` - Integration of the Keyple Interop libraries: Keyple terminal, card selection scenario of
-  the server, local reader and remote services
-- `ServerReadinessChecker` - Checks that the server is reachable with its SAM available (as in the Android client), the
+- `KeypleInteropService`: Integration of the Keyple Interop libraries (Keyple terminal, card selection scenario of
+  the server, local reader, and remote services)
+- `ServerReadinessChecker`: Checks that the server is reachable with its SAM available (as in the Android client), the
   check being repeated by `AppViewModel`
-- `ReadCardCache` - Cache of the last card read (serial number, contracts)
-- `ServerConfigRepository` - Server configuration persisted in the data store (address, endpoint, basic
+- `ReadCardCache`: Cache of the last card read (serial number, contracts)
+- `ServerConfigRepository`: Server configuration persisted in the data store (address, endpoint, basic
   authentication)
-- `SimpleHttpNetworkClient` (`data/network`) - HTTP client for server communication
+- `SimpleHttpNetworkClient` (`data/network`): HTTP client for server communication
 
 **DTOs** (`data/dto`):
 - Inputs and outputs of the remote services of the JSON API (`SelectAppAndAnalyzeContracts...`,
   `SelectAppAndLoadContract...`, `SelectAppAndPersonalizeCard...`), named as in the `common` library which they
   mirror: `common` is a JVM library, which the multiplatform client cannot use
-- `ContractInfo` - Contract information with name, description, and validity
+- `ContractInfo`: Contract information with name, description, and validity
 
 **Screens** (`ui`):
-- `ReadCardScreen` - Screen for reading card content
-- `CardContentScreen` - Contracts of the card and products proposed for sale
-- `LoadContractScreen` - Screen for loading contracts
-- `PersonalizeCardScreen` - Screen for card personalization
-- `SettingsMenuScreen` - Settings menu (server, personalization)
-- `ServerSettingsScreen` - Server settings UI
+- `ReadCardScreen`: Screen for reading card content
+- `CardContentScreen`: Contracts of the card and products proposed for sale
+- `LoadContractScreen`: Screen for loading contracts
+- `PersonalizeCardScreen`: Screen for card personalization
+- `SettingsMenuScreen`: Settings menu (server, personalization)
+- `ServerSettingsScreen`: Server settings UI
 
 #### Platform-specific implementations
 
@@ -307,7 +307,7 @@ reader is used.
 ## Contributing
 
 See the [Contributing](../../../../README.md#contributing) section of the main README. Specific to this client: keep the
-same features on Android, iOS and desktop, the platform-specific code being minimal.
+same features on Android, iOS, and desktop, the platform-specific code being minimal.
 
 ## Related documentation
 

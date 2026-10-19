@@ -10,16 +10,16 @@ At each release of the repository, the CI (`.github/workflows/release-tag.yml`) 
 to the release:
 
 - `kdt-functional-documentation-X.Y.Z.pdf`
-- `kdt-functional-documentation-X.Y.Z.html`, standalone (fonts, images and diagrams embedded; only the icons are
+- `kdt-functional-documentation-X.Y.Z.html`, standalone (fonts, images, and diagrams embedded; only the icons are
   loaded from the Font Awesome CDN)
 
-The version, the date and the document reference are set from the release tag and date. The CI of the pull requests
+The version, the date, and the document reference are set from the release tag and date. The CI of the pull requests
 and of the main branch (`.github/workflows/ci-main-and-pr.yml`) generates the same files, available as artifacts of
 the workflow run for review.
 
 ## Local build
 
-With [Asciidoctor](https://asciidoctor.org/), Asciidoctor PDF and Asciidoctor Diagram (PlantUML, Java required), or
+With [Asciidoctor](https://asciidoctor.org/), Asciidoctor PDF, and Asciidoctor Diagram (PlantUML, Java required), or
 the `asciidoctor/docker-asciidoctor` image used by the CI, from this directory:
 
 ```bash
@@ -45,7 +45,7 @@ docs/functional-documentation/
     └── logos/                      # Calypso logo (title page, HTML header, PDF page header)
 ```
 
-The `pdf-theme.yml`, `docinfo.html`, `title-page-background.svg`, `fonts` and `layout` files are copies of the shared
+The `pdf-theme.yml`, `docinfo.html`, `title-page-background.svg`, `fonts`, and `layout` files are copies of the shared
 resources of the CNA documents (CNA documentation toolchain): keep them in sync with their source. Two adaptations of
 `pdf-theme.yml` are specific to this document: the `green` and `olive` roles (icons of the terminal table), and the
 license of the document in the page footer, instead of the reproduction prohibition of the CNA specifications. The
@@ -53,6 +53,6 @@ license of the document in the page footer, instead of the reproduction prohibit
 
 ## Preview in the IDE
 
-The IDE previews (e.g. the AsciiDoc plugin of IntelliJ IDEA) do not load the fonts embedded in the HTML output: they
-use the fonts installed on the system. To preview the document with the fonts of the CNA charter, install the
+The IDE previews (for example, the AsciiDoc plugin of IntelliJ IDEA) do not load the fonts embedded in the HTML output:
+they use the fonts installed on the system. To preview the document with the fonts of the CNA charter, install the
 Montserrat and JetBrains Mono fonts of the `assets/fonts` directory. The generated HTML and PDF files are not affected.

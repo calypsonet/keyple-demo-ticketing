@@ -180,7 +180,7 @@ val event = EventStructure(
 )
 ```
 
-The structures are immutable: a modified structure is a copy, e.g.
+The structures are immutable: a modified structure is a copy, for example,
 `event.withContractPriority(1, PriorityCode.EXPIRED)` or `contract.withCounterValue(10)`.
 
 ### Working with compact date/time

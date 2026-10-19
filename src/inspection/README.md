@@ -15,7 +15,7 @@ This Android application simulates the terminals used by the inspectors of a tra
 passengers have validated their trip. It analyzes the validation events written by the
 [Validation Demo](../validation/) and the contracts loaded by the [Reload Demo](../reload-remote/).
 
-**Role in ecosystem**: Last step of the ticketing workflow - checks the cards after their validation.
+**Role in ecosystem**: Last step of the ticketing workflow, which checks the cards after their validation.
 
 **Inspection rules**: see [What inspection checks](../../docs/functional-documentation/index.adoc#inspection-checks)
 in the Functional Documentation.
@@ -110,7 +110,7 @@ Terminal selection → Settings → Home → Card reader → Card content or Inv
 2. **Authentication**: secure session with the `DEBIT` access level when a SAM is available, PKI secure session when
    the card supports it, otherwise reading without authentication
 3. **Environment analysis**: version and end date of the environment
-4. **Event analysis**: version, date, time and location of the last event, and contract used
+4. **Event analysis**: version, date, time, and location of the last event, and contract used
 5. **Contract analysis**: reading of the contracts and of the counters, expiration of each contract, contract
    validated by the last event
 6. **Result**: content of the card (`InspectionResult.CardContent`) or reason of the rejection
@@ -119,7 +119,7 @@ Terminal selection → Settings → Home → Card reader → Card content or Inv
 
 #### Storage cards
 **Inspection procedure** (MIFARE Ultralight, ST25 SRT512, MIFARE Classic):
-1. **Reading**: reading of the environment, of the event and of the contract, without cryptographic operation
+1. **Reading**: reading of the environment, of the event, and of the contract, without cryptographic operation
 2. **Analysis**: same checks as for the Calypso cards, on the single contract of the card
 
 ### Key classes
@@ -135,12 +135,12 @@ Terminal selection → Settings → Home → Card reader → Card content or Inv
   (`InspectionResult`)
 
 **BaseInspectionProcedure** (`domain/procedures/BaseInspectionProcedure.kt`)
-- Business rules common to the inspection procedures: validity of the last validation (location, day and validation
+- Business rules common to the inspection procedures: validity of the last validation (location, day, and validation
   period compared to the minute), validation event displayed
 
 **CalypsoCardInspectionProcedure** (`domain/procedures/CalypsoCardInspectionProcedure.kt`)
 - Inspection procedure of the Calypso cards
-- Secure session when a SAM is available (or PKI secure session), analysis of the environment, of the last event and
+- Secure session when a SAM is available (or PKI secure session), analysis of the environment, of the last event, and
   of the contracts
 
 **StorageCardInspectionProcedure** (`domain/procedures/StorageCardInspectionProcedure.kt`)
@@ -235,11 +235,11 @@ presentation of the card for one result, and verify the results after validation
 ## Related documentation
 
 - [Main Project Overview](../../README.md)
-- [Functional Documentation](../../docs/functional-documentation/index.adoc) - Use cases and business rules
-- [Common Library](../common/README.md) - Data structures and constants
-- [Validation Demo](../validation/README.md) - Previous step in workflow
-- [Reload Demo](../reload-remote/README.md) - Contract loading procedures
-- [Eclipse Keyple Documentation](https://keyple.org) - SDK reference
+- [Functional Documentation](../../docs/functional-documentation/index.adoc): Use cases and business rules
+- [Common Library](../common/README.md): Data structures and constants
+- [Validation Demo](../validation/README.md): Previous step in workflow
+- [Reload Demo](../reload-remote/README.md): Contract loading procedures
+- [Eclipse Keyple Documentation](https://keyple.org): SDK reference
 
 ## License
 

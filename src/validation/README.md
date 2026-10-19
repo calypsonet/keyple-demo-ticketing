@@ -16,8 +16,8 @@ This Android application simulates validation terminals found at transportation 
 boarding, etc.). It validates contracts loaded by the [Reload Demo](../reload-remote/) and creates validation events
 that can be later verified by the [Inspection Demo](../inspection/).
 
-**Role in ecosystem**: Second step in the ticketing workflow - validates loaded contracts and grants/denies access to
-transportation networks.
+**Role in ecosystem**: Second step in the ticketing workflow, which validates loaded contracts and grants or denies
+access to transportation networks.
 
 ## Prerequisites
 
@@ -170,7 +170,7 @@ authenticator), black list of the card applications, and stored value contracts 
 - Schedules card selection scenarios for supported cards, and selects the presented card
 
 **ValidateCard** (`domain/usecases/ValidateCard.kt`)
-- Validates the presented card: selection, execution of the validation procedure supporting it and user feedback of
+- Validates the presented card: selection, execution of the validation procedure supporting it, and user feedback of
   the result (`ValidationResult`)
 
 **BaseValidationProcedure** (`domain/procedures/BaseValidationProcedure.kt`)
@@ -277,10 +277,10 @@ the changes with Calypso cards and storage cards, on the supported terminal type
 ## Related documentation
 
 - [Main Project Overview](../../README.md)
-- [Functional Documentation](../../docs/functional-documentation/index.adoc) - Use cases and business rules
-- [Common Library](../common/README.md) - Data structures and constants
-- [Reload Demo](../reload-remote/README.md) - Contract loading process
-- [Inspection Demo](../inspection/README.md) - Post-validation verification
+- [Functional Documentation](../../docs/functional-documentation/index.adoc): Use cases and business rules
+- [Common Library](../common/README.md): Data structures and constants
+- [Reload Demo](../reload-remote/README.md): Contract loading process
+- [Inspection Demo](../inspection/README.md): Post-validation verification
 - [Eclipse Keyple Documentation](https://keyple.org)
 
 ## License

@@ -1,4 +1,4 @@
-# Keyple Reload Demo - Android client
+# Keyple Reload Demo — Android client
 
 [![Android](https://img.shields.io/badge/android-8.0%2B-green.svg)](https://developer.android.com/)
 [![Release](https://img.shields.io/github/v/release/calypsonet/keyple-demo-ticketing)](https://github.com/calypsonet/keyple-demo-ticketing/releases)
@@ -15,8 +15,8 @@ This Android application demonstrates distributed ticketing where all card opera
 server with SAM integration. The mobile client provides the user interface and NFC card communication while delegating
 all business logic and cryptographic operations to the server.
 
-**Role in ecosystem**: First step in the ticketing workflow - loads season passes and multi-trip tickets onto cards for
-later validation and inspection.
+**Role in ecosystem**: First step in the ticketing workflow, which loads season passes and multi-trip tickets onto cards
+for later validation and inspection.
 
 ## Prerequisites
 
@@ -53,8 +53,8 @@ cd keyple-demo-ticketing/src/reload-remote/client/keyple-mobile-android
 ### Server connection
 1. Open **Settings** → **Server**
 2. Configure the server connection:
-  - **Server IP** and **Server port** (e.g. `192.168.1.10` and `8080`)
-  - **Protocol** (e.g. `http://`)
+  - **Server IP** and **Server port** (for example, `192.168.1.10` and `8080`)
+  - **Protocol** (for example, `http://`)
 3. Check that the server is ready (reachable, with its SAM available) with the **Server state** button, then **Save**
 
 ### NFC settings
@@ -107,7 +107,7 @@ Splash screen → Home → Card reader → Card content → Select product → C
 
 **Settings menu (`SettingsMenuActivity`)**
 - **Server**: Connection configuration
-- **Card media**: Card media shown in the home screen (enabled, disabled or hidden)
+- **Card media**: Card media shown in the home screen (enabled, disabled, or hidden)
 - **Personalization**: Personalization of a card (reset of its data)
 
 **Card reader (`CardReaderActivity`)**
@@ -139,7 +139,7 @@ Splash screen → Home → Card reader → Card content → Select product → C
 ## Known limitations
 
 - The SIM card reader (OMAPI) is a work in progress
-- Payment simulation only - no real payment processing
+- Payment simulation only (no real payment processing)
 - Limited offline capability (server connection required)
 - Single server connection (no failover support)
 
@@ -156,7 +156,7 @@ Splash screen → Home → Card reader → Card content → Select product → C
 
 **TerminalReaders** (`domain/spi/TerminalReaders.kt`)
 - Port giving access to the readers of the terminal
-- Registers the reader plugins of the card medium (NFC, Bluebird or OMAPI), then provides its reader
+- Registers the reader plugins of the card medium (NFC, Bluebird, or OMAPI), then provides its reader
 - Implementation: `KeypleTerminalReaders`
 
 **TicketingServer** (`domain/spi/TicketingServer.kt`)
@@ -260,9 +260,9 @@ compatibility with the API level 26, and update the server when a remote service
 ## Related documentation
 
 - [Main Project Overview](../../../../README.md)
-- [Common Library](../../../common/README.md) - Data structures and types
-- [Server Documentation](../../server/README.md) - Server setup and API
-- [Validation App](../../../validation/README.md) - Next step in workflow
+- [Common Library](../../../common/README.md): Data structures and types
+- [Server Documentation](../../server/README.md): Server setup and API
+- [Validation App](../../../validation/README.md): Next step in workflow
 
 ## License
 

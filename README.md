@@ -16,8 +16,8 @@ as a foundation for building contactless card and NFC smartphone-based ticketing
 [Support](#support) · [Related projects](#related-projects) · [License](#license)
 
 ## Overview
-The Keyple Demo Ecosystem consists of three interconnected applications that simulate a complete public transportation
-ticketing workflow:
+The Keyple Demo Ticketing ecosystem consists of three interconnected applications that simulate a complete public
+transportation ticketing workflow:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -115,7 +115,7 @@ cards are not supported. To use a component:
 1. Request it from [CNA](https://calypsonet.org/contact-us/)
 2. Copy the provided library (`.aar` or `.jar` file) to the `libs` directory at the root of the repository: the build
    uses it instead of the corresponding mock (`-mock.aar` or `-mock.jar` file)
-3. Rebuild the applications (e.g. `./gradlew assembleDebug`)
+3. Rebuild the applications (for example, `./gradlew assembleDebug`)
 
 The README of each application lists the components it uses.
 
@@ -150,50 +150,53 @@ The README of each application lists the components it uses.
 
 ### Android application architecture
 
-The Android applications (`validation`, `inspection` and `reload-remote/client/keyple-mobile-android`) follow a
+The Android applications (`validation`, `inspection`, and `reload-remote/client/keyple-mobile-android`) follow a
 **layered architecture with ports and adapters** (hexagonal style). They do not use the MVVM pattern: the activities
 drive the user flow and call the domain directly.
 
-The `domain` layer is designed to be easily transposed to another language (e.g. C++ or Rust): only the `ui` and
+The `domain` layer is designed to be easily transposed to another language (for example, C++ or Rust): only the `ui` and
 `data` layers are specific to the target language and platform.
 
-Each application is standalone and can be read, built or copied on its own: no module is shared between the Android
+Each application is standalone and can be read, built, or copied on its own: no module is shared between the Android
 applications apart from the `common` library. The duplication of some technical files (ports and adapters of the
-platform, terminal configuration, permissions...) is assumed. The files which must stay identical are checked by
+platform, terminal configuration, permissions, etc.) is assumed. The files which must stay identical are checked by
 the CI (`.github/scripts/check-android-twin-files.sh`): a change of one of them must be reported in each
 application.
 
 | Package  | Content                                                                                                                                             |
 |----------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
 | `domain` | Business logic: `CardReaderSession` and `usecases` (entry points of the UI), `procedures`, `model`, `mappers` and `builders`, and the ports (`spi`) |
-| `data`   | Adapters implementing the ports (readers, Keypop API factories, user feedback, settings, clock, logging...)                                         |
+| `data`   | Adapters implementing the ports (readers, Keypop API factories, user feedback, settings, clock, logging, etc.)                                      |
 | `ui`     | Activities, UI-bound adapters (`ActivityUiContext`), and UI models with their mappers when needed                                                   |
 | `di`     | Hilt modules binding the adapters to the ports and providing the domain services                                                                    |
 
 **Dependency rules**
 
 - The `domain` layer only depends on the Kotlin standard library, the `java.time` date types (`LocalDate`,
-  `LocalDateTime`, which have an equivalent in any language), the Keypop APIs, the Keyple utilities and the `common`
+  `LocalDateTime`, which have an equivalent in any language), the Keypop APIs, the Keyple utilities, and the `common`
   library. It depends neither on Android (including the application resources `R`), Timber, the dependency injection
-  framework (no Hilt, Dagger or `javax.inject` annotation) or any other JVM-specific API, nor on the `data`, `ui` and
+  framework (no Hilt, Dagger, or `javax.inject` annotation), or any other JVM-specific API, nor on the `data`, `ui`, and
   `di` layers. The platform services, including the system clock, are accessed through ports.
 - The `domain` layer is synchronous: its operations are blocking calls (no `suspend` function), the choice of the
   threads belonging to the `ui` layer (coroutines bound to the activity lifecycle). An asynchronous operation of the
-  platform is either awaited by the adapter, the call being blocking (e.g. creation of the Arrive plugin factory), or
-  expressed in the port by a callback (e.g. registration of the OMAPI plugin).
-- Everything the domain needs from the outside world is expressed as a port in `domain/spi` (e.g. `TerminalReaders`,
-  `KeypopApiProvider`, `UserFeedback`, `AppSettingsRepository`, `Clock`, `Logger`, `UiContext`, `TicketingServer`,
-  `ServerReadinessChecker`) and implemented by an adapter in `data`, or in `ui` for the UI-bound ones.
-- A port is named after what it represents or provides (e.g. `TerminalReaders`, `TicketingServer`, `Clock`), not with
-  a vague suffix such as `Manager`, and uses a platform-neutral vocabulary (e.g. `release` rather than `onDestroy`).
-- An adapter is named after the technology it relies on, followed by the name of its port (e.g.
+  platform is either awaited by the adapter, the call being blocking (for example, creation of the Arrive plugin
+  factory), or expressed in the port by a callback (for example, registration of the OMAPI plugin).
+- Everything the domain needs from the outside world is expressed as a port in `domain/spi` (for example,
+  `TerminalReaders`, `KeypopApiProvider`, `UserFeedback`, `AppSettingsRepository`, `Clock`, `Logger`, `UiContext`,
+  `TicketingServer`, `ServerReadinessChecker`) and implemented by an adapter in `data`, or in `ui` for the UI-bound
+  ones.
+- A port is named after what it represents or provides (for example, `TerminalReaders`, `TicketingServer`, `Clock`), not
+  with a vague suffix such as `Manager`, and uses a platform-neutral vocabulary (for example, `release` rather than
+  `onDestroy`).
+- An adapter is named after the technology it relies on, followed by the name of its port (for example,
   `KeypleTerminalReaders`, `InMemoryAppSettingsRepository`, `SharedPreferencesAppSettingsRepository`, `TimberLogger`,
   `ActivityUiContext`). The `Impl` suffix is not used.
-- The `ui` layer calls the use cases of the domain services, or the ports directly for simple accesses (e.g. settings).
-  It never accesses the `data` layer, and does not handle the Keypop card types (`CalypsoCard`, `StorageCard`...).
+- The `ui` layer calls the use cases of the domain services, or the ports directly for simple accesses (for example,
+  settings). It never accesses the `data` layer, and does not handle the Keypop card types (`CalypsoCard`,
+  `StorageCard`, etc.).
 - The `data` layer implements the ports and does not depend on the `ui` layer.
 - The `di` layer is the only place where adapters are bound to ports. The domain services (`CardReaderSession`, the
-  use cases and the procedures) carry no annotation and are provided by the `DomainModule`. The stable dependencies of
+  use cases, and the procedures) carry no annotation and are provided by the `DomainModule`. The stable dependencies of
   the procedures are injected through their constructor; only the data of the current transaction is passed to them
   (`InspectionContext`, `ValidationContext`). The bindings are application-wide singletons (`SingletonComponent`); the
   application is annotated `@HiltAndroidApp`, and each activity receiving dependencies `@AndroidEntryPoint`.
@@ -203,9 +206,9 @@ application.
 - `CardReaderSession` manages the readers of the terminal: initialization of the readers and of the SAM (and of the
   user feedback devices), detection of the cards, selection of the presented card, end of its processing.
 - One use case per user operation (`domain/usecases`), invoked by the UI: `InspectCard` (inspection app), `ValidateCard`
-  (validation app), `ReadContracts`, `LoadContract` and `PersonalizeCard` (reload client). The use cases of the
-  inspection and validation apps select the card, execute the procedure supporting it and give the user feedback (sound,
-  LEDs) of the result.
+  (validation app), `ReadContracts`, `LoadContract`, and `PersonalizeCard` (reload client). The use cases of the
+  inspection and validation apps select the card, execute the procedure supporting it, and give the user feedback
+  (sound, LEDs) of the result.
 - The inspection and validation procedures implement a common interface (`InspectionProcedure`,
   `ValidationProcedure`), one implementation per card technology: the use case executes the procedure supporting the
   selected card, a new card technology only requiring a new procedure.
@@ -213,7 +216,7 @@ application.
 
 **Logging**
 
-- `domain`, `data` and `di` log through the `Logger` port. Timber is only used by its implementation
+- `domain`, `data`, and `di` log through the `Logger` port. Timber is only used by its implementation
   (`data/TimberLogger`, which tags each message with the name of the calling class), by `DemoApplication` (Timber
   initialization) and by the activities.
 - The messages follow the convention of all the components (see [Log messages](#log-messages)).
@@ -226,11 +229,11 @@ application.
 
 **Results**
 
-- The domain produces no text displayed to the users. The procedures return typed results (`sealed interface`, e.g.
-  `ValidationResult.Accepted`, `Rejected(reason)` or `Failed(error)`), and the UI translates them into the texts of
-  `strings.xml`, as the reload client does with the status codes of the server (`RemoteServiceStatus`).
+- The domain produces no text displayed to the users. The procedures return typed results (`sealed interface`, for
+  example, `ValidationResult.Accepted`, `Rejected(reason)`, or `Failed(error)`), and the UI translates them into the
+  texts of `strings.xml`, as the reload client does with the status codes of the server (`RemoteServiceStatus`).
 - The rejection of a card by a business rule is a result (`RejectionReason`), not an exception: the exceptions are kept
-  for the technical errors (card communication...).
+  for the technical errors (card communication, etc.).
 
 These rules are checked by the CI (`.github/scripts/check-android-architecture.sh`, and
 `.github/scripts/check-android-twin-files.sh` for the twin files), which can also be run locally:
@@ -245,42 +248,42 @@ bash .github/scripts/check-android-twin-files.sh
 - Application class `DemoApplication`, start screen `SplashActivity`, base activity `BaseActivity` (and
   `BaseCardActivity` for the card screens of the reload client), card presentation screen `CardReaderActivity`.
 - Layouts named after their activity (`activity_<name>.xml`), shared toolbar `toolbar.xml`, result overlays
-  `layout_<name>_overlay.xml`, rows of the lists `<item>_recycler_row.xml` and items of the drop-down lists
+  `layout_<name>_overlay.xml`, rows of the lists `<item>_recycler_row.xml`, and items of the drop-down lists
   `spinner_item_<item>.xml`.
-- Hilt modules named after what they provide (e.g. `AppSettingsModule`, `DomainModule`, `ReaderModule`), with
+- Hilt modules named after what they provide (for example, `AppSettingsModule`, `DomainModule`, `ReaderModule`), with
   `provide<Type>` methods.
-- Enums named without suffix (e.g. `TerminalType`, `CardProtocol`, `ResultType`).
+- Enums named without suffix (for example, `TerminalType`, `CardProtocol`, `ResultType`).
 - Mappers and builders, files named after the domain type concerned:
   - a mapper converts a representation into another one, from a layer to another or from an external
     representation (Keypop card, DTO of the server) to the domain. Extension function of the converted object:
-    `to<Type>()` in `domain/mappers` (e.g. `SmartCard.toCardInfo()`, file `CardInfoMapper.kt`), `toUi()` in
-    `ui/mappers` (e.g. `Contract.toUi(resources)` of the reload Android client, file `ContractUiMapper.kt`);
-  - a builder builds an object from several sources, none of them prevailing (e.g. data read in the card and
-    results computed by a procedure). Top-level function `build<Type>(...)` in `domain/builders` (e.g.
+    `to<Type>()` in `domain/mappers` (for example, `SmartCard.toCardInfo()`, file `CardInfoMapper.kt`), `toUi()` in
+    `ui/mappers` (for example, `Contract.toUi(resources)` of the reload Android client, file `ContractUiMapper.kt`);
+  - a builder builds an object from several sources, none of them prevailing (for example, data read in the card and
+    results computed by a procedure). Top-level function `build<Type>(...)` in `domain/builders` (for example,
     `buildContract(...)`, file `ContractBuilder.kt`).
-- The root package of an application only contains `DemoApplication`: the display states (e.g. `ResultType`) and the
-  Android helpers (e.g. `RecyclerView` extensions) belong to the `ui` layer.
+- The root package of an application only contains `DemoApplication`: the display states (for example, `ResultType`) and
+  the Android helpers (for example, `RecyclerView` extensions) belong to the `ui` layer.
 
 **Ticketing vocabulary**
 
 The applications use the same business terms, in the code and in the displayed texts:
 
-| Concept                                    | In the code                                  | Displayed to the users                             |
-|--------------------------------------------|----------------------------------------------|----------------------------------------------------|
-| Right recorded in the card                 | `Contract` (contract record)                 | "ticket", or the name of the ticket                |
-| What is sold (type, price, quantity)       | `Product`, `ProductType`                     | "ticket", or the name of the ticket                |
-| Names of the two tickets                   | `SEASON_PASS`, `MULTI_TRIP` (`PriorityCode`) | "Season pass", "Multi-trip ticket"                 |
-| Unit of the counter of a multi-trip ticket | `trip` (`remainingTrips`, `tripsToLoad`)     | "trip", "trips"                                    |
-| Medium holding the card application        | `CardMedium`                                 | "card" (contactless card, SIM card...)             |
-| Terminal running the application           | `TerminalType`                               | name of the terminal (Bluebird, Famoco, Arrive...) |
-| Sounds and LEDs of the terminal            | `UserFeedback`                               | -                                                  |
+| Concept                                    | In the code                                  | Displayed to the users                                |
+|--------------------------------------------|----------------------------------------------|-------------------------------------------------------|
+| Right recorded in the card                 | `Contract` (contract record)                 | "ticket", or the name of the ticket                   |
+| What is sold (type, price, quantity)       | `Product`, `ProductType`                     | "ticket", or the name of the ticket                   |
+| Names of the two tickets                   | `SEASON_PASS`, `MULTI_TRIP` (`PriorityCode`) | "Season pass", "Multi-trip ticket"                    |
+| Unit of the counter of a multi-trip ticket | `trip` (`remainingTrips`, `tripsToLoad`)     | "trip", "trips"                                       |
+| Medium holding the card application        | `CardMedium`                                 | "card" (contactless card, SIM card, etc.)             |
+| Terminal running the application           | `TerminalType`                               | name of the terminal (Bluebird, Famoco, Arrive, etc.) |
+| Sounds and LEDs of the terminal            | `UserFeedback`                               | -                                                     |
 
 - A product becomes a contract when it is loaded in the card ("load a contract").
 - "Ticket" is only used in the displayed texts, as the word understood by the users; in the code, it is ambiguous
-  (a trip, a product or a contract) and only appears in "ticketing", the name of the domain.
+  (a trip, a product, or a contract) and only appears in "ticketing", the name of the domain.
 - "Title" (literal translation of the French "titre de transport") is not used: it is a false friend in English.
 - "Support" (French "support") is not used either: the displayed texts say "card".
-- The names of the resources of the displayed texts follow the terms of the code (e.g. `product_price`,
+- The names of the resources of the displayed texts follow the terms of the code (for example, `product_price`,
   `trips_count` plurals, `no_contract_label`).
 
 The operations are named in the same way in all the components:
@@ -297,7 +300,7 @@ The operations are named in the same way in all the components:
 - "Reload" is only the name of the reload demo: the operation is "load", including when trips are added to a
   multi-trip ticket or when a season pass is renewed.
 - "Issuance" and "initialization" do not designate the personalization ("initialization" only designates the
-  technical start of a component, e.g. a reader plugin).
+  technical start of a component, for example, a reader plugin).
 - "Write" only designates the technical operation (writing of a record), never the business operation.
 - The secure sessions are named after their Calypso access level: `PERSONALIZATION` (personalization), `LOAD`
   (loading) and `DEBIT` (validation, inspection).
@@ -368,9 +371,9 @@ keyple-demo-ticketing/
 
 ### Building from source
 
-Each module (e.g., `src/common`, `src/reload-remote/server`, `src/validation`, `src/inspection`) is an independent
-project and should be built using the tools and instructions provided within its own directory. For Gradle-based
-projects, navigate to the module's directory and use its `./gradlew` wrapper.
+Each module (for example, `src/common`, `src/reload-remote/server`, `src/validation`, `src/inspection`) is an
+independent project and should be built using the tools and instructions provided within its own directory. For
+Gradle-based projects, navigate to the module's directory and use its `./gradlew` wrapper.
 
 ### Unit tests
 
@@ -415,26 +418,26 @@ Message [key1=value1, key2=value2]
   message (search, counting): the values are only in the context.
 - **Context** (optional): `key=value` pairs between square brackets, separated by `, `. The keys are in camelCase and
   use the terms of the glossary (`plugin`, `reader`, `serialNumber`, `uid`, `productType`, `contractTariff`,
-  `tripsToLoad`, `block`...), the values are written without quotes.
+  `tripsToLoad`, `block`, etc.), the values are written without quotes.
 - **No class or method name** in the message: the logger gives it (tag of `TimberLogger`, logger of the class with
-  SLF4J, Napier and Serilog).
+  SLF4J, Napier, and Serilog).
 - **Exceptions**:
   - unexpected error: `ERROR` level, the exception, when there is one, being attached to the call (stack trace) and
-    not copied in the message, e.g. `logger.error("Unexpected error while loading the contract", e)`;
+    not copied in the message, for example, `logger.error("Unexpected error while loading the contract", e)`;
   - expected incident (card rejected or removed, server not ready): `WARN` level without stack trace, the message of
-    the exception being given in the `cause` key, e.g.
+    the exception being given in the `cause` key, for example,
     `Card communication error while loading the contract [cause=...]`;
   - an exception thrown again is not logged: it is logged once, where it is handled.
 
-| Level   | Use                                                                                                                   |
-|---------|-----------------------------------------------------------------------------------------------------------------------|
-| `ERROR` | Unexpected error, with the stack trace                                                                                |
-| `WARN`  | Rejection or expected incident (card rejected or removed, SAM or server unavailable), without stack trace             |
-| `INFO`  | One line per business operation (e.g. `Loading a contract in a Calypso card [...]`) and main events of the life cycle |
-| `DEBUG` | Technical details (blocks read or written, secure session, states of the screens) and repetitive events               |
+| Level   | Use                                                                                                                           |
+|---------|-------------------------------------------------------------------------------------------------------------------------------|
+| `ERROR` | Unexpected error, with the stack trace                                                                                        |
+| `WARN`  | Rejection or expected incident (card rejected or removed, SAM or server unavailable), without stack trace                     |
+| `INFO`  | One line per business operation (for example, `Loading a contract in a Calypso card [...]`) and main events of the life cycle |
+| `DEBUG` | Technical details (blocks read or written, secure session, states of the screens) and repetitive events                       |
 
-The `TRACE` level is not used. A repetitive event (e.g. periodic check of the server) is logged at the `DEBUG` level,
-or only when its state changes (e.g. "Server ready", "Server not ready").
+The `TRACE` level is not used. A repetitive event (for example, periodic check of the server) is logged at the `DEBUG`
+level, or only when its state changes (for example, "Server ready", "Server not ready").
 
 These rules, and the ones of the exception messages (see [Exception messages](#exception-messages)), are checked by the
 CI (`.github/scripts/check-messages.py`, Python 3), which can also be run locally from the root of the repository:
@@ -443,9 +446,9 @@ CI (`.github/scripts/check-messages.py`, Python 3), which can also be run locall
 python3 .github/scripts/check-messages.py
 ```
 
-It checks the form of the messages (capital letter, final punctuation, class name, variable values and keys in
+It checks the form of the messages (capital letter, final punctuation, class name, and variable values and keys in
 camelCase in the context at the end), the warnings logged without stack trace, and the catch blocks: a catch block
-logs the exception, throws an exception, or explains in a comment why it does not log it (e.g.
+logs the exception, throws an exception, or explains in a comment why it does not log it (for example,
 `// Rejection logged where it is detected`).
 
 Where to read the logs:
@@ -472,12 +475,12 @@ The messages of the exceptions follow the template of the log messages, `Message
 they are often logged (`cause` key) or displayed:
 
 - English sentence starting with a capital letter, without final punctuation, without class or method name, the
-  variable values being given in the context (e.g. `Reader not found [reader=...]`).
+  variable values being given in the context (for example, `Reader not found [reader=...]`).
 - The cause is chained to the exception (`IllegalStateException("Error while registering the reader plugins", e)`),
   not copied in its message. When the exception type does not accept a cause, its message is given in the `cause` key
-  (e.g. `ServerIOException("Communication error [cause=...]")`).
-- The exception is of a specific type (e.g. `IllegalStateException`, `InvalidOperationException`), never `Exception`
-  nor `RuntimeException`.
+  (for example, `ServerIOException("Communication error [cause=...]")`).
+- The exception is of a specific type (for example, `IllegalStateException`, `InvalidOperationException`), never
+  `Exception` nor `RuntimeException`.
 
 The messages displayed to the users are never the messages of the exceptions: the Android applications display their
 texts (`strings.xml`), a technical error being displayed with a generic text, and the server returns to the clients
@@ -504,31 +507,31 @@ All the components name their methods with the same verbs:
 | `is...` / `has...`       | Boolean                                                                | `isServerReady()`, `isSamAvailable()`, `hasTripsLeft()`                          |
 | `...Rejection`           | Reason of the rejection of the card by a rule, null if the rule is met | `environmentRejection()`, `contractVersionRejection()`                           |
 
-- A method is named after what it does for the user or the domain, not after its technical effect (e.g.
+- A method is named after what it does for the user or the domain, not after its technical effect (for example,
   `applyServerSettings()` saves the settings and reconnects the client, `showReadInProgress()` displays "Read in
   progress").
 - An action is named with a verb. A function returning a value computed without side effect may be named after this
-  value, as a property (e.g. `technicalError()`, `rejectionMessage()`, `environmentRejection()`), and the Compose
-  functions, which describe an element of the screen, are named with a noun (e.g. `SuccessMessage`,
+  value, as a property (for example, `technicalError()`, `rejectionMessage()`, `environmentRejection()`), and the
+  Compose functions, which describe an element of the screen, are named with a noun (for example, `SuccessMessage`,
   `PlatformAnimation`).
-- A name without verb promises a value without hidden cost: a function accessing the card, the network or the
-  storage, or making a heavy computation, is named with the verb telling it (e.g. `readCard()`, `findReader()`,
+- A name without verb promises a value without hidden cost: a function accessing the card, the network, or the
+  storage, or making a heavy computation, is named with the verb telling it (for example, `readCard()`, `findReader()`,
   `load()`), even when it returns a value.
-- In Kotlin, a value without parameter nor computation is a property rather than a function (e.g.
+- In Kotlin, a value without parameter nor computation is a property rather than a function (for example,
   `CardReaderSession.cardReader`, `cardSecuritySetting`, instead of `getCardReader()`).
 - The same operation has the same name in all the components. The methods executing a remote service of the server
-  (`JsonApiService` of the server, multiplatform and .NET clients) are named after its identifier
+  (`JsonApiService` of the server, multiplatform, and .NET clients) are named after its identifier
   (`SELECT_APP_AND_PERSONALIZE_CARD`: `selectAppAndPersonalizeCard()`); the ports of the domain are named after the
   operation of the glossary (`TicketingServer.personalizeCard()`).
-- No abbreviation (`btn`, `anim`, `env`...), except the acronyms (`Sam`, `Aid`, `Apdu`) and the terms of the card data
-  model specification (`envEndDate`...).
-- Each language keeps its case convention: camelCase in Kotlin, Java and JavaScript, PascalCase in C#.
-- The names imposed by the frameworks and by the Keyple interfaces (`onCreate`, `onPluginEvent`, `setupReader`...)
+- No abbreviation (`btn`, `anim`, `env`, etc.), except the acronyms (`Sam`, `Aid`, `Apdu`) and the terms of the card
+  data model specification (`envEndDate`, etc.).
+- Each language keeps its case convention: camelCase in Kotlin, Java, and JavaScript, PascalCase in C#.
+- The names imposed by the frameworks and by the Keyple interfaces (`onCreate`, `onPluginEvent`, `setupReader`, etc.)
   are kept.
 
 ## Troubleshooting
 
-Common issues of the Android applications (validation, inspection and reload Android client), the README of each
+Common issues of the Android applications (validation, inspection, and reload Android client), the README of each
 component giving its specific issues:
 
 **NFC detection not working**
@@ -568,10 +571,10 @@ concerned, and passes the checks of the CI:
 
 ## Related projects
 
-- [Eclipse Keyple middleware](https://keyple.org) - Core SDK and plugins
+- [Eclipse Keyple middleware](https://keyple.org): Core SDK and plugins
 - [Calypso Specifications](https://calypsonet.org/calypso-specifications/)
 - [Keyple Server JSON API](https://keyple.org/user-guides/non-keyple-client/server-json-api/)
 
 ## License
 
-This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the BSD 3-Clause License. See the [LICENSE](LICENSE) file for details.
