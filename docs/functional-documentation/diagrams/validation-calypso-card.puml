@@ -50,9 +50,9 @@ else (Yes)
                 else (Yes)
                   if (Ticket still valid ?) then (No -> marked expired)
                   else (Yes)
-                    if (Season Pass,\nor trips left ?) then (No -> marked expired)
+                    if (Season pass,\nor trips left ?) then (No -> marked expired)
                     else (Yes)
-                      :Deduct 1 trip\n(Multi-trip ticket);
+                      :Deduct 1 trip\n(multi-trip ticket);
 
                       :Write the validation event\n(date, time, location, ticket used);
 

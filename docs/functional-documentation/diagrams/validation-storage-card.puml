@@ -44,15 +44,15 @@ else (Yes)
               :Expired ticket;<<#F9E79F>>
               stop
             else (Yes)
-              if (Season Pass or\nMulti-trip ticket ?) then (No)
+              if (Season pass or\nmulti-trip ticket ?) then (No)
                 :Ticket forbidden\nor expired;<<#F9E79F>>
                 stop
               else (Yes)
-                if (Season Pass,\nor trips left ?) then (No)
+                if (Season pass,\nor trips left ?) then (No)
                   :No trip left;<<#F9E79F>>
                   stop
                 else (Yes)
-                  :Write the ticket\n(1 trip deducted for a Multi-trip ticket);
+                  :Write the ticket\n(1 trip deducted for a multi-trip ticket);
 
                   :Write the validation event\n(date, time, location, ticket used);
 

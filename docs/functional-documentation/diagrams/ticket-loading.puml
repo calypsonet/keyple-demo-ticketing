@@ -62,9 +62,9 @@ partition "Loading of the ticket" {
         else (Yes)
           :Open the secure session\n(Calypso card);
 
-          :Write the ticket\n(Season Pass renewal: +30 days if not expired);
+          :Write the ticket\n(Season pass renewal: +30 days if not expired);
 
-          :Add the trips to the counter\n(Multi-trip ticket);
+          :Add the trips to the counter\n(multi-trip ticket);
 
           if (Ticket priorities changed ?) then (No)
           else (Yes)

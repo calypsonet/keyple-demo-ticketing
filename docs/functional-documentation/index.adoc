@@ -127,7 +127,7 @@ NOTE: The Validation terminal and the Inspection terminal do not communicate ove
 [[scope]]
 === Scope of the demo
 
-The demo covers the personalization of the cards, and the loading, validation and inspection of Season Pass and Multi-trip tickets. The following elements of the Calypso data model are not covered:
+The demo covers the personalization of the cards, and the loading, validation and inspection of season passes and multi-trip tickets. The following elements of the Calypso data model are not covered:
 
 * *Stored Value tickets*: they cannot be loaded, and a Stored Value ticket present on a card (priority 3) is ignored at validation
 * *Traceability mode*: the tickets are loaded without the cryptographic authenticator signed by the SAM, and no authenticator is verified at inspection
@@ -181,14 +181,14 @@ WARNING: This demo is only intended to demonstrate that memory cards can be hand
 
 Two ticket types can be loaded onto a card:
 
-=== Season Pass
+=== Season pass
 
 * Ticket valid for a *30-day period* from the date of sale
 * Provides *unlimited access* during its validity period
 * *Renewable*: before expiry, the end date is extended by 30 days; after expiry, a new 30-day period starts on the date of sale
 * No counter decrement at validation
 
-=== Multi-trip
+=== Multi-trip ticket
 
 * *Unit-based* ticket: each validation consumes *1 unit*
 * Valid until the *card expiry date* (EnvEndDate)
@@ -205,12 +205,12 @@ When several tickets are present on a Calypso card, the validation terminal auto
 | Priority | Ticket type | Behavior
 
 | 1 (highest)
-| Season Pass
+| Season pass
 | Selected first if valid
 
 | 2
-| Multi-trip
-| Selected if no valid Season Pass is present and trips are left
+| Multi-trip ticket
+| Selected if no valid season pass is present and trips are left
 
 | 31
 | Expired
@@ -272,16 +272,16 @@ This operation requires the *SAM security module* to be present on the server si
 | Calypso card without free or expired slot
 | Loading rejected — no slot available
 
-| Single-ticket card (storage card, Calypso Basic) holding a ticket of another type that is still usable (Season Pass not expired, Multi-trip with trips left)
+| Single-ticket card (storage card, Calypso Basic) holding a ticket of another type that is still usable (season pass not expired, multi-trip ticket with trips left)
 | Loading rejected
 
 | Ticket of the same type already on the card
 | The existing ticket is updated in its slot
 
-| Renewing a Season Pass
+| Renewing a season pass
 | Not expired: the end date is extended by 30 days from the current end date. Expired: new 30-day period from the date of sale
 
-| Reloading a Multi-trip ticket
+| Reloading a multi-trip ticket
 | The trips are added to the counter (up to 16,777,215)
 
 | New ticket on an empty slot
@@ -387,7 +387,7 @@ The inspector sees:
 
 * The authentication mode used during inspection ("Card authenticated by the SAM", "Card authenticated by PKI" or "Card not authenticated")
 * The *last validation*: date, time, location and ticket used
-* For each ticket present on the card: its type, its validity period (Season Pass) or its number of remaining trips (Multi-trip), and its status (valid, expired, or validated by the last validation)
+* For each ticket present on the card: its type, its validity period (season pass) or its number of remaining trips (multi-trip ticket), and its status (valid, expired, or validated by the last validation)
 * "No ticket" when the card has never been loaded
 
 When the card is rejected, the terminal displays "Not valid on this network" with the reason (see <<inspection-rejection-conditions>>).
@@ -452,17 +452,17 @@ Three types of clients can connect to the reload server:
 
 | *Native Android application*
 | Android 8.0+
-| Multi-trip (1 to 4 trips), Season Pass; card personalization
+| Multi-trip ticket (1 to 4 trips), Season pass; card personalization
 | Full Keyple framework integration
 
 | *Multiplatform application*
 | Android · iOS 15.3+ · Desktop (Windows, macOS, Linux)
-| Multi-trip (1 to 4 trips), Season Pass; card personalization
+| Multi-trip ticket (1 to 4 trips), Season pass; card personalization
 | Shared UI across all platforms
 
 | *.NET desktop client*
 | Windows
-| Multi-trip only (1 to 20 trips, entered by the user)
+| Multi-trip ticket only (1 to 20 trips, entered by the user)
 | Demonstrates the Keyple Server JSON API (HTTP) without the Keyple framework
 |===
 
@@ -480,7 +480,7 @@ Each validation produces one of the following results:
 | Result | Functional meaning
 
 | *Accepted*
-| Access granted, one trip deducted for a Multi-trip ticket. The terminal displays "Validation completed!" with the remaining trips (Multi-trip) or the end date (Season Pass).
+| Access granted, one trip deducted for a multi-trip ticket. The terminal displays "Validation completed!" with the remaining trips (multi-trip ticket) or the end date (season pass).
 
 | *Rejected*
 | Card rejected by a business rule (see below).
@@ -520,7 +520,7 @@ Each validation produces one of the following results:
 | Last analyzed ticket expired
 | Expired ticket — Please load a ticket.
 
-| Multi-trip exhausted (0 trips remaining)
+| Multi-trip ticket exhausted (0 trips remaining)
 | No trip left — Please load a ticket.
 
 | Ticket of a storage card forbidden or expired
@@ -575,10 +575,10 @@ Each validation produces one of the following results:
 | Transit ticket stored on the card. A Calypso card can hold up to 4 contracts simultaneously, depending on the card product.
 
 | *Contract priority*
-| Numerical value determining the selection order of tickets during validation (1 = Season Pass, 2 = Multi-trip, 31 = expired, 0 = empty slot).
+| Numerical value determining the selection order of tickets during validation (1 = Season pass, 2 = Multi-trip ticket, 31 = expired, 0 = empty slot).
 
 | *Counter*
-| Memory area on the card storing the remaining trips of a Multi-trip ticket.
+| Memory area on the card storing the remaining trips of a multi-trip ticket.
 
 | *EnvEndDate*
 | Expiry date of the card application (not of an individual ticket). Set at personalization to the first day of the current month + 6 years.
