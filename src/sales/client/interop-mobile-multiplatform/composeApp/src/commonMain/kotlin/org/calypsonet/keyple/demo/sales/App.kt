@@ -64,12 +64,6 @@ fun App(
             serverReadinessChecker = serverReadinessChecker,
             serverConfigRepository = serverConfigRepository)
       }
-  val serverSettingsViewModel =
-      viewModel<ServerSettingsScreenViewModel> {
-        ServerSettingsScreenViewModel(
-            keypleInteropService = keypleInteropService,
-            serverConfigRepository = serverConfigRepository)
-      }
 
   val navController = rememberNavController()
 
@@ -135,9 +129,16 @@ fun App(
       }
 
       composable<ServerSettings> {
+        // View model bound to the screen: the saved settings are displayed each time it is opened
         ServerSettingsScreen(
             navController = navController,
-            viewModel = serverSettingsViewModel,
+            viewModel =
+                viewModel<ServerSettingsScreenViewModel> {
+                  ServerSettingsScreenViewModel(
+                      keypleInteropService = keypleInteropService,
+                      serverConfigRepository = serverConfigRepository,
+                      serverReadinessChecker = serverReadinessChecker)
+                },
             appState = appState.value)
       }
     }

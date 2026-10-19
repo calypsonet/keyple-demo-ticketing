@@ -29,8 +29,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Reactivity of the terminals: the operations on the readers and the sounds run on dedicated threads, the stop of the
   card detection (about 440 ms on the Bluebird terminals) no longer delaying the display; the inspection result is
   displayed in an overlay of the card reader screen; the "Please wait" indicator is removed.
-- Sales Android client: server settings saved without restarting the application, and "Server state" button taking the
-  availability of the SAM into account.
+- Sales clients: server settings checked and saved in the same way, without restarting the application (entries
+  validated, "Server state" button taking the availability of the SAM into account, "Save" button returning to the
+  settings menu).
 - Code quality: layered architecture with ports and adapters in the Android applications (Hilt instead of Dagger),
   sales server split by business operation, remote services and data named after the business operations, same log
   template in all the components, and conventions described in the README.

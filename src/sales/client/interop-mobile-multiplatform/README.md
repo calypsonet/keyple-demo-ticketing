@@ -103,7 +103,8 @@ The application configuration is managed through:
 
 #### Initial setup
 1. **Launch application**
-2. **Configure server**: Tap settings icon → Enter server URL
+2. **Configure server**: Tap the settings icon → **Server**, enter the address of the server, check it with
+   **Server state**, then **Save**
 3. **Grant permissions**: Allow NFC access when prompted
 
 #### Card personalization
