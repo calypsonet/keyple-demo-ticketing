@@ -43,7 +43,7 @@ demonstrates the minimal integration approach while maintaining full functionali
 ## Installation
 
 ### Download
-1. Download latest `kdt-sales-pc-dotnet-app-X.Y.Z.zip` from [releases](https://github.com/calypsonet/keyple-demo-ticketing/releases)
+1. Download latest `kdt-sales-pc-dotnet-app-YY.MM.DD.zip` from [releases](https://github.com/calypsonet/keyple-demo-ticketing/releases)
 2. Extract to desired directory
 3. Run `App.exe`
 

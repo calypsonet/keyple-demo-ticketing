@@ -41,13 +41,16 @@ to each [release](https://github.com/calypsonet/keyple-demo-ticketing/releases).
 
 ## Quick start
 
+All the components are released together, their version being the release tag in the YY.MM.DD format (date of
+the release); the local builds are versioned `99.99.99`.
+
 ### 1. Server setup
 
-Download `kdt-sales-server-X.Y.Z-full.jar` from the [releases page](https://github.com/calypsonet/keyple-demo-ticketing/releases), then:
+Download `kdt-sales-server-YY.MM.DD-full.jar` from the [releases page](https://github.com/calypsonet/keyple-demo-ticketing/releases), then:
 
 ```bash
 # Start server (requires PC/SC reader with SAM)
-java -jar kdt-sales-server-X.Y.Z-full.jar
+java -jar kdt-sales-server-YY.MM.DD-full.jar
 
 # Access dashboard at http://localhost:8080
 ```

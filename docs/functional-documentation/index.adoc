@@ -6,7 +6,8 @@
 // Rendering, from this directory (all the generated files are placed in the generated directory):
 //   asciidoctor -r asciidoctor-diagram -D generated index.adoc
 //   asciidoctor-pdf -r asciidoctor-diagram -D generated index.adoc
-// The release workflow overrides revnumber, revdate and doc-ref with the release tag and date.
+// The release workflow sets revnumber and revdate from the release tag (YY.MM.DD): 99.99.99 and the build date
+// otherwise, as the applications of the demo. The document reference is fixed: it identifies the document.
 //
 // ============================================================================
 // Document identity
@@ -16,14 +17,14 @@
 :doc-name: Keyple Demo Ticketing
 :doc-type: Functional Documentation
 :doc-classification: Public
-:doc-ref: YYMMDD-FD-KeypleDemoTicketing
+:doc-ref: 261016-FD-KeypleDemoTicketing
 :doc-repo: https://github.com/calypsonet/keyple-demo-ticketing
 include::assets/logos/_calypso.adoc[]
 include::assets/legal/_license-bsd-3-clause.adoc[]
 //
 // Revision (set from the release tag by the release workflow)
-:revnumber: 1.1
-:revdate: 2026-10-16
+:revnumber: 99.99.99
+:revdate: {localdate}
 //
 // ============================================================================
 // Shared / fixed -- identical to the CNA documents

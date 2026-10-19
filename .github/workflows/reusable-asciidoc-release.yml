@@ -33,16 +33,21 @@ jobs:
       - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
         uses: actions/checkout@v5
 
-      - name: Generate the PDF and standalone HTML of ${{ inputs.component-name }} ${{ github.ref_name }}
+      - name: Generate the PDF and standalone HTML of ${{ inputs.component-name }}
+        id: document
         working-directory: ${{ inputs.working-directory }}
         run: |
-          version="${{ github.ref_name }}"
-          release_date=$(date -u +%Y-%m-%d)
-          # The document reference of the header starts with the YYMMDD placeholder, replaced by the release date
-          doc_ref=$(sed -n 's/^:doc-ref:[[:space:]]*//p' "${{ inputs.document }}" | sed "s/^YYMMDD/$(date -u +%y%m%d)/")
+          # Version of the edition: the release tag (YY.MM.DD), its date being the date of the edition (stable when
+          # the job is run again); the document reference of the header is fixed
+          version="${{ github.event.release.tag_name || github.ref_name }}"
+          if ! echo "$version" | grep -Eq '^[0-9]{2}\.[0-9]{2}\.[0-9]{2}$'; then
+            echo "::error::The workflow must be run on a release tag in the YY.MM.DD format (not '$version')"
+            exit 1
+          fi
+          release_date=$(echo "$version" | sed -E 's/^([0-9]{2})\.([0-9]{2})\.([0-9]{2})$/20\1-\2-\3/')
+          echo "version=$version" >> "$GITHUB_OUTPUT"
           for converter in asciidoctor asciidoctor-pdf; do
-            "$converter" -r asciidoctor-diagram \
-              -a revnumber="$version" -a revdate="$release_date" -a doc-ref="$doc_ref" \
+            "$converter" -r asciidoctor-diagram -a revnumber="$version" -a revdate="$release_date" \
               -D generated "${{ inputs.document }}"
           done
           base="generated/$(basename "${{ inputs.document }}" .adoc)"
@@ -54,6 +59,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            ${{ inputs.working-directory }}/generated/${{ inputs.archive-name-prefix }}-${{ github.ref_name }}.pdf
-            ${{ inputs.working-directory }}/generated/${{ inputs.archive-name-prefix }}-${{ github.ref_name }}.html
+            ${{ inputs.working-directory }}/generated/${{ inputs.archive-name-prefix }}-${{ steps.document.outputs.version }}.pdf
+            ${{ inputs.working-directory }}/generated/${{ inputs.archive-name-prefix }}-${{ steps.document.outputs.version }}.html
           token: ${{ secrets.GITHUB_TOKEN }}

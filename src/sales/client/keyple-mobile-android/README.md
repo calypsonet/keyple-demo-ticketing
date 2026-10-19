@@ -37,7 +37,7 @@ for later validation and inspection.
 
 ### Download
 1. Visit [Releases page](https://github.com/calypsonet/keyple-demo-ticketing/releases)
-2. Download latest `kdt-sales-android-app-X.Y.Z-debug.apk`
+2. Download latest `kdt-sales-android-app-YY.MM.DD-debug.apk`
 3. Enable "Install from unknown sources" in Android settings
 4. Install the APK file
 

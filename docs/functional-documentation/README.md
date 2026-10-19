@@ -9,13 +9,15 @@ the CNA documents.
 At each release of the repository, the CI (`.github/workflows/release-tag.yml`) generates the document and attaches it
 to the release:
 
-- `kdt-functional-documentation-X.Y.Z.pdf`
-- `kdt-functional-documentation-X.Y.Z.html`, standalone (fonts, images, and diagrams embedded; only the icons are
+- `kdt-functional-documentation-YY.MM.DD.pdf`
+- `kdt-functional-documentation-YY.MM.DD.html`, standalone (fonts, images, and diagrams embedded; only the icons are
   loaded from the Font Awesome CDN)
 
-The version, the date, and the document reference are set from the release tag and date. The CI of the pull requests
-and of the main branch (`.github/workflows/ci-main-and-pr.yml`) generates the same files, available as artifacts of
-the workflow run for review.
+As the applications of the demo, the version of the document is the release tag (YY.MM.DD), its date being the date
+of this tag; outside the releases, the version is `99.99.99` and the date is the build date. The document reference
+(`261016-FD-KeypleDemoTicketing`, from the date of creation of the document) is fixed: it identifies the document,
+whatever its version. The CI of the pull requests and of the main branch (`.github/workflows/ci-main-and-pr.yml`)
+generates the same files, available as artifacts of the workflow run for review.
 
 ## Local build
 

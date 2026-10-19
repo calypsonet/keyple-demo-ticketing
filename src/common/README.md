@@ -207,8 +207,9 @@ by the server of the sales demo, as described in its
 ## Version compatibility
 
 The library is not published on its own: it is versioned and released with the demo applications (`project` version
-of the `libs.versions.toml` version catalog, replaced by the release tag), and uses the Keyple components of the same
-Keyple Java BOM (`keypleJavaBom` version of the catalog). It targets Java 17, as the applications using it.
+of the `libs.versions.toml` version catalog, `99.99.99`, replaced by the release tag in the YY.MM.DD format), and uses
+the Keyple components of the same Keyple Java BOM (`keypleJavaBom` version of the catalog). It targets Java 17, as the
+applications using it.
 
 ## Contributing
 

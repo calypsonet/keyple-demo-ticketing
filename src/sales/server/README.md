@@ -44,11 +44,11 @@ This Java server implements the business logic for the Keyple Demo ecosystem, ma
 
 ### Download
 
-1. **Download** `kdt-sales-server-X.Y.Z-full.jar` from the [releases page](https://github.com/calypsonet/keyple-demo-ticketing/releases).
+1. **Download** `kdt-sales-server-YY.MM.DD-full.jar` from the [releases page](https://github.com/calypsonet/keyple-demo-ticketing/releases).
 
 2. **Start** the server:
 ```bash
-java -jar kdt-sales-server-X.Y.Z-full.jar
+java -jar kdt-sales-server-YY.MM.DD-full.jar
 ```
 
 3. **Access** the web dashboard at `http://localhost:8080`
@@ -65,17 +65,17 @@ If your PC/SC reader name doesn't match the default filter, specify a custom pat
 
 **Windows Command Prompt:**
 ```cmd
-java "-Dsam.pcsc.reader.filter=Identive CLOUD 2700 R Smart Card Reader.*" -jar kdt-sales-server-X.Y.Z-full.jar
+java "-Dsam.pcsc.reader.filter=Identive CLOUD 2700 R Smart Card Reader.*" -jar kdt-sales-server-YY.MM.DD-full.jar
 ```
 
 **Windows PowerShell:**
 ```powershell
-java '-Dsam.pcsc.reader.filter=Identive CLOUD 2700 R Smart Card Reader.*' -jar .\kdt-sales-server-X.Y.Z-full.jar
+java '-Dsam.pcsc.reader.filter=Identive CLOUD 2700 R Smart Card Reader.*' -jar .\kdt-sales-server-YY.MM.DD-full.jar
 ```
 
 **Linux/macOS:**
 ```bash
-java -Dsam.pcsc.reader.filter=".*ACS.*" -jar kdt-sales-server-X.Y.Z-full.jar
+java -Dsam.pcsc.reader.filter=".*ACS.*" -jar kdt-sales-server-YY.MM.DD-full.jar
 ```
 
 ### Application properties
@@ -247,7 +247,7 @@ until a SAM is detected (no restart needed once the reader is connected and the 
 Enable the detailed logging of the demo (`DEBUG` level: secure sessions, blocks read or written, SAM availability):
 
 ```bash
-java -Dquarkus.log.category."org.calypsonet.keyple".level=DEBUG -jar kdt-sales-server-X.Y.Z-full.jar
+java -Dquarkus.log.category."org.calypsonet.keyple".level=DEBUG -jar kdt-sales-server-YY.MM.DD-full.jar
 ```
 
 The `TRACE` level cannot be used: the minimum level of Quarkus (`quarkus.log.min-level`, `DEBUG` by default) is fixed at
