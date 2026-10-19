@@ -1,4 +1,4 @@
-# Keyple Reload Demo - Kotlin Multiplatform Client
+# Keyple Reload Demo - Kotlin Multiplatform client
 
 [![Kotlin](https://img.shields.io/badge/kotlin-2.3-blue.svg)](https://kotlinlang.org/)
 [![KMP](https://img.shields.io/badge/multiplatform-android%20%7C%20ios%20%7C%20desktop-green.svg)](https://kotlinlang.org/multiplatform/)
@@ -16,27 +16,27 @@ This innovative client showcases the power of Kotlin Multiplatform by providing 
 multiple platforms while maintaining full functionality with the Keyple server ecosystem. It demonstrates modern
 cross-platform development practices for contactless card applications.
 
-**Supported Platforms**:
+**Supported platforms**:
 - **Android 8.0+** (API 26+) with native NFC support
 - **iOS 15.3+** with Core NFC integration
-- **JVM Desktop** (Windows/macOS/Linux) with PC/SC readers
+- **JVM desktop** (Windows/macOS/Linux) with PC/SC readers
 
 ## Prerequisites
 
-### Development Environment
+### Development environment
 - **Android Studio** with Kotlin Multiplatform plugin
 - **Xcode** (for iOS development on macOS)
 - **JDK 17** to build the project (the desktop application runs on Java 17+)
 - **Kotlin 2.3** with multiplatform support (provided by the Gradle build)
 
-### Platform-Specific Requirements
+### Platform-specific requirements
 
 #### Android
 - Device with NFC capability
 - Android 8.0+ (API level 26+)
 - NFC enabled in system settings
 - Android SDK installed locally, with a `local.properties` file at the project root pointing to it (see
-  [Build from Source](#build-from-source))
+  [Build from source](#build-from-source))
 
 #### iOS
 - iPhone with NFC support (iPhone 7+)
@@ -51,7 +51,7 @@ cross-platform development practices for contactless card applications.
   - **macOS**: PC/SC framework (usually pre-installed)
   - **Linux**: `pcscd` daemon and `libpcsclite-dev`
 
-### Server Requirements
+### Server requirements
 - Running [Keyple Reload Demo server](../../server/README.md) with SAM integration
 - Network connectivity from all target platforms
 
@@ -64,9 +64,9 @@ From the [Releases page](https://github.com/calypsonet/keyple-demo-ticketing/rel
   the Android settings to install it)
 - **Desktop**: the package of your system (`.dmg` for macOS, `.msi` for Windows, `.deb` for Linux), or the executable
   JAR of your system (`kdt-reload-multiplatform-app-...jar`), run with Java 17+
-- **iOS**: not published, the application is built with Xcode (see [iOS Development](#ios-development))
+- **iOS**: not published, the application is built with Xcode (see [iOS development](#ios-development))
 
-### Build from Source
+### Build from source
 
 ```bash
 git clone https://github.com/calypsonet/keyple-demo-ticketing.git
@@ -85,11 +85,11 @@ On Windows, escape backslashes in the path, e.g. `sdk.dir=C\:\\Users\\<user>\\Ap
 
 Without this file, Gradle fails with `SDK location not found`.
 
-The build commands of each platform are given in [Building for Different Platforms](#building-for-different-platforms).
+The build commands of each platform are given in [Building for different platforms](#building-for-different-platforms).
 
 ## Configuration
 
-### Application Configuration
+### Application configuration
 
 The application configuration is managed through:
 - Server settings UI for configuring the server address (protocol, host, port, endpoint) and the optional basic
@@ -99,33 +99,33 @@ The application configuration is managed through:
 
 ## Usage
 
-### Mobile Platforms (Android/iOS)
+### Mobile platforms (Android/iOS)
 
-#### Initial Setup
-1. **Launch Application**
-2. **Configure Server**: Tap settings icon → Enter server URL
-3. **Grant Permissions**: Allow NFC access when prompted
+#### Initial setup
+1. **Launch application**
+2. **Configure server**: Tap settings icon → Enter server URL
+3. **Grant permissions**: Allow NFC access when prompted
 
-#### Card Personalization
+#### Card personalization
 1. **Settings** → **Personalization**
-2. **Present Card** to device NFC reader
+2. **Present card** to device NFC reader
 3. **Wait for confirmation** of successful personalization
 
-#### Reading Card Content
-1. **Home Screen** → **Contactless card**
+#### Reading card content
+1. **Home screen** → **Contactless card**
 2. **Hold card** against device back (near NFC antenna)
 3. **View existing contracts** and their status
 4. **Select a new ticket** to load if desired
 
-#### Contract Loading
+#### Contract loading
 1. **Choose contract type** from available options
 2. **Complete payment simulation**
 3. **Present card again** when prompted
 4. **Receive confirmation** of successful loading
 
-### Desktop Platform
+### Desktop platform
 
-#### Initial Setup
+#### Initial setup
 1. **Connect PC/SC reader** via USB
 2. **Launch application** with reader filter:
    ```bash
@@ -133,12 +133,12 @@ The application configuration is managed through:
    ```
 3. **Verify reader detection** in application logs
 
-#### Card Operations
+#### Card operations
 1. **Place card** on connected PC/SC reader
 2. **Follow same workflow** as mobile platforms
 3. **Monitor operations** through desktop UI
 
-### Shared User Interface
+### Shared user interface
 
 The application uses Compose Multiplatform for consistent UI across all platforms:
 
@@ -160,9 +160,9 @@ The application uses Compose Multiplatform for consistent UI across all platform
 └─────────────────────────────────────┘
 ```
 
-## Technical Architecture
+## Technical architecture
 
-### Multiplatform Structure
+### Multiplatform structure
 
 ```
 composeApp/src/                   # Kotlin Multiplatform library, desktop and iOS applications
@@ -194,9 +194,9 @@ androidApp/src/main/              # Android application (activity, manifest, lau
 The Android application is a separate module: the Android Gradle plugin 9 does not support the Kotlin
 Multiplatform and Android application plugins in the same module.
 
-### Key Classes
+### Key classes
 
-#### Shared Business Logic (`commonMain`)
+#### Shared business logic (`commonMain`)
 
 **Services** (`data/service`):
 - `KeypleInteropService` - Integration of the Keyple Interop libraries: Keyple terminal, card selection scenario of
@@ -222,7 +222,7 @@ Multiplatform and Android application plugins in the same module.
 - `SettingsMenuScreen` - Settings menu (server, personalization)
 - `ServerSettingsScreen` - Server settings UI
 
-#### Platform-Specific Implementations
+#### Platform-specific implementations
 
 Each platform provides:
 - NFC/PC/SC reader integration through Keyple libraries
@@ -231,9 +231,9 @@ Each platform provides:
 
 ## Development
 
-### Building for Different Platforms
+### Building for different platforms
 
-#### Android Development
+#### Android development
 ```bash
 # Debug build
 ./gradlew :androidApp:assembleDebug
@@ -242,8 +242,8 @@ Each platform provides:
 ./gradlew :androidApp:installDebug
 ```
 
-#### iOS Development
-1. **Xcode Setup**:
+#### iOS development
+1. **Xcode setup**:
   - Open `iosApp/iosApp.xcodeproj`
   - Configure the signing in `Signing & Capabilities`: enable "Automatically manage signing" and select your
     development team
@@ -257,11 +257,11 @@ Each platform provides:
    </array>
    ```
 
-3. **Build and Run**:
+3. **Build and run**:
   - Use Xcode to build and deploy to iPhone
   - Or use Android Studio's iOS run configuration
 
-#### Desktop Development
+#### Desktop development
 ```bash
 # Run with default settings
 ./gradlew :composeApp:run
@@ -278,7 +278,7 @@ reader is used.
 
 ## Troubleshooting
 
-### Common Issues Across Platforms
+### Common issues across platforms
 
 **"Server connection failed"**
 - Verify server URL is accessible from target platform
@@ -290,7 +290,7 @@ reader is used.
 - **iOS**: Ensure Core NFC is supported (iPhone 7+), check entitlements
 - **Desktop**: Verify PC/SC reader connection and drivers
 
-### Platform-Specific Issues
+### Platform-specific issues
 
 #### Android
 - **NFC not working**: Check `AndroidManifest.xml` for NFC permissions
@@ -309,7 +309,7 @@ reader is used.
 See the [Contributing](../../../../README.md#contributing) section of the main README. Specific to this client: keep the
 same features on Android, iOS and desktop, the platform-specific code being minimal.
 
-## Related Documentation
+## Related documentation
 
 - [Kotlin Multiplatform Documentation](https://kotlinlang.org/docs/multiplatform/get-started.html)
 - [Compose Multiplatform](https://kotlinlang.org/compose-multiplatform/)

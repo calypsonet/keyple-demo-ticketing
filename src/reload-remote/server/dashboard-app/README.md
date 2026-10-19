@@ -1,4 +1,4 @@
-# Keyple Reload Demo - Server Dashboard
+# Keyple Reload Demo - Server dashboard
 
 React application monitoring the Keyple Reload Demo server, built with [Vite](https://vite.dev/).
 
@@ -10,7 +10,7 @@ Node.js 20.19+ or 22.12+ (required by Vite), then install the dependencies:
 npm install
 ```
 
-## Available Scripts
+## Available scripts
 
 In the project directory, you can run:
 
@@ -34,7 +34,7 @@ by the server build (`check` task), and therefore by the CI.
 
 Serves the production build locally, to check it before packaging.
 
-## Packaging the Application
+## Packaging the application
 
 The dashboard is built and embedded into the server by the server Gradle build:
 

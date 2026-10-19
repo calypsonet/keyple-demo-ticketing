@@ -17,7 +17,7 @@ The version, the date and the document reference are set from the release tag an
 and of the main branch (`.github/workflows/ci-main-and-pr.yml`) generates the same files, available as artifacts of
 the workflow run for review.
 
-## Local Build
+## Local build
 
 With [Asciidoctor](https://asciidoctor.org/), Asciidoctor PDF and Asciidoctor Diagram (PlantUML, Java required), or
 the `asciidoctor/docker-asciidoctor` image used by the CI, from this directory:

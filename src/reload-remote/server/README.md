@@ -1,4 +1,4 @@
-# Keyple Reload Demo - Java Server
+# Keyple Reload Demo - Java server
 
 [![Java](https://img.shields.io/badge/java-17%2B-orange.svg)](https://openjdk.org/)
 [![Quarkus](https://img.shields.io/badge/quarkus-3.40-blue.svg)](https://quarkus.io/)
@@ -20,12 +20,12 @@ This Java server implements the business logic for the Keyple Demo ecosystem, ma
 
 ## Prerequisites
 
-### Hardware Requirements
+### Hardware requirements
 - PC/SC compatible card reader
 - Calypso SAM (Secure Access Module) for secure operations
 - USB connection for reader
 
-### Software Requirements
+### Software requirements
 - **JDK 17+** (OpenJDK recommended)
 - **Node.js 20.19+ or 22.12+** (for dashboard development, as required by Vite)
 - **Compatible PC/SC reader drivers**
@@ -33,7 +33,7 @@ This Java server implements the business logic for the Keyple Demo ecosystem, ma
   cards (replaced by a mock by default, the storage cards being then not supported; installed as described in the
   [main README](../../../README.md#proprietary-plugins-available-on-request))
 
-### Tested Readers
+### Tested readers
 - Cherry TC series
 - SCM Microsystems
 - Identive CLOUD series
@@ -53,13 +53,13 @@ java -jar kdt-reload-server-X.Y.Z-full.jar
 
 3. **Access** the web dashboard at `http://localhost:8080`
 
-### Build from Source
+### Build from source
 
-See [Building and Testing](#building-and-testing).
+See [Building and testing](#building-and-testing).
 
 ## Configuration
 
-### Custom Reader Configuration
+### Custom reader configuration
 
 If your PC/SC reader name doesn't match the default filter, specify a custom pattern:
 
@@ -78,7 +78,7 @@ java '-Dsam.pcsc.reader.filter=Identive CLOUD 2700 R Smart Card Reader.*' -jar .
 java -Dsam.pcsc.reader.filter=".*ACS.*" -jar kdt-reload-server-X.Y.Z-full.jar
 ```
 
-### Application Properties
+### Application properties
 
 The server uses the following default configuration in `application.properties`:
 
@@ -100,7 +100,7 @@ quarkus.log.category."org.eclipse.keyple".level=INFO
 sam.pcsc.reader.filter=.*(Cherry TC|SCM Microsystems|Identive|HID|Generic).*
 ```
 
-### Environment Variables
+### Environment variables
 
 Override configuration using environment variables:
 
@@ -109,7 +109,7 @@ export SAM_PCSC_READER_FILTER=".*Your Reader Name.*"
 export QUARKUS_LOG_LEVEL=DEBUG
 ```
 
-## Web Dashboard
+## Web dashboard
 
 ### Features
 
@@ -121,11 +121,11 @@ The React dashboard displays:
 
 ### Dashboard URLs
 
-- **Main Dashboard**: `http://localhost:8080`
+- **Main dashboard**: `http://localhost:8080`
 
-## API Endpoints
+## API endpoints
 
-### Card Operations
+### Card operations
 
 ```http
 GET  /card/export-card-selection-scenario
@@ -133,14 +133,14 @@ POST /card/remote-plugin
 GET  /card/sam-availability
 ```
 
-### Transaction Monitoring
+### Transaction monitoring
 
 ```http
 GET  /transactions           # all the transactions (JSON)
 GET  /transactions/stream    # new transactions (Server-Sent Events, one JSON transaction per event)
 ```
 
-## Technical Architecture
+## Technical architecture
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -156,7 +156,7 @@ GET  /transactions/stream    # new transactions (Server-Sent Events, one JSON tr
                         └───────────────────┘
 ```
 
-### Code Organization
+### Code organization
 
 The card processing (`card` package) is split by business operation, `RemoteServiceDispatcher` dispatching each
 remote service (`RemoteServiceId`) to the service handling it:
@@ -178,7 +178,7 @@ remote service (`RemoteServiceId`) to the service handling it:
 
 ## Development
 
-### Building and Testing
+### Building and testing
 
 1. **Clone** the repository:
 ```bash
@@ -222,7 +222,7 @@ npm start
 
 ## Troubleshooting
 
-### Common Issues
+### Common issues
 
 **"SAM Resource is not available" in the dashboard**
 
@@ -242,7 +242,7 @@ until a SAM is detected (no restart needed once the reader is connected and the 
 - Clear browser cache and cookies
 - Check console for JavaScript errors
 
-### Debug Mode
+### Debug mode
 
 Enable the detailed logging of the demo (`DEBUG` level: secure sessions, blocks read or written, SAM availability):
 
@@ -253,7 +253,7 @@ java -Dquarkus.log.category."org.calypsonet.keyple".level=DEBUG -jar kdt-reload-
 The `TRACE` level cannot be used: the minimum level of Quarkus (`quarkus.log.min-level`, `DEBUG` by default) is fixed at
 build time.
 
-### Server State
+### Server state
 
 Check that the server is reachable with its SAM available (as the clients and the dashboard do):
 
@@ -261,17 +261,17 @@ Check that the server is reachable with its SAM available (as the clients and th
 curl http://localhost:8080/card/sam-availability
 ```
 
-## Security Considerations
+## Security considerations
 
-See the [Security Considerations](../../../README.md#security-considerations) of the main README.
+See the [Security considerations](../../../README.md#security-considerations) of the main README.
 
 ## Contributing
 
 See the [Contributing](../../../README.md#contributing) section of the main README. Specific to this server: the
 business rules of the personalization and of the loading are unit tested (see
-[Unit Tests](../../../README.md#unit-tests)), and a change of a remote service is reported in the clients using it.
+[Unit tests](../../../README.md#unit-tests)), and a change of a remote service is reported in the clients using it.
 
-## Related Documentation
+## Related documentation
 
 - [Main Project Overview](../../../README.md)
 - [Functional Documentation](../../../docs/functional-documentation/index.adoc) - Use cases and business rules

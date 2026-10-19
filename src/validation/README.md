@@ -16,21 +16,21 @@ This Android application simulates validation terminals found at transportation 
 boarding, etc.). It validates contracts loaded by the [Reload Demo](../reload-remote/) and creates validation events
 that can be later verified by the [Inspection Demo](../inspection/).
 
-**Role in Ecosystem**: Second step in the ticketing workflow - validates loaded contracts and grants/denies access to
+**Role in ecosystem**: Second step in the ticketing workflow - validates loaded contracts and grants/denies access to
 transportation networks.
 
 ## Prerequisites
 
-### Hardware Requirements
+### Hardware requirements
 - Android device with Android 8.0+ (API level 26+)
 - NFC capability for contactless card reading
 - **SAM (Secure Access Module)** for the Calypso cards, matching the keys of the cards (test SAM for the demo cards)
 - Compatible terminal hardware (see [tested terminals](#tested-terminals))
 
-### Card Requirements
+### Card requirements
 - Cards personalized and loaded using the [Reload Demo](../reload-remote/)
 - Calypso cards, or storage cards (MIFARE Ultralight, ST25 SRT512, MIFARE Classic) with the storage card
-  libraries (see [Proprietary Plugins](#proprietary-plugins))
+  libraries (see [Proprietary plugins](#proprietary-plugins))
 - Supported AIDs (see [Common Library](../common/README.md#supported-card-applications))
 
 ## Installation
@@ -41,7 +41,7 @@ transportation networks.
 3. Enable "Install from unknown sources" in Android settings
 4. Install the APK file
 
-### Build from Source
+### Build from source
 ```bash
 git clone https://github.com/calypsonet/keyple-demo-ticketing.git
 cd keyple-demo-ticketing/src/validation
@@ -50,14 +50,14 @@ cd keyple-demo-ticketing/src/validation
 
 ## Configuration
 
-### Terminal Selection
+### Terminal selection
 1. Launch application
-2. Select the terminal type from **Terminal Selection** screen:
+2. Select the terminal type from **Terminal selection** screen:
   - **Famoco**: terminal with a SAM reader
   - **Arrive**, **Bluebird**: proprietary plugins (grayed out by default, see
-    [Proprietary Plugins](#proprietary-plugins))
+    [Proprietary plugins](#proprietary-plugins))
 
-### Validation Settings
+### Validation settings
 The **Settings** screen, displayed after the terminal selection, configures the validation:
 - **Battery powered mode**: for the portable terminals, which display the Home screen before each validation
 - **Location**: location of the terminal, written in the validation event and checked by the inspection
@@ -65,23 +65,23 @@ The **Settings** screen, displayed after the terminal selection, configures the 
 
 ## Usage
 
-### Standard Operation Flow
+### Standard operation flow
 
-#### Battery-Powered Mode (Portable Terminals)
+#### Battery-powered mode (portable terminals)
 ```
-Terminal Selection → Settings → Home → Card Reader → Validation Result
-```
-
-#### Fixed Terminal Mode
-```
-Terminal Selection → Settings → Card Reader → Validation Result
+Terminal selection → Settings → Home → Card reader → Validation result
 ```
 
-### Detailed Screen Guide
+#### Fixed terminal mode
+```
+Terminal selection → Settings → Card reader → Validation result
+```
 
-**Terminal Selection (`TerminalSelectionActivity`)**
+### Detailed screen guide
+
+**Terminal selection (`TerminalSelectionActivity`)**
 - Choose appropriate hardware plugin
-- Proprietary plugins require additional setup (see [Proprietary Plugins](#proprietary-plugins))
+- Proprietary plugins require additional setup (see [Proprietary plugins](#proprietary-plugins))
 
 **Settings (`SettingsActivity`)**
 - Battery powered mode, location of the terminal, access to the date and time settings
@@ -89,11 +89,11 @@ Terminal Selection → Settings → Card Reader → Validation Result
 **Home (`HomeActivity`)** _(Battery-powered mode only)_
 - Start of the validation
 
-**Card Reader (`CardReaderActivity`)**
+**Card reader (`CardReaderActivity`)**
 - Waits for a card ("Please present your contactless card for validation")
 - Selects the card and runs the validation procedure supporting it
 
-**Validation Result**
+**Validation result**
 
 The validation result overlay of the reader screen (`CardReaderActivity`) displays both success and failure results
 (`ValidationResult`):
@@ -109,32 +109,32 @@ The content and the messages of each result are described in the
   animation
 - The sounds and LEDs of the terminal signal the success or the failure
 
-## Technical Architecture
+## Technical architecture
 
-### Supported Card Types
+### Supported card types
 
-#### Calypso Cards
-**Security Model**:
+#### Calypso cards
+**Security model**:
 - Secure session with the `DEBIT` access level, authenticated by the SAM
 - Support for multiple contracts (1-4 depending on card type)
 
-**Processing Flow**: see the [Best Contract Search Algorithm](#best-contract-search-algorithm)
+**Processing flow**: see the [Best contract search algorithm](#best-contract-search-algorithm)
 
-#### Storage Cards
-**Simplified Model**:
+#### Storage cards
+**Simplified model**:
 - Reading and writing without cryptographic operation
 - Single contract per card
 - Streamlined validation procedure
 
-**Processing Flow**:
+**Processing flow**:
 1. Card detection and data reading
 2. Contract validation and date checking
 3. Counter updates for applicable contract types
 4. Event creation and data writing
 
-### Validation Procedure Details
+### Validation procedure details
 
-#### Best Contract Search Algorithm
+#### Best contract search algorithm
 
 The contracts are processed in the order of their priorities, described in the
 [Functional Documentation](../../docs/functional-documentation/index.adoc#ticket-priority):
@@ -163,7 +163,7 @@ Not implemented by the demo (steps of the data model): verification of the contr
 Verify Signature command of the SAM and SAM black list (traceability mode: the contracts loaded by the demo have no
 authenticator), black list of the card applications, and stored value contracts (`ContractTariff` 3).
 
-### Key Classes
+### Key classes
 
 **CardReaderSession** (`domain/CardReaderSession.kt`)
 - Manages card and SAM reader lifecycle, and the user feedback devices
@@ -187,17 +187,17 @@ authenticator), black list of the card applications, and stored value contracts 
 - Direct reading and writing, without cryptographic operation
 - Single contract processing per card
 
-## Hardware Integration
+## Hardware integration
 
-### Tested Terminals
+### Tested terminals
 
-#### Standard Plugins (Open Source)
+#### Standard plugins (open source)
 
 **Famoco FX205**
 - **Readers**: NFC reader and SAM reader
 - **Plugins**: [Famoco Plugin](https://github.com/calypsonet/keyple-famoco) + [Android NFC](https://keyple.org/components/standard-reader-plugins/keyple-plugin-android-nfc-lib/)
 
-#### Proprietary Plugins (On Request)
+#### Proprietary plugins (on request)
 
 **Bluebird EF501**
 - **Plugin**: [Bluebird Plugin](https://github.com/calypsonet/keyple-plugin-cna-bluebird-specific-nfc-java-lib)
@@ -208,7 +208,7 @@ authenticator), black list of the card applications, and stored value contracts 
 - **Feedback**: LEDs and sounds of the terminal through the Parkeon SDK (`AndroidParkeonCommon-release.aar`)
 - **Access**: Contact [CNA](https://calypsonet.org/contact-us/) for plugin
 
-### Proprietary Plugins
+### Proprietary plugins
 
 The proprietary components used by this application are available on request and replaced by mocks by default (their
 terminal types being then grayed out, and the storage cards not supported). They are installed as described in the
@@ -223,7 +223,7 @@ terminal types being then grayed out, and the storage cards not supported). They
 
 ## Development
 
-### Project Structure
+### Project structure
 
 ```
 validation/app/
@@ -245,7 +245,7 @@ validation/app/
 └── proguard-rules.pro                   # Code obfuscation rules
 ```
 
-### Building and Testing
+### Building and testing
 
 ```bash
 # Clean build
@@ -274,7 +274,7 @@ The common issues of the Android applications (NFC, SAM, terminal type) are desc
 See the [Contributing](../../README.md#contributing) section of the main README. Specific to this application: validate
 the changes with Calypso cards and storage cards, on the supported terminal types.
 
-## Related Documentation
+## Related documentation
 
 - [Main Project Overview](../../README.md)
 - [Functional Documentation](../../docs/functional-documentation/index.adoc) - Use cases and business rules

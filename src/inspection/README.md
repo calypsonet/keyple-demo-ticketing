@@ -15,20 +15,20 @@ This Android application simulates the terminals used by the inspectors of a tra
 passengers have validated their trip. It analyzes the validation events written by the
 [Validation Demo](../validation/) and the contracts loaded by the [Reload Demo](../reload-remote/).
 
-**Role in Ecosystem**: Last step of the ticketing workflow - checks the cards after their validation.
+**Role in ecosystem**: Last step of the ticketing workflow - checks the cards after their validation.
 
-**Inspection Rules**: see [What inspection checks](../../docs/functional-documentation/index.adoc#inspection-checks)
+**Inspection rules**: see [What inspection checks](../../docs/functional-documentation/index.adoc#inspection-checks)
 in the Functional Documentation.
 
 ## Prerequisites
 
-### Hardware Requirements
+### Hardware requirements
 - Android device with Android 8.0+ (API level 26+)
 - NFC capability for contactless card reading
 - **SAM (Secure Access Module)** for the authentication of the Calypso cards (optional)
 - Compatible terminal hardware (see [tested terminals](#tested-terminals))
 
-### Card Requirements
+### Card requirements
 - Cards personalized and loaded with the [Reload Demo](../reload-remote/)
 - Cards validated with the [Validation Demo](../validation/), to display a validated contract
 - Supported AIDs (see [Common Library](../common/README.md#supported-card-applications))
@@ -41,7 +41,7 @@ in the Functional Documentation.
 3. Enable "Install from unknown sources" in Android settings
 4. Install the APK file
 
-### Build from Source
+### Build from source
 ```bash
 git clone https://github.com/calypsonet/keyple-demo-ticketing.git
 cd keyple-demo-ticketing/src/inspection  
@@ -50,16 +50,16 @@ cd keyple-demo-ticketing/src/inspection
 
 ## Configuration
 
-### Terminal Selection
+### Terminal selection
 1. Launch application
-2. Select the terminal type from **Terminal Selection** screen:
+2. Select the terminal type from **Terminal selection** screen:
   - **Famoco**: terminal with a SAM reader
   - **NFC terminal**: any Android device with NFC (no SAM: the Calypso cards are authenticated by PKI when they
     support it, otherwise not authenticated); the MIFARE Ultralight and MIFARE Classic storage cards are also
-    supported (with the storage card libraries, see [Proprietary Plugins](#proprietary-plugins))
-  - **Bluebird**: proprietary plugin (grayed out by default, see [Proprietary Plugins](#proprietary-plugins))
+    supported (with the storage card libraries, see [Proprietary plugins](#proprietary-plugins))
+  - **Bluebird**: proprietary plugin (grayed out by default, see [Proprietary plugins](#proprietary-plugins))
 
-### Inspection Settings
+### Inspection settings
 The **Settings** screen, displayed after the terminal selection, configures the inspection:
 - **Location**: location of the inspection, compared with the location of the last validation
 - **Validation period** (minutes): period after the validation during which the validated contract is considered
@@ -68,17 +68,17 @@ The **Settings** screen, displayed after the terminal selection, configures the 
 
 ## Usage
 
-### Standard Inspection Flow
+### Standard inspection flow
 
 ```
-Terminal Selection → Settings → Home → Card Reader → Card Content or Invalid Card
+Terminal selection → Settings → Home → Card reader → Card content or Invalid card
 ```
 
-### Detailed Screen Guide
+### Detailed screen guide
 
-**Terminal Selection (`TerminalSelectionActivity`)**
+**Terminal selection (`TerminalSelectionActivity`)**
 - Choice of the terminal type, which selects the reader plugins
-- Proprietary plugins require additional setup (see [Proprietary Plugins](#proprietary-plugins))
+- Proprietary plugins require additional setup (see [Proprietary plugins](#proprietary-plugins))
 
 **Settings (`SettingsActivity`)**
 - Location of the inspection, validation period, access to the date and time settings
@@ -86,7 +86,7 @@ Terminal Selection → Settings → Home → Card Reader → Card Content or Inv
 **Home (`HomeActivity`)**
 - Start of the inspection
 
-**Card Reader (`CardReaderActivity`)**
+**Card reader (`CardReaderActivity`)**
 - Waits for a card ("Please present a contactless card for inspection")
 - Selects the card and runs the inspection procedure supporting it
 - Displays the authentication mode of the card (by the SAM, by PKI, or not authenticated)
@@ -100,29 +100,29 @@ Terminal Selection → Settings → Home → Card Reader → Card Content or Inv
     [Inspection rejection conditions](../../docs/functional-documentation/index.adoc#inspection-rejection-conditions)
     in the Functional Documentation) or error message
 
-## Technical Architecture
+## Technical architecture
 
-### Supported Card Types
+### Supported card types
 
-#### Calypso Cards
-**Inspection Procedure**:
+#### Calypso cards
+**Inspection procedure**:
 1. **Selection**: selection of the application by its AID
 2. **Authentication**: secure session with the `DEBIT` access level when a SAM is available, PKI secure session when
    the card supports it, otherwise reading without authentication
-3. **Environment Analysis**: version and end date of the environment
-4. **Event Analysis**: version, date, time and location of the last event, and contract used
-5. **Contract Analysis**: reading of the contracts and of the counters, expiration of each contract, contract
+3. **Environment analysis**: version and end date of the environment
+4. **Event analysis**: version, date, time and location of the last event, and contract used
+5. **Contract analysis**: reading of the contracts and of the counters, expiration of each contract, contract
    validated by the last event
 6. **Result**: content of the card (`InspectionResult.CardContent`) or reason of the rejection
 - **Not implemented** (steps of the data model): verification of the contract authenticator with the PSO Verify
   Signature command of the SAM and SAM black list (the contracts loaded by the demo have no authenticator)
 
-#### Storage Cards
-**Inspection Procedure** (MIFARE Ultralight, ST25 SRT512, MIFARE Classic):
+#### Storage cards
+**Inspection procedure** (MIFARE Ultralight, ST25 SRT512, MIFARE Classic):
 1. **Reading**: reading of the environment, of the event and of the contract, without cryptographic operation
 2. **Analysis**: same checks as for the Calypso cards, on the single contract of the card
 
-### Key Classes
+### Key classes
 
 **CardReaderSession** (`domain/CardReaderSession.kt`)
 - Manages the readers of the terminal, the SAM being optional: without SAM, the Calypso cards are authenticated by PKI
@@ -147,28 +147,28 @@ Terminal Selection → Settings → Home → Card Reader → Card Content or Inv
 - Inspection procedure of the storage cards (MIFARE Ultralight, ST25 SRT512, MIFARE Classic)
 - Direct reading of the contract and of the event, without cryptographic operation
 
-## Hardware Integration
+## Hardware integration
 
-### Tested Terminals
+### Tested terminals
 
-#### Standard Plugins (Open Source)
+#### Standard plugins (open source)
 
 **Famoco FX205**
 - **Configuration**: NFC reader and SAM reader
 - **Plugins**: [Famoco Plugin](https://github.com/calypsonet/keyple-famoco) + [Android NFC](https://keyple.org/components/standard-reader-plugins/keyple-plugin-android-nfc-lib/)
 
-**NFC Terminal (any Android device with NFC)**
+**NFC terminal (any Android device with NFC)**
 - **Plugin**: [Android NFC Plugin](https://keyple.org/components/standard-reader-plugins/keyple-plugin-android-nfc-lib/)
 - **Limitations**: No SAM (Calypso cards authenticated by PKI when they support it)
-- **Use Case**: Development and testing
+- **Use case**: Development and testing
 
-#### Proprietary Plugins (On Request)
+#### Proprietary plugins (on request)
 
 **Bluebird EF501**
 - **Plugin**: [Bluebird Plugin](https://github.com/calypsonet/keyple-plugin-cna-bluebird-specific-nfc-java-lib)
 - **Access**: Contact [CNA](https://calypsonet.org/contact-us/) for plugin
 
-### Proprietary Plugins
+### Proprietary plugins
 
 The proprietary components used by this application are available on request and replaced by mocks by default (their
 terminal types being then grayed out, and the storage cards not supported). They are installed as described in the
@@ -180,7 +180,7 @@ terminal types being then grayed out, and the storage cards not supported). They
 
 ## Development
 
-### Project Structure
+### Project structure
 
 ```
 inspection/app/
@@ -204,7 +204,7 @@ inspection/app/
 └── proguard-rules.pro                       # Code obfuscation rules
 ```
 
-### Building and Testing
+### Building and testing
 
 ```bash
 # Clean project
@@ -232,7 +232,7 @@ The common issues of the Android applications (NFC, SAM, terminal type) are desc
 See the [Contributing](../../README.md#contributing) section of the main README. Specific to this application: keep one
 presentation of the card for one result, and verify the results after validations at various locations and times.
 
-## Related Documentation
+## Related documentation
 
 - [Main Project Overview](../../README.md)
 - [Functional Documentation](../../docs/functional-documentation/index.adoc) - Use cases and business rules

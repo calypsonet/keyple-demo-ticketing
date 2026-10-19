@@ -1,4 +1,4 @@
-# Keyple Reload Demo - Android Client
+# Keyple Reload Demo - Android client
 
 [![Android](https://img.shields.io/badge/android-8.0%2B-green.svg)](https://developer.android.com/)
 [![Release](https://img.shields.io/github/v/release/calypsonet/keyple-demo-ticketing)](https://github.com/calypsonet/keyple-demo-ticketing/releases)
@@ -15,20 +15,20 @@ This Android application demonstrates distributed ticketing where all card opera
 server with SAM integration. The mobile client provides the user interface and NFC card communication while delegating
 all business logic and cryptographic operations to the server.
 
-**Role in Ecosystem**: First step in the ticketing workflow - loads Season pass and Multi-trip contracts onto cards for
+**Role in ecosystem**: First step in the ticketing workflow - loads season passes and multi-trip tickets onto cards for
 later validation and inspection.
 
 ## Prerequisites
 
-### Hardware Requirements
+### Hardware requirements
 - Android device with Android 8.0+ (API level 26+)
 - NFC capability for contactless card reading
 - Internet connectivity for server communication
 - Compatible cards: Calypso cards (see [supported AIDs](../../../common/README.md#supported-card-applications)), or
   storage cards (MIFARE Ultralight and MIFARE Classic 1K, and ST25 SRT512 with the Bluebird terminals), with the
-  storage card libraries (see [Plugin Integration](#plugin-integration))
+  storage card libraries (see [Plugin integration](#plugin-integration))
 
-### Server Requirements
+### Server requirements
 - Running [Keyple Reload Demo server](../../server/README.md) with SAM integration
 - Network connectivity between client and server
 - Proper firewall configuration for server access
@@ -41,7 +41,7 @@ later validation and inspection.
 3. Enable "Install from unknown sources" in Android settings
 4. Install the APK file
 
-### Build from Source
+### Build from source
 ```bash
 git clone https://github.com/calypsonet/keyple-demo-ticketing.git
 cd keyple-demo-ticketing/src/reload-remote/client/keyple-mobile-android
@@ -50,102 +50,102 @@ cd keyple-demo-ticketing/src/reload-remote/client/keyple-mobile-android
 
 ## Configuration
 
-### Server Connection
+### Server connection
 1. Open **Settings** → **Server**
 2. Configure the server connection:
   - **Server IP** and **Server port** (e.g. `192.168.1.10` and `8080`)
   - **Protocol** (e.g. `http://`)
 3. Check that the server is ready (reachable, with its SAM available) with the **Server state** button, then **Save**
 
-### NFC Settings
+### NFC settings
 1. Ensure NFC is enabled in Android settings
 2. Grant NFC permissions to the application
 3. Keep screen on during card operations for stable connection
 
-### Card Reader Selection
+### Card reader selection
 The app supports two card media, each with its reader:
 - **Contactless card**: Android NFC reader (all devices), or the reader of the Bluebird terminals
-- **SIM Card**: OMAPI reader (work in progress)
+- **SIM card**: OMAPI reader (work in progress)
 
 ## Usage
 
-### Quick Start Workflow
+### Quick start workflow
 
-1. **Launch Application**
+1. **Launch application**
   - Select **Contactless card** from main menu
   - Ensure server is running and accessible
 
-2. **Card Personalization** (if needed)
+2. **Card personalization** (if needed)
   - Go to **Settings** → **Personalization**, then choose the card medium
   - Present the card to personalize (its data is reset)
   - Wait for confirmation message
 
-3. **Read Card Content**
+3. **Read card content**
   - From main screen, tap **Contactless card**
   - Present card to NFC reader
   - View existing contracts and validity status
 
-4. **Load New Contract**
+4. **Load new contract**
   - Select desired contract type from available options
   - Follow payment simulation workflow
   - Present card again to complete loading
 
-### Screen Flow
+### Screen flow
 
 ```
-Splash Screen → Home → Card Reader → Card Content → Select Product → Checkout → Payment Confirmed → Load Contract → Result
+Splash screen → Home → Card reader → Card content → Select product → Checkout → Payment confirmed → Load contract → Result
 ```
 
-### Detailed Screen Guide
+### Detailed screen guide
 
-**Splash Screen (`SplashActivity`)**
+**Splash screen (`SplashActivity`)**
 - Displayed at startup, then opens the home screen
 
-**Home Screen (`HomeActivity`)**
+**Home screen (`HomeActivity`)**
 - Menu for different card reader types
 - Quick access to settings and personalization
 
-**Settings Menu (`SettingsMenuActivity`)**
-- **Server Settings**: Connection configuration
+**Settings menu (`SettingsMenuActivity`)**
+- **Server**: Connection configuration
 - **Card media**: Card media shown in the home screen (enabled, disabled or hidden)
 - **Personalization**: Personalization of a card (reset of its data)
 
-**Card Reader (`CardReaderActivity`)**
+**Card reader (`CardReaderActivity`)**
 - Initializes selected Keyple plugin
 - Establishes server connection with SAM integration
 - Reads card content through secure session
 - Displays connection status and progress
 
-**Card Content (`CardContentActivity`)**
+**Card content (`CardContentActivity`)**
 - Shows current card content (Season pass, Multi-trip ticket)
 - Displays contract validity and usage status
 - Option to load additional contracts
 
-**Select Product (`SelectProductActivity`)**
+**Select product (`SelectProductActivity`)**
 - Lists the products for sale (see the
   [Functional Documentation](../../../../docs/functional-documentation/index.adoc#reload-clients))
 - Shows their prices
 - Product selection for purchase
 
-**Payment Simulation**
+**Payment simulation**
 - **Checkout (`CheckoutActivity`)**: Simulates credit card payment
-- **Payment Confirmed (`PaymentConfirmedActivity`)**: Confirms payment success
+- **Payment confirmed (`PaymentConfirmedActivity`)**: Confirms payment success
 
-**Contract Loading**
-- **Load Contract (`LoadContractActivity`)**: Loads selected contract onto card
-- **Card Operation Result (`CardOperationResultActivity`)**: Shows the success or failure of the loading or of the
+**Contract loading**
+- **Load contract (`LoadContractActivity`)**: Loads selected contract onto card
+- **Card operation result (`CardOperationResultActivity`)**: Shows the success or failure of the loading or of the
   personalization
 
-## Known Limitations
+## Known limitations
 
 - The SIM card reader (OMAPI) is a work in progress
 - Payment simulation only - no real payment processing
 - Limited offline capability (server connection required)
 - Single server connection (no failover support)
 
-## Technical Architecture
+## Technical architecture
 
-### Key Classes
+### Key classes
 
 **CardReaderSession**
 - Manages Keyple plugin initialization and cleanup
@@ -170,20 +170,20 @@ Splash Screen → Home → Card Reader → Card Content → Select Product → C
 - Responds to card insertion/removal events
 - Triggers appropriate business logic for card processing
 
-**Server Communication** (`data/server`)
+**Server communication** (`data/server`)
 - `KeypleSyncEndpointClient`: synchronous endpoint of the Keyple Distributed client, exchanging the messages with the
   server (`/card/remote-plugin`)
 - `RestServerReadinessChecker`: checks that the server is reachable with its SAM available (`/card/sam-availability`)
 
-### Plugin Integration
+### Plugin integration
 
 The application supports multiple reader plugins:
 
-**Standard Plugins** (always available):
+**Standard plugins** (always available):
 - Android NFC plugin for standard contactless reading
 - OMAPI plugin for SIM card access (work in progress)
 
-**Proprietary Components** (on request, replaced by mocks by default; installed as described in the
+**Proprietary components** (on request, replaced by mocks by default; installed as described in the
 [main README](../../../../README.md#proprietary-plugins-available-on-request)):
 - Bluebird plugin for the reader of the Bluebird terminals
 - Storage card extension (`keyple-card-cna-storagecard-java-lib`) and reader plugin
@@ -191,7 +191,7 @@ The application supports multiple reader plugins:
 
 ## Development
 
-### Building and Testing
+### Building and testing
 
 ```bash
 # Clean build
@@ -204,13 +204,13 @@ The application supports multiple reader plugins:
 The business rules of the personalization and of the loading are implemented and unit tested by the server (see the
 [Server Documentation](../../server/README.md)).
 
-### Development Configuration
+### Development configuration
 
-**Debug Settings**:
+**Debug settings**:
 - Use test server URL for development
 - Read the logs in Logcat (Timber, all levels)
 
-### Adding New Readers
+### Adding new readers
 
 To integrate additional reader types:
 
@@ -221,7 +221,7 @@ To integrate additional reader types:
 
 ## Troubleshooting
 
-### Common Issues
+### Common issues
 
 The common issues of the Android applications (NFC, terminal type) are described in the
 [main README](../../../../README.md#troubleshooting).
@@ -240,11 +240,11 @@ The common issues of the Android applications (NFC, terminal type) are described
 - Ensure server has SAM properly configured
 - Check card has available contract slots
 
-### Debug Mode
+### Debug mode
 
 The logs are written to Logcat (Timber): view them in the Android Studio Logcat or with `adb logcat`.
 
-### Server Connectivity Test
+### Server connectivity test
 
 Test server connection:
 ```bash
@@ -257,7 +257,7 @@ curl http://your-server:8080/card/sam-availability
 See the [Contributing](../../../../README.md#contributing) section of the main README. Specific to this client: keep the
 compatibility with the API level 26, and update the server when a remote service changes.
 
-## Related Documentation
+## Related documentation
 
 - [Main Project Overview](../../../../README.md)
 - [Common Library](../../../common/README.md) - Data structures and types

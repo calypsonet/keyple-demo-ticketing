@@ -122,14 +122,14 @@ The ecosystem consists of four distinct applications, each covering a specific r
 
 plantuml::diagrams/overview.puml[target=overview,format=svg,alt="Keyple Demo Ticketing ecosystem flow",align="center"]
 
-NOTE: The Validation terminal and the Inspection terminal do not communicate over the network. Information is exchanged between these two applications *exclusively through the passenger's card*.
+NOTE: The validation terminal and the inspection terminal do not communicate over the network. Information is exchanged between these two applications *exclusively through the passenger's card*.
 
 [[scope]]
 === Scope of the demo
 
 The demo covers the personalization of the cards, and the loading, validation and inspection of season passes and multi-trip tickets. The following elements of the Calypso data model are not covered:
 
-* *Stored Value tickets*: they cannot be loaded, and a Stored Value ticket present on a card (priority 3) is ignored at validation
+* *Stored value tickets*: they cannot be loaded, and a stored value ticket present on a card (priority 3) is ignored at validation
 * *Traceability mode*: the tickets are loaded without the cryptographic authenticator signed by the SAM, and no authenticator is verified at inspection
 * *Black lists* of the cards and of the SAMs
 
@@ -221,7 +221,7 @@ When several tickets are present on a Calypso card, the validation terminal auto
 | Ignored
 |===
 
-NOTE: The priority 3 of the data model (Stored Value) is not covered by the demo (see <<scope>>).
+NOTE: The priority 3 of the data model (Stored value) is not covered by the demo (see <<scope>>).
 
 == Use cases
 

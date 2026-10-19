@@ -19,7 +19,7 @@ This library defines the common elements used across the Keyple Demo ecosystem:
   output data, status codes)
 - `reference`: reference data of the network (locations)
 
-## Used By
+## Used by
 
 - [Keyple Reload Demo](../reload-remote)
 - [Keyple Validation Demo](../validation)
@@ -30,9 +30,9 @@ This library defines the common elements used across the Keyple Demo ecosystem:
 This library is included in the builds of the applications using it (Gradle included build, `includeBuild` in their
 `settings.gradle.kts`): it is built with them and does not need to be installed.
 
-## Data Structures
+## Data structures
 
-### Environment/Holder Structure
+### Environment/holder structure
 
 Stores card metadata and holder information.
 
@@ -46,7 +46,7 @@ Stores card metadata and holder information.
 | HolderIdNumber       |   32 | Holder Identifier within HolderCompany             |      Int      | Optional  | 
 | EnvPadding           |  120 | Padding (bits to 0)                                |    Binary     | Optional  | 
 
-### Event Structure
+### Event structure
 
 Records validation events and transaction history.
 
@@ -63,7 +63,7 @@ Records validation events and transaction history.
 | ContractPriority4  |    8 | Priority for contract #4                      | PriorityCode  | Mandatory | 
 | EventPadding       |  120 | Padding (bits to 0)                           |    Binary     | Optional  | 
 
-### Contract Structure
+### Contract structure
 
 Defines the contracts (tickets) and their properties.
 
@@ -79,7 +79,7 @@ Defines the contracts (tickets) and their properties.
 | ContractAuthenticator   |   24 | Security authenticator               | Authenticator (Int) | Optional  | 
 | ContractPadding         |   96 | Padding (bits to 0)                  |       Binary        | Optional  | 
 
-### Counter Structure
+### Counter structure
 
 Counts the trips left of a multi-trip ticket.
 
@@ -91,9 +91,9 @@ The counter of a contract is stored in a separate file on the Calypso cards (one
 the contract record on the storage cards. `ContractStructure` carries it in its `counterValue` field, null for a
 contract without counter (season pass).
 
-## Data Types
+## Data types
 
-### Base Types
+### Base types
 
 | Name          | Bits | Description                                                                                                                                                        |
 |:--------------|-----:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -101,7 +101,7 @@ contract without counter (season pass).
 | TimeCompact   |   16 | Time in minutes, value = hour*60+minute (0 to 1,439)                                                                                                               |    
 | VersionNumber |    8 | Data model version:<br>0 Forbidden (undefined)<br>1 Current version<br>2..254 RFU<br>255 Forbidden (reserved)                                                      |
 
-### Priority Codes
+### Priority codes
 
 Contract types and status indicators of the event. The code 3 (stored value) is defined by the data model but not
 supported by the demo: it is read as `UNKNOWN`. The use of the codes by the validation is described in the
@@ -116,7 +116,7 @@ supported by the demo: it is read as `UNKNOWN`. The use of the codes by the vali
 | 4-30 | RFU         | Reserved for future use |
 |   31 | EXPIRED     | Contract has expired    |
 
-## Record Codecs
+## Record codecs
 
 The records of the card are decoded and encoded by codecs implementing `RecordCodec<T>` (`decode` and `encode`
 methods), one per structure and card technology:
@@ -130,7 +130,7 @@ methods), one per structure and card technology:
 The counter of a contract is stored in a separate file on the Calypso cards, and in the contract record on the storage
 cards.
 
-## Card Constants
+## Card constants
 
 | Object                | Content                                                                          |
 |-----------------------|----------------------------------------------------------------------------------|
@@ -141,7 +141,7 @@ cards.
 | `MifareClassicBlocks` | Layout of the MIFARE Classic 1K cards (sector 1)                                 |
 | `PkiTestCertificates` | Test certificates of the PKI                                                     |
 
-## Supported Card Applications
+## Supported card applications
 
 The demos work with cards from the [CNA Test Kit](https://calypsonet.org/technical-support-documentation/) containing these application identifiers:
 
@@ -152,9 +152,9 @@ The demos work with cards from the [CNA Test Kit](https://calypsonet.org/technic
 | 315449432E49434133   | Calypso Light                  | Standard Calypso       |
 | A0000004040125090101 | Navigo IDF                     | Paris transport system |
 
-## Usage Examples
+## Usage examples
 
-### Environment Structure Creation
+### Environment structure creation
 
 ```kotlin
 val env = EnvironmentHolderStructure(
@@ -167,7 +167,7 @@ val env = EnvironmentHolderStructure(
 )
 ```
 
-### Event Creation
+### Event creation
 
 ```kotlin
 val event = EventStructure(
@@ -183,7 +183,7 @@ val event = EventStructure(
 The structures are immutable: a modified structure is a copy, e.g.
 `event.withContractPriority(1, PriorityCode.EXPIRED)` or `contract.withCounterValue(10)`.
 
-### Working with Compact Date/Time
+### Working with compact date/time
 
 ```kotlin
 // Create compact date from LocalDate
@@ -198,13 +198,13 @@ val timeCompact = TimeCompact(LocalDateTime.now())
 val timeValue: Int = timeCompact.value
 ```
 
-## Common Procedures
+## Common procedures
 
 The procedures using these structures, the personalization of the cards and the loading of the contracts, are executed
 by the server of the reload demo, as described in its
 [README](../reload-remote/README.md#card-personalization-and-contract-loading-procedures).
 
-## Version Compatibility
+## Version compatibility
 
 The library is not published on its own: it is versioned and released with the demo applications (`project` version
 of the `libs.versions.toml` version catalog, replaced by the release tag), and uses the Keyple components of the same
@@ -214,7 +214,7 @@ Keyple Java BOM (`keypleJavaBom` version of the catalog). It targets Java 17, as
 
 When contributing to this library, ensure:
 - All data structures maintain backward compatibility
-- The library is versioned with the demo applications (see [Version Compatibility](#version-compatibility))
+- The library is versioned with the demo applications (see [Version compatibility](#version-compatibility))
 - Update all demo applications when making breaking changes
 - Include comprehensive unit tests for new utilities
 

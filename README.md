@@ -1,4 +1,4 @@
-# Keyple Demo Ticketing Ecosystem
+# Keyple Demo Ticketing ecosystem
 
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](LICENSE)
 [![Java](https://img.shields.io/badge/java-17%2B-orange.svg)](https://openjdk.org/)
@@ -8,12 +8,12 @@ A comprehensive open source ticketing ecosystem demonstrating the [Eclipse Keypl
 real-world use cases. This project is provided by the [Calypso Networks Association](https://calypsonet.org) and serves
 as a foundation for building contactless card and NFC smartphone-based ticketing systems.
 
-**Contents**: [Overview](#overview) · [Quick Start](#quick-start) ·
-[Supported Card Technologies](#supported-card-technologies) · [Data Model](#data-model) ·
-[Supported Hardware](#supported-hardware) · [Architecture](#architecture) ·
-[Security Considerations](#security-considerations) · [Development](#development) ·
-[Coding Conventions](#coding-conventions) · [Troubleshooting](#troubleshooting) · [Contributing](#contributing) ·
-[Support](#support) · [Related Projects](#related-projects) · [License](#license)
+**Contents**: [Overview](#overview) · [Quick start](#quick-start) ·
+[Supported card technologies](#supported-card-technologies) · [Data model](#data-model) ·
+[Supported hardware](#supported-hardware) · [Architecture](#architecture) ·
+[Security considerations](#security-considerations) · [Development](#development) ·
+[Coding conventions](#coding-conventions) · [Troubleshooting](#troubleshooting) · [Contributing](#contributing) ·
+[Support](#support) · [Related projects](#related-projects) · [License](#license)
 
 ## Overview
 The Keyple Demo Ecosystem consists of three interconnected applications that simulate a complete public transportation
@@ -28,7 +28,7 @@ ticketing workflow:
 └─────────────────┘     └─────────────────┘     └─────────────────┘
 ```
 
-### Application Roles
+### Application roles
 
 - **[Reload Demo](src/reload-remote/)**: Remote contract loading using distributed client/server architecture
 - **[Validation Demo](src/validation/)**: Entry validation for transportation networks
@@ -39,9 +39,9 @@ The use cases and business rules are described for a functional audience (projec
 in the [Functional Documentation](docs/functional-documentation/index.adoc), also attached as PDF and HTML files
 to each [release](https://github.com/calypsonet/keyple-demo-ticketing/releases).
 
-## Quick Start
+## Quick start
 
-### 1. Server Setup
+### 1. Server setup
 
 Download `kdt-reload-server-X.Y.Z-full.jar` from the [releases page](https://github.com/calypsonet/keyple-demo-ticketing/releases), then:
 
@@ -52,7 +52,7 @@ java -jar kdt-reload-server-X.Y.Z-full.jar
 # Access dashboard at http://localhost:8080
 ```
 
-### 2. Card Personalization
+### 2. Card personalization
 
 Use the personalization feature of the Android or multiplatform reload client to personalize cards with:
 
@@ -60,40 +60,40 @@ Use the personalization feature of the Android or multiplatform reload client to
 - Clean contract slots
 - Reset event logs and counters
 
-### 3. Workflow Execution
+### 3. Workflow execution
 
-1. **Load Contracts**: Use Reload Demo to add Season pass or Multi-trip tickets
-2. **Validate Entry**: Present card to Validation Demo terminal
-3. **Ticket Inspection**: Verify card status using the Inspection Demo
+1. **Load contracts**: Use Reload Demo to add season passes or multi-trip tickets
+2. **Validate entry**: Present card to Validation Demo terminal
+3. **Ticket inspection**: Verify card status using the Inspection Demo
 
-## Supported Card Technologies
+## Supported card technologies
 
 The demo supports Calypso cards, with secure sessions authenticated by a SAM (or by PKI for the inspection), and
 storage cards (MIFARE Ultralight, ST25 SRT512, MIFARE Classic), read and written without cryptographic operation and
 supported with the proprietary storage card libraries (see
-[Proprietary Plugins](#proprietary-plugins-available-on-request)). Their features and the tickets they hold are
+[Proprietary plugins](#proprietary-plugins-available-on-request)). Their features and the tickets they hold are
 described in the [Functional Documentation](docs/functional-documentation/index.adoc#cards).
 
-### Card Application Identifiers
+### Card application identifiers
 
 The Calypso card applications supported by the demos, those of the test cards of the
 [CNA Test Kit](https://calypsonet.org/technical-support-documentation/), are listed in the
 [Common Library documentation](src/common/README.md#supported-card-applications).
 
-## Data Model
+## Data model
 
 The ecosystem uses standardized data structures defined in the [Common Library](src/common/):
 
-- **Environment Record**: Card metadata and validity information
-- **Event Log**: Transaction history and validation events
-- **Contract Records**: Contracts (tickets) and their properties
-- **Counter Files**: Usage tracking for multi-trip tickets
+- **Environment record**: Card metadata and validity information
+- **Event log**: Transaction history and validation events
+- **Contract records**: Contracts (tickets) and their properties
+- **Counter files**: Usage tracking for multi-trip tickets
 
 See [Common Library Documentation](src/common/README.md) for detailed specifications.
 
-## Supported Hardware
+## Supported hardware
 
-### Tested Terminals
+### Tested terminals
 
 The terminals supported by each application (Famoco FX205, Bluebird EF501, Arrive Axio 4, any Android device with NFC)
 are listed in the [Functional Documentation](docs/functional-documentation/index.adoc#tested-terminals), and their
@@ -102,7 +102,7 @@ reader plugins in the README of each application ([validation](src/validation/RE
 [reload Android client](src/reload-remote/client/keyple-mobile-android/README.md#plugin-integration)). The server and
 the desktop clients use PC/SC readers.
 
-### Proprietary Plugins (Available on Request)
+### Proprietary plugins (available on request)
 
 - Bluebird EF501 (reader plugin)
 - Arrive Axio 4 (reader plugin)
@@ -121,7 +121,7 @@ The README of each application lists the components it uses.
 
 ## Architecture
 
-### Distributed Client/Server Model
+### Distributed client/server model
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -133,22 +133,22 @@ The README of each application lists the components it uses.
 └─────────────────┘     └─────────────────┘     └─────────────────┘
 ```
 
-### Supported Platforms
+### Supported platforms
 
-**Client Applications:**
+**Client applications:**
 
 - Android 8.0+ (Native and KMP)
 - iOS 15.3+ (KMP)
 - Windows Desktop (.NET 10.0)
 - JVM Desktop (Kotlin Multiplatform)
 
-**Server Requirements:**
+**Server requirements:**
 
 - Java 17+ with PC/SC reader
 - SAM (Secure Access Module) for Calypso cards
 - Web dashboard for monitoring
 
-### Android Application Architecture
+### Android application architecture
 
 The Android applications (`validation`, `inspection` and `reload-remote/client/keyple-mobile-android`) follow a
 **layered architecture with ports and adapters** (hexagonal style). They do not use the MVVM pattern: the activities
@@ -216,7 +216,7 @@ application.
 - `domain`, `data` and `di` log through the `Logger` port. Timber is only used by its implementation
   (`data/TimberLogger`, which tags each message with the name of the calling class), by `DemoApplication` (Timber
   initialization) and by the activities.
-- The messages follow the convention of all the components (see [Log Messages](#log-messages)).
+- The messages follow the convention of all the components (see [Log messages](#log-messages)).
 
 **UI models**
 
@@ -319,7 +319,7 @@ The applications share these conventions, except for the following deliberate di
 | KMP client: Android APK suffixed `-android-`                                                                     | The same project name is used by the desktop packages                                                                                           |
 | Directory and project names (`reload-remote`, `keyple-mobile-android`, `kdt-...`) differing from the packages    | Referenced by the CI, the names of the released artifacts and the existing links                                                                |
 
-## Security Considerations
+## Security considerations
 
 The demo is not a production system:
 
@@ -344,7 +344,7 @@ The demo is not a production system:
 
 The versions required by each component are given in its README.
 
-### Project Structure
+### Project structure
 
 ```
 keyple-demo-ticketing/
@@ -366,13 +366,13 @@ keyple-demo-ticketing/
 └── src/inspection/                         # Android inspection terminal
 ```
 
-### Building from Source
+### Building from source
 
 Each module (e.g., `src/common`, `src/reload-remote/server`, `src/validation`, `src/inspection`) is an independent
 project and should be built using the tools and instructions provided within its own directory. For Gradle-based
 projects, navigate to the module's directory and use its `./gradlew` wrapper.
 
-### Unit Tests
+### Unit tests
 
 The unit tests check the business rules of the data model, independently of the cards and of the terminals (simulated
 with MockK when a procedure is tested end to end). They are run by the CI:
@@ -388,7 +388,7 @@ The current date is provided by a clock (`Clock` port of the Android application
 replaced by a fixed date in the tests. The domain being transposable to another language, its tests describe the
 expected behavior as an executable specification.
 
-### Build Optimization
+### Build optimization
 
 The Android applications (`validation`, `inspection`, and `reload-remote` client) are configured with ProGuard
 minification enabled for both debug and release builds. This removes SLF4J debug/trace logs from the application and
@@ -396,12 +396,12 @@ third-party libraries (like Keyple), resulting in smaller APKs and better runtim
 applications (Timber) are all kept, those of Keyple from the `INFO` level only. To see full unoptimized
 logs during debugging, comment out the `debug` build type configuration in the respective `app/build.gradle.kts` files.
 
-## Coding Conventions
+## Coding conventions
 
 Conventions followed by the code of all the components, checked by the CI where possible (see
 [Contributing](#contributing)).
 
-### Log Messages
+### Log messages
 
 All the components (server and its dashboard, Android applications, multiplatform and .NET clients) write their log
 messages with the same template:
@@ -436,7 +436,7 @@ Message [key1=value1, key2=value2]
 The `TRACE` level is not used. A repetitive event (e.g. periodic check of the server) is logged at the `DEBUG` level,
 or only when its state changes (e.g. "Server ready", "Server not ready").
 
-These rules, and the ones of the exception messages (see [Exception Messages](#exception-messages)), are checked by the
+These rules, and the ones of the exception messages (see [Exception messages](#exception-messages)), are checked by the
 CI (`.github/scripts/check-messages.py`, Python 3), which can also be run locally from the root of the repository:
 
 ```bash
@@ -453,7 +453,7 @@ Where to read the logs:
 | Component            | Logs                                                                   | Default level | To see the `DEBUG` messages                                                |
 |----------------------|------------------------------------------------------------------------|---------------|----------------------------------------------------------------------------|
 | Server               | Console                                                                | `INFO`        | `java -Dquarkus.log.category."org.calypsonet.keyple".level=DEBUG -jar ...` |
-| Android applications | Logcat (Android Studio or `adb logcat`)                                | All levels    | Keyple messages: see [Build Optimization](#build-optimization)             |
+| Android applications | Logcat (Android Studio or `adb logcat`)                                | All levels    | Keyple messages: see [Build optimization](#build-optimization)             |
 | Multiplatform client | Logcat (Android), console (desktop), Xcode console (iOS)               | All levels    | -                                                                          |
 | .NET client          | File `logs/demo-keyple-less-<date>.log` (kept 7 days), not the console | `DEBUG`       | -                                                                          |
 
@@ -466,7 +466,7 @@ WARN  Card communication error while loading the contract [cause=Card removed]
 ERROR Unexpected error while loading the contract
 ```
 
-### Exception Messages
+### Exception messages
 
 The messages of the exceptions follow the template of the log messages, `Message [key1=value1, key2=value2]`, as
 they are often logged (`cause` key) or displayed:
@@ -484,7 +484,7 @@ texts (`strings.xml`), a technical error being displayed with a generic text, an
 which do not use Keyple the messages of the statuses of its remote services (`RemoteServiceMessages`, texts of the
 Android applications), the causes being logged.
 
-### Method Names
+### Method names
 
 All the components name their methods with the same verbs:
 
@@ -542,19 +542,19 @@ component giving its specific issues:
 
 **Terminal type not available**
 - Check that the selected terminal type matches the actual hardware
-- The proprietary terminals require their plugin (see [Proprietary Plugins](#proprietary-plugins-available-on-request))
+- The proprietary terminals require their plugin (see [Proprietary plugins](#proprietary-plugins-available-on-request))
 
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the procedure (fork, feature branch, signed-off commits, pull request).
 
 A contribution follows the conventions of this README
-([Android Application Architecture](#android-application-architecture), [Log Messages](#log-messages),
-[Exception Messages](#exception-messages), [Method Names](#method-names)), updates the documentation of the components
+([Android application architecture](#android-application-architecture), [Log messages](#log-messages),
+[Exception messages](#exception-messages), [Method names](#method-names)), updates the documentation of the components
 concerned, and passes the checks of the CI:
 
 - Code format: `./gradlew spotlessCheck` in each Gradle project
-- Unit tests: see [Unit Tests](#unit-tests)
+- Unit tests: see [Unit tests](#unit-tests)
 - Log and exception messages: `python3 .github/scripts/check-messages.py`
 - Architecture and twin files of the Android applications: `.github/scripts/check-android-architecture.sh` and
   `.github/scripts/check-android-twin-files.sh`
@@ -564,9 +564,9 @@ concerned, and passes the checks of the CI:
 - **Documentation**: [keyple.org](https://keyple.org)
 - **Community**: [Calypso Networks Association](https://calypsonet.org)
 - **Issues**: Use GitHub Issues for bug reports and feature requests
-- **Technical Support**: [Contact CNA](https://calypsonet.org/contact-us/)
+- **Technical support**: [Contact CNA](https://calypsonet.org/contact-us/)
 
-## Related Projects
+## Related projects
 
 - [Eclipse Keyple middleware](https://keyple.org) - Core SDK and plugins
 - [Calypso Specifications](https://calypsonet.org/calypso-specifications/)

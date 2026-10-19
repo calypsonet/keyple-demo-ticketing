@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Checks the log and exception messages of all the components against the conventions described in README.md ("Log
-Messages" and "Exception Messages").
+messages" and "Exception messages").
 
 Checked rules:
 - a message is an English sentence starting with a capital letter (or with a variable message), without final
@@ -256,7 +256,7 @@ def main():
                        "does not log it")
 
     if violations:
-        print("%d message violation(s) found (see \"Log Messages\" and \"Exception Messages\" in README.md)" % violations)
+        print("%d message violation(s) found (see \"Log messages\" and \"Exception messages\" in README.md)" % violations)
         sys.exit(1)
     print("Messages checked: %d log calls, %d exceptions and %d catch blocks, no violation"
           % (log_calls, exceptions, catch_blocks))
