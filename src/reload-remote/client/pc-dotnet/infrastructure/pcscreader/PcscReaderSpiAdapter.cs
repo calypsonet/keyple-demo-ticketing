@@ -129,7 +129,7 @@ namespace App.infrastructure.pcscreader
             {
                 _cardAtr = null;
                 _reader = _context.ConnectReader(_readerName, SCardShareMode.Shared, SCardProtocol.T0 | SCardProtocol.T1);
-                _logger.Debug($"Physical channel open [reader={_readerName}]");
+                _logger.Debug($"Physical channel opened [reader={_readerName}]");
 
                 _cardAtr = _reader.GetAttrib(SCardAttribute.AtrString);
                 if (_logger.IsEnabled(LogEventLevel.Debug))

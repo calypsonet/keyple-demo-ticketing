@@ -18,6 +18,6 @@ package org.calypsonet.keyple.demo.reload.remote.server.card;
  */
 class CardFullException extends RuntimeException {
   CardFullException() {
-    super("Card full: no empty, expired or exhausted contract record");
+    super("Card full: no empty, expired, or exhausted contract record");
   }
 }

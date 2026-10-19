@@ -237,7 +237,7 @@ public class ContractLoadingService {
       // Calypso: loading of a new contract, find available position
       newContractNumber = findAvailablePosition(contracts, currentEvent);
       if (newContractNumber == 0) {
-        logger.warn("Card rejected: card full, no empty, expired or exhausted contract record");
+        logger.warn("Card rejected: card full, no empty, expired, or exhausted contract record");
         throw new CardFullException();
       }
       // build new contract

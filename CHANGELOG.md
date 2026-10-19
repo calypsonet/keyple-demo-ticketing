@@ -31,7 +31,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   texts of the inspection app ("Please fill in the validation period", "An error occurred while reading the card.
   Please try again."). The console of the .NET client uses the ticketing vocabulary ("Ticket #1:", "No multi-trip
   ticket found.", "3 trips will now be loaded onto the card." instead of "Contract #1:", "No MULTI_TRIP contract
-  found." and "3 trip(s) will now be loaded in the card.").
+  found." and "3 trip(s) will now be loaded in the card."). The log messages follow the same typography: serial
+  comma, American spelling ("signaled"), "Server started" (instead of "Keyple Demo - Reload Server started"), and
+  "Physical channel opened" as the other events.
 - READMEs reviewed against the code and the build, each information being described in a single place (main README,
   README of the component, or functional documentation): features, settings, supported cards and terminals,
   proprietary components (including the storage card libraries), prerequisites and versions, released packages, unit

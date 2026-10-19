@@ -50,7 +50,7 @@ public class Main {
       // Open the dashboard in the default browser
       URI webappUri = new URI("http://localhost:" + assignedPort + "/");
       Desktop.getDesktop().browse(webappUri);
-      logger.info("Keyple Demo - Reload Server started [port={}]", assignedPort);
+      logger.info("Server started [port={}]", assignedPort);
       Quarkus.waitForExit();
       return 0;
     }
