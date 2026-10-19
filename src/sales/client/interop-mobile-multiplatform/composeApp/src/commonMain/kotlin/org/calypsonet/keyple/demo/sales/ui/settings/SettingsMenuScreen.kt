@@ -35,6 +35,7 @@ import org.calypsonet.keyple.composeapp.generated.resources.Res
 import org.calypsonet.keyple.composeapp.generated.resources.ic_arrow_right
 import org.calypsonet.keyple.composeapp.generated.resources.ic_server
 import org.calypsonet.keyple.composeapp.generated.resources.ic_sim_card
+import org.calypsonet.keyple.demo.sales.APP_VERSION
 import org.calypsonet.keyple.demo.sales.AppState
 import org.calypsonet.keyple.demo.sales.ui.components.AppTopBar
 import org.calypsonet.keyple.demo.sales.ui.nav.PersonalizeCard
@@ -66,7 +67,7 @@ fun SettingsMenuScreen(
 
       Text(
           modifier = Modifier.fillMaxWidth().padding(bottom = 64.dp),
-          text = "version 1.0.0",
+          text = "version $APP_VERSION",
           textAlign = TextAlign.Center,
       )
 
@@ -106,7 +107,7 @@ internal fun SettingRow(
       Image(
           imageVector = vectorResource(iconRes),
           modifier = Modifier.size(24.dp),
-          contentDescription = "icon for card $title",
+          contentDescription = title,
       )
       Text(
           text = title,
@@ -119,7 +120,7 @@ internal fun SettingRow(
 
       Image(
           imageVector = vectorResource(Res.drawable.ic_arrow_right),
-          contentDescription = "arrow right",
+          contentDescription = title,
           modifier = Modifier.size(24.dp))
     }
   }

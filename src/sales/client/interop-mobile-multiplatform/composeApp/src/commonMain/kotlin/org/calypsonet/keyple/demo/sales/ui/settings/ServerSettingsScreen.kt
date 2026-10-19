@@ -102,7 +102,7 @@ internal fun ServerSettingsScreen(
               isError = state.isLoaded && state.validatedPort == null,
               supportingText = {
                 if (state.isLoaded && state.validatedPort == null) {
-                  Text("Enter a port between 1 and 65535")
+                  Text("Please set a port between 1 and 65535")
                 }
               },
               label = { Text("Server port") })

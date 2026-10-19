@@ -143,8 +143,10 @@ android {
     applicationId = project.property("androidAppId") as String
     minSdk = (project.property("androidMinSdk") as String).toInt()
     targetSdk = (project.property("androidTargetSdk") as String).toInt()
-    versionCode = (project.property("androidAppVersionCode") as String).toInt()
-    versionName = project.property("androidAppVersionName") as String
+    // Version of the project (release tag YY.MM.DD, 99.99.99 in development), its code being its
+    // digits (for example, 261020 for 26.10.20)
+    versionName = project.version.toString()
+    versionCode = project.version.toString().replace(".", "").toInt()
   }
   buildFeatures {
     viewBinding = true

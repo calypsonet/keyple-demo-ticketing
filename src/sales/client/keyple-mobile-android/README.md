@@ -53,9 +53,10 @@ cd keyple-demo-ticketing/src/sales/client/keyple-mobile-android
 ### Server connection
 1. Open **Settings** → **Server**
 2. Configure the server connection:
-  - **Server IP** and **Server port** (for example, `192.168.1.10` and `8080`)
-  - **Protocol** (for example, `http://`)
+  - **Server IP** (IP address or host name) and **Server port** (for example, `192.168.1.10` and `8080`)
+  - **Protocol** (`http` or `https`)
 3. Check that the server is ready (reachable, with its SAM available) with the **Server state** button, then **Save**
+   (both buttons are enabled when the entries are valid)
 
 ### NFC settings
 1. Ensure NFC is enabled in Android settings

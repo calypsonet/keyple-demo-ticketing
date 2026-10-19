@@ -13,9 +13,9 @@
 package org.calypsonet.keyple.demo.sales.domain.model
 
 /** Address of the sales server. */
-data class ServerConfig(val protocol: String, val ip: String, val port: Int) {
+data class ServerConfig(val protocol: String, val host: String, val port: Int) {
 
   /** Base URL of the server (for example, "http://192.168.0.1:8080"). */
   val url: String
-    get() = "$protocol$ip:$port"
+    get() = "$protocol://$host:$port"
 }

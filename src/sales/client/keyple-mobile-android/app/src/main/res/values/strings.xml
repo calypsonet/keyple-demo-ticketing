@@ -84,9 +84,9 @@
 
     <string name="server_ready">Server ready</string>
     <string name="server_not_ready">Server not ready</string>
-    <string name="invalid_server_ip">Please set a valid IP</string>
-    <string name="invalid_server_port">Please set a valid port</string>
-    <string name="invalid_server_protocol">Please set a valid protocol</string>
+    <string name="invalid_server_host">Please set a valid IP address or host name</string>
+    <string name="invalid_server_port">Please set a port between 1 and 65535</string>
+    <string name="invalid_server_protocol">Please set http or https</string>
 
     <!-- Card content screen -->
     <string name="content_title">Content</string>

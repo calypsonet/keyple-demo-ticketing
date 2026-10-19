@@ -29,6 +29,24 @@ val javaTargetLevel = project.property("javaTargetLevel") as String
 // APP CONFIGURATION
 ///////////////////////////////////////////////////////////////////////////////
 
+// Version of the application displayed by the settings menu: the version of the project (release
+// tag YY.MM.DD, 99.99.99 in development), generated as a constant of the shared code
+val generateAppVersion =
+    tasks.register("generateAppVersion") {
+      val outputDir = layout.buildDirectory.dir("generated/appVersion/kotlin")
+      val appVersion = project.version.toString()
+      inputs.property("appVersion", appVersion)
+      outputs.dir(outputDir)
+      doLast {
+        val file = outputDir.get().file("org/calypsonet/keyple/demo/sales/AppVersion.kt").asFile
+        file.parentFile.mkdirs()
+        file.writeText(
+            "package org.calypsonet.keyple.demo.sales\n\n" +
+                "/** Version of the application (release tag, 99.99.99 in development). */\n" +
+                "const val APP_VERSION = \"$appVersion\"\n")
+      }
+    }
+
 kotlin {
   jvmToolchain(jvmToolchainVersion.toInt())
   // The platform specific implementations (for example, Buzzer, DataStore) use expect/actual
@@ -56,6 +74,7 @@ kotlin {
   }
   jvm("desktop")
   sourceSets {
+    commonMain { kotlin.srcDir(generateAppVersion) }
     commonMain.dependencies {
       // Keyple BOM
       implementation(project.dependencies.platform(libs.keypleJavaBom))

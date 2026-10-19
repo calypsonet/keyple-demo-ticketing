@@ -26,15 +26,19 @@ class SharedPreferencesAppSettingsRepository(private val preferences: SharedPref
   override var serverConfig: ServerConfig
     get() =
         ServerConfig(
+            // A protocol which is not "http" or "https" (for example, written as "http://" by a
+            // previous version) is replaced by the default one
             protocol =
-                preferences.getString(SERVER_PROTOCOL_KEY, DEFAULT_PROTOCOL) ?: DEFAULT_PROTOCOL,
-            ip = preferences.getString(SERVER_IP_KEY, DEFAULT_SERVER_IP) ?: DEFAULT_SERVER_IP,
+                preferences.getString(SERVER_PROTOCOL_KEY, null)?.takeIf { it in PROTOCOLS }
+                    ?: DEFAULT_PROTOCOL,
+            host =
+                preferences.getString(SERVER_HOST_KEY, DEFAULT_SERVER_HOST) ?: DEFAULT_SERVER_HOST,
             port = preferences.getInt(SERVER_PORT_KEY, DEFAULT_PORT))
     set(value) {
       preferences
           .edit()
           .putString(SERVER_PROTOCOL_KEY, value.protocol)
-          .putString(SERVER_IP_KEY, value.ip)
+          .putString(SERVER_HOST_KEY, value.host)
           .putInt(SERVER_PORT_KEY, value.port)
           .apply()
     }
@@ -73,13 +77,14 @@ class SharedPreferencesAppSettingsRepository(private val preferences: SharedPref
       }
 
   companion object {
-    private const val SERVER_IP_KEY = "server_ip"
+    private const val SERVER_HOST_KEY = "server_host"
     private const val SERVER_PORT_KEY = "server_port"
     private const val SERVER_PROTOCOL_KEY = "server_protocol"
     private const val CARD_MEDIUM_KEY = "card_medium"
-    private const val DEFAULT_SERVER_IP = "192.168.0.1"
+    private const val DEFAULT_SERVER_HOST = "192.168.0.1"
     private const val DEFAULT_PORT = 8080
-    private const val DEFAULT_PROTOCOL = "http://"
+    private const val DEFAULT_PROTOCOL = "http"
+    private val PROTOCOLS = setOf("http", "https")
     private const val CONTACTLESS_VISIBILITY_KEY = "contactless_visibility"
     private const val SIM_VISIBILITY_KEY = "sim_visibility"
     private const val WAS_SERVER_READY_KEY = "was_server_ready"
