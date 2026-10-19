@@ -157,7 +157,6 @@ class CardReaderActivity : BaseActivity() {
     readerScope.launch {
       if (cardReaderSession.isInitialized) {
         cardReaderSession.stopCardDetection()
-        Timber.d("Card detection stopped")
       }
     }
   }

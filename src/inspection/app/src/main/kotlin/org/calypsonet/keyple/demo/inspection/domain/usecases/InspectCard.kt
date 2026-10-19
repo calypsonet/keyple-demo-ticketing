@@ -47,7 +47,6 @@ class InspectCard(
     } else {
       userFeedback.signalFailure()
     }
-    logger.d("User feedback signaled")
     return result
   }
 

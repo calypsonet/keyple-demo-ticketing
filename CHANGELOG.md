@@ -293,6 +293,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   the other by a dedicated thread instead of the main thread: the stop of the card detection, which takes about 440 ms
   on the Bluebird terminals (end of the monitoring of the card removal and stop of the NFC reader), no longer delays
   the display of the result screen. The result screens are opened without the transition animation of the system.
+  The stop of the card detection is logged once, at the `DEBUG` level, by the `CardReaderSession` of the control and
+  validation apps ("Card detection stopped").
 - Control and validation apps: the waiting indicator ("Please wait") is removed. In the control app, displayed without
   transition for the short duration of the control of a card, then hidden before the opening of the result screen, it
   flashed on the screen (since the replacement of the deprecated `ProgressDialog`); it is no longer displayed during
