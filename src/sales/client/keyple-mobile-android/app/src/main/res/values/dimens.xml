@@ -53,7 +53,6 @@
     <dimen name="settings_radio_size">15dp</dimen>
     <dimen name="settings_radio_text_margin">20dp</dimen>
     <dimen name="settings_radio_vertical_margin">15dp</dimen>
-    <dimen name="settings_back_btn_width">30dp</dimen>
 
     <dimen name="main_btn_horizontal_margin">19dp</dimen>
     <dimen name="main_btn_margin_bottom">20dp</dimen>

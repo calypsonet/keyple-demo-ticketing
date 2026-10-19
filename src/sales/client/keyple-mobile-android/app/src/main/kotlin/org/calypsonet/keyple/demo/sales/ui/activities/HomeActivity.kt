@@ -30,6 +30,8 @@ class HomeActivity : BaseActivity() {
 
   private lateinit var activityHomeBinding: ActivityHomeBinding
 
+  override val showsBackArrow = false
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     activityHomeBinding = ActivityHomeBinding.inflate(layoutInflater)

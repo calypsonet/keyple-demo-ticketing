@@ -13,6 +13,7 @@
 package org.calypsonet.keyple.demo.sales.ui.activities
 
 import android.animation.ObjectAnimator
+import android.os.Bundle
 import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.ProgressBar
@@ -40,6 +41,18 @@ abstract class BaseActivity : AppCompatActivity() {
   private var autoReturnAnimator: ObjectAnimator? = null
   private var autoReturnProgress: ProgressBar? = null
   private var onAutoReturnCountdown: ((Int?) -> Unit)? = null
+
+  /** True if the toolbar displays the back arrow (all the screens but the home screen). */
+  protected open val showsBackArrow: Boolean = true
+
+  override fun onPostCreate(savedInstanceState: Bundle?) {
+    super.onPostCreate(savedInstanceState)
+    // The back arrow has the same effect as the back key of the system
+    if (::toolbarBinding.isInitialized && showsBackArrow) {
+      toolbarBinding.backBtn.visibility = View.VISIBLE
+      toolbarBinding.backBtn.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+    }
+  }
 
   override fun onResume() {
     super.onResume()

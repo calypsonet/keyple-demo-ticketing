@@ -32,10 +32,6 @@ class CardMediumSettingsActivity : BaseActivity() {
     toolbarBinding = activityCardMediumSettingsBinding.appBarLayout
     setContentView(activityCardMediumSettingsBinding.root)
 
-    activityCardMediumSettingsBinding.backBtn.setOnClickListener {
-      onBackPressedDispatcher.onBackPressed()
-    }
-
     CardMedium.entries.forEach { updateRadioButtons(it) }
   }
 

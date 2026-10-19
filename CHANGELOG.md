@@ -31,7 +31,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   displayed in an overlay of the card reader screen; the "Please wait" indicator is removed.
 - Sales clients: same settings screens, the server settings being checked and saved without restarting the
   application (entries validated as they are typed, "Server state" button taking the availability of the SAM into
-  account, "Save" button returning to the settings menu).
+  account, "Save" button returning to the settings menu), and the same back arrow in the toolbar of all the screens but
+  the home screen (the Android client only had the system back key).
 - Android applications: the version displayed and the version name are the version of the release (YY.MM.DD,
   `99.99.99` for the local builds), instead of a fixed "1.0".
 - Code quality: layered architecture with ports and adapters in the Android applications (Hilt instead of Dagger),

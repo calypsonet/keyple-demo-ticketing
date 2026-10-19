@@ -22,16 +22,6 @@
         app:layout_constraintTop_toBottomOf="@id/appBarLayout"
         app:layout_constraintBottom_toTopOf="@id/contactlessCardSetting"/>
 
-    <ImageView
-        android:id="@+id/backBtn"
-        android:layout_width="@dimen/settings_back_btn_width"
-        android:layout_height="@dimen/settings_back_btn_width"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_arrow_left"
-        android:layout_marginStart="@dimen/settings_btn_padding_horizontal"
-        android:contentDescription="@string/action_settings"
-        app:layout_constraintTop_toTopOf="@id/settingTitle"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/contactlessCardSetting"
