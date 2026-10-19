@@ -14,7 +14,7 @@ app_root() {
   case "$1" in
     inspection) echo "src/inspection/app/src/main/kotlin/org/calypsonet/keyple/demo/inspection" ;;
     validation) echo "src/validation/app/src/main/kotlin/org/calypsonet/keyple/demo/validation" ;;
-    reload) echo "src/reload-remote/client/keyple-mobile-android/app/src/main/kotlin/org/calypsonet/keyple/demo/reload/remote" ;;
+    sales) echo "src/sales/client/keyple-mobile-android/app/src/main/kotlin/org/calypsonet/keyple/demo/sales" ;;
     *) echo "Unknown application: $1" >&2; exit 2 ;;
   esac
 }
@@ -23,7 +23,7 @@ app_root() {
 normalize() {
   tr -d '\r' < "$1" \
     | awk 'header_done { print; next } /^ \*+ \*\/$/ { header_done = 1 }' \
-    | sed -E 's/org\.calypsonet\.keyple\.demo\.(inspection|validation|reload\.remote)/org.calypsonet.keyple.demo.APP/g'
+    | sed -E 's/org\.calypsonet\.keyple\.demo\.(inspection|validation|sales)/org.calypsonet.keyple.demo.APP/g'
 }
 
 violations=0
@@ -54,17 +54,17 @@ while read -r path apps; do
   checked=$((checked + 1))
 done <<'EOF'
 # Shared by the three applications
-DemoApplication.kt                                        inspection validation reload
-data/DemoMifareClassicKeyProvider.kt                      inspection validation reload
-data/JavaTimeClock.kt                                     inspection validation reload
-data/TimberLogger.kt                                      inspection validation reload
-di/ClockModule.kt                                         inspection validation reload
-di/KeypopApiModule.kt                                     inspection validation reload
-di/LoggerModule.kt                                        inspection validation reload
-domain/spi/Clock.kt                                       inspection validation reload
-domain/spi/Logger.kt                                      inspection validation reload
-domain/spi/UiContext.kt                                   inspection validation reload
-ui/ActivityUiContext.kt                                   inspection validation reload
+DemoApplication.kt                                        inspection validation sales
+data/DemoMifareClassicKeyProvider.kt                      inspection validation sales
+data/JavaTimeClock.kt                                     inspection validation sales
+data/TimberLogger.kt                                      inspection validation sales
+di/ClockModule.kt                                         inspection validation sales
+di/KeypopApiModule.kt                                     inspection validation sales
+di/LoggerModule.kt                                        inspection validation sales
+domain/spi/Clock.kt                                       inspection validation sales
+domain/spi/Logger.kt                                      inspection validation sales
+domain/spi/UiContext.kt                                   inspection validation sales
+ui/ActivityUiContext.kt                                   inspection validation sales
 # Shared by the inspection and validation applications
 domain/model/CardProtocol.kt                              inspection validation
 domain/model/SelectionError.kt                            inspection validation

@@ -105,10 +105,10 @@ The ecosystem consists of four distinct applications, each covering a specific r
 |===
 | Application | Functional role
 
-| *Reload — server*
-| Hosts the security module (SAM) and performs cryptographic operations. Exposes the remote services of reading, loading, and personalization. Its web dashboard (`http://localhost:8080`) displays the status of the server and of the SAM, and the transactions of the clients in real time (see the link:../../src/reload-remote/server/README.md#web-dashboard[server README]).
+| *Sales — server*
+| Hosts the security module (SAM) and performs cryptographic operations. Exposes the remote services of reading, loading, and personalization. Its web dashboard (`http://localhost:8080`) displays the status of the server and of the SAM, and the transactions of the clients in real time (see the link:../../src/sales/server/README.md#web-dashboard[server README]).
 
-| *Reload — clients*
+| *Sales — clients*
 | Android, multiplatform (Android, iOS, desktop), or .NET application used by a sales agent or a passenger to load a new transit ticket. The Android and multiplatform clients also personalize blank cards.
 
 | *Validation*
@@ -173,7 +173,7 @@ Storage cards are simpler memory media without a Calypso security system. They a
 
 NOTE: Storage cards support only *1 transit ticket*. They do not benefit from the same security guarantees as Calypso cards.
 
-IMPORTANT: Storage cards are handled with the storage card extension and reader plugin of CNA, available on request. Without them (default build), the applications do not support storage cards. With the reload Android client, the ST25 SRT512 cards are supported on the Bluebird terminals only.
+IMPORTANT: Storage cards are handled with the storage card extension and reader plugin of CNA, available on request. Without them (default build), the applications do not support storage cards. With the sales Android client, the ST25 SRT512 cards are supported on the Bluebird terminals only.
 
 WARNING: This demo is only intended to demonstrate that memory cards can be handled.
 
@@ -231,7 +231,7 @@ NOTE: The priority 3 of the data model (Stored value) is not covered by the demo
 
 Before being used, a blank card must be *personalized*: this operation initializes the card data and sets its validity period.
 
-Issuance is performed from the Android or multiplatform reload client, connected to the server (the .NET client does not personalize cards).
+Issuance is performed from the Android or multiplatform sales client, connected to the server (the .NET client does not personalize cards).
 
 ==== What personalization does
 
@@ -398,14 +398,14 @@ plantuml::diagrams/inspection.puml[target=inspection,format=svg,alt="Inspection 
 
 == Compatible terminals and hardware
 
-This section summarizes the hardware supported by each application. The reader plugins, the installation, and the prerequisites of each component are detailed in the link:../../README.md[README of the repository] and in the README of each application (link:../../src/validation/README.md[validation], link:../../src/inspection/README.md[inspection], link:../../src/reload-remote/README.md[reload]).
+This section summarizes the hardware supported by each application. The reader plugins, the installation, and the prerequisites of each component are detailed in the link:../../README.md[README of the repository] and in the README of each application (link:../../src/validation/README.md[validation], link:../../src/inspection/README.md[inspection], link:../../src/sales/README.md[sales]).
 
 [[tested-terminals]]
 === Tested Android terminals
 
 [cols="^2,4,^1,^1,^1", options="header"]
 |===
-| Terminal | Description | Reload | Validation | Inspection
+| Terminal | Description | Sales | Validation | Inspection
 
 | Standard Android devices
 | Any Android 8.0+ device with NFC (no SAM: inspection by PKI or without authentication)
@@ -438,13 +438,13 @@ This section summarizes the hardware supported by each application. The reader p
 
 === Server and desktop hardware
 
-* *Reload server*: PC/SC reader holding a Calypso SAM, required for personalization and ticket loading
-* *Desktop reload clients* (multiplatform and .NET): contactless PC/SC reader
+* *Sales server*: PC/SC reader holding a Calypso SAM, required for personalization and ticket loading
+* *Desktop sales clients* (multiplatform and .NET): contactless PC/SC reader
 
-[[reload-clients]]
-=== Available reload clients
+[[sales-clients]]
+=== Available sales clients
 
-Three types of clients can connect to the reload server:
+Three types of clients can connect to the sales server:
 
 [cols="^2,3,3,3", options="header"]
 |===

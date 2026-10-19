@@ -1,0 +1,54 @@
+/* ******************************************************************************
+ * Copyright (c) 2026 Calypso Networks Association https://calypsonet.org/
+ *
+ * See the NOTICE file(s) distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the BSD 3-Clause License which is available at
+ * https://opensource.org/licenses/BSD-3-Clause.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ ****************************************************************************** */
+package org.calypsonet.keyple.demo.sales.domain.spi
+
+import org.calypsonet.keyple.demo.sales.domain.model.CardMedium
+import org.calypsonet.keyple.demo.sales.domain.model.TerminalType
+import org.eclipse.keypop.reader.CardReader
+import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
+import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
+
+/**
+ * Readers of the terminal: registration of the reader plugins of the platform, then access to the
+ * reader of the card medium (contactless reader or OMAPI reader).
+ *
+ * The readers are driven (card detection, selection, and processing) by the `CardReaderSession` of
+ * the domain.
+ */
+interface TerminalReaders {
+  /**
+   * Returns the name of the reader to use for the given terminal type and card medium.
+   *
+   * @param terminalType The type of terminal.
+   * @param cardMedium The card medium (contactless card, SIM, etc.) to read.
+   */
+  fun getReaderName(terminalType: TerminalType, cardMedium: CardMedium): String
+
+  fun registerPlugin(
+      terminalType: TerminalType,
+      uiContext: UiContext,
+      cardMedium: CardMedium,
+      onPluginRegistered: (() -> Unit)?
+  )
+
+  fun initCardReader(
+      observer: CardReaderObserverSpi?,
+      readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi?
+  ): CardReader?
+
+  fun getReader(readerName: String): CardReader
+
+  fun getCardReader(): CardReader?
+
+  fun release(observer: CardReaderObserverSpi?)
+}

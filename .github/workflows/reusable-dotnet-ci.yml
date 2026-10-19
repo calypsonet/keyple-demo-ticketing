@@ -27,7 +27,7 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Check code format, build and test ${{ inputs.component-name }}
-        working-directory: ./src/reload-remote/client/pc-dotnet
+        working-directory: ./src/sales/client/pc-dotnet
         run: |
           dotnet restore
           dotnet format --verify-no-changes App.sln

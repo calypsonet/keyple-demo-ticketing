@@ -21,7 +21,7 @@ transportation ticketing workflow:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│   RELOAD DEMO   │────>│ VALIDATION DEMO │────>│ INSPECTION DEMO │
+│   SALES DEMO    │────>│ VALIDATION DEMO │────>│ INSPECTION DEMO │
 │                 │     │                 │     │                 │
 │ Load contracts  │     │ Validate entry  │     │ Check validity  │
 │ onto cards      │     │ to transport    │     │ after use       │
@@ -30,7 +30,7 @@ transportation ticketing workflow:
 
 ### Application roles
 
-- **[Reload Demo](src/reload-remote/)**: Remote contract loading using distributed client/server architecture
+- **[Sales Demo](src/sales/)**: Sale and remote loading of the contracts using a distributed client/server architecture
 - **[Validation Demo](src/validation/)**: Entry validation for transportation networks
 - **[Inspection Demo](src/inspection/)**: Post-validation ticket inspection, checking the validity of the last
   validation
@@ -43,18 +43,18 @@ to each [release](https://github.com/calypsonet/keyple-demo-ticketing/releases).
 
 ### 1. Server setup
 
-Download `kdt-reload-server-X.Y.Z-full.jar` from the [releases page](https://github.com/calypsonet/keyple-demo-ticketing/releases), then:
+Download `kdt-sales-server-X.Y.Z-full.jar` from the [releases page](https://github.com/calypsonet/keyple-demo-ticketing/releases), then:
 
 ```bash
 # Start server (requires PC/SC reader with SAM)
-java -jar kdt-reload-server-X.Y.Z-full.jar
+java -jar kdt-sales-server-X.Y.Z-full.jar
 
 # Access dashboard at http://localhost:8080
 ```
 
 ### 2. Card personalization
 
-Use the personalization feature of the Android or multiplatform reload client to personalize cards with:
+Use the personalization feature of the Android or multiplatform sales client to personalize cards with:
 
 - Environment data (validity dates, application number)
 - Clean contract slots
@@ -62,7 +62,7 @@ Use the personalization feature of the Android or multiplatform reload client to
 
 ### 3. Workflow execution
 
-1. **Load contracts**: Use Reload Demo to add season passes or multi-trip tickets
+1. **Load contracts**: Use Sales Demo to add season passes or multi-trip tickets
 2. **Validate entry**: Present card to Validation Demo terminal
 3. **Ticket inspection**: Verify card status using the Inspection Demo
 
@@ -99,7 +99,7 @@ The terminals supported by each application (Famoco FX205, Bluebird EF501, Arriv
 are listed in the [Functional Documentation](docs/functional-documentation/index.adoc#tested-terminals), and their
 reader plugins in the README of each application ([validation](src/validation/README.md#tested-terminals),
 [inspection](src/inspection/README.md#tested-terminals),
-[reload Android client](src/reload-remote/client/keyple-mobile-android/README.md#plugin-integration)). The server and
+[sales Android client](src/sales/client/keyple-mobile-android/README.md#plugin-integration)). The server and
 the desktop clients use PC/SC readers.
 
 ### Proprietary plugins (available on request)
@@ -150,7 +150,7 @@ The README of each application lists the components it uses.
 
 ### Android application architecture
 
-The Android applications (`validation`, `inspection`, and `reload-remote/client/keyple-mobile-android`) follow a
+The Android applications (`validation`, `inspection`, and `sales/client/keyple-mobile-android`) follow a
 **layered architecture with ports and adapters** (hexagonal style). They do not use the MVVM pattern: the activities
 drive the user flow and call the domain directly.
 
@@ -206,7 +206,7 @@ application.
 - `CardReaderSession` manages the readers of the terminal: initialization of the readers and of the SAM (and of the
   user feedback devices), detection of the cards, selection of the presented card, end of its processing.
 - One use case per user operation (`domain/usecases`), invoked by the UI: `InspectCard` (inspection app), `ValidateCard`
-  (validation app), `ReadContracts`, `LoadContract`, and `PersonalizeCard` (reload client). The use cases of the
+  (validation app), `ReadContracts`, `LoadContract`, and `PersonalizeCard` (sales client). The use cases of the
   inspection and validation apps select the card, execute the procedure supporting it, and give the user feedback
   (sound, LEDs) of the result.
 - The inspection and validation procedures implement a common interface (`InspectionProcedure`,
@@ -231,7 +231,7 @@ application.
 
 - The domain produces no text displayed to the users. The procedures return typed results (`sealed interface`, for
   example, `ValidationResult.Accepted`, `Rejected(reason)`, or `Failed(error)`), and the UI translates them into the
-  texts of `strings.xml`, as the reload client does with the status codes of the server (`RemoteServiceStatus`).
+  texts of `strings.xml`, as the sales client does with the status codes of the server (`RemoteServiceStatus`).
 - The rejection of a card by a business rule is a result (`RejectionReason`), not an exception: the exceptions are kept
   for the technical errors (card communication, etc.).
 
@@ -246,7 +246,7 @@ bash .github/scripts/check-android-twin-files.sh
 **Naming conventions**
 
 - Application class `DemoApplication`, start screen `SplashActivity`, base activity `BaseActivity` (and
-  `BaseCardActivity` for the card screens of the reload client), card presentation screen `CardReaderActivity`.
+  `BaseCardActivity` for the card screens of the sales client), card presentation screen `CardReaderActivity`.
 - Layouts named after their activity (`activity_<name>.xml`), shared toolbar `toolbar.xml`, result overlays
   `layout_<name>_overlay.xml`, rows of the lists `<item>_recycler_row.xml`, and items of the drop-down lists
   `spinner_item_<item>.xml`.
@@ -257,7 +257,7 @@ bash .github/scripts/check-android-twin-files.sh
   - a mapper converts a representation into another one, from a layer to another or from an external
     representation (Keypop card, DTO of the server) to the domain. Extension function of the converted object:
     `to<Type>()` in `domain/mappers` (for example, `SmartCard.toCardInfo()`, file `CardInfoMapper.kt`), `toUi()` in
-    `ui/mappers` (for example, `Contract.toUi(resources)` of the reload Android client, file `ContractUiMapper.kt`);
+    `ui/mappers` (for example, `Contract.toUi(resources)` of the sales Android client, file `ContractUiMapper.kt`);
   - a builder builds an object from several sources, none of them prevailing (for example, data read in the card and
     results computed by a procedure). Top-level function `build<Type>(...)` in `domain/builders` (for example,
     `buildContract(...)`, file `ContractBuilder.kt`).
@@ -297,8 +297,8 @@ The operations are named in the same way in all the components:
 | Use of a contract at the entry          | `ValidateCard`, `ValidationResult`                  | "Validation"                           |
 | Check of the card by an inspector       | `InspectCard`, `InspectionResult`                   | "Inspection"                           |
 
-- "Reload" is only the name of the reload demo: the operation is "load", including when trips are added to a
-  multi-trip ticket or when a season pass is renewed.
+- The demo selling and loading the tickets is named "Sales"; the operation is "load", including when trips are
+  added to a multi-trip ticket or when a season pass is renewed ("reload" is not used).
 - "Issuance" and "initialization" do not designate the personalization ("initialization" only designates the
   technical start of a component, for example, a reader plugin).
 - "Write" only designates the technical operation (writing of a record), never the business operation.
@@ -312,21 +312,21 @@ The terms of the card data model (`EnvironmentHolder`, `Event`, `Contract`, `Con
 
 The applications share these conventions, except for the following deliberate differences:
 
-| Difference                                                                                                       | Reason                                                                                                                                          |
-|------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
-| Validation app: free orientation, `arrive`/`arrive-mock` source sets and `com.parkeon.app.customer` action       | Arrive (Parkeon) terminal: landscape screen, optional proprietary SDK, application launched by the terminal                                     |
-| Reload Android client: reader detected from the device, no terminal selection screen                             | Only the Bluebird terminals use a specific reader; the other devices use the Android NFC reader                                                 |
-| Reload Android client: settings persisted (`SharedPreferences`), in memory in the inspection and validation apps | The server address must survive a restart; the inspection and validation apps ask for the terminal at each startup                              |
-| Reload Android client: no local SAM, but NFC and OMAPI (SIM) readers                                             | The SAM is managed by the server (Keyple Distributed)                                                                                           |
-| KMP client: `ui` and `data` packages without `domain` layer (MVVM), without Hilt nor the `common` library        | Compose code shared by Android, desktop and iOS; the `common` library relies on Java libraries (bit-lib4j, Keyple utilities) unavailable on iOS |
-| KMP client: Android APK suffixed `-android-`                                                                     | The same project name is used by the desktop packages                                                                                           |
-| Directory and project names (`reload-remote`, `keyple-mobile-android`, `kdt-...`) differing from the packages    | Referenced by the CI, the names of the released artifacts and the existing links                                                                |
+| Difference                                                                                                      | Reason                                                                                                                                          |
+|-----------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| Validation app: free orientation, `arrive`/`arrive-mock` source sets and `com.parkeon.app.customer` action      | Arrive (Parkeon) terminal: landscape screen, optional proprietary SDK, application launched by the terminal                                     |
+| Sales Android client: reader detected from the device, no terminal selection screen                             | Only the Bluebird terminals use a specific reader; the other devices use the Android NFC reader                                                 |
+| Sales Android client: settings persisted (`SharedPreferences`), in memory in the inspection and validation apps | The server address must survive a restart; the inspection and validation apps ask for the terminal at each startup                              |
+| Sales Android client: no local SAM, but NFC and OMAPI (SIM) readers                                             | The SAM is managed by the server (Keyple Distributed)                                                                                           |
+| KMP client: `ui` and `data` packages without `domain` layer (MVVM), without Hilt nor the `common` library       | Compose code shared by Android, desktop and iOS; the `common` library relies on Java libraries (bit-lib4j, Keyple utilities) unavailable on iOS |
+| KMP client: Android APK suffixed `-android-`                                                                    | The same project name is used by the desktop packages                                                                                           |
+| Directory and project names (`keyple-mobile-android`, `pc-dotnet`, `kdt-...`) differing from the packages       | Referenced by the CI, the names of the released artifacts and the existing links                                                                |
 
 ## Security considerations
 
 The demo is not a production system:
 
-- The cryptographic operations of the Calypso cards are performed by a SAM: by the server for the reload clients,
+- The cryptographic operations of the Calypso cards are performed by a SAM: by the server for the sales clients,
   which hold no cryptographic material, and by the terminal for the validation and inspection apps (the inspection
   authenticating the cards by PKI when the terminal has no SAM).
 - The storage cards are read and written without cryptographic protection: a production system adds signature
@@ -359,7 +359,7 @@ keyple-demo-ticketing/
 ├── libs/                                   # Proprietary libraries (on request) and their mocks
 ├── libs.versions.toml                      # Version catalog shared by the Gradle projects
 ├── src/common/                             # Shared data structures and utilities
-├── src/reload-remote/                      # Remote reload clients and server
+├── src/sales/                              # Sales clients and server
 │   ├── server/                             # Java server application
 │   ├── client/
 │   │   ├── keyple-mobile-android/          # Android native client
@@ -371,7 +371,7 @@ keyple-demo-ticketing/
 
 ### Building from source
 
-Each module (for example, `src/common`, `src/reload-remote/server`, `src/validation`, `src/inspection`) is an
+Each module (for example, `src/common`, `src/sales/server`, `src/validation`, `src/inspection`) is an
 independent project and should be built using the tools and instructions provided within its own directory. For
 Gradle-based projects, navigate to the module's directory and use its `./gradlew` wrapper.
 
@@ -380,12 +380,12 @@ Gradle-based projects, navigate to the module's directory and use its `./gradlew
 The unit tests check the business rules of the data model, independently of the cards and of the terminals (simulated
 with MockK when a procedure is tested end to end). They are run by the CI:
 
-| Component                  | Tests                                                                                               | Command                                         |
-|----------------------------|-----------------------------------------------------------------------------------------------------|-------------------------------------------------|
-| `src/common`               | Record codecs, data types, event structure, DF name check                                           | `./gradlew test` (also run by the server build) |
-| `src/reload-remote/server` | Contract analysis, personalization and contract loading rules                                       | `./gradlew test`                                |
-| `src/validation`           | Validation rules (anti-passback, versions, contracts, priorities) and Calypso validation procedure  | `./gradlew testDebugUnitTest`                   |
-| `src/inspection`           | Inspection rules (validity of the last validation), displayed data and Calypso inspection procedure | `./gradlew testDebugUnitTest`                   |
+| Component          | Tests                                                                                               | Command                                         |
+|--------------------|-----------------------------------------------------------------------------------------------------|-------------------------------------------------|
+| `src/common`       | Record codecs, data types, event structure, DF name check                                           | `./gradlew test` (also run by the server build) |
+| `src/sales/server` | Contract analysis, personalization and contract loading rules                                       | `./gradlew test`                                |
+| `src/validation`   | Validation rules (anti-passback, versions, contracts, priorities) and Calypso validation procedure  | `./gradlew testDebugUnitTest`                   |
+| `src/inspection`   | Inspection rules (validity of the last validation), displayed data and Calypso inspection procedure | `./gradlew testDebugUnitTest`                   |
 
 The current date is provided by a clock (`Clock` port of the Android applications, `java.time.Clock` of the server),
 replaced by a fixed date in the tests. The domain being transposable to another language, its tests describe the
@@ -393,7 +393,7 @@ expected behavior as an executable specification.
 
 ### Build optimization
 
-The Android applications (`validation`, `inspection`, and `reload-remote` client) are configured with ProGuard
+The Android applications (`validation`, `inspection`, and `sales` client) are configured with ProGuard
 minification enabled for both debug and release builds. This removes SLF4J debug/trace logs from the application and
 third-party libraries (like Keyple), resulting in smaller APKs and better runtime performance: the messages of the
 applications (Timber) are all kept, those of Keyple from the `INFO` level only. To see full unoptimized
@@ -531,7 +531,7 @@ All the components name their methods with the same verbs:
 
 ## Troubleshooting
 
-Common issues of the Android applications (validation, inspection, and reload Android client), the README of each
+Common issues of the Android applications (validation, inspection, and sales Android client), the README of each
 component giving its specific issues:
 
 **NFC detection not working**

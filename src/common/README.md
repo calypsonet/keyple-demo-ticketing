@@ -21,7 +21,7 @@ This library defines the common elements used across the Keyple Demo ecosystem:
 
 ## Used by
 
-- [Keyple Reload Demo](../reload-remote)
+- [Keyple Sales Demo](../sales)
 - [Keyple Validation Demo](../validation)
 - [Keyple Inspection Demo](../inspection)
 
@@ -201,8 +201,8 @@ val timeValue: Int = timeCompact.value
 ## Common procedures
 
 The procedures using these structures, the personalization of the cards and the loading of the contracts, are executed
-by the server of the reload demo, as described in its
-[README](../reload-remote/README.md#card-personalization-and-contract-loading-procedures).
+by the server of the sales demo, as described in its
+[README](../sales/README.md#card-personalization-and-contract-loading-procedures).
 
 ## Version compatibility
 

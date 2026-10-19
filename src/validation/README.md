@@ -13,7 +13,7 @@ for validation.
 ## Overview
 
 This Android application simulates validation terminals found at transportation network entry points (metro gates, bus
-boarding, etc.). It validates contracts loaded by the [Reload Demo](../reload-remote/) and creates validation events
+boarding, etc.). It validates contracts loaded by the [Sales Demo](../sales/) and creates validation events
 that can be later verified by the [Inspection Demo](../inspection/).
 
 **Role in ecosystem**: Second step in the ticketing workflow, which validates loaded contracts and grants or denies
@@ -28,7 +28,7 @@ access to transportation networks.
 - Compatible terminal hardware (see [tested terminals](#tested-terminals))
 
 ### Card requirements
-- Cards personalized and loaded using the [Reload Demo](../reload-remote/)
+- Cards personalized and loaded using the [Sales Demo](../sales/)
 - Calypso cards, or storage cards (MIFARE Ultralight, ST25 SRT512, MIFARE Classic) with the storage card
   libraries (see [Proprietary plugins](#proprietary-plugins))
 - Supported AIDs (see [Common Library](../common/README.md#supported-card-applications))
@@ -264,7 +264,7 @@ The common issues of the Android applications (NFC, SAM, terminal type) are desc
 [main README](../../README.md#troubleshooting).
 
 **"Card validation failed"**
-- Check card has valid contracts loaded via Reload Demo
+- Check card has valid contracts loaded via Sales Demo
 - Verify card AID is supported by application
 - Ensure contract validity dates are current
 - Check trips left for validation
@@ -279,7 +279,7 @@ the changes with Calypso cards and storage cards, on the supported terminal type
 - [Main Project Overview](../../README.md)
 - [Functional Documentation](../../docs/functional-documentation/index.adoc): Use cases and business rules
 - [Common Library](../common/README.md): Data structures and constants
-- [Reload Demo](../reload-remote/README.md): Contract loading process
+- [Sales Demo](../sales/README.md): Contract loading process
 - [Inspection Demo](../inspection/README.md): Post-validation verification
 - [Eclipse Keyple Documentation](https://keyple.org)
 

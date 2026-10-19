@@ -17,8 +17,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     package `org.calypsonet.keyple.demo.inspection` (installed as a new application), `InspectCard` use case,
     `InspectionResult`, `InspectionContext`, `InspectionProcedure` and its implementations, variables and displayed
     texts ("Keyple Demo - Inspection", "Start inspection", "New inspection"), CI jobs, and documentation;
-  - "reload" instead of "reloading": `src/reload-remote` directory, `kdt-reload-server`, `kdt-reload-android-app`,
-    `kdt-reload-multiplatform-app`, and `kdt-reload-pc-dotnet-app` artifacts, CI jobs, and documentation;
+  - "sales" instead of "reloading" for the demo selling and loading the tickets ("reload" designating, on a Calypso
+    card, the reloading of its stored value): `src/sales` directory (instead of `src/reloading-remote`), packages
+    `org.calypsonet.keyple.demo.sales` (instead of `org.calypsonet.keyple.demo.reload.remote`), application ids and
+    iOS bundle id (installed as new applications), `kdt-sales-server`, `kdt-sales-android-app`,
+    `kdt-sales-multiplatform-app`, and `kdt-sales-pc-dotnet-app` artifacts, names of the applications ("Keyple
+    Demo — Sales"), CI jobs, and documentation;
   - results of the validation and inspection procedures: `NotRecognized` (instead of `NotSelected`) and, in the
     validation, `CardRemoved` (instead of `CardLost`, a "lost card" being a card lost by its holder);
   - "rejected" instead of "refused" in the displayed texts ("Card rejected"), the log messages ("Card rejected: ..."),
@@ -34,12 +38,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   found." and "3 trip(s) will now be loaded in the card."). The log messages follow the same typography: serial
   comma, American spelling ("signaled"), "Server started" (instead of "Keyple Demo - Reload Server started"), and
   "Physical channel opened" as the other events.
-- Reload demo: the remote service of the .NET client adding trips to the multi-trip ticket is named after the
+- Sales demo: the remote service of the .NET client adding trips to the multi-trip ticket is named after the
   business operation ("load"): `SELECT_APP_AND_LOAD_TRIPS` (instead of `SELECT_APP_AND_INCREASE_CONTRACT_COUNTER`),
   `SelectAppAndLoadTripsInputDto`/`OutputDto` with a `tripsToLoad` field (instead of `counterIncrement`, also in the
   JSON message), `JsonApiContractService` on the server (instead of `ContractCounterService`), and
   `SelectAppAndLoadTrips()`/`LoadTripsInputData` in the .NET client. The functional documentation no longer uses
-  "reload" for the operation, "Reload" only being the name of the demo.
+  "reload" for the operation.
 - READMEs reviewed against the code and the build, each information being described in a single place (main README,
   README of the component, or functional documentation): features, settings, supported cards and terminals,
   proprietary components (including the storage card libraries), prerequisites and versions, released packages, unit

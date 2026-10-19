@@ -21,23 +21,23 @@ jobs:
       component-name: "Inspection"
       working-directory: "./src/inspection/"
 
-  ci-reload-kmp-android-macos:
-    name: "Reload Interop (KMP, Android/macOS)"
+  ci-sales-kmp-android-macos:
+    name: "Sales Interop (KMP, Android/macOS)"
     uses: ./.github/workflows/reusable-android-ci.yml
     with:
-      component-name: "Reload Client Interop Mobile Multiplatform"
-      working-directory: "./src/reload-remote/client/interop-mobile-multiplatform/"
+      component-name: "Sales Client Interop Mobile Multiplatform"
+      working-directory: "./src/sales/client/interop-mobile-multiplatform/"
       target-os: "macos-latest"
       # The layering rules apply to the Android applications: the multiplatform client follows the MVVM pattern, its
       # view models calling the data services directly
       check-architecture: false
 
-  ci-reload-android:
-    name: "Reload (Android)"
+  ci-sales-android:
+    name: "Sales (Android)"
     uses: ./.github/workflows/reusable-android-ci.yml
     with:
-      component-name: "Reload Client Keyple Mobile Android"
-      working-directory: "./src/reload-remote/client/keyple-mobile-android/"
+      component-name: "Sales Client Keyple Mobile Android"
+      working-directory: "./src/sales/client/keyple-mobile-android/"
 
   ci-validation:
     name: "Validation (Android)"
@@ -76,44 +76,44 @@ jobs:
   # SERVER APPLICATION
   # ========================================
 
-  ci-reload-server:
-    name: "Reload Server (Java+Node)"
+  ci-sales-server:
+    name: "Sales Server (Java+Node)"
     uses: ./.github/workflows/reusable-java-node-ci.yml
     with:
-      component-name: "Reload Server"
-      working-directory: "./src/reload-remote/server/"
+      component-name: "Sales Server"
+      working-directory: "./src/sales/server/"
       node-directory: "./dashboard-app"
 
   # ========================================
   # iOS FRAMEWORKS - MULTIPLATFORM
   # ========================================
 
-  ci-reload-kmp-ios-arm64:
-    name: "Reload Interop (KMP, iOS-Arm64/macOS)"
+  ci-sales-kmp-ios-arm64:
+    name: "Sales Interop (KMP, iOS-Arm64/macOS)"
     uses: ./.github/workflows/reusable-kmp-ios-ci.yml
     with:
-      component-name: "Reload Client Interop Mobile Multiplatform"
-      working-directory: "./src/reload-remote/client/interop-mobile-multiplatform/"
+      component-name: "Sales Client Interop Mobile Multiplatform"
+      working-directory: "./src/sales/client/interop-mobile-multiplatform/"
       gradle-task: "linkDebugFrameworkIosArm64"
 
-  ci-reload-kmp-ios-simulator-arm64:
-    name: "Reload Interop (KMP, iOS-SimulatorArm64/macOS)"
+  ci-sales-kmp-ios-simulator-arm64:
+    name: "Sales Interop (KMP, iOS-SimulatorArm64/macOS)"
     uses: ./.github/workflows/reusable-kmp-ios-ci.yml
     with:
-      component-name: "Reload Client Interop Mobile Multiplatform"
-      working-directory: "./src/reload-remote/client/interop-mobile-multiplatform/"
+      component-name: "Sales Client Interop Mobile Multiplatform"
+      working-directory: "./src/sales/client/interop-mobile-multiplatform/"
       gradle-task: "linkDebugFrameworkIosSimulatorArm64"
 
   # ========================================
   # .NET APPLICATIONS
   # ========================================
 
-  ci-reload-dotnet:
-    name: "Reload (.NET/Windows)"
+  ci-sales-dotnet:
+    name: "Sales (.NET/Windows)"
     uses: ./.github/workflows/reusable-dotnet-ci.yml
     with:
-      component-name: "Reload Client PC .NET"
-      working-directory: "./src/reload-remote/client/pc-dotnet/"
+      component-name: "Sales Client PC .NET"
+      working-directory: "./src/sales/client/pc-dotnet/"
 
   # ========================================
   # DOCUMENTATION

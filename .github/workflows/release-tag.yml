@@ -18,20 +18,20 @@ jobs:
       component-name: "Inspection"
       working-directory: "./src/inspection/"
 
-  release-reload-kmp-android:
-    name: "Reload Interop (KMP, Android)"
+  release-sales-kmp-android:
+    name: "Sales Interop (KMP, Android)"
     uses: ./.github/workflows/reusable-android-release.yml
     with:
-      component-name: "Reload Client Interop Mobile Multiplatform"
-      working-directory: "./src/reload-remote/client/interop-mobile-multiplatform/"
+      component-name: "Sales Client Interop Mobile Multiplatform"
+      working-directory: "./src/sales/client/interop-mobile-multiplatform/"
       apk-output-path: "androidApp/build/outputs/apk/debug/*.apk"
 
-  release-reload-android:
-    name: "Reload (Android)"
+  release-sales-android:
+    name: "Sales (Android)"
     uses: ./.github/workflows/reusable-android-release.yml
     with:
-      component-name: "Reload Client Keyple Mobile Android"
-      working-directory: "./src/reload-remote/client/keyple-mobile-android/"
+      component-name: "Sales Client Keyple Mobile Android"
+      working-directory: "./src/sales/client/keyple-mobile-android/"
 
   release-validation:
     name: "Validation (Android)"
@@ -44,59 +44,59 @@ jobs:
   # SERVER APPLICATION
   # ========================================
 
-  release-reload-server:
-    name: "Reload Server (Java+Node)"
+  release-sales-server:
+    name: "Sales Server (Java+Node)"
     uses: ./.github/workflows/reusable-java-node-release.yml
     with:
-      component-name: "Reload Server"
-      working-directory: "./src/reload-remote/server/"
+      component-name: "Sales Server"
+      working-directory: "./src/sales/server/"
       node-directory: "./dashboard-app"
 
   # ========================================
   # DESKTOP APPLICATIONS - MULTIPLATFORM
   # ========================================
 
-  release-reload-kmp-macos:
-    name: "Reload Interop (KMP, macOS)"
+  release-sales-kmp-macos:
+    name: "Sales Interop (KMP, macOS)"
     uses: ./.github/workflows/reusable-kmp-desktop-release.yml
     with:
-      component-name: "Reload Client Interop Mobile Multiplatform"
+      component-name: "Sales Client Interop Mobile Multiplatform"
       target-os: "macos-latest"
       platform-name: "macOS"
-      working-directory: "./src/reload-remote/client/interop-mobile-multiplatform/"
+      working-directory: "./src/sales/client/interop-mobile-multiplatform/"
       platform-artifact-pattern: "composeApp/build/compose/binaries/main/dmg/*.dmg"
 
-  release-reload-kmp-linux:
-    name: "Reload Interop (KMP, Linux)"
+  release-sales-kmp-linux:
+    name: "Sales Interop (KMP, Linux)"
     uses: ./.github/workflows/reusable-kmp-desktop-release.yml
     with:
-      component-name: "Reload Client Interop Mobile Multiplatform"
+      component-name: "Sales Client Interop Mobile Multiplatform"
       target-os: "ubuntu-latest"
       platform-name: "Linux"
-      working-directory: "./src/reload-remote/client/interop-mobile-multiplatform/"
+      working-directory: "./src/sales/client/interop-mobile-multiplatform/"
       platform-artifact-pattern: "composeApp/build/compose/binaries/main/deb/*.deb"
 
-  release-reload-kmp-windows:
-    name: "Reload Interop (KMP, Windows)"
+  release-sales-kmp-windows:
+    name: "Sales Interop (KMP, Windows)"
     uses: ./.github/workflows/reusable-kmp-desktop-release.yml
     with:
-      component-name: "Reload Client Interop Mobile Multiplatform"
+      component-name: "Sales Client Interop Mobile Multiplatform"
       target-os: "windows-latest"
       platform-name: "Windows"
-      working-directory: "./src/reload-remote/client/interop-mobile-multiplatform/"
+      working-directory: "./src/sales/client/interop-mobile-multiplatform/"
       platform-artifact-pattern: "composeApp/build/compose/binaries/main/msi/*.msi"
 
   # ========================================
   # .NET APPLICATIONS
   # ========================================
 
-  release-reload-dotnet:
-    name: "Reload (.NET/Windows)"
+  release-sales-dotnet:
+    name: "Sales (.NET/Windows)"
     uses: ./.github/workflows/reusable-dotnet-release.yml
     with:
-      component-name: "Reload Client PC .NET"
-      working-directory: "./src/reload-remote/client/pc-dotnet/"
-      archive-name-prefix: "kdt-reload-pc-dotnet-app"
+      component-name: "Sales Client PC .NET"
+      working-directory: "./src/sales/client/pc-dotnet/"
+      archive-name-prefix: "kdt-sales-pc-dotnet-app"
 
   # ========================================
   # DOCUMENTATION

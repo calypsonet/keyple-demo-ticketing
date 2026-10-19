@@ -13,7 +13,7 @@ represents the last step of the ticketing workflow.
 
 This Android application simulates the terminals used by the inspectors of a transport network to check that the
 passengers have validated their trip. It analyzes the validation events written by the
-[Validation Demo](../validation/) and the contracts loaded by the [Reload Demo](../reload-remote/).
+[Validation Demo](../validation/) and the contracts loaded by the [Sales Demo](../sales/).
 
 **Role in ecosystem**: Last step of the ticketing workflow, which checks the cards after their validation.
 
@@ -29,7 +29,7 @@ in the Functional Documentation.
 - Compatible terminal hardware (see [tested terminals](#tested-terminals))
 
 ### Card requirements
-- Cards personalized and loaded with the [Reload Demo](../reload-remote/)
+- Cards personalized and loaded with the [Sales Demo](../sales/)
 - Cards validated with the [Validation Demo](../validation/), to display a validated contract
 - Supported AIDs (see [Common Library](../common/README.md#supported-card-applications))
 
@@ -238,7 +238,7 @@ presentation of the card for one result, and verify the results after validation
 - [Functional Documentation](../../docs/functional-documentation/index.adoc): Use cases and business rules
 - [Common Library](../common/README.md): Data structures and constants
 - [Validation Demo](../validation/README.md): Previous step in workflow
-- [Reload Demo](../reload-remote/README.md): Contract loading procedures
+- [Sales Demo](../sales/README.md): Contract loading procedures
 - [Eclipse Keyple Documentation](https://keyple.org): SDK reference
 
 ## License
