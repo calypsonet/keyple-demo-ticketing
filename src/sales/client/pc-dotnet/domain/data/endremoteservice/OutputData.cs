@@ -16,6 +16,13 @@ using Newtonsoft.Json;
 public class OutputData
 {
     /// <summary>
+    /// Gets or sets the serial number of the card application, in hexadecimal (output of the reading
+    /// of the contracts only).
+    /// </summary>
+    [JsonProperty("applicationSerialNumber")]
+    public string? ApplicationSerialNumber { get; set; }
+
+    /// <summary>
     /// Gets or sets the contracts.
     /// </summary>
     [JsonProperty("items")]

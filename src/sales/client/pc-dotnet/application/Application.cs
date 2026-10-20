@@ -62,8 +62,10 @@ namespace App.application
 
             Display("Reading successful", ConsoleColor.DarkGreen);
 
+            // The trips are loaded in the card read here only: its serial number is sent back to the server
+            string applicationSerialNumber = endRemoteServiceBody.OutputData.ApplicationSerialNumber ?? "";
             List<string> contracts = endRemoteServiceBody.OutputData.Items;
-            _logger.Information($"Contracts read [contracts={contracts.Count}]");
+            _logger.Information($"Contracts read [serialNumber={applicationSerialNumber}, contracts={contracts.Count}]");
             int contractNumber = 1;
             bool isMultiTripContractPresent = false;
             foreach (string contract in contracts)
@@ -100,7 +102,7 @@ namespace App.application
             WaitForCard();
 
             // Select the application of the card and load the trips
-            outputJson = _ticketingService.SelectAppAndLoadTrips(tripsToLoad);
+            outputJson = _ticketingService.SelectAppAndLoadTrips(tripsToLoad, applicationSerialNumber);
 
             endRemoteServiceBody = JsonConvert.DeserializeObject<EndRemoteServiceBody>(outputJson)!;
 

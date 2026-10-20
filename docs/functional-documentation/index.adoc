@@ -297,7 +297,7 @@ The steps executed on the card are detailed in <<loading-procedure>>.
 . The sales agent or the passenger presents the card to the reader of the client (NFC reader of the mobile device, or PC/SC reader of the desktop).
 . The server checks that the card is valid (personalized, not expired, last event of a known version), then reads its tickets, which are displayed.
 . The user selects the ticket to load.
-. The card is presented again: the server checks that a slot is available (with the multiplatform client, that the card is the one read before), then writes the new ticket, the counter being updated if necessary.
+. The card is presented again: the ticket is only loaded in the card read before (checked by the Android client, or by the server for the multiplatform and .NET clients); the server checks that a slot is available, then writes the new ticket, the counter being updated if necessary.
 
 ==== Business rules
 

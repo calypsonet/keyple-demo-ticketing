@@ -50,7 +50,7 @@ partition "Loading of the ticket" {
       :Card rejected;<<#F5B7B1>>
       stop
     else (Yes)
-      if (Same card as the one read?\n(multiplatform client)) then (No)
+      if (Same card as the one read?\n(checked by the Android client,\nor by the server for the\nmultiplatform and .NET clients)) then (No)
         :Not the same card;<<#F5B7B1>>
         stop
       else (Yes)
@@ -66,10 +66,7 @@ partition "Loading of the ticket" {
 
           :Add the trips to the counter\n(multi-trip ticket);
 
-          if (Ticket priorities changed?) then (No)
-          else (Yes)
-            :Update the priorities\nin the last event;
-          endif
+          :Update the priorities\nin the last event;
 
           :End of the secure session\n(Calypso card);
 

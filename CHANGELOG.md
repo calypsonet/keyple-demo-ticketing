@@ -61,7 +61,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Sales Android client: the statuses returned by the server were interpreted with a shift of one (wrong message, screen
   stuck on the loading animation).
 - Sales multiplatform client: an error of the server when reading the card is displayed, instead of an empty card.
-- Sales .NET client: the number of trips was sent in hexadecimal (10 trips were refused and 20 trips loaded 14).
+- Sales .NET client: the number of trips was sent in hexadecimal (10 trips were refused and 20 trips loaded 14), and
+  the trips could be loaded in another card than the one read.
 ### Upgraded
 - `keyple-java-bom`: `2026.03.19` -> `2026.10.14` (`keyple-card-calypso-java-lib` `3.3.0`, fixing the session signature
   of the PKI cards when the CA certificate is not registered).

@@ -37,7 +37,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Services of the .NET client, the application of the card being selected by the server: reading of
  * the contracts as text (remote service {@code SELECT_APP_AND_READ_CONTRACTS}) and loading of trips
- * on the multi-trip ticket (remote service {@code SELECT_APP_AND_LOAD_TRIPS}).
+ * on the multi-trip ticket (remote service {@code SELECT_APP_AND_LOAD_TRIPS}), in the card read
+ * before only.
  */
 @ApplicationScoped
 public class JsonApiContractService {
@@ -101,6 +102,7 @@ public class JsonApiContractService {
       }
     }
     return new SelectAppAndReadContractsOutputDto(
+        calypsoCard == null ? "" : HexUtil.toHex(calypsoCard.getApplicationSerialNumber()),
         contractDescriptions,
         statusCode,
         RemoteServiceMessages.of(RemoteServiceStatus.fromCode(statusCode), calypsoCard));
@@ -114,20 +116,30 @@ public class JsonApiContractService {
     int statusCode = RemoteServiceStatus.SUCCESS.getCode();
     try {
       calypsoCard = cardRepository.selectCard(cardReader);
+      String serialNumber = HexUtil.toHex(calypsoCard.getApplicationSerialNumber());
       logger.info(
           "Loading trips [plugin={}, serialNumber={}, tripsToLoad={}]",
           NON_KEYPLE_PLUGIN,
-          HexUtil.toHex(calypsoCard.getApplicationSerialNumber()),
+          serialNumber,
           inputData.getTripsToLoad());
 
-      samResource =
-          CardResourceServiceProvider.getService()
-              .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
+      if (!serialNumber.equals(inputData.getApplicationSerialNumber())) {
+        // The trips are only loaded in the card read before, to avoid swapping the cards
+        logger.warn(
+            "Card rejected: not the card read before [serialNumber={}, expectedSerialNumber={}]",
+            serialNumber,
+            inputData.getApplicationSerialNumber());
+        statusCode = RemoteServiceStatus.DIFFERENT_CARD.getCode();
+      } else {
+        samResource =
+            CardResourceServiceProvider.getService()
+                .getCardResource(CardConfigurator.SAM_RESOURCE_PROFILE_NAME);
 
-      CardData card = cardRepository.readCard(cardReader, calypsoCard, samResource);
-      contractLoadingService.insertNewContract(
-          PriorityCode.MULTI_TRIP, inputData.getTripsToLoad(), card);
-      statusCode = cardRepository.writeCard(cardReader, calypsoCard, samResource, card);
+        CardData card = cardRepository.readCard(cardReader, calypsoCard, samResource);
+        contractLoadingService.insertNewContract(
+            PriorityCode.MULTI_TRIP, inputData.getTripsToLoad(), card);
+        statusCode = cardRepository.writeCard(cardReader, calypsoCard, samResource, card);
+      }
     } catch (CardFullException e) {
       // Rejection logged where it is detected
       statusCode = RemoteServiceStatus.CARD_FULL.getCode();

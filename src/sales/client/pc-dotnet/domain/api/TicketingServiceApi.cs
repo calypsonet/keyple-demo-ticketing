@@ -32,11 +32,12 @@ namespace App.domain.api
         string SelectAppAndReadContracts();
 
         /// <summary>
-        /// Selects the application of the card and loads trips onto its multi-trip ticket.
-        /// The transaction is fully operated by the server.
+        /// Selects the application of the card and loads trips onto its multi-trip ticket, if the card
+        /// is the one read before. The transaction is fully operated by the server.
         /// </summary>
         /// <param name="tripsToLoad">The number of trips to load.</param>
+        /// <param name="applicationSerialNumber">The serial number of the card read before.</param>
         /// <returns>A string representation of the status of the operation.</returns>
-        string SelectAppAndLoadTrips(int tripsToLoad);
+        string SelectAppAndLoadTrips(int tripsToLoad, string applicationSerialNumber);
     }
 }

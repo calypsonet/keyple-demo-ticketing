@@ -89,11 +89,11 @@ namespace App.domain.api
         }
 
         /// <inheritdoc/>
-        public string SelectAppAndLoadTrips(int tripsToLoad)
+        public string SelectAppAndLoadTrips(int tripsToLoad, string applicationSerialNumber)
         {
             _logger.Information("Executing the remote service [service=SELECT_APP_AND_LOAD_TRIPS]");
 
-            return ExecuteRemoteService(SelectAppAndLoadTripsService, new LoadTripsInputData { TripsToLoad = tripsToLoad });
+            return ExecuteRemoteService(SelectAppAndLoadTripsService, new LoadTripsInputData { ApplicationSerialNumber = applicationSerialNumber, TripsToLoad = tripsToLoad });
         }
 
         private string ExecuteRemoteService(string serviceId, InputData inputData)

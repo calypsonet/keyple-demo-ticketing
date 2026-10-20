@@ -82,7 +82,8 @@ Configure the server connection and specify your PC/SC reader name.
 2. **Read the contracts**: present a card; the server selects its application and reads its contracts, which are
    displayed
 3. **Load trips**: enter a number of trips between 1 and 20, then present the card again; the server adds the trips to
-   the multi-trip ticket (or loads a new one when the card has none)
+   the multi-trip ticket (or loads a new one when the card has none), in the card read before only ("Not the same
+   card" otherwise)
 4. **Result**: success, or the status code and the message of the server
 
 ## Technical architecture
@@ -157,7 +158,7 @@ The client implements the Keyple Server JSON API without the full SDK. It starts
 ```json
 {
   "serviceId": "SELECT_APP_AND_LOAD_TRIPS",
-  "inputData": { "tripsToLoad": 5 },
+  "inputData": { "applicationSerialNumber": "0000000011223344", "tripsToLoad": 5 },
   "isReaderContactless": true
 }
 ```
@@ -173,7 +174,8 @@ The client implements the Keyple Server JSON API without the full SDK. It starts
 ```
 
 The remote services used are `SELECT_APP_AND_READ_CONTRACTS` (the `items` of its output being the descriptions of the
-contracts) and `SELECT_APP_AND_LOAD_TRIPS`.
+contracts, and its `applicationSerialNumber` the serial number of the card) and `SELECT_APP_AND_LOAD_TRIPS`, which
+receives this serial number to load the trips in the same card only.
 
 ### Error handling
 

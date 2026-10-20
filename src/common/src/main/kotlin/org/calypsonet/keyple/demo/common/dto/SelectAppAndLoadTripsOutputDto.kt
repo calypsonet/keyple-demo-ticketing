@@ -14,7 +14,8 @@ package org.calypsonet.keyple.demo.common.dto
 
 /**
  * - statusCode: code of the [RemoteServiceStatus]: 0 (successful), 1 (card communication error), 2
- *   (server error), 4 (card not personalized), 5 (environment expired), 7 (card full).
+ *   (server error), 4 (card not personalized), 5 (environment expired), 6 (not the card read
+ *   before), 7 (card full).
  * - message: Status message.
  */
 data class SelectAppAndLoadTripsOutputDto(var statusCode: Int, var message: String)

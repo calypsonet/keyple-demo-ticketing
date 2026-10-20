@@ -12,4 +12,9 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.common.dto
 
-data class SelectAppAndLoadTripsInputDto(var tripsToLoad: Int)
+/**
+ * - applicationSerialNumber: Serial number of the card read before (output of the service
+ *   SELECT_APP_AND_READ_CONTRACTS): the trips are only loaded in this card.
+ * - tripsToLoad: Number of trips to load.
+ */
+data class SelectAppAndLoadTripsInputDto(var applicationSerialNumber: String, var tripsToLoad: Int)
