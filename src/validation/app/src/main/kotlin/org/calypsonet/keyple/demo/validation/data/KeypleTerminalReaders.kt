@@ -100,6 +100,8 @@ constructor(
     cardReaderName = AndroidNfcConstants.READER_NAME
     cardReaderProtocols[AndroidNfcSupportedProtocols.ISO_14443_4.name] =
         CardProtocol.ISO_14443_4.name
+    cardReaderProtocols[AndroidNfcSupportedProtocols.MIFARE_ULTRALIGHT.name] =
+        CardProtocol.MIFARE_ULTRALIGHT.name
     cardReaderProtocols[AndroidNfcSupportedProtocols.MIFARE_CLASSIC_1K.name] =
         CardProtocol.MIFARE_CLASSIC.name
     samPluginName = AndroidFamocoPlugin.PLUGIN_NAME
@@ -107,6 +109,7 @@ constructor(
     samReaderName = AndroidFamocoReader.READER_NAME
     samReaderProtocolPhysicalName = ContactCardCommonProtocols.ISO_7816_3.name
     samReaderProtocolLogicalName = CardProtocol.ISO_7816.name
+    isStorageCardSupported = true
   }
 
   private fun initArriveReader() {

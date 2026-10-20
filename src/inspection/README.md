@@ -31,6 +31,9 @@ in the Functional Documentation.
 ### Card requirements
 - Cards personalized and loaded with the [Sales Demo](../sales/)
 - Cards validated with the [Validation Demo](../validation/), to display a validated contract
+- Calypso cards, or storage cards with the storage card libraries (see [Proprietary plugins](#proprietary-plugins)),
+  depending on the terminal (see the
+  [storage cards supported](../../docs/functional-documentation/index.adoc#storage-card-support))
 - Supported AIDs (see [Card data model](../../docs/functional-documentation/index.adoc#supported-card-applications))
 
 ## Installation
@@ -147,7 +150,9 @@ The comments of these classes reference the step numbers of the annex.
 
 **Famoco FX205**
 - **Configuration**: NFC reader and SAM reader
-- **Plugins**: [Famoco Plugin](https://github.com/calypsonet/keyple-famoco) + [Android NFC](https://keyple.org/components/standard-reader-plugins/keyple-plugin-android-nfc-lib/)
+- **Plugins**: [Android NFC](https://keyple.org/components/standard-reader-plugins/keyple-plugin-android-nfc-lib/)
+  for the contactless cards (Calypso cards, and storage cards with the storage card libraries), and
+  [Famoco Plugin](https://github.com/calypsonet/keyple-famoco) for the SAM
 
 **NFC terminal (any Android device with NFC)**
 - **Plugin**: [Android NFC Plugin](https://keyple.org/components/standard-reader-plugins/keyple-plugin-android-nfc-lib/)

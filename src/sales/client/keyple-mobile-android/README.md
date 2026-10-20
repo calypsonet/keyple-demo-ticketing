@@ -26,8 +26,9 @@ for later validation and inspection.
 - Internet connectivity for server communication
 - Compatible cards: Calypso cards (see the
   [supported AIDs](../../../../docs/functional-documentation/index.adoc#supported-card-applications)), or storage cards
-  (MIFARE Ultralight and MIFARE Classic 1K, and ST25 SRT512 with the Bluebird terminals), with the storage card
-  libraries (see [Plugin integration](#plugin-integration))
+  (MIFARE Ultralight and MIFARE Classic 1K, and ST25 SRT512 with the Bluebird terminals, see the
+  [storage cards supported](../../../../docs/functional-documentation/index.adoc#storage-card-support)), with
+  the storage card libraries (see [Plugin integration](#plugin-integration))
 
 ### Server requirements
 - Running [Keyple Sales Demo server](../../server/README.md) with SAM integration

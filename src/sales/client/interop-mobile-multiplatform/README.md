@@ -29,6 +29,11 @@ cross-platform development practices for contactless card applications.
 - **JDK 17** to build the project (the desktop application runs on Java 17+)
 - **Kotlin 2.3** with multiplatform support (provided by the Gradle build)
 
+### Card requirements
+- Calypso cards with a supported AID (see the
+  [supported card applications](../../../../docs/functional-documentation/index.adoc#supported-card-applications)):
+  this client does not handle the storage cards
+
 ### Platform-specific requirements
 
 #### Android

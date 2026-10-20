@@ -23,6 +23,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Unit tests of the business rules (common library, sales server, validation and inspection apps), and CI checks of
   the log and exception messages, of the architecture of the Android applications, and of the dashboard code.
 - Validation app: anti-passback check for the storage cards.
+- Famoco terminals: storage cards handled by the validation app, and MIFARE Ultralight cards read by the validation
+  and inspection apps (supported storage cards described in the functional documentation).
 - Sales clients: the result screens return automatically after 5 seconds, the remaining time being displayed.
 ### Changed
 - All the applications: same English ticketing vocabulary in the displayed texts ("ticket", "card", "Season pass",

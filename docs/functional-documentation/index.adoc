@@ -176,7 +176,37 @@ Storage cards are simpler memory media without a Calypso security system. They a
 
 NOTE: Storage cards support only *1 transit ticket*. They do not benefit from the same security guarantees as Calypso cards.
 
-IMPORTANT: Storage cards are handled with the storage card extension and reader plugin of CNA, available on request. Without them (default build), the applications do not support storage cards. With the sales Android client, the ST25 SRT512 cards are supported on the Bluebird terminals only.
+IMPORTANT: Storage cards are handled with the storage card extension and reader plugin of CNA, available on request. Without them (default build), the applications do not support storage cards.
+
+With these libraries, the storage cards supported depend on the application and on the terminal:
+
+[[storage-card-support]]
+[cols="5,^2,^2,^2", options="header"]
+|===
+| Application and terminal | MIFARE Ultralight | ST25 SRT512 | MIFARE Classic 1K
+
+| Sales (Android client), validation, and inspection: Bluebird EF501
+| icon:check[role=green]
+| icon:check[role=green]
+| icon:check[role=green]
+
+| Validation and inspection: Famoco FX205
+| icon:check[role=green]
+| icon:times[role=red]
+| icon:check[role=green]
+
+| Sales (Android client) and inspection: other Android devices with NFC
+| icon:check[role=green]
+| icon:times[role=red]
+| icon:check[role=green]
+
+| Validation: Arrive Axio 4
+| icon:times[role=red]
+| icon:times[role=red]
+| icon:times[role=red]
+|===
+
+The storage cards are read by the reader plugins configured with the storage card interpreter of CNA: the plugin of the Bluebird terminals, and the Android NFC plugin, used by the Famoco terminals and the other Android devices (this plugin does not support the ST25 SRT512 cards). The plugin of the Arrive terminals does not support them. The multiplatform and .NET sales clients handle the Calypso cards only.
 
 WARNING: This demo is only intended to demonstrate that memory cards can be handled.
 

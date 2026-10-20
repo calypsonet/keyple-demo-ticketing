@@ -29,8 +29,10 @@ access to transportation networks.
 
 ### Card requirements
 - Cards personalized and loaded using the [Sales Demo](../sales/)
-- Calypso cards, or storage cards (MIFARE Ultralight, ST25 SRT512, MIFARE Classic) with the storage card
-  libraries (see [Proprietary plugins](#proprietary-plugins))
+- Calypso cards, or storage cards (MIFARE Ultralight and MIFARE Classic 1K on the Bluebird and Famoco terminals, ST25
+  SRT512 on the Bluebird terminals only), with the storage card libraries (see
+  [Proprietary plugins](#proprietary-plugins) and the
+  [storage cards supported](../../docs/functional-documentation/index.adoc#storage-card-support))
 - Supported AIDs (see [Card data model](../../docs/functional-documentation/index.adoc#supported-card-applications))
 
 ## Installation
@@ -155,7 +157,9 @@ The comments of these classes reference the step numbers of the annex.
 
 **Famoco FX205**
 - **Readers**: NFC reader and SAM reader
-- **Plugins**: [Famoco Plugin](https://github.com/calypsonet/keyple-famoco) + [Android NFC](https://keyple.org/components/standard-reader-plugins/keyple-plugin-android-nfc-lib/)
+- **Plugins**: [Android NFC](https://keyple.org/components/standard-reader-plugins/keyple-plugin-android-nfc-lib/)
+  for the contactless cards (Calypso cards, and storage cards with the storage card libraries), and
+  [Famoco Plugin](https://github.com/calypsonet/keyple-famoco) for the SAM
 
 #### Proprietary plugins (on request)
 
