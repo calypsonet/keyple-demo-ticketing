@@ -31,7 +31,7 @@ in the Functional Documentation.
 ### Card requirements
 - Cards personalized and loaded with the [Sales Demo](../sales/)
 - Cards validated with the [Validation Demo](../validation/), to display a validated contract
-- Supported AIDs (see [Common Library](../common/README.md#supported-card-applications))
+- Supported AIDs (see [Card data model](../../docs/functional-documentation/index.adoc#supported-card-applications))
 
 ## Installation
 
@@ -102,25 +102,16 @@ Terminal selection → Settings → Home → Card reader → Card content or Inv
 
 ## Technical architecture
 
-### Supported card types
+### Inspection procedure
 
-#### Calypso cards
-**Inspection procedure**:
-1. **Selection**: selection of the application by its AID
-2. **Authentication**: secure session with the `DEBIT` access level when a SAM is available, PKI secure session when
-   the card supports it, otherwise reading without authentication
-3. **Environment analysis**: version and end date of the environment
-4. **Event analysis**: version, date, time, and location of the last event, and contract used
-5. **Contract analysis**: reading of the contracts and of the counters, expiration of each contract, contract
-   validated by the last event
-6. **Result**: content of the card (`InspectionResult.CardContent`) or reason of the rejection
-- **Not implemented** (steps of the data model): verification of the contract authenticator with the PSO Verify
-  Signature command of the SAM and SAM black list (the contracts loaded by the demo have no authenticator)
+The steps of the inspection procedure are described in the annex
+[Card procedures](../../docs/functional-documentation/index.adoc#inspection-procedure) of the Functional
+Documentation, with the authentication modes and the steps not implemented by the demo. They are implemented by:
+- `CalypsoCardInspectionProcedure`: Calypso cards, in a secure session with the `DEBIT` access level when a SAM is
+  available, in a PKI secure session when the card supports it, otherwise without authentication;
+- `StorageCardInspectionProcedure`: storage cards (single contract), read without cryptographic operation.
 
-#### Storage cards
-**Inspection procedure** (MIFARE Ultralight, ST25 SRT512, MIFARE Classic):
-1. **Reading**: reading of the environment, of the event, and of the contract, without cryptographic operation
-2. **Analysis**: same checks as for the Calypso cards, on the single contract of the card
+The comments of these classes reference the step numbers of the annex.
 
 ### Key classes
 

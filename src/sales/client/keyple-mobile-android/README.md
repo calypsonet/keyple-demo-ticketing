@@ -24,9 +24,10 @@ for later validation and inspection.
 - Android device with Android 8.0+ (API level 26+)
 - NFC capability for contactless card reading
 - Internet connectivity for server communication
-- Compatible cards: Calypso cards (see [supported AIDs](../../../common/README.md#supported-card-applications)), or
-  storage cards (MIFARE Ultralight and MIFARE Classic 1K, and ST25 SRT512 with the Bluebird terminals), with the
-  storage card libraries (see [Plugin integration](#plugin-integration))
+- Compatible cards: Calypso cards (see the
+  [supported AIDs](../../../../docs/functional-documentation/index.adoc#supported-card-applications)), or storage cards
+  (MIFARE Ultralight and MIFARE Classic 1K, and ST25 SRT512 with the Bluebird terminals), with the storage card
+  libraries (see [Plugin integration](#plugin-integration))
 
 ### Server requirements
 - Running [Keyple Sales Demo server](../../server/README.md) with SAM integration

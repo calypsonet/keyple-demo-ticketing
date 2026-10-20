@@ -37,9 +37,9 @@ transportation ticketing workflow:
 
 The use cases and business rules are described for a functional audience (project managers, functional architects)
 in the [Functional Documentation](docs/functional-documentation/index.adoc), also attached as PDF and HTML files
-to each [release](https://github.com/calypsonet/keyple-demo-ticketing/releases). Its annex
-[Card procedures](docs/functional-documentation/index.adoc#card-procedures) details, step by step, the procedures
-executed on the card, as a technical reference for the developers.
+to each [release](https://github.com/calypsonet/keyple-demo-ticketing/releases). Its annexes are a technical
+reference for the developers: the [data model of the card](docs/functional-documentation/index.adoc#card-data-model),
+and the [procedures executed on the card](docs/functional-documentation/index.adoc#card-procedures), step by step.
 
 ## Quick start
 
@@ -82,21 +82,16 @@ described in the [Functional Documentation](docs/functional-documentation/index.
 ### Card application identifiers
 
 The Calypso card applications supported by the demos, those of the test cards of the
-[CNA Test Kit](https://calypsonet.org/technical-support-documentation/), are listed in the
-[Common Library documentation](src/common/README.md#supported-card-applications).
+[CNA Test Kit](https://calypsonet.org/technical-support-documentation/), are listed in the annex
+[Card data model](docs/functional-documentation/index.adoc#supported-card-applications) of the Functional
+Documentation.
 
 ## Data model
 
-The ecosystem uses standardized data structures defined in the [Common Library](src/common/):
-
-- **Environment record**: Card metadata and validity information
-- **Event log**: Transaction history and validation events
-- **Contract records**: Contracts (tickets) and their properties
-- **Counter files**: Usage tracking for multi-trip tickets
-
-See [Common Library Documentation](src/common/README.md) for detailed specifications, and the annex
-[Card procedures](docs/functional-documentation/index.adoc#card-procedures) of the Functional Documentation for the
-procedures using them.
+The data model of the card (environment and holder, event, contracts, and counters) and the procedures using it are
+specified in the annexes [Card data model](docs/functional-documentation/index.adoc#card-data-model) and
+[Card procedures](docs/functional-documentation/index.adoc#card-procedures) of the Functional Documentation. The
+[Common Library](src/common/README.md) implements the data model, shared by all the applications.
 
 ## Supported hardware
 

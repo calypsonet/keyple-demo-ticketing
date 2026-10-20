@@ -30,91 +30,19 @@ This library defines the common elements used across the Keyple Demo ecosystem:
 This library is included in the builds of the applications using it (Gradle included build, `includeBuild` in their
 `settings.gradle.kts`): it is built with them and does not need to be installed.
 
-## Data structures
+## Data model
 
-### Environment/holder structure
+The data model of the card (structures of the records, types of their fields, priority codes, and supported card
+applications) is specified in the annex
+[Card data model](../../docs/functional-documentation/index.adoc#card-data-model) of the Functional Documentation.
+This library implements it:
 
-Stores card metadata and holder information.
-
-| Field name           | Bits | Description                                        |     Type      |  Status   |
-|:---------------------|-----:|:---------------------------------------------------|:-------------:|:---------:|
-| EnvVersionNumber     |    8 | Data structure version number                      | VersionNumber | Mandatory | 
-| EnvApplicationNumber |   32 | Card application number (unique system identifier) |      Int      | Mandatory |
-| EnvIssuingDate       |   16 | Card application issuing date                      |  DateCompact  | Mandatory | 
-| EnvEndDate           |   16 | Card application expiration date                   |  DateCompact  | Mandatory | 
-| HolderCompany        |    8 | Holder company                                     |      Int      | Optional  | 
-| HolderIdNumber       |   32 | Holder Identifier within HolderCompany             |      Int      | Optional  | 
-| EnvPadding           |  120 | Padding (bits to 0)                                |    Binary     | Optional  | 
-
-### Event structure
-
-Records validation events and transaction history.
-
-| Field name         | Bits | Description                                   |     Type      |  Status   |
-|:-------------------|-----:|:----------------------------------------------|:-------------:|:---------:|
-| EventVersionNumber |    8 | Data structure version number                 | VersionNumber | Mandatory | 
-| EventDateStamp     |   16 | Date of the event                             |  DateCompact  | Mandatory | 
-| EventTimeStamp     |   16 | Time of the event                             |  TimeCompact  | Mandatory | 
-| EventLocation      |   32 | Location identifier                           |      Int      | Mandatory | 
-| EventContractUsed  |    8 | Index of the contract used for the validation |      Int      | Mandatory | 
-| ContractPriority1  |    8 | Priority for contract #1                      | PriorityCode  | Mandatory | 
-| ContractPriority2  |    8 | Priority for contract #2                      | PriorityCode  | Mandatory | 
-| ContractPriority3  |    8 | Priority for contract #3                      | PriorityCode  | Mandatory | 
-| ContractPriority4  |    8 | Priority for contract #4                      | PriorityCode  | Mandatory | 
-| EventPadding       |  120 | Padding (bits to 0)                           |    Binary     | Optional  | 
-
-### Contract structure
-
-Defines the contracts (tickets) and their properties.
-
-| Field name              | Bits | Description                          |        Type         |  Status   |
-|:------------------------|-----:|:-------------------------------------|:-------------------:|:---------:|
-| ContractVersionNumber   |    8 | Data structure version number        |    VersionNumber    | Mandatory | 
-| ContractTariff          |    8 | Contract Type                        |    PriorityCode     | Mandatory | 
-| ContractSaleDate        |   16 | Sale date of the contract            |     DateCompact     | Mandatory | 
-| ContractValidityEndDate |   16 | Last day of validity of the contract |     DateCompact     | Mandatory | 
-| ContractSaleSam         |   32 | SAM which loaded the contract        |         Int         | Optional  | 
-| ContractSaleCounter     |   24 | SAM auth key counter value           |         Int         | Optional  | 
-| ContractAuthKvc         |    8 | SAM auth key KVC                     |         Int         | Optional  | 
-| ContractAuthenticator   |   24 | Security authenticator               | Authenticator (Int) | Optional  | 
-| ContractPadding         |   96 | Padding (bits to 0)                  |       Binary        | Optional  | 
-
-### Counter structure
-
-Counts the trips left of a multi-trip ticket.
-
-| Field name   | Bits | Description     | Type |  Status   |
-|:-------------|-----:|:----------------|:----:|:---------:|
-| CounterValue |   24 | Number of trips | Int  | Mandatory |
-
-The counter of a contract is stored in a separate file on the Calypso cards (one counter per contract record), and in
-the contract record on the storage cards. `ContractStructure` carries it in its `counterValue` field, null for a
-contract without counter (season pass).
-
-## Data types
-
-### Base types
-
-| Name          | Bits | Description                                                                                                                                                        |
-|:--------------|-----:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| DateCompact   |   16 | Number of days since January 1st, 2010 (being date 0). Maximum value is 16,383, last complete year being 2053. All dates are in legal local time.                  |
-| TimeCompact   |   16 | Time in minutes, value = hour*60+minute (0 to 1,439)                                                                                                               |    
-| VersionNumber |    8 | Data model version:<br>0 Forbidden (undefined)<br>1 Current version<br>2..254 RFU<br>255 Forbidden (reserved)                                                      |
-
-### Priority codes
-
-Contract types and status indicators of the event. The code 3 (stored value) is defined by the data model but not
-supported by the demo: it is read as `UNKNOWN`. The use of the codes by the validation is described in the
-[Functional Documentation](../../docs/functional-documentation/index.adoc#ticket-priority).
-
-| Code | Name        | Description             |
-|-----:|:------------|:------------------------|
-|    0 | FORBIDDEN   | Prohibited usage        |
-|    1 | SEASON_PASS | Unlimited travel period |
-|    2 | MULTI_TRIP  | Count-based ticket      |
-|    3 | -           | Stored value            |
-| 4-30 | RFU         | Reserved for future use |
-|   31 | EXPIRED     | Contract has expired    |
+| Class                        | Content                                                                                      |
+|------------------------------|----------------------------------------------------------------------------------------------|
+| `EnvironmentHolderStructure` | Environment and holder record                                                                |
+| `EventStructure`             | Event record, with the priorities of the contracts                                           |
+| `ContractStructure`          | Contract record, with its counter (`counterValue`, null for a contract without counter)      |
+| `model/type`                 | `DateCompact`, `TimeCompact`, `VersionNumber`, and `PriorityCode` (code 3 read as `UNKNOWN`) |
 
 ## Record codecs
 
@@ -140,17 +68,6 @@ cards.
 | `StorageCardBlocks`   | Layout of the storage cards with 4-byte blocks (MIFARE Ultralight, ST25 SRT512)  |
 | `MifareClassicBlocks` | Layout of the MIFARE Classic 1K cards (sector 1)                                 |
 | `PkiTestCertificates` | Test certificates of the PKI                                                     |
-
-## Supported card applications
-
-The demos work with cards from the [CNA Test Kit](https://calypsonet.org/technical-support-documentation/) containing these application identifiers:
-
-| AID                  | Description                    | Compatibility          |
-|:---------------------|:-------------------------------|:-----------------------|
-| A000000291FF9101     | Keyple Generic test card       | All demo applications  |
-| 315449432E49434131   | CD Light/GTML Compatibility    | Legacy system support  |
-| 315449432E49434133   | Calypso Light                  | Standard Calypso       |
-| A0000004040125090101 | Navigo IDF                     | Paris transport system |
 
 ## Usage examples
 
@@ -201,9 +118,8 @@ val timeValue: Int = timeCompact.value
 ## Common procedures
 
 The procedures using these structures, the personalization of the cards and the loading of the contracts, are executed
-by the server of the sales demo, as described in its
-[README](../sales/README.md#card-personalization-and-contract-loading-procedures). The steps of all the procedures
-(personalization, loading, validation, and inspection) are described in the annex
+by the server of the sales demo. The steps of all the procedures (personalization, loading, validation, and
+inspection) are described in the annex
 [Card procedures](../../docs/functional-documentation/index.adoc#card-procedures) of the Functional Documentation.
 
 ## Version compatibility

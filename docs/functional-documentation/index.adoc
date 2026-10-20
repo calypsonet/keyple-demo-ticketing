@@ -88,7 +88,7 @@ include::assets/layout/_colophon.adoc[]
 [abstract]
 == Abstract
 
-This document describes the Keyple Demo Ticketing ecosystem from a functional and business perspective. It is intended for project managers, functional architects, and business teams who want to understand the covered use cases without going into technical implementation details. Annex A details the procedures executed on the card, as a technical reference for the developers.
+This document describes the Keyple Demo Ticketing ecosystem from a functional and business perspective. It is intended for project managers, functional architects, and business teams who want to understand the covered use cases without going into technical implementation details. Annexes A and B are a technical reference for the developers: the data model of the card, and the procedures executed on the card.
 
 == Overview
 
@@ -627,32 +627,164 @@ Each validation produces one of the following results:
 |===
 
 [appendix]
-[[card-procedures]]
-== Card procedures (technical reference)
+[[card-data-model]]
+== Card data model (technical reference)
 
-[[card-procedures-introduction]]
+[[card-data-model-introduction]]
 === Introduction
 
-This annex details, step by step, the procedures executed on the card by the applications of the demo. It is intended for the developers and the integrators: the use cases of this document describe the same operations from a functional perspective.
+This annex describes the data model of the Keyple demos: the card applications supported, the structures of the records written on the card, the types of their fields, and the layout of the files and blocks of the cards. It is intended for the developers and the integrators, as the procedures of <<card-procedures>> that use it.
 
-The procedures are those of the data model of the Keyple demos. The step numbers are referenced by the comments of the source code (for example, `// Step 11.3.1` in the validation procedure): a change of a procedure is made both in this annex and in the code.
+The data model is implemented by the link:../../src/common/README.md[common library] of the demo (classes of the structures and codecs encoding the records): a change of the data model is made both in this annex and in this library.
 
-[[card-procedures-conventions]]
-=== Conventions
+[[supported-card-applications]]
+=== Supported card applications
 
-* *Step numbers*: the steps keep the numbers of the data model. The steps added by the demo have a sub-number (for example, 6.1), so that the numbers of the other steps do not change.
-* `<Abort Transaction and exit process>`: the card is rejected, the secure session is canceled (no data written), and the procedure ends. On the storage cards, which have no secure session, the procedure ends without writing.
-* `<Exit process>`: the procedure ends, the result being returned to the upper layer (the application).
-* `END`, `CNT_UPD`, `CNT_READ`: labels of the steps reached by a "`go to`".
-* _Not implemented by the demo_: step of the data model that the demo does not implement (see <<scope>>). The step keeps its number, so that an integrator sees where to implement it.
+The demos work with the cards of the https://calypsonet.org/technical-support-documentation/[CNA Test Kit], whose Calypso applications have the following identifiers:
+
+[cols="3,3,2", options="header"]
+|===
+| AID | Description | Compatibility
+
+| `A000000291FF9101`
+| Keyple Generic test card
+| All the demo applications
+
+| `315449432E49434131`
+| CD Light/GTML Compatibility
+| Legacy system support
+
+| `315449432E49434133`
+| Calypso Light
+| Standard Calypso
+
+| `A0000004040125090101`
+| Navigo IDF
+| Paris transport system
+|===
+
+The DF name of the selected application must start with the AID, followed by zeros only (requirement TL-SEL-AIDMATCH.1 of the Calypso specifications).
+
+The file structure of the application (application subtype) must be one of the following: 01h (Revision 2 minimum), 02h (Revision 2 minimum with MF files), 03h (Revision 2 extended), 04h (Revision 2 extended with MF files), 05h (CD Light/GTML Compatibility), 06h (CD97 Structure 2 Compatibility), 07h (CD97 Structure 3 Compatibility), 08h (Extended Ticketing with Loyalty), 09h (Extended Ticketing with Loyalty and Miscellaneous), 32h (Calypso Light Classic), or 33h (Calypso Basic).
+
+The storage cards (MIFARE Ultralight, ST25 SRT512, MIFARE Classic 1K) are detected by their product type.
+
+[[data-structures]]
+=== Data structures
+
+The records have 29 bytes (232 bits) on the Calypso cards, and 16 bytes (128 bits) on the storage cards: the fields are the same, except the padding and the fields related to the SAM. A dash in the "`Storage cards`" column indicates a field not stored on these cards.
+
+==== Environment and holder
+
+Card metadata and holder information, written at the personalization.
+
+[cols="4,^1,^1,6,3,2", options="header"]
+|===
+| Field | Bits (Calypso) | Bits (storage cards) | Description | Type | Status
+
+| EnvVersionNumber | 8 | 8 | Data structure version number | VersionNumber | Mandatory
+| EnvApplicationNumber | 32 | 32 | Card application number (unique system identifier) | Int | Mandatory
+| EnvIssuingDate | 16 | 16 | Card application issuing date | DateCompact | Mandatory
+| EnvEndDate | 16 | 16 | Card application expiration date | DateCompact | Mandatory
+| HolderCompany | 8 | 8 | Holder company | Int | Optional
+| HolderIdNumber | 32 | 32 | Holder identifier within HolderCompany | Int | Optional
+| EnvPadding | 120 | 16 | Padding (bits to 0) | Binary | Optional
+|===
+
+==== Event
+
+Last event of the card: validation, or update of the contract priorities.
+
+[cols="4,^1,^1,6,3,2", options="header"]
+|===
+| Field | Bits (Calypso) | Bits (storage cards) | Description | Type | Status
+
+| EventVersionNumber | 8 | 8 | Data structure version number | VersionNumber | Mandatory
+| EventDateStamp | 16 | 16 | Date of the event | DateCompact | Mandatory
+| EventTimeStamp | 16 | 16 | Time of the event | TimeCompact | Mandatory
+| EventLocation | 32 | 32 | Location identifier | Int | Mandatory
+| EventContractUsed | 8 | 8 | Index of the contract used for the validation | Int | Mandatory
+| ContractPriority1 | 8 | 8 | Priority of the contract #1 | PriorityCode | Mandatory
+| ContractPriority2 | 8 | 8 | Priority of the contract #2 | PriorityCode | Mandatory
+| ContractPriority3 | 8 | 8 | Priority of the contract #3 | PriorityCode | Mandatory
+| ContractPriority4 | 8 | 8 | Priority of the contract #4 | PriorityCode | Mandatory
+| EventPadding | 120 | 16 | Padding (bits to 0) | Binary | Optional
+|===
+
+==== Contract
+
+Contract (ticket) and its properties.
+
+[cols="4,^1,^1,6,3,2", options="header"]
+|===
+| Field | Bits (Calypso) | Bits (storage cards) | Description | Type | Status
+
+| ContractVersionNumber | 8 | 8 | Data structure version number | VersionNumber | Mandatory
+| ContractTariff | 8 | 8 | Contract type | PriorityCode | Mandatory
+| ContractSaleDate | 16 | 16 | Sale date of the contract | DateCompact | Mandatory
+| ContractValidityEndDate | 16 | 16 | Last day of validity of the contract | DateCompact | Mandatory
+| ContractSaleSam | 32 | - | SAM that loaded the contract | Int | Optional
+| ContractSaleCounter | 24 | - | SAM authentication key counter value | Int | Optional
+| ContractAuthKvc | 8 | 8 | SAM authentication key KVC | Int | Optional
+| ContractAuthenticator | 24 | 24 | Security authenticator | Authenticator (Int) | Optional
+| ContractPadding | 96 | 24 | Padding (bits to 0) | Binary | Optional
+| CounterValue | - | 24 | Number of trips left (storage cards: counter stored in the contract record) | Int | Mandatory
+|===
+
+The fields ContractSaleSam, ContractSaleCounter, ContractAuthKvc, and ContractAuthenticator are those of the traceability mode, not implemented by the demo (see <<scope>>): the contracts are loaded with these fields at 0.
+
+==== Counter
+
+Number of trips left of a multi-trip ticket. On the Calypso cards, the counters are stored in a separate file, one counter per contract record; on the storage cards, the counter is stored in the contract record.
+
+[cols="4,^1,6,3,2", options="header"]
+|===
+| Field | Bits | Description | Type | Status
+
+| CounterValue | 24 | Number of trips left (0 to 16,777,215) | Int | Mandatory
+|===
+
+[[data-types]]
+=== Data types
+
+[cols="2,^1,8", options="header"]
+|===
+| Name | Bits | Description
+
+| DateCompact
+| 16
+| Number of days since January 1, 2010 (date 0). The maximum value is 16,383, the last complete year being 2053. All the dates are in legal local time.
+
+| TimeCompact
+| 16
+| Time in minutes: hour × 60 + minute (0 to 1,439).
+
+| VersionNumber
+| 8
+| Version of the data structure: 0 forbidden (undefined: blank record, never written), 1 current version, 2 to 254 reserved for future use, 255 forbidden (reserved).
+|===
+
+[[priority-codes]]
+==== Priority codes
+
+The PriorityCode type gives the type of a contract (ContractTariff field) and the priorities of the contracts in the event (ContractPriority fields). Their use by the validation is described in <<ticket-priority>>.
+
+[cols="^1,2,6", options="header"]
+|===
+| Code | Name | Description
+
+| 0 | FORBIDDEN | Empty record (present in clean records only)
+| 1 | SEASON_PASS | Season pass: unlimited travel during its validity period
+| 2 | MULTI_TRIP | Multi-trip ticket: one trip used at each validation
+| 3 | - | Stored value: defined by the data model, not supported by the demo (read as unknown, never validated)
+| 4 to 30 | RFU | Reserved for future use
+| 31 | EXPIRED | Contract expired or exhausted
+|===
 
 [[card-layouts]]
-=== Data model and card layouts
+=== Card layouts
 
-The structures of the records (environment and holder, event, contract, counter) and the data types (DateCompact, TimeCompact, VersionNumber, PriorityCode) are described in the link:../../src/common/README.md[README of the common library]. The procedures use the following values:
-
-* *VersionNumber*: 1 for the current version of a structure, 0 for a blank record (never written).
-* *PriorityCode* (ContractTariff of a contract, ContractPriority of the event): 1 for a season pass, 2 for a multi-trip ticket, 0 for an empty record, 31 for an expired or exhausted contract (see <<ticket-priority>>). The code 3 (stored value) is not supported: it is read as unknown, and never validated.
+Files of the Calypso cards and blocks of the storage cards used by the demo.
 
 ==== Calypso cards
 
@@ -700,6 +832,26 @@ The storage cards hold a single contract, the counter of a multi-trip ticket bei
 
 The MIFARE Classic 1K cards are authenticated with the key A of the sector 1 before each reading and each writing. The block 7 of the sector (sector trailer, holding the keys) is never written.
 
+[appendix]
+[[card-procedures]]
+== Card procedures (technical reference)
+
+[[card-procedures-introduction]]
+=== Introduction
+
+This annex details, step by step, the procedures executed on the card by the applications of the demo. It is intended for the developers and the integrators: the use cases of this document describe the same operations from a functional perspective.
+
+The procedures are those of the data model of the Keyple demos, described in <<card-data-model>>. The step numbers are referenced by the comments of the source code (for example, `// Step 11.3.1` in the validation procedure): a change of a procedure is made both in this annex and in the code.
+
+[[card-procedures-conventions]]
+=== Conventions
+
+* *Step numbers*: the steps keep the numbers of the data model. The steps added by the demo have a sub-number (for example, 6.1), so that the numbers of the other steps do not change.
+* `<Abort Transaction and exit process>`: the card is rejected, the secure session is canceled (no data written), and the procedure ends. On the storage cards, which have no secure session, the procedure ends without writing.
+* `<Exit process>`: the procedure ends, the result being returned to the upper layer (the application).
+* `END`, `CNT_UPD`, `CNT_READ`: labels of the steps reached by a "`go to`".
+* _Not implemented by the demo_: step of the data model that the demo does not implement (see <<scope>>). The step keeps its number, so that an integrator sees where to implement it.
+
 [[detection-selection-procedure]]
 === Detection and selection
 
@@ -710,7 +862,7 @@ Generic procedure, executed by all the applications before the procedures of the
 | Step | Action
 
 | 1
-| Perform the application selection using the AIDs of the demo cards (see the link:../../src/common/README.md[README of the common library]). The DF name of the selected application must start with the AID, followed by zeros only, and its file structure must be supported by the demo; otherwise, the card is not selected. The storage cards are detected by their product type.
+| Perform the application selection using the AIDs of the demo cards (see <<supported-card-applications>>). The DF name of the selected application must start with the AID, followed by zeros only, and its file structure must be supported by the demo; otherwise, the card is not selected. The storage cards are detected by their product type.
 
 | 2
 | If the status of the DF is invalid, report that information to the upper layer. `<Exit process>` +

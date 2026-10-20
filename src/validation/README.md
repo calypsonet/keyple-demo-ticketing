@@ -31,7 +31,7 @@ access to transportation networks.
 - Cards personalized and loaded using the [Sales Demo](../sales/)
 - Calypso cards, or storage cards (MIFARE Ultralight, ST25 SRT512, MIFARE Classic) with the storage card
   libraries (see [Proprietary plugins](#proprietary-plugins))
-- Supported AIDs (see [Common Library](../common/README.md#supported-card-applications))
+- Supported AIDs (see [Card data model](../../docs/functional-documentation/index.adoc#supported-card-applications))
 
 ## Installation
 
@@ -111,57 +111,17 @@ The content and the messages of each result are described in the
 
 ## Technical architecture
 
-### Supported card types
+### Validation procedure
 
-#### Calypso cards
-**Security model**:
-- Secure session with the `DEBIT` access level, authenticated by the SAM
-- Support for multiple contracts (1-4 depending on card type)
+The steps of the validation procedure are described in the annex
+[Card procedures](../../docs/functional-documentation/index.adoc#validation-procedure) of the Functional
+Documentation, with the anti-passback rule and the steps not implemented by the demo. They are implemented by:
+- `CalypsoCardValidationProcedure`: Calypso cards (1 to 4 contracts depending on the card product), in a secure session
+  with the `DEBIT` access level, authenticated by the SAM;
+- `StorageCardValidationProcedure`: storage cards (single contract), read and written without cryptographic
+  operation.
 
-**Processing flow**: see the [Best contract search algorithm](#best-contract-search-algorithm)
-
-#### Storage cards
-**Simplified model**:
-- Reading and writing without cryptographic operation
-- Single contract per card
-- Streamlined validation procedure
-
-**Processing flow**:
-1. Card detection and data reading
-2. Contract validation and date checking
-3. Counter updates for applicable contract types
-4. Event creation and data writing
-
-### Validation procedure details
-
-#### Best contract search algorithm
-
-The contracts are processed in the order of their priorities, described in the
-[Functional Documentation](../../docs/functional-documentation/index.adoc#ticket-priority):
-
-```
-1. Read environment and validate card expiration
-2. Analyze last event for contract priorities, and apply the anti-passback
-3. Create ordered list of valid contract priorities
-4. For each contract in priority order:
-   a. Read and validate contract record
-   b. Check the conditions of its type (ContractTariff)
-   c. If valid, select for validation
-   d. If expired or exhausted, mark priority as expired
-5. Update selected contract counter
-6. Create new validation event, or write the updated priorities if the card is rejected
-7. Close secure session
-```
-
-Additions to the procedure of the data model, described in the Functional Documentation:
-- [Anti-passback](../../docs/functional-documentation/index.adoc#anti-passback-rule), with the ratification of a
-  session interrupted by the removal of the card
-- [Rejected card](../../docs/functional-documentation/index.adoc#rejected-card): priorities of the expired or
-  exhausted contracts written on the card
-
-Not implemented by the demo (steps of the data model): verification of the contract authenticator with the PSO
-Verify Signature command of the SAM and SAM black list (traceability mode: the contracts loaded by the demo have no
-authenticator), black list of the card applications, and stored value contracts (`ContractTariff` 3).
+The comments of these classes reference the step numbers of the annex.
 
 ### Key classes
 
