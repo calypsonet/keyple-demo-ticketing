@@ -235,12 +235,19 @@ until a SAM is detected (no restart needed once the reader is connected and the 
 - Verify SAM is compatible with your cards (Test vs Production keys)
 
 **Server not starting: port 8080 already used by another process**
-- Kill existing process: `lsof -ti:8080 | xargs kill -9` (Linux/macOS) or check Task Manager (Windows)
+- Stop the other process: `lsof -ti:8080 | xargs kill -9` (Linux/macOS) or Task Manager (Windows)
+- Or start the server on another port (`java -Dquarkus.http.port=8081 -jar kdt-sales-server-YY.MM.DD-full.jar`), the
+  clients being then configured with this port
 
 **Web dashboard not loading**
-- Verify Node.js dependencies: `cd dashboard-app && npm install`
-- Clear browser cache and cookies
-- Check console for JavaScript errors
+- The dashboard is served by the server (`http://localhost:8080`): check that the server is running
+- Built from source: the Gradle build runs `npm run build` but not `npm install`, to be run once in `dashboard-app`
+  before the first build
+- Check the browser console for JavaScript errors
+
+**"Cannot reach the Keyple Demo — Sales Server" in the dashboard**
+- The dashboard has lost the connection to the server: check that the server process is running, and restart it if
+  needed
 
 ### Debug mode
 

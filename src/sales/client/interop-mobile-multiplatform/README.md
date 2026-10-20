@@ -287,23 +287,21 @@ reader is used.
 - Ensure firewall allows connections on desktop
 
 **"Place your card on the reader" stays displayed, or "Card reader error"**
-- **Android**: Enable NFC in system settings, grant app permissions
-- **iOS**: Ensure Core NFC is supported (iPhone 7+), check entitlements
-- **Desktop**: Verify PC/SC reader connection and drivers
+- **Android**: Enable NFC in the system settings
+- **iOS**: The device must support Core NFC (iPhone 7 or later, iOS 15.3 or later), and the AID of the card must be
+  declared in the `com.apple.developer.nfc.readersession.iso7816.select-identifiers` list of `iosApp/iosApp/Info.plist`
+  (the AIDs of the demo cards are declared): iOS does not detect the other cards
+- **Desktop**: Verify the connection and the drivers of the PC/SC reader, and that its name matches the `-filter`
+  argument (see [Desktop platform](#desktop-platform))
 
 ### Platform-specific issues
 
-#### Android
-- **NFC not working**: Check `AndroidManifest.xml` for NFC permissions
-- **App crashes on card detection**: Verify NFC intent filters
-
 #### iOS
-- **Core NFC session errors**: Check entitlements and provisioning profile
+- **Core NFC session errors**: Check the NFC entitlement (`iosApp/iosApp/iosApp.entitlements`) and the provisioning
+  profile
 
 #### Desktop
-- **PC/SC service not available**: Start PC/SC daemon (`pcscd` on Linux)
-- **Reader not detected**: Check USB connection and driver installation
-- **Permission denied**: Run with appropriate user permissions
+- **PC/SC service not available**: Start the PC/SC daemon (`pcscd` on Linux)
 
 ## Contributing
 
