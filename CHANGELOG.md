@@ -10,21 +10,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Components renamed with the English ticketing terms, the applications being installed as new applications (the
   previous ones are to be uninstalled, and their settings are not taken over):
   - "inspection" instead of "control": `src/inspection`, `kdt-inspection-app`, application "Keyple Demo — Inspection";
-  - "sales" instead of "reloading" for the demo selling and loading the tickets ("reload" designating, on a Calypso
-    card, the reloading of its stored value): `src/sales`, `kdt-sales-*` artifacts, applications "Keyple Demo —
-    Sales", "Keyple Demo — Sales (Interop)", and "Keyple Demo — Sales (.NET)".
+  - "sales" instead of "reloading" for the demo selling and loading the tickets: `src/sales`, `kdt-sales-*`
+    artifacts, applications "Keyple Demo — Sales", "Keyple Demo — Sales (Interop)", and "Keyple Demo — Sales (.NET)".
 - Build requirements: Java 17 for all the Java and Kotlin components, .NET 10 for the .NET client, and Node.js 24 for
   the dashboard.
 ### Added
-- Functional documentation (`docs/functional-documentation`): use cases, business rules, and messages of the demo, with
-  diagrams and a glossary, in the graphic charter of the CNA documents, attached as PDF and HTML files to each release.
-  Its annexes specify the data model of the card and the procedures executed on the card, step by step (the step
-  comments of the code being aligned with them), the READMEs being limited to the technical details of the components.
+- Functional documentation (`docs/functional-documentation`): use cases, business rules, and messages of the demo,
+  with diagrams and a glossary, and annexes specifying the data model of the card and the card procedures, in the
+  graphic charter of the CNA documents, attached as PDF and HTML files to each release.
 - Unit tests of the business rules (common library, sales server, validation and inspection apps), and CI checks of
   the log and exception messages, of the architecture of the Android applications, and of the dashboard code.
-- Validation app: anti-passback check for the storage cards.
-- Famoco terminals: storage cards handled by the validation app, and MIFARE Ultralight cards read by the validation
-  and inspection apps (supported storage cards described in the functional documentation).
+- Storage cards: anti-passback check in the validation app; on the Famoco terminals, storage cards handled by the
+  validation app, and MIFARE Ultralight cards read by the validation and inspection apps.
 - Sales clients: the result screens return automatically after 5 seconds, the remaining time being displayed.
 ### Changed
 - All the applications: same English ticketing vocabulary in the displayed texts ("ticket", "card", "Season pass",
@@ -39,7 +36,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Code quality: layered architecture with ports and adapters in the Android applications (Hilt instead of Dagger),
   sales server split by business operation, remote services and data named after the business operations, same log
   template in all the components, and conventions described in the README.
-- READMEs reviewed against the code; the changelogs of the archived repositories are moved to `docs/history/`.
+- READMEs reviewed against the code and limited to the technical details of the components, the specifications being
+  in the functional documentation; the changelogs of the archived repositories are moved to `docs/history/`.
 ### Fixed
 - Common library: a field value whose high bit is set was truncated when encoded (for example, a counter of 16,777,215
   written as 65,535 on a storage card).
