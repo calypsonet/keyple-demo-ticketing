@@ -14,7 +14,8 @@ package org.calypsonet.keyple.demo.common.model.type
 
 /**
  * Code of the ContractTariff field of a contract (type of contract) and of the ContractPriority
- * fields of the event (priority of a contract record): see the data model in the README.
+ * fields of the event (priority of a contract record): see the annex "Card data model" of the
+ * functional documentation.
  *
  * @property code The value stored in the card.
  * @property label The description of the code.

@@ -764,7 +764,7 @@ Number of trips left of a multi-trip ticket. On the Calypso cards, the counters 
 
 | VersionNumber
 | 8
-| Version of the data structure: 0 forbidden (undefined: blank record, never written), 1 current version, 2 to 254 reserved for future use, 255 forbidden (reserved).
+| Version of the data structure: 0 forbidden (undefined: blank record, never written), 1 current version, 2 to 254 reserved for future use (read as unknown by the demo), 255 forbidden (reserved).
 |===
 
 [[priority-codes]]
@@ -783,6 +783,8 @@ The PriorityCode type gives the type of a contract (ContractTariff field) and th
 | 4 to 30 | RFU | Reserved for future use
 | 31 | EXPIRED | Contract expired or exhausted
 |===
+
+The codes 3 to 30 are read as unknown (`UNKNOWN`) by the demo: a contract of an unknown type is never validated.
 
 [[card-layouts]]
 === Card layouts
@@ -1075,7 +1077,7 @@ The procedure is executed without secure session (steps 1, 16, and 20 without se
 [[validation-procedure]]
 === Validation
 
-Executed by the validation terminal, with its SAM (see <<validation-use-case>>).
+Executed by the validation terminal, with its SAM (see <<validation-use-case>>). The ContractPriority fields of the event give the order in which the contracts are read: the best candidate is found with the fewest records read, and thus the fewest commands exchanged with the card, and a card without usable contract is detected without reading its contracts. An expired or exhausted contract gets the priority 31, so that the next validations no longer read it, until it is renewed or replaced.
 
 [cols="^1,12", options="header"]
 |===
@@ -1282,7 +1284,7 @@ Executed by the inspection terminal, with or without SAM (see <<inspection-use-c
 
 ==== Storage cards
 
-* *Step 1*: the environment, event, and contract blocks are read at once, without authentication of the card (steps 1.1 and 1.2 not applicable).
+* *Step 1*: the environment, event, and contract blocks are read at once, without authentication of the card (steps 1.1 and 1.2 not applicable); the MIFARE Classic 1K cards require the authentication of their sector with the key A, which gives access to the blocks but does not authenticate the card.
 * *Steps 10 to 12*: the single contract, read at the step 1, is unpacked.
 * *Step 18*: the counter value is read in the contract record.
 * *Step 20*: the transaction ends, without session to close.

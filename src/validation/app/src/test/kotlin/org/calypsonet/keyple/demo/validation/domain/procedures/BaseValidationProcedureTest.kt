@@ -22,7 +22,10 @@ import org.calypsonet.keyple.demo.validation.domain.model.ValidationResult
 import org.eclipse.keypop.reader.selection.spi.SmartCard
 import org.junit.Test
 
-/** Business rules of the validation (data model of the demo, Validation process). */
+/**
+ * Business rules of the validation (annex "Card procedures" of the functional documentation,
+ * section "Validation").
+ */
 class BaseValidationProcedureTest {
 
   private val rules =

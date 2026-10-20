@@ -19,7 +19,7 @@ import org.calypsonet.keyple.demo.common.model.type.TimeCompact
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 
 /**
- * Event record of the card (see the data model in the README).
+ * Event record of the card (see the annex "Card data model" of the functional documentation).
  *
  * @property contractPriorities The priorities of the contract records, in the order of the records
  *   (contract numbers 1 to [CONTRACT_COUNT]).

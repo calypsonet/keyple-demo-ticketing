@@ -24,7 +24,10 @@ import org.calypsonet.keyple.demo.inspection.domain.model.InspectionResult
 import org.eclipse.keypop.reader.selection.spi.SmartCard
 import org.junit.Test
 
-/** Business rules of the inspection (data model of the demo, Inspection process). */
+/**
+ * Business rules of the inspection (annex "Card procedures" of the functional documentation,
+ * section "Inspection").
+ */
 class BaseInspectionProcedureTest {
 
   private val rules =

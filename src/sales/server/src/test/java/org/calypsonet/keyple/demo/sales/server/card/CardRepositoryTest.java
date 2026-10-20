@@ -21,7 +21,10 @@ import org.calypsonet.keyple.demo.common.model.EnvironmentHolderStructure;
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber;
 import org.junit.jupiter.api.Test;
 
-/** Environment written by the card personalization (data model of the demo). */
+/**
+ * Environment written by the card personalization (annex "Card procedures" of the functional
+ * documentation, section "Card personalization").
+ */
 class CardRepositoryTest {
 
   private static final LocalDate TODAY = LocalDate.of(2026, 10, 15);

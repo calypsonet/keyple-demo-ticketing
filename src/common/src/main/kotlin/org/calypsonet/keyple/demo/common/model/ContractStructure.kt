@@ -17,7 +17,8 @@ import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 
 /**
- * Contract record of the card (see the data model in the README), with the value of its counter.
+ * Contract record of the card (see the annex "Card data model" of the functional documentation),
+ * with the value of its counter.
  *
  * @property counterValue The value of the counter associated with the contract (number of trips
  *   left), null if it has not been read.

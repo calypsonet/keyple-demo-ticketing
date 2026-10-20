@@ -15,7 +15,10 @@ package org.calypsonet.keyple.demo.common.model
 import org.calypsonet.keyple.demo.common.model.type.DateCompact
 import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 
-/** Environment and holder record of the card (see the data model in the README). */
+/**
+ * Environment and holder record of the card (see the annex "Card data model" of the functional
+ * documentation).
+ */
 data class EnvironmentHolderStructure(
     val envVersionNumber: VersionNumber,
     val envApplicationNumber: Int,

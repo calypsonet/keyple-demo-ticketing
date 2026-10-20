@@ -32,7 +32,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Business rules of the contract analysis (data model of the demo, Distribution/Loading process).
+ * Business rules of the contract analysis (annex "Card procedures" of the functional documentation,
+ * section "Contract loading").
  */
 class ContractAnalysisServiceTest {
 

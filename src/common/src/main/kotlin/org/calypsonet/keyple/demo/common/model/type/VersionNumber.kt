@@ -14,7 +14,7 @@ package org.calypsonet.keyple.demo.common.model.type
 
 /**
  * Version number of a structure of the card (EnvVersionNumber, EventVersionNumber and
- * ContractVersionNumber fields): see the data model in the README.
+ * ContractVersionNumber fields): see the annex "Card data model" of the functional documentation.
  *
  * @property code The value stored in the card.
  * @property label The description of the version.
