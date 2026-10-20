@@ -501,7 +501,7 @@ Each validation produces one of the following results:
 | Card rejected by a business rule (see below).
 
 | *Not recognized*
-| Card not recognized: no supported application, or unsupported file structure ("`Selection error: card not recognized`").
+| Card not recognized: no supported application ("`Selection error: card not recognized`"), DF name not matching the AID of the application ("`Selection error: unexpected DF name`"), or file structure not supported ("`Invalid card — File structure not supported`"), see <<supported-card-applications>>.
 
 | *Card removed*
 | Communication interrupted during the transaction (card removed too early): "`An error occurred. Please try again.`"
@@ -551,6 +551,9 @@ Each validation produces one of the following results:
 
 | No supported application in the card
 | Selection error: card not recognized
+
+| DF name not matching the AID of the application
+| Selection error: unexpected DF name
 
 | File structure of the Calypso application not supported
 | Invalid card — File structure not supported

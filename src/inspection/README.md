@@ -213,6 +213,13 @@ inspection/app/
 The common issues of the Android applications (NFC, SAM, terminal type) are described in the
 [main README](../../README.md#troubleshooting).
 
+**"Not valid on this network"**
+- The reason displayed below the title is one of the
+  [inspection rejection conditions](../../docs/functional-documentation/index.adoc#inspection-rejection-conditions)
+  of the Functional Documentation
+- A storage card is not recognized when the storage card libraries are not available (see
+  [Proprietary plugins](#proprietary-plugins))
+
 **No contract marked as validated**
 - The last validation does not meet the rules of the inspection (location, day, validation period, contract used),
   described in [What inspection checks](../../docs/functional-documentation/index.adoc#inspection-checks) in the

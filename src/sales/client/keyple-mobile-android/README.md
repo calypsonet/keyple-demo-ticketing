@@ -240,8 +240,9 @@ The common issues of the Android applications (NFC, terminal type) are described
 - Try different card positioning on NFC antenna
 
 **"Ticket not loaded"**
-- The reason is displayed with the result, for example "No space left on the card for a new ticket" (no empty,
-  expired, or exhausted ticket slot on the card)
+- The reason is displayed with the result, for example "No space left on the card for a new ticket" (see the
+  [business rules of the loading](../../../../docs/functional-documentation/index.adoc#loading-use-case) in the
+  Functional Documentation)
 - Ensure server has SAM properly configured
 
 ### Debug mode
