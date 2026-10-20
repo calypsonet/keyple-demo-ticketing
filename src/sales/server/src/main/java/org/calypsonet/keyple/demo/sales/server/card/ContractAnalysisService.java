@@ -45,6 +45,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Analysis of the contracts of a card (remote service {@code READ_CARD_AND_ANALYZE_CONTRACTS}):
  * check of the environment and of the last event, then list of the contracts present in the card.
+ *
+ * <p>The steps referenced by the comments are described in the annex "Card procedures" of the
+ * functional documentation (docs/functional-documentation/index.adoc, section "Contract loading").
  */
 @ApplicationScoped
 public class ContractAnalysisService {
@@ -195,7 +198,7 @@ public class ContractAnalysisService {
    *     undefined one (clean card).
    */
   List<ContractStructure> findPresentContracts(CardData card) {
-    // Check environment
+    // Steps 3 and 4: Check environment
     EnvironmentHolderStructure environment = card.getEnvironment();
     if (environment.getEnvVersionNumber() != VersionNumber.CURRENT_VERSION) {
       logger.warn(
@@ -209,7 +212,7 @@ public class ContractAnalysisService {
           environment.getEnvEndDate().getDate());
       throw new EnvironmentExpiredException();
     }
-    // Check last event
+    // Step 6: Check last event
     EventStructure lastEvent = card.getEvent();
     if (lastEvent.getEventVersionNumber() != VersionNumber.CURRENT_VERSION
         && lastEvent.getEventVersionNumber() != VersionNumber.UNDEFINED) {
@@ -218,7 +221,7 @@ public class ContractAnalysisService {
           lastEvent.getEventVersionNumber());
       throw new EventWrongVersionException();
     }
-    // Iterate through the contracts in the card session
+    // Step 8: Iterate through the contracts in the card session
     List<ContractStructure> contracts = card.getContracts();
     List<ContractStructure> presentContracts = new ArrayList<>();
     int recordNumber = 1;
@@ -229,8 +232,8 @@ public class ContractAnalysisService {
           contract.getContractTariff(),
           contract.getContractSaleDate().getDate());
       if (contract.getContractVersionNumber() == VersionNumber.UNDEFINED) {
-        // If ContractVersionNumber is 0, ensure that the associated ContractPriority field value is
-        // 0 and move on to the next contract.
+        // Step 8.2: If ContractVersionNumber is 0, ensure that the associated ContractPriority
+        // field value is 0 and move on to the next contract.
         if (contract.getContractTariff() != PriorityCode.FORBIDDEN) {
           logger.warn(
               "Blank contract of an unexpected ContractTariff [recordNumber={}, contractTariff={}]",
@@ -238,6 +241,7 @@ public class ContractAnalysisService {
               contract.getContractTariff());
         }
       } else {
+        // Step 8.5: Add the contract to the list of the contracts of the card
         presentContracts.add(contract);
       }
       recordNumber++;

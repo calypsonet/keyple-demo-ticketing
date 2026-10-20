@@ -88,7 +88,7 @@ include::assets/layout/_colophon.adoc[]
 [abstract]
 == Abstract
 
-This document describes the Keyple Demo Ticketing ecosystem from a functional and business perspective. It is intended for project managers, functional architects, and business teams who want to understand the covered use cases without going into technical implementation details.
+This document describes the Keyple Demo Ticketing ecosystem from a functional and business perspective. It is intended for project managers, functional architects, and business teams who want to understand the covered use cases without going into technical implementation details. Annex A details the procedures executed on the card, as a technical reference for the developers.
 
 == Overview
 
@@ -133,6 +133,8 @@ The demo covers the personalization of the cards, and the loading, validation, a
 * *Stored value tickets*: they cannot be loaded, and a stored value ticket present on a card (priority 3) is ignored at validation
 * *Traceability mode*: the tickets are loaded without the cryptographic authenticator signed by the SAM, and no authenticator is verified at inspection
 * *Black lists* of the cards and of the SAMs
+
+The corresponding steps of the procedures are marked _Not implemented by the demo_ in <<card-procedures>>.
 
 [[cards]]
 == Contactless cards and media
@@ -226,6 +228,7 @@ NOTE: The priority 3 of the data model (Stored value) is not covered by the demo
 
 == Use cases
 
+[[personalization-use-case]]
 === Card issuance and personalization
 
 ==== Functional description
@@ -233,6 +236,8 @@ NOTE: The priority 3 of the data model (Stored value) is not covered by the demo
 Before being used, a blank card must be *personalized*: this operation initializes the card data and sets its validity period.
 
 Issuance is performed from the Android or multiplatform sales client, connected to the server (the .NET client does not personalize cards).
+
+The steps executed on the card are detailed in <<personalization-procedure>>.
 
 ==== What personalization does
 
@@ -247,12 +252,15 @@ plantuml::diagrams/personalization.puml[target=personalization,format=svg,alt="C
 
 '''
 
+[[loading-use-case]]
 === Loading a ticket
 
 ==== Functional description
 
 Loading consists of writing a new transit ticket onto the card, or adding trips to or renewing an existing one.
 This operation requires the *SAM security module* to be present on the server side.
+
+The steps executed on the card are detailed in <<loading-procedure>>.
 
 ==== Process
 
@@ -298,6 +306,7 @@ plantuml::diagrams/ticket-loading.puml[target=ticket-loading,format=svg,alt="Tic
 
 '''
 
+[[validation-use-case]]
 === Access validation
 
 ==== Functional description
@@ -305,6 +314,8 @@ plantuml::diagrams/ticket-loading.puml[target=ticket-loading,format=svg,alt="Tic
 Validation is the operation performed by the terminal installed at the access point (gate, validator) when a passenger presents their card.
 
 The terminal automatically selects the best available ticket, updates the card data, and records the entry event.
+
+The steps executed on the card are detailed in <<validation-procedure>>.
 
 ==== Prerequisites
 
@@ -344,11 +355,14 @@ plantuml::diagrams/validation-storage-card.puml[target=validation-storage-card,f
 
 '''
 
+[[inspection-use-case]]
 === Ticket inspection
 
 ==== Functional description
 
 Inspection is carried out by a ticket inspector equipped with a mobile terminal. It allows the inspector to *check that the passenger holds a validated ticket*, without modifying the card.
+
+The steps executed on the card are detailed in <<inspection-procedure>>.
 
 ==== Authentication modes
 
@@ -611,3 +625,509 @@ Each validation produces one of the following results:
 | *Storage card*
 | Simple memory card (MIFARE Ultralight, ST25, MIFARE Classic) that does not support the Calypso protocol. Only 1 ticket possible, no Calypso secure session.
 |===
+
+[appendix]
+[[card-procedures]]
+== Card procedures (technical reference)
+
+[[card-procedures-introduction]]
+=== Introduction
+
+This annex details, step by step, the procedures executed on the card by the applications of the demo. It is intended for the developers and the integrators: the use cases of this document describe the same operations from a functional perspective.
+
+The procedures are those of the data model of the Keyple demos. The step numbers are referenced by the comments of the source code (for example, `// Step 11.3.1` in the validation procedure): a change of a procedure is made both in this annex and in the code.
+
+[[card-procedures-conventions]]
+=== Conventions
+
+* *Step numbers*: the steps keep the numbers of the data model. The steps added by the demo have a sub-number (for example, 6.1), so that the numbers of the other steps do not change.
+* `<Abort Transaction and exit process>`: the card is rejected, the secure session is canceled (no data written), and the procedure ends. On the storage cards, which have no secure session, the procedure ends without writing.
+* `<Exit process>`: the procedure ends, the result being returned to the upper layer (the application).
+* `END`, `CNT_UPD`, `CNT_READ`: labels of the steps reached by a "`go to`".
+* _Not implemented by the demo_: step of the data model that the demo does not implement (see <<scope>>). The step keeps its number, so that an integrator sees where to implement it.
+
+[[card-layouts]]
+=== Data model and card layouts
+
+The structures of the records (environment and holder, event, contract, counter) and the data types (DateCompact, TimeCompact, VersionNumber, PriorityCode) are described in the link:../../src/common/README.md[README of the common library]. The procedures use the following values:
+
+* *VersionNumber*: 1 for the current version of a structure, 0 for a blank record (never written).
+* *PriorityCode* (ContractTariff of a contract, ContractPriority of the event): 1 for a season pass, 2 for a multi-trip ticket, 0 for an empty record, 31 for an expired or exhausted contract (see <<ticket-priority>>). The code 3 (stored value) is not supported: it is read as unknown, and never validated.
+
+==== Calypso cards
+
+[cols="3,^1,4", options="header"]
+|===
+| File | SFI | Content
+
+| Environment and holder
+| 07h
+| 1 record of 29 bytes
+
+| Event log
+| 08h
+| Last event in the record 1 (29 bytes)
+
+| Contracts
+| 09h
+| 1 record of 29 bytes per contract: 4 records, 2 on the Calypso Light cards, 1 on the Calypso Basic cards
+
+| Counters
+| 19h
+| 1 counter of 3 bytes per contract record (the counter of the contract #1 first, and so on)
+|===
+
+The secure sessions use the access level of the operation, with the default key (KIF) of the SAM: Personalization (21h) for the personalization, Load (27h) for the loading, Debit (30h) for the validation and the inspection.
+
+==== Storage cards
+
+The storage cards hold a single contract, the counter of a multi-trip ticket being stored in the contract record. Their records have 16 bytes, and they have no secure session (no SAM).
+
+[cols="2,2,2,2", options="header"]
+|===
+| Card | Environment and holder | Contract and counter | Event
+
+| MIFARE Ultralight, ST25 SRT512 (4-byte blocks)
+| Blocks 4 to 7
+| Blocks 8 to 11
+| Blocks 12 to 15
+
+| MIFARE Classic 1K (16-byte blocks, sector 1)
+| Block 4
+| Block 5
+| Block 6
+|===
+
+The MIFARE Classic 1K cards are authenticated with the key A of the sector 1 before each reading and each writing. The block 7 of the sector (sector trailer, holding the keys) is never written.
+
+[[detection-selection-procedure]]
+=== Detection and selection
+
+Generic procedure, executed by all the applications before the procedures of the following sections.
+
+[cols="^1,12", options="header"]
+|===
+| Step | Action
+
+| 1
+| Perform the application selection using the AIDs of the demo cards (see the link:../../src/common/README.md[README of the common library]). The DF name of the selected application must start with the AID, followed by zeros only, and its file structure must be supported by the demo; otherwise, the card is not selected. The storage cards are detected by their product type.
+
+| 2
+| If the status of the DF is invalid, report that information to the upper layer. `<Exit process>` +
+The validation and inspection terminals do not select the invalidated applications (card not recognized).
+
+| 3
+| If the serial number of the selected application is on the black list, go to the step 5. _Not implemented by the demo._
+
+| 4
+| Return the information on the selected application. `<Exit process>`
+
+| 5
+| Open a validation session without reading any information. _Not implemented by the demo._
+
+| 6
+| Send an Invalidate command. _Not implemented by the demo._
+
+| 7
+| Close the session. _Not implemented by the demo._
+
+| 8
+| Report to the upper layer that a card on the black list has been detected and invalidated. `<Exit process>` _Not implemented by the demo._
+|===
+
+[[personalization-procedure]]
+=== Card personalization
+
+Executed by the sales server, with its SAM (see <<personalization-use-case>>).
+
+[cols="^1,12", options="header"]
+|===
+| Step | Action
+
+| 1
+| Open a secure session at the Personalization access level, without reading any information.
+
+| 2
+a| Fill the environment structure, pack it, and update the environment record:
+
+* EnvVersionNumber = 1
+* EnvApplicationNumber = number generated by the server, initialized with its start time (in seconds) and incremented at each personalization
+* EnvIssuingDate = current date
+* EnvEndDate = first day of the month of the current date + 6 years
+* HolderCompany, HolderIdNumber, and EnvPadding filled with 0
+
+| 3
+| Clear the event record (update with a byte array filled with 0).
+
+| 4
+| Clear all the contract records (update with byte arrays filled with 0).
+
+| 5
+| Clear the counter file (update with a byte array filled with 0).
+
+| 6
+| Close the session.
+
+| 7
+| Return the status of the operation to the upper layer. `<Exit process>`
+|===
+
+==== Storage cards
+
+The environment block(s) are written, and the event and contract blocks are filled with 0, without secure session (steps 1 and 6 not applicable). The counter being stored in the contract record, the step 5 is not applicable.
+
+[[loading-procedure]]
+=== Contract loading
+
+Executed by the sales server, with its SAM (see <<loading-use-case>>). The procedure has two parts: the analysis of the contracts, whose result is displayed to the user, then the writing of the contract chosen by the user.
+
+==== Contract analysis
+
+[cols="^1,12", options="header"]
+|===
+| Step | Action
+
+| 1
+| Open a secure session at the Load access level, reading the environment record. The demo also reads the event, the contracts, and the counters in this session, then closes it.
+
+| 2
+| Unpack the environment structure.
+
+| 3
+| If EnvVersionNumber is not the expected one (1 for the current version), reject the card (card not personalized). `<Abort Transaction and exit process>`
+
+| 4
+| If EnvEndDate is in the past, reject the card. `<Abort Transaction and exit process>`
+
+| 5
+| Read and unpack the last event record.
+
+| 6
+| If EventVersionNumber is not the expected one (0 for a blank card, 1 for the current version), reject the card. `<Abort Transaction and exit process>`
+
+| 7
+| Store the ContractPriority fields of the event in a persistent object, with a flag indicating a change of priority, set to false.
+
+| 8
+| For each contract record:
+
+| 8.1
+| Read and unpack the contract record.
+
+| 8.2
+| If ContractVersionNumber is 0 (blank record), set the associated ContractPriority to 0 and move on to the next contract.
+
+| 8.3
+| If ContractAuthenticator is not 0, verify its value with the PSO Verify Signature command of the SAM. _Not implemented by the demo._
+
+| 8.3.1
+| If the value is wrong, reject the card. `<Abort Transaction and exit process>` _Not implemented by the demo._
+
+| 8.3.2
+| If ContractSaleSam is on the black list of the SAMs, reject the card. `<Abort Transaction and exit process>` _Not implemented by the demo._
+
+| 8.4
+| If ContractValidityEndDate is in the past, set the associated ContractPriority to 31 and set the change flag to true.
+
+| 8.5
+| Add the contract to the list of the contracts of the card.
+
+| 9
+| Return the list of the contracts. `<Exit process>`
+|===
+
+The user then chooses the contract to load (type, and number of trips of a multi-trip ticket), and presents the card again. The server reads it again (step 1) and recomputes the ContractPriority fields (steps 7, 8.2, and 8.4), without repeating the checks of the steps 3 to 6.
+
+==== Writing of the contract and update of the priorities
+
+[cols="^1,12", options="header"]
+|===
+| Step | Action
+
+| 10
+a| Fill the contract structure to write:
+
+* ContractVersionNumber = 1
+* ContractTariff = value provided by the upper layer (1 or 2; any other value is rejected)
+* ContractSaleDate = current date
+
+| 10.1
+| If the operation is the renewal of a season pass (ContractTariff = 1), ContractValidityEndDate = original ContractValidityEndDate + 30 days if the season pass has not expired, or ContractSaleDate + 30 days if it has expired.
+
+| 10.2
+| Otherwise, ContractValidityEndDate = ContractSaleDate + 30 days for a season pass (ContractTariff = 1), or EnvEndDate for a multi-trip ticket (ContractTariff = 2).
+
+| 11
+| Pack the contract structure.
+
+| 12
+| If the traceability mode is enabled, generate the authenticator with the PSO Generate Signature command of the SAM. _Not implemented by the demo._
+
+| 13
+| If a contract of the same type (ContractTariff) is present on the card, even expired, the operation is a renewal: use the index of this contract.
+
+| 14.1
+| If its ContractPriority is equal to ContractTariff, go to `CNT_UPD`.
+
+| 14.2
+| Otherwise, set its ContractPriority to ContractTariff and set the change flag to true.
+
+| 15
+| Otherwise (new contract):
+
+| 15.1
+| If one or more ContractPriority fields are 0, the record with the lowest index receives the contract. Set its ContractPriority to ContractTariff, set the change flag to true, and go to `CNT_UPD`.
+
+| 15.2
+| Otherwise, if a ContractPriority field is 31, the first one gives the record that receives the contract. Set its ContractPriority to ContractTariff, set the change flag to true, and go to `CNT_UPD`.
+
+| 15.3
+| Otherwise (no empty nor expired record), reject the card (card full). `<Abort Transaction and exit process>`
+
+| 15.4
+| On the single-contract cards (Calypso Basic, storage cards), the steps 15.1 to 15.3 are replaced by: the contract is replaced only if it is empty, expired, or exhausted (multi-trip ticket without trips left); otherwise, reject the card (card full). `<Abort Transaction and exit process>`
+
+| 16
+| `CNT_UPD`: open a secure session at the Load access level, and update the contract record of the chosen index.
+
+| 17
+| If ContractTariff is 2, set the counter of the contract to its current value (0 for a new contract) increased by the number of trips provided by the upper layer. This number must be positive, and the counter cannot exceed 16,777,215 (24 bits); otherwise, the operation is rejected. `<Abort Transaction and exit process>`
+
+| 18
+a| If the change flag is true, fill the event structure to update:
+
+* EventVersionNumber = 1
+* EventDateStamp, EventTimeStamp, EventLocation, EventContractUsed = values of the previous event
+* ContractPriority1 to ContractPriority4 = values of the persistent object
+* EventPadding = 0
+
+The demo always updates the event, its version number being set to 1 on a blank card.
+
+| 19
+| Pack the event structure and update the event record.
+
+| 20
+| Close the session.
+
+| 21
+| Return the status of the operation to the upper layer. `<Exit process>`
+|===
+
+==== Storage cards
+
+The procedure is executed without secure session (steps 1, 16, and 20 without session). The card holding a single contract, the step 15.4 applies. The counter being stored in the contract record, it is written with the contract at the step 16 (step 17 without separate counter).
+
+[[validation-procedure]]
+=== Validation
+
+Executed by the validation terminal, with its SAM (see <<validation-use-case>>).
+
+[cols="^1,12", options="header"]
+|===
+| Step | Action
+
+2+| *Event analysis*
+
+| 1
+| Open a secure session at the Debit access level, reading the environment record.
+
+| 2
+| Unpack the environment structure.
+
+| 3
+| If EnvVersionNumber is not the expected one (1 for the current version), reject the card. `<Abort Transaction and exit process>`
+
+| 4
+| If EnvEndDate is in the past, reject the card. `<Abort Transaction and exit process>`
+
+| 5
+| Read and unpack the last event record.
+
+| 6
+| If EventVersionNumber is not the expected one (1 for the current version), reject the card (0: card never loaded). `<Abort Transaction and exit process>`
+
+| 6.1
+| Anti-passback (see <<anti-passback-rule>>): if the last event is within the anti-passback delay (1 minute), reject the card. `<Abort Transaction and exit process>` The time of the event being recorded to the minute, the times are compared to the minute: the card is rejected until the end of the minute following the delay. +
+Exception on the Calypso cards: if the previous validation session was interrupted by the removal of the card (session not ratified), the card is considered as validated, without new decrement: go to `END`, which closes the session.
+
+| 7
+| Store the ContractPriority fields of the event in a persistent object.
+
+2+| *Best contract search*
+
+| 8
+| Create a list of the ContractPriority fields different from 0 and 31 (the unknown codes being excluded too).
+
+| 9
+| If the list is empty, go to `END`.
+
+| 10
+| Order the list by ContractPriority value.
+
+| 11
+| For each element of the list (the type of the contract is read in its ContractTariff field, the priorities only giving the order of the analysis):
+
+| 11.1
+| Read and unpack the contract record.
+
+| 11.2
+| If ContractVersionNumber is not the expected one (1 for the current version), reject the card. `<Abort Transaction and exit process>`
+
+| 11.3
+| If ContractAuthenticator is not 0, verify its value with the PSO Verify Signature command of the SAM. _Not implemented by the demo._
+
+| 11.3.1
+| If the value is wrong, reject the card. `<Abort Transaction and exit process>` _Not implemented by the demo._
+
+| 11.3.2
+| If ContractSaleSam is on the black list of the SAMs, reject the card. `<Abort Transaction and exit process>` _Not implemented by the demo._
+
+| 11.4
+| If ContractValidityEndDate is in the past, set the associated ContractPriority to 31, and move on to the next element of the list.
+
+| 11.5
+| If ContractTariff is 2 (multi-trip ticket):
+
+| 11.5.1
+| Read the counter associated with the contract (the counter #1 for the contract #1, and so on).
+
+| 11.5.2
+| If the counter value is 0, set the associated ContractPriority to 31, and move on to the next element of the list.
+
+| 11.5.3
+| If ContractTariff is 3 and the counter value is lower than the amount of the validation, move on to the next element of the list. _Not implemented by the demo (stored value)._
+
+2+| *Update counter*
+
+| 11.5.4
+| Decrement the counter by 1. The contract is used: go to the step 12. A contract whose ContractTariff is neither 1 nor 2 is not validated: move on to the next element of the list.
+
+2+| *Add new event*
+
+| 12
+a| If a contract is used, fill the event structure to update:
+
+* EventVersionNumber = 1
+* EventDateStamp, EventTimeStamp = current date and time (to the minute)
+* EventLocation = location configured in the validation terminal
+* EventContractUsed = index of the contract used
+* ContractPriority1 to ContractPriority4 = values of the persistent object
+* EventPadding = 0
+
+| 12.1
+| If no contract can be used, but ContractPriority values have been set to 31 (contracts expired or without trips left), the card is rejected: fill the event structure with the values of the previous event, except the ContractPriority fields, set to the values of the persistent object (see <<rejected-card>>).
+
+| 13
+| Pack the event structure and update the event record.
+
+| 14
+| `END`: close the session if the event has been updated (steps 12 and 12.1) or after a non-ratified session (step 6.1); otherwise, cancel it.
+
+| 15
+| Return the status of the operation to the upper layer. `<Exit process>`
+|===
+
+==== Storage cards
+
+* *Step 1*: the environment, event, and contract blocks are read at once, without secure session.
+* *Step 6.1*: no exception, the storage cards having no session to ratify.
+* *Steps 7 to 11*: the card holding a single contract, there is no list of priorities: the contract is read (11.1) and checked (11.2). An expired contract (11.4), a multi-trip ticket without trips left (11.5.2), or a contract of an unknown type rejects the card, without writing.
+* *Step 11.5.4*: the counter, stored in the contract record, is decremented in this record.
+* *Step 12*: ContractPriority1 is set to the ContractTariff of the contract, the other priorities to 0. The step 12.1 is not applicable.
+* *Steps 13 and 14*: the contract and event blocks are written, without session to close.
+
+[[inspection-procedure]]
+=== Inspection
+
+Executed by the inspection terminal, with or without SAM (see <<inspection-use-case>>).
+
+[cols="^1,12", options="header"]
+|===
+| Step | Action
+
+2+| *Event analysis*
+
+| 1.1
+| If the SAM is available, open a secure session at the Debit access level, reading the environment record, set the inTransactionFlag to true, and go to the step 2.
+
+| 1.2
+| Otherwise, if the card supports the PKI mode, open a PKI secure session, reading the environment record, set the inTransactionFlag to true, and go to the step 2.
+
+| 1.3
+| Otherwise, read the environment record, without authentication of the card.
+
+| 2
+| Unpack the environment structure.
+
+| 3
+| If EnvVersionNumber is not the expected one (1 for the current version), reject the card. `<Abort Transaction if inTransactionFlag is true and exit process>`
+
+| 4
+| If EnvEndDate is in the past, reject the card. `<Abort Transaction if inTransactionFlag is true and exit process>`
+
+| 5
+| Read and unpack the last event record.
+
+| 6
+| If EventVersionNumber is not the expected one (1 for the current version), reject the card; if it is 0, return the status of a card never loaded ("`No ticket`"). `<Abort Transaction if inTransactionFlag is true and exit process>`
+
+| 7
+| If EventLocation is not the location configured in the inspection terminal, set the "`not valid`" flag of the validated contract to true, and go to `CNT_READ`.
+
+| 8
+| Otherwise, if EventDateStamp is before the current date, set the "`not valid`" flag to true, and go to `CNT_READ`.
+
+| 9
+| Otherwise, if EventTimeStamp + validation period configured in the inspection terminal is before the current time, set the "`not valid`" flag to true. The time of the event being recorded to the minute, the times are compared to the minute: the validation is valid until the end of the minute of the end of the validation period.
+
+2+| *Contract analysis*
+
+| 10
+| `CNT_READ`: read all the contract records and the counter file.
+
+| 11
+| For each contract:
+
+| 12
+| Unpack the contract.
+
+| 13
+| If ContractVersionNumber is 0, the contract is blank: move on to the next contract.
+
+| 14
+| If ContractVersionNumber is not the expected one (1 for the current version), reject the card. `<Abort Transaction if inTransactionFlag is true and exit process>`
+
+| 15
+| If the SAM is available and ContractAuthenticator is not 0, verify its value with the PSO Verify Signature command of the SAM. _Not implemented by the demo._
+
+| 15.1
+| If the value is wrong, reject the card. `<Abort Transaction if inTransactionFlag is true and exit process>` _Not implemented by the demo._
+
+| 15.2
+| If ContractSaleSam is on the black list of the SAMs, reject the card. `<Abort Transaction if inTransactionFlag is true and exit process>` _Not implemented by the demo._
+
+| 16
+| If ContractValidityEndDate is in the past, mark the contract as expired.
+
+| 17
+| If EventContractUsed is the index of the contract and the "`not valid`" flag is false, mark the contract as validated.
+
+| 18
+| If ContractTariff is 2, extract the counter value associated with the contract.
+
+| 19
+| Add the contract to the list of the contracts to return to the upper layer.
+
+| 20
+| If the inTransactionFlag is true, close the session.
+
+| 21
+| Return the status of the operation to the upper layer. `<Exit process>`
+|===
+
+==== Storage cards
+
+* *Step 1*: the environment, event, and contract blocks are read at once, without authentication of the card (steps 1.1 and 1.2 not applicable).
+* *Steps 10 to 12*: the single contract, read at the step 1, is unpacked.
+* *Step 18*: the counter value is read in the contract record.
+* *Step 20*: the transaction ends, without session to close.

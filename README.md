@@ -37,7 +37,9 @@ transportation ticketing workflow:
 
 The use cases and business rules are described for a functional audience (project managers, functional architects)
 in the [Functional Documentation](docs/functional-documentation/index.adoc), also attached as PDF and HTML files
-to each [release](https://github.com/calypsonet/keyple-demo-ticketing/releases).
+to each [release](https://github.com/calypsonet/keyple-demo-ticketing/releases). Its annex
+[Card procedures](docs/functional-documentation/index.adoc#card-procedures) details, step by step, the procedures
+executed on the card, as a technical reference for the developers.
 
 ## Quick start
 
@@ -92,7 +94,9 @@ The ecosystem uses standardized data structures defined in the [Common Library](
 - **Contract records**: Contracts (tickets) and their properties
 - **Counter files**: Usage tracking for multi-trip tickets
 
-See [Common Library Documentation](src/common/README.md) for detailed specifications.
+See [Common Library Documentation](src/common/README.md) for detailed specifications, and the annex
+[Card procedures](docs/functional-documentation/index.adoc#card-procedures) of the Functional Documentation for the
+procedures using them.
 
 ## Supported hardware
 

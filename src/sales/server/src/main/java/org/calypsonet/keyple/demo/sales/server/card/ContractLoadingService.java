@@ -44,6 +44,9 @@ import org.slf4j.LoggerFactory;
  * Loading of a contract in a card (remote service {@code READ_CARD_AND_LOAD_CONTRACT}): loading of
  * a contract of the same type (trips added or season pass renewed), or new contract written in an
  * empty record or in place of an expired or exhausted contract.
+ *
+ * <p>The steps referenced by the comments are described in the annex "Card procedures" of the
+ * functional documentation (docs/functional-documentation/index.adoc, section "Contract loading").
  */
 @ApplicationScoped
 public class ContractLoadingService {
@@ -191,8 +194,8 @@ public class ContractLoadingService {
     ContractStructure newContract;
     int newContractNumber;
 
-    // Contract analysis: the priority of the empty records is set to 0, and the one of the expired
-    // contracts to 31, in the event to write
+    // Steps 7, 8.2, and 8.4 (contract analysis): the priority of the empty records is set to 0, and
+    // the one of the expired contracts to 31, in the event to write
     currentEvent = withAnalyzedContractPriorities(contracts, currentEvent);
 
     // Single contract cards support only one contract (contracts.size() == 1)
@@ -200,7 +203,7 @@ public class ContractLoadingService {
 
     int existingContractNumber = getContractNumber(contractTariff, contracts);
     if (existingContractNumber > 0) {
-      // Contract of the same type: trips added or season pass renewed
+      // Steps 13, 14.1, and 14.2: Contract of the same type: trips added or season pass renewed
       newContractNumber = existingContractNumber;
       ContractStructure currentContract = contracts.get(existingContractNumber - 1);
       // build new contract
@@ -213,8 +216,8 @@ public class ContractLoadingService {
         newContract = buildSeasonPassContract(currentContract);
       }
     } else if (isSingleContractCard) {
-      // Single contract card: the new contract replaces the existing one only if it is empty,
-      // expired or exhausted, as a contract of a multi-contract card
+      // Step 15.4: Single contract card: the new contract replaces the existing one only if it is
+      // empty, expired or exhausted, as a contract of a multi-contract card
       if (!isReplaceable(contracts.get(0), currentEvent.getContractPriority(1))) {
         logger.warn(
             "Card rejected: the contract of the single contract card is still valid [contractTariff={}, newContractTariff={}]",
@@ -234,7 +237,7 @@ public class ContractLoadingService {
         newContract = buildSeasonPassContract(null);
       }
     } else {
-      // Calypso: loading of a new contract, find available position
+      // Steps 15.1 to 15.3: Calypso: loading of a new contract, find available position
       newContractNumber = findAvailablePosition(contracts, currentEvent);
       if (newContractNumber == 0) {
         logger.warn("Card rejected: card full, no empty, expired, or exhausted contract record");
@@ -247,9 +250,10 @@ public class ContractLoadingService {
         newContract = buildSeasonPassContract(null);
       }
     }
+    // Steps 14.2, 15.1, and 15.2: the priority of the contract is its tariff
     currentEvent =
         currentEvent.withContractPriority(newContractNumber, newContract.getContractTariff());
-    // Update the contract and the event
+    // Update the contract and the event (written by the steps 16 to 20)
     card.setContract(newContractNumber - 1, newContract);
     card.setEvent(currentEvent);
   }
@@ -287,8 +291,8 @@ public class ContractLoadingService {
   }
 
   /**
-   * Returns the value of the counter of a multi-trip ticket after the loading of the provided
-   * trips.
+   * Returns the value of the counter of a multi-trip ticket after the loading of the provided trips
+   * (step 17).
    *
    * @throws IllegalArgumentException If the number of trips to load is not positive, or if the
    *     counter cannot hold the new value.
@@ -338,7 +342,8 @@ public class ContractLoadingService {
 
   /**
    * Builds a season pass valid for 30 days: from today for a new season pass, or from the validity
-   * end date of the renewed season pass when it has not expired (the renewal extends its validity).
+   * end date of the renewed season pass when it has not expired (the renewal extends its validity),
+   * as described by the steps 10.1 and 10.2.
    *
    * @param renewedSeasonPass The season pass renewed, null for a new season pass.
    */

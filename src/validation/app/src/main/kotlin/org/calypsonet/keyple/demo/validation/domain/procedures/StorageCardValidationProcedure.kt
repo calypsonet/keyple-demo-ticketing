@@ -49,6 +49,10 @@ import org.eclipse.keypop.storagecard.transaction.StorageCardTransactionManager
  * Block layouts:
  * - MIFARE Ultralight/ST25 SRT512: blocks 4-7 (Env), 8-11 (Contract), 12-15 (Event) [4 bytes each]
  * - MIFARE Classic 1K: blocks 4 (Env), 5 (Contract), 6 (Event) [16 bytes each, sector 1]
+ *
+ * The steps referenced by the comments are those of the validation procedure of the Calypso cards,
+ * adapted to the storage cards, as described in the annex "Card procedures" of the functional
+ * documentation (docs/functional-documentation/index.adoc, section "Validation").
  */
 class StorageCardValidationProcedure(
     private val keypopApiProvider: KeypopApiProvider,
@@ -132,7 +136,7 @@ class StorageCardValidationProcedure(
     }
 
     // ========= READ DATA =========
-    // Read environment, contract, and event based on card type
+    // Step 1: Read the environment, contract, and event blocks at once (no secure session)
     if (isMifareClassic) {
       logger.d(
           "Reading the MIFARE Classic blocks [environmentBlock=${MifareClassicBlocks.ENVIRONMENT_AND_HOLDER_BLOCK}, contractBlock=${MifareClassicBlocks.CONTRACT_BLOCK}, eventBlock=${MifareClassicBlocks.EVENT_BLOCK}]")
@@ -195,12 +199,13 @@ class StorageCardValidationProcedure(
       return ValidationResult.Rejected(cardDescription, it)
     }
 
-    // Anti-passback: the storage cards have no session to ratify
+    // Step 6.1: Anti-passback, without exception: the storage cards have no session to ratify
     if (isWithinAntiPassbackDelay(event.eventDateTime, validationDateTime)) {
       return ValidationResult.Rejected(cardDescription, RejectionReason.ALREADY_VALIDATED)
     }
 
-    // Step 7: Read and unpack the contract record (16 bytes)
+    // Step 11.1: Unpack the contract record (16 bytes), the single contract of the card (no list of
+    // priorities: steps 7 to 10 not applicable)
     val contractContent =
         if (isMifareClassic) {
           storageCard.getBlock(MifareClassicBlocks.CONTRACT_BLOCK)
@@ -210,12 +215,12 @@ class StorageCardValidationProcedure(
         }
     val contract = StorageCardContractCodec.decode(contractContent)
 
-    // Validate contract version
+    // Step 11.2: Validate contract version
     contractVersionRejection(contract.contractVersionNumber)?.let {
       return ValidationResult.Rejected(cardDescription, it)
     }
 
-    // Check contract validity
+    // Step 11.4: Check contract validity (an expired contract rejects the card, without writing)
     if (isContractExpired(
         contract.contractValidityEndDate.date, validationDateTime.toLocalDate())) {
       return ValidationResult.Rejected(cardDescription, RejectionReason.EXPIRED_CONTRACT)
@@ -230,13 +235,13 @@ class StorageCardValidationProcedure(
 
     when (contract.contractTariff) {
       PriorityCode.MULTI_TRIP -> {
-        // Check if there are trips left
+        // Step 11.5.2: Check if there are trips left (the counter is stored in the contract record)
         val counterValue = contract.counterValue ?: 0
         if (!hasTripsLeft(counterValue)) {
           return ValidationResult.Rejected(cardDescription, RejectionReason.NO_TRIPS_LEFT)
         }
 
-        // Decrement counter
+        // Step 11.5.4 (UPDATE COUNTER): Decrement counter
         val newCounterValue = counterValue - calculateDecrementAmount(contract.contractTariff)
         contractToWrite = contract.withCounterValue(newCounterValue)
         remainingTrips = newCounterValue
@@ -253,7 +258,7 @@ class StorageCardValidationProcedure(
     }
 
     // ========= WRITE DATA =========
-    // Create a new validation event
+    // Step 12: Fill the event structure of the validation
     val eventToWrite =
         EventStructure(
             eventVersionNumber = VersionNumber.CURRENT_VERSION,
@@ -279,7 +284,7 @@ class StorageCardValidationProcedure(
     }
 
     logger.d("Writing the contract and the event")
-    // Prepare write operations based on card type
+    // Steps 13 and 14: Write the contract and event blocks (no session to close)
     val updatedContractContent = StorageCardContractCodec.encode(contractToWrite)
     val eventBytesToWrite = StorageCardEventCodec.encode(eventToWrite)
 

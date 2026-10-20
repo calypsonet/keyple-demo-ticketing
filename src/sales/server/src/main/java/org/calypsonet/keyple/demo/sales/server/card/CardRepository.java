@@ -60,6 +60,13 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Access to the cards: selection, reading, writing, and personalization.
+ *
+ * <p>The steps referenced by the comments are described in the annex "Card procedures" of the
+ * functional documentation (docs/functional-documentation/index.adoc, sections "Card
+ * personalization" and "Contract loading").
+ */
 @ApplicationScoped
 public class CardRepository {
 
@@ -149,6 +156,8 @@ public class CardRepository {
         createCardTransactionManager(cardReader, calypsoCard, samResource);
 
     logger.debug("Opening the secure session [writeAccessLevel=LOAD]");
+    // Contract loading, step 1: Load session reading the environment, the event, the contracts, and
+    // the counters, closed after the reading
     cardTransactionManager
         .prepareOpenSecureSession(WriteAccessLevel.LOAD)
         .prepareReadRecords(
@@ -223,6 +232,7 @@ public class CardRepository {
         createCardTransactionManager(cardReader, calypsoCard, samResource);
 
     logger.debug("Opening the secure session [writeAccessLevel=LOAD]");
+    // Contract loading, step 16 (CNT_UPD): Load session updating the contract record
     cardTransactionManager.prepareOpenSecureSession(WriteAccessLevel.LOAD);
 
     /* Update contract records */
@@ -237,7 +247,7 @@ public class CardRepository {
               CalypsoFiles.SFI_CONTRACTS,
               contractNumber,
               CalypsoContractCodec.INSTANCE.encode(contract));
-          // update counter
+          // Step 17: update counter
           if (contract.getCounterValue() != null) {
             cardTransactionManager.prepareSetCounter(
                 CalypsoFiles.SFI_COUNTERS, contractNumber, contract.getCounterValue());
@@ -245,7 +255,7 @@ public class CardRepository {
         }
       }
     }
-    /* Update event */
+    /* Update event (steps 18 and 19) */
     if (Boolean.TRUE.equals(card.isEventUpdated())) {
       cardTransactionManager.prepareUpdateRecord(
           CalypsoFiles.SFI_EVENT_LOG,
@@ -253,6 +263,7 @@ public class CardRepository {
           CalypsoEventCodec.INSTANCE.encode(buildEvent(card.getEvent())));
     }
 
+    // Step 20: Close the session
     cardTransactionManager.prepareCloseSecureSession().processCommands(ChannelControl.KEEP_OPEN);
     logger.debug(SECURE_SESSION_CLOSED);
 
@@ -323,29 +334,31 @@ public class CardRepository {
         createCardTransactionManager(cardReader, calypsoCard, samResource);
 
     logger.debug("Opening the secure session [writeAccessLevel=PERSONALIZATION]");
+    // Personalization, step 1: Personalization session, without reading
     cardTransactionManager.prepareOpenSecureSession(WriteAccessLevel.PERSONALIZATION);
 
-    // Fill the environment structure with predefined values
+    // Step 2: Fill the environment structure with predefined values
     cardTransactionManager.prepareUpdateRecord(
         CalypsoFiles.SFI_ENVIRONMENT_AND_HOLDER,
         1,
         CalypsoEnvironmentHolderCodec.INSTANCE.encode(buildEnvironmentHolder()));
 
-    // Clear the first event (update with a byte array filled with 0 s).
+    // Step 3: Clear the first event (update with a byte array filled with 0 s).
     cardTransactionManager.prepareUpdateRecord(
         CalypsoFiles.SFI_EVENT_LOG, 1, new byte[CalypsoFiles.EVENT_RECORD_SIZE_BYTES]);
 
-    // Clear all contracts (update with a byte array filled with 0 s).
+    // Step 4: Clear all contracts (update with a byte array filled with 0 s).
     int contractRecordCount = getContractRecordCount(calypsoCard);
     for (int i = 1; i <= contractRecordCount; i++) {
       cardTransactionManager.prepareUpdateRecord(
           CalypsoFiles.SFI_CONTRACTS, i, new byte[CalypsoFiles.CONTRACT_RECORD_SIZE_BYTES]);
     }
 
-    // Clear the counter-file (update with a byte array filled with 0 s).
+    // Step 5: Clear the counter-file (update with a byte array filled with 0 s).
     cardTransactionManager.prepareUpdateRecord(
         CalypsoFiles.SFI_COUNTERS, 1, new byte[contractRecordCount * 3]);
 
+    // Step 6: Close the session
     cardTransactionManager.prepareCloseSecureSession().processCommands(ChannelControl.KEEP_OPEN);
     logger.debug(SECURE_SESSION_CLOSED);
   }

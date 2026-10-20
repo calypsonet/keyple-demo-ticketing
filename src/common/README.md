@@ -202,7 +202,9 @@ val timeValue: Int = timeCompact.value
 
 The procedures using these structures, the personalization of the cards and the loading of the contracts, are executed
 by the server of the sales demo, as described in its
-[README](../sales/README.md#card-personalization-and-contract-loading-procedures).
+[README](../sales/README.md#card-personalization-and-contract-loading-procedures). The steps of all the procedures
+(personalization, loading, validation, and inspection) are described in the annex
+[Card procedures](../../docs/functional-documentation/index.adoc#card-procedures) of the Functional Documentation.
 
 ## Version compatibility
 

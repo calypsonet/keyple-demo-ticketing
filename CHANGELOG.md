@@ -18,6 +18,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Functional documentation (`docs/functional-documentation`): use cases, business rules, and messages of the demo, with
   diagrams and a glossary, in the graphic charter of the CNA documents, attached as PDF and HTML files to each release.
+  Its annex details, step by step, the procedures executed on the card, the step comments of the code being aligned
+  with it.
 - Unit tests of the business rules (common library, sales server, validation and inspection apps), and CI checks of
   the log and exception messages, of the architecture of the Android applications, and of the dashboard code.
 - Validation app: anti-passback check for the storage cards.

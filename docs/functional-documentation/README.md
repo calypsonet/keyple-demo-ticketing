@@ -2,7 +2,9 @@
 
 Source of the functional documentation of the Keyple Demo Ticketing
 ([`index.adoc`](index.adoc)), written in AsciiDoc with the graphic charter of
-the CNA documents.
+the CNA documents. Its annex A, "Card procedures", details the procedures executed on the card, step by step, as a
+technical reference for the developers: the step numbers are referenced by the comments of the code, a change of a
+procedure being made in both.
 
 ## Publication
 

@@ -36,6 +36,11 @@ import org.eclipse.keypop.reader.CardCommunicationException
 import org.eclipse.keypop.reader.ChannelControl
 import org.eclipse.keypop.reader.selection.spi.SmartCard
 
+/**
+ * Validation procedure of the Calypso cards. The steps referenced by the comments are described in
+ * the annex "Card procedures" of the functional documentation
+ * (docs/functional-documentation/index.adoc, section "Validation").
+ */
 class CalypsoCardValidationProcedure(
     private val keypopApiProvider: KeypopApiProvider,
     private val logger: Logger
@@ -135,8 +140,7 @@ class CalypsoCardValidationProcedure(
     val environment = CalypsoEnvironmentHolderCodec.decode(efEnvironmentHolder.data.content)
 
     // Step 3: If EnvVersionNumber of the Environment structure is not the expected one (==1 for
-    // the
-    // current version), reject the card. <Abort Secure Session>
+    // the current version), reject the card. <Abort Secure Session>
     // Step 4: If EnvEndDate points to a date in the past, reject the card. <Abort Secure Session>
     environmentRejection(
             environment.envVersionNumber,
@@ -160,7 +164,7 @@ class CalypsoCardValidationProcedure(
       return rejected(it)
     }
 
-    // Step 6.2: anti-passback management and ratification of an interrupted session: within the
+    // Step 6.1: anti-passback management and ratification of an interrupted session: within the
     // anti-passback delay, the card is rejected if the last validation session has been ratified,
     // otherwise this session, interrupted by the removal of the card, is considered as validated.
     if (isWithinAntiPassbackDelay(event.eventDateTime, validationDateTime)) {
@@ -174,7 +178,7 @@ class CalypsoCardValidationProcedure(
     }
 
     // ***************** Best Contract Search
-    // Step 7: Create a list of PriorityCode fields that are different from FORBIDDEN, EXPIRED and
+    // Step 8: Create a list of PriorityCode fields that are different from FORBIDDEN, EXPIRED and
     // UNKNOWN.
     val allPriorities =
         event.contractPriorities.mapIndexed { index, priority -> Pair(index + 1, priority) }
@@ -185,7 +189,8 @@ class CalypsoCardValidationProcedure(
       return rejected(RejectionReason.NO_VALID_CONTRACT)
     }
 
-    // Contract priorities of the event to write, updated by the validation
+    // Step 7: Store the ContractPriority fields in a persistent object (the contract priorities of
+    // the event to write, updated by the validation)
     val contractPriorities = event.contractPriorities.toMutableList()
     var contractUsed = 0
     var shouldWriteEvent = false
@@ -194,7 +199,7 @@ class CalypsoCardValidationProcedure(
     var seasonPassValidityEndDate: LocalDate? = null
     var remainingTrips: Int? = null
 
-    // Step 10: For each element in the list:
+    // Step 10: Order the list by ContractPriority value.
     val sortedPriorities = sortContractPriorities(filteredPriorities)
 
     // Step 11: For each element in the list:
@@ -269,7 +274,8 @@ class CalypsoCardValidationProcedure(
           continue
         }
 
-        // Step 11.5.3 (UPDATE COUNTER): Decrement the counter-value by 1.
+        // Step 11.5.4 (UPDATE COUNTER): Decrement the counter-value by 1 (the step 11.5.3, stored
+        // value, is not implemented).
         val decrement = calculateDecrementAmount(contract.contractTariff)
         if (decrement > 0) {
           cardTransaction.prepareDecreaseCounter(CalypsoFiles.SFI_COUNTERS, recordNumber, decrement)
@@ -295,7 +301,7 @@ class CalypsoCardValidationProcedure(
     val eventToWrite: EventStructure
     val result: ValidationResult
     if (contractUsed > 0) {
-      // Create a new validation event
+      // Step 12: Fill the event structure of the validation
       eventToWrite =
           EventStructure(
               eventVersionNumber = VersionNumber.CURRENT_VERSION,
@@ -312,15 +318,15 @@ class CalypsoCardValidationProcedure(
               remainingTrips = remainingTrips,
               seasonPassValidityEndDate = seasonPassValidityEndDate)
     } else {
-      // Update the priorities of the event: the card is rejected, but its expired or exhausted
-      // contracts are no longer analyzed by the next validations
+      // Step 12.1: Update the priorities of the event: the card is rejected, but its expired or
+      // exhausted contracts are no longer analyzed by the next validations
       eventToWrite = event.copy(contractPriorities = contractPriorities.toList())
       result =
           ValidationResult.Rejected(
               cardDescription, rejectionReason ?: RejectionReason.NO_VALID_CONTRACT)
     }
 
-    // Step 13: Pack the Event structure and append it to the event file
+    // Step 13: Pack the Event structure and update the event record
     val eventBytesToWrite = CalypsoEventCodec.encode(eventToWrite)
     cardTransaction.prepareUpdateRecord(CalypsoFiles.SFI_EVENT_LOG, 1, eventBytesToWrite)
     return SessionOutcome(result, shouldCloseSession = true)

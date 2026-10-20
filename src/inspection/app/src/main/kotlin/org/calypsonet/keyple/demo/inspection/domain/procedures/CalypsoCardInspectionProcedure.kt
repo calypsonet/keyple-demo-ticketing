@@ -38,6 +38,11 @@ import org.eclipse.keypop.calypso.card.transaction.TransactionManager
 import org.eclipse.keypop.reader.ChannelControl
 import org.eclipse.keypop.reader.selection.spi.SmartCard
 
+/**
+ * Inspection procedure of the Calypso cards. The steps referenced by the comments are described in
+ * the annex "Card procedures" of the functional documentation
+ * (docs/functional-documentation/index.adoc, section "Inspection").
+ */
 class CalypsoCardInspectionProcedure(
     private val keypopApiProvider: KeypopApiProvider,
     private val logger: Logger
@@ -59,6 +64,8 @@ class CalypsoCardInspectionProcedure(
 
     val calypsoCardApiFactory = keypopApiProvider.getCalypsoCardApiFactory()
 
+    // Steps 1.1 to 1.3: Authentication of the card by the SAM if available, otherwise by the PKI
+    // mode if the card supports it, otherwise no authentication
     val authenticationMode: AuthenticationMode =
         if (symmetricCryptoSecuritySetting != null) AuthenticationMode.SAM
         else if (calypsoCard.isPkiModeSupported) AuthenticationMode.PKI
@@ -77,11 +84,13 @@ class CalypsoCardInspectionProcedure(
           }
 
       if (cardTransaction is SecureRegularModeTransactionManager) {
-        // Open a transaction to read/write the Calypso Card and read the Environment file
+        // Step 1.1: Open a secure session at the Debit access level (SAM)
         cardTransaction.prepareOpenSecureSession(WriteAccessLevel.DEBIT)
       } else if (cardTransaction is SecurePkiModeTransactionManager) {
+        // Step 1.2: Open a PKI secure session
         cardTransaction.prepareOpenSecureSession()
       }
+      // Step 1.3 otherwise: the environment record is read without authentication
 
       // Step 2: Read and unpack environment structure from the binary present in the environment
       // record.
@@ -121,8 +130,7 @@ class CalypsoCardInspectionProcedure(
       val event = CalypsoEventCodec.decode(efEventLog.data.content)
 
       // Step 6: If EventVersionNumber is not the expected one (==1 for the current version),
-      // reject
-      // the card (if ==0 return error status indicating clean card).
+      // reject the card (if ==0 return error status indicating clean card).
       // <Abort Secure Session if any>
       val eventVersionNumber = event.eventVersionNumber
       if (eventVersionNumber != VersionNumber.CURRENT_VERSION) {

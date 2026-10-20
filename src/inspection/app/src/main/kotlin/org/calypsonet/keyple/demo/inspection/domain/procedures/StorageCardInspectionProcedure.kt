@@ -37,6 +37,12 @@ import org.eclipse.keypop.storagecard.SCAuthenticationFailedException
 import org.eclipse.keypop.storagecard.card.ProductType
 import org.eclipse.keypop.storagecard.card.StorageCard
 
+/**
+ * Inspection procedure of the storage cards. The steps referenced by the comments are those of the
+ * inspection procedure of the Calypso cards, adapted to the storage cards, as described in the
+ * annex "Card procedures" of the functional documentation
+ * (docs/functional-documentation/index.adoc, section "Inspection").
+ */
 class StorageCardInspectionProcedure(
     private val keypopApiProvider: KeypopApiProvider,
     private val logger: Logger
@@ -86,7 +92,8 @@ class StorageCardInspectionProcedure(
       }
 
       // ========= READ DATA =========
-      // Step 2: Read environment, event, and contract structures based on card type
+      // Step 1: Read the environment, event, and contract blocks at once, without authentication
+      // of the card (steps 1.1 and 1.2 not applicable)
       if (isMifareClassic) {
         logger.d(
             "Reading the MIFARE Classic blocks [environmentBlock=${MifareClassicBlocks.ENVIRONMENT_AND_HOLDER_BLOCK}, contractBlock=${MifareClassicBlocks.CONTRACT_BLOCK}, eventBlock=${MifareClassicBlocks.EVENT_BLOCK}]")
@@ -148,8 +155,7 @@ class StorageCardInspectionProcedure(
       val event = StorageCardEventCodec.decode(eventContent)
 
       // Step 6: If EventVersionNumber is not the expected one (==1 for the current version),
-      // reject
-      // the card (if ==0 return error status indicating clean card).
+      // reject the card (if ==0 return error status indicating clean card).
       val eventVersionNumber = event.eventVersionNumber
       if (eventVersionNumber != VersionNumber.CURRENT_VERSION) {
         return if (eventVersionNumber == VersionNumber.UNDEFINED) {
@@ -168,7 +174,7 @@ class StorageCardInspectionProcedure(
           isLastValidationValid(
               event, inspectionLocation, inspectionDateTime, validationPeriodMinutes)
 
-      // Step 10 (CNT_READ): Read contract data (already read above)
+      // Steps 10 (CNT_READ) to 12: Unpack the single contract of the card, read at the step 1
       val contractContent =
           if (isMifareClassic) {
             storageCard.getBlock(MifareClassicBlocks.CONTRACT_BLOCK)
@@ -218,7 +224,8 @@ class StorageCardInspectionProcedure(
           validationDateTime = event.eventDateTime
         }
 
-        // Step 18: If the ContractTariff value for the contract is 2, extract the counter-value.
+        // Step 18: If the ContractTariff value for the contract is 2, extract the counter-value,
+        // stored in the contract record.
         val remainingTrips =
             if (contract.contractTariff == PriorityCode.MULTI_TRIP) {
               contract.counterValue
@@ -237,7 +244,7 @@ class StorageCardInspectionProcedure(
                 remainingTrips = remainingTrips))
       }
 
-      // Step 20: Close the transaction
+      // Step 20: End the transaction (no session to close)
       cardTransaction.processCommands(ChannelControl.CLOSE_AFTER)
 
       // Step 21: Return the status of the operation to the upper layer. <Exit process>
