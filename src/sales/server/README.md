@@ -234,7 +234,7 @@ until a SAM is detected (no restart needed once the reader is connected and the 
 - Ensure SAM is properly inserted in reader
 - Verify SAM is compatible with your cards (Test vs Production keys)
 
-**"Port already in use"**
+**Server not starting: port 8080 already used by another process**
 - Kill existing process: `lsof -ti:8080 | xargs kill -9` (Linux/macOS) or check Task Manager (Windows)
 
 **Web dashboard not loading**

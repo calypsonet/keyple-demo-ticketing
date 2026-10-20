@@ -281,12 +281,12 @@ reader is used.
 
 ### Common issues across platforms
 
-**"Server connection failed"**
-- Verify server URL is accessible from target platform
+**"Communication error" when reading the card, or "Server not ready" in the server settings**
+- Verify server URL is accessible from target platform (**Server state** button of the server settings)
 - Check network permissions on mobile platforms
 - Ensure firewall allows connections on desktop
 
-**"Card not detected"**
+**"Place your card on the reader" stays displayed, or "Card reader error"**
 - **Android**: Enable NFC in system settings, grant app permissions
 - **iOS**: Ensure Core NFC is supported (iPhone 7+), check entitlements
 - **Desktop**: Verify PC/SC reader connection and drivers

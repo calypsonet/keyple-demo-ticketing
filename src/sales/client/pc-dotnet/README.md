@@ -232,28 +232,23 @@ dotnet publish -c Release -r win-x64 --self-contained
 
 ### Common issues
 
-**"No PC/SC service available"**
-- Ensure PC/SC service is running: `services.msc` → "Smart Card"
-- Restart the service if stopped
-- Check reader drivers are properly installed
+**"Error while running the application (see log file for details)."**
 
-**"Card reader not detected"**
-- Verify reader is connected via USB
-- Check Device Manager for reader status
-- Try different USB ports or cables
-- Update reader drivers from manufacturer
+The console displays this message for any blocking error; the log file (`logs/demo-keyple-less-<date>.log`) gives its
+cause:
+- `Unable to start the smart card service (SCardSvr)`: ensure the PC/SC service is running (`services.msc` →
+  "Smart Card"), and that the reader drivers are installed
+- `No reader found` or `Reader not found`: verify that the reader is connected (Device Manager), and that its name
+  matches the `reader.name` setting of `appsettings.json`
+- `Error while calling the server API` or `Unexpected server response`: verify the server URL in `appsettings.json`,
+  the network connectivity (`ping your-server`), the Windows Firewall settings, and that the server is running
 
-**"Server connection timeout"**
-- Verify server URL in `appsettings.json`
-- Check network connectivity: `ping your-server`
-- Ensure server is running and accessible
-- Check Windows Firewall settings
-
-**"Card not recognized"**
-- Verify card contains supported AID
-- Check card is properly positioned on reader
-- Try different cards to isolate issue
-- Check the APDU exchanges in the log file (`logs/demo-keyple-less-<date>.log`, `DEBUG` level)
+**"Reading failed, status code: …" or "Loading failed, status code: …"**
+- The message of the server is displayed below the status code (for example, card not supported or card full)
+- Verify that the card has a
+  [supported card application](../../../../docs/functional-documentation/index.adoc#supported-card-applications) and
+  is properly positioned on the reader
+- Check the APDU exchanges in the log file (`DEBUG` level)
 
 ## Contributing
 

@@ -223,11 +223,15 @@ validation/app/
 The common issues of the Android applications (NFC, SAM, terminal type) are described in the
 [main README](../../README.md#troubleshooting).
 
-**"Card validation failed"**
-- Check card has valid contracts loaded via Sales Demo
-- Verify card AID is supported by application
-- Ensure contract validity dates are current
-- Check trips left for validation
+**"Card rejected" or "Please load a ticket."**
+- The reason displayed with the result is one of the
+  [validation rejection conditions](../../docs/functional-documentation/index.adoc#validation-rejection-conditions)
+  of the Functional Documentation
+
+**"Selection error: card not recognized"**
+- The card has none of the
+  [supported card applications](../../docs/functional-documentation/index.adoc#supported-card-applications), or it is
+  a storage card while the storage card libraries are not available (see [Proprietary plugins](#proprietary-plugins))
 
 ## Contributing
 

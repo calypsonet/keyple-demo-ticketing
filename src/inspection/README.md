@@ -214,9 +214,9 @@ The common issues of the Android applications (NFC, SAM, terminal type) are desc
 [main README](../../README.md#troubleshooting).
 
 **No contract marked as validated**
-- The card has not been validated, or the last validation used another contract
-- The location of the validation differs from the location of the inspection
-- The validation did not take place the same day, or is older than the validation period
+- The last validation does not meet the rules of the inspection (location, day, validation period, contract used),
+  described in [What inspection checks](../../docs/functional-documentation/index.adoc#inspection-checks) in the
+  Functional Documentation: check the location and the validation period set in the **Settings** screen
 
 ## Contributing
 

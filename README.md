@@ -59,11 +59,9 @@ java -jar kdt-sales-server-YY.MM.DD-full.jar
 
 ### 2. Card personalization
 
-Use the personalization feature of the Android or multiplatform sales client to personalize cards with:
-
-- Environment data (validity dates, application number)
-- Clean contract slots
-- Reset event logs and counters
+Personalize the cards with the personalization feature of the Android or multiplatform sales client (see
+[Card issuance and personalization](docs/functional-documentation/index.adoc#personalization-use-case) in the
+Functional Documentation).
 
 ### 3. Workflow execution
 
@@ -536,18 +534,28 @@ All the components name their methods with the same verbs:
 Common issues of the Android applications (validation, inspection, and sales Android client), the README of each
 component giving its specific issues:
 
-**NFC detection not working**
-- Enable NFC in the Android settings and grant the NFC permission to the application
+**Card not detected by the NFC reader**
+- Enable NFC in the Android settings: when it is disabled, the inspection app (NFC terminal) displays "The NFC
+  feature of the device does not seem to be available. Please activate the NFC function before continuing.", and the
+  sales Android client "NFC not activated"
 - Keep the card steady during the reading, and try different positions on the NFC antenna
 
-**SAM not detected or not available** (validation and inspection apps)
+**SAM not available** (validation and inspection apps)
+
+The validation app, which requires a SAM, displays "The readers of the terminal could not be initialized." and quits;
+the inspection app displays "SAM not available" on the card reader screen, and inspects the cards by PKI or without
+authentication.
 - Check that the SAM is properly inserted in the SAM reader of the terminal
 - Check that the SAM matches the keys of the cards (test SAM for the demo cards)
-- Restart the application to initialize the SAM reader again
+- Restart the application: the SAM is detected at the start of the card reader screen
 
-**Terminal type not available**
-- Check that the selected terminal type matches the actual hardware
+**"You must accept the requested permissions to continue. Please relaunch the app."** (Bluebird terminals)
+- Relaunch the application, and accept the access to the SAM of the terminal (and to the storage, up to Android 12)
+
+**Terminal type grayed out on the "Select the terminal" screen**
 - The proprietary terminals require their plugin (see [Proprietary plugins](#proprietary-plugins-available-on-request))
+- A terminal type that does not match the actual hardware can lead to "The readers of the terminal could not be
+  initialized."
 
 ## Contributing
 

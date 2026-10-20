@@ -228,19 +228,21 @@ To integrate additional reader types:
 The common issues of the Android applications (NFC, terminal type) are described in the
 [main README](../../../../README.md#troubleshooting).
 
-**"Server connection failed"**
-- Verify server URL and network connectivity
+**"Server error" when reading the card, or "Server not ready" in the server settings**
+- Verify server URL and network connectivity (**Server state** button of the server settings)
 - Check firewall settings on server and client
-- Ensure server is running with proper configuration
+- Ensure server is running with its SAM available (see the [Server Documentation](../../server/README.md))
 
-**"Card not recognized"**
-- Verify card contains supported AID
-- Check card is properly personalized
+**"Undetermined card type" or "Not valid on this network"**
+- Verify that the card has a
+  [supported card application](../../../../docs/functional-documentation/index.adoc#supported-card-applications)
+- Check that the card is personalized and not expired (the reason is displayed with "Not valid on this network")
 - Try different card positioning on NFC antenna
 
-**"Loading failed"**
+**"Ticket not loaded"**
+- The reason is displayed with the result, for example "No space left on the card for a new ticket" (no empty,
+  expired, or exhausted ticket slot on the card)
 - Ensure server has SAM properly configured
-- Check card has available contract slots
 
 ### Debug mode
 
