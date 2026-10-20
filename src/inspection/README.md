@@ -109,7 +109,8 @@ The steps of the inspection procedure are described in the annex
 Documentation, with the authentication modes and the steps not implemented by the demo. They are implemented by:
 - `CalypsoCardInspectionProcedure`: Calypso cards, in a secure session with the `DEBIT` access level when a SAM is
   available, in a PKI secure session when the card supports it, otherwise without authentication;
-- `StorageCardInspectionProcedure`: storage cards (single contract), read without cryptographic operation.
+- `StorageCardInspectionProcedure`: storage cards (single contract), read without authentication of the card (the
+  MIFARE Classic cards requiring the authentication of their sector with the key A).
 
 The comments of these classes reference the step numbers of the annex.
 
@@ -136,7 +137,7 @@ The comments of these classes reference the step numbers of the annex.
 
 **StorageCardInspectionProcedure** (`domain/procedures/StorageCardInspectionProcedure.kt`)
 - Inspection procedure of the storage cards (MIFARE Ultralight, ST25 SRT512, MIFARE Classic)
-- Direct reading of the contract and of the event, without cryptographic operation
+- Direct reading of the environment, of the event, and of the contract, without authentication of the card
 
 ## Hardware integration
 

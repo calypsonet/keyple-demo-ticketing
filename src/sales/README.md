@@ -9,7 +9,8 @@ ticketing procedures and sessions are managed by the server, the clients only gi
 [⬅️ Back to Main Project](../../README.md)
 
 The server, using the [Eclipse Keyple](https://keyple.org) SDK and a SAM, personalizes the cards and loads the contracts
-(season passes, multi-trip tickets, or both) on Calypso cards and on storage cards. Several clients are provided:
+(season passes, multi-trip tickets) on Calypso cards, which can hold both, and on storage cards, which hold a single
+contract. Several clients are provided:
 - **Android client** using the Keyple middleware: contactless cards (Android NFC reader, or the reader of the Bluebird
   terminals) and SIM cards (OMAPI reader, work in progress);
 - **Kotlin Multiplatform client** (Android, iOS, desktop) using the Keyple Interop libraries and the Server JSON API;

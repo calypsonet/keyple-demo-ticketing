@@ -72,8 +72,9 @@ Functional Documentation).
 ## Supported card technologies
 
 The demo supports Calypso cards, with secure sessions authenticated by a SAM (or by PKI for the inspection), and
-storage cards (MIFARE Ultralight, ST25 SRT512, MIFARE Classic), read and written without cryptographic operation and
-supported with the proprietary storage card libraries (see
+storage cards (MIFARE Ultralight, ST25 SRT512, MIFARE Classic), read and written without SAM nor secure session (the
+MIFARE Classic cards requiring the authentication of their sector with the key A) and supported with the proprietary
+storage card libraries (see
 [Proprietary plugins](#proprietary-plugins-available-on-request)). Their features and the tickets they hold are
 described in the [Functional Documentation](docs/functional-documentation/index.adoc#cards).
 
@@ -306,7 +307,8 @@ The operations are named in the same way in all the components:
   (loading) and `DEBIT` (validation, inspection).
 
 The terms of the card data model (`EnvironmentHolder`, `Event`, `Contract`, `ContractTariff`, `ContractPriority`,
-`PriorityCode`) follow its specification (see the `common` library).
+`PriorityCode`) follow its specification (see the annex
+[Card data model](docs/functional-documentation/index.adoc#card-data-model) of the Functional Documentation).
 
 **Differences between the applications**
 
@@ -329,8 +331,9 @@ The demo is not a production system:
 - The cryptographic operations of the Calypso cards are performed by a SAM: by the server for the sales clients,
   which hold no cryptographic material, and by the terminal for the validation and inspection apps (the inspection
   authenticating the cards by PKI when the terminal has no SAM).
-- The storage cards are read and written without cryptographic protection: a production system adds signature
-  verification and secure key management.
+- The data of the storage cards are not protected by a SAM (no signature, the key A of the MIFARE Classic cards only
+  controlling the access to their sector): a production system adds signature verification and secure key
+  management.
 - The SAMs and the cards of the demo use test keys: a production system uses the keys of its own network, stored and
   renewed securely.
 - The server is designed for a local network (HTTP): a production system uses HTTPS and authenticates the clients and

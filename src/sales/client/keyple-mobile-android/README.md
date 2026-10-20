@@ -115,7 +115,7 @@ Splash screen → Home → Card reader → Card content → Select product → C
 **Card reader (`CardReaderActivity`)**
 - Initializes selected Keyple plugin
 - Establishes server connection with SAM integration
-- Reads card content through secure session
+- Reads card content through the server (in a secure session for the Calypso cards)
 - Displays connection status and progress
 
 **Card content (`CardContentActivity`)**

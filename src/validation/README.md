@@ -118,8 +118,8 @@ The steps of the validation procedure are described in the annex
 Documentation, with the anti-passback rule and the steps not implemented by the demo. They are implemented by:
 - `CalypsoCardValidationProcedure`: Calypso cards (1 to 4 contracts depending on the card product), in a secure session
   with the `DEBIT` access level, authenticated by the SAM;
-- `StorageCardValidationProcedure`: storage cards (single contract), read and written without cryptographic
-  operation.
+- `StorageCardValidationProcedure`: storage cards (single contract), read and written without SAM nor secure
+  session (the MIFARE Classic cards requiring the authentication of their sector with the key A).
 
 The comments of these classes reference the step numbers of the annex.
 
@@ -144,7 +144,7 @@ The comments of these classes reference the step numbers of the annex.
 
 **StorageCardValidationProcedure** (`domain/procedures/StorageCardValidationProcedure.kt`)
 - Simplified validation for storage cards (MIFARE Ultralight, ST25 SRT512, MIFARE Classic)
-- Direct reading and writing, without cryptographic operation
+- Direct reading and writing, without secure session (authentication of the sector of the MIFARE Classic cards)
 - Single contract processing per card
 
 ## Hardware integration

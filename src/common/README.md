@@ -37,12 +37,12 @@ applications) is specified in the annex
 [Card data model](../../docs/functional-documentation/index.adoc#card-data-model) of the Functional Documentation.
 This library implements it:
 
-| Class                        | Content                                                                                      |
-|------------------------------|----------------------------------------------------------------------------------------------|
-| `EnvironmentHolderStructure` | Environment and holder record                                                                |
-| `EventStructure`             | Event record, with the priorities of the contracts                                           |
-| `ContractStructure`          | Contract record, with its counter (`counterValue`, null for a contract without counter)      |
-| `model/type`                 | `DateCompact`, `TimeCompact`, `VersionNumber`, and `PriorityCode` (code 3 read as `UNKNOWN`) |
+| Class                        | Content                                                                                             |
+|------------------------------|-----------------------------------------------------------------------------------------------------|
+| `EnvironmentHolderStructure` | Environment and holder record                                                                       |
+| `EventStructure`             | Event record, with the priorities of the contracts                                                  |
+| `ContractStructure`          | Contract record, with its counter (`counterValue`, null for a contract without counter)             |
+| `model/type`                 | `DateCompact`, `TimeCompact`, `VersionNumber`, and `PriorityCode` (unused values read as `UNKNOWN`) |
 
 ## Record codecs
 
