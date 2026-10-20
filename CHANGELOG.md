@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
-## [26.10.19]
+## [26.10.20]
 ### Breaking changes
 - Components renamed with the English ticketing terms, the applications being installed as new applications (the
   previous ones are to be uninstalled, and their settings are not taken over):
@@ -133,8 +133,8 @@ It brings together previously independent projects into a unified codebase to si
   - [Validation App](https://github.com/calypsonet/keyple-demo-ticketing-validation-app)
   - [Control App](https://github.com/calypsonet/keyple-demo-ticketing-control-app)
 
-[Unreleased]: https://github.com/calypsonet/keyple-demo-ticketing/compare/26.10.19...HEAD
-[26.10.19]: https://github.com/calypsonet/keyple-demo-ticketing/compare/26.03.26...26.10.19
+[Unreleased]: https://github.com/calypsonet/keyple-demo-ticketing/compare/26.10.20...HEAD
+[26.10.20]: https://github.com/calypsonet/keyple-demo-ticketing/compare/26.03.26...26.10.20
 [26.03.26]: https://github.com/calypsonet/keyple-demo-ticketing/compare/25.12.01...26.03.26
 [25.12.01]: https://github.com/calypsonet/keyple-demo-ticketing/compare/25.10.30...25.12.01
 [25.10.30]: https://github.com/calypsonet/keyple-demo-ticketing/compare/25.09.10...25.10.30
