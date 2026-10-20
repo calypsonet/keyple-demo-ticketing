@@ -432,7 +432,7 @@ The inspector sees:
 
 * The authentication mode used during inspection ("`Card authenticated by the SAM`", "`Card authenticated by PKI`", or "`Card not authenticated`")
 * The *last validation*: date, time, location, and ticket used
-* For each ticket present on the card: its type, its validity period (season pass) or its number of remaining trips (multi-trip ticket), and its status (valid, expired, or validated by the last validation)
+* For each ticket present on the card: its type, its validity period (season pass) or its number of remaining trips (multi-trip ticket), and a mark indicating whether it is validated by the last validation (icon:check[role=green]) or not (icon:times[role=red])
 * "`No ticket`" when the card has never been loaded
 
 When the card is rejected, the terminal displays "`Not valid on this network`" with the reason (see <<inspection-rejection-conditions>>).
@@ -531,7 +531,7 @@ Each validation produces one of the following results:
 | Card rejected by a business rule (see below).
 
 | *Not recognized*
-| Card not recognized: no supported application ("`Selection error: card not recognized`"), DF name not matching the AID of the application ("`Selection error: unexpected DF name`"), or file structure not supported ("`Invalid card — File structure not supported`"), see <<supported-card-applications>>.
+| Card not recognized, displayed as "`Card rejected`" with the cause: no supported application ("`Selection error: card not recognized`"), DF name not matching the AID of the application ("`Selection error: unexpected DF name`"), or file structure not supported ("`Invalid card — File structure not supported`"), see <<supported-card-applications>>.
 
 | *Card removed*
 | Communication interrupted during the transaction (card removed too early): "`An error occurred. Please try again.`"
@@ -602,6 +602,12 @@ Each validation produces one of the following results:
 
 | Reading error (for example, card removed too early)
 | An error occurred while reading the card.
+
+| Failed authentication of the sector of a MIFARE Classic card
+| Authentication failed. Please ensure the card is correctly positioned.
+
+| Reading error of a MIFARE Classic card
+| Failed to read the MIFARE Classic card. Please try again.
 |===
 
 == Glossary
