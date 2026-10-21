@@ -512,9 +512,12 @@ With the storage card libraries of CNA (see <<storage-cards>>), the storage card
 | icon:times[role=red]
 | icon:times[role=red]
 | icon:times[role=red]
-|===
 
-The multiplatform and .NET sales clients handle Calypso cards only.
+| Sales (multiplatform and .NET clients): all platforms
+| icon:times[role=red]
+| icon:times[role=red]
+| icon:times[role=red]
+|===
 
 === Server and desktop hardware
 
