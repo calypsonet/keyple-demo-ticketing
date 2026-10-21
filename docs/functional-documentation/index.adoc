@@ -433,7 +433,7 @@ This section summarizes the hardware supported by each application. The reader p
 [[tested-terminals]]
 === Tested Android terminals
 
-[cols="3,5,^2,^2,^2", options="header"]
+[cols="3,5,^.^2,^.^2,^.^2", options="header"]
 |===
 | Terminal | Description | Sales | Validation | Inspection
 
@@ -471,7 +471,7 @@ This section summarizes the hardware supported by each application. The reader p
 
 With the storage card libraries of CNA (see <<storage-cards>>), the storage cards supported depend on the application and on the terminal:
 
-[cols="5,^2,^2,^2", options="header"]
+[cols="5,^.^2,^.^2,^.^2", options="header"]
 |===
 | Application and terminal | MIFARE Ultralight | ST25 SRT512 | MIFARE Classic 1K
 
