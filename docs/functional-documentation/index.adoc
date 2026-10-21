@@ -96,7 +96,7 @@ This document describes the Keyple Demo Ticketing ecosystem from a functional an
 
 The Keyple Demo Ticketing is a complete ecosystem illustrating the lifecycle of a contactless transit ticket, from card personalization through access validation to inspection.
 
-It is made available by the *Calypso Networks Association (CNA)* as a starting point for integrators who want to build their own ticketing system based on the Eclipse Keyple middleware.
+It is made available by the Calypso Networks Association (CNA) as a starting point for integrators who want to build their own ticketing system based on the Eclipse Keyple middleware.
 
 === Components
 
@@ -227,7 +227,7 @@ Two ticket types can be loaded onto a card.
 [[ticket-priority]]
 === Ticket priority (Calypso cards only)
 
-When several tickets are present on a Calypso card, the validation terminal automatically selects *the highest-priority valid ticket* according to the following ranking:
+When several tickets are present on a Calypso card, the validation terminal automatically selects the highest-priority valid ticket according to the following ranking:
 
 [cols="^1,2,4", options="header"]
 |===
@@ -277,12 +277,12 @@ The server must be reachable, with its SAM for a Calypso card.
 
 ==== Business rules
 
-Personalization:
+During personalization, the server:
 
 * Assigns a *unique application number*
 * Records the *issuing date*
 * Calculates and records the *end date* of the card: first day of the current month + 6 years
-* Clears all the tickets, the event, and the counters
+* Clears *the tickets, the event, and the counters*
 
 ==== Diagram
 
@@ -399,7 +399,7 @@ The steps executed on the card are detailed in <<inspection-procedure>>.
 
 ==== Prerequisites
 
-Unlike validation, inspection can operate *without a SAM*, thanks to two fallback modes:
+Unlike validation, inspection can operate without a SAM, thanks to two fallback modes:
 
 [cols="1,2,3", options="header"]
 |===
@@ -429,7 +429,7 @@ Unlike validation, inspection can operate *without a SAM*, thanks to two fallbac
 [[inspection-checks]]
 ==== Business rules
 
-Inspection checks:
+Inspection checks the following points:
 
 * The *general validity* of the card (version, dates)
 * The *detail of each ticket*: type, validity dates, remaining trips
@@ -943,6 +943,8 @@ Files of Calypso cards and blocks of storage cards used by the demo.
 
 ==== Calypso cards
 
+Calypso cards hold the following files:
+
 [cols="2,^1,5", options="header"]
 |===
 | File | SFI | Content
@@ -1018,7 +1020,7 @@ Generic procedure, executed by all the applications before the procedures of the
 | Step | Action
 
 | 1
-| Perform the application selection using the AIDs of the demo cards (see <<supported-card-applications>>). The DF name of the selected application must start with the AID, followed by zeros only, and its file structure must be supported by the demo; otherwise, the card is not selected. Storage cards are detected by their product type.
+| Perform the application selection using the AIDs of the demo cards (see <<supported-card-applications>>). The DF name of the selected application must start with the AID, followed by zeros only, and its file structure must be supported by the demo; otherwise, the card is not selected.
 
 | 2
 | If the status of the DF is invalid, report that information to the upper layer. `<Exit process>` +
@@ -1042,6 +1044,11 @@ The validation and inspection terminals do not select the invalidated applicatio
 | 8
 | Report to the upper layer that a card on the black list has been detected and invalidated. `<Exit process>` _Not implemented by the demo._
 |===
+
+==== Storage cards
+
+* *Step 1*: the card is detected by its product type, without application selection.
+* *Steps 2 to 8*: not applicable, as storage cards have no card application (DF).
 
 [[personalization-procedure]]
 === Card personalization
