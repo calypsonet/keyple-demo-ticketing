@@ -229,12 +229,12 @@ The common issues of the Android applications (NFC, SAM, terminal type) are desc
 
 **"Card rejected" or "Please load a ticket."**
 - The reason displayed with the result is one of the
-  [validation rejection conditions](../../docs/functional-documentation/index.adoc#validation-rejection-conditions)
+  [validation rejections and errors](../../docs/functional-documentation/index.adoc#validation-rejection-conditions)
   of the Functional Documentation
 
 **"Selection error: …" or "Invalid card / File structure … not supported"**
 - The card is not recognized (see the
-  [validation rejection conditions](../../docs/functional-documentation/index.adoc#validation-rejection-conditions)
+  [validation rejections and errors](../../docs/functional-documentation/index.adoc#validation-rejection-conditions)
   in the Functional Documentation): it has none of the
   [supported card applications](../../docs/functional-documentation/index.adoc#supported-card-applications), its DF
   name does not match the AID, or its file structure is not supported

@@ -183,7 +183,7 @@ The Calypso card stores in memory:
 [[storage-cards]]
 === Storage cards
 
-Storage cards are simpler memory media without a Calypso security system. They allow lightweight scenarios to be demonstrated:
+Storage cards are simpler memory media without a Calypso security system, used to demonstrate lightweight scenarios. The demo supports the following ones:
 
 [cols="2,4,2", options="header"]
 |===
@@ -247,7 +247,7 @@ When several tickets are present on a Calypso card, the validation terminal auto
 
 | 0
 | Empty slot
-| Ignored
+| Ignored during validation
 |===
 
 NOTE: Priority 3 of the data model (stored value) is not covered by the demo (see <<scope>>).
@@ -379,7 +379,7 @@ If the card has already been validated within the previous minute, validation is
 NOTE: Special case (Calypso cards only): if the previous validation session was not ratified (card removed before the end of the session), the card presented again within the delay is accepted without deducting a trip, and the previous session is ratified.
 
 [[rejected-card]]
-===== Rejected card
+===== Expired or exhausted tickets
 
 When no ticket of a Calypso card can be used, the expired or exhausted tickets are marked as such on the card (priority 31), so that the next validations no longer analyze them.
 
@@ -531,7 +531,7 @@ In this chapter, a message displayed on several lines is written "`first line â€
 [[sales-results]]
 === Sales results
 
-The sales clients display the messages of the following table:
+The sales clients display the messages of the table below, as follows:
 
 * *Android client*: the reason for a rejection is displayed below "`Not valid on this network`" when the card is read, and below "`Ticket not loaded`" or "`Personalization failed`" when the operation fails.
 * *Multiplatform client*: the same reasons, returned by the server, are displayed alone; "`Communication error`" is displayed when the server cannot be reached.
@@ -604,7 +604,7 @@ Each validation produces one of the following results:
 |===
 
 [[validation-rejection-conditions]]
-=== Validation rejection conditions
+=== Validation rejections and errors
 
 [cols="4,4", options="header"]
 |===
@@ -670,10 +670,10 @@ The inspector sees:
 * For each ticket present on the card: its type, its validity period (season pass) or its number of remaining trips (multi-trip ticket), and a mark indicating whether it is validated by the last validation (icon:check[role=green]) or not (icon:times[role=red])
 * "`No ticket`" when the card has never been loaded
 
-When the card is rejected, the terminal displays "`Not valid on this network`" with the reason (see <<inspection-rejection-conditions>>).
+When the card is rejected or cannot be read, the terminal displays "`Not valid on this network`" with the reason (see <<inspection-rejection-conditions>>).
 
 [[inspection-rejection-conditions]]
-=== Inspection rejection conditions
+=== Inspection rejections and errors
 
 [cols="4,4", options="header"]
 |===
@@ -796,25 +796,21 @@ The data model is implemented by the {doc-repo}/blob/main/src/common/README.md[c
 
 The demos work with the cards of the https://calypsonet.org/technical-support-documentation/[CNA Test Kit], whose Calypso applications have the following identifiers:
 
-[cols="3,3,2", options="header"]
+[cols="1,2", options="header"]
 |===
-| AID | Description | Context
+| AID | Application
 
 | `A000000291FF9101`
 | Keyple Generic test card
-| All the demo applications
 
 | `315449432E49434131`
-| CD Light/GTML Compatibility
-| Legacy system support
+| CD Light/GTML Compatibility (legacy systems)
 
 | `315449432E49434133`
-| Calypso Light
-| Standard Calypso
+| Calypso Light (standard Calypso)
 
 | `A0000004040125090101`
-| Navigo IDF
-| Paris transport system
+| Navigo IDF (Paris transport system)
 |===
 
 The DF name of the selected application must start with the AID, followed by zeros only (requirement TL-SEL-AIDMATCH.1 of the Calypso specifications).
@@ -1003,7 +999,7 @@ The procedures are those of the data model of the Keyple demos, described in <<c
 === Conventions
 
 * *Step numbers*: the steps keep the numbers of the data model. The steps added by the demo have a sub-number (for example, 6.1), so that the numbers of the other steps do not change.
-* `<Abort Transaction and exit process>`: the card is rejected, the secure session is canceled (no data written), and the procedure ends. On the storage cards, which have no secure session, the procedure ends without writing.
+* `<Abort Transaction and exit process>`: the card is rejected, the secure session is canceled (no data written), and the procedure ends. On storage cards, which have no secure session, the procedure ends without writing.
 * `<Abort Transaction if inTransactionFlag is true and exit process>`: same as `<Abort Transaction and exit process>`, but the session is canceled only if one is open: the inTransactionFlag of the inspection procedure indicates that a secure session (SAM or PKI) has been opened.
 * `<Exit process>`: the procedure ends and returns its result to the upper layer (the application).
 * `END`, `CNT_UPD`, `CNT_READ`: labels of the steps reached by a "`go to`".
@@ -1019,7 +1015,7 @@ Generic procedure, executed by all the applications before the procedures of the
 | Step | Action
 
 | 1
-| Perform the application selection using the AIDs of the demo cards (see <<supported-card-applications>>). The DF name of the selected application must start with the AID, followed by zeros only, and its file structure must be supported by the demo; otherwise, the card is not selected. The storage cards are detected by their product type.
+| Perform the application selection using the AIDs of the demo cards (see <<supported-card-applications>>). The DF name of the selected application must start with the AID, followed by zeros only, and its file structure must be supported by the demo; otherwise, the card is not selected. Storage cards are detected by their product type.
 
 | 2
 | If the status of the DF is invalid, report that information to the upper layer. `<Exit process>` +
@@ -1440,7 +1436,7 @@ Executed by the inspection terminal, with or without SAM (see <<inspection-use-c
 
 ==== Storage cards
 
-* *Step 1*: the environment, event, and contract blocks are read at once, without authentication of the card (steps 1.1 and 1.2 not applicable); the MIFARE Classic 1K cards require the authentication of their sector with key A, which gives access to the blocks but does not authenticate the card.
+* *Step 1*: the environment, event, and contract blocks are read at once, without authentication of the card (steps 1.1 and 1.2 not applicable); MIFARE Classic 1K cards require the authentication of their sector with key A, which gives access to the blocks but does not authenticate the card.
 * *Steps 10 to 12*: the single contract, read at step 1, is unpacked.
 * *Step 18*: the counter value is read in the contract record.
 * *Step 20*: the transaction ends, without session to close.

@@ -100,7 +100,7 @@ Terminal selection → Settings → Home → Card reader → Card content or Inv
     [Inspection results](../../docs/functional-documentation/index.adoc#inspection-results),
     [Inspection business rules](../../docs/functional-documentation/index.adoc#inspection-checks))
   - **Invalid card**: reason why the card is rejected (see
-    [Inspection rejection conditions](../../docs/functional-documentation/index.adoc#inspection-rejection-conditions)
+    [Inspection rejections and errors](../../docs/functional-documentation/index.adoc#inspection-rejection-conditions)
     in the Functional Documentation) or error message
 
 ## Technical architecture
@@ -221,7 +221,7 @@ The common issues of the Android applications (NFC, SAM, terminal type) are desc
 
 **"Not valid on this network"**
 - The reason displayed below the title is one of the
-  [inspection rejection conditions](../../docs/functional-documentation/index.adoc#inspection-rejection-conditions)
+  [inspection rejections and errors](../../docs/functional-documentation/index.adoc#inspection-rejection-conditions)
   of the Functional Documentation
 - A storage card is not recognized when the storage card libraries are not available (see
   [Proprietary plugins](#proprietary-plugins))
