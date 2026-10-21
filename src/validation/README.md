@@ -234,8 +234,8 @@ The common issues of the Android applications (NFC, SAM, terminal type) are desc
 
 **"Selection error: …" or "Invalid card / File structure … not supported"**
 - The card is not recognized (see the
-  [validation results](../../docs/functional-documentation/index.adoc#validation-results) in the Functional
-  Documentation): it has none of the
+  [validation rejection conditions](../../docs/functional-documentation/index.adoc#validation-rejection-conditions)
+  in the Functional Documentation): it has none of the
   [supported card applications](../../docs/functional-documentation/index.adoc#supported-card-applications), its DF
   name does not match the AID, or its file structure is not supported
 - A storage card is not recognized when the storage card libraries are not available (see

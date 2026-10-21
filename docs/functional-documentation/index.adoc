@@ -98,7 +98,7 @@ The Keyple Demo Ticketing is a complete ecosystem illustrating the lifecycle of 
 
 It is made available by the *Calypso Networks Association (CNA)* as a starting point for integrators who want to build their own ticketing system based on the Eclipse Keyple middleware.
 
-=== The components
+=== Components
 
 The ecosystem consists of four components, each covering a specific role in the ticketing system:
 
@@ -107,7 +107,7 @@ The ecosystem consists of four components, each covering a specific role in the 
 | Component | Functional role
 
 | *Sales — server*
-| Hosts the security module (SAM) and performs cryptographic operations. Exposes the remote services of reading, loading, and personalization. Its web dashboard displays the status of the server and of the SAM, and the transactions of the clients in real time (see the {doc-repo}/blob/main/src/sales/server/README.md#web-dashboard[server README]).
+| Hosts the security module (SAM) and performs cryptographic operations. Exposes the reading, loading, and personalization services. Its web dashboard displays the status of the server and of its SAM, and the client transactions in real time (see the {doc-repo}/blob/main/src/sales/server/README.md#web-dashboard[server README]).
 
 | *Sales — clients*
 | Android, multiplatform (Android, iOS, desktop), or .NET client used by a sales agent or a passenger (the user, in this document) to load a new transit ticket. The Android and multiplatform clients also personalize blank cards (see <<sales-clients>>).
@@ -119,33 +119,6 @@ The ecosystem consists of four components, each covering a specific role in the 
 | Terminal used by ticket inspectors. Reads the card, displays ticket details, and checks the validity of the last validation.
 |===
 
-[[sales-clients]]
-=== Sales clients
-
-Three clients can connect to the sales server:
-
-[cols="3,3,4,5", options="header"]
-|===
-| Client | Platforms | Products | Notes
-
-| *Android client*
-| Android 8.0+
-| Multi-trip ticket (1 to 4 trips), season pass; card personalization
-| Native Android application, full integration of the Keyple middleware
-
-| *Multiplatform client*
-| Android, iOS 15.3+, desktop (Windows, macOS, Linux)
-| Multi-trip ticket (1 to 4 trips), season pass; card personalization
-| Shared UI across all platforms
-
-| *.NET client*
-| Windows
-| Multi-trip ticket only (1 to 20 trips, entered by the user)
-| Desktop application demonstrating the Keyple Server JSON API (HTTP), without the Keyple middleware
-|===
-
-NOTE: The prices displayed by the clients are fictitious.
-
 === Ecosystem flow
 
 plantuml::diagrams/overview.puml[target=overview,format=svg,alt="Keyple Demo Ticketing ecosystem flow",align="center"]
@@ -155,13 +128,40 @@ NOTE: The validation terminal and the inspection terminal do not communicate ove
 [[scope]]
 === Scope of the demo
 
-The demo covers the personalization of the cards, and the loading, validation, and inspection of season passes and multi-trip tickets. The following elements of the data model (see <<card-data-model>>) are not covered:
+The demo covers card personalization, and the loading, validation, and inspection of season passes and multi-trip tickets. The following elements of the data model (see <<card-data-model>>) are not covered:
 
 * *Stored value tickets*: they cannot be loaded, and a stored value ticket present on a card (priority 3) is ignored at validation
 * *Traceability mode*: the tickets are loaded without the cryptographic authenticator signed by the SAM, and no authenticator is verified at inspection
-* *Black lists* of the cards and of the SAMs
+* *Card and SAM black lists*
 
 The corresponding steps of the procedures are marked _Not implemented by the demo_ in <<card-procedures>>.
+
+[[sales-clients]]
+=== Sales clients
+
+Three clients can connect to the sales server:
+
+[cols="3,3,4,5", options="header"]
+|===
+| Client | Platforms | Operations | Notes
+
+| *Android client*
+| Android 8.0+
+| Loading of multi-trip tickets (1 to 4 trips) and season passes; card personalization
+| Native Android application, full integration of the Keyple middleware
+
+| *Multiplatform client*
+| Android, iOS 15.3+, desktop (Windows, macOS, Linux)
+| Loading of multi-trip tickets (1 to 4 trips) and season passes; card personalization
+| Shared UI across all platforms, Keyple Interop libraries (JSON API client and local reader)
+
+| *.NET client*
+| Windows
+| Loading of multi-trip tickets only (1 to 20 trips, entered by the user)
+| Desktop application demonstrating the Keyple Server JSON API (HTTP), without the Keyple middleware
+|===
+
+NOTE: The prices displayed by the clients are fictitious.
 
 [[cards]]
 == Contactless cards
@@ -171,7 +171,7 @@ The corresponding steps of the procedures are marked _Not implemented by the dem
 The Calypso card is the primary medium of the ecosystem. It is a smart card compliant with the Calypso standard, enabling:
 
 * Storage of *up to 4 transit tickets simultaneously*, depending on the card product (1 on Calypso Basic cards, 2 on Calypso Light cards)
-* *Secure transactions* guaranteeing data integrity (via a SAM security module or asymmetric PKI cryptography)
+* *Secure transactions* guaranteeing data integrity (via a SAM or asymmetric PKI cryptography)
 
 The Calypso card stores in memory:
 
@@ -225,7 +225,7 @@ Two ticket types can be loaded onto a card.
 * Remaining trips are visible during inspection
 
 [[ticket-priority]]
-=== Ticket priority (Calypso card only)
+=== Ticket priority (Calypso cards only)
 
 When several tickets are present on a Calypso card, the validation terminal automatically selects *the highest-priority valid ticket* according to the following ranking:
 
@@ -288,8 +288,6 @@ Personalization:
 
 plantuml::diagrams/personalization.puml[target=personalization,format=svg,alt="Card personalization workflow",align="center"]
 
-'''
-
 [[loading-use-case]]
 === Ticket loading
 
@@ -347,8 +345,6 @@ The steps executed on the card are detailed in <<loading-procedure>>.
 
 plantuml::diagrams/ticket-loading.puml[target=ticket-loading,format=svg,alt="Ticket loading workflow",align="center"]
 
-'''
-
 [[validation-use-case]]
 === Access validation
 
@@ -362,8 +358,7 @@ The steps executed on the card are detailed in <<validation-procedure>>.
 
 ==== Prerequisites
 
-* The SAM must be present and operational in the terminal.
-* Without a SAM, the terminal cannot validate (no fallback mode).
+* The SAM must be present and operational in the terminal: without a SAM, the terminal cannot validate (no fallback mode).
 
 ==== Process
 
@@ -397,8 +392,6 @@ plantuml::diagrams/validation-calypso-card.puml[target=validation-calypso-card,f
 ===== Storage card validation
 
 plantuml::diagrams/validation-storage-card.puml[target=validation-storage-card,format=svg,alt="Storage card validation workflow",align="center"]
-
-'''
 
 [[inspection-use-case]]
 === Ticket inspection
@@ -466,19 +459,19 @@ This chapter summarizes the hardware supported by each application. The reader p
 | Terminal | Description | Sales | Validation | Inspection
 
 | Famoco FX205
-| Rugged enterprise NFC terminal with SAM reader
+| Rugged mobile terminal, NFC and SAM reader
 | icon:check[role=green]
 | icon:check[role=green]
 | icon:check[role=green]
 
 | Bluebird EF501
-| Specialized NFC terminal
+| Mobile terminal, NFC and SAM reader
 | icon:adjust[role=olive] On request
 | icon:adjust[role=olive] On request
 | icon:adjust[role=olive] On request
 
 | Arrive Axio 4
-| Transit Android terminal
+| Transit validator, NFC and SAM reader
 | icon:times[role=red]
 | icon:adjust[role=olive] On request
 | icon:times[role=red]
@@ -524,11 +517,11 @@ With the storage card libraries of CNA (see <<storage-cards>>), the storage card
 | icon:times[role=red]
 |===
 
-The storage cards are read by the reader plugins configured with the storage card libraries: the plugin of the Bluebird terminals, and the Android NFC plugin, used by the Famoco terminals and the other Android devices with NFC (this plugin does not support ST25 SRT512 cards). The plugin of the Arrive terminals does not support them. The multiplatform and .NET sales clients handle Calypso cards only.
+The multiplatform and .NET sales clients handle Calypso cards only.
 
 === Server and desktop hardware
 
-* *Sales server*: PC/SC reader holding a Calypso SAM, required for personalization and ticket loading
+* *Sales server*: PC/SC reader holding a Calypso SAM, required for the personalization and loading of Calypso cards
 * *Desktop sales clients* (multiplatform and .NET): contactless PC/SC reader
 
 == Results and functional messages
@@ -538,7 +531,11 @@ In this chapter, a message displayed on several lines is written "`first line �
 [[sales-results]]
 === Sales results
 
-The sales clients display the following messages. On the Android client, the reason for a rejection is displayed below "`Not valid on this network`" when the card is read, and below "`Ticket not loaded`" or "`Personalization failed`" when the operation fails. The multiplatform client displays the same reasons, returned by the server, and "`Communication error`" when the server cannot be reached. The .NET client reports the failures in its console (see the {doc-repo}/blob/main/src/sales/client/pc-dotnet/README.md[README of the client]).
+The sales clients display the messages of the following table:
+
+* *Android client*: the reason for a rejection is displayed below "`Not valid on this network`" when the card is read, and below "`Ticket not loaded`" or "`Personalization failed`" when the operation fails.
+* *Multiplatform client*: the same reasons, returned by the server, are displayed alone; "`Communication error`" is displayed when the server cannot be reached.
+* *.NET client*: the failures are reported in its console (see the {doc-repo}/blob/main/src/sales/client/pc-dotnet/README.md[README of the client]).
 
 [cols="4,4", options="header"]
 |===
@@ -600,10 +597,10 @@ Each validation produces one of the following results:
 | Card not recognized: no supported application, DF name not matching the AID of the application, or file structure not supported (see <<validation-rejection-conditions>> and <<supported-card-applications>>).
 
 | *Card removed*
-| Communication interrupted during the transaction (card removed too early): "`An error occurred. — Please try again.`"
+| Communication interrupted during the transaction, when the card is removed too early (see <<validation-rejection-conditions>>).
 
 | *Failed*
-| Unexpected technical error: "`An error occurred. — Please try again.`" On a MIFARE Classic card, failed authentication of the sector: "`An error occurred. — Authentication failed. Please ensure the card is correctly positioned.`", or other failure of the transaction: "`An error occurred. — Transaction failed. Please try again.`"
+| Unexpected technical error, or failure of the transaction with a MIFARE Classic card (see <<validation-rejection-conditions>>).
 |===
 
 [[validation-rejection-conditions]]
@@ -648,6 +645,18 @@ Each validation produces one of the following results:
 
 | Ticket of a storage card forbidden or expired
 | Ticket forbidden or expired — Please load a ticket.
+
+| Communication interrupted during the transaction (card removed too early)
+| An error occurred. — Please try again.
+
+| Unexpected technical error
+| An error occurred. — Please try again.
+
+| Failed authentication of the sector of a MIFARE Classic card
+| An error occurred. — Authentication failed. Please ensure the card is correctly positioned.
+
+| Other failure of the transaction with a MIFARE Classic card
+| An error occurred. — Transaction failed. Please try again.
 |===
 
 [[inspection-results]]
@@ -711,7 +720,7 @@ When the card is rejected, the terminal displays "`Not valid on this network`" w
 | Application Identifier. Unique identifier of the Calypso card application, used when the terminal selects the application.
 
 | *Anti-passback*
-| Mechanism preventing a passenger from presenting their card twice within 1 minute, in order to prevent the card from being passed back to another passenger for a second entry.
+| Mechanism rejecting a card presented again within 1 minute, so that it cannot be passed back to another passenger for a second entry.
 
 | *Calypso*
 | Open standard for contactless smart cards in ticketing systems, maintained by the Calypso Networks Association.
@@ -744,7 +753,7 @@ When the card is rejected, the terminal displays "`Not valid on this network`" w
 | Identifier of the place of a validation, configured on the validation terminal and recorded in the event. The inspection terminal compares it with its own configured location.
 
 | *PC/SC*
-| Standard interface of the smart card readers of the computers, used by the server (SAM reader) and by the desktop sales clients (contactless reader).
+| Standard interface of computer smart card readers, used by the server (SAM reader) and by the desktop sales clients (contactless reader).
 
 | *PKI*
 | Public Key Infrastructure. Asymmetric authentication mode (RSA 2048-bit) that does not require a physical SAM. The demo uses test certificates: a real deployment requires the certificates of its own PKI.
@@ -778,9 +787,9 @@ When the card is rejected, the terminal displays "`Not valid on this network`" w
 [[card-data-model-introduction]]
 === Introduction
 
-This annex describes the data model of the Keyple demos: the card applications supported, the structures of the records written on the card, the types of their fields, and the layout of the files and blocks of the cards. It is intended for developers and integrators, like the procedures of <<card-procedures>>, which use it.
+This annex describes the data model of the Keyple demos: the supported card applications, the structures of the records written on the card, the types of their fields, and the layout of the card files and blocks. It is intended for developers and integrators, like the procedures of <<card-procedures>>, which use it.
 
-The data model is implemented by the {doc-repo}/blob/main/src/common/README.md[common library] of the demo (classes of the structures and codecs encoding the records): a change of the data model is made both in this annex and in this library.
+The data model is implemented by the {doc-repo}/blob/main/src/common/README.md[common library] of the demo (structure classes and codecs encoding the records): a change of the data model is made both in this annex and in this library.
 
 [[supported-card-applications]]
 === Supported card applications
@@ -789,7 +798,7 @@ The demos work with the cards of the https://calypsonet.org/technical-support-do
 
 [cols="3,3,2", options="header"]
 |===
-| AID | Description | Compatibility
+| AID | Description | Context
 
 | `A000000291FF9101`
 | Keyple Generic test card
@@ -986,9 +995,9 @@ MIFARE Classic 1K cards are authenticated with key A of sector 1 before each rea
 [[card-procedures-introduction]]
 === Introduction
 
-This annex details, step by step, the procedures executed on the card by the applications of the demo. It is intended for developers and integrators: the use cases of this document describe the same operations from a functional perspective.
+This annex details, step by step, the procedures executed on the card by the demo applications. It is intended for developers and integrators: the use cases of this document describe the same operations from a functional perspective.
 
-The procedures are those of the data model of the Keyple demos, described in <<card-data-model>>. The step numbers are referenced by the comments of the source code (for example, `// Step 11.3.1` in the validation procedure): a change of a procedure is made both in this annex and in the code.
+The procedures are those of the data model of the Keyple demos, described in <<card-data-model>>. The step numbers are referenced by the source code comments (for example, `// Step 11.3.1` in the validation procedure): a change of a procedure is made both in this annex and in the code.
 
 [[card-procedures-conventions]]
 === Conventions
@@ -1126,16 +1135,16 @@ Executed by the sales server, with its SAM (see <<loading-use-case>>). The proce
 | If the value is wrong, reject the card. `<Abort Transaction and exit process>` _Not implemented by the demo._
 
 | 8.3.2
-| If ContractSaleSam is on the black list of the SAMs, reject the card. `<Abort Transaction and exit process>` _Not implemented by the demo._
+| If ContractSaleSam is on the SAM black list, reject the card. `<Abort Transaction and exit process>` _Not implemented by the demo._
 
 | 8.4
 | If ContractValidityEndDate is in the past, set the associated ContractPriority to 31 and set the change flag to true.
 
 | 8.5
-| Add the contract to the list of the contracts of the card.
+| Add the contract to the list of card contracts.
 
 | 9
-| Return the list of the contracts. `<Exit process>`
+| Return the list of contracts. `<Exit process>`
 |===
 
 The user then chooses the contract to load (type, and number of trips of a multi-trip ticket), and presents the card again. The server reads it again (step 1) and recomputes the ContractPriority fields (steps 7, 8.2, and 8.4), without repeating the checks of steps 3 to 6.
@@ -1284,7 +1293,7 @@ Exception on Calypso cards: if the previous validation session was interrupted b
 | If the value is wrong, reject the card. `<Abort Transaction and exit process>` _Not implemented by the demo._
 
 | 11.3.2
-| If ContractSaleSam is on the black list of the SAMs, reject the card. `<Abort Transaction and exit process>` _Not implemented by the demo._
+| If ContractSaleSam is on the SAM black list, reject the card. `<Abort Transaction and exit process>` _Not implemented by the demo._
 
 | 11.4
 | If ContractValidityEndDate is in the past, set the associated ContractPriority to 31, and move on to the next element of the list.
@@ -1408,7 +1417,7 @@ Executed by the inspection terminal, with or without SAM (see <<inspection-use-c
 | If the value is wrong, reject the card. `<Abort Transaction if inTransactionFlag is true and exit process>` _Not implemented by the demo._
 
 | 15.2
-| If ContractSaleSam is on the black list of the SAMs, reject the card. `<Abort Transaction if inTransactionFlag is true and exit process>` _Not implemented by the demo._
+| If ContractSaleSam is on the SAM black list, reject the card. `<Abort Transaction if inTransactionFlag is true and exit process>` _Not implemented by the demo._
 
 | 16
 | If ContractValidityEndDate is in the past, mark the contract as expired.
@@ -1420,7 +1429,7 @@ Executed by the inspection terminal, with or without SAM (see <<inspection-use-c
 | If ContractTariff is 2, extract the counter value associated with the contract.
 
 | 19
-| Add the contract to the list of the contracts to return to the upper layer.
+| Add the contract to the list of contracts to return to the upper layer.
 
 | 20
 | If the inTransactionFlag is true, close the session.
