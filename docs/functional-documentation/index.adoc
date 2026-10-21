@@ -17,7 +17,7 @@
 :doc-name: Keyple Demo Ticketing
 :doc-type: Functional Documentation
 :doc-classification: Public
-:doc-ref: 261020-FD-KeypleDemoTicketing
+:doc-ref: 261021-FD-KeypleDemoTicketing
 :doc-repo: https://github.com/calypsonet/keyple-demo-ticketing
 include::assets/logos/_calypso.adoc[]
 include::assets/legal/_license-bsd-3-clause.adoc[]
@@ -771,7 +771,7 @@ When the card is rejected or cannot be read, the terminal displays "`Not valid o
 | Simple memory card (MIFARE Ultralight, ST25 SRT512, MIFARE Classic 1K) that does not support the Calypso protocol. Only 1 ticket possible, no Calypso secure session.
 
 | *Storage card libraries*
-| Libraries of CNA, available on request (card extension and reader plugin), enabling the applications to handle storage cards (see <<storage-card-support>>).
+| Libraries of CNA, available on request (card extension and reader plugin extension), enabling the applications to handle storage cards (see <<storage-card-support>>).
 
 | *Ticket priority*
 | Numerical value determining the selection order of tickets during validation (1 = season pass, 2 = multi-trip ticket, 31 = expired or exhausted, 0 = empty slot), stored in the ContractPriority fields of the event (see <<ticket-priority>>).

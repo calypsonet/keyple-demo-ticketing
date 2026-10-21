@@ -144,7 +144,7 @@ android {
     minSdk = (project.property("androidMinSdk") as String).toInt()
     targetSdk = (project.property("androidTargetSdk") as String).toInt()
     // Version of the project (release tag YY.MM.DD, 99.99.99 in development), its code being its
-    // digits (for example, 261020 for 26.10.20)
+    // digits (for example, 261021 for 26.10.21)
     versionName = project.version.toString()
     versionCode = project.version.toString().replace(".", "").toInt()
   }
