@@ -32,7 +32,7 @@ else (Yes)
         :Card rejected;<<#F5B7B1>>
         stop
       else (Yes)
-        if (Last validation more\nthan 1 minute ago?) then (No)
+        if (Last validation older than\nthe anti-passback delay?) then (No)
           :Card rejected\n(already validated);<<#F5B7B1>>
           stop
         else (Yes)

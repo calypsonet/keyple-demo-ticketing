@@ -375,7 +375,7 @@ The SAM must be present and operational in the terminal: without a SAM, the term
 
 Validation applies the following rules:
 
-* [[anti-passback-rule,Anti-passback]]*Anti-passback*: if the card has already been validated within the previous minute, validation is rejected to prevent multiple entries, and a message prompts the passenger to wait. As the times are recorded to the minute, the effective delay is between 1 and 2 minutes. Recovery (Calypso cards only): within this delay, if the previous validation session was interrupted (card removed before the end of the session, session not ratified), the passenger did not get access although the trip was deducted. The interrupted validation is then recovered: access is granted without deducting a trip, and the previous session is ratified. Beyond the delay, the validation is processed normally.
+* [[anti-passback-rule,Anti-passback]]*Anti-passback*: if the card has already been validated within the anti-passback delay (1 minute in the demo, set by each network in a real deployment), validation is rejected to prevent multiple entries, and a message prompts the passenger to wait. As the times are recorded to the minute, the effective delay can exceed it by up to 1 minute. Recovery (Calypso cards only): within this delay, if the previous validation session was interrupted (card removed before the end of the session, session not ratified), the passenger did not get access although the trip was deducted. The interrupted validation is then recovered: access is granted without deducting a trip, and the previous session is ratified. Beyond the delay, the validation is processed normally.
 * [[rejected-card,Expired or exhausted tickets]]*Expired or exhausted tickets*: when no ticket of a Calypso card can be used, the expired or exhausted tickets are marked as such on the card (priority 31), so that the next validations no longer analyze them.
 
 ==== Diagrams
@@ -633,7 +633,7 @@ When the card is rejected or the transaction fails, the terminal displays one of
 | Ticket of an unexpected version
 | Card rejected — Ticket error: wrong version number
 
-| Card validated less than 1 minute ago (previous session ratified, for a Calypso card)
+| Card validated within the anti-passback delay (previous session ratified, for a Calypso card)
 | Card rejected — Card already tapped. Please wait before retrying.
 
 | Card never loaded, or no usable ticket
@@ -724,7 +724,7 @@ When the card is rejected or cannot be read, the terminal displays one of the fo
 | Application Identifier. Unique identifier of the Calypso card application, used when the terminal selects the application.
 
 | *Anti-passback*
-| Mechanism rejecting a card presented again within 1 minute, so that it cannot be passed back to another passenger for a second entry.
+| Mechanism rejecting a card presented again within the anti-passback delay, so that it cannot be passed back to another passenger for a second entry.
 
 | *Calypso*
 | Open standard for contactless smart cards in ticketing systems, maintained by the Calypso Networks Association.
@@ -1269,7 +1269,7 @@ Executed by the validation terminal, with its SAM (see <<validation-use-case>>).
 | If EventVersionNumber is not the expected one (1 for the current version), reject the card (0: card never loaded). `<Abort Transaction and exit process>`
 
 | 6.1
-| Anti-passback (see <<anti-passback-rule>>). As the time of the event is recorded to the minute, the times are compared to the minute, and the delay of 1 minute lasts until the end of the minute following the event. If the last event is within this delay:
+| Anti-passback (see <<anti-passback-rule>>), with the anti-passback delay (1 minute in the demo). As the time of the event is recorded to the minute, the times are compared to the minute, and the delay runs until the end of its last minute (for 1 minute, until the end of the minute following the event). If the last event is within this delay:
 
 | 6.1.1
 | If the previous validation session has been ratified, reject the card. `<Abort Transaction and exit process>`
