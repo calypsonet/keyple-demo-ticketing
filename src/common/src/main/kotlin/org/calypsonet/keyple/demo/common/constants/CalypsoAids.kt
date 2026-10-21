@@ -20,6 +20,11 @@ object CalypsoAids {
   @JvmField val KEYPLE_GENERIC: ByteArray = HexUtil.toByteArray("A000000291FF9101")
   @JvmField val CD_LIGHT_GTML: ByteArray = HexUtil.toByteArray("315449432E49434131")
   @JvmField val CALYPSO_LIGHT: ByteArray = HexUtil.toByteArray("315449432E49434133")
+  /**
+   * AID of the Navigo IDF application (Paris transport network): not part of the CNA Test Kit nor
+   * of the data model of the demo, it is only selected to make testing easier in Paris without the
+   * kit.
+   */
   @JvmField val NORMALIZED_IDF: ByteArray = HexUtil.toByteArray("A0000004040125090101")
 
   /**

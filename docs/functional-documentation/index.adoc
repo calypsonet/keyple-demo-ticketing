@@ -812,9 +812,6 @@ The demos work with the cards of the https://calypsonet.org/technical-support-do
 
 | `315449432E49434133`
 | Calypso Light (standard Calypso)
-
-| `A0000004040125090101`
-| Navigo IDF (Paris transport system)
 |===
 
 The DF name of the selected application must start with the AID, followed by zeros only (requirement TL-SEL-AIDMATCH.1 of the Calypso specifications).

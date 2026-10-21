@@ -239,7 +239,7 @@ class CardReaderSession(
                 .filterByCardProtocol(CardProtocol.ISO_14443_4.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
-    // Prepare card selection case #4: Navigo IDF
+    // Prepare card selection case #4: Navigo IDF (testing only, see CalypsoAids.NORMALIZED_IDF)
     indexOfNavigoIdfCardSelection =
         cardSelectionManager.prepareSelection(
             readerApiFactory
