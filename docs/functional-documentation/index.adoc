@@ -106,16 +106,16 @@ The ecosystem consists of four components, each covering a specific role in the 
 |===
 | Component | Functional role
 
-| *Sales — server*
+| Sales — server
 | Hosts the security module (SAM) and performs cryptographic operations. Exposes the reading, loading, and personalization services. Its web dashboard displays the status of the server and of its SAM, and the client transactions in real time (see the {doc-repo}/blob/main/src/sales/server/README.md#web-dashboard[server README]).
 
-| *Sales — clients*
+| Sales — clients
 | Android, multiplatform (Android, iOS, desktop), or .NET client used by a sales agent or a passenger (the user, in this document) to load a new transit ticket. The Android and multiplatform clients also personalize blank cards (see <<sales-clients>>).
 
-| *Validation*
+| Validation
 | Terminal installed at access points (gates, validators). Reads the passenger's card, selects the most suitable ticket, and records the entry event.
 
-| *Inspection*
+| Inspection
 | Terminal used by ticket inspectors. Reads the card, displays ticket details, and checks the validity of the last validation.
 |===
 
@@ -130,9 +130,9 @@ NOTE: The validation terminal and the inspection terminal do not communicate ove
 
 The demo covers card personalization, and the loading, validation, and inspection of season passes and multi-trip tickets. The following elements of the data model (see <<card-data-model>>) are not covered:
 
-* *Stored value tickets*: they cannot be loaded, and a stored value ticket present on a card (priority 3) is ignored at validation
-* *Traceability mode*: the tickets are loaded without the cryptographic authenticator signed by the SAM, and no authenticator is verified at inspection
-* *Card and SAM black lists*
+* *Stored value tickets*: they cannot be loaded, and a stored value ticket present on a card (priority 3) is ignored at validation.
+* *Traceability mode*: the tickets are loaded without the cryptographic authenticator signed by the SAM, and no authenticator is verified at inspection.
+* *Card and SAM black lists*: they are not checked.
 
 The corresponding steps of the procedures are marked _Not implemented by the demo_ in <<card-procedures>>.
 
@@ -145,17 +145,17 @@ Three clients can connect to the sales server:
 |===
 | Client | Platforms | Operations | Notes
 
-| *Android client*
+| Android client
 | Android 8.0+
 | Loading of multi-trip tickets (1 to 4 trips) and season passes; card personalization
 | Native Android application, full integration of the Keyple middleware
 
-| *Multiplatform client*
+| Multiplatform client
 | Android, iOS 15.3+, desktop (Windows, macOS, Linux)
 | Loading of multi-trip tickets (1 to 4 trips) and season passes; card personalization
 | Shared UI across all platforms, Keyple Interop libraries (JSON API client and local reader)
 
-| *.NET client*
+| .NET client
 | Windows
 | Loading of multi-trip tickets only (1 to 20 trips, entered by the user)
 | Desktop application demonstrating the Keyple Server JSON API (HTTP), without the Keyple middleware
@@ -214,7 +214,7 @@ Two ticket types can be loaded onto a card.
 
 * Ticket valid for *30 days* from the date of sale
 * Provides *unlimited access* during its validity period
-* *Renewable*: if not expired, its end date is extended by 30 days; if expired, a new period of 30 days starts on the date of sale
+* Can be *renewed*: if not expired, its end date is extended by 30 days; if expired, a new period of 30 days starts on the date of sale
 * No trip deducted at validation
 
 === Multi-trip ticket
@@ -259,7 +259,7 @@ NOTE: Priority 3 of the data model (stored value) is not covered by the demo (se
 
 ==== Functional description
 
-Before being used, a blank card must be *personalized*: this operation writes the first data of the card and sets its validity period.
+Before being used, a blank card must be personalized: this operation writes the first data of the card and sets its validity period.
 
 Personalization is performed from the Android or multiplatform sales client, connected to the server (the .NET client does not personalize cards).
 
@@ -267,7 +267,7 @@ The steps executed on the card are detailed in <<personalization-procedure>>.
 
 ==== Prerequisites
 
-* The server must be reachable, with its SAM for a Calypso card.
+The server must be reachable, with its SAM for a Calypso card.
 
 ==== Process
 
@@ -299,7 +299,7 @@ The steps executed on the card are detailed in <<loading-procedure>>.
 
 ==== Prerequisites
 
-* The server must be reachable, with its SAM for a Calypso card.
+The server must be reachable, with its SAM for a Calypso card.
 
 ==== Process
 
@@ -311,6 +311,8 @@ The steps executed on the card are detailed in <<loading-procedure>>.
 . The result is displayed to the user (see <<sales-results>>).
 
 ==== Business rules
+
+Loading behaves as follows, depending on the situation of the card:
 
 [cols="3,4", options="header"]
 |===
@@ -358,7 +360,7 @@ The steps executed on the card are detailed in <<validation-procedure>>.
 
 ==== Prerequisites
 
-* The SAM must be present and operational in the terminal: without a SAM, the terminal cannot validate (no fallback mode).
+The SAM must be present and operational in the terminal: without a SAM, the terminal cannot validate (no fallback mode).
 
 ==== Process
 
@@ -371,17 +373,10 @@ The steps executed on the card are detailed in <<validation-procedure>>.
 
 ==== Business rules
 
-[[anti-passback-rule]]
-===== Anti-passback
+Validation applies the following rules:
 
-If the card has already been validated within the previous minute, validation is *rejected* to prevent multiple entries. A message prompts the passenger to wait. As the times are recorded to the minute, the effective delay is between 1 and 2 minutes.
-
-NOTE: Special case (Calypso cards only): if the previous validation session was not ratified (card removed before the end of the session), the card presented again within the delay is accepted without deducting a trip, and the previous session is ratified.
-
-[[rejected-card]]
-===== Expired or exhausted tickets
-
-When no ticket of a Calypso card can be used, the expired or exhausted tickets are marked as such on the card (priority 31), so that the next validations no longer analyze them.
+* [[anti-passback-rule,Anti-passback]]*Anti-passback*: if the card has already been validated within the previous minute, validation is rejected to prevent multiple entries, and a message prompts the passenger to wait. As the times are recorded to the minute, the effective delay is between 1 and 2 minutes. Special case (Calypso cards only): if the previous validation session was not ratified (card removed before the end of the session), the card presented again within the delay is accepted without deducting a trip, and the previous session is ratified.
+* [[rejected-card,Expired or exhausted tickets]]*Expired or exhausted tickets*: when no ticket of a Calypso card can be used, the expired or exhausted tickets are marked as such on the card (priority 31), so that the next validations no longer analyze them.
 
 ==== Diagrams
 
@@ -398,7 +393,7 @@ plantuml::diagrams/validation-storage-card.puml[target=validation-storage-card,f
 
 ==== Functional description
 
-Inspection is carried out by a ticket inspector equipped with a mobile terminal. It allows the inspector to *check that the passenger holds a validated ticket*, without modifying the card.
+Inspection is carried out by a ticket inspector equipped with a mobile terminal. It allows the inspector to check that the passenger holds a validated ticket, without modifying the card.
 
 The steps executed on the card are detailed in <<inspection-procedure>>.
 
@@ -445,7 +440,7 @@ Inspection checks:
 
 ==== Diagram
 
-plantuml::diagrams/inspection.puml[target=inspection,format=svg,alt="Inspection workflow",align="center"]
+plantuml::diagrams/inspection.puml[target=inspection,format=svg,alt="Ticket inspection workflow",align="center"]
 
 == Compatible terminals and hardware
 
@@ -453,6 +448,8 @@ This chapter summarizes the hardware supported by each application. The reader p
 
 [[tested-terminals]]
 === Tested Android terminals
+
+The applications have been tested on the following Android terminals:
 
 [cols="3,5,^.^2,^.^2,^.^2", options="header"]
 |===
@@ -587,24 +584,26 @@ Each validation produces one of the following results:
 |===
 | Result | Functional meaning
 
-| *Accepted*
+| Accepted
 | Access granted, 1 trip deducted for a multi-trip ticket. The terminal displays "`Validation completed!`" with the remaining trips (multi-trip ticket) or the end date (season pass).
 
-| *Rejected*
+| Rejected
 | Card rejected by a business rule (see <<validation-rejection-conditions>>).
 
-| *Not recognized*
+| Not recognized
 | Card not recognized: no supported application, DF name not matching the AID of the application, or file structure not supported (see <<validation-rejection-conditions>> and <<supported-card-applications>>).
 
-| *Card removed*
+| Card removed
 | Communication interrupted during the transaction, when the card is removed too early (see <<validation-rejection-conditions>>).
 
-| *Failed*
+| Failed
 | Unexpected technical error, or failure of the transaction with a MIFARE Classic card (see <<validation-rejection-conditions>>).
 |===
 
 [[validation-rejection-conditions]]
 === Validation rejections and errors
+
+When the card is rejected or the transaction fails, the terminal displays one of the following messages:
 
 [cols="4,4", options="header"]
 |===
@@ -675,9 +674,11 @@ When the card is rejected or cannot be read, the terminal displays "`Not valid o
 [[inspection-rejection-conditions]]
 === Inspection rejections and errors
 
+When the card is rejected or cannot be read, the terminal displays one of the following reasons below "`Not valid on this network`":
+
 [cols="4,4", options="header"]
 |===
-| Situation | Message displayed (below "`Not valid on this network`")
+| Situation | Message displayed
 
 | No supported application in the card
 | Selection error: card not recognized
@@ -897,6 +898,8 @@ Number of trips left of a multi-trip ticket. On Calypso cards, the counters are 
 [[data-types]]
 === Data types
 
+Besides integers (Int) and binary data (Binary), the fields of the records use the following types:
+
 [cols="2,^1,8", options="header"]
 |===
 | Name | Bits | Description
@@ -931,7 +934,7 @@ The PriorityCode type gives the type of a contract (ContractTariff field) and th
 | 31 | EXPIRED | Contract expired or exhausted
 |===
 
-The codes 3 to 30 are read as unknown (`UNKNOWN`) by the demo: a contract of an unknown type is never validated.
+The codes 3 to 30 are read as unknown (UNKNOWN) by the demo: a contract of an unknown type is never validated.
 
 [[card-layouts]]
 === Card layouts
