@@ -215,14 +215,14 @@ Two ticket types can be loaded onto a card.
 * Ticket valid for *30 days* from the date of sale
 * Provides *unlimited access* during its validity period
 * Can be *renewed*: if not expired, its end date is extended by 30 days; if expired, a new period of 30 days starts on the date of sale
-* No trip deducted at validation
+* *No trip* deducted at validation
 
 === Multi-trip ticket
 
 * Ticket holding a number of *trips*: each validation uses *1 trip*
 * Valid until the *end date of the card* (EnvEndDate)
-* Trips can be added by a new loading, up to 16,777,215 trips on the counter
-* Remaining trips are visible during inspection
+* *Trips can be added* by a new loading, up to 16,777,215 trips on the counter
+* *Remaining trips* are visible during inspection
 
 [[ticket-priority]]
 === Ticket priority (Calypso cards only)
@@ -665,7 +665,7 @@ When the card is rejected or the transaction fails, the terminal displays one of
 The inspector sees:
 
 * The authentication mode used during inspection ("`Card authenticated by the SAM`", "`Card authenticated by PKI`", or "`Card not authenticated`")
-* The *last validation*: date, time, location, and ticket used
+* The last validation: date, time, location, and ticket used
 * For each ticket present on the card: its type, its validity period (season pass) or its number of remaining trips (multi-trip ticket), and a mark indicating whether it is validated by the last validation (icon:check[role=green]) or not (icon:times[role=red])
 * "`No ticket`" when the card has never been loaded
 
