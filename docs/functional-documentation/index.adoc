@@ -728,9 +728,6 @@ When the card is rejected or cannot be read, the terminal displays "`Not valid o
 | *Contract*
 | Transit ticket stored on the card: "`ticket`" in the use cases, "`contract`" in the data model and the procedures (annexes). A Calypso card can hold up to 4 contracts simultaneously, depending on the card product.
 
-| *Contract priority*
-| Numerical value determining the selection order of tickets during validation (1 = season pass, 2 = multi-trip ticket, 31 = expired or exhausted, 0 = empty slot).
-
 | *Counter*
 | Memory area on the card storing the remaining trips of a multi-trip ticket.
 
@@ -775,6 +772,9 @@ When the card is rejected or cannot be read, the terminal displays "`Not valid o
 
 | *Storage card libraries*
 | Libraries of CNA, available on request (card extension and reader plugin), enabling the applications to handle storage cards (see <<storage-card-support>>).
+
+| *Ticket priority*
+| Numerical value determining the selection order of tickets during validation (1 = season pass, 2 = multi-trip ticket, 31 = expired or exhausted, 0 = empty slot), stored in the ContractPriority fields of the event (see <<ticket-priority>>).
 
 | *Validation period*
 | Period following a validation during which the inspection considers it valid, configured on the inspection terminal.
@@ -925,7 +925,7 @@ The PriorityCode type gives the type of a contract (ContractTariff field) and th
 
 | 0 | FORBIDDEN | Empty record (present in clean records only)
 | 1 | SEASON_PASS | Season pass: unlimited travel during its validity period
-| 2 | MULTI_TRIP | Multi-trip ticket: one trip used at each validation
+| 2 | MULTI_TRIP | Multi-trip ticket: 1 trip used at each validation
 | 3 | - | Stored value: defined by the data model, not supported by the demo (read as unknown, never validated)
 | 4 to 30 | RFU | Reserved for future use
 | 31 | EXPIRED | Contract expired or exhausted
@@ -1306,12 +1306,12 @@ Exception on Calypso cards: if the previous validation session was interrupted b
 | 11.5.3
 | If ContractTariff is 3 and the counter value is lower than the amount of the validation, move on to the next element of the list. _Not implemented by the demo (stored value)._
 
-2+| *Update counter*
+2+| *Counter update*
 
 | 11.5.4
 | Decrement the counter by 1. The contract is used: go to step 12. A contract whose ContractTariff is neither 1 nor 2 is not validated: move on to the next element of the list.
 
-2+| *Add new event*
+2+| *New event*
 
 | 12
 a| If a contract is used, fill the event structure to update:
