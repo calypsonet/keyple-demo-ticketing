@@ -164,13 +164,15 @@ class CalypsoCardValidationProcedure(
       return rejected(it)
     }
 
-    // Step 6.1: anti-passback management and ratification of an interrupted session: within the
-    // anti-passback delay, the card is rejected if the last validation session has been ratified,
-    // otherwise this session, interrupted by the removal of the card, is considered as validated.
+    // Step 6.1: anti-passback, if the last event is within the anti-passback delay
     if (isWithinAntiPassbackDelay(event.eventDateTime, validationDateTime)) {
       return if (calypsoCard.isDfRatified) {
+        // Step 6.1.1: the previous validation session has been ratified: the card is rejected
         rejected(RejectionReason.ALREADY_VALIDATED)
       } else {
+        // Step 6.1.2: recovery of the validation interrupted by the removal of the card (session
+        // not ratified): the card is considered as validated, without new decrement, and the
+        // session is closed (END)
         SessionOutcome(
             ValidationResult.Accepted(cardDescription, validationDateTime, context.location),
             shouldCloseSession = true)

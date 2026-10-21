@@ -29,52 +29,52 @@ else (Yes)
         :Card rejected;<<#F5B7B1>>
         stop
       else (Yes)
-        if (Last validation more\nthan 1 minute ago, or previous\nsession interrupted?) then (No)
-          :Card rejected\n(already validated);<<#F5B7B1>>
-          stop
-        else (Yes)
-          if (Last validation more\nthan 1 minute ago?) then (No)
-            :Validation completed\n(ratification of the interrupted\nprevious session, no trip deducted);<<#ABEBC6>>
+        if (Last validation more\nthan 1 minute ago?) then (No)
+          if (Previous session\ninterrupted\n(not ratified)?) then (No)
+            :Card rejected\n(already validated);<<#F5B7B1>>
             stop
           else (Yes)
-            :List the usable tickets\nin priority order;
+            :Validation completed\n(recovery of the interrupted\nvalidation, no trip deducted);<<#ABEBC6>>
+            stop
+          endif
+        else (Yes)
+          :List the usable tickets\nin priority order;
 
-            if (Usable tickets?) then (No)
+          if (Usable tickets?) then (No)
+            :No valid ticket;<<#F9E79F>>
+            stop
+          else (Yes)
+            repeat
+              if (Ticket of a\nknown version?) then (No)
+                :Card rejected;<<#F5B7B1>>
+                stop
+              else (Yes)
+                if (Ticket still valid?) then (No -> marked expired)
+                else (Yes)
+                  if (Season pass,\nor trips left?) then (No -> marked expired)
+                  else (Yes)
+                    :Deduct 1 trip\n(multi-trip ticket);
+
+                    :Write the validation event\n(date, time, location, ticket used);
+
+                    :End of the secure session;
+
+                    :Validation completed;<<#ABEBC6>>
+
+                    stop
+                  endif
+                endif
+              endif
+            repeat while (Next ticket?) is (Yes) not (No)
+
+            if (Tickets marked expired?) then (No)
               :No valid ticket;<<#F9E79F>>
               stop
             else (Yes)
-              repeat
-                if (Ticket of a\nknown version?) then (No)
-                  :Card rejected;<<#F5B7B1>>
-                  stop
-                else (Yes)
-                  if (Ticket still valid?) then (No -> marked expired)
-                  else (Yes)
-                    if (Season pass,\nor trips left?) then (No -> marked expired)
-                    else (Yes)
-                      :Deduct 1 trip\n(multi-trip ticket);
-
-                      :Write the validation event\n(date, time, location, ticket used);
-
-                      :End of the secure session;
-
-                      :Validation completed;<<#ABEBC6>>
-
-                      stop
-                    endif
-                  endif
-                endif
-              repeat while (Next ticket?) is (Yes) not (No)
-
-              if (Tickets marked expired?) then (No)
-                :No valid ticket;<<#F9E79F>>
-                stop
-              else (Yes)
-                :Write the updated priorities;
-                :End of the secure session;
-                :Expired ticket\nor no trip left;<<#F9E79F>>
-                stop
-              endif
+              :Write the updated priorities;
+              :End of the secure session;
+              :Expired ticket\nor no trip left;<<#F9E79F>>
+              stop
             endif
           endif
         endif

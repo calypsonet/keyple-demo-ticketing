@@ -199,7 +199,9 @@ class StorageCardValidationProcedure(
       return ValidationResult.Rejected(cardDescription, it)
     }
 
-    // Step 6.1: Anti-passback, without exception: the storage cards have no session to ratify
+    // Step 6.1: Anti-passback, if the last event is within the anti-passback delay: the card is
+    // always rejected (step 6.1.1), the storage cards having no session to ratify (step 6.1.2 not
+    // applicable)
     if (isWithinAntiPassbackDelay(event.eventDateTime, validationDateTime)) {
       return ValidationResult.Rejected(cardDescription, RejectionReason.ALREADY_VALIDATED)
     }
