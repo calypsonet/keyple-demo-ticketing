@@ -102,7 +102,7 @@ It is made available by the *Calypso Networks Association (CNA)* as a starting p
 
 The ecosystem consists of four distinct applications, each covering a specific role in the ticketing system:
 
-[cols="^1,3", options="header"]
+[cols="1,4", options="header"]
 |===
 | Application | Functional role
 
@@ -158,7 +158,7 @@ The Calypso card stores in memory:
 
 Storage cards are simpler memory media without a Calypso security system. They allow lightweight scenarios to be demonstrated:
 
-[cols="^2,3,2", options="header"]
+[cols="2,4,2", options="header"]
 |===
 | Type | Characteristics | Authentication
 
@@ -202,7 +202,7 @@ Two ticket types can be loaded onto a card:
 
 When several tickets are present on a Calypso card, the validation terminal automatically selects *the highest-priority valid ticket* according to the following ranking:
 
-[cols="^1,3,4", options="header"]
+[cols="^1,2,4", options="header"]
 |===
 | Priority | Meaning | Behavior
 
@@ -385,7 +385,7 @@ The steps executed on the card are detailed in <<inspection-procedure>>.
 
 Unlike validation, inspection can operate *without a SAM*, thanks to two fallback modes:
 
-[cols="^1,3,4", options="header"]
+[cols="1,2,3", options="header"]
 |===
 | Mode | Activation condition | Level of guarantee
 
@@ -433,7 +433,7 @@ This section summarizes the hardware supported by each application. The reader p
 [[tested-terminals]]
 === Tested Android terminals
 
-[cols="^2,4,^1,^1,^1", options="header"]
+[cols="3,5,^2,^2,^2", options="header"]
 |===
 | Terminal | Description | Sales | Validation | Inspection
 
@@ -508,7 +508,7 @@ The storage cards are read by the reader plugins configured with the storage car
 
 Three types of clients can connect to the sales server:
 
-[cols="^2,3,3,3", options="header"]
+[cols="3,3,4,5", options="header"]
 |===
 | Client | Platforms | Products | Notes
 
@@ -585,7 +585,7 @@ The sales clients display the following messages. On the Android client, the rea
 
 Each validation produces one of the following results:
 
-[cols="^2,5", options="header"]
+[cols="1,4", options="header"]
 |===
 | Result | Functional meaning
 
@@ -810,7 +810,7 @@ The records have 29 bytes (232 bits) on the Calypso cards, and 16 bytes (128 bit
 
 Card metadata and holder information, written at the personalization.
 
-[cols="4,^1,^1,6,3,2", options="header"]
+[cols="25,^10,^10,31,14,10", options="header"]
 |===
 | Field | Bits (Calypso) | Bits (storage cards) | Description | Type | Status
 
@@ -827,7 +827,7 @@ Card metadata and holder information, written at the personalization.
 
 Last event of the card: validation, or update of the contract priorities.
 
-[cols="4,^1,^1,6,3,2", options="header"]
+[cols="25,^10,^10,31,14,10", options="header"]
 |===
 | Field | Bits (Calypso) | Bits (storage cards) | Description | Type | Status
 
@@ -847,7 +847,7 @@ Last event of the card: validation, or update of the contract priorities.
 
 Contract (ticket) and its properties.
 
-[cols="4,^1,^1,6,3,2", options="header"]
+[cols="25,^10,^10,31,14,10", options="header"]
 |===
 | Field | Bits (Calypso) | Bits (storage cards) | Description | Type | Status
 
@@ -869,7 +869,7 @@ The fields ContractSaleSam, ContractSaleCounter, ContractAuthKvc, and ContractAu
 
 Number of trips left of a multi-trip ticket. On the Calypso cards, the counters are stored in a separate file, one counter per contract record; on the storage cards, the counter is stored in the contract record.
 
-[cols="4,^1,6,3,2", options="header"]
+[cols="25,^10,41,14,10", options="header"]
 |===
 | Field | Bits | Description | Type | Status
 
@@ -922,7 +922,7 @@ Files of the Calypso cards and blocks of the storage cards used by the demo.
 
 ==== Calypso cards
 
-[cols="3,^1,4", options="header"]
+[cols="2,^1,5", options="header"]
 |===
 | File | SFI | Content
 
