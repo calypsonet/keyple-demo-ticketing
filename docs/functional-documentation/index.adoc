@@ -96,7 +96,7 @@ This document describes the Keyple Demo Ticketing ecosystem from a functional an
 
 The Keyple Demo Ticketing is a complete ecosystem illustrating the lifecycle of a contactless transit ticket, from card personalization through access validation to inspection.
 
-It is made available by the Calypso Networks Association (CNA) as a starting point for integrators who want to build their own ticketing system based on the Eclipse Keyple middleware.
+It is made available by the Calypso Networks Association (CNA) as a starting point for integrators who want to build their own ticketing system based on the Eclipse Keyple middleware. Its source code, its documentation, and the applications of each release are available in the {doc-repo}[keyple-demo-ticketing repository] on GitHub.
 
 === Components
 
