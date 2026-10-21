@@ -17,7 +17,7 @@ passengers have validated their trip. It analyzes the validation events written 
 
 **Role in ecosystem**: Last step of the ticketing workflow, which checks the cards after their validation.
 
-**Inspection rules**: see [What inspection checks](../../docs/functional-documentation/index.adoc#inspection-checks)
+**Inspection rules**: see [Inspection business rules](../../docs/functional-documentation/index.adoc#inspection-checks)
 in the Functional Documentation.
 
 ## Prerequisites
@@ -97,8 +97,8 @@ Terminal selection → Settings → Home → Card reader → Card content or Inv
   back) is pressed, the next card being then detected:
   - **Card content**: last validation and contracts of the card, the contract used by the last validation being
     marked as validated when the rules of the inspection are met (see the Functional Documentation:
-    [Information displayed](../../docs/functional-documentation/index.adoc#inspection-display),
-    [What inspection checks](../../docs/functional-documentation/index.adoc#inspection-checks))
+    [Inspection results](../../docs/functional-documentation/index.adoc#inspection-results),
+    [Inspection business rules](../../docs/functional-documentation/index.adoc#inspection-checks))
   - **Invalid card**: reason why the card is rejected (see
     [Inspection rejection conditions](../../docs/functional-documentation/index.adoc#inspection-rejection-conditions)
     in the Functional Documentation) or error message
@@ -228,7 +228,7 @@ The common issues of the Android applications (NFC, SAM, terminal type) are desc
 
 **No contract marked as validated**
 - The last validation does not meet the rules of the inspection (location, day, validation period, contract used),
-  described in [What inspection checks](../../docs/functional-documentation/index.adoc#inspection-checks) in the
+  described in [Inspection business rules](../../docs/functional-documentation/index.adoc#inspection-checks) in the
   Functional Documentation: check the location and the validation period set in the **Settings** screen
 
 ## Contributing

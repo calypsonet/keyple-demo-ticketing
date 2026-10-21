@@ -3,7 +3,7 @@
 ' drawn on the right) contains the rest of the procedure.
 ' Pastel background colors: red F5B7B1 (error), yellow F9E79F (no ticket), green ABEBC6 (success),
 ' purple D7BDE2 (mode), orange FAD7A0 (user interaction)
-title Personalization (card issuance)
+title Card personalization
 
 start
 
@@ -19,7 +19,7 @@ else (Yes)
   else (Yes)
     :Open the secure session\n(Calypso card);
 
-    :Write the card environment\n(issuance date, end date =\n1st day of the month + 6 years);
+    :Write the card environment\n(issuing date, end date =\n1st day of the month + 6 years);
 
     :Clear the events, tickets,\nand counters;
 

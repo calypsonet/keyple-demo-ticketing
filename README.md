@@ -60,7 +60,7 @@ java -jar kdt-sales-server-YY.MM.DD-full.jar
 ### 2. Card personalization
 
 Personalize the cards with the personalization feature of the Android or multiplatform sales client (see
-[Card issuance and personalization](docs/functional-documentation/index.adoc#personalization-use-case) in the
+[Card personalization](docs/functional-documentation/index.adoc#personalization-use-case) in the
 Functional Documentation).
 
 ### 3. Workflow execution

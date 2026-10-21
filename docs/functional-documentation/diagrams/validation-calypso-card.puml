@@ -34,7 +34,7 @@ else (Yes)
           stop
         else (Yes)
           if (Last validation more\nthan 1 minute ago?) then (No)
-            :Validation completed\n(ratification of the interrupted\nprevious session, no new deduction);<<#ABEBC6>>
+            :Validation completed\n(ratification of the interrupted\nprevious session, no trip deducted);<<#ABEBC6>>
             stop
           else (Yes)
             :List the usable tickets\nin priority order;
