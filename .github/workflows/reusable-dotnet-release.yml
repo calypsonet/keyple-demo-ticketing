@@ -46,7 +46,8 @@ jobs:
           dotnet restore
           dotnet format --verify-no-changes App.sln
           dotnet test --no-build --verbosity normal
-          dotnet publish -c Release -r win-x64 --no-restore -o ./publish
+          # The project, not the solution, is published: an output directory is not supported for a solution
+          dotnet publish App.csproj -c Release -r win-x64 --no-restore -o ./publish
 
       - name: Archive ${{ inputs.component-name }} application
         working-directory: ${{ inputs.working-directory }}/publish
