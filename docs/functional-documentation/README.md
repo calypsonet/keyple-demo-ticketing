@@ -22,7 +22,7 @@ to the release:
 
 As the applications of the demo, the version of the document is the release tag (YY.MM.DD), its date being the date
 of this tag; outside the releases, the version is `99.99.99` and the date is the build date. The document reference
-(`261021-FD-KeypleDemoTicketing`, from the date of its first publication) is fixed: it identifies the document,
+(`261022-FD-KeypleDemoTicketing`, from the date of its first publication) is fixed: it identifies the document,
 whatever its version. The CI of the pull requests and of the main branch (`.github/workflows/ci-main-and-pr.yml`)
 generates the same files, available as artifacts of the workflow run for review.
 
