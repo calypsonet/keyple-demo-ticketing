@@ -14,17 +14,25 @@ package org.calypsonet.keyple.demo.common.constants
 
 import org.eclipse.keyple.core.util.HexUtil
 
-/** AIDs of the Calypso applications selected by the demo (possibly truncated). */
+/**
+ * AIDs of the Calypso applications selected by the demo (possibly truncated).
+ *
+ * [KEYPLE_GENERIC] is the only AID of the demo, documented in the functional documentation. The
+ * other AIDs are a CNA-specific facility: they are only selected to make the internal tests of CNA
+ * easier, and are of no interest for the integrators.
+ */
 object CalypsoAids {
 
+  /** AID of the Calypso application of the demo (Keyple generic test application). */
   @JvmField val KEYPLE_GENERIC: ByteArray = HexUtil.toByteArray("A000000291FF9101")
+
+  /** CD Light/GTML application: CNA internal tests only. */
   @JvmField val CD_LIGHT_GTML: ByteArray = HexUtil.toByteArray("315449432E49434131")
+
+  /** Calypso Light application: CNA internal tests only. */
   @JvmField val CALYPSO_LIGHT: ByteArray = HexUtil.toByteArray("315449432E49434133")
-  /**
-   * AID of the Navigo IDF application (Paris transport network): not part of the CNA Test Kit nor
-   * of the data model of the demo, it is only selected to make testing easier in Paris without the
-   * kit.
-   */
+
+  /** Navigo IDF application (Paris transport network): CNA internal tests only. */
   @JvmField val NORMALIZED_IDF: ByteArray = HexUtil.toByteArray("A0000004040125090101")
 
   /**

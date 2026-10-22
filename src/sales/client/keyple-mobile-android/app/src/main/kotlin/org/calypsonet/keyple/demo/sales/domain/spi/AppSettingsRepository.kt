@@ -12,8 +12,6 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.sales.domain.spi
 
-import org.calypsonet.keyple.demo.sales.domain.model.CardMedium
-import org.calypsonet.keyple.demo.sales.domain.model.CardMediumVisibility
 import org.calypsonet.keyple.demo.sales.domain.model.ServerConfig
 
 /** Port giving access to the persisted application settings. */
@@ -22,15 +20,6 @@ interface AppSettingsRepository {
   /** Address of the sales server. */
   var serverConfig: ServerConfig
 
-  /** Card medium (contactless card, SIM, etc.) chosen by the user. */
-  var cardMedium: CardMedium
-
   /** Last known readiness of the server (true if the server is reachable and its SAM available). */
   var wasServerReady: Boolean
-
-  /** Returns the visibility of the given card medium in the home screen. */
-  fun getCardMediumVisibility(cardMedium: CardMedium): CardMediumVisibility
-
-  /** Sets the visibility of the given card medium in the home screen. */
-  fun setCardMediumVisibility(cardMedium: CardMedium, visibility: CardMediumVisibility)
 }

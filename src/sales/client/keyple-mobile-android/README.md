@@ -25,7 +25,7 @@ for later validation and inspection.
 - NFC capability for contactless card reading
 - Internet connectivity for server communication
 - Compatible cards: Calypso cards (see the
-  [supported AIDs](../../../../docs/functional-documentation/index.adoc#supported-card-applications)), or storage cards
+  [supported AID](../../../../docs/functional-documentation/index.adoc#supported-card-applications)), or storage cards
   (MIFARE Ultralight and MIFARE Classic 1K, and ST25 SRT512 with the Bluebird terminals, see the
   [storage cards supported](../../../../docs/functional-documentation/index.adoc#storage-card-support)), with
   the storage card libraries (see [Plugin integration](#plugin-integration))
@@ -65,10 +65,9 @@ cd keyple-demo-ticketing/src/sales/client/keyple-mobile-android
 2. Grant NFC permissions to the application
 3. Keep screen on during card operations for stable connection
 
-### Card reader selection
-The app supports two card media, each with its reader:
-- **Contactless card**: Android NFC reader (all devices), or the reader of the Bluebird terminals
-- **SIM card**: OMAPI reader (work in progress)
+### Card reader
+The app reads the contactless cards with the Android NFC reader (all devices), or with the reader of the Bluebird
+terminals.
 
 ## Usage
 
@@ -79,7 +78,7 @@ The app supports two card media, each with its reader:
   - Ensure server is running and accessible
 
 2. **Card personalization** (if needed)
-  - Go to **Settings** → **Personalization**, then choose the card medium
+  - Go to **Settings** → **Personalization**
   - Present the card to personalize (its data is reset)
   - Wait for confirmation message
 
@@ -105,12 +104,11 @@ Splash screen → Home → Card reader → Card content → Select product → C
 - Displayed at startup, then opens the home screen
 
 **Home screen (`HomeActivity`)**
-- Menu for different card reader types
+- Access to the reading of a contactless card
 - Quick access to settings and personalization
 
 **Settings menu (`SettingsMenuActivity`)**
 - **Server**: Connection configuration
-- **Card media**: Card media shown in the home screen (enabled, disabled, or hidden)
 - **Personalization**: Personalization of a card (reset of its data)
 
 **Card reader (`CardReaderActivity`)**
@@ -141,7 +139,6 @@ Splash screen → Home → Card reader → Card content → Select product → C
 
 ## Known limitations
 
-- The SIM card reader (OMAPI) is a work in progress
 - Payment simulation only (no real payment processing)
 - Limited offline capability (server connection required)
 - Single server connection (no failover support)
@@ -159,7 +156,7 @@ Splash screen → Home → Card reader → Card content → Select product → C
 
 **TerminalReaders** (`domain/spi/TerminalReaders.kt`)
 - Port giving access to the readers of the terminal
-- Registers the reader plugins of the card medium (NFC, Bluebird, or OMAPI), then provides its reader
+- Registers the reader plugin of the terminal (Android NFC or Bluebird), then provides its card reader
 - Implementation: `KeypleTerminalReaders`
 
 **TicketingServer** (`domain/spi/TicketingServer.kt`)
@@ -184,7 +181,6 @@ The application supports multiple reader plugins:
 
 **Standard plugins** (always available):
 - Android NFC plugin for standard contactless reading
-- OMAPI plugin for SIM card access (work in progress)
 
 **Proprietary components** (on request, replaced by mocks by default; installed as described in the
 [main README](../../../../README.md#proprietary-plugins-available-on-request)):
@@ -219,8 +215,7 @@ To integrate additional reader types:
 
 1. Add plugin dependency to `build.gradle.kts`
 2. Implement reader-specific initialization in `KeypleTerminalReaders`
-3. Add the card medium (`CardMedium`) and its button in the home screen
-4. Test with target hardware platform
+3. Test with target hardware platform
 
 ## Troubleshooting
 
@@ -235,7 +230,7 @@ The common issues of the Android applications (NFC, terminal type) are described
 - Ensure server is running with its SAM available (see the [Server Documentation](../../server/README.md))
 
 **"Undetermined card type" or "Not valid on this network"**
-- Verify that the card has a
+- Verify that the card has the
   [supported card application](../../../../docs/functional-documentation/index.adoc#supported-card-applications)
 - Check that the card is personalized and not expired (the reason is displayed with "Not valid on this network")
 - Try different card positioning on NFC antenna

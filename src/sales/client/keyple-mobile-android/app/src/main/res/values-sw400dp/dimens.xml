@@ -7,13 +7,10 @@
     <dimen name="smaller_text_size">15sp</dimen>
 
     <dimen name="img_contactless_card_width">38dp</dimen>
-    <dimen name="img_sim_width">28dp</dimen>
 
-    <dimen name="settings_radio_size">20dp</dimen>
 
     <dimen name="reading_animation_size">180dp</dimen>
     <dimen name="contract_text_width">150dp</dimen>
 
-    <dimen name="home_card_medium_btn_height">90dp</dimen>
-    <dimen name="home_btn_top_margin">20dp</dimen>
+    <dimen name="home_card_btn_height">90dp</dimen>
 </resources>

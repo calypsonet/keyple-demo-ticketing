@@ -94,6 +94,7 @@ public class CardRepository {
         readerApiFactory.createIsoCardSelector().filterByDfName(CalypsoAids.KEYPLE_GENERIC),
         calypsoCardApiFactory.createCalypsoCardSelectionExtension().acceptInvalidatedCard());
 
+    // Other AIDs: CNA internal tests only (see CalypsoAids)
     cardSelectionManager.prepareSelection(
         readerApiFactory.createIsoCardSelector().filterByDfName(CalypsoAids.CALYPSO_LIGHT),
         calypsoCardApiFactory.createCalypsoCardSelectionExtension().acceptInvalidatedCard());

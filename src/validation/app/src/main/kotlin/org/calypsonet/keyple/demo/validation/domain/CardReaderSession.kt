@@ -212,7 +212,7 @@ class CardReaderSession(
     // Get a new card selection manager
     cardSelectionManager = readerApiFactory.createCardSelectionManager()
 
-    // Prepare card selection case #1: Keyple generic
+    // Prepare card selection case #1: Keyple generic (AID of the demo)
     indexOfKeypleGenericCardSelection =
         cardSelectionManager.prepareSelection(
             readerApiFactory
@@ -221,7 +221,7 @@ class CardReaderSession(
                 .filterByCardProtocol(CardProtocol.ISO_14443_4.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
-    // Prepare card selection case #2: CD LIGHT/GTML
+    // Prepare card selection case #2: CD LIGHT/GTML (CNA internal tests only, see CalypsoAids)
     indexOfCdLightGtmlCardSelection =
         cardSelectionManager.prepareSelection(
             readerApiFactory
@@ -230,7 +230,7 @@ class CardReaderSession(
                 .filterByCardProtocol(CardProtocol.ISO_14443_4.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
-    // Prepare card selection case #3: CALYPSO LIGHT
+    // Prepare card selection case #3: CALYPSO LIGHT (CNA internal tests only, see CalypsoAids)
     indexOfCalypsoLightCardSelection =
         cardSelectionManager.prepareSelection(
             readerApiFactory
@@ -239,7 +239,7 @@ class CardReaderSession(
                 .filterByCardProtocol(CardProtocol.ISO_14443_4.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
-    // Prepare card selection case #4: Navigo IDF (testing only, see CalypsoAids.NORMALIZED_IDF)
+    // Prepare card selection case #4: Navigo IDF (CNA internal tests only, see CalypsoAids)
     indexOfNavigoIdfCardSelection =
         cardSelectionManager.prepareSelection(
             readerApiFactory

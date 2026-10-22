@@ -27,7 +27,6 @@ import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
 import org.calypsonet.keyple.demo.sales.R
 import org.calypsonet.keyple.demo.sales.databinding.ActivityCardReaderBinding
-import org.calypsonet.keyple.demo.sales.domain.model.CardMedium
 import org.calypsonet.keyple.demo.sales.domain.usecases.ReadContracts
 import org.calypsonet.keyple.demo.sales.ui.activities.cardcontent.CardContentActivity
 import org.calypsonet.keyple.demo.sales.ui.mappers.toUi
@@ -53,25 +52,17 @@ class CardReaderActivity : BaseCardActivity() {
 
   override fun initReaders() {
     try {
-      when (cardMedium) {
-        CardMedium.CONTACTLESS_CARD -> {
-          if (!isBluebirdTerminal) {
-            val nfcManager = getSystemService(NFC_SERVICE) as NfcManager
-            if (nfcManager.defaultAdapter?.isEnabled == true) {
-              showPresentCardInstructions()
-              initCardReader()
-            } else {
-              showError(getString(R.string.nfc_not_activated), finishActivity = true)
-            }
-          } else {
-            showPresentCardInstructions()
-            initCardReader()
-          }
+      if (!isBluebirdTerminal) {
+        val nfcManager = getSystemService(NFC_SERVICE) as NfcManager
+        if (nfcManager.defaultAdapter?.isEnabled == true) {
+          showPresentCardInstructions()
+          initCardReader()
+        } else {
+          showError(getString(R.string.nfc_not_activated), finishActivity = true)
         }
-        CardMedium.SIM -> {
-          showReadInProgress()
-          initOmapiReader { lifecycleScope.launch(Dispatchers.Default) { executeRemoteService() } }
-        }
+      } else {
+        showPresentCardInstructions()
+        initCardReader()
       }
     } catch (e: ReaderCommunicationException) {
       Timber.e(e, "Reader communication error while initializing the readers")
@@ -110,8 +101,7 @@ class CardReaderActivity : BaseCardActivity() {
                     resultType,
                     result.card.description,
                     result.contracts.map { it.toUi(resources) }),
-                result.card.serialNumber,
-                shouldFinishActivityAfterResult())
+                result.card.serialNumber)
           }
         } else {
           showStatusError(result.card, result.status)
@@ -121,7 +111,7 @@ class CardReaderActivity : BaseCardActivity() {
         showInvalidCard(getString(R.string.undetermined_card_type), "")
       } catch (e: Exception) {
         Timber.e(e, "Error while reading the contracts")
-        showError(getString(R.string.server_error), shouldFinishActivityAfterResult())
+        showError(getString(R.string.server_error))
       } finally {
         cardReaderSession.endCardProcessing()
       }

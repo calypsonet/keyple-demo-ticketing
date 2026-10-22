@@ -18,7 +18,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import org.calypsonet.keyple.demo.sales.data.KeypleTerminalReaders
-import org.calypsonet.keyple.demo.sales.domain.spi.Logger
 import org.calypsonet.keyple.demo.sales.domain.spi.TerminalReaders
 
 @Suppress("unused")
@@ -28,7 +27,7 @@ class ReaderModule {
 
   @Provides
   @Singleton
-  fun provideTerminalReaders(logger: Logger): TerminalReaders {
-    return KeypleTerminalReaders(logger)
+  fun provideTerminalReaders(): TerminalReaders {
+    return KeypleTerminalReaders()
   }
 }

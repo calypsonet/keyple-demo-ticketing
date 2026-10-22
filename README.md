@@ -78,12 +78,12 @@ storage card libraries (see
 [Proprietary plugins](#proprietary-plugins-available-on-request)). Their features and the tickets they hold are
 described in the [Functional Documentation](docs/functional-documentation/index.adoc#cards).
 
-### Card application identifiers
+### Card application identifier
 
-The Calypso card applications supported by the demos, those of the test cards of the
-[CNA Test Kit](https://calypsonet.org/technical-support-documentation/), are listed in the annex
+The demos work with the Calypso application of AID `A000000291FF9101`, present on the test cards of the
+[CNA Test Kit](https://calypsonet.org/technical-support-documentation/) (see the annex
 [Card data model](docs/functional-documentation/index.adoc#supported-card-applications) of the Functional
-Documentation.
+Documentation).
 
 ## Data model
 
@@ -180,8 +180,7 @@ application.
   `di` layers. The platform services, including the system clock, are accessed through ports.
 - The `domain` layer is synchronous: its operations are blocking calls (no `suspend` function), the choice of the
   threads belonging to the `ui` layer (coroutines bound to the activity lifecycle). An asynchronous operation of the
-  platform is either awaited by the adapter, the call being blocking (for example, creation of the Arrive plugin
-  factory), or expressed in the port by a callback (for example, registration of the OMAPI plugin).
+  platform is awaited by the adapter, the call being blocking (for example, creation of the Arrive plugin factory).
 - Everything the domain needs from the outside world is expressed as a port in `domain/spi` (for example,
   `TerminalReaders`, `KeypopApiProvider`, `UserFeedback`, `AppSettingsRepository`, `Clock`, `Logger`, `UiContext`,
   `TicketingServer`, `ServerReadinessChecker`) and implemented by an adapter in `data`, or in `ui` for the UI-bound
@@ -275,7 +274,6 @@ The applications use the same business terms, in the code and in the displayed t
 | What is sold (type, price, quantity)       | `Product`, `ProductType`                     | "ticket", or the name of the ticket                   |
 | Names of the two tickets                   | `SEASON_PASS`, `MULTI_TRIP` (`PriorityCode`) | "Season pass", "Multi-trip ticket"                    |
 | Unit of the counter of a multi-trip ticket | `trip` (`remainingTrips`, `tripsToLoad`)     | "trip", "trips"                                       |
-| Medium holding the card application        | `CardMedium`                                 | "card" (contactless card, SIM card, etc.)             |
 | Terminal running the application           | `TerminalType`                               | name of the terminal (Bluebird, Famoco, Arrive, etc.) |
 | Sounds and LEDs of the terminal            | `UserFeedback`                               | -                                                     |
 
@@ -319,7 +317,7 @@ The applications share these conventions, except for the following deliberate di
 | Validation app: free orientation, `arrive`/`arrive-mock` source sets and `com.parkeon.app.customer` action      | Arrive (Parkeon) terminal: landscape screen, optional proprietary SDK, application launched by the terminal                                     |
 | Sales Android client: reader detected from the device, no terminal selection screen                             | Only the Bluebird terminals use a specific reader; the other devices use the Android NFC reader                                                 |
 | Sales Android client: settings persisted (`SharedPreferences`), in memory in the inspection and validation apps | The server address must survive a restart; the inspection and validation apps ask for the terminal at each startup                              |
-| Sales Android client: no local SAM, but NFC and OMAPI (SIM) readers                                             | The SAM is managed by the server (Keyple Distributed)                                                                                           |
+| Sales Android client: no local SAM, but NFC readers                                                             | The SAM is managed by the server (Keyple Distributed)                                                                                           |
 | KMP client: `ui` and `data` packages without `domain` layer (MVVM), without Hilt nor the `common` library       | Compose code shared by Android, desktop and iOS; the `common` library relies on Java libraries (bit-lib4j, Keyple utilities) unavailable on iOS |
 | KMP client: Android APK suffixed `-android-`                                                                    | The same project name is used by the desktop packages                                                                                           |
 | Directory and project names (`keyple-mobile-android`, `pc-dotnet`, `kdt-...`) differing from the packages       | Referenced by the CI, the names of the released artifacts and the existing links                                                                |

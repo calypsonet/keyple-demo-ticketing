@@ -45,14 +45,8 @@ class SettingsMenuActivity : BaseActivity() {
       startActivity(intent)
     }
 
-    activitySettingsMenuBinding.cardMediumBtn.setOnClickListener {
-      val intent = Intent(this, CardMediumSettingsActivity::class.java)
-      startActivity(intent)
-    }
-
     activitySettingsMenuBinding.personalizationBtn.setOnClickListener {
-      val intent = Intent(this, HomeActivity::class.java)
-      intent.putExtra(HomeActivity.CHOOSE_CARD_MEDIUM_FOR_PERSONALIZATION, true)
+      val intent = Intent(this, PersonalizeCardActivity::class.java)
       startActivity(intent)
     }
 

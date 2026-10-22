@@ -89,7 +89,6 @@ keypleDistributedRemoteLib = { module = "org.eclipse.keyple:keyple-distributed-r
 keypleInteropJsonapiClientKmpLib = { module = "org.eclipse.keyple:keyple-interop-jsonapi-client-kmp-lib" }
 keypleInteropLocalreaderNfcmobileKmpLib = { module = "org.eclipse.keyple:keyple-interop-localreader-nfcmobile-kmp-lib" }
 keyplePluginAndroidNfcLib = { module = "org.eclipse.keyple:keyple-plugin-android-nfc-java-lib" }
-keyplePluginAndroidOmapiLib = { module = "org.eclipse.keyple:keyple-plugin-android-omapi-java-lib" }
 keyplePluginCnaFamocoSeCommunicationLib = { module = "org.calypsonet.keyple:keyple-plugin-cna-famoco-se-communication-java-lib", version.ref = "keyplePluginCnaFamocoSeCommunicationLib" }
 keyplePluginPcscLib = { module = "org.eclipse.keyple:keyple-plugin-pcsc-java-lib" }
 keyplePluginStoragecardApi = { module = "org.eclipse.keyple:keyple-plugin-storagecard-java-api" }

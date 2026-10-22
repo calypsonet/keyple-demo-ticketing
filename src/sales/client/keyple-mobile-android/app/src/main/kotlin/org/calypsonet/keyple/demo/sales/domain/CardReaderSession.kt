@@ -13,7 +13,6 @@
 package org.calypsonet.keyple.demo.sales.domain
 
 import org.calypsonet.keyple.demo.common.constants.CalypsoAids
-import org.calypsonet.keyple.demo.sales.domain.model.CardMedium
 import org.calypsonet.keyple.demo.sales.domain.model.CardProtocol
 import org.calypsonet.keyple.demo.sales.domain.model.TerminalType
 import org.calypsonet.keyple.demo.sales.domain.spi.KeypopApiProvider
@@ -30,8 +29,8 @@ import org.eclipse.keypop.storagecard.card.ProductType.MIFARE_ULTRALIGHT
 import org.eclipse.keypop.storagecard.card.ProductType.ST25_SRT512
 
 /**
- * Session of the card reader of the selected card medium: initialization of the reader, detection
- * and selection of the presented cards, on which the remote ticketing services are executed.
+ * Session of the contactless card reader: initialization of the reader, detection and selection of
+ * the presented cards, on which the remote ticketing services are executed.
  */
 class CardReaderSession(
     private val keypopApiProvider: KeypopApiProvider,
@@ -52,40 +51,32 @@ class CardReaderSession(
   var isInitialized = false
     private set
 
-  /** The name of the reader of the card medium. */
+  /** The name of the card reader. */
   lateinit var readerName: String
     private set
 
-  /** The plugin type reported to the server, depending on the terminal and the card medium. */
+  /** The plugin type reported to the server, depending on the terminal. */
   lateinit var pluginType: String
     private set
 
-  private var aids: List<ByteArray> = emptyList()
-
   /**
-   * Initializes the reader of the given card medium.
+   * Initializes the card reader.
    *
    * @param terminalType The type of terminal.
-   * @param cardMedium The card medium (contactless card, SIM, etc.) to read.
    * @param uiContext Platform-specific context used to register the plugins.
-   * @param observer Optional observer of the card reader events (contactless cards only).
+   * @param observer Optional observer of the card reader events.
    * @param readerObservationExceptionHandler Optional handler of the reader observation errors.
-   * @param onPluginRegistered Optional callback invoked once the plugin is registered (asynchronous
-   *   registration of the OMAPI plugin).
    */
   fun init(
       terminalType: TerminalType,
-      cardMedium: CardMedium,
       uiContext: UiContext,
       observer: CardReaderObserverSpi?,
-      readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi?,
-      onPluginRegistered: (() -> Unit)?
+      readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi?
   ) {
-    readerName = terminalReaders.getReaderName(terminalType, cardMedium)
-    pluginType = getPluginType(terminalType, cardMedium)
-    aids = getAids(cardMedium)
+    readerName = terminalReaders.getReaderName(terminalType)
+    pluginType = if (terminalType == TerminalType.BLUEBIRD) "Bluebird" else "Android NFC"
 
-    terminalReaders.registerPlugin(terminalType, uiContext, cardMedium, onPluginRegistered)
+    terminalReaders.registerPlugin(terminalType, uiContext)
     terminalReaders.initCardReader(observer, readerObservationExceptionHandler)
 
     isInitialized = true
@@ -131,7 +122,7 @@ class CardReaderSession(
     val reader = terminalReaders.getReader(readerName)
     val cardSelectionManager = readerApiFactory.createCardSelectionManager()
 
-    aids.forEach {
+    AIDS.forEach {
       // Generic selection: configures a CardSelector with all the desired attributes to perform
       // the selection and read additional information afterward
       val calypsoCardSelector =
@@ -166,25 +157,16 @@ class CardReaderSession(
         ?: throw IllegalStateException("No matching card found")
   }
 
-  /**
-   * Returns the plugin type reported to the server, depending on the terminal and the card medium.
-   */
-  private fun getPluginType(terminalType: TerminalType, cardMedium: CardMedium): String =
-      when (cardMedium) {
-        CardMedium.CONTACTLESS_CARD ->
-            if (terminalType == TerminalType.BLUEBIRD) "Bluebird" else "Android NFC"
-        CardMedium.SIM -> "Android OMAPI"
-      }
-
-  /** Returns the AIDs of the Calypso applications to select, depending on the card medium. */
-  private fun getAids(cardMedium: CardMedium): List<ByteArray> =
-      when (cardMedium) {
-        CardMedium.CONTACTLESS_CARD ->
-            listOf(
-                CalypsoAids.KEYPLE_GENERIC,
-                CalypsoAids.CD_LIGHT_GTML,
-                CalypsoAids.CALYPSO_LIGHT,
-                CalypsoAids.NORMALIZED_IDF)
-        CardMedium.SIM -> listOf(CalypsoAids.CD_LIGHT_GTML, CalypsoAids.NORMALIZED_IDF)
-      }
+  private companion object {
+    /**
+     * AIDs of the Calypso applications to select: the AID of the demo, followed by the AIDs
+     * selected for the internal tests of CNA only (see [CalypsoAids]).
+     */
+    val AIDS =
+        listOf(
+            CalypsoAids.KEYPLE_GENERIC,
+            CalypsoAids.CD_LIGHT_GTML,
+            CalypsoAids.CALYPSO_LIGHT,
+            CalypsoAids.NORMALIZED_IDF)
+  }
 }

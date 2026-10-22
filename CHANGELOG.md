@@ -73,7 +73,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 - Coppernic C-One 2 terminal support (plugin not updated since 2022).
 - Stored value contract type, which could not be created by the demo.
-- Sales Android client: "Wearable" and "Embedded Secure Element" card media, which had no reader.
+- Sales Android client: card media other than the contactless card ("Wearable" and "Embedded Secure Element", which
+  had no reader, and SIM card with the OMAPI reader), with the card media settings.
 - Multiplatform client: iOS Intel simulator target, no longer supported by Compose Multiplatform.
 - Unused dependencies (dagger-android, RxJava, EventBus, Koin, `log4j`, Material icons extended, etc.), code, and
   resources.

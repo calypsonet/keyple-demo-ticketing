@@ -33,7 +33,7 @@ access to transportation networks.
   SRT512 on the Bluebird terminals only), with the storage card libraries (see
   [Proprietary plugins](#proprietary-plugins) and the
   [storage cards supported](../../docs/functional-documentation/index.adoc#storage-card-support))
-- Supported AIDs (see [Card data model](../../docs/functional-documentation/index.adoc#supported-card-applications))
+- Supported AID (see [Card data model](../../docs/functional-documentation/index.adoc#supported-card-applications))
 
 ## Installation
 
@@ -235,8 +235,8 @@ The common issues of the Android applications (NFC, SAM, terminal type) are desc
 **"Selection error: …" or "Invalid card / File structure … not supported"**
 - The card is not recognized (see the
   [validation rejections and errors](../../docs/functional-documentation/index.adoc#validation-rejection-conditions)
-  in the Functional Documentation): it has none of the
-  [supported card applications](../../docs/functional-documentation/index.adoc#supported-card-applications), its DF
+  in the Functional Documentation): it does not have the
+  [supported card application](../../docs/functional-documentation/index.adoc#supported-card-applications), its DF
   name does not match the AID, or its file structure is not supported
 - A storage card is not recognized when the storage card libraries are not available (see
   [Proprietary plugins](#proprietary-plugins))

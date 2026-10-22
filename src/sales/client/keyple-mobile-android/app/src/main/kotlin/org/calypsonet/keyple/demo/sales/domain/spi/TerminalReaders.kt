@@ -12,7 +12,6 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.sales.domain.spi
 
-import org.calypsonet.keyple.demo.sales.domain.model.CardMedium
 import org.calypsonet.keyple.demo.sales.domain.model.TerminalType
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
@@ -20,26 +19,20 @@ import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 
 /**
  * Readers of the terminal: registration of the reader plugins of the platform, then access to the
- * reader of the card medium (contactless reader or OMAPI reader).
+ * contactless card reader.
  *
  * The readers are driven (card detection, selection, and processing) by the `CardReaderSession` of
  * the domain.
  */
 interface TerminalReaders {
   /**
-   * Returns the name of the reader to use for the given terminal type and card medium.
+   * Returns the name of the card reader of the given terminal type.
    *
    * @param terminalType The type of terminal.
-   * @param cardMedium The card medium (contactless card, SIM, etc.) to read.
    */
-  fun getReaderName(terminalType: TerminalType, cardMedium: CardMedium): String
+  fun getReaderName(terminalType: TerminalType): String
 
-  fun registerPlugin(
-      terminalType: TerminalType,
-      uiContext: UiContext,
-      cardMedium: CardMedium,
-      onPluginRegistered: (() -> Unit)?
-  )
+  fun registerPlugin(terminalType: TerminalType, uiContext: UiContext)
 
   fun initCardReader(
       observer: CardReaderObserverSpi?,

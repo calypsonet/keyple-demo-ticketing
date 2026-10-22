@@ -55,14 +55,6 @@
                 android:exported="false">
         </activity>
         <activity
-                android:name="org.calypsonet.keyple.demo.sales.ui.activities.CardMediumSettingsActivity"
-                android:theme="@style/AppTheme.NoActionBar"
-                android:screenOrientation="portrait"
-                android:launchMode="singleTop"
-                android:configChanges="orientation|keyboardHidden"
-                android:exported="false">
-        </activity>
-        <activity
                 android:name="org.calypsonet.keyple.demo.sales.ui.activities.CardReaderActivity"
                 android:theme="@style/AppTheme.NoActionBar"
                 android:screenOrientation="portrait"

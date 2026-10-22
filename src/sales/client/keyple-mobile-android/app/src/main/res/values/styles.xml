@@ -42,12 +42,6 @@
         <item name="android:textColor">@color/dark_blue</item>
     </style>
 
-    <style name="mediumBoldDarkBlue">
-        <item name="fontFamily">@font/worksans_bold</item>
-        <item name="android:textSize">@dimen/medium_text_size</item>
-        <item name="android:textColor">@color/dark_blue</item>
-    </style>
-
     <style name="bigBoldBlack">
         <item name="fontFamily">@font/worksans_bold</item>
         <item name="android:textSize">@dimen/big_text_size</item>

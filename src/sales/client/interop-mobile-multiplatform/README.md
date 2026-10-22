@@ -30,8 +30,8 @@ cross-platform development practices for contactless card applications.
 - **Kotlin 2.3** with multiplatform support (provided by the Gradle build)
 
 ### Card requirements
-- Calypso cards with a supported AID (see the
-  [supported card applications](../../../../docs/functional-documentation/index.adoc#supported-card-applications)):
+- Calypso cards with the supported AID (see the
+  [supported card application](../../../../docs/functional-documentation/index.adoc#supported-card-applications)):
   this client does not handle the storage cards
 
 ### Platform-specific requirements

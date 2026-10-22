@@ -247,7 +247,7 @@ cause:
 
 **"Reading failed, status code: …" or "Loading failed, status code: …"**
 - The message of the server is displayed below the status code (for example, card not supported or card full)
-- Verify that the card has a
+- Verify that the card has the
   [supported card application](../../../../docs/functional-documentation/index.adoc#supported-card-applications) and
   is properly positioned on the reader
 - Check the APDU exchanges in the log file (`DEBUG` level)

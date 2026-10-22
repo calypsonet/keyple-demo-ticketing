@@ -14,10 +14,8 @@ package org.calypsonet.keyple.demo.sales.data
 
 import android.app.Activity
 import javax.inject.Inject
-import org.calypsonet.keyple.demo.sales.domain.model.CardMedium
 import org.calypsonet.keyple.demo.sales.domain.model.CardProtocol
 import org.calypsonet.keyple.demo.sales.domain.model.TerminalType
-import org.calypsonet.keyple.demo.sales.domain.spi.Logger
 import org.calypsonet.keyple.demo.sales.domain.spi.TerminalReaders
 import org.calypsonet.keyple.demo.sales.domain.spi.UiContext
 import org.calypsonet.keyple.plugin.bluebird.BluebirdConstants
@@ -29,9 +27,6 @@ import org.eclipse.keyple.plugin.android.nfc.AndroidNfcConfig
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcConstants
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcPluginFactoryProvider
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcSupportedProtocols
-import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiPlugin
-import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiPluginFactoryProvider
-import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiReader
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ConfigurableCardReader
 import org.eclipse.keypop.reader.ObservableCardReader
@@ -40,11 +35,10 @@ import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 
 /** [TerminalReaders] adapter based on the Keyple reader plugins of the terminal. */
-class KeypleTerminalReaders @Inject constructor(private val logger: Logger) : TerminalReaders {
+class KeypleTerminalReaders @Inject constructor() : TerminalReaders {
 
   private lateinit var terminalType: TerminalType
 
-  private lateinit var cardMedium: CardMedium
   // Card
   private lateinit var cardPluginName: String
   private lateinit var cardReaderName: String
@@ -89,22 +83,8 @@ class KeypleTerminalReaders @Inject constructor(private val logger: Logger) : Te
   }
 
   /** Register any keyple plugin */
-  override fun registerPlugin(
-      terminalType: TerminalType,
-      uiContext: UiContext,
-      cardMedium: CardMedium,
-      onPluginRegistered: (() -> Unit)?
-  ) {
-    this.cardMedium = cardMedium
+  override fun registerPlugin(terminalType: TerminalType, uiContext: UiContext) {
     val activity = uiContext.adaptTo(Activity::class.java)
-    if (cardMedium != CardMedium.CONTACTLESS_CARD) {
-      // The OMAPI plugin factory is provided asynchronously, once the SE service is connected.
-      AndroidOmapiPluginFactoryProvider(activity) { factory ->
-        SmartCardServiceProvider.getService().registerPlugin(factory)
-        onPluginRegistered?.invoke()
-      }
-      return
-    }
     initTerminalReader(terminalType)
     val pluginFactory =
         when (terminalType) {
@@ -128,10 +108,6 @@ class KeypleTerminalReaders @Inject constructor(private val logger: Logger) : Te
       observer: CardReaderObserverSpi?,
       readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi?
   ): CardReader? {
-    // Only the contactless card reader is observed; the OMAPI readers are retrieved by name.
-    if (cardMedium != CardMedium.CONTACTLESS_CARD) {
-      return null
-    }
     cardReader =
         SmartCardServiceProvider.getService().getPlugin(cardPluginName)?.getReader(cardReaderName)
 
@@ -155,10 +131,6 @@ class KeypleTerminalReaders @Inject constructor(private val logger: Logger) : Te
     cardReaderProtocols.keys.forEach { physicalName ->
       (cardReader as ConfigurableCardReader).deactivateProtocol(physicalName)
     }
-
-    if (cardMedium != CardMedium.CONTACTLESS_CARD) {
-      unregisterPlugin(AndroidOmapiPlugin.PLUGIN_NAME)
-    }
   }
 
   override fun release(observer: CardReaderObserverSpi?) {
@@ -170,22 +142,9 @@ class KeypleTerminalReaders @Inject constructor(private val logger: Logger) : Te
     smartCardService.plugins.forEach { smartCardService.unregisterPlugin(it.name) }
   }
 
-  override fun getReaderName(terminalType: TerminalType, cardMedium: CardMedium): String =
-      when (cardMedium) {
-        CardMedium.CONTACTLESS_CARD ->
-            if (terminalType == TerminalType.BLUEBIRD) BluebirdConstants.CARD_READER_NAME
-            else AndroidNfcConstants.READER_NAME
-        CardMedium.SIM -> AndroidOmapiReader.READER_NAME_SIM_1
-      }
-
-  /** Unregisters the given Keyple plugin, logging the failure. */
-  private fun unregisterPlugin(pluginName: String) {
-    try {
-      SmartCardServiceProvider.getService().unregisterPlugin(pluginName)
-    } catch (e: Exception) {
-      logger.e("Error while unregistering the plugin [plugin=$pluginName]", e)
-    }
-  }
+  override fun getReaderName(terminalType: TerminalType): String =
+      if (terminalType == TerminalType.BLUEBIRD) BluebirdConstants.CARD_READER_NAME
+      else AndroidNfcConstants.READER_NAME
 
   /** Retrieve a registered reader */
   @Throws(ReaderCommunicationException::class)

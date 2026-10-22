@@ -29,11 +29,9 @@
     <string name="personalization_failed_label">Personalization failed</string>
 
     <string name="contactless_card">Contactless card</string>
-    <string name="sim_card">SIM card</string>
 
 
-    <string name="card_medium_selection">Choose a card</string>
-    <string name="to_be_personalized">to be personalized</string>
+    <string name="card_selection">Choose a card</string>
     <string name="choose_product">Choose a type of ticket</string>
     <string name="try_again">Retry</string>
     <string name="try_again_countdown">Retry (%1$d)</string>
@@ -70,7 +68,6 @@
     <string name="action_settings">Settings</string>
     <string name="back">Back</string>
     <string name="server_setting">Server</string>
-    <string name="card_medium_setting">Card media</string>
     <string name="personalization_setting">Personalization</string>
 
     <string name="server_ip">Server IP</string>
@@ -79,9 +76,6 @@
     <string name="server_readiness_action">Server state</string>
     <string name="save">Save</string>
 
-    <string name="enable">Enable</string>
-    <string name="disable">Disable</string>
-    <string name="hide">Hide</string>
 
     <string name="server_ready">Server ready</string>
     <string name="server_not_ready">Server not ready</string>

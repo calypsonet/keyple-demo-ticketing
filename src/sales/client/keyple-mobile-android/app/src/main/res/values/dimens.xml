@@ -15,14 +15,13 @@
     <dimen name="settings_margin">15dp</dimen>
     <dimen name="settings_edit_padding">7dp</dimen>
 
-    <dimen name="card_medium_selection_top_margin">10dp</dimen>
+    <dimen name="card_selection_top_margin">10dp</dimen>
 
     <dimen name="card_content_desc_top_margin">20dp</dimen>
     <dimen name="content_top_margin">20dp</dimen>
     <dimen name="card_validation_horizontal_margin">13dp</dimen>
 
     <dimen name="img_contactless_card_width">30dp</dimen>
-    <dimen name="img_sim_width">20dp</dimen>
 
     <dimen name="connection_status_size">12dp</dimen>
     <dimen name="connection_status_contour">3dp</dimen>
@@ -36,12 +35,11 @@
     <dimen name="eclipse_logo_height">60dp</dimen>
 
     <dimen name="home_element_margin">20dp</dimen>
-    <dimen name="home_btn_top_margin">10dp</dimen>
     <dimen name="home_text_width">200dp</dimen>
     <dimen name="home_horizontal_margin">38dp</dimen>
     <dimen name="home_block_vertical_margin">10dp</dimen>
     <dimen name="home_choose_margin_top">7dp</dimen>
-    <dimen name="home_card_medium_btn_height">70dp</dimen>
+    <dimen name="home_card_btn_height">70dp</dimen>
 
     <dimen name="settings_line_top_padding">72dp</dimen>
     <dimen name="settings_btn_padding_horizontal">38dp</dimen>
@@ -49,10 +47,6 @@
     <dimen name="settings_icon_size">20dp</dimen>
     <dimen name="settings_arrow_width">12dp</dimen>
     <dimen name="settings_btn_text_margin_left">12dp</dimen>
-    <dimen name="settings_config_top_margin">20dp</dimen>
-    <dimen name="settings_radio_size">15dp</dimen>
-    <dimen name="settings_radio_text_margin">20dp</dimen>
-    <dimen name="settings_radio_vertical_margin">15dp</dimen>
 
     <dimen name="main_btn_horizontal_margin">19dp</dimen>
     <dimen name="main_btn_margin_bottom">20dp</dimen>

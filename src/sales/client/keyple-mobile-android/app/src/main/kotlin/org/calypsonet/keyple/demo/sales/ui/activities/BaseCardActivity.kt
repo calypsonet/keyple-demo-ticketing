@@ -13,7 +13,6 @@
 package org.calypsonet.keyple.demo.sales.ui.activities
 
 import android.os.Build
-import android.os.Bundle
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import javax.inject.Inject
@@ -27,7 +26,6 @@ import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
 import org.calypsonet.keyple.demo.sales.R
 import org.calypsonet.keyple.demo.sales.domain.CardReaderSession
 import org.calypsonet.keyple.demo.sales.domain.model.CardInfo
-import org.calypsonet.keyple.demo.sales.domain.model.CardMedium
 import org.calypsonet.keyple.demo.sales.domain.model.TerminalType
 import org.calypsonet.keyple.demo.sales.ui.ActivityUiContext
 import org.calypsonet.keyple.demo.sales.ui.model.ResultType
@@ -40,17 +38,11 @@ abstract class BaseCardActivity :
     BaseActivity(), CardReaderObserverSpi, CardReaderObservationExceptionHandlerSpi {
 
   @Inject lateinit var cardReaderSession: CardReaderSession
-  lateinit var cardMedium: CardMedium
 
   val isBluebirdTerminal = Build.MANUFACTURER?.lowercase()?.contains("bluebird") == true
 
   private val terminalType: TerminalType
     get() = if (isBluebirdTerminal) TerminalType.BLUEBIRD else TerminalType.NFC_TERMINAL
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    cardMedium = appSettings.cardMedium
-  }
 
   override fun onResume() {
     super.onResume()
@@ -69,28 +61,11 @@ abstract class BaseCardActivity :
   fun initCardReader() {
     cardReaderSession.init(
         terminalType,
-        cardMedium,
         ActivityUiContext(this@BaseCardActivity),
         this@BaseCardActivity,
-        this@BaseCardActivity,
-        null)
+        this@BaseCardActivity)
 
     cardReaderSession.startCardDetection()
-  }
-
-  /**
-   * Initialization of AndroidOmapiPlugin is asynchronous, takes time, and cannot be observed: the
-   * process is triggered only when the plugin is registered.
-   */
-  @Throws(UnsupportedOperationException::class)
-  fun initOmapiReader(onPluginRegistered: () -> Unit) {
-    cardReaderSession.init(
-        terminalType,
-        cardMedium,
-        ActivityUiContext(this@BaseCardActivity),
-        null,
-        null,
-        onPluginRegistered)
   }
 
   /**
@@ -98,14 +73,11 @@ abstract class BaseCardActivity :
    * 440 ms on the Bluebird terminals), which would delay the display of the next screen.
    */
   fun releaseCardReader() {
-    val isContactlessCard = cardMedium == CardMedium.CONTACTLESS_CARD
     val observer: CardReaderObserverSpi = this
     pendingRelease =
         readerScope.launch {
           try {
-            if (isContactlessCard) {
-              cardReaderSession.stopCardDetection()
-            }
+            cardReaderSession.stopCardDetection()
             cardReaderSession.release(observer)
           } catch (e: Exception) {
             Timber.e(e, "Error while releasing the readers")
@@ -143,9 +115,7 @@ abstract class BaseCardActivity :
 
   fun showInvalidCard(cardType: String, message: String) {
     runOnUiThread {
-      displayResult(
-          UiCardResult(ResultType.INVALID_CARD, cardType, emptyList(), message),
-          finishActivity = shouldFinishActivityAfterResult())
+      displayResult(UiCardResult(ResultType.INVALID_CARD, cardType, emptyList(), message))
     }
   }
 
@@ -153,17 +123,12 @@ abstract class BaseCardActivity :
     runOnUiThread {
       displayResult(
           UiCardResult(
-              ResultType.ERROR, "", emptyList(), getString(R.string.card_communication_error)),
-          finishActivity = shouldFinishActivityAfterResult())
+              ResultType.ERROR, "", emptyList(), getString(R.string.card_communication_error)))
     }
   }
 
   fun showServerError() {
-    runOnUiThread {
-      displayResult(
-          UiCardResult(ResultType.ERROR, "", emptyList()),
-          finishActivity = shouldFinishActivityAfterResult())
-    }
+    runOnUiThread { displayResult(UiCardResult(ResultType.ERROR, "", emptyList())) }
   }
 
   /**
@@ -176,10 +141,6 @@ abstract class BaseCardActivity :
           UiCardResult(ResultType.ERROR, "", emptyList(), message), finishActivity = finishActivity)
     }
   }
-
-  /** Only with NFC can the user come back to the 'present the card' screen after a result. */
-  protected fun shouldFinishActivityAfterResult(): Boolean =
-      cardMedium != CardMedium.CONTACTLESS_CARD
 
   protected abstract fun displayResult(
       cardResult: UiCardResult,

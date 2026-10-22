@@ -21,10 +21,10 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/chooseCardMediumTv"
+        android:id="@+id/chooseCardTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/card_medium_selection"
+        android:text="@string/card_selection"
         style="@style/smallRegularDarkBlue"
         android:layout_marginHorizontal="@dimen/home_horizontal_margin"
         app:layout_constraintTop_toBottomOf="@id/homeDescription"
@@ -34,7 +34,7 @@
     <LinearLayout
         android:id="@+id/contactlessCardBtn"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/home_card_medium_btn_height"
+        android:layout_height="@dimen/home_card_btn_height"
         android:orientation="vertical"
         android:clickable="true"
         android:focusable="true"
@@ -43,8 +43,7 @@
         android:elevation="@dimen/elevation"
         android:layout_marginTop="@dimen/home_block_vertical_margin"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/chooseCardMediumTv"
-        app:layout_constraintBottom_toTopOf="@id/simCardBtn"
+        app:layout_constraintTop_toBottomOf="@id/chooseCardTv"
         android:gravity="center">
 
         <ImageView
@@ -58,39 +57,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/card_medium_selection_top_margin"
+            android:layout_marginTop="@dimen/card_selection_top_margin"
             android:text="@string/contactless_card"
-            style="@style/bigBoldDarkBlue" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/simCardBtn"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/home_card_medium_btn_height"
-        android:orientation="vertical"
-        android:clickable="true"
-        android:focusable="true"
-        android:background="@drawable/white_card"
-        android:layout_marginHorizontal="@dimen/home_horizontal_margin"
-        android:elevation="@dimen/elevation"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/contactlessCardBtn"
-        android:layout_marginTop="@dimen/home_btn_top_margin"
-        android:gravity="center">
-
-        <ImageView
-            android:layout_width="@dimen/img_sim_width"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
-            android:contentDescription="@string/sim_card"
-            android:src="@drawable/ic_simcard" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/card_medium_selection_top_margin"
-            android:text="@string/sim_card"
             style="@style/bigBoldDarkBlue" />
     </LinearLayout>
 

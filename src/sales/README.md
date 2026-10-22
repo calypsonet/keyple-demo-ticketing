@@ -12,7 +12,7 @@ The server, using the [Eclipse Keyple](https://keyple.org) SDK and a SAM, person
 (season passes, multi-trip tickets) on Calypso cards, which can hold both, and on storage cards, which hold a single
 contract. Several clients are provided:
 - **Android client** using the Keyple middleware: contactless cards (Android NFC reader, or the reader of the Bluebird
-  terminals) and SIM cards (OMAPI reader, work in progress);
+  terminals);
 - **Kotlin Multiplatform client** (Android, iOS, desktop) using the Keyple Interop libraries and the Server JSON API;
 - **.NET client** (C#), showing how an application can interact with the server without using the Keyple middleware.
 

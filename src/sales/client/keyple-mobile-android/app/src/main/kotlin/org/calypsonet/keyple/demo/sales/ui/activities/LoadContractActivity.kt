@@ -27,7 +27,6 @@ import org.calypsonet.keyple.demo.common.dto.RemoteServiceStatus
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.sales.R
 import org.calypsonet.keyple.demo.sales.databinding.ActivityCardReaderBinding
-import org.calypsonet.keyple.demo.sales.domain.model.CardMedium
 import org.calypsonet.keyple.demo.sales.domain.usecases.LoadContract
 import org.calypsonet.keyple.demo.sales.ui.model.ResultType
 import org.calypsonet.keyple.demo.sales.ui.model.UiCardResult
@@ -49,13 +48,8 @@ class LoadContractActivity : BaseCardActivity() {
 
   override fun initReaders() {
     try {
-      if (cardMedium == CardMedium.CONTACTLESS_CARD) {
-        showPresentCardInstructions()
-        initCardReader()
-      } else {
-        showLoadingInProgress()
-        initOmapiReader { lifecycleScope.launch(Dispatchers.Default) { executeRemoteService() } }
-      }
+      showPresentCardInstructions()
+      initCardReader()
     } catch (e: Exception) {
       Timber.e(e, "Error while initializing the readers")
     }

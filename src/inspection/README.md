@@ -34,7 +34,7 @@ in the Functional Documentation.
 - Calypso cards, or storage cards with the storage card libraries (see [Proprietary plugins](#proprietary-plugins)),
   depending on the terminal (see the
   [storage cards supported](../../docs/functional-documentation/index.adoc#storage-card-support))
-- Supported AIDs (see [Card data model](../../docs/functional-documentation/index.adoc#supported-card-applications))
+- Supported AID (see [Card data model](../../docs/functional-documentation/index.adoc#supported-card-applications))
 
 ## Installation
 
