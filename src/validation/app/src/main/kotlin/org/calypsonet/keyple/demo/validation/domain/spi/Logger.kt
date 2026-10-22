@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * Copyright (c) 2025 Calypso Networks Association https://calypsonet.org/
+ * Copyright (c) 2026 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information
  * regarding copyright ownership.
@@ -22,6 +22,13 @@ package org.calypsonet.keyple.demo.validation.domain.spi
 interface Logger {
 
   /**
+   * Logs a debug message.
+   *
+   * @param message Human-readable debugging message.
+   */
+  fun d(message: String)
+
+  /**
    * Logs an informational message.
    *
    * @param message Human-readable message to log.
@@ -35,4 +42,12 @@ interface Logger {
    * @param throwable Optional associated exception.
    */
   fun e(message: String, throwable: Throwable? = null)
+
+  /**
+   * Logs a warning message.
+   *
+   * @param message Human-readable message describing the error.
+   * @param throwable Optional associated exception.
+   */
+  fun w(message: String, throwable: Throwable? = null)
 }

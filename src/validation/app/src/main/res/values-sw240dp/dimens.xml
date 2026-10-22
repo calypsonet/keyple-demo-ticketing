@@ -15,6 +15,6 @@
 
     <dimen name="medium_text_size">15sp</dimen>
     <dimen name="splash_title">15sp</dimen>
-    <dimen name="summary_desc_top_margin">1dp</dimen>
+    <dimen name="validation_result_desc_top_margin">1dp</dimen>
     <dimen name="big_text_size">18sp</dimen>
 </resources>

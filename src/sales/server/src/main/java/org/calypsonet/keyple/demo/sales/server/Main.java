@@ -1,0 +1,58 @@
+/* ******************************************************************************
+ * Copyright (c) 2020 Calypso Networks Association https://calypsonet.org/
+ *
+ * See the NOTICE file(s) distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the BSD 3-Clause License which is available at
+ * https://opensource.org/licenses/BSD-3-Clause.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ ****************************************************************************** */
+package org.calypsonet.keyple.demo.sales.server;
+
+import io.quarkus.runtime.Quarkus;
+import io.quarkus.runtime.QuarkusApplication;
+import io.quarkus.runtime.annotations.QuarkusMain;
+import jakarta.inject.Inject;
+import java.awt.*;
+import java.net.URI;
+import org.calypsonet.keyple.demo.sales.server.card.CardConfigurator;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/** Main class of quarkus */
+@QuarkusMain
+public class Main {
+
+  public static void main(String... args) {
+    Quarkus.run(AppServer.class, args);
+  }
+
+  /** Main class of the Demo Application. */
+  public static class AppServer implements QuarkusApplication {
+
+    // Must not be initialized in Main: it would load the JUL LogManager before Quarkus sets
+    // "java.util.logging.manager" to the JBoss LogManager.
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+
+    @ConfigProperty(name = "quarkus.http.port")
+    Integer assignedPort;
+
+    @Inject CardConfigurator cardConfigurator;
+
+    @Override
+    public int run(String... args) throws Exception {
+      // Start the SAM and Calypso card configuration
+      cardConfigurator.init();
+      // Open the dashboard in the default browser
+      URI webappUri = new URI("http://localhost:" + assignedPort + "/");
+      Desktop.getDesktop().browse(webappUri);
+      logger.info("Server started [port={}]", assignedPort);
+      Quarkus.waitForExit();
+      return 0;
+    }
+  }
+}

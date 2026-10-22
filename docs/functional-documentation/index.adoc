@@ -1,0 +1,1441 @@
+= {doc-title} — {doc-subtitle}
+//
+// Header structured as the documents of the CNA documentation toolchain (CNA graphic charter): the
+// assets directory holds the shared theme (pdf-theme.yml, docinfo.html), fonts, layout and legal partials.
+//
+// Rendering, from this directory (all the generated files are placed in the generated directory):
+//   asciidoctor -r asciidoctor-diagram -D generated index.adoc
+//   asciidoctor-pdf -r asciidoctor-diagram -D generated index.adoc
+// The release workflow sets revnumber and revdate from the release tag (YY.MM.DD): 99.99.99 and the build date
+// otherwise, as the applications of the demo. The document reference is fixed: it identifies the document.
+//
+// ============================================================================
+// Document identity
+// ============================================================================
+//
+:doc-topic: Keyple Demo Ticketing
+:doc-name: Keyple Demo Ticketing
+:doc-type: Functional Documentation
+:doc-classification: Public
+:doc-ref: 261022-FD-KeypleDemoTicketing
+:doc-repo: https://github.com/calypsonet/keyple-demo-ticketing
+include::assets/logos/_calypso.adoc[]
+include::assets/legal/_license-bsd-3-clause.adoc[]
+//
+// Revision (set from the release tag by the release workflow)
+:revnumber: 99.99.99
+:revdate: {localdate}
+//
+// ============================================================================
+// Shared / fixed -- identical to the CNA documents
+// ============================================================================
+//
+// Title composition
+:doc-title: {doc-type}
+:doc-subtitle: {doc-topic}
+:title-separator: —
+//
+// Publisher and authorship
+:organization: Calypso Networks Association
+:author: Calypso_Networks_Association
+:email: https://calypsonet.org
+//
+// Build (works with revdate for deterministic output)
+:reproducible:
+//
+// Output & rendering
+:lang: en
+:doctype: book
+:toc: left
+:toc-title: Table of Contents
+// PDF only: manual TOC placement, so that the colophon sits between the title page and the TOC
+ifdef::backend-pdf[:toc: macro]
+:toclevels: 3
+:sectnums:
+:sectnumlevels: 3
+:sectanchors:
+:sectlinks:
+:icons: font
+:data-uri:
+:webfonts!:
+//
+// Assets & theming
+:docinfodir: {docdir}/assets
+:docinfo: shared-head
+:docinfo-subs: attributes
+:imagesoutdir: {docdir}/generated
+:diagram-cachedir: {docdir}/generated/.asciidoctor/diagram
+:pdf-themesdir: {docdir}/assets
+:pdf-theme: pdf
+:pdf-fontsdir: {docdir}/assets/fonts
+// Web fonts (base64 woff2) of the HTML output
+include::assets/fonts/_fonts.adoc[]
+// Favicon (HTML) and icons of the colophon
+include::assets/layout/_favicon.adoc[]
+include::assets/layout/_web.adoc[]
+include::assets/layout/_mail.adoc[]
+//
+// Captions & sectioning
+:appendix-caption: Annex
+:example-caption: Example
+:figure-caption: Figure
+:table-caption: Table
+:!chapter-signifier:
+
+// Colophon (link, contact and license notice), followed by the TOC in the PDF
+include::assets/layout/_colophon.adoc[]
+
+[abstract]
+== Abstract
+
+This document describes the Keyple Demo Ticketing ecosystem from a functional and business perspective. It is intended for project managers, functional architects, and business teams who want to understand the covered use cases without going into technical implementation details. Annexes A and B are a technical reference for developers: the data model of the card, and the procedures executed on it.
+
+== Overview
+
+=== Purpose
+
+The Keyple Demo Ticketing is a complete ecosystem illustrating the lifecycle of a contactless transit ticket, from card personalization through access validation to inspection.
+
+It is made available by the Calypso Networks Association (CNA) as a starting point for integrators who want to build their own ticketing system based on the Eclipse Keyple middleware. Its source code, its documentation, and the applications of each release are available in the {doc-repo}[keyple-demo-ticketing repository] on GitHub.
+
+=== Components
+
+The ecosystem consists of four components, each covering a specific role in the ticketing system:
+
+[cols="1,4", options="header"]
+|===
+| Component | Functional role
+
+| Sales — server
+| Hosts the security module (SAM) and performs cryptographic operations. Exposes the reading, loading, and personalization services. Its web dashboard displays the status of the server and of its SAM, and the client transactions in real time (see the {doc-repo}/blob/main/src/sales/server/README.md#web-dashboard[server README]).
+
+| Sales — clients
+| Android, multiplatform (Android, iOS, desktop), or .NET client used by a sales agent or a passenger (the user, in this document) to load a new transit ticket. The Android and multiplatform clients also personalize blank cards (see <<sales-clients>>).
+
+| Validation
+| Terminal installed at access points (gates, validators). Reads the passenger's card, selects the most suitable ticket, and records the entry event.
+
+| Inspection
+| Terminal used by ticket inspectors. Reads the card, displays ticket details, and checks the validity of the last validation.
+|===
+
+=== Ecosystem flow
+
+plantuml::diagrams/overview.puml[target=overview,format=svg,alt="Keyple Demo Ticketing ecosystem flow",align="center"]
+
+NOTE: The validation terminal and the inspection terminal do not communicate over the network. Information is exchanged between these two applications *exclusively through the passenger's card*.
+
+[[scope]]
+=== Scope of the demo
+
+The demo covers card personalization, and the loading, validation, and inspection of season passes and multi-trip tickets. The following elements of the data model (see <<card-data-model>>) are not covered:
+
+* *Stored value tickets*: they cannot be loaded, and a stored value ticket present on a card (priority 3) is ignored at validation.
+* *Traceability mode*: the tickets are loaded without the cryptographic authenticator signed by the SAM, and no authenticator is verified at inspection.
+* *Card and SAM black lists*: they are not checked.
+
+The corresponding steps of the procedures are marked _Not implemented by the demo_ in <<card-procedures>>.
+
+[[sales-clients]]
+=== Sales clients
+
+Three clients can connect to the sales server:
+
+[cols="3,3,4,5", options="header"]
+|===
+| Client | Platforms | Operations | Notes
+
+| Android client
+| Android 8.0+
+| Loading of multi-trip tickets (1 to 4 trips) and season passes; card personalization
+| Native Android application, full integration of the Keyple middleware
+
+| Multiplatform client
+| Android, iOS 15.3+, desktop (Windows, macOS, Linux)
+| Loading of multi-trip tickets (1 to 4 trips) and season passes; card personalization
+| Shared UI across all platforms, Keyple Interop libraries (JSON API client and local reader)
+
+| .NET client
+| Windows
+| Loading of multi-trip tickets only (1 to 20 trips, entered by the user)
+| Desktop application demonstrating the Keyple Server JSON API (HTTP), without the Keyple middleware
+|===
+
+NOTE: The prices displayed by the clients are fictitious.
+
+[[cards]]
+== Contactless cards
+
+=== Calypso card
+
+The Calypso card is the primary medium of the ecosystem. It is a smart card compliant with the Calypso standard, enabling:
+
+* Storage of *up to 4 transit tickets simultaneously*, depending on the card product (1 on Calypso Basic cards, 2 on Calypso Light cards)
+* *Secure transactions* guaranteeing data integrity (via a SAM or asymmetric PKI cryptography)
+
+The Calypso card stores in memory:
+
+* Information about the *cardholder and card validity* (issuing date, end date)
+* Loaded *tickets*
+* The *last recorded event*
+* *Counters* holding the remaining trips of the multi-trip tickets
+
+[[storage-cards]]
+=== Storage cards
+
+Storage cards are simpler memory media without a Calypso security system, used to demonstrate lightweight scenarios. The demo supports the following ones:
+
+[cols="2,4,2", options="header"]
+|===
+| Type | Characteristics | Authentication
+
+| MIFARE Ultralight
+| Memory card, 4-byte blocks
+| None
+
+| ST25 SRT512
+| Memory card (STMicroelectronics), 4-byte blocks
+| None
+
+| MIFARE Classic 1K
+| Memory card divided into sectors, 16-byte blocks
+| Key A of sector 1
+|===
+
+NOTE: Storage cards hold only *1 transit ticket*. They do not benefit from the same security guarantees as Calypso cards: the demo only shows that they can be handled.
+
+IMPORTANT: Storage cards are handled with the storage card libraries of CNA (card extension and reader plugin), available on request. Without them (default build), the applications do not support storage cards. The storage cards supported by each application and terminal are given in <<storage-card-support>>.
+
+== Transit tickets
+
+Two ticket types can be loaded onto a card.
+
+=== Season pass
+
+* Ticket valid for *30 days* from the date of sale
+* Provides *unlimited access* during its validity period
+* Can be *renewed*: if not expired, its end date is extended by 30 days; if expired, a new period of 30 days starts on the date of sale
+* *No trip* deducted at validation
+
+=== Multi-trip ticket
+
+* Ticket holding a number of *trips*: each validation uses *1 trip*
+* Valid until the *end date of the card* (EnvEndDate)
+* *Trips can be added* by a new loading, up to 16,777,215 trips on the counter
+* *Remaining trips* are visible during inspection
+
+[[ticket-priority]]
+=== Ticket priority (Calypso cards only)
+
+When several tickets are present on a Calypso card, the validation terminal automatically selects the highest-priority valid ticket according to the following ranking:
+
+[cols="^1,2,4", options="header"]
+|===
+| Priority | Meaning | Behavior
+
+| 1 (highest)
+| Season pass
+| Selected first if valid
+
+| 2
+| Multi-trip ticket
+| Selected if no valid season pass is present and trips are left
+
+| 31
+| Expired or exhausted ticket
+| Ignored during validation
+
+| 0
+| Empty slot
+| Ignored during validation
+|===
+
+NOTE: Priority 3 of the data model (stored value) is not covered by the demo (see <<scope>>).
+
+== Use cases
+
+[[personalization-use-case]]
+=== Card personalization
+
+==== Functional description
+
+Before being used, a blank card must be personalized: this operation writes the first data of the card and sets its validity period.
+
+Personalization is performed from the Android or multiplatform sales client, connected to the server (the .NET client does not personalize cards).
+
+The steps executed on the card are detailed in <<personalization-procedure>>.
+
+==== Prerequisites
+
+The server must be reachable, with its SAM for a Calypso card.
+
+==== Process
+
+. The user chooses the personalization in the sales client, then presents the card to the reader of the client.
+. The server personalizes the card.
+. The result is displayed to the user (see <<sales-results>>).
+
+==== Business rules
+
+During personalization, the server:
+
+* Assigns a *unique application number*
+* Records the *issuing date*
+* Calculates and records the *end date* of the card: first day of the current month + 6 years
+* Clears *the tickets, the event, and the counters*
+
+==== Diagram
+
+plantuml::diagrams/personalization.puml[target=personalization,format=svg,alt="Card personalization workflow",align="center"]
+
+[[loading-use-case]]
+=== Ticket loading
+
+==== Functional description
+
+Loading consists of writing a new transit ticket onto the card, or adding trips to or renewing an existing one.
+
+The steps executed on the card are detailed in <<loading-procedure>>.
+
+==== Prerequisites
+
+The server must be reachable, with its SAM for a Calypso card.
+
+==== Process
+
+. The user presents the card to the reader of the client (NFC reader of the mobile device, or PC/SC reader of the desktop).
+. The server checks that the card is valid (personalized, not expired, last event of a known version), then reads its tickets, which are displayed.
+. The user selects the ticket to load.
+. The user presents the card again: it must be the card read before (checked by the Android client, or by the server for the multiplatform and .NET clients).
+. The server checks that a slot is available, then writes the new ticket and, for a multi-trip ticket, updates its counter.
+. The result is displayed to the user (see <<sales-results>>).
+
+==== Business rules
+
+Loading behaves as follows, depending on the situation of the card:
+
+[cols="3,4", options="header"]
+|===
+| Situation | Behavior
+
+| Card not personalized, expired card, or last event of an unexpected version
+| Loading rejected
+
+| Calypso card without empty or expired slot
+| Loading rejected (no slot available)
+
+| Single-ticket card (storage card, Calypso Basic) holding a ticket of another type that is still usable (season pass not expired, multi-trip ticket with trips left)
+| Loading rejected
+
+| Ticket of the same type already on the card
+| The existing ticket is updated in its slot
+
+| Renewing a season pass
+| Not expired: the end date is extended by 30 days; expired: new period of 30 days from the date of sale
+
+| Loading trips onto an existing multi-trip ticket
+| The trips are added to the counter (up to 16,777,215)
+
+| New ticket on an empty slot
+| Written to the first available slot
+
+| New ticket on an expired slot
+| Replaces the expired ticket at the lowest index
+|===
+
+==== Diagram
+
+plantuml::diagrams/ticket-loading.puml[target=ticket-loading,format=svg,alt="Ticket loading workflow",align="center"]
+
+[[validation-use-case]]
+=== Access validation
+
+==== Functional description
+
+Validation is the operation performed by the terminal installed at the access point (gate, validator) when a passenger presents their card.
+
+The terminal automatically selects the best available ticket, updates the card data, and records the entry event.
+
+The steps executed on the card are detailed in <<validation-procedure>>.
+
+==== Prerequisites
+
+The SAM must be present and operational in the terminal: without a SAM, the terminal cannot validate (no fallback mode).
+
+==== Process
+
+. The passenger presents their card to the NFC reader.
+. The terminal checks the general validity of the card.
+. The terminal analyzes the last recorded event (anti-passback).
+. The terminal searches for the best valid ticket among those present (see <<ticket-priority>>).
+. If a valid ticket is found: 1 trip is deducted for a multi-trip ticket, and a new event is recorded on the card.
+. The result is displayed to the passenger (see <<validation-results>>).
+
+==== Business rules
+
+Validation applies the following rules:
+
+* [[anti-passback-rule,Anti-passback]]*Anti-passback*: if the card has already been validated within the anti-passback delay (1 minute in the demo, set by each network in a real deployment), validation is rejected to prevent multiple entries, and a message prompts the passenger to wait. As the times are recorded to the minute, the effective delay can exceed it by up to 1 minute. Recovery (Calypso cards only): within this delay, if the previous validation session was interrupted (card removed before the end of the session, session not ratified), the passenger did not get access although the trip was deducted. The interrupted validation is then recovered: access is granted without deducting a trip, and the previous session is ratified. Beyond the delay, the validation is processed normally.
+* [[rejected-card,Expired or exhausted tickets]]*Expired or exhausted tickets*: when no ticket of a Calypso card can be used, the expired or exhausted tickets are marked as such on the card (priority 31), so that the next validations no longer analyze them.
+
+==== Diagrams
+
+===== Calypso card validation
+
+plantuml::diagrams/validation-calypso-card.puml[target=validation-calypso-card,format=svg,alt="Calypso card validation workflow",align="center"]
+
+===== Storage card validation
+
+plantuml::diagrams/validation-storage-card.puml[target=validation-storage-card,format=svg,alt="Storage card validation workflow",align="center"]
+
+[[inspection-use-case]]
+=== Ticket inspection
+
+==== Functional description
+
+Inspection is carried out by a ticket inspector equipped with a mobile terminal. It allows the inspector to check that the passenger holds a validated ticket, without modifying the card.
+
+The steps executed on the card are detailed in <<inspection-procedure>>.
+
+==== Prerequisites
+
+Unlike validation, inspection can operate without a SAM, thanks to two fallback modes:
+
+[cols="1,2,3", options="header"]
+|===
+| Mode | Activation condition | Level of guarantee
+
+| SAM
+| SAM present and available
+| Maximum — secure session, cryptographic verification
+
+| PKI
+| No SAM, but the card supports PKI mode
+| Maximum — asymmetric authentication without external hardware (test certificates in the demo)
+
+| No authentication
+| Neither SAM nor PKI available
+| None — data read without cryptographic verification
+|===
+
+==== Process
+
+. The inspector presents the passenger's card to the NFC reader of the terminal.
+. The terminal reads the card, authenticating it according to the available mode.
+. The terminal checks the general validity of the card, then the last validation event.
+. The terminal reads the tickets and determines their status.
+. The content of the card is displayed to the inspector (see <<inspection-results>>).
+
+[[inspection-checks]]
+==== Business rules
+
+Inspection checks the following points:
+
+* The *general validity* of the card (version, dates)
+* The *detail of each ticket*: type, validity dates, remaining trips
+* The *validity of the last validation*, which must have taken place:
+** At the location configured on the inspection terminal
+** On the current day, within the validation period configured on the inspection terminal
+* The *ticket used* by the last validation
+
+==== Diagram
+
+plantuml::diagrams/inspection.puml[target=inspection,format=svg,alt="Ticket inspection workflow",align="center"]
+
+== Compatible terminals and hardware
+
+This chapter summarizes the hardware supported by each application. The reader plugins, the installation, and the prerequisites of each component are detailed in the {doc-repo}/blob/main/README.md[README of the repository] and in the README of each application ({doc-repo}/blob/main/src/validation/README.md[validation], {doc-repo}/blob/main/src/inspection/README.md[inspection], {doc-repo}/blob/main/src/sales/README.md[sales]).
+
+[[tested-terminals]]
+=== Tested Android terminals
+
+The applications have been tested on the following Android terminals:
+
+[cols="3,5,^.^2,^.^2,^.^2", options="header"]
+|===
+| Terminal | Description | Sales | Validation | Inspection
+
+| Famoco FX205
+| Rugged mobile terminal, NFC and SAM reader
+| icon:check[role=green]
+| icon:check[role=green]
+| icon:check[role=green]
+
+| Bluebird EF501
+| Mobile terminal, NFC and SAM reader
+| icon:adjust[role=olive] On request
+| icon:adjust[role=olive] On request
+| icon:adjust[role=olive] On request
+
+| Arrive Axio 4
+| Transit validator, NFC and SAM reader
+| icon:times[role=red]
+| icon:adjust[role=olive] On request
+| icon:times[role=red]
+
+| Other Android devices with NFC
+| Any Android 8.0+ device with NFC (no SAM: inspection by PKI or without authentication)
+| icon:check[role=green]
+| icon:times[role=red]
+| icon:check[role=green]
+|===
+
+* icon:check[role=green] Natively supported
+* icon:adjust[role=olive] Proprietary library available on request from CNA
+* icon:times[role=red] Not supported
+
+[[storage-card-support]]
+=== Storage card support
+
+With the storage card libraries of CNA (see <<storage-cards>>), the storage cards supported depend on the application and on the terminal:
+
+[cols="5,^.^2,^.^2,^.^2", options="header"]
+|===
+| Application and terminal | MIFARE Ultralight | ST25 SRT512 | MIFARE Classic 1K
+
+| Sales (Android client), validation, and inspection: Bluebird EF501
+| icon:check[role=green]
+| icon:check[role=green]
+| icon:check[role=green]
+
+| Validation and inspection: Famoco FX205
+| icon:check[role=green]
+| icon:times[role=red]
+| icon:check[role=green]
+
+| Sales (Android client) and inspection: other Android devices with NFC
+| icon:check[role=green]
+| icon:times[role=red]
+| icon:check[role=green]
+
+| Validation: Arrive Axio 4
+| icon:times[role=red]
+| icon:times[role=red]
+| icon:times[role=red]
+
+| Sales (multiplatform and .NET clients): all platforms
+| icon:times[role=red]
+| icon:times[role=red]
+| icon:times[role=red]
+|===
+
+=== Server and desktop hardware
+
+* *Sales server*: PC/SC reader holding a Calypso SAM, required for the personalization and loading of Calypso cards
+* *Desktop sales clients* (multiplatform and .NET): contactless PC/SC reader
+
+== Results and functional messages
+
+In this chapter, a message displayed on several lines is written "`first line — second line`", and __XX__ stands for the file structure of the card.
+
+[[sales-results]]
+=== Sales results
+
+The sales clients display the messages of the table below, as follows:
+
+* *Android client*: the reason for a rejection is displayed below "`Not valid on this network`" when the card is read, and below "`Ticket not loaded`" or "`Personalization failed`" when the operation fails.
+* *Multiplatform client*: the same reasons, returned by the server, are displayed alone; "`Communication error`" is displayed when the server cannot be reached.
+* *.NET client*: the failures are reported in its console (see the {doc-repo}/blob/main/src/sales/client/pc-dotnet/README.md[README of the client]).
+
+[cols="4,4", options="header"]
+|===
+| Situation | Message displayed
+
+| Personalization succeeded
+| Card personalized
+
+| Loading succeeded
+| Ticket loaded
+
+| Card never loaded (when the card is read)
+| No ticket — Please load a ticket.
+
+| Card not personalized (environment of an unexpected version)
+| Environment error: wrong version number
+
+| Expired card
+| Environment error: end date expired
+
+| Last event of an unexpected version
+| Event error: wrong version number
+
+| File structure of the Calypso application not supported
+| Invalid card — File structure __XX__h not supported
+
+| Card presented for loading different from the card read
+| Not the same card
+
+| No slot available for the ticket
+| No space left on the card for a new ticket
+
+| Card not recognized (Android client)
+| Undetermined card type
+
+| Error on the server side, or server not reachable (Android client)
+| Server error
+
+| Communication with the card interrupted (for example, card removed too early)
+| Card communication error
+|===
+
+[[validation-results]]
+=== Validation results
+
+Each validation produces one of the following results:
+
+[cols="1,4", options="header"]
+|===
+| Result | Functional meaning
+
+| Accepted
+| Access granted, 1 trip deducted for a multi-trip ticket. The terminal displays "`Validation completed!`" with the remaining trips (multi-trip ticket) or the end date (season pass).
+
+| Rejected
+| Card rejected by a business rule (see <<validation-rejection-conditions>>).
+
+| Not recognized
+| Card not recognized: no supported application, DF name not matching the AID of the application, or file structure not supported (see <<validation-rejection-conditions>> and <<supported-card-applications>>).
+
+| Card removed
+| Communication interrupted during the transaction, when the card is removed too early (see <<validation-rejection-conditions>>).
+
+| Failed
+| Unexpected technical error, or failure of the transaction with a MIFARE Classic card (see <<validation-rejection-conditions>>).
+|===
+
+[[validation-rejection-conditions]]
+=== Validation rejections and errors
+
+When the card is rejected or the transaction fails, the terminal displays one of the following messages:
+
+[cols="4,4", options="header"]
+|===
+| Situation | Message displayed
+
+| No supported application in the card
+| Card rejected — Selection error: card not recognized
+
+| DF name not matching the AID of the application
+| Card rejected — Selection error: unexpected DF name
+
+| File structure of the Calypso application not supported
+| Card rejected — Invalid card — File structure __XX__h not supported
+
+| Card not personalized (environment of an unexpected version)
+| Card rejected — Environment error: wrong version number
+
+| Expired card
+| Card rejected — Environment error: end date expired
+
+| Last event of an unexpected version
+| Card rejected — Event error: wrong version number
+
+| Ticket of an unexpected version
+| Card rejected — Ticket error: wrong version number
+
+| Card validated within the anti-passback delay (previous session ratified, for a Calypso card)
+| Card rejected — Card already tapped. Please wait before retrying.
+
+| Card never loaded, or no usable ticket
+| No valid ticket detected — Please load a ticket.
+
+| Last analyzed ticket expired
+| Expired ticket — Please load a ticket.
+
+| Multi-trip ticket exhausted (0 trips remaining)
+| No trip left — Please load a ticket.
+
+| Ticket of a storage card forbidden or expired
+| Ticket forbidden or expired — Please load a ticket.
+
+| Communication interrupted during the transaction (card removed too early)
+| An error occurred. — Please try again.
+
+| Unexpected technical error
+| An error occurred. — Please try again.
+
+| Failed authentication of the sector of a MIFARE Classic card
+| An error occurred. — Authentication failed. Please ensure the card is correctly positioned.
+
+| Other failure of the transaction with a MIFARE Classic card
+| An error occurred. — Transaction failed. Please try again.
+|===
+
+[[inspection-results]]
+=== Inspection results
+
+[[inspection-display]]
+The inspector sees:
+
+* The authentication mode used during inspection ("`Card authenticated by the SAM`", "`Card authenticated by PKI`", or "`Card not authenticated`")
+* The last validation: date, time, location, and ticket used
+* For each ticket present on the card: its type, its validity period (season pass) or its number of remaining trips (multi-trip ticket), and a mark indicating whether it is validated by the last validation (icon:check[role=green]) or not (icon:times[role=red])
+* "`No ticket`" when the card has never been loaded
+
+When the card is rejected or cannot be read, the terminal displays "`Not valid on this network`" with the reason (see <<inspection-rejection-conditions>>).
+
+[[inspection-rejection-conditions]]
+=== Inspection rejections and errors
+
+When the card is rejected or cannot be read, the terminal displays one of the following reasons below "`Not valid on this network`":
+
+[cols="4,4", options="header"]
+|===
+| Situation | Message displayed
+
+| No supported application in the card
+| Selection error: card not recognized
+
+| DF name not matching the AID of the application
+| Selection error: unexpected DF name
+
+| File structure of the Calypso application not supported
+| Invalid card — File structure __XX__h not supported
+
+| Card not personalized (environment of an unexpected version)
+| Environment error: wrong version number
+
+| Expired card
+| Environment error: end date expired
+
+| Last event of an unexpected version
+| Event error: wrong version number
+
+| Ticket of an unexpected version
+| Ticket error: wrong version number
+
+| Reading error (for example, card removed too early)
+| An error occurred while reading the card.
+
+| Failed authentication of the sector of a MIFARE Classic card
+| Authentication failed. Please ensure the card is correctly positioned.
+
+| Reading error of a MIFARE Classic card
+| Failed to read the MIFARE Classic card. Please try again.
+|===
+
+== Glossary
+
+[cols="2,5", options="header"]
+|===
+| Term | Definition
+
+| *AID*
+| Application Identifier. Unique identifier of the Calypso card application, used when the terminal selects the application.
+
+| *Anti-passback*
+| Mechanism rejecting a card presented again within the anti-passback delay, so that it cannot be passed back to another passenger for a second entry.
+
+| *Calypso*
+| Open standard for contactless smart cards in ticketing systems, maintained by the Calypso Networks Association.
+
+| *Contract*
+| Transit ticket stored on the card: "`ticket`" in the use cases, "`contract`" in the data model and the procedures (annexes). A Calypso card can hold up to 4 contracts simultaneously, depending on the card product.
+
+| *Counter*
+| Memory area on the card storing the remaining trips of a multi-trip ticket.
+
+| *DF name*
+| Name of the card application, returned at its selection. It must start with the AID of the application (see <<supported-card-applications>>).
+
+| *EnvEndDate*
+| End date of the card application (not of an individual ticket). Set at personalization to the first day of the current month + 6 years.
+
+| *Environment*
+| Record of the card application holding its version, issuing date, and end date (EnvEndDate), written at personalization.
+
+| *Event*
+| Record of the last event of the card: the last validation (date, time, location, ticket used), and the priorities of the tickets, also updated at loading.
+
+| *Keyple*
+| Open source Eclipse middleware facilitating the development of contactless ticketing applications. See https://keyple.org[keyple.org].
+
+| *Location*
+| Identifier of the place of a validation, configured on the validation terminal and recorded in the event. The inspection terminal compares it with its own configured location.
+
+| *PC/SC*
+| Standard interface of computer smart card readers, used by the server (SAM reader) and by the desktop sales clients (contactless reader).
+
+| *PKI*
+| Public Key Infrastructure. Asymmetric authentication mode (RSA 2048-bit) that does not require a physical SAM. The demo uses test certificates: a real deployment requires the certificates of its own PKI.
+
+| *Ratification*
+| Calypso confirmation that a secure session has been completed. A session interrupted before its ratification (card removed too early) is ratified at the next presentation of the card; within the anti-passback delay, the validation terminal then recovers the interrupted validation (see <<anti-passback-rule>>).
+
+| *SAM*
+| Secure Access Module. Cryptographic hardware module used to secure Calypso transactions. Required for validation, and for the personalization and loading of Calypso cards.
+
+| *Secure session*
+| Calypso mechanism guaranteeing the integrity and authenticity of data exchanged between the terminal and the card, using a SAM or PKI.
+
+| *Slot*
+| Memory location available on the card to hold a ticket (contract record). A Calypso card has up to 4 slots, depending on the card product.
+
+| *Storage card*
+| Simple memory card (MIFARE Ultralight, ST25 SRT512, MIFARE Classic 1K) that does not support the Calypso protocol. Only 1 ticket possible, no Calypso secure session.
+
+| *Storage card libraries*
+| Libraries of CNA, available on request (card extension and reader plugin extension), enabling the applications to handle storage cards (see <<storage-card-support>>).
+
+| *Ticket priority*
+| Numerical value determining the selection order of tickets during validation (1 = season pass, 2 = multi-trip ticket, 31 = expired or exhausted, 0 = empty slot), stored in the ContractPriority fields of the event (see <<ticket-priority>>).
+
+| *Validation period*
+| Period following a validation during which the inspection considers it valid, configured on the inspection terminal.
+|===
+
+[appendix]
+[[card-data-model]]
+== Card data model (technical reference)
+
+[[card-data-model-introduction]]
+=== Introduction
+
+This annex describes the data model of the Keyple demos: the supported card application, the structures of the records written on the card, the types of their fields, and the layout of the card files and blocks. It is intended for developers and integrators, like the procedures of <<card-procedures>>, which use it.
+
+The data model is implemented by the {doc-repo}/blob/main/src/common/README.md[common library] of the demo (structure classes and codecs encoding the records): a change of the data model is made both in this annex and in this library.
+
+[[supported-card-applications]]
+=== Supported card application
+
+The demos work with the generic Calypso application of the cards of the CNA Test Kit, of AID `A000000291FF9101`.
+
+The DF name of the selected application must start with the AID, followed by zeros only (requirement TL-SEL-AIDMATCH.1 of the Calypso specifications).
+
+Storage cards (MIFARE Ultralight, ST25 SRT512, MIFARE Classic 1K) are detected by their product type.
+
+[[data-structures]]
+=== Data structures
+
+The records have 29 bytes (232 bits) on Calypso cards, and 16 bytes (128 bits) on storage cards: the fields are the same, except the padding and the fields related to the SAM. A dash in the "`Storage cards`" column indicates a field not stored on these cards.
+
+==== Environment and holder
+
+Card metadata and holder information, written at personalization.
+
+[cols="25,^10,^10,31,14,10", options="header"]
+|===
+| Field | Bits (Calypso) | Bits (storage cards) | Description | Type | Status
+
+| EnvVersionNumber | 8 | 8 | Data structure version number | VersionNumber | Mandatory
+| EnvApplicationNumber | 32 | 32 | Card application number (unique system identifier) | Int | Mandatory
+| EnvIssuingDate | 16 | 16 | Card application issuing date | DateCompact | Mandatory
+| EnvEndDate | 16 | 16 | Card application end date | DateCompact | Mandatory
+| HolderCompany | 8 | 8 | Holder company | Int | Optional
+| HolderIdNumber | 32 | 32 | Holder identifier within HolderCompany | Int | Optional
+| EnvPadding | 120 | 16 | Padding (bits to 0) | Binary | Optional
+|===
+
+==== Event
+
+Last event of the card: validation, or update of the contract priorities.
+
+[cols="25,^10,^10,31,14,10", options="header"]
+|===
+| Field | Bits (Calypso) | Bits (storage cards) | Description | Type | Status
+
+| EventVersionNumber | 8 | 8 | Data structure version number | VersionNumber | Mandatory
+| EventDateStamp | 16 | 16 | Date of the event | DateCompact | Mandatory
+| EventTimeStamp | 16 | 16 | Time of the event | TimeCompact | Mandatory
+| EventLocation | 32 | 32 | Location identifier | Int | Mandatory
+| EventContractUsed | 8 | 8 | Index of the contract used by the validation | Int | Mandatory
+| ContractPriority1 | 8 | 8 | Priority of contract #1 | PriorityCode | Mandatory
+| ContractPriority2 | 8 | 8 | Priority of contract #2 | PriorityCode | Mandatory
+| ContractPriority3 | 8 | 8 | Priority of contract #3 | PriorityCode | Mandatory
+| ContractPriority4 | 8 | 8 | Priority of contract #4 | PriorityCode | Mandatory
+| EventPadding | 120 | 16 | Padding (bits to 0) | Binary | Optional
+|===
+
+==== Contract
+
+Contract (ticket) and its properties.
+
+[cols="25,^10,^10,31,14,10", options="header"]
+|===
+| Field | Bits (Calypso) | Bits (storage cards) | Description | Type | Status
+
+| ContractVersionNumber | 8 | 8 | Data structure version number | VersionNumber | Mandatory
+| ContractTariff | 8 | 8 | Contract type | PriorityCode | Mandatory
+| ContractSaleDate | 16 | 16 | Sale date of the contract | DateCompact | Mandatory
+| ContractValidityEndDate | 16 | 16 | Last day of validity of the contract | DateCompact | Mandatory
+| ContractSaleSam | 32 | - | SAM that loaded the contract | Int | Optional
+| ContractSaleCounter | 24 | - | SAM authentication key counter value | Int | Optional
+| ContractAuthKvc | 8 | 8 | SAM authentication key KVC | Int | Optional
+| ContractAuthenticator | 24 | 24 | Security authenticator | Authenticator (Int) | Optional
+| ContractPadding | 96 | 24 | Padding (bits to 0) | Binary | Optional
+| CounterValue | - | 24 | Number of trips left (storage cards: counter stored in the contract record) | Int | Mandatory
+|===
+
+The fields ContractSaleSam, ContractSaleCounter, ContractAuthKvc, and ContractAuthenticator are those of the traceability mode, not implemented by the demo (see <<scope>>): the contracts are loaded with these fields at 0.
+
+==== Counter
+
+Number of trips left of a multi-trip ticket. On Calypso cards, the counters are stored in a separate file, one counter per contract record; on storage cards, the counter is stored in the contract record.
+
+[cols="25,^10,41,14,10", options="header"]
+|===
+| Field | Bits | Description | Type | Status
+
+| CounterValue | 24 | Number of trips left (0 to 16,777,215) | Int | Mandatory
+|===
+
+[[data-types]]
+=== Data types
+
+Besides integers (Int) and binary data (Binary), the fields of the records use the following types:
+
+[cols="2,^1,8", options="header"]
+|===
+| Name | Bits | Description
+
+| DateCompact
+| 16
+| Number of days since January 1, 2010 (date 0). The maximum value is 16,383, and the last complete year is 2053. All dates are in legal local time.
+
+| TimeCompact
+| 16
+| Time in minutes: hour × 60 + minute (0 to 1,439).
+
+| VersionNumber
+| 8
+| Version of the data structure: 0 forbidden (undefined: blank record, never written), 1 current version, 2 to 254 reserved for future use (read as unknown by the demo), 255 forbidden (reserved).
+|===
+
+[[priority-codes]]
+==== Priority codes
+
+The PriorityCode type gives the type of a contract (ContractTariff field) and the priorities of the contracts in the event (ContractPriority fields). Their use at validation is described in <<ticket-priority>>.
+
+[cols="^1,2,6", options="header"]
+|===
+| Code | Name | Description
+
+| 0 | FORBIDDEN | Empty record (present in clean records only)
+| 1 | SEASON_PASS | Season pass: unlimited travel during its validity period
+| 2 | MULTI_TRIP | Multi-trip ticket: 1 trip used at each validation
+| 3 | - | Stored value: defined by the data model, not supported by the demo (read as unknown, never validated)
+| 4 to 30 | RFU | Reserved for future use
+| 31 | EXPIRED | Contract expired or exhausted
+|===
+
+The codes 3 to 30 are read as unknown (UNKNOWN) by the demo: a contract of an unknown type is never validated.
+
+[[card-layouts]]
+=== Card layouts
+
+Files of Calypso cards and blocks of storage cards used by the demo.
+
+==== Calypso cards
+
+Calypso cards hold the following files:
+
+[cols="2,^1,5", options="header"]
+|===
+| File | SFI | Content
+
+| Environment and holder
+| 07h
+| 1 record of 29 bytes
+
+| Event log
+| 08h
+| Last event in record 1 (29 bytes)
+
+| Contracts
+| 09h
+| 1 record of 29 bytes per contract: 4 records, 2 on Calypso Light cards, 1 on Calypso Basic cards
+
+| Counters
+| 19h
+| 1 counter of 3 bytes per contract record (counter of contract #1 first, and so on)
+|===
+
+The secure sessions use the access level of the operation, with the default key (KIF) of the SAM: Personalization (21h) for personalization, Load (27h) for loading, Debit (30h) for validation and inspection.
+
+==== Storage cards
+
+Storage cards hold a single contract, whose record also stores the counter of a multi-trip ticket. Their records have 16 bytes, and they have no secure session (no SAM).
+
+[cols="2,2,2,2", options="header"]
+|===
+| Card | Environment and holder | Contract and counter | Event
+
+| MIFARE Ultralight, ST25 SRT512 (4-byte blocks)
+| Blocks 4 to 7
+| Blocks 8 to 11
+| Blocks 12 to 15
+
+| MIFARE Classic 1K (16-byte blocks, sector 1)
+| Block 4
+| Block 5
+| Block 6
+|===
+
+MIFARE Classic 1K cards are authenticated with key A of sector 1 before each reading and each writing. Block 7 of the sector (sector trailer, holding the keys) is never written.
+
+[appendix]
+[[card-procedures]]
+== Card procedures (technical reference)
+
+[[card-procedures-introduction]]
+=== Introduction
+
+This annex details, step by step, the procedures executed on the card by the demo applications. It is intended for developers and integrators: the use cases of this document describe the same operations from a functional perspective.
+
+The procedures are those of the data model of the Keyple demos, described in <<card-data-model>>. The step numbers are referenced by the source code comments (for example, `// Step 11.3.1` in the validation procedure): a change of a procedure is made both in this annex and in the code.
+
+[[card-procedures-conventions]]
+=== Conventions
+
+* *Step numbers*: the steps keep the numbers of the data model. The steps added by the demo have a sub-number (for example, 6.1), so that the numbers of the other steps do not change.
+* `<Abort Transaction and exit process>`: the card is rejected, the secure session is canceled (no data written), and the procedure ends. On storage cards, which have no secure session, the procedure ends without writing.
+* `<Abort Transaction if inTransactionFlag is true and exit process>`: same as `<Abort Transaction and exit process>`, but the session is canceled only if one is open: the inTransactionFlag of the inspection procedure indicates that a secure session (SAM or PKI) has been opened.
+* `<Exit process>`: the procedure ends and returns its result to the upper layer (the application).
+* `END`, `CNT_UPD`, `CNT_READ`: labels of the steps reached by a "`go to`".
+* _Not implemented by the demo_: step of the data model that the demo does not implement (see <<scope>>). The step keeps its number, so that an integrator sees where to implement it.
+
+[[detection-selection-procedure]]
+=== Detection and selection
+
+Generic procedure, executed by all the applications before the procedures of the following sections.
+
+[cols="^1,12", options="header"]
+|===
+| Step | Action
+
+| 1
+| Perform the application selection using the AID of the demo (see <<supported-card-applications>>). The DF name of the selected application must start with the AID, followed by zeros only, and its file structure must be supported by the demo; otherwise, the card is not selected.
+
+| 2
+| If the status of the DF is invalid, report that information to the upper layer. `<Exit process>` +
+The validation and inspection terminals do not select the invalidated applications (card not recognized).
+
+| 3
+| If the serial number of the selected application is on the black list, go to step 5. _Not implemented by the demo._
+
+| 4
+| Return the information on the selected application. `<Exit process>`
+
+| 5
+| Open a validation session without reading any information. _Not implemented by the demo._
+
+| 6
+| Send an Invalidate command. _Not implemented by the demo._
+
+| 7
+| Close the session. _Not implemented by the demo._
+
+| 8
+| Report to the upper layer that a card on the black list has been detected and invalidated. `<Exit process>` _Not implemented by the demo._
+|===
+
+==== Storage cards
+
+* *Step 1*: the card is detected by its product type, without application selection.
+* *Steps 2 to 8*: not applicable, as storage cards have no card application (DF).
+
+[[personalization-procedure]]
+=== Card personalization
+
+Executed by the sales server, with its SAM (see <<personalization-use-case>>).
+
+[cols="^1,12", options="header"]
+|===
+| Step | Action
+
+| 1
+| Open a secure session at the Personalization access level, without reading any information.
+
+| 2
+a| Fill the environment structure, pack it, and update the environment record:
+
+* EnvVersionNumber = 1
+* EnvApplicationNumber = number generated by the server, initialized with its start time (in seconds) and incremented at each personalization
+* EnvIssuingDate = current date
+* EnvEndDate = first day of the month of the current date + 6 years
+* HolderCompany, HolderIdNumber, and EnvPadding filled with 0
+
+| 3
+| Clear the event record (update with a byte array filled with 0).
+
+| 4
+| Clear all the contract records (update with byte arrays filled with 0).
+
+| 5
+| Clear the counter file (update with a byte array filled with 0).
+
+| 6
+| Close the session.
+
+| 7
+| Return the status of the operation to the upper layer. `<Exit process>`
+|===
+
+==== Storage cards
+
+* *Steps 1 and 6*: not applicable, as storage cards have no secure session.
+* *Steps 2 to 4*: the environment block(s) are written, and the event and contract blocks are filled with 0.
+* *Step 5*: not applicable, as the counter is stored in the contract record.
+
+[[loading-procedure]]
+=== Contract loading
+
+Executed by the sales server, with its SAM (see <<loading-use-case>>). The procedure has two parts: the analysis of the contracts, whose result is displayed to the user, then the writing of the contract chosen by the user.
+
+==== Contract analysis
+
+[cols="^1,12", options="header"]
+|===
+| Step | Action
+
+| 1
+| Open a secure session at the Load access level, reading the environment record. The demo also reads the event, the contracts, and the counters in this session, then closes it.
+
+| 2
+| Unpack the environment structure.
+
+| 3
+| If EnvVersionNumber is not the expected one (1 for the current version), reject the card (card not personalized). `<Abort Transaction and exit process>`
+
+| 4
+| If EnvEndDate is in the past, reject the card. `<Abort Transaction and exit process>`
+
+| 5
+| Read and unpack the last event record.
+
+| 6
+| If EventVersionNumber is not the expected one (0 for a blank card, 1 for the current version), reject the card. `<Abort Transaction and exit process>`
+
+| 7
+| Store the ContractPriority fields of the event in a persistent object, with a flag indicating a change of priority, set to false.
+
+| 8
+| For each contract record:
+
+| 8.1
+| Read and unpack the contract record.
+
+| 8.2
+| If ContractVersionNumber is 0 (blank record), set the associated ContractPriority to 0 and move on to the next contract.
+
+| 8.3
+| If ContractAuthenticator is not 0, verify its value with the PSO Verify Signature command of the SAM. _Not implemented by the demo._
+
+| 8.3.1
+| If the value is wrong, reject the card. `<Abort Transaction and exit process>` _Not implemented by the demo._
+
+| 8.3.2
+| If ContractSaleSam is on the SAM black list, reject the card. `<Abort Transaction and exit process>` _Not implemented by the demo._
+
+| 8.4
+| If ContractValidityEndDate is in the past, set the associated ContractPriority to 31 and set the change flag to true.
+
+| 8.5
+| Add the contract to the list of card contracts.
+
+| 9
+| Return the list of contracts. `<Exit process>`
+|===
+
+The user then chooses the contract to load (type, and number of trips of a multi-trip ticket), and presents the card again. The server reads it again (step 1) and recomputes the ContractPriority fields (steps 7, 8.2, and 8.4), without repeating the checks of steps 3 to 6.
+
+==== Writing of the contract and update of the priorities
+
+[cols="^1,12", options="header"]
+|===
+| Step | Action
+
+| 10
+a| Fill the contract structure to write:
+
+* ContractVersionNumber = 1
+* ContractTariff = value provided by the upper layer (1 or 2; any other value is rejected)
+* ContractSaleDate = current date
+
+| 10.1
+| If the operation is the renewal of a season pass (ContractTariff = 1), ContractValidityEndDate = original ContractValidityEndDate + 30 days if the season pass has not expired, or ContractSaleDate + 30 days if it has expired.
+
+| 10.2
+| Otherwise, ContractValidityEndDate = ContractSaleDate + 30 days for a season pass (ContractTariff = 1), or EnvEndDate for a multi-trip ticket (ContractTariff = 2).
+
+| 11
+| Pack the contract structure.
+
+| 12
+| If the traceability mode is enabled, generate the authenticator with the PSO Generate Signature command of the SAM. _Not implemented by the demo._
+
+| 13
+| If a contract of the same type (ContractTariff) is present on the card, even expired, the operation is a renewal: use the index of this contract.
+
+| 14.1
+| If its ContractPriority is equal to ContractTariff, go to `CNT_UPD`.
+
+| 14.2
+| Otherwise, set its ContractPriority to ContractTariff and set the change flag to true.
+
+| 15
+| Otherwise (new contract):
+
+| 15.1
+| If one or more ContractPriority fields are 0, the record with the lowest index receives the contract. Set its ContractPriority to ContractTariff, set the change flag to true, and go to `CNT_UPD`.
+
+| 15.2
+| Otherwise, if a ContractPriority field is 31, the first one gives the record that receives the contract. Set its ContractPriority to ContractTariff, set the change flag to true, and go to `CNT_UPD`.
+
+| 15.3
+| Otherwise (no empty nor expired record), reject the card (card full). `<Abort Transaction and exit process>`
+
+| 15.4
+| On single-contract cards (Calypso Basic, storage cards), steps 15.1 to 15.3 are replaced by: the contract is replaced only if it is empty, expired, or exhausted (multi-trip ticket without trips left); otherwise, reject the card (card full). `<Abort Transaction and exit process>`
+
+| 16
+| `CNT_UPD`: open a secure session at the Load access level, and update the contract record of the chosen index.
+
+| 17
+| If ContractTariff is 2, set the counter of the contract to its current value (0 for a new contract) increased by the number of trips provided by the upper layer. This number must be positive, and the counter cannot exceed 16,777,215 (24 bits); otherwise, the operation is rejected. `<Abort Transaction and exit process>`
+
+| 18
+a| If the change flag is true, fill the event structure to update:
+
+* EventVersionNumber = 1
+* EventDateStamp, EventTimeStamp, EventLocation, EventContractUsed = values of the previous event
+* ContractPriority1 to ContractPriority4 = values of the persistent object
+* EventPadding = 0
+
+The demo always updates the event, and sets its version number to 1 on a blank card.
+
+| 19
+| Pack the event structure and update the event record.
+
+| 20
+| Close the session.
+
+| 21
+| Return the status of the operation to the upper layer. `<Exit process>`
+|===
+
+==== Storage cards
+
+* *Steps 1, 16, and 20*: executed without secure session.
+* *Steps 15.1 to 15.4*: as the card holds a single contract, step 15.4 applies.
+* *Step 17*: the counter, stored in the contract record, is written with the contract at step 16.
+
+[[validation-procedure]]
+=== Validation
+
+Executed by the validation terminal, with its SAM (see <<validation-use-case>>). The ContractPriority fields of the event give the order in which the contracts are read: the best candidate is found with the fewest records read, and thus the fewest commands exchanged with the card, and a card without usable contract is detected without reading its contracts. An expired or exhausted contract gets priority 31, so that the next validations no longer read it, until it is renewed or replaced.
+
+[cols="^1,12", options="header"]
+|===
+| Step | Action
+
+2+| *Event analysis*
+
+| 1
+| Open a secure session at the Debit access level, reading the environment record.
+
+| 2
+| Unpack the environment structure.
+
+| 3
+| If EnvVersionNumber is not the expected one (1 for the current version), reject the card. `<Abort Transaction and exit process>`
+
+| 4
+| If EnvEndDate is in the past, reject the card. `<Abort Transaction and exit process>`
+
+| 5
+| Read and unpack the last event record.
+
+| 6
+| If EventVersionNumber is not the expected one (1 for the current version), reject the card (0: card never loaded). `<Abort Transaction and exit process>`
+
+| 6.1
+| Anti-passback (see <<anti-passback-rule>>), with the anti-passback delay (1 minute in the demo). As the time of the event is recorded to the minute, the times are compared to the minute, and the delay runs until the end of its last minute (for 1 minute, until the end of the minute following the event). If the last event is within this delay:
+
+| 6.1.1
+| If the previous validation session has been ratified, reject the card. `<Abort Transaction and exit process>`
+
+| 6.1.2
+| Otherwise (session interrupted by the removal of the card, not ratified), recover the interrupted validation: the card is considered as validated, without new decrement: go to `END`, which closes the session.
+
+| 7
+| Store the ContractPriority fields of the event in a persistent object.
+
+2+| *Best contract search*
+
+| 8
+| Create a list of the ContractPriority fields different from 0 and 31 (unknown codes are excluded too).
+
+| 9
+| If the list is empty, go to `END`.
+
+| 10
+| Order the list by ContractPriority value.
+
+| 11
+| For each element of the list (the type of the contract is read in its ContractTariff field; the priorities only give the order of the analysis):
+
+| 11.1
+| Read and unpack the contract record.
+
+| 11.2
+| If ContractVersionNumber is not the expected one (1 for the current version), reject the card. `<Abort Transaction and exit process>`
+
+| 11.3
+| If ContractAuthenticator is not 0, verify its value with the PSO Verify Signature command of the SAM. _Not implemented by the demo._
+
+| 11.3.1
+| If the value is wrong, reject the card. `<Abort Transaction and exit process>` _Not implemented by the demo._
+
+| 11.3.2
+| If ContractSaleSam is on the SAM black list, reject the card. `<Abort Transaction and exit process>` _Not implemented by the demo._
+
+| 11.4
+| If ContractValidityEndDate is in the past, set the associated ContractPriority to 31, and move on to the next element of the list.
+
+| 11.5
+| If ContractTariff is 2 (multi-trip ticket):
+
+| 11.5.1
+| Read the counter associated with the contract (counter #1 for contract #1, and so on).
+
+| 11.5.2
+| If the counter value is 0, set the associated ContractPriority to 31, and move on to the next element of the list.
+
+| 11.5.3
+| If ContractTariff is 3 and the counter value is lower than the amount of the validation, move on to the next element of the list. _Not implemented by the demo (stored value)._
+
+2+| *Counter update*
+
+| 11.5.4
+| Decrement the counter by 1. The contract is used: go to step 12. A contract whose ContractTariff is neither 1 nor 2 is not validated: move on to the next element of the list.
+
+2+| *New event*
+
+| 12
+a| If a contract is used, fill the event structure to update:
+
+* EventVersionNumber = 1
+* EventDateStamp, EventTimeStamp = current date and time (to the minute)
+* EventLocation = location configured in the validation terminal
+* EventContractUsed = index of the contract used
+* ContractPriority1 to ContractPriority4 = values of the persistent object
+* EventPadding = 0
+
+| 12.1
+| If no contract can be used, but ContractPriority values have been set to 31 (contracts expired or without trips left), the card is rejected: fill the event structure with the values of the previous event, except the ContractPriority fields, set to the values of the persistent object (see <<rejected-card>>).
+
+| 13
+| Pack the event structure and update the event record.
+
+| 14
+| `END`: close the session if the event has been updated (steps 12 and 12.1) or after the recovery of an interrupted validation (step 6.1.2); otherwise, cancel it.
+
+| 15
+| Return the status of the operation to the upper layer. `<Exit process>`
+|===
+
+==== Storage cards
+
+* *Step 1*: the environment, event, and contract blocks are read at once, without secure session.
+* *Steps 6.1.1 and 6.1.2*: within the delay, the card is always rejected, as storage cards have no session to ratify (step 6.1.2 not applicable).
+* *Steps 7 to 11*: as the card holds a single contract, there is no list of priorities: the contract is read (11.1) and checked (11.2). An expired contract (11.4), a multi-trip ticket without trips left (11.5.2), or a contract of an unknown type rejects the card, without writing.
+* *Step 11.5.4*: the counter, stored in the contract record, is decremented in this record.
+* *Step 12*: ContractPriority1 is set to the ContractTariff of the contract, the other priorities to 0. Step 12.1 is not applicable.
+* *Steps 13 and 14*: the contract and event blocks are written, without session to close.
+
+[[inspection-procedure]]
+=== Inspection
+
+Executed by the inspection terminal, with or without SAM (see <<inspection-use-case>>).
+
+[cols="^1,12", options="header"]
+|===
+| Step | Action
+
+2+| *Event analysis*
+
+| 1.1
+| If the SAM is available, open a secure session at the Debit access level, reading the environment record, set the inTransactionFlag to true, and go to step 2.
+
+| 1.2
+| Otherwise, if the card supports the PKI mode, open a PKI secure session, reading the environment record, set the inTransactionFlag to true, and go to step 2.
+
+| 1.3
+| Otherwise, read the environment record, without authentication of the card.
+
+| 2
+| Unpack the environment structure.
+
+| 3
+| If EnvVersionNumber is not the expected one (1 for the current version), reject the card. `<Abort Transaction if inTransactionFlag is true and exit process>`
+
+| 4
+| If EnvEndDate is in the past, reject the card. `<Abort Transaction if inTransactionFlag is true and exit process>`
+
+| 5
+| Read and unpack the last event record.
+
+| 6
+| If EventVersionNumber is not the expected one (1 for the current version), reject the card; if it is 0, return the status of a card never loaded ("`No ticket`"). `<Abort Transaction if inTransactionFlag is true and exit process>`
+
+| 7
+| If EventLocation is not the location configured in the inspection terminal, set the "`not valid`" flag of the validated contract to true, and go to `CNT_READ`.
+
+| 8
+| Otherwise, if EventDateStamp is before the current date, set the "`not valid`" flag to true, and go to `CNT_READ`.
+
+| 9
+| Otherwise, if EventTimeStamp + validation period configured in the inspection terminal is before the current time, set the "`not valid`" flag to true. As the time of the event is recorded to the minute, the times are compared to the minute: the validation is valid until the end of the minute of the end of the validation period.
+
+2+| *Contract analysis*
+
+| 10
+| `CNT_READ`: read all the contract records and the counter file.
+
+| 11
+| For each contract:
+
+| 12
+| Unpack the contract.
+
+| 13
+| If ContractVersionNumber is 0, the contract is blank: move on to the next contract.
+
+| 14
+| If ContractVersionNumber is not the expected one (1 for the current version), reject the card. `<Abort Transaction if inTransactionFlag is true and exit process>`
+
+| 15
+| If the SAM is available and ContractAuthenticator is not 0, verify its value with the PSO Verify Signature command of the SAM. _Not implemented by the demo._
+
+| 15.1
+| If the value is wrong, reject the card. `<Abort Transaction if inTransactionFlag is true and exit process>` _Not implemented by the demo._
+
+| 15.2
+| If ContractSaleSam is on the SAM black list, reject the card. `<Abort Transaction if inTransactionFlag is true and exit process>` _Not implemented by the demo._
+
+| 16
+| If ContractValidityEndDate is in the past, mark the contract as expired.
+
+| 17
+| If EventContractUsed is the index of the contract and the "`not valid`" flag is false, mark the contract as validated.
+
+| 18
+| If ContractTariff is 2, extract the counter value associated with the contract.
+
+| 19
+| Add the contract to the list of contracts to return to the upper layer.
+
+| 20
+| If the inTransactionFlag is true, close the session.
+
+| 21
+| Return the status of the operation to the upper layer. `<Exit process>`
+|===
+
+==== Storage cards
+
+* *Step 1*: the environment, event, and contract blocks are read at once, without authentication of the card (steps 1.1 and 1.2 not applicable); MIFARE Classic 1K cards require the authentication of their sector with key A, which gives access to the blocks but does not authenticate the card.
+* *Steps 10 to 12*: the single contract, read at step 1, is unpacked.
+* *Step 18*: the counter value is read in the contract record.
+* *Step 20*: the transaction ends, without session to close.

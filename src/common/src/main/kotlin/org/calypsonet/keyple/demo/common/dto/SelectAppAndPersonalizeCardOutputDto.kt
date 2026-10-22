@@ -13,7 +13,8 @@
 package org.calypsonet.keyple.demo.common.dto
 
 /**
- * - statusCode: 0 (if successful), 1 (card communication error), >1 (other error).
- * - message: error message
+ * - statusCode: code of the [RemoteServiceStatus]: 0 (successful), 1 (card communication error), 2
+ *   (server error), 3 (card rejected).
+ * - message: Status message.
  */
 data class SelectAppAndPersonalizeCardOutputDto(var statusCode: Int, var message: String)

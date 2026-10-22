@@ -1,0 +1,45 @@
+name: Reusable AsciiDoc CI
+
+on:
+  workflow_call:
+    inputs:
+      component-name:
+        description: 'Name of the document being built'
+        required: true
+        type: string
+      working-directory:
+        description: 'Directory of the AsciiDoc document'
+        required: true
+        type: string
+      document:
+        description: 'AsciiDoc document to build, relative to the working directory'
+        required: true
+        type: string
+
+jobs:
+  ci-asciidoc:
+    runs-on: ubuntu-latest
+
+    # Same toolchain as the CNA specifications (calypsonet-actions): Asciidoctor, Asciidoctor PDF, and Asciidoctor
+    # Diagram (PlantUML)
+    container:
+      image: asciidoctor/docker-asciidoctor:latest
+
+    steps:
+      - name: Check out repository code from ${{ github.repository }}/${{ github.ref }}
+        uses: actions/checkout@v5
+
+      - name: Generate the PDF and standalone HTML of ${{ inputs.component-name }}
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+          for converter in asciidoctor asciidoctor-pdf; do
+            "$converter" -r asciidoctor-diagram -D generated "${{ inputs.document }}"
+          done
+
+      - name: Upload ${{ inputs.component-name }} for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.component-name }}
+          path: |
+            ${{ inputs.working-directory }}/generated/*.pdf
+            ${{ inputs.working-directory }}/generated/*.html

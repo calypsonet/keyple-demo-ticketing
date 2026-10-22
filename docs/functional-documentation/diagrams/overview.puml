@@ -1,0 +1,16 @@
+@startuml overview
+title Overview of the functional workflows
+
+start
+
+:Card personalization;
+
+:Ticket loading;
+
+:Validation;
+
+:Inspection;
+
+stop
+
+@enduml

@@ -1,0 +1,211 @@
+///////////////////////////////////////////////////////////////////////////////
+// GRADLE CONFIGURATION
+///////////////////////////////////////////////////////////////////////////////
+
+if (project.hasProperty("releaseTag")) {
+  project.version = project.property("releaseTag") as String
+  println("Release mode: version set to ${project.version}")
+} else {
+  project.version = libs.versions.project.get()
+  println("Development mode: version is ${project.version}")
+}
+
+plugins {
+  alias(libs.plugins.androidApplication)
+  alias(libs.plugins.kotlinParcelize)
+  alias(libs.plugins.ksp)
+  alias(libs.plugins.hilt)
+  alias(libs.plugins.spotless)
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// APP CONFIGURATION
+///////////////////////////////////////////////////////////////////////////////
+
+dependencies {
+  // Demo common
+  implementation(libs.demoCommon)
+
+  // Proprietary libs
+  // Storage card specific components
+  // Conditional dependency for the storage card library
+  val storageCardLibName = "keyple-card-cna-storagecard-java-lib-2.3.1"
+  val storageCardLibFile = file("../../../libs/${storageCardLibName}.jar")
+  if (storageCardLibFile.exists()) {
+    println("Using private storage card library: ${storageCardLibFile.name}")
+    implementation(files(storageCardLibFile))
+  } else {
+    println("Using mock storage card library")
+    implementation(files("../../../libs/${storageCardLibName}-mock.jar"))
+  }
+
+  // Conditional dependency for the storage card plugin library
+  val storageCardPluginLibName = "keyple-plugin-cna-storagecard-java-lib-1.1.1"
+  val storageCardPluginLibFile = file("../../../libs/${storageCardPluginLibName}.jar")
+  if (storageCardPluginLibFile.exists()) {
+    println("Using private storage card plugin library: ${storageCardPluginLibFile.name}")
+    implementation(files(storageCardPluginLibFile))
+  } else {
+    println("Using mock storage card plugin library")
+    implementation(files("../../../libs/${storageCardPluginLibName}-mock.jar"))
+  }
+
+  // Bluebird specific components
+  val bluebirdPluginLibName = "keyple-plugin-cna-bluebird-specific-nfc-java-lib-3.2.0-debug"
+  val bluebirdPluginLibFile = file("../../../libs/${bluebirdPluginLibName}.aar")
+  if (bluebirdPluginLibFile.exists()) {
+    println("Using Bluebird plugin library: ${bluebirdPluginLibFile.name}")
+    implementation(files(bluebirdPluginLibFile))
+  } else {
+    println("Using mock Bluebird plugin library")
+    implementation(files("../../../libs/${bluebirdPluginLibName}-mock.aar"))
+  }
+
+  // Keyple BOM
+  implementation(platform(libs.keypleJavaBom))
+
+  // Keypop (API)
+  implementation(libs.keypopReaderApi)
+  implementation(libs.keypopCalypsoCardApi)
+  implementation(libs.keypopCalypsoCryptoLegacysamApi)
+  implementation(libs.keypopStoragecardApi)
+
+  // Keyple
+  implementation(libs.keypleCommonApi)
+  implementation(libs.keyplePluginStoragecardApi)
+  implementation(libs.keypleUtilJavaLib)
+  implementation(libs.keypleServiceLib)
+  implementation(libs.keypleCardCalypsoLib)
+  implementation(libs.keypleCardCalypsoCryptoLegacysamLib)
+  implementation(libs.keypleCardCalypsoCryptoPkiLib)
+  implementation(libs.keyplePluginAndroidNfcLib)
+
+  // Other Keyple plugins
+  implementation(libs.keyplePluginCnaFamocoSeCommunicationLib) {
+    // Runtime of the obsolete "kotlin-android-extensions" plugin, declared but not used by the
+    // plugin, and duplicating the classes of the Parcelize runtime
+    exclude(group = "org.jetbrains.kotlin", module = "kotlin-android-extensions-runtime")
+  }
+
+  // Android components
+  implementation(libs.androidxAppcompat)
+  implementation(libs.material)
+  implementation(libs.androidxConstraintLayout)
+  implementation(libs.androidxActivity)
+  implementation(libs.androidxFragment)
+
+  // Kotlin (the Kotlin standard library is added by the Kotlin Gradle plugin)
+  implementation(libs.androidxCore)
+
+  // Coroutines
+  implementation(libs.kotlinxCoroutinesCore)
+  implementation(libs.kotlinxCoroutinesAndroid)
+
+  // Hilt (dependency injection)
+  implementation(libs.hiltAndroid)
+  ksp(libs.hiltCompiler)
+
+  // Lottie
+  implementation(libs.lottie)
+
+  // Devnied - Byte Utils
+  implementation(libs.bitLib4j) {
+    // Logging dependencies declared but not used by the library (log4j 1.x is end of life)
+    exclude(group = "org.slf4j")
+    exclude(group = "log4j")
+  }
+
+  // Logging libraries used in the project:
+  // - SLF4J API provides a common logging interface for the app and third-party libraries (for
+  // example,
+  //   Keyple).
+  // - slf4j-timber bridges SLF4J calls to Timber for Android logging.
+  // - Timber is used as the primary Android logging framework, offering lightweight and flexible
+  //   logging.
+  implementation(libs.slf4jApi)
+  implementation(libs.slf4jTimber)
+  implementation(libs.timber)
+
+  // Unit tests of the domain (business rules and procedures)
+  testImplementation(libs.junit)
+  testImplementation(libs.assertjCore)
+  testImplementation(libs.mockk)
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// STANDARD CONFIGURATION FOR ANDROID KOTLIN-BASED APP-TYPE PROJECTS
+///////////////////////////////////////////////////////////////////////////////
+
+val javaSourceLevel = project.property("javaSourceLevel") as String
+val javaTargetLevel = project.property("javaTargetLevel") as String
+
+android {
+  namespace = project.property("androidAppNamespace") as String
+  compileSdk = (project.property("androidCompileSdk") as String).toInt()
+  defaultConfig {
+    applicationId = project.property("androidAppId") as String
+    minSdk = (project.property("androidMinSdk") as String).toInt()
+    targetSdk = (project.property("androidTargetSdk") as String).toInt()
+    // Version of the project (release tag YY.MM.DD, 99.99.99 in development), its code being its
+    // digits (for example, 261022 for 26.10.22)
+    versionName = project.version.toString()
+    versionCode = project.version.toString().replace(".", "").toInt()
+  }
+  buildFeatures {
+    viewBinding = true
+    buildConfig = true
+  }
+  buildTypes {
+    // Configuration for the debug build variant:
+    // - Code and resource shrinking are enabled with the ProGuard rules of the release build, to
+    //   detect the missing keep rules during development (for example, classes used by reflection,
+    // such as
+    //   the DTOs serialized with Gson).
+    // - The build being debuggable, R8 neither optimizes nor obfuscates the code: the stack traces
+    //   and the debug logs are kept, and the effects of the optimizations (for example, the
+    //   "-assumenosideeffects" rules) can only be observed with the release build.
+    getByName("debug") {
+      isMinifyEnabled = true
+      isShrinkResources = true
+      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+    }
+    getByName("release") {
+      isMinifyEnabled = true
+      isShrinkResources = true
+      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+    }
+  }
+  compileOptions {
+    sourceCompatibility = JavaVersion.toVersion(javaSourceLevel)
+    targetCompatibility = JavaVersion.toVersion(javaTargetLevel)
+  }
+  packaging {
+    resources {
+      // Files included by several dependencies, conflicting when packaged in the APK (for example,
+      // the
+      // OSGi manifest of the Bouncy Castle JARs, used by the PKI extension)
+      excludes.add("META-INF/NOTICE.md")
+      excludes.add("META-INF/versions/9/OSGI-INF/MANIFEST.MF")
+    }
+  }
+  lint { abortOnError = false }
+}
+
+// Name of the APK files: <root project name>-<version>-<variant>.apk
+base { archivesName.set("${rootProject.name}-${project.version}") }
+
+tasks.withType<AbstractArchiveTask>().configureEach { archiveBaseName.set(rootProject.name) }
+
+tasks {
+  spotless {
+    kotlin {
+      target("src/**/*.kt")
+      licenseHeaderFile("../../../LICENSE_HEADER")
+      ktfmt()
+    }
+    kotlinGradle {
+      target("**/*.kts")
+      ktfmt()
+    }
+  }
+}

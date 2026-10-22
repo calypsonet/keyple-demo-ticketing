@@ -33,5 +33,5 @@
 
     <dimen name="reading_animation_size">150dp</dimen>
 
-    <dimen name="summary_desc_top_margin">15dp</dimen>
+    <dimen name="validation_result_desc_top_margin">15dp</dimen>
 </resources>

@@ -1,0 +1,15 @@
+// Legal notice -- copyright and license wording of the document, rendered on the
+// colophon page. Included via the :doc-license-notice: attribute.
+// Relies on the header attributes: {organization}, {email}, {doc-license},
+// {doc-license-short}, {doc-license-url}.
+// The license roles are applied per block (Asciidoctor PDF does not propagate a
+// role set on an open block to its children).
+[.license-header]
+Copyright © {organization}, {email}.
+
+[.license-content]
+This document is part of the Keyple Demo Ticketing project, licensed under the *{doc-license}*
+({doc-license-short}).
+
+[.license-content]
+The full license text is available at {doc-license-url} and in the `LICENSE` file of the repository.
