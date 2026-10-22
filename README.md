@@ -81,9 +81,8 @@ described in the [Functional Documentation](docs/functional-documentation/index.
 ### Card application identifier
 
 The demos work with the Calypso application of AID `A000000291FF9101`, present on the test cards of the
-[CNA Test Kit](https://calypsonet.org/technical-support-documentation/) (see the annex
-[Card data model](docs/functional-documentation/index.adoc#supported-card-applications) of the Functional
-Documentation).
+CNA Test Kit (see the annex [Card data model](docs/functional-documentation/index.adoc#supported-card-applications)
+of the Functional Documentation).
 
 ## Data model
 
