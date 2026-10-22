@@ -112,7 +112,7 @@ class CardReaderSession(
   val cardReader: CardReader
     get() = checkNotNull(terminalReaders.getCardReader()) { "Card reader not initialized" }
 
-  private var indexOfKeypleGenericCardSelection = 0
+  private var indexOfCnaTestKitGenericCardSelection = 0
   private var indexOfCdLightGtmlCardSelection = 0
   private var indexOfCalypsoLightCardSelection = 0
   private var indexOfNavigoIdfCardSelection = 0
@@ -210,12 +210,12 @@ class CardReaderSession(
     // Get a new card selection manager
     cardSelectionManager = readerApiFactory.createCardSelectionManager()
 
-    // Prepare card selection case #1: Keyple generic (AID of the demo)
-    indexOfKeypleGenericCardSelection =
+    // Prepare card selection case #1: CNA Test Kit generic (AID of the demo)
+    indexOfCnaTestKitGenericCardSelection =
         cardSelectionManager.prepareSelection(
             readerApiFactory
                 .createIsoCardSelector()
-                .filterByDfName(CalypsoAids.KEYPLE_GENERIC)
+                .filterByDfName(CalypsoAids.CNA_TEST_KIT_GENERIC)
                 .filterByCardProtocol(CardProtocol.ISO_14443_4.name),
             calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
@@ -289,8 +289,8 @@ class CardReaderSession(
     val smartCard = cardSelectionResult.activeSmartCard
     when (smartCard) {
       is CalypsoCard -> { // check is the DF name is the expected one (Req. TL-SEL-AIDMATCH.1)
-        if ((cardSelectionResult.activeSelectionIndex == indexOfKeypleGenericCardSelection &&
-            !CalypsoAids.matches(CalypsoAids.KEYPLE_GENERIC, smartCard.dfName)) ||
+        if ((cardSelectionResult.activeSelectionIndex == indexOfCnaTestKitGenericCardSelection &&
+            !CalypsoAids.matches(CalypsoAids.CNA_TEST_KIT_GENERIC, smartCard.dfName)) ||
             (cardSelectionResult.activeSelectionIndex == indexOfCdLightGtmlCardSelection &&
                 !CalypsoAids.matches(CalypsoAids.CD_LIGHT_GTML, smartCard.dfName)) ||
             (cardSelectionResult.activeSelectionIndex == indexOfCalypsoLightCardSelection &&

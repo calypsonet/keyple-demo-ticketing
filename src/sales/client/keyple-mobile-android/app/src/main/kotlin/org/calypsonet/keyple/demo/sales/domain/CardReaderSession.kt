@@ -164,7 +164,7 @@ class CardReaderSession(
      */
     val AIDS =
         listOf(
-            CalypsoAids.KEYPLE_GENERIC,
+            CalypsoAids.CNA_TEST_KIT_GENERIC,
             CalypsoAids.CD_LIGHT_GTML,
             CalypsoAids.CALYPSO_LIGHT,
             CalypsoAids.NORMALIZED_IDF)

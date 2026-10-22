@@ -17,14 +17,14 @@ import org.eclipse.keyple.core.util.HexUtil
 /**
  * AIDs of the Calypso applications selected by the demo (possibly truncated).
  *
- * [KEYPLE_GENERIC] is the only AID of the demo, documented in the functional documentation. The
- * other AIDs are a CNA-specific facility: they are only selected to make the internal tests of CNA
- * easier, and are of no interest for the integrators.
+ * [CNA_TEST_KIT_GENERIC] is the only AID of the demo, documented in the functional documentation.
+ * The other AIDs are a CNA-specific facility: they are only selected to make the internal tests of
+ * CNA easier, and are of no interest for the integrators.
  */
 object CalypsoAids {
 
-  /** AID of the Calypso application of the demo (Keyple generic test application). */
-  @JvmField val KEYPLE_GENERIC: ByteArray = HexUtil.toByteArray("A000000291FF9101")
+  /** AID of the Calypso application of the demo (generic application of the CNA Test Kit cards). */
+  @JvmField val CNA_TEST_KIT_GENERIC: ByteArray = HexUtil.toByteArray("A000000291FF9101")
 
   /** CD Light/GTML application: CNA internal tests only. */
   @JvmField val CD_LIGHT_GTML: ByteArray = HexUtil.toByteArray("315449432E49434131")

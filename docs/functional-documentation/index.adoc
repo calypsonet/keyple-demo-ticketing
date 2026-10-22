@@ -798,7 +798,7 @@ The data model is implemented by the {doc-repo}/blob/main/src/common/README.md[c
 [[supported-card-applications]]
 === Supported card application
 
-The demos work with the Calypso application of AID `A000000291FF9101` (Keyple generic test application), present on the cards of the https://calypsonet.org/technical-support-documentation/[CNA Test Kit].
+The demos work with the generic Calypso application of the cards of the https://calypsonet.org/technical-support-documentation/[CNA Test Kit], of AID `A000000291FF9101`.
 
 The DF name of the selected application must start with the AID, followed by zeros only (requirement TL-SEL-AIDMATCH.1 of the Calypso specifications).
 
