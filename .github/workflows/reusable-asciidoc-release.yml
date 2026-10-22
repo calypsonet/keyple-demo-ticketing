@@ -56,7 +56,7 @@ jobs:
           mv "$base.pdf" "$output.pdf"
 
       - name: Upload ${{ inputs.component-name }} to GitHub release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: |
             ${{ inputs.working-directory }}/generated/${{ inputs.archive-name-prefix }}-${{ steps.document.outputs.version }}.pdf

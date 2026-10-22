@@ -49,7 +49,7 @@ jobs:
           cp ${{ inputs.apk-output-path }} release-artifacts/ || true
 
       - name: Upload ${{ inputs.component-name }} artifacts to GitHub release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: ${{ inputs.working-directory }}/release-artifacts/*
           token: ${{ secrets.GITHUB_TOKEN }}

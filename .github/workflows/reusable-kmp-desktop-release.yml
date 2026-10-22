@@ -57,7 +57,7 @@ jobs:
           cp composeApp/build/compose/jars/*.jar release-artifacts/ || true
 
       - name: Upload ${{ inputs.component-name }} artifacts for ${{ inputs.platform-name }} to GitHub release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: ${{ inputs.working-directory }}/release-artifacts/*
           token: ${{ secrets.GITHUB_TOKEN }}
