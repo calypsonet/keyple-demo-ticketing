@@ -14,10 +14,10 @@ A change of the data model or of a procedure is made both in the annex and in th
 ## Publication
 
 At each release of the repository, the CI (`.github/workflows/release-tag.yml`) generates the document and attaches it
-to the release:
+to the release, named after the document reference followed by the version:
 
-- `kdt-functional-documentation-YY.MM.DD.pdf`
-- `kdt-functional-documentation-YY.MM.DD.html`, standalone (fonts, images, and diagrams embedded; only the icons are
+- `261022-FD-KeypleDemoTicketing_vYY.MM.DD.pdf`
+- `261022-FD-KeypleDemoTicketing_vYY.MM.DD.html`, standalone (fonts, images, and diagrams embedded; only the icons are
   loaded from the Font Awesome CDN)
 
 As the applications of the demo, the version of the document is the release tag (YY.MM.DD), its date being the date

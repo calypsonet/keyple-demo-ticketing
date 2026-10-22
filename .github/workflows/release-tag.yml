@@ -109,4 +109,3 @@ jobs:
       component-name: "Functional documentation"
       working-directory: "./docs/functional-documentation/"
       document: "index.adoc"
-      archive-name-prefix: "kdt-functional-documentation"

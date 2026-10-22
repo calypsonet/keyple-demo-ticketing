@@ -15,10 +15,6 @@ on:
         description: 'AsciiDoc document to build, relative to the working directory'
         required: true
         type: string
-      archive-name-prefix:
-        description: 'Prefix of the names of the PDF and HTML files attached to the release'
-        required: true
-        type: string
 
 jobs:
   release-asciidoc:
@@ -45,13 +41,21 @@ jobs:
             exit 1
           fi
           release_date=$(echo "$version" | sed -E 's/^([0-9]{2})\.([0-9]{2})\.([0-9]{2})$/20\1-\2-\3/')
-          echo "version=$version" >> "$GITHUB_OUTPUT"
+          # Name of the attached files: the document reference of the header, followed by the version (for example,
+          # 261022-FD-KeypleDemoTicketing_v26.10.22)
+          doc_ref=$(sed -n -E 's/^:doc-ref:[[:space:]]*([^[:space:]]+)[[:space:]]*$/\1/p' "${{ inputs.document }}")
+          if [ -z "$doc_ref" ]; then
+            echo "::error::No :doc-ref: attribute found in ${{ inputs.document }}"
+            exit 1
+          fi
+          name="${doc_ref}_v${version}"
+          echo "name=$name" >> "$GITHUB_OUTPUT"
           for converter in asciidoctor asciidoctor-pdf; do
             "$converter" -r asciidoctor-diagram -a revnumber="$version" -a revdate="$release_date" \
               -D generated "${{ inputs.document }}"
           done
           base="generated/$(basename "${{ inputs.document }}" .adoc)"
-          output="generated/${{ inputs.archive-name-prefix }}-${version}"
+          output="generated/$name"
           mv "$base.html" "$output.html"
           mv "$base.pdf" "$output.pdf"
 
@@ -59,6 +63,6 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           files: |
-            ${{ inputs.working-directory }}/generated/${{ inputs.archive-name-prefix }}-${{ steps.document.outputs.version }}.pdf
-            ${{ inputs.working-directory }}/generated/${{ inputs.archive-name-prefix }}-${{ steps.document.outputs.version }}.html
+            ${{ inputs.working-directory }}/generated/${{ steps.document.outputs.name }}.pdf
+            ${{ inputs.working-directory }}/generated/${{ steps.document.outputs.name }}.html
           token: ${{ secrets.GITHUB_TOKEN }}
