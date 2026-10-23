@@ -31,7 +31,7 @@ access to transportation networks.
 - Cards personalized and loaded using the [Sales Demo](../sales/)
 - Calypso cards, or storage cards (MIFARE Ultralight and MIFARE Classic 1K on the Bluebird and Famoco terminals, ST25
   SRT512 on the Bluebird terminals only), with the storage card libraries (see
-  [Proprietary plugins](#proprietary-plugins) and the
+  [Proprietary components](#proprietary-components) and the
   [storage cards supported](../../docs/functional-documentation/index.adoc#storage-card-support))
 - Supported AID (see [Card data model](../../docs/functional-documentation/index.adoc#supported-card-applications))
 
@@ -56,8 +56,8 @@ cd keyple-demo-ticketing/src/validation
 1. Launch application
 2. Select the terminal type from **Terminal selection** screen:
   - **Famoco**: terminal with a SAM reader
-  - **Arrive**, **Bluebird**: proprietary plugins (grayed out by default, see
-    [Proprietary plugins](#proprietary-plugins))
+  - **Arrive**, **Bluebird**: plugins built with the library of the manufacturer (grayed out by default, see
+    [Proprietary components](#proprietary-components))
 
 ### Validation settings
 The **Settings** screen, displayed after the terminal selection, configures the validation:
@@ -83,7 +83,7 @@ Terminal selection → Settings → Card reader → Validation result
 
 **Terminal selection (`TerminalSelectionActivity`)**
 - Choose appropriate hardware plugin
-- Proprietary plugins require additional setup (see [Proprietary plugins](#proprietary-plugins))
+- The Arrive and Bluebird terminals require their plugin (see [Proprietary components](#proprietary-components))
 
 **Settings (`SettingsActivity`)**
 - Battery-powered mode, location of the terminal, access to the date and time settings
@@ -161,29 +161,31 @@ The comments of these classes reference the step numbers of the annex.
   for the contactless cards (Calypso cards, and storage cards with the storage card libraries), and
   [Famoco Plugin](https://github.com/calypsonet/keyple-famoco) for the SAM
 
-#### Proprietary plugins (on request)
+#### Terminals with a manufacturer library
 
 **Bluebird EF501**
 - **Plugin**: [Bluebird Plugin](https://github.com/calypsonet/keyple-plugin-cna-bluebird-specific-nfc-java-lib)
-- **Access**: Contact [CNA](https://calypsonet.org/contact-us/) for plugin
+- **Access**: open source plugin, to build with the native library of Bluebird (see
+  [Proprietary components](#proprietary-components))
 
 **Arrive Axio 4**
 - **Plugin**: [Arrive Plugin](https://github.com/calypsonet/keyple-plugin-cna-arrive-android-jvm-lib)
 - **Feedback**: LEDs and sounds of the terminal through the Parkeon SDK (`AndroidParkeonCommon-release.aar`)
-- **Access**: Contact [CNA](https://calypsonet.org/contact-us/) for plugin
+- **Access**: open source plugin, to build with the native library of Arrive (see
+  [Proprietary components](#proprietary-components))
 
-### Proprietary plugins
+### Proprietary components
 
-The proprietary components used by this application are available on request and replaced by mocks by default (their
-terminal types being then grayed out, and the storage cards not supported). They are installed as described in the
-[main README](../../README.md#proprietary-plugins-available-on-request):
+The proprietary components used by this application are replaced by mocks by default (their terminal types being
+then grayed out, and the storage cards not supported). They are built or obtained, then installed, as described in the
+[main README](../../README.md#proprietary-components):
 
-- **Bluebird EF501**
-- **Arrive Axio 4**: for the LEDs and sounds of the terminal, also copy the Parkeon SDK
-  (`AndroidParkeonCommon-release.aar`) to the `libs` directory: the build then uses the `arrive` source set instead of
-  `arrive-mock`
+- **Bluebird EF501**: plugin built with the library of Bluebird
+- **Arrive Axio 4**: plugin built with the library of Arrive; for the LEDs and sounds of the terminal, also copy the
+  Parkeon SDK (`AndroidParkeonCommon-release.aar`) to the `libs` directory: the build then uses the `arrive` source
+  set instead of `arrive-mock`
 - **Storage cards**: storage card extension (`keyple-card-cna-storagecard-java-lib`) and reader plugin
-  (`keyple-plugin-cna-storagecard-java-lib`)
+  (`keyple-plugin-cna-storagecard-java-lib`), reserved for CNA members and available on request
 
 ## Development
 
@@ -239,7 +241,7 @@ The common issues of the Android applications (NFC, SAM, terminal type) are desc
   [supported card application](../../docs/functional-documentation/index.adoc#supported-card-applications), its DF
   name does not match the AID, or its file structure is not supported
 - A storage card is not recognized when the storage card libraries are not available (see
-  [Proprietary plugins](#proprietary-plugins))
+  [Proprietary components](#proprietary-components))
 
 ## Contributing
 

@@ -31,8 +31,8 @@ in the Functional Documentation.
 ### Card requirements
 - Cards personalized and loaded with the [Sales Demo](../sales/)
 - Cards validated with the [Validation Demo](../validation/), to display a validated contract
-- Calypso cards, or storage cards with the storage card libraries (see [Proprietary plugins](#proprietary-plugins)),
-  depending on the terminal (see the
+- Calypso cards, or storage cards with the storage card libraries (see
+  [Proprietary components](#proprietary-components)), depending on the terminal (see the
   [storage cards supported](../../docs/functional-documentation/index.adoc#storage-card-support))
 - Supported AID (see [Card data model](../../docs/functional-documentation/index.adoc#supported-card-applications))
 
@@ -59,8 +59,9 @@ cd keyple-demo-ticketing/src/inspection
   - **Famoco**: terminal with a SAM reader
   - **NFC terminal**: any Android device with NFC (no SAM: the Calypso cards are authenticated by PKI when they
     support it, otherwise not authenticated); the MIFARE Ultralight and MIFARE Classic storage cards are also
-    supported (with the storage card libraries, see [Proprietary plugins](#proprietary-plugins))
-  - **Bluebird**: proprietary plugin (grayed out by default, see [Proprietary plugins](#proprietary-plugins))
+    supported (with the storage card libraries, see [Proprietary components](#proprietary-components))
+  - **Bluebird**: plugin built with the library of Bluebird (grayed out by default, see
+    [Proprietary components](#proprietary-components))
 
 ### Inspection settings
 The **Settings** screen, displayed after the terminal selection, configures the inspection:
@@ -81,7 +82,7 @@ Terminal selection → Settings → Home → Card reader → Card content or Inv
 
 **Terminal selection (`TerminalSelectionActivity`)**
 - Choice of the terminal type, which selects the reader plugins
-- Proprietary plugins require additional setup (see [Proprietary plugins](#proprietary-plugins))
+- The Bluebird terminals require their plugin (see [Proprietary components](#proprietary-components))
 
 **Settings (`SettingsActivity`)**
 - Location of the inspection, validation period, access to the date and time settings
@@ -159,21 +160,22 @@ The comments of these classes reference the step numbers of the annex.
 - **Limitations**: No SAM (Calypso cards authenticated by PKI when they support it)
 - **Use case**: Development and testing
 
-#### Proprietary plugins (on request)
+#### Terminals with a manufacturer library
 
 **Bluebird EF501**
 - **Plugin**: [Bluebird Plugin](https://github.com/calypsonet/keyple-plugin-cna-bluebird-specific-nfc-java-lib)
-- **Access**: Contact [CNA](https://calypsonet.org/contact-us/) for plugin
+- **Access**: open source plugin, to build with the native library of Bluebird (see
+  [Proprietary components](#proprietary-components))
 
-### Proprietary plugins
+### Proprietary components
 
-The proprietary components used by this application are available on request and replaced by mocks by default (their
-terminal types being then grayed out, and the storage cards not supported). They are installed as described in the
-[main README](../../README.md#proprietary-plugins-available-on-request):
+The proprietary components used by this application are replaced by mocks by default (their terminal types being
+then grayed out, and the storage cards not supported). They are built or obtained, then installed, as described in the
+[main README](../../README.md#proprietary-components):
 
-- **Bluebird EF501**
+- **Bluebird EF501**: plugin built with the library of Bluebird
 - **Storage cards**: storage card extension (`keyple-card-cna-storagecard-java-lib`) and reader plugin
-  (`keyple-plugin-cna-storagecard-java-lib`)
+  (`keyple-plugin-cna-storagecard-java-lib`), reserved for CNA members and available on request
 
 ## Development
 
@@ -224,7 +226,7 @@ The common issues of the Android applications (NFC, SAM, terminal type) are desc
   [inspection rejections and errors](../../docs/functional-documentation/index.adoc#inspection-rejection-conditions)
   of the Functional Documentation
 - A storage card is not recognized when the storage card libraries are not available (see
-  [Proprietary plugins](#proprietary-plugins))
+  [Proprietary components](#proprietary-components))
 
 **No contract marked as validated**
 - The last validation does not meet the rules of the inspection (location, day, validation period, contract used),

@@ -29,9 +29,10 @@ This Java server implements the business logic for the Keyple Demo ecosystem, ma
 - **JDK 17+** (OpenJDK recommended)
 - **Node.js 20.19+ or 22.12+** (for dashboard development, as required by Vite)
 - **Compatible PC/SC reader drivers**
-- **Storage card extension** of [CNA](https://calypsonet.org/contact-us/) (`keyple-card-cna-storagecard-java-lib`, on request) to process the storage
-  cards (replaced by a mock by default, the storage cards being then not supported; installed as described in the
-  [main README](../../../README.md#proprietary-plugins-available-on-request))
+- **Storage card extension** of [CNA](https://calypsonet.org/contact-us/) (`keyple-card-cna-storagecard-java-lib`,
+  reserved for CNA members and available on request) to process the storage cards (replaced by a mock by default, the
+  storage cards being then not supported; installed as described in the
+  [main README](../../../README.md#proprietary-components))
 
 ### Tested readers
 - Cherry TC series

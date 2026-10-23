@@ -182,11 +182,12 @@ The application supports multiple reader plugins:
 **Standard plugins** (always available):
 - Android NFC plugin for standard contactless reading
 
-**Proprietary components** (on request, replaced by mocks by default; installed as described in the
-[main README](../../../../README.md#proprietary-plugins-available-on-request)):
-- Bluebird plugin for the reader of the Bluebird terminals
+**Proprietary components** (replaced by mocks by default; built or obtained, then installed, as described in the
+[main README](../../../../README.md#proprietary-components)):
+- Bluebird plugin for the reader of the Bluebird terminals, built with the library of Bluebird
 - Storage card extension (`keyple-card-cna-storagecard-java-lib`) and reader plugin
-  (`keyple-plugin-cna-storagecard-java-lib`), without which the storage cards are not supported
+  (`keyple-plugin-cna-storagecard-java-lib`), reserved for CNA members, without which the storage cards are not
+  supported
 
 ## Development
 

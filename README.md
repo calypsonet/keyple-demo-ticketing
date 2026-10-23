@@ -75,7 +75,7 @@ The demo supports Calypso cards, with secure sessions authenticated by a SAM (or
 storage cards (MIFARE Ultralight, ST25 SRT512, MIFARE Classic), read and written without SAM nor secure session (the
 MIFARE Classic cards requiring the authentication of their sector with the key A) and supported with the proprietary
 storage card libraries (see
-[Proprietary plugins](#proprietary-plugins-available-on-request)). Their features and the tickets they hold are
+[Proprietary components](#proprietary-components)). Their features and the tickets they hold are
 described in the [Functional Documentation](docs/functional-documentation/index.adoc#cards).
 
 ### Card application identifier
@@ -102,19 +102,25 @@ reader plugins in the README of each application ([validation](src/validation/RE
 [sales Android client](src/sales/client/keyple-mobile-android/README.md#plugin-integration)). The server and
 the desktop clients use PC/SC readers.
 
-### Proprietary plugins (available on request)
+### Proprietary components
 
-- Bluebird EF501 (reader plugin)
-- Arrive Axio 4 (reader plugin)
-- Storage cards: card extension (`keyple-card-cna-storagecard-java-lib`) and, in the Android applications, reader
-  plugin (`keyple-plugin-cna-storagecard-java-lib`)
+Some components depend on libraries that are not publicly available:
+
+- **Bluebird EF501 and Arrive Axio 4 terminals**: their reader plugins are open source
+  ([Bluebird plugin](https://github.com/calypsonet/keyple-plugin-cna-bluebird-specific-nfc-java-lib),
+  [Arrive plugin](https://github.com/calypsonet/keyple-plugin-cna-arrive-android-jvm-lib)), but they are built with the
+  native library of the terminal manufacturer: an integrator who has this library builds the plugin from its repository
+- **Storage cards**: card extension (`keyple-card-cna-storagecard-java-lib`) and, in the Android applications, reader
+  plugin (`keyple-plugin-cna-storagecard-java-lib`), reserved for CNA members and available on request from
+  [CNA](https://calypsonet.org/contact-us/)
 
 By default, they are replaced by mocks (`libs` directory): the corresponding terminals are grayed out, and the storage
 cards are not supported. To use a component:
 
-1. Request it from [CNA](https://calypsonet.org/contact-us/)
-2. Copy the provided library (`.aar` or `.jar` file) to the `libs` directory at the root of the repository: the build
-   uses it instead of the corresponding mock (`-mock.aar` or `-mock.jar` file)
+1. Build the plugin with the library of the manufacturer, or obtain the storage card libraries from CNA
+2. Copy the library (`.aar` or `.jar` file) to the `libs` directory at the root of the repository, named as the
+   corresponding mock without its `-mock` suffix (for example,
+   `keyple-plugin-cna-bluebird-specific-nfc-java-lib-3.2.0-debug.aar`): the build uses it instead of the mock
 3. Rebuild the applications (for example, `./gradlew assembleDebug`)
 
 The README of each application lists the components it uses.
@@ -356,7 +362,7 @@ keyple-demo-ticketing/
 ├── .github/                                # CI workflows and checks (messages, architecture, twin files)
 ├── docs/history/                           # Changelogs of the archived repositories (before the merge)
 ├── docs/functional-documentation/          # Functional documentation (AsciiDoc, PlantUML diagrams, CNA charter)
-├── libs/                                   # Proprietary libraries (on request) and their mocks
+├── libs/                                   # Proprietary libraries and their mocks
 ├── libs.versions.toml                      # Version catalog shared by the Gradle projects
 ├── src/common/                             # Shared data structures and utilities
 ├── src/sales/                              # Sales clients and server
@@ -553,7 +559,7 @@ authentication.
 - Relaunch the application, and accept the access to the SAM of the terminal (and to the storage, up to Android 12)
 
 **Terminal type grayed out on the "Select the terminal" screen**
-- The proprietary terminals require their plugin (see [Proprietary plugins](#proprietary-plugins-available-on-request))
+- The Bluebird and Arrive terminals require their plugin (see [Proprietary components](#proprietary-components))
 - A terminal type that does not match the actual hardware can lead to "The readers of the terminal could not be
   initialized."
 

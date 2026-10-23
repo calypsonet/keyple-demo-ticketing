@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Fixed
+- Documentation: the plugins of the Bluebird and Arrive terminals are open source, built with the library of the
+  terminal manufacturer; only the storage card libraries are on request, for CNA members.
 
 ## [26.10.22]
 ### Breaking changes
