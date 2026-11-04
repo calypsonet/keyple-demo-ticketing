@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Documentation: the plugins of the Bluebird and Arrive terminals are open source, built with the library of the
   terminal manufacturer; only the storage card libraries are on request, for CNA members.
+- Icons of the Validation and Inspection applications: actual images instead of Git LFS pointers, Git LFS being no
+  longer used by the repository.
 
 ## [26.10.22]
 ### Breaking changes
