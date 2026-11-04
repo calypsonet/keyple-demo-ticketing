@@ -246,7 +246,7 @@ until a SAM is detected (no restart needed once the reader is connected and the 
   before the first build
 - Check the browser console for JavaScript errors
 
-**"Cannot reach the Keyple Demo — Sales Server" in the dashboard**
+**"Cannot reach the Keyple Sales Server" in the dashboard**
 - The dashboard has lost the connection to the server: check that the server process is running, and restart it if
   needed
 
