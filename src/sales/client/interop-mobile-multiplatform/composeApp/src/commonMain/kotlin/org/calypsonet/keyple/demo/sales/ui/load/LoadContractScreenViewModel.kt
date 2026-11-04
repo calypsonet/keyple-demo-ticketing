@@ -50,14 +50,14 @@ class LoadContractScreenViewModel(
 
   override fun onCleared() {
     super.onCleared()
-    keypleInteropService.releaseReader()
+    keypleInteropService.releaseReader(owner = this)
   }
 
   private fun scan() {
     viewModelScope.launch {
       keypleInteropService.setScanMessage("Place your card on the reader")
       try {
-        val cardFound = keypleInteropService.waitForCard()
+        val cardFound = keypleInteropService.waitForCard(owner = this@LoadContractScreenViewModel)
         buzzer.beepAndVibrate()
         if (cardFound) {
           keypleInteropService.setScanMessage("Stay still…")

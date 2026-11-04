@@ -62,6 +62,8 @@ class KeypleInteropService(
 
   private var serverConfig: KeypleServerConfig? = null
   private var keypleTerminal: KeypleTerminal? = null
+  // Screen currently using the reader (main thread only)
+  private var readerOwner: Any? = null
   private val httpClient = HttpClient {
     install(ContentNegotiation) {
       json(
@@ -118,13 +120,23 @@ class KeypleInteropService(
     }
   }
 
-  suspend fun waitForCard(): Boolean {
+  /**
+   * Waits for a card on behalf of the given owner (the screen using the reader), which becomes the
+   * owner of the reader. To be called from the main thread.
+   */
+  suspend fun waitForCard(owner: Any): Boolean {
+    readerOwner = owner
     return withContext(Dispatchers.IO) {
       return@withContext keypleTerminal?.waitForCard() ?: false
     }
   }
 
-  fun waitForCard(onCardConnected: () -> Unit) {
+  /**
+   * Starts the card detection on behalf of the given owner (the screen using the reader), which
+   * becomes the owner of the reader. To be called from the main thread.
+   */
+  fun waitForCard(owner: Any, onCardConnected: () -> Unit) {
+    readerOwner = owner
     this.keypleTerminal?.waitForCard(onCardConnected)
   }
 
@@ -132,7 +144,17 @@ class KeypleInteropService(
     keypleTerminal?.setScanMessage(message)
   }
 
-  fun releaseReader() {
+  /**
+   * Releases the reader if the given owner still owns it. The view model of a screen left is
+   * cleared at the end of the navigation transition, possibly after the next screen started the
+   * card detection: the reader is then left to the next screen. To be called from the main thread.
+   */
+  fun releaseReader(owner: Any) {
+    if (readerOwner !== owner) {
+      Napier.d("Reader not released, used by another screen")
+      return
+    }
+    readerOwner = null
     keypleTerminal?.releaseReader()
   }
 
