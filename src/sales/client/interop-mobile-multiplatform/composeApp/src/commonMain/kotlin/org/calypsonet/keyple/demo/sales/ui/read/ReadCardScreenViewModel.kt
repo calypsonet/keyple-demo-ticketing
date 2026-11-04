@@ -50,14 +50,14 @@ class ReadCardScreenViewModel(
 
   override fun onCleared() {
     super.onCleared()
-    keypleInteropService.releaseReader()
+    keypleInteropService.releaseReader(owner = this)
   }
 
   private fun scan() {
     viewModelScope.launch {
       keypleInteropService.setScanMessage("Place your card on the reader")
       try {
-        keypleInteropService.waitForCard {
+        keypleInteropService.waitForCard(owner = this@ReadCardScreenViewModel) {
           keypleInteropService.setScanMessage("Stay still…")
           buzzer.beepAndVibrate()
           viewModelScope.launch(Dispatchers.IO) { readContracts() }
