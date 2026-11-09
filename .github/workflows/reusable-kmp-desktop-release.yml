@@ -11,10 +11,6 @@ on:
         description: 'Target OS (ubuntu-latest, macos-latest, windows-latest)'
         required: true
         type: string
-      platform-name:
-        description: 'Platform display name (Linux, macOS, Windows)'
-        required: true
-        type: string
       working-directory:
         description: 'Working directory for the build'
         required: true
@@ -37,25 +33,21 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Update permissions for ${{ inputs.component-name }} (${{ inputs.platform-name }})
+      - name: Update permissions for ${{ inputs.component-name }} (${{ runner.os }})
         working-directory: .
         run: chmod +x ${{ inputs.working-directory }}/gradlew
 
-      - name: Build ${{ inputs.component-name }} artifacts for ${{ inputs.platform-name }}
+      - name: Build ${{ inputs.component-name }}       artifacts for ${{ runner.os }}
         env:
           ORG_GRADLE_PROJECT_releaseTag: ${{ github.event.release.tag_name }}
         working-directory: ${{ inputs.working-directory }}
         run: ./gradlew packageDistributionForCurrentOS packageUberJarForCurrentOS
 
-      - name: Collect ${{ inputs.component-name }} artifacts for ${{ inputs.platform-name }}
-        working-directory: ${{ inputs.working-directory }}
-        run: |
-          mkdir -p release-artifacts
-          cp ${{ inputs.platform-artifact-pattern }} release-artifacts/ || true
-          cp composeApp/build/compose/jars/*.jar release-artifacts/ || true
-
-      - name: Upload ${{ inputs.component-name }} artifacts for ${{ inputs.platform-name }} to GitHub release
+      - name: Upload ${{ inputs.component-name }} artifacts for ${{ runner.os }} to GitHub release
         uses: softprops/action-gh-release@v3
         with:
-          files: ${{ inputs.working-directory }}/release-artifacts/*
+          files: |
+            ${{ inputs.working-directory }}/${{ inputs.platform-artifact-pattern }}
+            ${{ inputs.working-directory }}/composeApp/build/compose/jars/*.jar
+          fail_on_unmatched_files: true
           token: ${{ secrets.GITHUB_TOKEN }}

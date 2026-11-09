@@ -19,6 +19,8 @@ on:
 jobs:
   release-asciidoc:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     # Same toolchain as the CNA specifications (calypsonet-actions): Asciidoctor, Asciidoctor PDF, and Asciidoctor
     # Diagram (PlantUML)
@@ -50,6 +52,7 @@ jobs:
           fi
           name="${doc_ref}_v${version}"
           echo "name=$name" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
           for converter in asciidoctor asciidoctor-pdf; do
             "$converter" -r asciidoctor-diagram -a revnumber="$version" -a revdate="$release_date" \
               -D generated "${{ inputs.document }}"
@@ -66,3 +69,49 @@ jobs:
             ${{ inputs.working-directory }}/generated/${{ steps.document.outputs.name }}.pdf
             ${{ inputs.working-directory }}/generated/${{ steps.document.outputs.name }}.html
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check that ${{ steps.document.outputs.version }} is the latest release
+        id: latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.document.outputs.version }}
+        run: |
+          # An older release run again must not replace the documentation of the latest release. No gh CLI nor jq in
+          # the container: the GitHub API is called with curl, and its JSON read with Ruby
+          latest=$(curl -fsSL -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" \
+            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/latest" \
+            | ruby -rjson -e 'puts JSON.parse(STDIN.read).fetch("tag_name")')
+          if [ "$VERSION" = "$latest" ]; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::GitHub Pages not updated: $VERSION is not the latest release ($latest)"
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check out the gh-pages branch
+        if: steps.latest.outputs.publish == 'true'
+        uses: actions/checkout@v5
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Publish ${{ inputs.component-name }} ${{ steps.document.outputs.version }} to GitHub Pages
+        if: steps.latest.outputs.publish == 'true'
+        working-directory: gh-pages
+        env:
+          HTML: ${{ github.workspace }}/${{ inputs.working-directory }}/generated/${{ steps.document.outputs.name }}.html
+          VERSION: ${{ steps.document.outputs.version }}
+        run: |
+          git config --global --add safe.directory "$PWD"
+          cp "$HTML" index.html
+          # Files served as they are, without Jekyll processing
+          touch .nojekyll
+          git add index.html .nojekyll
+          if git diff --cached --quiet; then
+            echo "::notice::GitHub Pages already up to date with $VERSION"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "docs: publish the functional documentation $VERSION"
+          git push origin gh-pages

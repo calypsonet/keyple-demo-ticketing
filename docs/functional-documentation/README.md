@@ -20,6 +20,10 @@ to the release, named after the document reference followed by the version:
 - `261022-FD-KeypleDemoTicketing_vYY.MM.DD.html`, standalone (fonts, images, and diagrams embedded; only the icons are
   loaded from the Font Awesome CDN)
 
+The HTML of the latest release is also published online, at https://calypsonet.github.io/keyple-demo-ticketing/: the
+CI copies it as `index.html` to the `gh-pages` branch, served by GitHub Pages. An older release run again does not
+replace the documentation of the latest release.
+
 As the applications of the demo, the version of the document is the release tag (YY.MM.DD), its date being the date
 of this tag; outside the releases, the version is `99.99.99` and the date is the build date. The document reference
 (`261022-FD-KeypleDemoTicketing`, from the date of its first publication) is fixed: it identifies the document,

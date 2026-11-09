@@ -37,7 +37,8 @@ transportation ticketing workflow:
 
 The use cases and business rules are described for a functional audience (project managers, functional architects)
 in the [Functional Documentation](docs/functional-documentation/index.adoc), also attached as PDF and HTML files
-to each [release](https://github.com/calypsonet/keyple-demo-ticketing/releases). Its annexes are a technical
+to each [release](https://github.com/calypsonet/keyple-demo-ticketing/releases), and published
+[online](https://calypsonet.github.io/keyple-demo-ticketing/) for the latest release. Its annexes are a technical
 reference for the developers: the [data model of the card](docs/functional-documentation/index.adoc#card-data-model),
 and the [procedures executed on the card](docs/functional-documentation/index.adoc#card-procedures), step by step.
 

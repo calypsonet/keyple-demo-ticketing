@@ -48,14 +48,9 @@ jobs:
           cd ..
           ./gradlew build
 
-      - name: Collect ${{ inputs.component-name }} artifacts
-        working-directory: ${{ inputs.working-directory }}
-        run: |
-          mkdir -p release-artifacts
-          cp build/*-full.jar release-artifacts/ || true
-
       - name: Upload ${{ inputs.component-name }} artifacts to GitHub release
         uses: softprops/action-gh-release@v3
         with:
-          files: ${{ inputs.working-directory }}/release-artifacts/*
+          files: ${{ inputs.working-directory }}/build/*-full.jar
+          fail_on_unmatched_files: true
           token: ${{ secrets.GITHUB_TOKEN }}

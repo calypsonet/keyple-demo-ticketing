@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Added
+- Functional documentation published online at each release (https://calypsonet.github.io/keyple-demo-ticketing/), by
+  the CI from the HTML of the latest release, instead of by hand.
 ### Fixed
 - Documentation: the plugins of the Bluebird and Arrive terminals are open source, built with the library of the
   terminal manufacturer; only the storage card libraries are on request, for CNA members.
