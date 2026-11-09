@@ -7,6 +7,10 @@ on:
         description: 'Name of the component being built'
         required: true
         type: string
+      working-directory:
+        description: 'Working directory for the build'
+        required: true
+        type: string
 
 jobs:
   ci-dotnet:
@@ -21,7 +25,7 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Check code format, build and test ${{ inputs.component-name }}
-        working-directory: ./src/sales/client/pc-dotnet
+        working-directory: ${{ inputs.working-directory }}
         run: |
           dotnet restore
           dotnet format --verify-no-changes App.sln
