@@ -21,9 +21,9 @@ This library defines the common elements used across the Keyple Demo ecosystem:
 
 ## Used by
 
-- [Keyple Demo — Sales](../sales)
-- [Keyple Demo — Validation](../validation)
-- [Keyple Demo — Inspection](../inspection)
+- [Keyple Sales Demo](../sales)
+- [Keyple Validation Demo](../validation)
+- [Keyple Inspection Demo](../inspection)
 
 ## Installation
 

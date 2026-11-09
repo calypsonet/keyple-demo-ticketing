@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Keyple Demo — Sales</string>
+    <string name="app_name">Keyple Sales Demo</string>
     <string name="eclipse_foundation">Eclipse Foundation</string>
 
     <string name="splash_title">Open Source API for Smart Ticketing</string>

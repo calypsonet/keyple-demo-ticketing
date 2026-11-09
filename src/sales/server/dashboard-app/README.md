@@ -1,6 +1,6 @@
-# Keyple Demo — Sales Dashboard
+# Keyple Sales Demo — server dashboard
 
-React application monitoring the Keyple Demo — Sales Server, built with [Vite](https://vite.dev/).
+React application monitoring the Keyple Sales Demo server, built with [Vite](https://vite.dev/).
 
 ## Prerequisites
 
@@ -18,7 +18,7 @@ In the project directory, you can run:
 
 Runs the app in development mode at [http://localhost:3000](http://localhost:3000), with hot reload.
 
-Be aware that the application relies on the Keyple Demo — Sales Server API: the API calls (`/transactions`, `/card`) are
+Be aware that the application relies on the Keyple Sales Demo server API: the API calls (`/transactions`, `/card`) are
 forwarded to the server at http://localhost:8080 (see `vite.config.js`), which must be running.
 
 ### `npm run build`

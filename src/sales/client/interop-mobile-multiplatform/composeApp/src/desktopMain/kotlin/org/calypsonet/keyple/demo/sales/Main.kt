@@ -54,7 +54,7 @@ fun main(args: Array<String>) = application {
 
   Window(
       // icon = TODO
-      title = "Keyple Demo — Sales (Interop)",
+      title = "Keyple Sales Demo (Interop)",
       state = windowState,
       onCloseRequest = ::exitApplication) {
         App(

@@ -1,4 +1,4 @@
-# Keyple Demo — Sales (.NET): desktop client
+# Keyple Sales Demo — .NET desktop client
 
 [![.NET](https://img.shields.io/badge/.NET-10.0-purple.svg)](https://dotnet.microsoft.com/)
 [![Release](https://img.shields.io/github/v/release/calypsonet/keyple-demo-ticketing)](https://github.com/calypsonet/keyple-demo-ticketing/releases)
@@ -37,7 +37,7 @@ demonstrates the minimal integration approach while maintaining full functionali
 - **Network connectivity** to Keyple demo server
 
 ### Server requirements
-- Running [Keyple Demo — Sales Server](../../server/README.md) with SAM integration
+- Running [Keyple Sales Demo server](../../server/README.md) with SAM integration
 - Accessible network endpoint (default: `http://localhost:8080`)
 
 ## Installation

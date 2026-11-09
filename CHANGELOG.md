@@ -4,13 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Changed
+- Application names "Keyple Sales Demo", "Keyple Sales Demo (Interop)", "Keyple Sales Demo (.NET)", "Keyple Validation
+  Demo", and "Keyple Inspection Demo", instead of "Keyple Demo — …", to be told apart when shortened in the launchers;
+  same names in the documentation and the Sales dashboard ("Keyple Sales Demo Dashboard").
 ### Fixed
 - Documentation: the plugins of the Bluebird and Arrive terminals are open source, built with the library of the
   terminal manufacturer; only the storage card libraries are on request, for CNA members.
 - Icons of the Validation and Inspection applications: actual images instead of Git LFS pointers, Git LFS being no
   longer used by the repository.
-- Same application names everywhere ("Keyple Demo — Sales", "Keyple Demo — Validation", "Keyple Demo — Inspection"):
-  titles of the documentation, and name of the Sales dashboard when installed as a web application.
 
 ## [26.10.22]
 ### Breaking changes
