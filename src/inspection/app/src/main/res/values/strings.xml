@@ -32,7 +32,8 @@
     <!-- Terminal selection screen -->
     <string name="terminal_title">Select the terminal</string>
     <string name="terminal_bluebird">BLUEBIRD</string>
-    <string name="terminal_famoco">FAMOCO</string>
+    <string name="terminal_famoco">FAMOCO (SE COM)</string>
+    <string name="terminal_famoco_omapi">FAMOCO (OMAPI)</string>
     <string name="terminal_nfc">NFC TERMINAL</string>
 
     <!-- Home screen -->

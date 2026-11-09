@@ -59,9 +59,14 @@ class TerminalSelectionActivity : BaseActivity() {
       }
     }
 
-    // Famoco
+    // Famoco: SAM accessed with the Famoco SE Communication plugin or with the OMAPI plugin
     activityTerminalSelectionBinding.famocoBtn.setOnClickListener {
       appSettings.terminalType = TerminalType.FAMOCO
+      startActivity(Intent(this, SettingsActivity::class.java))
+      finish()
+    }
+    activityTerminalSelectionBinding.famocoOmapiBtn.setOnClickListener {
+      appSettings.terminalType = TerminalType.FAMOCO_OMAPI
       startActivity(Intent(this, SettingsActivity::class.java))
       finish()
     }

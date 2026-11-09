@@ -79,6 +79,7 @@ dependencies {
   implementation(libs.keypleCardCalypsoCryptoLegacysamLib)
   implementation(libs.keypleCardCalypsoCryptoPkiLib)
   implementation(libs.keyplePluginAndroidNfcLib)
+  implementation(libs.keyplePluginAndroidOmapiLib)
 
   // Other Keyple plugins
   implementation(libs.keyplePluginCnaFamocoSeCommunicationLib) {
