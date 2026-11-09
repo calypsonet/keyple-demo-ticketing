@@ -11,7 +11,7 @@
   -->
 
 <resources>
-    <string name="app_name">Keyple Inspection</string>
+    <string name="app_name">Keyple Demo — Inspection</string>
 
 
     <string name="error_title">Error</string>

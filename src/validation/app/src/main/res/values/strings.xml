@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Keyple Validation</string>
+    <string name="app_name">Keyple Demo — Validation</string>
 
 
     <string name="card_type">%1$s</string>
