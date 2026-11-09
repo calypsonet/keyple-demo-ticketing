@@ -19,7 +19,7 @@ export default function Header(props) {
   return (
     <React.Fragment>
       <AlertDialog show={isServerReady && !isSamAvailable} title="SAM resource is not available" text="Please ensure that the SAM is inserted into the SAM reader."/>
-      <AlertDialog show={!isServerReady} title="Cannot reach the Keyple Sales Demo Server" text="Keyple Distributed server is not reachable. Please ensure that the server process is running. Restart it if needed."/>
+      <AlertDialog show={!isServerReady} title="Cannot reach the Keyple Demo — Sales Server" text="Keyple Distributed server is not reachable. Please ensure that the server process is running. Restart it if needed."/>
       <AppBar color="primary" position="sticky" elevation={0}>
         <Toolbar>
           <Grid container spacing={1} sx={{ alignItems: 'center', flex: 1 }}>

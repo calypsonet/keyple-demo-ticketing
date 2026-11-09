@@ -1,4 +1,4 @@
-# Keyple Sales Demo — Kotlin Multiplatform client
+# Keyple Demo — Sales (Interop): Kotlin Multiplatform client
 
 [![Kotlin](https://img.shields.io/badge/kotlin-2.3-blue.svg)](https://kotlinlang.org/)
 [![KMP](https://img.shields.io/badge/multiplatform-android%20%7C%20ios%20%7C%20desktop-green.svg)](https://kotlinlang.org/multiplatform/)
@@ -57,7 +57,7 @@ cross-platform development practices for contactless card applications.
   - **Linux**: `pcscd` daemon and `libpcsclite-dev`
 
 ### Server requirements
-- Running [Keyple Sales Demo server](../../server/README.md) with SAM integration
+- Running [Keyple Demo — Sales Server](../../server/README.md) with SAM integration
 - Network connectivity from all target platforms
 
 ## Installation
