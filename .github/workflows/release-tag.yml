@@ -109,3 +109,4 @@ jobs:
       component-name: "Functional documentation"
       working-directory: "./docs/functional-documentation/"
       document: "index.adoc"
+      publish-to-pages: true

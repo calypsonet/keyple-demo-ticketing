@@ -15,10 +15,18 @@ on:
         description: 'AsciiDoc document to build, relative to the working directory'
         required: true
         type: string
+      publish-to-pages:
+        description: 'Publish the standalone HTML as the home page of GitHub Pages (gh-pages branch), for the latest release only'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   release-asciidoc:
     runs-on: ubuntu-latest
+    outputs:
+      name: ${{ steps.document.outputs.name }}
+      version: ${{ steps.document.outputs.version }}
 
     # Same toolchain as the CNA specifications (calypsonet-actions): Asciidoctor, Asciidoctor PDF, and Asciidoctor
     # Diagram (PlantUML)
@@ -50,6 +58,7 @@ jobs:
           fi
           name="${doc_ref}_v${version}"
           echo "name=$name" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
           for converter in asciidoctor asciidoctor-pdf; do
             "$converter" -r asciidoctor-diagram -a revnumber="$version" -a revdate="$release_date" \
               -D generated "${{ inputs.document }}"
@@ -66,3 +75,66 @@ jobs:
             ${{ inputs.working-directory }}/generated/${{ steps.document.outputs.name }}.pdf
             ${{ inputs.working-directory }}/generated/${{ steps.document.outputs.name }}.html
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Keep the HTML of ${{ inputs.component-name }} for GitHub Pages
+        if: inputs.publish-to-pages
+        uses: actions/upload-artifact@v7
+        with:
+          name: github-pages-html
+          path: ${{ inputs.working-directory }}/generated/${{ steps.document.outputs.name }}.html
+          if-no-files-found: error
+
+  publish-pages:
+    needs: release-asciidoc
+    if: inputs.publish-to-pages
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check that ${{ needs.release-asciidoc.outputs.version }} is the latest release
+        id: latest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ needs.release-asciidoc.outputs.version }}
+        run: |
+          # An older release run again must not replace the documentation of the latest release
+          latest=$(gh api "repos/${{ github.repository }}/releases/latest" --jq .tag_name)
+          if [ "$VERSION" = "$latest" ]; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::GitHub Pages not updated: $VERSION is not the latest release ($latest)"
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check out the gh-pages branch
+        if: steps.latest.outputs.publish == 'true'
+        uses: actions/checkout@v5
+        with:
+          ref: gh-pages
+
+      - name: Download the HTML of ${{ inputs.component-name }}
+        if: steps.latest.outputs.publish == 'true'
+        uses: actions/download-artifact@v8
+        with:
+          name: github-pages-html
+          path: ${{ runner.temp }}/github-pages
+
+      - name: Publish ${{ inputs.component-name }} ${{ needs.release-asciidoc.outputs.version }} to GitHub Pages
+        if: steps.latest.outputs.publish == 'true'
+        env:
+          NAME: ${{ needs.release-asciidoc.outputs.name }}
+          VERSION: ${{ needs.release-asciidoc.outputs.version }}
+        run: |
+          cp "$RUNNER_TEMP/github-pages/$NAME.html" index.html
+          # Files served as they are, without Jekyll processing
+          touch .nojekyll
+          git add index.html .nojekyll
+          if git diff --cached --quiet; then
+            echo "::notice::GitHub Pages already up to date with $VERSION"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "docs: publish the functional documentation $VERSION"
+          git push origin gh-pages
