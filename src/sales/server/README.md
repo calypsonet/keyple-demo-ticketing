@@ -1,10 +1,10 @@
-# Keyple Sales Demo — Java server
+# Keyple Demo — Sales Server
 
 [![Java](https://img.shields.io/badge/java-17%2B-orange.svg)](https://openjdk.org/)
 [![Quarkus](https://img.shields.io/badge/quarkus-3.40-blue.svg)](https://quarkus.io/)
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../../LICENSE)
 
-The server component of the Keyple Sales Demo, providing distributed ticketing services with web-based monitoring and
+The server component of the Keyple Demo — Sales, providing distributed ticketing services with web-based monitoring and
 SAM integration for secure Calypso card operations.
 
 [⬅️ Back to Main Project](../../../README.md)

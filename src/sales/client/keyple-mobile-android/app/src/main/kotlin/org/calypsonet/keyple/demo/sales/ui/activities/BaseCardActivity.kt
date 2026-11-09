@@ -46,10 +46,16 @@ abstract class BaseCardActivity :
 
   override fun onResume() {
     super.onResume()
+    val release = pendingRelease
+    if (release == null || release.isCompleted) {
+      initReaders()
+      return
+    }
+    // The reader released by the previous screen, in background, is initialized again once
+    // released. The lifecycle state is checked after the release only: during onResume, the
+    // state is still STARTED.
     lifecycleScope.launch {
-      // The reader released by the previous screen, in background, is initialized again once
-      // released (immediately, unless the release is still in progress)
-      pendingRelease?.join()
+      release.join()
       if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
         initReaders()
       }

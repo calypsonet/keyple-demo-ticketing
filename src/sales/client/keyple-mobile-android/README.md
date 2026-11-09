@@ -1,10 +1,10 @@
-# Keyple Sales Demo — Android client
+# Keyple Demo — Sales: Android client
 
 [![Android](https://img.shields.io/badge/android-8.0%2B-green.svg)](https://developer.android.com/)
 [![Release](https://img.shields.io/github/v/release/calypsonet/keyple-demo-ticketing)](https://github.com/calypsonet/keyple-demo-ticketing/releases)
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../../../LICENSE)
 
-Native Android client for the Keyple Sales Demo, enabling secure contract loading onto Calypso and storage cards
+Native Android client for the Keyple Demo — Sales, enabling secure contract loading onto Calypso and storage cards
 through a distributed architecture with remote server management.
 
 [⬅️ Back to Main Project](../../../../README.md)
@@ -31,7 +31,7 @@ for later validation and inspection.
   the storage card libraries (see [Plugin integration](#plugin-integration))
 
 ### Server requirements
-- Running [Keyple Sales Demo server](../../server/README.md) with SAM integration
+- Running [Keyple Demo — Sales Server](../../server/README.md) with SAM integration
 - Network connectivity between client and server
 - Proper firewall configuration for server access
 
