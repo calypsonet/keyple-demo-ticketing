@@ -113,7 +113,6 @@ jobs:
     uses: ./.github/workflows/reusable-dotnet-ci.yml
     with:
       component-name: "Sales Client PC .NET"
-      working-directory: "./src/sales/client/pc-dotnet/"
 
   # ========================================
   # DOCUMENTATION

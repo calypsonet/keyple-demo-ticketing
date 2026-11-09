@@ -7,10 +7,6 @@ on:
         description: 'Name of the component being built'
         required: true
         type: string
-      working-directory:
-        description: 'Working directory for the build'
-        required: true
-        type: string
 
 jobs:
   ci-dotnet:

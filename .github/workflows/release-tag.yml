@@ -62,7 +62,6 @@ jobs:
     with:
       component-name: "Sales Client Interop Mobile Multiplatform"
       target-os: "macos-latest"
-      platform-name: "macOS"
       working-directory: "./src/sales/client/interop-mobile-multiplatform/"
       platform-artifact-pattern: "composeApp/build/compose/binaries/main/dmg/*.dmg"
 
@@ -72,7 +71,6 @@ jobs:
     with:
       component-name: "Sales Client Interop Mobile Multiplatform"
       target-os: "ubuntu-latest"
-      platform-name: "Linux"
       working-directory: "./src/sales/client/interop-mobile-multiplatform/"
       platform-artifact-pattern: "composeApp/build/compose/binaries/main/deb/*.deb"
 
@@ -82,7 +80,6 @@ jobs:
     with:
       component-name: "Sales Client Interop Mobile Multiplatform"
       target-os: "windows-latest"
-      platform-name: "Windows"
       working-directory: "./src/sales/client/interop-mobile-multiplatform/"
       platform-artifact-pattern: "composeApp/build/compose/binaries/main/msi/*.msi"
 

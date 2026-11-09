@@ -40,14 +40,9 @@ jobs:
         working-directory: ${{ inputs.working-directory }}
         run: ./gradlew spotlessCheck testDebugUnitTest assembleDebug
 
-      - name: Collect ${{ inputs.component-name }} artifacts
-        working-directory: ${{ inputs.working-directory }}
-        run: |
-          mkdir -p release-artifacts
-          cp ${{ inputs.apk-output-path }} release-artifacts/ || true
-
       - name: Upload ${{ inputs.component-name }} artifacts to GitHub release
         uses: softprops/action-gh-release@v3
         with:
-          files: ${{ inputs.working-directory }}/release-artifacts/*
+          files: ${{ inputs.working-directory }}/${{ inputs.apk-output-path }}
+          fail_on_unmatched_files: true
           token: ${{ secrets.GITHUB_TOKEN }}
