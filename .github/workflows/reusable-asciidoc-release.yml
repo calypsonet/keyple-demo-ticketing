@@ -24,9 +24,8 @@ on:
 jobs:
   release-asciidoc:
     runs-on: ubuntu-latest
-    outputs:
-      name: ${{ steps.document.outputs.name }}
-      version: ${{ steps.document.outputs.version }}
+    permissions:
+      contents: write
 
     # Same toolchain as the CNA specifications (calypsonet-actions): Asciidoctor, Asciidoctor PDF, and Asciidoctor
     # Diagram (PlantUML)
@@ -76,30 +75,18 @@ jobs:
             ${{ inputs.working-directory }}/generated/${{ steps.document.outputs.name }}.html
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Keep the HTML of ${{ inputs.component-name }} for GitHub Pages
+      - name: Check that ${{ steps.document.outputs.version }} is the latest release
         if: inputs.publish-to-pages
-        uses: actions/upload-artifact@v7
-        with:
-          name: github-pages-html
-          path: ${{ inputs.working-directory }}/generated/${{ steps.document.outputs.name }}.html
-          if-no-files-found: error
-
-  publish-pages:
-    needs: release-asciidoc
-    if: inputs.publish-to-pages
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    steps:
-      - name: Check that ${{ needs.release-asciidoc.outputs.version }} is the latest release
         id: latest
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VERSION: ${{ needs.release-asciidoc.outputs.version }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.document.outputs.version }}
         run: |
-          # An older release run again must not replace the documentation of the latest release
-          latest=$(gh api "repos/${{ github.repository }}/releases/latest" --jq .tag_name)
+          # An older release run again must not replace the documentation of the latest release. No gh CLI nor jq in
+          # the container: the GitHub API is called with curl, and its JSON read with Ruby
+          latest=$(curl -fsSL -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" \
+            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/latest" \
+            | ruby -rjson -e 'puts JSON.parse(STDIN.read).fetch("tag_name")')
           if [ "$VERSION" = "$latest" ]; then
             echo "publish=true" >> "$GITHUB_OUTPUT"
           else
@@ -112,21 +99,17 @@ jobs:
         uses: actions/checkout@v5
         with:
           ref: gh-pages
+          path: gh-pages
 
-      - name: Download the HTML of ${{ inputs.component-name }}
+      - name: Publish ${{ inputs.component-name }} ${{ steps.document.outputs.version }} to GitHub Pages
         if: steps.latest.outputs.publish == 'true'
-        uses: actions/download-artifact@v8
-        with:
-          name: github-pages-html
-          path: ${{ runner.temp }}/github-pages
-
-      - name: Publish ${{ inputs.component-name }} ${{ needs.release-asciidoc.outputs.version }} to GitHub Pages
-        if: steps.latest.outputs.publish == 'true'
+        working-directory: gh-pages
         env:
-          NAME: ${{ needs.release-asciidoc.outputs.name }}
-          VERSION: ${{ needs.release-asciidoc.outputs.version }}
+          HTML: ${{ github.workspace }}/${{ inputs.working-directory }}/generated/${{ steps.document.outputs.name }}.html
+          VERSION: ${{ steps.document.outputs.version }}
         run: |
-          cp "$RUNNER_TEMP/github-pages/$NAME.html" index.html
+          git config --global --add safe.directory "$PWD"
+          cp "$HTML" index.html
           # Files served as they are, without Jekyll processing
           touch .nojekyll
           git add index.html .nojekyll
