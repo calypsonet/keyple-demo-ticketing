@@ -15,11 +15,6 @@ on:
         description: 'AsciiDoc document to build, relative to the working directory'
         required: true
         type: string
-      publish-to-pages:
-        description: 'Publish the standalone HTML as the home page of GitHub Pages (gh-pages branch), for the latest release only'
-        required: false
-        type: boolean
-        default: false
 
 jobs:
   release-asciidoc:
@@ -76,7 +71,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check that ${{ steps.document.outputs.version }} is the latest release
-        if: inputs.publish-to-pages
         id: latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
