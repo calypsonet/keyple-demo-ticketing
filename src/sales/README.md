@@ -1,4 +1,4 @@
-# Keyple Sales Demo
+# Keyple Demo — Sales
 
 [![License](https://img.shields.io/badge/license-BSD_3_Clause-blue.svg)](../../LICENSE)
 

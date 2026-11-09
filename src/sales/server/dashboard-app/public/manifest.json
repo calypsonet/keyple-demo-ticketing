@@ -1,6 +1,6 @@
 {
-  "short_name": "Dashboard App",
-  "name": "Dashboard  Sample",
+  "short_name": "Sales Dashboard",
+  "name": "Keyple Demo — Sales Dashboard",
   "icons": [
     {
       "src": "favicon.ico",
