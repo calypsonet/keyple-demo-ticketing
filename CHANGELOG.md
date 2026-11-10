@@ -14,6 +14,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   longer used by the repository.
 - Same application names everywhere ("Keyple Demo — Sales", "Keyple Demo — Validation", "Keyple Demo — Inspection"):
   titles of the documentation, and name of the Sales dashboard when installed as a web application.
+### Upgraded
+- `keyple-java-bom`: `2026.10.14` -> `2026.11.10` (`keyple-card-calypso-java-lib` `3.3.1` and
+  `keyple-plugin-android-omapi-java-lib` `2.1.2`, the snapshot of this plugin being no longer needed).
 
 ## [26.10.22]
 ### Breaking changes
