@@ -455,7 +455,7 @@ The applications have been tested on the following Android terminals:
 |===
 | Terminal | Description | Sales | Validation | Inspection
 
-| Famoco FX205
+| Famoco FX205, FX207
 | Rugged mobile terminal, NFC and SAM reader
 | icon:check[role=green]
 | icon:check[role=green]
@@ -498,7 +498,7 @@ With the storage card libraries of CNA (see <<storage-cards>>), the storage card
 | icon:check[role=green]
 | icon:check[role=green]
 
-| Validation and inspection: Famoco FX205
+| Validation and inspection: Famoco FX205, FX207
 | icon:check[role=green]
 | icon:times[role=red]
 | icon:check[role=green]

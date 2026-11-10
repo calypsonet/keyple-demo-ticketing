@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Functional documentation published online at each release (https://calypsonet.github.io/keyple-demo-ticketing/), by
   the CI from the HTML of the latest release, instead of by hand.
+- Validation and Inspection applications: Famoco FX207 terminal, its SAM being accessed with the Android OMAPI plugin.
 ### Fixed
 - Documentation: the plugins of the Bluebird and Arrive terminals are open source, built with the library of the
   terminal manufacturer; only the storage card libraries are on request, for CNA members.
@@ -16,7 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   titles of the documentation, and name of the Sales dashboard when installed as a web application.
 ### Upgraded
 - `keyple-java-bom`: `2026.10.14` -> `2026.11.10` (`keyple-card-calypso-java-lib` `3.3.1` and
-  `keyple-plugin-android-omapi-java-lib` `2.1.2`, the snapshot of this plugin being no longer needed).
+  `keyple-plugin-android-omapi-java-lib` `2.1.2`).
 
 ## [26.10.22]
 ### Breaking changes

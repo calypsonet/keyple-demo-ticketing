@@ -55,7 +55,8 @@ cd keyple-demo-ticketing/src/validation
 ### Terminal selection
 1. Launch application
 2. Select the terminal type from **Terminal selection** screen:
-  - **Famoco**: terminal with a SAM reader
+  - **Famoco (SE COM)**: Famoco FX205, SAM accessed with the Famoco plugin
+  - **Famoco (OMAPI)**: Famoco FX207, SAM accessed with the Android OMAPI plugin
   - **Arrive**, **Bluebird**: plugins built with the library of the manufacturer (grayed out by default, see
     [Proprietary components](#proprietary-components))
 
@@ -160,6 +161,12 @@ The comments of these classes reference the step numbers of the annex.
 - **Plugins**: [Android NFC](https://keyple.org/components/standard-reader-plugins/keyple-plugin-android-nfc-lib/)
   for the contactless cards (Calypso cards, and storage cards with the storage card libraries), and
   [Famoco Plugin](https://github.com/calypsonet/keyple-famoco) for the SAM
+
+**Famoco FX207**
+- **Readers**: NFC reader and SAM reader
+- **Plugins**: [Android NFC](https://keyple.org/components/standard-reader-plugins/keyple-plugin-android-nfc-lib/)
+  for the contactless cards (Calypso cards, and storage cards with the storage card libraries), and
+  [Android OMAPI](https://keyple.org/components/standard-reader-plugins/keyple-plugin-android-omapi-lib/) for the SAM
 
 #### Terminals with a manufacturer library
 
