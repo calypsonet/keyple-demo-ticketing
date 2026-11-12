@@ -33,11 +33,13 @@ import org.calypsonet.keyple.demo.sales.ui.load.LoadContractScreenViewModel
 import org.calypsonet.keyple.demo.sales.ui.nav.CardContent
 import org.calypsonet.keyple.demo.sales.ui.nav.Home
 import org.calypsonet.keyple.demo.sales.ui.nav.LoadContract
+import org.calypsonet.keyple.demo.sales.ui.nav.PaymentConfirmed
 import org.calypsonet.keyple.demo.sales.ui.nav.PersonalizeCard
 import org.calypsonet.keyple.demo.sales.ui.nav.ReadCard
 import org.calypsonet.keyple.demo.sales.ui.nav.ServerSettings
 import org.calypsonet.keyple.demo.sales.ui.nav.Splash
 import org.calypsonet.keyple.demo.sales.ui.nav.Success
+import org.calypsonet.keyple.demo.sales.ui.payment.PaymentConfirmedScreen
 import org.calypsonet.keyple.demo.sales.ui.personalize.PersonalizeCardScreen
 import org.calypsonet.keyple.demo.sales.ui.personalize.PersonalizeCardScreenViewModel
 import org.calypsonet.keyple.demo.sales.ui.read.ReadCardScreen
@@ -90,6 +92,25 @@ fun App(
                       buzzer = buzzer)
                 },
             appState = appState.value)
+      }
+
+      composable<PaymentConfirmed> { backStackEntry ->
+        val route = backStackEntry.toRoute<PaymentConfirmed>()
+
+        // As in the Android client, the confirmation is replaced by the loading: the back arrow of
+        // the loading does not return to it
+        PaymentConfirmedScreen(
+            navController = navController,
+            appState = appState.value,
+            onLoadTicket = {
+              navController.navigate(
+                  LoadContract(
+                      productType = route.productType,
+                      quantity = route.quantity,
+                      cardSerialNumber = route.cardSerialNumber)) {
+                    popUpTo<PaymentConfirmed> { inclusive = true }
+                  }
+            })
       }
 
       composable<LoadContract> { backStackEntry ->

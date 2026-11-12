@@ -59,7 +59,7 @@ import org.calypsonet.keyple.demo.sales.ui.components.MainButton
 import org.calypsonet.keyple.demo.sales.ui.model.Product
 import org.calypsonet.keyple.demo.sales.ui.model.ProductType
 import org.calypsonet.keyple.demo.sales.ui.nav.Home
-import org.calypsonet.keyple.demo.sales.ui.nav.LoadContract
+import org.calypsonet.keyple.demo.sales.ui.nav.PaymentConfirmed
 import org.calypsonet.keyple.demo.sales.ui.theme.AppTextStyles
 import org.calypsonet.keyple.demo.sales.ui.theme.LocalAppDimens
 import org.calypsonet.keyple.demo.sales.ui.theme.blue
@@ -150,9 +150,11 @@ fun CardContentScreen(
           ScreenTitle(current.screenTitle)
           Basket(
               product = current.selectedProduct!!,
+              // As in the Android client, the payment is confirmed before the loading
               onPay = {
                 navController.navigate(
-                    LoadContract(product = it, cardSerialNumber = viewModel.getCardSerialNumber()))
+                    PaymentConfirmed(
+                        product = it, cardSerialNumber = viewModel.getCardSerialNumber()))
               },
               modifier = Modifier.weight(1f))
         }

@@ -125,7 +125,7 @@ The application configuration is managed through:
 
 #### Contract loading
 1. **Choose contract type** from available options
-2. **Complete payment simulation**
+2. **Complete payment simulation**, then **Load ticket** on the payment confirmation
 3. **Present card again** when prompted
 4. **Receive confirmation** of successful loading: the card reading is then displayed again, for the next ticket
    (back arrow: home screen)
@@ -221,6 +221,7 @@ Multiplatform and Android application plugins in the same module.
 **Screens** (`ui`):
 - `ReadCardScreen`: Screen for reading card content
 - `CardContentScreen`: Contracts of the card and products proposed for sale
+- `PaymentConfirmedScreen`: Confirmation of the payment, before the loading
 - `LoadContractScreen`: Screen for loading contracts
 - `PersonalizeCardScreen`: Screen for card personalization
 - `ServerSettingsScreen`: Server settings UI
