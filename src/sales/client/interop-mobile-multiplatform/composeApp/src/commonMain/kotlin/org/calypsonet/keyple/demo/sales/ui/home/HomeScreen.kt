@@ -116,6 +116,9 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier, appS
 
           Spacer(modifier = Modifier.weight(1f))
 
+          // Hint distinguishing this client from the native Android client of the demo
+          Text(text = "Interop client", color = darkBlue)
+
           Text(text = "version $APP_VERSION", color = darkBlue)
 
           Image(

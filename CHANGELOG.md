@@ -11,12 +11,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Sales clients: home screen with two buttons, "Load tickets" and "Personalize a card" (instead of a single
   "Contactless card" button, the personalization being in the settings menu), and the version of the application; the
-  settings icon opens the server settings directly.
+  settings icon opens the server settings directly. The multiplatform client also displays "Interop client", to
+  distinguish it from the native Android client.
 - Multiplatform sales client: default server `http://192.168.0.1:8080`, as the Android client.
 - Multiplatform sales client: after a loading, return to the card reading for the next ticket (instead of the home
   screen), as the Android client.
-- Sales clients: warning "All the tickets of the card will be erased." on the screen waiting for the card to
-  personalize.
+- Sales clients: "Warning: all the content of the card will be reset." on the screen waiting for the card to
+  personalize (and, on iOS, in the NFC dialog).
 - Multiplatform sales client: same messages as the Android client, the instructions and the progress messages being
   specific to each operation (reading, loading, personalization, also in the NFC dialog of iOS), and the errors being
   "Server error" and "An error occurred" (instead of "Communication error" and "Unexpected error"); the server

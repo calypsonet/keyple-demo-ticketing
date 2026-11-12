@@ -78,7 +78,7 @@ terminals.
 
 2. **Card personalization** (if needed)
   - From the home screen, tap **Personalize a card**
-  - Present the card to personalize (the screen warns that all the tickets of the card will be erased)
+  - Present the card to personalize (the screen warns that all the content of the card will be reset)
   - Wait for confirmation message
 
 3. **Read card content**

@@ -114,7 +114,7 @@ The application configuration is managed through:
 
 #### Card personalization
 1. **Home screen** → **Personalize a card**
-2. **Present card** to device NFC reader (the screen warns that all the tickets of the card will be erased)
+2. **Present card** to device NFC reader (the screen warns that all the content of the card will be reset)
 3. **Wait for confirmation** of successful personalization
 
 #### Reading card content
@@ -159,6 +159,7 @@ The application uses Compose Multiplatform for consistent UI across all platform
 │  ┌─────────────────────────────────┐│
 │  │ Personalize a card              ││
 │  └─────────────────────────────────┘│
+│            Interop client           │
 │            version YY.MM.DD         │
 └─────────────────────────────────────┘
 ```

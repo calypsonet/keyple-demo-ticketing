@@ -271,7 +271,7 @@ The server must be reachable, with its SAM for a Calypso card.
 
 ==== Process
 
-. The user chooses the personalization in the sales client, then presents the card to the reader of the client, which warns that all the tickets of the card will be erased.
+. The user chooses the personalization in the sales client, then presents the card to the reader of the client, which warns that all the content of the card will be reset.
 . The server personalizes the card.
 . The result is displayed to the user (see <<sales-results>>).
 

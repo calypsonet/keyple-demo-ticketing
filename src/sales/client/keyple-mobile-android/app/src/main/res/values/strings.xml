@@ -62,7 +62,7 @@
 
     <!-- Personalization -->
     <string name="personalization_in_progress">Personalization in progress</string>
-    <string name="personalization_warning">All the tickets of the card will be erased.</string>
+    <string name="personalization_warning">Warning: all the content of the card will be reset.</string>
 
     <!-- Settings -->
     <string name="version">version %s</string>
