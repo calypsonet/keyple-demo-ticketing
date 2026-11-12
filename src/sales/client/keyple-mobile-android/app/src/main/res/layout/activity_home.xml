@@ -20,7 +20,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- Main operation first: loading of a ticket, then personalization of a card (reset of its data) -->
+    <!-- Main operation first: loading of tickets, then personalization of a card (reset of its data) -->
     <LinearLayout
         android:id="@+id/loadTicketBtn"
         android:layout_width="match_parent"
@@ -42,14 +42,14 @@
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
-            android:contentDescription="@string/home_load_ticket"
+            android:contentDescription="@string/home_load_tickets"
             android:src="@drawable/ic_contactlesscard"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/card_selection_top_margin"
-            android:text="@string/home_load_ticket"
+            android:text="@string/home_load_tickets"
             style="@style/bigBoldDarkBlue" />
     </LinearLayout>
 

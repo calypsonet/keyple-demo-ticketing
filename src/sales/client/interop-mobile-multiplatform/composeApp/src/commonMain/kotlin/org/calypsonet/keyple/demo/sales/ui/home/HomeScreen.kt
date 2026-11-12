@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
@@ -98,12 +99,15 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier, appS
 
           Spacer(modifier = Modifier.weight(1f))
 
-          // Main operation first: loading of a ticket, then personalization of a card (reset of its
+          // Main operation first: loading of tickets, then personalization of a card (reset of its
           // data)
           HomeCard(
               iconRes = Res.drawable.ic_contactless_card,
-              title = "Load a ticket",
+              title = "Load tickets",
               onClick = { navController.navigate(route = ReadCard) })
+
+          // Space of 24 dp between the buttons, with their vertical padding of 8 dp
+          Spacer(modifier = Modifier.height(8.dp))
 
           HomeCard(
               iconRes = Res.drawable.ic_sim_card,
@@ -136,7 +140,7 @@ internal fun HomeCard(
       elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
   ) {
     Column(
-        modifier = Modifier.padding(8.dp).padding(vertical = 48.dp),
+        modifier = Modifier.padding(8.dp).padding(vertical = 56.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
       Image(

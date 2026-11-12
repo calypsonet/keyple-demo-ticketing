@@ -37,6 +37,7 @@ import org.calypsonet.keyple.demo.sales.ui.components.AppTopBar
 import org.calypsonet.keyple.demo.sales.ui.components.AutoReturnProgress
 import org.calypsonet.keyple.demo.sales.ui.components.SUCCESS_RETURN_DELAY_MS
 import org.calypsonet.keyple.demo.sales.ui.nav.Home
+import org.calypsonet.keyple.demo.sales.ui.nav.ReadCard
 import org.calypsonet.keyple.demo.sales.ui.theme.green
 import org.calypsonet.keyple.demo.sales.ui.theme.white
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -49,11 +50,15 @@ fun SuccessScreen(
     modifier: Modifier = Modifier,
     appState: AppState,
 ) {
-  // Back to the home screen, replacing the screens of the transaction (back arrow or automatic)
-  val goHome = { navController.navigate(Home) { popUpTo(Home) { inclusive = true } } }
+  // Back to the card reading, for the loading of another ticket (as the Android client), replacing
+  // the screens of the transaction (back arrow or automatic): the back arrow of the card reading
+  // then returns to the home screen
+  val readNextCard = { navController.navigate(ReadCard) { popUpTo(Home) } }
 
   Scaffold(
-      topBar = { AppTopBar(navController = navController, appState = appState, onBack = goHome) },
+      topBar = {
+        AppTopBar(navController = navController, appState = appState, onBack = readNextCard)
+      },
       modifier = modifier,
   ) { innerPadding ->
     Box(Modifier.padding(innerPadding).fillMaxSize().background(green)) {
@@ -67,7 +72,7 @@ fun SuccessScreen(
       AutoReturnProgress(
           delayMs = SUCCESS_RETURN_DELAY_MS,
           color = white,
-          onReturn = goHome,
+          onReturn = readNextCard,
           modifier = Modifier.align(Alignment.BottomCenter))
     }
   }

@@ -118,7 +118,7 @@ The application configuration is managed through:
 3. **Wait for confirmation** of successful personalization
 
 #### Reading card content
-1. **Home screen** → **Load a ticket**
+1. **Home screen** → **Load tickets**
 2. **Hold card** against device back (near NFC antenna)
 3. **View existing contracts** and their status
 4. **Select a new ticket** to load if desired
@@ -127,7 +127,8 @@ The application configuration is managed through:
 1. **Choose contract type** from available options
 2. **Complete payment simulation**
 3. **Present card again** when prompted
-4. **Receive confirmation** of successful loading
+4. **Receive confirmation** of successful loading: the card reading is then displayed again, for the next ticket
+   (back arrow: home screen)
 
 ### Desktop platform
 
@@ -152,7 +153,7 @@ The application uses Compose Multiplatform for consistent UI across all platform
 ┌─────────────────────────────────────┐
 │ Home Screen     [settings → Server] │
 │  ┌─────────────────────────────────┐│
-│  │ Load a ticket                   ││
+│  │ Load tickets                    ││
 │  │  (read the card, then load)     ││
 │  └─────────────────────────────────┘│
 │  ┌─────────────────────────────────┐│

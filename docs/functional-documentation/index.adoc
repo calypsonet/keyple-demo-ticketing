@@ -308,7 +308,7 @@ The server must be reachable, with its SAM for a Calypso card.
 . The user selects the ticket to load.
 . The user presents the card again: it must be the card read before (checked by the Android client, or by the server for the multiplatform and .NET clients).
 . The server checks that a slot is available, then writes the new ticket and, for a multi-trip ticket, updates its counter.
-. The result is displayed to the user (see <<sales-results>>).
+. The result is displayed to the user (see <<sales-results>>); the Android and multiplatform clients then wait for the next card, to load another ticket.
 
 ==== Business rules
 

@@ -82,7 +82,7 @@ terminals.
   - Wait for confirmation message
 
 3. **Read card content**
-  - From the home screen, tap **Load a ticket**
+  - From the home screen, tap **Load tickets**
   - Present card to NFC reader
   - View existing contracts and validity status
 
@@ -90,11 +90,13 @@ terminals.
   - Select desired contract type from available options
   - Follow payment simulation workflow
   - Present card again to complete loading
+  - After the result, the card reader screen is displayed again, for the next ticket (back arrow: home screen)
 
 ### Screen flow
 
 ```
-Splash screen → Home → Card reader → Card content → Select product → Checkout → Payment confirmed → Load contract → Result
+Splash screen → Home → Card reader → Card content → Select product → Checkout → Payment confirmed → Load contract
+  → Result → Card reader (next ticket)
 ```
 
 ### Detailed screen guide
@@ -103,7 +105,7 @@ Splash screen → Home → Card reader → Card content → Select product → C
 - Displayed at startup, then opens the home screen
 
 **Home screen (`HomeActivity`)**
-- **Load a ticket**: reading of the card, then loading of a ticket
+- **Load tickets**: reading of the card, then loading of a ticket, repeated for the next tickets
 - **Personalize a card**: personalization of a card (reset of its data)
 - Settings icon: server settings (`ServerSettingsActivity`)
 - Version of the application (YY.MM.DD)

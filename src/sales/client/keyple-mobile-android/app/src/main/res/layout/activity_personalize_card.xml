@@ -115,7 +115,7 @@
         android:id="@+id/warningTxt"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/home_btn_top_margin"
+        android:layout_marginTop="@dimen/warning_top_margin"
         android:text="@string/personalization_warning"
         android:gravity="center"
         style="@style/mediumBoldOrange"

@@ -30,7 +30,7 @@
 
 
 
-    <string name="home_load_ticket">Load a ticket</string>
+    <string name="home_load_tickets">Load tickets</string>
     <string name="home_personalize_card">Personalize a card</string>
     <string name="choose_product">Choose a type of ticket</string>
     <string name="try_again">Retry</string>

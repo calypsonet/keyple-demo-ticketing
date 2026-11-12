@@ -71,8 +71,8 @@ class ServerConfigRepository(private val dataStore: DataStore<Preferences>) {
     val SERVER_ENDPOINT_KEY = stringPreferencesKey("server_endpoint")
     val SERVER_BASIC_AUTH_KEY = stringPreferencesKey("server_basic_auth")
 
-    const val DEFAULT_SERVER_HOST = "82.96.147.205"
-    const val DEFAULT_SERVER_PORT = 42080
+    const val DEFAULT_SERVER_HOST = "192.168.0.1"
+    const val DEFAULT_SERVER_PORT = 8080
     const val DEFAULT_SERVER_PROTOCOL = "http"
     const val DEFAULT_SERVER_ENDPOINT = "/card/remote-plugin"
   }
