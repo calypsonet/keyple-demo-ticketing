@@ -191,7 +191,8 @@ composeApp/src/                   # Kotlin Multiplatform library, desktop and iO
 │           └── theme/            # Theme and colors
 ├── androidMain/                  # Android-specific implementations (buzzer, data store, success animation)
 ├── iosMain/                      # iOS-specific code
-└── desktopMain/                  # Desktop-specific code
+└── desktopMain/                  # Desktop-specific code (entry point, window icon)
+composeApp/icons/                 # Icons of the desktop installers (Windows, macOS, Linux)
 androidApp/src/main/              # Android application (activity, manifest, launcher icons)
 ```
 
@@ -323,3 +324,4 @@ same features on Android, iOS, and desktop, the platform-specific code being min
 ## License
 
 This Kotlin Multiplatform client is part of the Keyple Demo project and is licensed under the BSD 3-Clause License.
+Some of its icons are derived from Material Symbols, under the Apache License 2.0 (see [NOTICE](../../../../NOTICE.md)).

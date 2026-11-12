@@ -50,6 +50,7 @@ import org.calypsonet.keyple.composeapp.generated.resources.Res
 import org.calypsonet.keyple.composeapp.generated.resources.ic_arrow_back
 import org.calypsonet.keyple.composeapp.generated.resources.ic_logo_keyple
 import org.calypsonet.keyple.demo.sales.AppState
+import org.calypsonet.keyple.demo.sales.ui.theme.darkBlue
 import org.jetbrains.compose.resources.vectorResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -82,6 +83,8 @@ fun AppTopBar(
             Icon(
                 imageVector = vectorResource(Res.drawable.ic_arrow_back),
                 contentDescription = "Back",
+                // Same color as the back arrow of the Android client
+                tint = darkBlue,
             )
           }
         }

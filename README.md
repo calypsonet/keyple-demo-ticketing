@@ -594,4 +594,5 @@ concerned, and passes the checks of the CI:
 
 ## License
 
-This project is licensed under the BSD 3-Clause License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the BSD 3-Clause License. See the [LICENSE](LICENSE) file for details. Some icons
+of the sales clients are derived from third-party content, under its own license (see [NOTICE](NOTICE.md)).

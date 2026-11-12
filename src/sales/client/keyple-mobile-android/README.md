@@ -267,4 +267,5 @@ compatibility with the API level 26, and update the server when a remote service
 
 ## License
 
-This Android application is part of the Keyple Demo project and is licensed under the BSD 3-Clause License.
+This Android application is part of the Keyple Demo project and is licensed under the BSD 3-Clause License. Some of
+its icons are derived from Material Symbols, under the Apache License 2.0 (see [NOTICE](../../../../NOTICE.md)).

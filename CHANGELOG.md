@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   distinguish it from the native Android client. Icons of the buttons derived from Material Symbols (see
   [NOTICE](NOTICE.md)): a transit ticket for the loading, and a contactless card being reset for the personalization
   (instead of a generic card and a SIM card), with the same dimensions in both clients.
+- Sales clients: same back arrow in the top bar (arrow instead of a chevron in the Android client, dark blue in both).
 - Multiplatform sales client: default server `http://192.168.0.1:8080`, as the Android client.
 - Multiplatform sales client: after a loading, return to the card reading for the next ticket (instead of the home
   screen), as the Android client.
@@ -28,6 +29,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Documentation: the plugins of the Bluebird and Arrive terminals are open source, built with the library of the
   terminal manufacturer; only the storage card libraries are on request, for CNA members.
+- Icons of the Sales applications (Android, multiplatform on Android and iOS): "Sales" instead of "Remote", the former
+  name of the demo. The desktop version of the multiplatform client gets the same icon, for its window and its
+  installers.
 - Icons of the Validation and Inspection applications: actual images instead of Git LFS pointers, Git LFS being no
   longer used by the repository.
 - Same application names everywhere ("Keyple Demo — Sales", "Keyple Demo — Validation", "Keyple Demo — Inspection"):
