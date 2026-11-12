@@ -14,16 +14,18 @@ package org.calypsonet.keyple.demo.sales.ui.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -37,7 +39,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import org.calypsonet.keyple.composeapp.generated.resources.Res
 import org.calypsonet.keyple.composeapp.generated.resources.ic_contactless_card
@@ -53,6 +58,7 @@ import org.calypsonet.keyple.demo.sales.ui.nav.ReadCard
 import org.calypsonet.keyple.demo.sales.ui.nav.ServerSettings
 import org.calypsonet.keyple.demo.sales.ui.theme.blue
 import org.calypsonet.keyple.demo.sales.ui.theme.darkBlue
+import org.calypsonet.keyple.demo.sales.ui.theme.white
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.vectorResource
 
@@ -61,7 +67,8 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier, appS
   Scaffold(
       modifier = modifier,
   ) { innerPadding ->
-    Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
+    BoxWithConstraints(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
+      val dimens = homeButtonDimens(maxWidth)
       Image(
           imageVector = vectorResource(Res.drawable.keyple_background),
           contentDescription = "Keyple app background",
@@ -103,15 +110,18 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier, appS
           // data)
           HomeCard(
               iconRes = Res.drawable.ic_contactless_card,
+              iconWidth = dimens.loadIconWidth,
               title = "Load tickets",
+              dimens = dimens,
               onClick = { navController.navigate(route = ReadCard) })
 
-          // Space of 24 dp between the buttons, with their vertical padding of 8 dp
-          Spacer(modifier = Modifier.height(8.dp))
+          Spacer(modifier = Modifier.height(dimens.gap))
 
           HomeCard(
               iconRes = Res.drawable.ic_sim_card,
+              iconWidth = dimens.personalizeIconWidth,
               title = "Personalize a card",
+              dimens = dimens,
               onClick = { navController.navigate(route = PersonalizeCard) })
 
           Spacer(modifier = Modifier.weight(1f))
@@ -131,30 +141,57 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier, appS
   }
 }
 
+/**
+ * Dimensions of the home buttons, the same as the native Android client (resources `values`,
+ * `values-sw400dp` and `values-sw600dp` of its `activity_home` layout), depending on the width of
+ * the screen.
+ */
+internal data class HomeButtonDimens(
+    val height: Dp,
+    val gap: Dp,
+    val loadIconWidth: Dp,
+    val personalizeIconWidth: Dp,
+    val textSize: TextUnit,
+)
+
+internal fun homeButtonDimens(screenWidth: Dp): HomeButtonDimens =
+    when {
+      screenWidth >= 600.dp -> HomeButtonDimens(168.dp, 32.dp, 38.dp, 28.dp, 27.sp)
+      screenWidth >= 400.dp -> HomeButtonDimens(108.dp, 32.dp, 38.dp, 28.dp, 22.sp)
+      else -> HomeButtonDimens(84.dp, 24.dp, 30.dp, 20.dp, 20.sp)
+    }
+
 @Composable
 internal fun HomeCard(
     modifier: Modifier = Modifier,
     iconRes: DrawableResource,
+    iconWidth: Dp,
     title: String,
+    dimens: HomeButtonDimens,
     onClick: () -> Unit
 ) {
   Card(
-      modifier = modifier.fillMaxWidth().padding(vertical = 8.dp).clickable { onClick() },
+      modifier = modifier.fillMaxWidth().height(dimens.height).clickable { onClick() },
+      shape = RoundedCornerShape(5.dp),
+      colors = CardDefaults.cardColors(containerColor = white),
       elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
   ) {
     Column(
-        modifier = Modifier.padding(8.dp).padding(vertical = 56.dp),
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+      // Width of the icon, its height following its aspect ratio (as in the Android client)
       Image(
           imageVector = vectorResource(iconRes),
-          modifier = Modifier.size(64.dp),
+          modifier = Modifier.width(iconWidth),
           contentDescription = "icon for card $title",
       )
       Text(
           text = title,
-          modifier = Modifier.fillMaxWidth(),
+          modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
           textAlign = TextAlign.Center,
+          fontSize = dimens.textSize,
           fontWeight = FontWeight.Bold,
           color = darkBlue)
     }

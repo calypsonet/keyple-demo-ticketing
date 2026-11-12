@@ -62,7 +62,8 @@
 
     <!-- Personalization -->
     <string name="personalization_in_progress">Personalization in progress</string>
-    <string name="personalization_warning">Warning: all the content of the card will be reset.</string>
+    <string name="personalization_warning_title">Warning</string>
+    <string name="personalization_warning">All the content of the card will be reset.</string>
 
     <!-- Settings -->
     <string name="version">version %s</string>

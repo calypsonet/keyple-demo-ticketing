@@ -16,8 +16,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Multiplatform sales client: default server `http://192.168.0.1:8080`, as the Android client.
 - Multiplatform sales client: after a loading, return to the card reading for the next ticket (instead of the home
   screen), as the Android client.
-- Sales clients: "Warning: all the content of the card will be reset." on the screen waiting for the card to
-  personalize (and, on iOS, in the NFC dialog).
+- Sales clients: warning on the screen waiting for the card to personalize, "Warning" then "All the content of the
+  card will be reset." (and, on iOS, in the NFC dialog).
 - Multiplatform sales client: same messages as the Android client, the instructions and the progress messages being
   specific to each operation (reading, loading, personalization, also in the NFC dialog of iOS), and the errors being
   "Server error" and "An error occurred" (instead of "Communication error" and "Unexpected error"); the server

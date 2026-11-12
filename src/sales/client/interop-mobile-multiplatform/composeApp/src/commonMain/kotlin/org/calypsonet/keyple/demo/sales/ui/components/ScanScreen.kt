@@ -118,13 +118,19 @@ internal fun PresentCardAnimation(message: String, warning: String? = null) {
   val progress by animateLottieCompositionAsState(composition)
 
   PlatformAnimation(message, blue, composition, progress)
-  // Warning on the consequences of the operation (personalization: the card is reset)
+  // Warning on the consequences of the operation (personalization: the card is reset), as in the
+  // Android client: "Warning" title in bold, then the message
   warning?.let {
+    Text(
+        text = "Warning",
+        color = orange,
+        fontWeight = FontWeight.Bold,
+        textAlign = TextAlign.Center,
+    )
     Text(
         text = it,
         modifier = Modifier.widthIn(max = 300.dp),
         color = orange,
-        fontWeight = FontWeight.Bold,
         textAlign = TextAlign.Center,
     )
   }

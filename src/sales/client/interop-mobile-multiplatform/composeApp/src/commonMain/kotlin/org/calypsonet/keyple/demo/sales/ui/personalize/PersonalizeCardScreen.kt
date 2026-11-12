@@ -70,7 +70,7 @@ internal fun PersonalizeCardScreen(
           PersonalizeCardScreenState.WaitForCard -> {
             PresentCardAnimation(
                 "Please present the contactless card to be personalized",
-                warning = "Warning: all the content of the card will be reset.")
+                warning = "All the content of the card will be reset.")
           }
           PersonalizeCardScreenState.WritingToCard -> {
             ScanCardAnimation("Personalization in progress")
