@@ -12,29 +12,48 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.sales.ui.settings
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.Text
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import org.calypsonet.keyple.demo.sales.AppState
 import org.calypsonet.keyple.demo.sales.ui.components.AppTopBar
+import org.calypsonet.keyple.demo.sales.ui.components.MainButton
+import org.calypsonet.keyple.demo.sales.ui.components.SecondaryButton
+import org.calypsonet.keyple.demo.sales.ui.theme.AppTextStyles
+import org.calypsonet.keyple.demo.sales.ui.theme.blue
+import org.calypsonet.keyple.demo.sales.ui.theme.darkBlue
+import org.calypsonet.keyple.demo.sales.ui.theme.lightBlue
+import org.calypsonet.keyple.demo.sales.ui.theme.lineBlue
+import org.calypsonet.keyple.demo.sales.ui.theme.red
+
+// Margins of the settings of the Android client (block_space, settings_margin and
+// settings_edit_padding)
+private val SCREEN_PADDING = 10.dp
+private val SETTINGS_MARGIN = 15.dp
+private val EDIT_PADDING = 7.dp
 
 @Composable
 fun ServerSettingsScreen(
@@ -57,8 +76,7 @@ fun ServerSettingsScreen(
       appState = appState,
       onHostChanged = viewModel::onHostChanged,
       onPortChanged = viewModel::onPortChanged,
-      onProtocolChanged = viewModel::onProtocolChanged,
-      onEndpointChanged = viewModel::onEndpointChanged)
+      onProtocolChanged = viewModel::onProtocolChanged)
 }
 
 @Composable
@@ -72,89 +90,123 @@ internal fun ServerSettingsScreen(
     onHostChanged: (String) -> Unit,
     onPortChanged: (String) -> Unit,
     onProtocolChanged: (String) -> Unit,
-    onEndpointChanged: (String) -> Unit
 ) {
   Scaffold(
       topBar = { AppTopBar(navController = navController, appState = appState) },
       modifier = modifier,
   ) { innerPadding ->
-    Column(
-        Modifier.padding(innerPadding).fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center) {
-          OutlinedTextField(
-              value = state.host,
-              onValueChange = onHostChanged,
-              singleLine = true,
-              isError = state.isLoaded && !state.isHostValid,
-              supportingText = {
-                if (state.isLoaded && !state.isHostValid) {
-                  Text("Please set a valid IP address or host name")
-                }
-              },
-              label = { Text("Server IP") })
+    Column(Modifier.padding(innerPadding).fillMaxSize()) {
+      // Settings laid out as in the Android client: label on the left, value on the right on a
+      // light blue background, line below
+      Column(Modifier.padding(horizontal = SCREEN_PADDING)) {
+        SettingsField(
+            label = "Server IP",
+            value = state.host,
+            onValueChange = onHostChanged,
+            error =
+                "Please set a valid IP address or host name"
+                    .takeIf { state.isLoaded && !state.isHostValid })
 
-          OutlinedTextField(
-              value = state.port,
-              onValueChange = onPortChanged,
-              keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-              singleLine = true,
-              isError = state.isLoaded && state.validatedPort == null,
-              supportingText = {
-                if (state.isLoaded && state.validatedPort == null) {
-                  Text("Please set a port between 1 and 65535")
-                }
-              },
-              label = { Text("Server port") })
+        SettingsField(
+            label = "Server port",
+            value = state.port,
+            onValueChange = onPortChanged,
+            keyboardType = KeyboardType.Number,
+            error =
+                "Please set a port between 1 and 65535"
+                    .takeIf { state.isLoaded && state.validatedPort == null })
 
-          OutlinedTextField(
-              value = state.protocol,
-              onValueChange = onProtocolChanged,
-              singleLine = true,
-              isError = state.isLoaded && !state.isProtocolValid,
-              supportingText = {
-                if (state.isLoaded && !state.isProtocolValid) {
-                  Text("Please set http or https")
-                }
-              },
-              label = { Text("Protocol") })
+        SettingsField(
+            label = "Protocol",
+            value = state.protocol,
+            onValueChange = onProtocolChanged,
+            error = "Please set http or https".takeIf { state.isLoaded && !state.isProtocolValid })
+      }
 
-          OutlinedTextField(
-              value = state.endpoint,
-              onValueChange = onEndpointChanged,
-              singleLine = true,
-              isError = state.isLoaded && !state.isEndpointValid,
-              supportingText = {
-                if (state.isLoaded && !state.isEndpointValid) {
-                  Text("Please set a path starting with /")
-                }
-              },
-              label = { Text("Endpoint") })
+      Spacer(modifier = Modifier.weight(1f))
 
-          Spacer(modifier = Modifier.weight(1f))
-
-          // Test of the server entered, before saving it (as the "Server state" button of the
-          // Android client)
-          Row(verticalAlignment = Alignment.CenterVertically) {
-            Button(
+      // Test of the server entered, before saving it (as the "Server state" button of the
+      // Android client)
+      Row(
+          modifier = Modifier.fillMaxWidth().padding(horizontal = SCREEN_PADDING),
+          verticalAlignment = Alignment.CenterVertically) {
+            SecondaryButton(
+                text = "Server state",
                 onClick = onTestServerReadiness,
-                enabled = state.isValid && state.serverReadiness != ServerReadiness.CHECKING) {
-                  Text("Server state")
+                enabled = state.isValid && state.serverReadiness != ServerReadiness.CHECKING)
+            Box(
+                modifier = Modifier.weight(1f).padding(start = SETTINGS_MARGIN),
+                contentAlignment = Alignment.Center) {
+                  when (state.serverReadiness) {
+                    ServerReadiness.CHECKING ->
+                        CircularProgressIndicator(modifier = Modifier.size(24.dp), color = blue)
+                    ServerReadiness.READY -> ReadinessText("Server ready")
+                    ServerReadiness.NOT_READY -> ReadinessText("Server not ready")
+                    null -> {}
+                  }
                 }
-            when (state.serverReadiness) {
-              ServerReadiness.CHECKING ->
-                  CircularProgressIndicator(modifier = Modifier.padding(start = 16.dp).size(24.dp))
-              ServerReadiness.READY -> Text("Server ready", Modifier.padding(start = 16.dp))
-              ServerReadiness.NOT_READY -> Text("Server not ready", Modifier.padding(start = 16.dp))
-              null -> {}
-            }
           }
 
-          Spacer(modifier = Modifier.height(16.dp))
+      Spacer(modifier = Modifier.weight(1f))
 
-          Button(onClick = onSaveServerSettings, enabled = state.isValid) { Text("Save") }
-
-          Spacer(modifier = Modifier.height(16.dp))
-        }
+      MainButton(text = "Save", onClick = onSaveServerSettings, enabled = state.isValid)
+    }
   }
+}
+
+/**
+ * Setting of the server, as in the Android client: label (`smallRegularDarkBlue`) and value
+ * (`smallMediumDarkBlue`, aligned on the right on a light blue background), then a line. An invalid
+ * value is explained below it.
+ */
+@Composable
+private fun SettingsField(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    error: String?,
+    keyboardType: KeyboardType = KeyboardType.Text,
+) {
+  Column(modifier = Modifier.fillMaxWidth()) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+      Text(text = label, style = AppTextStyles.smallRegular, color = darkBlue)
+      BasicTextField(
+          value = value,
+          onValueChange = onValueChange,
+          singleLine = true,
+          textStyle = AppTextStyles.smallMedium.copy(color = darkBlue, textAlign = TextAlign.End),
+          keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+          cursorBrush = SolidColor(darkBlue),
+          modifier =
+              Modifier.weight(1f)
+                  .padding(start = SETTINGS_MARGIN)
+                  .background(lightBlue)
+                  .padding(EDIT_PADDING)
+                  .semantics { contentDescription = label },
+      )
+    }
+    error?.let {
+      Text(
+          text = it,
+          modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+          style = AppTextStyles.smallerRegular,
+          color = red,
+          textAlign = TextAlign.End)
+    }
+    Box(
+        modifier =
+            Modifier.padding(vertical = SETTINGS_MARGIN)
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(lineBlue))
+  }
+}
+
+@Composable
+private fun ReadinessText(text: String) {
+  Text(
+      text = text,
+      style = AppTextStyles.smallRegular,
+      color = darkBlue,
+      textAlign = TextAlign.Center)
 }

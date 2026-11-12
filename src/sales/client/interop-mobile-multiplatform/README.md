@@ -97,8 +97,8 @@ The build commands of each platform are given in [Building for different platfor
 ### Application configuration
 
 The application configuration is managed through:
-- Server settings UI for configuring the server address (protocol, host, port, endpoint) and the optional basic
-  authentication
+- Server settings UI for configuring the server address (protocol, host, port) and the optional basic
+  authentication; the endpoint of the remote plugin is fixed (`/card/remote-plugin`, as for the Android client)
 - Platform-specific datastore for persisting settings
 - Shared network client for server communication
 
@@ -209,8 +209,7 @@ Multiplatform and Android application plugins in the same module.
 - `ServerReadinessChecker`: Checks that the server is reachable with its SAM available (as in the Android client), the
   check being repeated by `AppViewModel`
 - `ReadCardCache`: Cache of the last card read (serial number, contracts)
-- `ServerConfigRepository`: Server configuration persisted in the data store (address, endpoint, basic
-  authentication)
+- `ServerConfigRepository`: Server configuration persisted in the data store (address, basic authentication)
 - `SimpleHttpNetworkClient` (`data/network`): HTTP client for server communication
 
 **DTOs** (`data/dto`):

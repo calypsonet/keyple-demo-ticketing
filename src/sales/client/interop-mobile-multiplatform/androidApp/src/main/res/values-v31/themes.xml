@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- From Android 12, the system displays its own splash screen: it is reduced to the light
+         background of the application, the splash screen of the application following it -->
+    <style name="AppTheme" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/status_bar</item>
+        <item name="android:windowBackground">@color/background</item>
+        <item name="android:windowSplashScreenBackground">@color/background</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_icon_empty</item>
+    </style>
+
+</resources>

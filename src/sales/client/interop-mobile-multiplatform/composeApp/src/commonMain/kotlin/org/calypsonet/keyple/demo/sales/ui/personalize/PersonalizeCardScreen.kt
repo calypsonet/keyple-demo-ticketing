@@ -12,28 +12,17 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.sales.ui.personalize
 
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import org.calypsonet.keyple.demo.sales.AppState
-import org.calypsonet.keyple.demo.sales.ui.components.AutoReturn
-import org.calypsonet.keyple.demo.sales.ui.components.ERROR_RETURN_DELAY_MS
 import org.calypsonet.keyple.demo.sales.ui.components.PresentCardAnimation
-import org.calypsonet.keyple.demo.sales.ui.components.ReadingError
-import org.calypsonet.keyple.demo.sales.ui.components.SUCCESS_RETURN_DELAY_MS
+import org.calypsonet.keyple.demo.sales.ui.components.ResultKind
+import org.calypsonet.keyple.demo.sales.ui.components.ResultScreen
 import org.calypsonet.keyple.demo.sales.ui.components.ScanCardAnimation
 import org.calypsonet.keyple.demo.sales.ui.components.ScanScreen
 import org.calypsonet.keyple.demo.sales.ui.nav.Home
-import org.calypsonet.keyple.demo.sales.ui.theme.blue
-import org.calypsonet.keyple.demo.sales.ui.theme.green
-import org.calypsonet.keyple.demo.sales.ui.theme.red
 
 @Composable
 fun PersonalizeCardScreen(
@@ -55,17 +44,38 @@ internal fun PersonalizeCardScreen(
     modifier: Modifier = Modifier,
     appState: AppState
 ) {
+  val backToHome = { navController.navigate(Home) { popUpTo(Home) { inclusive = true } } }
+
+  // As in the Android client, the result of the personalization is a result screen (green or red)
+  when (state) {
+    PersonalizeCardScreenState.DisplaySuccess -> {
+      ResultScreen(
+          navController = navController,
+          appState = appState,
+          kind = ResultKind.SUCCESS,
+          message = "Card personalized",
+          onReturn = backToHome,
+          modifier = modifier)
+      return
+    }
+    is PersonalizeCardScreenState.DisplayError -> {
+      ResultScreen(
+          navController = navController,
+          appState = appState,
+          kind = ResultKind.ERROR,
+          message = state.message,
+          onReturn = backToHome,
+          modifier = modifier)
+      return
+    }
+    else -> {}
+  }
+
   ScanScreen(
       navController = navController,
       modifier = modifier,
       appState = appState,
-      onBack = { navController.navigate(Home) { popUpTo(Home) { inclusive = true } } },
-      autoReturn =
-          when (state) {
-            is PersonalizeCardScreenState.DisplayError -> AutoReturn(ERROR_RETURN_DELAY_MS, red)
-            PersonalizeCardScreenState.DisplaySuccess -> AutoReturn(SUCCESS_RETURN_DELAY_MS, green)
-            else -> null
-          }) {
+      onBack = backToHome) {
         when (state) {
           PersonalizeCardScreenState.WaitForCard -> {
             PresentCardAnimation(
@@ -75,18 +85,7 @@ internal fun PersonalizeCardScreen(
           PersonalizeCardScreenState.WritingToCard -> {
             ScanCardAnimation("Personalization in progress")
           }
-          is PersonalizeCardScreenState.DisplayError -> {
-            ReadingError(state.message)
-          }
-          PersonalizeCardScreenState.DisplaySuccess -> {
-            Text(
-                text = "Card personalized",
-                modifier = Modifier.widthIn(max = 200.dp).padding(top = 16.dp),
-                color = blue,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-            )
-          }
+          else -> {}
         }
       }
 }

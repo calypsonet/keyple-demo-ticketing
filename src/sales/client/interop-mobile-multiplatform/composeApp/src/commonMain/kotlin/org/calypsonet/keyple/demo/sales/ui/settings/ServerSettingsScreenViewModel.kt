@@ -36,7 +36,6 @@ data class ServerSettingsScreenState(
     val host: String = "",
     val port: String = "",
     val protocol: String = "http",
-    val endpoint: String = "",
     val serverReadiness: ServerReadiness? = null,
     val isLoaded: Boolean = false
 ) {
@@ -51,22 +50,15 @@ data class ServerSettingsScreenState(
   val isProtocolValid: Boolean
     get() = protocol.trim() in PROTOCOLS
 
-  /** True if the endpoint is a path of the server, starting with "/". */
-  val isEndpointValid: Boolean
-    get() = endpoint.trim().let { it.startsWith("/") && it.none { char -> char.isWhitespace() } }
-
   /** True if all the entries are valid. */
   val isValid: Boolean
-    get() = isHostValid && validatedPort != null && isProtocolValid && isEndpointValid
+    get() = isHostValid && validatedPort != null && isProtocolValid
 
   /** Returns the server configuration entered by the user, or null if an entry is not valid. */
   fun toServerConfig(): KeypleServerConfig? =
       validatedPort
           ?.takeIf { isValid }
-          ?.let {
-            KeypleServerConfig(
-                host = "${protocol.trim()}://${host.trim()}", port = it, endpoint = endpoint.trim())
-          }
+          ?.let { KeypleServerConfig(host = "${protocol.trim()}://${host.trim()}", port = it) }
 
   private companion object {
     val PROTOCOLS = setOf("http", "https")
@@ -110,7 +102,6 @@ class ServerSettingsScreenViewModel(
           ServerSettingsScreenState(
               host = hostUrl.host,
               port = serverConfig.port.toString(),
-              endpoint = serverConfig.endpoint,
               protocol = hostUrl.protocol.name,
               isLoaded = true)
     }
@@ -131,7 +122,6 @@ class ServerSettingsScreenViewModel(
           host = settings.host.trim(),
           port = port,
           protocol = settings.protocol.trim(),
-          endpoint = settings.endpoint.trim(),
       )
       keypleInteropService.start()
       onSaved()
@@ -172,9 +162,5 @@ class ServerSettingsScreenViewModel(
 
   fun onProtocolChanged(protocol: String) {
     _state.value = state.value.copy(protocol = protocol, serverReadiness = null)
-  }
-
-  fun onEndpointChanged(endpoint: String) {
-    _state.value = state.value.copy(endpoint = endpoint, serverReadiness = null)
   }
 }

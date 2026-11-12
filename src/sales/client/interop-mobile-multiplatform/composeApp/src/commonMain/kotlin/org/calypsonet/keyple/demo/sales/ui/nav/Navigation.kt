@@ -15,6 +15,8 @@ package org.calypsonet.keyple.demo.sales.ui.nav
 import kotlinx.serialization.Serializable
 import org.calypsonet.keyple.demo.sales.ui.model.Product
 
+@Serializable data object Splash
+
 @Serializable data object Home
 
 @Serializable

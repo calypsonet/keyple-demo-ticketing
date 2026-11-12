@@ -12,38 +12,20 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.sales.ui.success
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import io.github.alexzhirkevich.compottie.LottieComposition
-import io.github.alexzhirkevich.compottie.LottieCompositionSpec
-import io.github.alexzhirkevich.compottie.animateLottieCompositionAsState
-import io.github.alexzhirkevich.compottie.rememberLottieComposition
 import org.calypsonet.keyple.composeapp.generated.resources.Res
 import org.calypsonet.keyple.composeapp.generated.resources.contract_loaded
 import org.calypsonet.keyple.demo.sales.AppState
-import org.calypsonet.keyple.demo.sales.ui.components.AppTopBar
-import org.calypsonet.keyple.demo.sales.ui.components.AutoReturnProgress
-import org.calypsonet.keyple.demo.sales.ui.components.SUCCESS_RETURN_DELAY_MS
+import org.calypsonet.keyple.demo.sales.ui.components.ResultKind
+import org.calypsonet.keyple.demo.sales.ui.components.ResultScreen
 import org.calypsonet.keyple.demo.sales.ui.nav.Home
 import org.calypsonet.keyple.demo.sales.ui.nav.ReadCard
-import org.calypsonet.keyple.demo.sales.ui.theme.green
-import org.calypsonet.keyple.demo.sales.ui.theme.white
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
-@Preview
 @Composable
 fun SuccessScreen(
     navController: NavController,
@@ -53,50 +35,26 @@ fun SuccessScreen(
   // Back to the card reading, for the loading of another ticket (as the Android client), replacing
   // the screens of the transaction (back arrow or automatic): the back arrow of the card reading
   // then returns to the home screen
-  val readNextCard = { navController.navigate(ReadCard) { popUpTo(Home) } }
-
-  Scaffold(
-      topBar = {
-        AppTopBar(navController = navController, appState = appState, onBack = readNextCard)
-      },
+  ResultScreen(
+      navController = navController,
+      appState = appState,
+      kind = ResultKind.SUCCESS,
+      message = stringResource(Res.string.contract_loaded),
+      onReturn = { navController.navigate(ReadCard) { popUpTo(Home) } },
       modifier = modifier,
-  ) { innerPadding ->
-    Box(Modifier.padding(innerPadding).fillMaxSize().background(green)) {
-      Column(
-          Modifier.fillMaxSize(),
-          horizontalAlignment = Alignment.CenterHorizontally,
-          verticalArrangement = Arrangement.Center,
-      ) {
-        SuccessMessage("anim_tick_white.json", stringResource(Res.string.contract_loaded))
-      }
-      AutoReturnProgress(
-          delayMs = SUCCESS_RETURN_DELAY_MS,
-          color = white,
-          onReturn = readNextCard,
-          modifier = Modifier.align(Alignment.BottomCenter))
-    }
-  }
+  )
 }
 
-@OptIn(ExperimentalResourceApi::class)
-@Composable
-internal fun SuccessMessage(animationFileName: String, message: String) {
-  val composition by rememberLottieComposition {
-    LottieCompositionSpec.JsonString(Res.readBytes("files/$animationFileName").decodeToString())
-  }
-  val progress by
-      animateLottieCompositionAsState(
-          composition,
-      )
-
-  PlatformAnimation(message, white, composition, progress, infinite = false)
-}
-
+/**
+ * Animation of an operation, followed by its message (in the style of the messages of the Android
+ * client). [animationModifier] sets the size of the animation.
+ */
 @Composable
 expect fun PlatformAnimation(
     message: String,
     textColor: Color,
     composition: LottieComposition?,
     progress: Float,
-    infinite: Boolean = true
+    infinite: Boolean = true,
+    animationModifier: Modifier = Modifier,
 )
