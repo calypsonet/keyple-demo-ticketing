@@ -27,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -40,6 +41,7 @@ import org.calypsonet.keyple.composeapp.generated.resources.keyple_background
 import org.calypsonet.keyple.demo.sales.AppState
 import org.calypsonet.keyple.demo.sales.ui.success.PlatformAnimation
 import org.calypsonet.keyple.demo.sales.ui.theme.blue
+import org.calypsonet.keyple.demo.sales.ui.theme.orange
 import org.calypsonet.keyple.demo.sales.ui.theme.red
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.vectorResource
@@ -109,25 +111,35 @@ fun ScanScreen(
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-internal fun PresentCardAnimation() {
+internal fun PresentCardAnimation(message: String, warning: String? = null) {
   val composition by rememberLottieComposition {
     LottieCompositionSpec.JsonString(Res.readBytes("files/anim_card_scan.json").decodeToString())
   }
   val progress by animateLottieCompositionAsState(composition)
 
-  PlatformAnimation("Please present a contactless card", blue, composition, progress)
+  PlatformAnimation(message, blue, composition, progress)
+  // Warning on the consequences of the operation (personalization: the card is reset)
+  warning?.let {
+    Text(
+        text = it,
+        modifier = Modifier.widthIn(max = 300.dp),
+        color = orange,
+        fontWeight = FontWeight.Bold,
+        textAlign = TextAlign.Center,
+    )
+  }
 }
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-internal fun ScanCardAnimation() {
+internal fun ScanCardAnimation(message: String) {
   val composition by rememberLottieComposition {
     LottieCompositionSpec.JsonString(Res.readBytes("files/anim_loading.json").decodeToString())
   }
   val progress by
       animateLottieCompositionAsState(composition, iterations = Compottie.IterateForever)
 
-  PlatformAnimation("Read in progress", blue, composition, progress)
+  PlatformAnimation(message, blue, composition, progress)
 }
 
 @OptIn(ExperimentalResourceApi::class)

@@ -68,10 +68,12 @@ internal fun PersonalizeCardScreen(
           }) {
         when (state) {
           PersonalizeCardScreenState.WaitForCard -> {
-            PresentCardAnimation()
+            PresentCardAnimation(
+                "Please present the contactless card to be personalized",
+                warning = "All the tickets of the card will be erased.")
           }
           PersonalizeCardScreenState.WritingToCard -> {
-            ScanCardAnimation()
+            ScanCardAnimation("Personalization in progress")
           }
           is PersonalizeCardScreenState.DisplayError -> {
             ReadingError(state.message)

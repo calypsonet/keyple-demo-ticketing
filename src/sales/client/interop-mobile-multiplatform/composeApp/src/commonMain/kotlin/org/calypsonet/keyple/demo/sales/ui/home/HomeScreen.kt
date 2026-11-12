@@ -42,11 +42,14 @@ import org.calypsonet.keyple.composeapp.generated.resources.Res
 import org.calypsonet.keyple.composeapp.generated.resources.ic_contactless_card
 import org.calypsonet.keyple.composeapp.generated.resources.ic_logo_calypso
 import org.calypsonet.keyple.composeapp.generated.resources.ic_settings
+import org.calypsonet.keyple.composeapp.generated.resources.ic_sim_card
 import org.calypsonet.keyple.composeapp.generated.resources.keyple_background
+import org.calypsonet.keyple.demo.sales.APP_VERSION
 import org.calypsonet.keyple.demo.sales.AppState
 import org.calypsonet.keyple.demo.sales.ui.components.AppTopBar
+import org.calypsonet.keyple.demo.sales.ui.nav.PersonalizeCard
 import org.calypsonet.keyple.demo.sales.ui.nav.ReadCard
-import org.calypsonet.keyple.demo.sales.ui.nav.SettingsMenu
+import org.calypsonet.keyple.demo.sales.ui.nav.ServerSettings
 import org.calypsonet.keyple.demo.sales.ui.theme.blue
 import org.calypsonet.keyple.demo.sales.ui.theme.darkBlue
 import org.jetbrains.compose.resources.DrawableResource
@@ -73,7 +76,8 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier, appS
             appState = appState,
             showBackArrow = false,
             actions = {
-              IconButton(onClick = { navController.navigate(route = SettingsMenu) }) {
+              // The settings button opens the server settings, the only settings of the application
+              IconButton(onClick = { navController.navigate(route = ServerSettings) }) {
                 Icon(
                     imageVector = vectorResource(Res.drawable.ic_settings),
                     contentDescription = "Go to settings action",
@@ -94,12 +98,21 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier, appS
 
           Spacer(modifier = Modifier.weight(1f))
 
+          // Main operation first: loading of a ticket, then personalization of a card (reset of its
+          // data)
           HomeCard(
               iconRes = Res.drawable.ic_contactless_card,
-              title = "Contactless card",
+              title = "Load a ticket",
               onClick = { navController.navigate(route = ReadCard) })
 
+          HomeCard(
+              iconRes = Res.drawable.ic_sim_card,
+              title = "Personalize a card",
+              onClick = { navController.navigate(route = PersonalizeCard) })
+
           Spacer(modifier = Modifier.weight(1f))
+
+          Text(text = "version $APP_VERSION", color = darkBlue)
 
           Image(
               imageVector = vectorResource(Res.drawable.ic_logo_calypso),

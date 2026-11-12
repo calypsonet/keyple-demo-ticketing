@@ -39,14 +39,6 @@
                 android:exported="false">
         </activity>
         <activity
-                android:name="org.calypsonet.keyple.demo.sales.ui.activities.SettingsMenuActivity"
-                android:theme="@style/AppTheme.NoActionBar"
-                android:screenOrientation="portrait"
-                android:launchMode="singleTop"
-                android:configChanges="orientation|keyboardHidden"
-                android:exported="false">
-        </activity>
-        <activity
                 android:name="org.calypsonet.keyple.demo.sales.ui.activities.ServerSettingsActivity"
                 android:theme="@style/AppTheme.NoActionBar"
                 android:screenOrientation="portrait"

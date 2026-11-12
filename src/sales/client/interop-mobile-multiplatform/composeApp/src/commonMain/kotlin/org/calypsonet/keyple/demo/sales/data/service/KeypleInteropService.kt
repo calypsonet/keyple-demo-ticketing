@@ -276,7 +276,7 @@ class KeypleInteropService(
             "Remote service execution failed [service=$serviceId, status=${result.status}, " +
                 "message=${result.message}, output=${result.data}]")
         return KeypleResult.Failure(
-            status = result.status, message = result.data?.message ?: "Communication error")
+            status = result.status, message = result.data?.message ?: "Server error")
       }
       is KeypleResult.Success -> {
         if (result.data != null) {
@@ -319,7 +319,7 @@ class KeypleInteropService(
         Napier.w(
             "Remote service execution failed [service=$serviceId, status=${result.status}, " +
                 "message=${result.message}, output=${result.data}]")
-        return KeypleResult.Failure(result.status, "Communication error")
+        return KeypleResult.Failure(result.status, "Server error")
       }
       is KeypleResult.Success -> {
         val outputJson: String = result.data!!

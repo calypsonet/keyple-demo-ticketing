@@ -19,6 +19,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import dagger.hilt.android.AndroidEntryPoint
+import org.calypsonet.keyple.demo.sales.BuildConfig
+import org.calypsonet.keyple.demo.sales.R
 import org.calypsonet.keyple.demo.sales.databinding.ActivityHomeBinding
 
 @AndroidEntryPoint
@@ -41,16 +43,22 @@ class HomeActivity : BaseActivity() {
       WindowInsetsCompat.CONSUMED
     }
 
+    // The settings button opens the server settings, the only settings of the application
     toolbarBinding.menuBtn.visibility = View.VISIBLE
     toolbarBinding.menuBtn.setOnClickListener {
-      startActivity(Intent(this, SettingsMenuActivity::class.java))
+      startActivity(Intent(this, ServerSettingsActivity::class.java))
     }
+
+    activityHomeBinding.versionName.text = getString(R.string.version, BuildConfig.VERSION_NAME)
   }
 
   override fun onResume() {
     super.onResume()
-    activityHomeBinding.contactlessCardBtn.setOnClickListener {
+    activityHomeBinding.loadTicketBtn.setOnClickListener {
       startActivity(Intent(this, CardReaderActivity::class.java))
+    }
+    activityHomeBinding.personalizeCardBtn.setOnClickListener {
+      startActivity(Intent(this, PersonalizeCardActivity::class.java))
     }
   }
 }

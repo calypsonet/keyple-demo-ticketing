@@ -28,10 +28,10 @@
     <string name="personalization_success_label">Card personalized</string>
     <string name="personalization_failed_label">Personalization failed</string>
 
-    <string name="contactless_card">Contactless card</string>
 
 
-    <string name="card_selection">Choose a card</string>
+    <string name="home_load_ticket">Load a ticket</string>
+    <string name="home_personalize_card">Personalize a card</string>
     <string name="choose_product">Choose a type of ticket</string>
     <string name="try_again">Retry</string>
     <string name="try_again_countdown">Retry (%1$d)</string>
@@ -62,13 +62,11 @@
 
     <!-- Personalization -->
     <string name="personalization_in_progress">Personalization in progress</string>
+    <string name="personalization_warning">All the tickets of the card will be erased.</string>
 
     <!-- Settings -->
     <string name="version">version %s</string>
-    <string name="action_settings">Settings</string>
     <string name="back">Back</string>
-    <string name="server_setting">Server</string>
-    <string name="personalization_setting">Personalization</string>
 
     <string name="server_ip">Server IP</string>
     <string name="server_port">Server port</string>

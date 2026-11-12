@@ -64,6 +64,7 @@ class PersonalizeCardActivity : BaseCardActivity() {
   private fun showPresentCardInstructions() {
     activityPersonalizeCardBinding.presentTxt.text =
         getString(R.string.present_card_personalization)
+    activityPersonalizeCardBinding.warningTxt.visibility = View.VISIBLE
     activityPersonalizeCardBinding.cardAnimation.visibility = View.VISIBLE
     activityPersonalizeCardBinding.cardAnimation.playAnimation()
     activityPersonalizeCardBinding.loadingAnimation.cancelAnimation()
@@ -72,6 +73,7 @@ class PersonalizeCardActivity : BaseCardActivity() {
 
   private fun showPersonalizationInProgress() {
     activityPersonalizeCardBinding.presentTxt.text = getString(R.string.personalization_in_progress)
+    activityPersonalizeCardBinding.warningTxt.visibility = View.GONE
     activityPersonalizeCardBinding.loadingAnimation.visibility = View.VISIBLE
     activityPersonalizeCardBinding.loadingAnimation.playAnimation()
     activityPersonalizeCardBinding.cardAnimation.cancelAnimation()

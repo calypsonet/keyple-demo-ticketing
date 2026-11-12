@@ -57,10 +57,10 @@ internal fun LoadContractScreen(
           else null) {
         when (state) {
           LoadContractScreenState.WaitForCard -> {
-            PresentCardAnimation()
+            PresentCardAnimation("Please present the contactless card to be loaded")
           }
           LoadContractScreenState.WritingToCard -> {
-            ScanCardAnimation()
+            ScanCardAnimation("Loading in progress")
           }
           is LoadContractScreenState.DisplayError -> {
             ReadingError(state.message)

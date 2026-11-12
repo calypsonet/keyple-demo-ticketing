@@ -20,19 +20,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/chooseCardTv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/card_selection"
-        style="@style/smallRegularDarkBlue"
-        android:layout_marginHorizontal="@dimen/home_horizontal_margin"
-        app:layout_constraintTop_toBottomOf="@id/homeDescription"
-        android:layout_marginTop="@dimen/home_choose_margin_top"
-        app:layout_constraintLeft_toLeftOf="parent"/>
-
+    <!-- Main operation first: loading of a ticket, then personalization of a card (reset of its data) -->
     <LinearLayout
-        android:id="@+id/contactlessCardBtn"
+        android:id="@+id/loadTicketBtn"
         android:layout_width="match_parent"
         android:layout_height="@dimen/home_card_btn_height"
         android:orientation="vertical"
@@ -41,9 +31,10 @@
         android:background="@drawable/white_card"
         android:layout_marginHorizontal="@dimen/home_horizontal_margin"
         android:elevation="@dimen/elevation"
-        android:layout_marginTop="@dimen/home_block_vertical_margin"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/chooseCardTv"
+        app:layout_constraintTop_toBottomOf="@id/homeDescription"
+        app:layout_constraintBottom_toTopOf="@id/personalizeCardBtn"
+        app:layout_constraintVertical_chainStyle="packed"
         android:gravity="center">
 
         <ImageView
@@ -51,16 +42,58 @@
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
-            android:contentDescription="@string/contactless_card"
+            android:contentDescription="@string/home_load_ticket"
             android:src="@drawable/ic_contactlesscard"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/card_selection_top_margin"
-            android:text="@string/contactless_card"
+            android:text="@string/home_load_ticket"
             style="@style/bigBoldDarkBlue" />
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/personalizeCardBtn"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/home_card_btn_height"
+        android:orientation="vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="@drawable/white_card"
+        android:layout_marginHorizontal="@dimen/home_horizontal_margin"
+        android:elevation="@dimen/elevation"
+        android:layout_marginTop="@dimen/home_btn_top_margin"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/loadTicketBtn"
+        app:layout_constraintBottom_toTopOf="@id/versionName"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="@dimen/img_personalization_width"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/home_personalize_card"
+            android:src="@drawable/ic_simcard"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/card_selection_top_margin"
+            android:text="@string/home_personalize_card"
+            style="@style/bigBoldDarkBlue" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/versionName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/version"
+        style="@style/smallRegularDarkBlue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/eclipseLogo" />
 
     <ImageView
         android:id="@+id/eclipseLogo"

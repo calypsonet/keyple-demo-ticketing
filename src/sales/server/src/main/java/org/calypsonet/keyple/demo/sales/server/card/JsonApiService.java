@@ -244,7 +244,8 @@ public class JsonApiService {
         name = PriorityCode.MULTI_TRIP.getLabel();
         description =
             contract.getCounterValue() != null
-                ? contract.getCounterValue() + " trip(s) left"
+                ? contract.getCounterValue()
+                    + (contract.getCounterValue() == 1 ? " trip left" : " trips left")
                 : "No counter";
         isValid = contract.getCounterValue() != null && contract.getCounterValue() >= 1;
         break;
@@ -258,19 +259,19 @@ public class JsonApiService {
                 ? PriorityCode.SEASON_PASS.getLabel() + " (expired)"
                 : PriorityCode.SEASON_PASS.getLabel();
         description =
-            "From\n"
+            "From "
                 + saleDate.format(dateTimeFormatter)
-                + "\nto\n"
+                + " to "
                 + validityEndDate.format(dateTimeFormatter);
         isValid = !saleDate.isAfter(today) && !isExpired;
         break;
       case FORBIDDEN:
-        name = "FORBIDDEN";
+        name = PriorityCode.FORBIDDEN.getLabel();
         description = "";
         isValid = false;
         break;
       default:
-        name = "UNKNOWN";
+        name = PriorityCode.UNKNOWN.getLabel();
         description = "";
         isValid = false;
         break;

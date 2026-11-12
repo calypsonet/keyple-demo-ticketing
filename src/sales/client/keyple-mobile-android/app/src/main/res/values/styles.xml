@@ -66,6 +66,12 @@
         <item name="android:textColor">@color/green</item>
     </style>
 
+    <style name="mediumBoldOrange">
+        <item name="fontFamily">@font/worksans_bold</item>
+        <item name="android:textSize">@dimen/medium_text_size</item>
+        <item name="android:textColor">@color/orange</item>
+    </style>
+
     <style name="smallRegularDarkBlue">
         <item name="fontFamily">@font/worksans_regular</item>
         <item name="android:textSize">@dimen/small_text_size</item>

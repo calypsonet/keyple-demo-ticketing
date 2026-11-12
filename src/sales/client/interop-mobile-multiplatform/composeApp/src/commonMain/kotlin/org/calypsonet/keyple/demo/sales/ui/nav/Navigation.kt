@@ -17,8 +17,6 @@ import org.calypsonet.keyple.demo.sales.ui.model.Product
 
 @Serializable data object Home
 
-@Serializable data object SettingsMenu
-
 @Serializable
 data class LoadContract(val productType: Int, val quantity: Int = 1, val cardSerialNumber: String) {
   companion object {

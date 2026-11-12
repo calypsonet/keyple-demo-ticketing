@@ -110,6 +110,19 @@
         app:layout_constraintRight_toRightOf="@id/guideline_right"
         app:layout_constraintBottom_toBottomOf="@id/guideline_bottom"/>
 
+    <!-- Warning on the reset of the card, displayed while waiting for the card -->
+    <TextView
+        android:id="@+id/warningTxt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/home_btn_top_margin"
+        android:text="@string/personalization_warning"
+        android:gravity="center"
+        style="@style/mediumBoldOrange"
+        app:layout_constraintTop_toBottomOf="@id/presentTxt"
+        app:layout_constraintLeft_toLeftOf="@id/guideline_left"
+        app:layout_constraintRight_toRightOf="@id/guideline_right"/>
+
     <ImageView
         android:id="@+id/eclipseLogo"
         android:layout_width="@dimen/eclipse_logo_width"

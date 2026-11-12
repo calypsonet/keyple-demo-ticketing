@@ -36,7 +36,6 @@ import org.calypsonet.keyple.demo.sales.ui.nav.LoadContract
 import org.calypsonet.keyple.demo.sales.ui.nav.PersonalizeCard
 import org.calypsonet.keyple.demo.sales.ui.nav.ReadCard
 import org.calypsonet.keyple.demo.sales.ui.nav.ServerSettings
-import org.calypsonet.keyple.demo.sales.ui.nav.SettingsMenu
 import org.calypsonet.keyple.demo.sales.ui.nav.Success
 import org.calypsonet.keyple.demo.sales.ui.personalize.PersonalizeCardScreen
 import org.calypsonet.keyple.demo.sales.ui.personalize.PersonalizeCardScreenViewModel
@@ -44,7 +43,6 @@ import org.calypsonet.keyple.demo.sales.ui.read.ReadCardScreen
 import org.calypsonet.keyple.demo.sales.ui.read.ReadCardScreenViewModel
 import org.calypsonet.keyple.demo.sales.ui.settings.ServerSettingsScreen
 import org.calypsonet.keyple.demo.sales.ui.settings.ServerSettingsScreenViewModel
-import org.calypsonet.keyple.demo.sales.ui.settings.SettingsMenuScreen
 import org.calypsonet.keyple.demo.sales.ui.success.SuccessScreen
 import org.calypsonet.keyple.demo.sales.ui.theme.AppTheme
 
@@ -72,10 +70,6 @@ fun App(
   AppTheme {
     NavHost(navController = navController, startDestination = Home) {
       composable<Home> { HomeScreen(navController = navController, appState = appState.value) }
-
-      composable<SettingsMenu> {
-        SettingsMenuScreen(navController = navController, appState = appState.value)
-      }
 
       composable<ReadCard> {
         ReadCardScreen(

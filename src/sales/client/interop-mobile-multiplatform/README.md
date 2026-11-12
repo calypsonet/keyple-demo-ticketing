@@ -108,17 +108,17 @@ The application configuration is managed through:
 
 #### Initial setup
 1. **Launch application**
-2. **Configure server**: Tap the settings icon → **Server**, enter the address of the server, check it with
+2. **Configure server**: Tap the settings icon of the home screen, enter the address of the server, check it with
    **Server state**, then **Save**
 3. **Grant permissions**: Allow NFC access when prompted
 
 #### Card personalization
-1. **Settings** → **Personalization**
-2. **Present card** to device NFC reader
+1. **Home screen** → **Personalize a card**
+2. **Present card** to device NFC reader (the screen warns that all the tickets of the card will be erased)
 3. **Wait for confirmation** of successful personalization
 
 #### Reading card content
-1. **Home screen** → **Contactless card**
+1. **Home screen** → **Load a ticket**
 2. **Hold card** against device back (near NFC antenna)
 3. **View existing contracts** and their status
 4. **Select a new ticket** to load if desired
@@ -150,19 +150,15 @@ The application uses Compose Multiplatform for consistent UI across all platform
 
 ```
 ┌─────────────────────────────────────┐
-│            Home Screen              │
+│ Home Screen     [settings → Server] │
 │  ┌─────────────────────────────────┐│
-│  │         Settings menu           ││
-│  │  ┌─────────────────────────────┐││
-│  │  │  Server                    │││
-│  │  │  Personalization           │││
-│  │  └─────────────────────────────┘││
+│  │ Load a ticket                   ││
+│  │  (read the card, then load)     ││
 │  └─────────────────────────────────┘│
 │  ┌─────────────────────────────────┐│
-│  │      Card Operations            ││
-│  │  • Read Card Content           ││
-│  │  • Load a Contract             ││
+│  │ Personalize a card              ││
 │  └─────────────────────────────────┘│
+│            version YY.MM.DD         │
 └─────────────────────────────────────┘
 ```
 
@@ -188,7 +184,7 @@ composeApp/src/                   # Kotlin Multiplatform library, desktop and iO
 │           ├── nav/              # Navigation routes
 │           ├── personalize/      # Personalization of the card
 │           ├── read/             # Reading of the card
-│           ├── settings/         # Settings menu and server settings
+│           ├── settings/         # Server settings
 │           ├── success/          # Success screen (animation by platform)
 │           └── theme/            # Theme and colors
 ├── androidMain/                  # Android-specific implementations (buzzer, data store, success animation)
@@ -225,7 +221,6 @@ Multiplatform and Android application plugins in the same module.
 - `CardContentScreen`: Contracts of the card and products proposed for sale
 - `LoadContractScreen`: Screen for loading contracts
 - `PersonalizeCardScreen`: Screen for card personalization
-- `SettingsMenuScreen`: Settings menu (server, personalization)
 - `ServerSettingsScreen`: Server settings UI
 
 #### Platform-specific implementations
@@ -286,12 +281,13 @@ reader is used.
 
 ### Common issues across platforms
 
-**"Communication error" when reading the card, or "Server not ready" in the server settings**
+**"Server error" when reading the card, or "Server not ready" in the server settings**
 - Verify server URL is accessible from target platform (**Server state** button of the server settings)
 - Check network permissions on mobile platforms
 - Ensure firewall allows connections on desktop
 
-**"Place your card on the reader" stays displayed, or "Card reader error"**
+**"Please present a contactless card" (iOS: "Place the card to read on the reader") stays displayed, or "Card reader
+error"**
 - **Android**: Enable NFC in the system settings
 - **iOS**: The device must support Core NFC (iPhone 7 or later, iOS 15.3 or later), and the AID of the card must be
   declared in the `com.apple.developer.nfc.readersession.iso7816.select-identifiers` list of `iosApp/iosApp/Info.plist`

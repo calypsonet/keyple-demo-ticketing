@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Functional documentation published online at each release (https://calypsonet.github.io/keyple-demo-ticketing/), by
   the CI from the HTML of the latest release, instead of by hand.
 - Validation and Inspection applications: Famoco FX207 terminal, its SAM being accessed with the Android OMAPI plugin.
+### Changed
+- Sales clients: home screen with two buttons, "Load a ticket" and "Personalize a card" (instead of a single
+  "Contactless card" button, the personalization being in the settings menu), and the version of the application; the
+  settings icon opens the server settings directly.
+- Sales clients: warning "All the tickets of the card will be erased." on the screen waiting for the card to
+  personalize.
+- Multiplatform sales client: same messages as the Android client, the instructions and the progress messages being
+  specific to each operation (reading, loading, personalization, also in the NFC dialog of iOS), and the errors being
+  "Server error" and "An error occurred" (instead of "Communication error" and "Unexpected error"); the server
+  returns the names and descriptions of the contracts as displayed by the Android client ("Forbidden", "Unknown",
+  "1 trip left", "From … to …").
 ### Fixed
 - Documentation: the plugins of the Bluebird and Arrive terminals are open source, built with the library of the
   terminal manufacturer; only the storage card libraries are on request, for CNA members.
