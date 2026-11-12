@@ -21,7 +21,7 @@
     <dimen name="content_top_margin">20dp</dimen>
     <dimen name="card_validation_horizontal_margin">13dp</dimen>
 
-    <dimen name="img_contactless_card_width">30dp</dimen>
+    <dimen name="home_icon_size">36dp</dimen>
 
     <dimen name="connection_status_size">12dp</dimen>
     <dimen name="connection_status_contour">3dp</dimen>
@@ -41,7 +41,6 @@
     <dimen name="home_card_btn_height">84dp</dimen>
     <dimen name="home_btn_top_margin">24dp</dimen>
     <dimen name="warning_top_margin">10dp</dimen>
-    <dimen name="img_personalization_width">20dp</dimen>
 
 
     <dimen name="main_btn_horizontal_margin">19dp</dimen>

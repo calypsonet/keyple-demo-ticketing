@@ -38,12 +38,12 @@
         android:gravity="center">
 
         <ImageView
-            android:layout_width="@dimen/img_contactless_card_width"
+            android:layout_width="@dimen/home_icon_size"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
             android:contentDescription="@string/home_load_tickets"
-            android:src="@drawable/ic_contactlesscard"/>
+            android:src="@drawable/ic_load_tickets"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -70,12 +70,12 @@
         android:gravity="center">
 
         <ImageView
-            android:layout_width="@dimen/img_personalization_width"
+            android:layout_width="@dimen/home_icon_size"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
             android:contentDescription="@string/home_personalize_card"
-            android:src="@drawable/ic_simcard"/>
+            android:src="@drawable/ic_personalize_card"/>
 
         <TextView
             android:layout_width="wrap_content"

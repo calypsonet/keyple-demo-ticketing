@@ -22,8 +22,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -45,10 +45,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import org.calypsonet.keyple.composeapp.generated.resources.Res
-import org.calypsonet.keyple.composeapp.generated.resources.ic_contactless_card
+import org.calypsonet.keyple.composeapp.generated.resources.ic_load_tickets
 import org.calypsonet.keyple.composeapp.generated.resources.ic_logo_calypso
+import org.calypsonet.keyple.composeapp.generated.resources.ic_personalize_card
 import org.calypsonet.keyple.composeapp.generated.resources.ic_settings
-import org.calypsonet.keyple.composeapp.generated.resources.ic_sim_card
 import org.calypsonet.keyple.composeapp.generated.resources.keyple_background
 import org.calypsonet.keyple.demo.sales.APP_VERSION
 import org.calypsonet.keyple.demo.sales.AppState
@@ -109,8 +109,8 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier, appS
           // Main operation first: loading of tickets, then personalization of a card (reset of its
           // data)
           HomeCard(
-              iconRes = Res.drawable.ic_contactless_card,
-              iconWidth = dimens.loadIconWidth,
+              iconRes = Res.drawable.ic_load_tickets,
+              iconSize = dimens.iconSize,
               title = "Load tickets",
               dimens = dimens,
               onClick = { navController.navigate(route = ReadCard) })
@@ -118,8 +118,8 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier, appS
           Spacer(modifier = Modifier.height(dimens.gap))
 
           HomeCard(
-              iconRes = Res.drawable.ic_sim_card,
-              iconWidth = dimens.personalizeIconWidth,
+              iconRes = Res.drawable.ic_personalize_card,
+              iconSize = dimens.iconSize,
               title = "Personalize a card",
               dimens = dimens,
               onClick = { navController.navigate(route = PersonalizeCard) })
@@ -149,23 +149,22 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier, appS
 internal data class HomeButtonDimens(
     val height: Dp,
     val gap: Dp,
-    val loadIconWidth: Dp,
-    val personalizeIconWidth: Dp,
+    val iconSize: Dp,
     val textSize: TextUnit,
 )
 
 internal fun homeButtonDimens(screenWidth: Dp): HomeButtonDimens =
     when {
-      screenWidth >= 600.dp -> HomeButtonDimens(168.dp, 32.dp, 38.dp, 28.dp, 27.sp)
-      screenWidth >= 400.dp -> HomeButtonDimens(108.dp, 32.dp, 38.dp, 28.dp, 22.sp)
-      else -> HomeButtonDimens(84.dp, 24.dp, 30.dp, 20.dp, 20.sp)
+      screenWidth >= 600.dp -> HomeButtonDimens(168.dp, 32.dp, 56.dp, 27.sp)
+      screenWidth >= 400.dp -> HomeButtonDimens(108.dp, 32.dp, 44.dp, 22.sp)
+      else -> HomeButtonDimens(84.dp, 24.dp, 36.dp, 20.sp)
     }
 
 @Composable
 internal fun HomeCard(
     modifier: Modifier = Modifier,
     iconRes: DrawableResource,
-    iconWidth: Dp,
+    iconSize: Dp,
     title: String,
     dimens: HomeButtonDimens,
     onClick: () -> Unit
@@ -181,10 +180,10 @@ internal fun HomeCard(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-      // Width of the icon, its height following its aspect ratio (as in the Android client)
+      // Square icon, of the same size as in the Android client
       Image(
           imageVector = vectorResource(iconRes),
-          modifier = Modifier.width(iconWidth),
+          modifier = Modifier.size(iconSize),
           contentDescription = "icon for card $title",
       )
       Text(

@@ -12,7 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Sales clients: home screen with two buttons, "Load tickets" and "Personalize a card" (instead of a single
   "Contactless card" button, the personalization being in the settings menu), and the version of the application; the
   settings icon opens the server settings directly. The multiplatform client also displays "Interop client", to
-  distinguish it from the native Android client.
+  distinguish it from the native Android client. Icons of the buttons derived from Material Symbols (see
+  [NOTICE](NOTICE.md)): a transit ticket for the loading, and a contactless card being reset for the personalization
+  (instead of a generic card and a SIM card), with the same dimensions in both clients.
 - Multiplatform sales client: default server `http://192.168.0.1:8080`, as the Android client.
 - Multiplatform sales client: after a loading, return to the card reading for the next ticket (instead of the home
   screen), as the Android client.
