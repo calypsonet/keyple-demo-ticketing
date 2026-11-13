@@ -17,6 +17,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   (instead of a generic card and a SIM card), with the same dimensions in both clients.
 - Sales clients: server settings with the state of the server right below the settings, on the same row as the
   "Server state" button, with a colored status light ("Not checked", "Checking…", "Server ready", "Server not ready").
+- Version of the application displayed once, in the bottom right corner of the first screen: terminal selection for
+  the Validation and Inspection applications (no longer on their settings screen), home screen for the Sales clients
+  (with "Interop client" above it in the multiplatform client).
 - Sales clients: same back arrow in the top bar (arrow instead of a chevron in the Android client, dark blue in both).
 - Multiplatform sales client: default server `http://192.168.0.1:8080`, as the Android client.
 - Multiplatform sales client: after a loading, return to the card reading for the next ticket (instead of the home

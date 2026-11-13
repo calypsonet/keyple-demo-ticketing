@@ -159,8 +159,8 @@ The application uses Compose Multiplatform for consistent UI across all platform
 │  ┌─────────────────────────────────┐│
 │  │ Personalize a card              ││
 │  └─────────────────────────────────┘│
-│            Interop client           │
-│            version YY.MM.DD         │
+│                      Interop client │
+│                    version YY.MM.DD │
 └─────────────────────────────────────┘
 ```
 

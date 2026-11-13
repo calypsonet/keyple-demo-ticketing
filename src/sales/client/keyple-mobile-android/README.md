@@ -108,7 +108,7 @@ Splash screen → Home → Card reader → Card content → Select product → C
 - **Load tickets**: reading of the card, then loading of a ticket, repeated for the next tickets
 - **Personalize a card**: personalization of a card (reset of its data)
 - Settings icon: server settings (`ServerSettingsActivity`)
-- Version of the application (YY.MM.DD)
+- Version of the application (YY.MM.DD), in the bottom right corner
 
 **Card reader (`CardReaderActivity`)**
 - Initializes selected Keyple plugin

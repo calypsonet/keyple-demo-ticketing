@@ -66,7 +66,7 @@
         android:layout_marginTop="@dimen/home_btn_top_margin"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/loadTicketBtn"
-        app:layout_constraintBottom_toTopOf="@id/versionName"
+        app:layout_constraintBottom_toTopOf="@id/eclipseLogo"
         android:gravity="center">
 
         <ImageView
@@ -85,15 +85,17 @@
             style="@style/bigBoldDarkBlue" />
     </LinearLayout>
 
+    <!-- Version of the application, in the bottom right corner as in the other applications of the demo -->
     <TextView
         android:id="@+id/versionName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
         android:text="@string/version"
-        style="@style/smallRegularDarkBlue"
+        android:textColor="@color/dark_blue"
+        android:textSize="@dimen/version"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/eclipseLogo" />
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <ImageView
         android:id="@+id/eclipseLogo"

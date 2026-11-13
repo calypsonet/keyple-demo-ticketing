@@ -84,6 +84,7 @@ Terminal selection → Settings → Home → Card reader → Card content or Inv
 **Terminal selection (`TerminalSelectionActivity`)**
 - Choice of the terminal type, which selects the reader plugins
 - The Bluebird terminals require their plugin (see [Proprietary components](#proprietary-components))
+- Version of the application (YY.MM.DD), in the bottom right corner
 
 **Settings (`SettingsActivity`)**
 - Location of the inspection, validation period, access to the date and time settings

@@ -22,11 +22,6 @@
     </style>
 
 
-    <style name="mediumRegularBlack">
-        <item name="fontFamily">@font/worksans_regular</item>
-        <item name="android:textSize">@dimen/medium_text_size</item>
-        <item name="android:textColor">@android:color/black</item>
-    </style>
 
     <style name="mediumRegularWhite">
         <item name="fontFamily">@font/worksans_regular</item>

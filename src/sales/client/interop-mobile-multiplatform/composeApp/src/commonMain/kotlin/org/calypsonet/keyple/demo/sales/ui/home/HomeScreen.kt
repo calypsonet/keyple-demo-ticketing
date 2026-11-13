@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import org.calypsonet.keyple.composeapp.generated.resources.Res
 import org.calypsonet.keyple.composeapp.generated.resources.ic_load_tickets
@@ -61,6 +62,9 @@ import org.calypsonet.keyple.demo.sales.ui.theme.darkBlue
 import org.calypsonet.keyple.demo.sales.ui.theme.white
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.vectorResource
+
+/** Text size of the version, as in the other applications of the demo. */
+private val VERSION_TEXT_SIZE = 11.sp
 
 @Composable
 fun HomeScreen(navController: NavController, modifier: Modifier = Modifier, appState: AppState) {
@@ -129,20 +133,22 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier, appS
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                // Hint distinguishing this client from the native Android client of the demo
-                Text(text = "Interop client", style = AppTextStyles.smallRegular, color = darkBlue)
-
-                Text(
-                    text = "version $APP_VERSION",
-                    style = AppTextStyles.smallRegular,
-                    color = darkBlue)
-
                 Image(
                     imageVector = vectorResource(Res.drawable.ic_logo_calypso),
                     contentDescription = "Calypso logo",
                     modifier = Modifier.width(dimens.calypsoLogoWidth).padding(bottom = 4.dp))
               }
             }
+
+            // Version of the application, in the bottom right corner as in the other applications
+            // of the demo, below the hint distinguishing this client from the native Android client
+            Column(
+                modifier = Modifier.align(Alignment.BottomEnd).padding(5.dp),
+                horizontalAlignment = Alignment.End) {
+                  Text(text = "Interop client", fontSize = VERSION_TEXT_SIZE, color = darkBlue)
+                  Text(
+                      text = "version $APP_VERSION", fontSize = VERSION_TEXT_SIZE, color = darkBlue)
+                }
           }
     }
   }

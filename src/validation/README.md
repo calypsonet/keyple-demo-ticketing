@@ -85,6 +85,7 @@ Terminal selection → Settings → Card reader → Validation result
 **Terminal selection (`TerminalSelectionActivity`)**
 - Choose appropriate hardware plugin
 - The Arrive and Bluebird terminals require their plugin (see [Proprietary components](#proprietary-components))
+- Version of the application (YY.MM.DD), in the bottom right corner
 
 **Settings (`SettingsActivity`)**
 - Battery-powered mode, location of the terminal, access to the date and time settings

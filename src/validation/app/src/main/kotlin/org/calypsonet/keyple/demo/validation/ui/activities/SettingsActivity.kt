@@ -19,7 +19,6 @@ import android.widget.ArrayAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.common.reference.Location
 import org.calypsonet.keyple.demo.common.reference.LocationRepository
-import org.calypsonet.keyple.demo.validation.BuildConfig
 import org.calypsonet.keyple.demo.validation.R
 import org.calypsonet.keyple.demo.validation.databinding.ActivitySettingsBinding
 import org.calypsonet.keyple.demo.validation.databinding.ToolbarBinding
@@ -54,6 +53,5 @@ class SettingsActivity : BaseActivity() {
         startActivity(Intent(this, CardReaderActivity::class.java))
       }
     }
-    activitySettingsBinding.appVersion.text = getString(R.string.version, BuildConfig.VERSION_NAME)
   }
 }
