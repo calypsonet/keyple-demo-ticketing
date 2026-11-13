@@ -8,7 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [26.11.13]
 ### Added
 - Functional documentation published online at each release (https://calypsonet.github.io/keyple-demo-ticketing/), by
-  the CI from the HTML of the latest release, instead of by hand.
+  the CI from the HTML of the latest release, instead of by hand; skipped for the repositories without a `gh-pages`
+  branch (as the internal repository, whose releases run the release workflow of this repository).
 - Validation and Inspection applications: Famoco FX207 terminal, its SAM being accessed with the Android OMAPI plugin.
 ### Changed
 - Sales clients: home screen with two buttons, "Load tickets" and "Personalize a card" (instead of a single

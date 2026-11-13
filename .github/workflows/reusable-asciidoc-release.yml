@@ -70,12 +70,25 @@ jobs:
             ${{ inputs.working-directory }}/generated/${{ steps.document.outputs.name }}.html
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Check that ${{ steps.document.outputs.version }} is the latest release
+      - name: Check whether GitHub Pages are to be updated with ${{ steps.document.outputs.version }}
         id: latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ steps.document.outputs.version }}
         run: |
+          # GitHub Pages only for the repositories publishing them (gh-pages branch): not for the internal repository,
+          # whose releases run this workflow from the sources of the public one. Any other status than 200 or 404 (API
+          # or token issue) fails the job instead of silently skipping the publication
+          status=$(curl -sS -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/branches/gh-pages")
+          if [ "$status" = "404" ]; then
+            echo "::notice::GitHub Pages not updated: no gh-pages branch in $GITHUB_REPOSITORY"
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          elif [ "$status" != "200" ]; then
+            echo "::error::Unexpected status $status when checking the gh-pages branch of $GITHUB_REPOSITORY"
+            exit 1
+          fi
           # An older release run again must not replace the documentation of the latest release. No gh CLI nor jq in
           # the container: the GitHub API is called with curl, and its JSON read with Ruby
           latest=$(curl -fsSL -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" \
