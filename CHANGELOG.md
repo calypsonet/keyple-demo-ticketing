@@ -32,6 +32,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   returns the names and descriptions of the contracts as displayed by the Android client ("Forbidden", "Unknown",
   "1 trip left", "From … to …").
 ### Fixed
+- Sales clients: automatic return of the result screens on the terminals pausing the screen while it stays visible
+  (for example, the Bluebird terminals), and bar of the remaining time displayed also when the animations of the
+  system are disabled or shortened.
+- Validation application: result displayed during its whole delay on the terminals pausing the screen while it stays
+  visible (instead of being dismissed when the screen resumes).
+- Android applications: animations played also when the animations of the system are disabled (as on some
+  terminals), instead of being frozen on their last frame.
 - Documentation: the plugins of the Bluebird and Arrive terminals are open source, built with the library of the
   terminal manufacturer; only the storage card libraries are on request, for CNA members.
 - Icons of the Sales applications (Android, multiplatform on Android and iOS): "Sales" instead of "Remote", the former

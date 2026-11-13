@@ -19,6 +19,7 @@
         app:layout_constraintGuide_percent="0.85" />
 
     <com.airbnb.lottie.LottieAnimationView
+        app:lottie_ignoreDisabledSystemAnimations="true"
         android:id="@+id/animation"
         app:lottie_fileName="splashscreen_anim.json"
         app:lottie_autoPlay="true"
