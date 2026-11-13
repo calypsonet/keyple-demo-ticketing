@@ -735,8 +735,8 @@ table.tableblock th p {
 <div class="details">
 <span id="author" class="author">Calypso Networks Association</span><br>
 <span id="email" class="email"><a href="https://calypsonet.org" class="bare">https://calypsonet.org</a></span><br>
-<span id="revnumber">version 26.10.22,</span>
-<span id="revdate">2026-10-22</span>
+<span id="revnumber">version 26.11.13,</span>
+<span id="revdate">2026-11-13</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -1163,7 +1163,7 @@ Storage cards hold only <strong>1 transit ticket</strong>. They do not benefit f
 <i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-Storage cards are handled with the storage card libraries of CNA (card extension and reader plugin), available on request. Without them (default build), the applications do not support storage cards. The storage cards supported by each application and terminal are given in <a href="#storage-card-support">Storage card support</a>.
+Storage cards are handled with the storage card libraries of CNA (card extension and reader plugin), reserved for CNA members and available on request. Without them (default build), the applications do not support storage cards. The storage cards supported by each application and terminal are given in <a href="#storage-card-support">Storage card support</a>.
 </td>
 </tr>
 </table>
@@ -1299,7 +1299,7 @@ Priority 3 of the data model (stored value) is not covered by the demo (see <a h
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>The user chooses the personalization in the sales client, then presents the card to the reader of the client.</p>
+<p>The user chooses the personalization in the sales client, then presents the card to the reader of the client, which warns that all the content of the card will be reset.</p>
 </li>
 <li>
 <p>The server personalizes the card.</p>
@@ -1378,7 +1378,7 @@ Priority 3 of the data model (stored value) is not covered by the demo (see <a h
 <p>The server checks that a slot is available, then writes the new ticket and, for a multi-trip ticket, updates its counter.</p>
 </li>
 <li>
-<p>The result is displayed to the user (see <a href="#sales-results">Sales results</a>).</p>
+<p>The result is displayed to the user (see <a href="#sales-results">Sales results</a>); the Android and multiplatform clients then wait for the next card, to load another ticket.</p>
 </li>
 </ol>
 </div>
@@ -1668,7 +1668,7 @@ Priority 3 of the data model (stored value) is not covered by the demo (see <a h
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Famoco FX205</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Famoco FX205, FX207</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Rugged mobile terminal, NFC and SAM reader</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
@@ -1677,15 +1677,15 @@ Priority 3 of the data model (stored value) is not covered by the demo (see <a h
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Bluebird EF501</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Mobile terminal, NFC and SAM reader</p></td>
-<td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon olive"><i class="fa fa-adjust"></i></span> On request</p></td>
-<td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon olive"><i class="fa fa-adjust"></i></span> On request</p></td>
-<td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon olive"><i class="fa fa-adjust"></i></span> On request</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon olive"><i class="fa fa-adjust"></i></span> Manufacturer library</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon olive"><i class="fa fa-adjust"></i></span> Manufacturer library</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon olive"><i class="fa fa-adjust"></i></span> Manufacturer library</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Arrive Axio 4</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Transit validator, NFC and SAM reader</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
-<td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon olive"><i class="fa fa-adjust"></i></span> On request</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon olive"><i class="fa fa-adjust"></i></span> Manufacturer library</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
 </tr>
 <tr>
@@ -1703,7 +1703,7 @@ Priority 3 of the data model (stored value) is not covered by the demo (see <a h
 <p><span class="icon green"><i class="fa fa-check"></i></span> Natively supported</p>
 </li>
 <li>
-<p><span class="icon olive"><i class="fa fa-adjust"></i></span> Proprietary library available on request from CNA</p>
+<p><span class="icon olive"><i class="fa fa-adjust"></i></span> Open source plugin, to build with the library of the terminal manufacturer</p>
 </li>
 <li>
 <p><span class="icon red"><i class="fa fa-times"></i></span> Not supported</p>
@@ -1739,7 +1739,7 @@ Priority 3 of the data model (stored value) is not covered by the demo (see <a h
 <td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Validation and inspection: Famoco FX205</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Validation and inspection: Famoco FX205, FX207</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
@@ -1797,7 +1797,7 @@ Priority 3 of the data model (stored value) is not covered by the demo (see <a h
 <p><strong>Android client</strong>: the reason for a rejection is displayed below &#8220;Not valid on this network&#8221; when the card is read, and below &#8220;Ticket not loaded&#8221; or &#8220;Personalization failed&#8221; when the operation fails.</p>
 </li>
 <li>
-<p><strong>Multiplatform client</strong>: the same reasons, returned by the server, are displayed alone; &#8220;Communication error&#8221; is displayed when the server cannot be reached.</p>
+<p><strong>Multiplatform client</strong>: the same reasons, returned by the server, are displayed alone; &#8220;Server error&#8221; is displayed when the server cannot be reached, as by the Android client.</p>
 </li>
 <li>
 <p><strong>.NET client</strong>: the failures are reported in its console (see the <a href="https://github.com/calypsonet/keyple-demo-ticketing/blob/main/src/sales/client/pc-dotnet/README.md">README of the client</a>).</p>
@@ -1857,7 +1857,7 @@ Priority 3 of the data model (stored value) is not covered by the demo (see <a h
 <td class="tableblock halign-left valign-top"><p class="tableblock">Undetermined card type</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Error on the server side, or server not reachable (Android client)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Error on the server side, or server not reachable</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Server error</p></td>
 </tr>
 <tr>
@@ -2167,7 +2167,7 @@ Priority 3 of the data model (stored value) is not covered by the demo (see <a h
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Storage card libraries</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Libraries of CNA, available on request (card extension and reader plugin extension), enabling the applications to handle storage cards (see <a href="#storage-card-support">Storage card support</a>).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Libraries of CNA, reserved for CNA members and available on request (card extension and reader plugin extension), enabling the applications to handle storage cards (see <a href="#storage-card-support">Storage card support</a>).</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Ticket priority</strong></p></td>
@@ -3505,7 +3505,7 @@ The validation and inspection terminals do not select the invalidated applicatio
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 26.10.22<br>
+Version 26.11.13<br>
 </div>
 </div>
 </body>
