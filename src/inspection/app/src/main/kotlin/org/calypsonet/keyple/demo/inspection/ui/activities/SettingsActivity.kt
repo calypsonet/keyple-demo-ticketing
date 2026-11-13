@@ -36,6 +36,7 @@ class SettingsActivity : BaseActivity() {
     toolbarBinding = activitySettingsBinding.appBarLayout
     setContentView(activitySettingsBinding.root)
     setSupportActionBar(toolbarBinding.toolbar)
+    supportActionBar?.setDisplayShowTitleEnabled(false)
 
     activitySettingsBinding.spinnerLocationList.adapter =
         ArrayAdapter(

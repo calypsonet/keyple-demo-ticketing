@@ -79,6 +79,7 @@ class CardReaderActivity : BaseActivity() {
     toolbarBinding = activityCardReaderBinding.appBarLayout
     setContentView(activityCardReaderBinding.root)
     setSupportActionBar(toolbarBinding.toolbar)
+    supportActionBar?.setDisplayShowTitleEnabled(false)
     onBackPressedDispatcher.addCallback(this, backCallback)
 
     // The result overlays are inflated in advance, so that the result is displayed at once
