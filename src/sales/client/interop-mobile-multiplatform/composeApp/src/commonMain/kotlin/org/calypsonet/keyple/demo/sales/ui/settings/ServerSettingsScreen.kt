@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
@@ -45,6 +46,8 @@ import org.calypsonet.keyple.demo.sales.ui.components.SecondaryButton
 import org.calypsonet.keyple.demo.sales.ui.theme.AppTextStyles
 import org.calypsonet.keyple.demo.sales.ui.theme.blue
 import org.calypsonet.keyple.demo.sales.ui.theme.darkBlue
+import org.calypsonet.keyple.demo.sales.ui.theme.green
+import org.calypsonet.keyple.demo.sales.ui.theme.grey
 import org.calypsonet.keyple.demo.sales.ui.theme.lightBlue
 import org.calypsonet.keyple.demo.sales.ui.theme.lineBlue
 import org.calypsonet.keyple.demo.sales.ui.theme.red
@@ -121,31 +124,17 @@ internal fun ServerSettingsScreen(
             value = state.protocol,
             onValueChange = onProtocolChanged,
             error = "Please set http or https".takeIf { state.isLoaded && !state.isProtocolValid })
+
+        // State of the server entered, right below the settings, as in the Android client: status
+        // on the left (as the labels), test button on the right (as the values)
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+          ServerReadinessStatus(state.serverReadiness, Modifier.weight(1f))
+          SecondaryButton(
+              text = "Server state",
+              onClick = onTestServerReadiness,
+              enabled = state.isValid && state.serverReadiness != ServerReadiness.CHECKING)
+        }
       }
-
-      Spacer(modifier = Modifier.weight(1f))
-
-      // Test of the server entered, before saving it (as the "Server state" button of the
-      // Android client)
-      Row(
-          modifier = Modifier.fillMaxWidth().padding(horizontal = SCREEN_PADDING),
-          verticalAlignment = Alignment.CenterVertically) {
-            SecondaryButton(
-                text = "Server state",
-                onClick = onTestServerReadiness,
-                enabled = state.isValid && state.serverReadiness != ServerReadiness.CHECKING)
-            Box(
-                modifier = Modifier.weight(1f).padding(start = SETTINGS_MARGIN),
-                contentAlignment = Alignment.Center) {
-                  when (state.serverReadiness) {
-                    ServerReadiness.CHECKING ->
-                        CircularProgressIndicator(modifier = Modifier.size(24.dp), color = blue)
-                    ServerReadiness.READY -> ReadinessText("Server ready")
-                    ServerReadiness.NOT_READY -> ReadinessText("Server not ready")
-                    null -> {}
-                  }
-                }
-          }
 
       Spacer(modifier = Modifier.weight(1f))
 
@@ -202,11 +191,31 @@ private fun SettingsField(
   }
 }
 
+/**
+ * State of the server entered (not checked when null), as in the Android client: status light (or
+ * progress indicator while the server is checked) and text, in the color of the state.
+ */
 @Composable
-private fun ReadinessText(text: String) {
-  Text(
-      text = text,
-      style = AppTextStyles.smallRegular,
-      color = darkBlue,
-      textAlign = TextAlign.Center)
+private fun ServerReadinessStatus(readiness: ServerReadiness?, modifier: Modifier = Modifier) {
+  val (text, color) =
+      when (readiness) {
+        null -> "Not checked" to grey
+        ServerReadiness.CHECKING -> "Checking…" to grey
+        ServerReadiness.READY -> "Server ready" to green
+        ServerReadiness.NOT_READY -> "Server not ready" to red
+      }
+  Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+    Box(modifier = Modifier.size(20.dp), contentAlignment = Alignment.Center) {
+      if (readiness == ServerReadiness.CHECKING) {
+        CircularProgressIndicator(modifier = Modifier.size(20.dp), color = blue, strokeWidth = 2.dp)
+      } else {
+        Box(modifier = Modifier.size(12.dp).background(color, CircleShape))
+      }
+    }
+    Text(
+        text = text,
+        modifier = Modifier.padding(start = 10.dp),
+        style = AppTextStyles.smallRegular,
+        color = color)
+  }
 }

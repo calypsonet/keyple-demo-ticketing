@@ -24,6 +24,7 @@
     <dimen name="home_icon_size">36dp</dimen>
 
     <dimen name="connection_status_size">12dp</dimen>
+    <dimen name="readiness_indicator_size">20dp</dimen>
     <dimen name="connection_status_contour">3dp</dimen>
 
 

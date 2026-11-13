@@ -12,9 +12,12 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.sales.ui.activities
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
+import androidx.core.content.ContextCompat
+import androidx.core.widget.ImageViewCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,11 +53,12 @@ class ServerSettingsActivity : BaseActivity() {
             activityServerSettingsBinding.serverProtocolEdit)
         .forEach { edit ->
           edit.doAfterTextChanged {
-            activityServerSettingsBinding.serverReadinessText.text = ""
+            showServerReadiness(ServerReadinessDisplay.NOT_CHECKED)
             updateEntryChecks()
           }
         }
     updateEntryChecks()
+    showServerReadiness(ServerReadinessDisplay.NOT_CHECKED)
 
     // The new server is used from the next request: no restart of the application is needed
     activityServerSettingsBinding.save.setOnClickListener {
@@ -72,8 +76,7 @@ class ServerSettingsActivity : BaseActivity() {
   /** Tests whether the server entered by the user is ready (reachable, with its SAM available). */
   private fun testServerReadiness(serverConfig: ServerConfig) {
     Timber.i("Checking the server [url=${serverConfig.url}]")
-    activityServerSettingsBinding.serverReadinessProgressBar.visibility = View.VISIBLE
-    activityServerSettingsBinding.serverReadinessText.visibility = View.INVISIBLE
+    showServerReadiness(ServerReadinessDisplay.CHECKING)
     lifecycleScope.launch(Dispatchers.Main) {
       val isServerReady =
           withContext(Dispatchers.IO) {
@@ -88,11 +91,41 @@ class ServerSettingsActivity : BaseActivity() {
               false
             }
           }
-      activityServerSettingsBinding.serverReadinessProgressBar.visibility = View.INVISIBLE
-      activityServerSettingsBinding.serverReadinessText.visibility = View.VISIBLE
-      activityServerSettingsBinding.serverReadinessText.text =
-          getString(if (isServerReady) R.string.server_ready else R.string.server_not_ready)
+      showServerReadiness(
+          if (isServerReady) ServerReadinessDisplay.READY else ServerReadinessDisplay.NOT_READY)
     }
+  }
+
+  /**
+   * Displays the state of the server entered: status light (or progress indicator while the server
+   * is checked) and text, in the color of the state. The "Server state" button is disabled while
+   * the server is checked.
+   */
+  private fun showServerReadiness(display: ServerReadinessDisplay) {
+    val isChecking = display == ServerReadinessDisplay.CHECKING
+    activityServerSettingsBinding.serverReadinessProgressBar.visibility =
+        if (isChecking) View.VISIBLE else View.INVISIBLE
+    activityServerSettingsBinding.serverReadinessLight.visibility =
+        if (isChecking) View.INVISIBLE else View.VISIBLE
+    val color = ContextCompat.getColor(this, display.colorRes)
+    ImageViewCompat.setImageTintList(
+        activityServerSettingsBinding.serverReadinessLight, ColorStateList.valueOf(color))
+    activityServerSettingsBinding.serverReadinessText.setText(display.textRes)
+    activityServerSettingsBinding.serverReadinessText.setTextColor(color)
+    if (isChecking) {
+      activityServerSettingsBinding.serverReadinessBtn.isEnabled = false
+      activityServerSettingsBinding.serverReadinessBtn.alpha = DISABLED_BUTTON_ALPHA
+    } else {
+      updateEntryChecks()
+    }
+  }
+
+  /** States of the server entered, with their text and color. */
+  private enum class ServerReadinessDisplay(val textRes: Int, val colorRes: Int) {
+    NOT_CHECKED(R.string.server_not_checked, R.color.grey),
+    CHECKING(R.string.server_checking, R.color.grey),
+    READY(R.string.server_ready, R.color.green),
+    NOT_READY(R.string.server_not_ready, R.color.red),
   }
 
   /**
