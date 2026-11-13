@@ -56,7 +56,8 @@ cd keyple-demo-ticketing/src/inspection
 ### Terminal selection
 1. Launch application
 2. Select the terminal type from **Terminal selection** screen:
-  - **Famoco**: terminal with a SAM reader
+  - **Famoco (SE COM)**: Famoco FX205, SAM accessed with the Famoco plugin
+  - **Famoco (OMAPI)**: Famoco FX207, SAM accessed with the Android OMAPI plugin
   - **NFC terminal**: any Android device with NFC (no SAM: the Calypso cards are authenticated by PKI when they
     support it, otherwise not authenticated); the MIFARE Ultralight and MIFARE Classic storage cards are also
     supported (with the storage card libraries, see [Proprietary components](#proprietary-components))
@@ -83,6 +84,7 @@ Terminal selection → Settings → Home → Card reader → Card content or Inv
 **Terminal selection (`TerminalSelectionActivity`)**
 - Choice of the terminal type, which selects the reader plugins
 - The Bluebird terminals require their plugin (see [Proprietary components](#proprietary-components))
+- Version of the application (YY.MM.DD), in the bottom right corner
 
 **Settings (`SettingsActivity`)**
 - Location of the inspection, validation period, access to the date and time settings
@@ -154,6 +156,12 @@ The comments of these classes reference the step numbers of the annex.
 - **Plugins**: [Android NFC](https://keyple.org/components/standard-reader-plugins/keyple-plugin-android-nfc-lib/)
   for the contactless cards (Calypso cards, and storage cards with the storage card libraries), and
   [Famoco Plugin](https://github.com/calypsonet/keyple-famoco) for the SAM
+
+**Famoco FX207**
+- **Configuration**: NFC reader and SAM reader
+- **Plugins**: [Android NFC](https://keyple.org/components/standard-reader-plugins/keyple-plugin-android-nfc-lib/)
+  for the contactless cards (Calypso cards, and storage cards with the storage card libraries), and
+  [Android OMAPI](https://keyple.org/components/standard-reader-plugins/keyple-plugin-android-omapi-lib/) for the SAM
 
 **NFC terminal (any Android device with NFC)**
 - **Plugin**: [Android NFC Plugin](https://keyple.org/components/standard-reader-plugins/keyple-plugin-android-nfc-lib/)

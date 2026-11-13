@@ -79,6 +79,7 @@ class CardReaderActivity : BaseActivity() {
     toolbarBinding = activityCardReaderBinding.appBarLayout
     setContentView(activityCardReaderBinding.root)
     setSupportActionBar(toolbarBinding.toolbar)
+    supportActionBar?.setDisplayShowTitleEnabled(false)
     onBackPressedDispatcher.addCallback(this, backCallback)
 
     // The result overlays are inflated in advance, so that the result is displayed at once
@@ -91,6 +92,7 @@ class CardReaderActivity : BaseActivity() {
     invalidCardBinding =
         LayoutInvalidCardOverlayBinding.bind(activityCardReaderBinding.invalidCardStub.inflate())
     invalidCardBinding.appBarLayout.toolbarLogo.setImageResource(R.drawable.ic_logo_white)
+    invalidCardBinding.appBarLayout.toolbarAppName.setText(R.string.toolbar_app_name_on_color)
     invalidCardBinding.presentBtn.setOnClickListener { hideResult() }
   }
 

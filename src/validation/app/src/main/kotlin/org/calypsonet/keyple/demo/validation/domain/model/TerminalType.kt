@@ -15,5 +15,8 @@ package org.calypsonet.keyple.demo.validation.domain.model
 enum class TerminalType {
   ARRIVE,
   BLUEBIRD,
-  FAMOCO
+  /** Famoco terminal whose SAM is accessed with the Famoco SE Communication plugin. */
+  FAMOCO,
+  /** Famoco terminal whose SAM is accessed with the Android OMAPI plugin (e.g. FX207). */
+  FAMOCO_OMAPI
 }

@@ -29,7 +29,8 @@
     <string name="terminal_title">Select the terminal</string>
     <string name="terminal_arrive">ARRIVE</string>
     <string name="terminal_bluebird">BLUEBIRD</string>
-    <string name="terminal_famoco">FAMOCO</string>
+    <string name="terminal_famoco">FAMOCO (SE COM)</string>
+    <string name="terminal_famoco_omapi">FAMOCO (OMAPI)</string>
 
     <!-- Home screen -->
     <string name="home_description">Open Source API for Smart Ticketing</string>
@@ -65,4 +66,7 @@
     <string name="rejection_contract_forbidden_or_expired">Ticket forbidden or expired</string>
     <string name="error_mifare_classic_authentication">Authentication failed. Please ensure the card is correctly positioned.</string>
     <string name="error_mifare_classic_transaction">Transaction failed. Please try again.</string>
+
+    <!-- Name of the application in the toolbar: initial in the color of the "y" of the logo -->
+    <string name="toolbar_app_name"><font color="#FFFFFF">V</font>alidation</string>
 </resources>

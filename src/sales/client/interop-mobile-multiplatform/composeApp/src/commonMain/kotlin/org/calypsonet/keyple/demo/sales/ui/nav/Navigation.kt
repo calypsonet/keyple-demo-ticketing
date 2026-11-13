@@ -15,9 +15,23 @@ package org.calypsonet.keyple.demo.sales.ui.nav
 import kotlinx.serialization.Serializable
 import org.calypsonet.keyple.demo.sales.ui.model.Product
 
+@Serializable data object Splash
+
 @Serializable data object Home
 
-@Serializable data object SettingsMenu
+/** Confirmation of the payment of a product, before its loading onto the card. */
+@Serializable
+data class PaymentConfirmed(
+    val productType: Int,
+    val quantity: Int = 1,
+    val cardSerialNumber: String
+) {
+  companion object {
+    operator fun invoke(product: Product, cardSerialNumber: String = ""): PaymentConfirmed {
+      return PaymentConfirmed(product.type.ordinal, product.quantity, cardSerialNumber)
+    }
+  }
+}
 
 @Serializable
 data class LoadContract(val productType: Int, val quantity: Int = 1, val cardSerialNumber: String) {

@@ -20,7 +20,6 @@ import android.widget.ArrayAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import org.calypsonet.keyple.demo.common.reference.Location
 import org.calypsonet.keyple.demo.common.reference.LocationRepository
-import org.calypsonet.keyple.demo.inspection.BuildConfig
 import org.calypsonet.keyple.demo.inspection.R
 import org.calypsonet.keyple.demo.inspection.databinding.ActivitySettingsBinding
 import org.calypsonet.keyple.demo.inspection.databinding.ToolbarBinding
@@ -37,6 +36,7 @@ class SettingsActivity : BaseActivity() {
     toolbarBinding = activitySettingsBinding.appBarLayout
     setContentView(activitySettingsBinding.root)
     setSupportActionBar(toolbarBinding.toolbar)
+    supportActionBar?.setDisplayShowTitleEnabled(false)
 
     activitySettingsBinding.spinnerLocationList.adapter =
         ArrayAdapter(
@@ -46,7 +46,6 @@ class SettingsActivity : BaseActivity() {
             LocationRepository.getLocations())
     activitySettingsBinding.validationPeriodEdit.text =
         Editable.Factory.getInstance().newEditable("10")
-    activitySettingsBinding.appVersion.text = getString(R.string.version, BuildConfig.VERSION_NAME)
     activitySettingsBinding.timeBtn.setOnClickListener {
       startActivity(Intent(Settings.ACTION_DATE_SETTINGS))
     }

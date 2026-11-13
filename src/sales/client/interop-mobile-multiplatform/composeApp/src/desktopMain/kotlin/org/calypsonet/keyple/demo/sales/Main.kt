@@ -18,6 +18,8 @@ import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import io.github.aakira.napier.Napier
+import org.calypsonet.keyple.composeapp.generated.resources.Res
+import org.calypsonet.keyple.composeapp.generated.resources.app_icon
 import org.calypsonet.keyple.demo.sales.data.platform.Buzzer
 import org.calypsonet.keyple.demo.sales.data.platform.DataStorePathProducer
 import org.calypsonet.keyple.demo.sales.data.platform.PlatformBuzzer
@@ -28,6 +30,7 @@ import org.calypsonet.keyple.demo.sales.data.service.ServerConfigRepository
 import org.calypsonet.keyple.demo.sales.data.service.ServerReadinessChecker
 import org.eclipse.keyple.interop.localreader.nfcmobile.api.LocalNfcReader
 import org.eclipse.keyple.interop.localreader.nfcmobile.api.MultiplatformNfcReader
+import org.jetbrains.compose.resources.painterResource
 
 fun main(args: Array<String>) = application {
   initLogger()
@@ -53,7 +56,7 @@ fun main(args: Array<String>) = application {
   val buzzer = Buzzer(PlatformBuzzer())
 
   Window(
-      // icon = TODO
+      icon = painterResource(Res.drawable.app_icon),
       title = "Keyple Demo — Sales (Interop)",
       state = windowState,
       onCloseRequest = ::exitApplication) {

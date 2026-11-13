@@ -12,13 +12,18 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.sales.data.network
 
+/**
+ * Endpoint of the remote plugin of the server, the same as for the Android client: it is not
+ * configurable.
+ */
+const val REMOTE_PLUGIN_ENDPOINT = "/card/remote-plugin"
+
 data class KeypleServerConfig(
     val host: String,
     val port: Int,
-    val endpoint: String,
     val basicAuth: String? = null,
 ) {
   fun baseUrl() = "${host}:${port}"
 
-  fun serviceUrl() = "${baseUrl()}${endpoint}"
+  fun serviceUrl() = "${baseUrl()}$REMOTE_PLUGIN_ENDPOINT"
 }

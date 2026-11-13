@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Icon of the "Personalize a card" button of the home screen: contactless card being reset.
+  Derived from Material Symbols (Outlined) by Google, licensed under the Apache License 2.0
+  (https://www.apache.org/licenses/LICENSE-2.0): waves of the icon "contactless" and arrow of the icon "restart_alt",
+  scaled and placed on a card frame drawn for the demo, and recolored.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="960"
+    android:viewportHeight="960">
+    <!-- Material Symbols coordinates (y from -960 to 0) shifted into the viewport -->
+    <group android:translateY="960">
+        <path
+            android:fillColor="#213B6C"
+            android:pathData="M140-160q-24 0-42-18t-18-42v-520q0-24 18-42t42-18h680q24 0 42 18t18 42v280h-60v-280H140v520h400v60H140Z" />
+        <group
+            android:pivotX="443"
+            android:pivotY="-480"
+            android:scaleX="0.8"
+            android:scaleY="0.8"
+            android:translateX="-123"
+            android:translateY="0">
+            <path
+                android:fillColor="#213B6C"
+                android:pathData="M322-385q10-23 16.5-46.5T345-480q0-25-6-49t-18-46l-56 20q11 17 15.5 36t4.5 39q0 20-5.5 39T265-404l57 19Zm136 57q16-36 23-74.5t7-77.5q0-39-7-77t-23-74l-57 20q15 31 21 64t6 67q0 34-6.5 67.5T401-348l57 20Zm131 56q22-50 32-102t10-106q0-54-10-106t-32-101l-56 22q20 44 29 90.5t9 94.5q0 48-9 95t-29 91l56 22Z" />
+        </group>
+        <group
+            android:pivotX="160"
+            android:pivotY="-892"
+            android:scaleX="0.55"
+            android:scaleY="0.55"
+            android:translateX="425"
+            android:translateY="437">
+            <path
+                android:fillColor="#213B6C"
+                android:pathData="M451-122q-123-10-207-101t-84-216q0-77 35.5-145T295-695l43 43q-56 33-87 90.5T220-439q0 100 66 173t165 84v60Zm60 0v-60q100-12 165-84.5T741-439q0-109-75.5-184.5T481-699h-20l60 60-43 43-133-133 133-133 43 43-60 60h20q134 0 227 93.5T801-439q0 125-83.5 216T511-122Z" />
+        </group>
+    </group>
+</vector>

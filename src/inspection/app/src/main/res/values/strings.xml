@@ -32,7 +32,8 @@
     <!-- Terminal selection screen -->
     <string name="terminal_title">Select the terminal</string>
     <string name="terminal_bluebird">BLUEBIRD</string>
-    <string name="terminal_famoco">FAMOCO</string>
+    <string name="terminal_famoco">FAMOCO (SE COM)</string>
+    <string name="terminal_famoco_omapi">FAMOCO (OMAPI)</string>
     <string name="terminal_nfc">NFC TERMINAL</string>
 
     <!-- Home screen -->
@@ -82,4 +83,9 @@
     <string name="error_mifare_classic_authentication">Authentication failed. Please ensure the card is correctly positioned.</string>
     <string name="error_mifare_classic_reading">Failed to read the MIFARE Classic card. Please try again.</string>
     <string name="error_card_reading">An error occurred while reading the card.</string>
+
+    <!-- Name of the application in the toolbar: initial in the color of the "y" of the logo -->
+    <string name="toolbar_app_name"><font color="#1D87BB">I</font>nspection</string>
+    <!-- Same, on a colored background, where the logo is the white one -->
+    <string name="toolbar_app_name_on_color"><font color="#FFFFFF">I</font>nspection</string>
 </resources>

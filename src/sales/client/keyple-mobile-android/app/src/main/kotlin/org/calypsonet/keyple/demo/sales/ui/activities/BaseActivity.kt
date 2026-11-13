@@ -12,13 +12,14 @@
  ****************************************************************************** */
 package org.calypsonet.keyple.demo.sales.ui.activities
 
-import android.animation.ObjectAnimator
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.View
-import android.view.animation.LinearInterpolator
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -38,7 +39,6 @@ abstract class BaseActivity : AppCompatActivity() {
   @Inject lateinit var serverReadinessChecker: ServerReadinessChecker
   protected lateinit var toolbarBinding: ToolbarBinding
   private var autoReturnJob: Job? = null
-  private var autoReturnAnimator: ObjectAnimator? = null
   private var autoReturnProgress: ProgressBar? = null
   private var onAutoReturnCountdown: ((Int?) -> Unit)? = null
 
@@ -59,16 +59,14 @@ abstract class BaseActivity : AppCompatActivity() {
     checkServerReadiness()
   }
 
-  override fun onPause() {
-    super.onPause()
-    // The automatic return is abandoned when the user leaves the screen (for example, with a
-    // button)
-    cancelAutoReturn()
-  }
-
   /**
    * Closes the screen after the provided delay, returning to the previous screen (for example, the
    * card presentation screen to try again, or the home screen).
+   *
+   * The countdown runs while the screen is visible: it is stopped when the screen is hidden (for
+   * example, when the user leaves it with a button), and restarted from the beginning when it is
+   * visible again. A pause of the screen while it stays visible (for example, a transparent window
+   * of the system, as the NFC service of some terminals opens) does not stop it.
    *
    * @param delayMs The display duration, in milliseconds.
    * @param progress The bar emptied during the delay to show the remaining time, if any.
@@ -86,35 +84,44 @@ abstract class BaseActivity : AppCompatActivity() {
     onAutoReturnCountdown = onCountdown
     progress?.let {
       it.max = AUTO_RETURN_PROGRESS_MAX
+      it.progress = AUTO_RETURN_PROGRESS_MAX
       it.visibility = View.VISIBLE
-      autoReturnAnimator =
-          ObjectAnimator.ofInt(it, "progress", AUTO_RETURN_PROGRESS_MAX, 0).apply {
-            duration = delayMs
-            interpolator = LinearInterpolator()
-            start()
-          }
     }
+    // The bar is updated from the elapsed time, and not with an animator: the animators follow the
+    // animation duration scale of the system, which some terminals disable (the bar would then be
+    // empty from the start)
     autoReturnJob =
         lifecycleScope.launch {
-          for (seconds in (delayMs / 1000).toInt() downTo 1) {
-            onCountdown?.invoke(seconds)
-            delay(1000)
+          repeatOnLifecycle(Lifecycle.State.STARTED) {
+            val start = SystemClock.elapsedRealtime()
+            var displayedSeconds = -1
+            while (true) {
+              val remainingMs = delayMs - (SystemClock.elapsedRealtime() - start)
+              if (remainingMs <= 0) break
+              progress?.progress = (remainingMs * AUTO_RETURN_PROGRESS_MAX / delayMs).toInt()
+              val seconds = ((remainingMs + 999) / 1000).toInt()
+              if (seconds != displayedSeconds) {
+                displayedSeconds = seconds
+                onCountdown?.invoke(seconds)
+              }
+              delay(AUTO_RETURN_UPDATE_PERIOD_MS)
+            }
+            progress?.progress = 0
+            finish()
           }
-          delay(delayMs % 1000)
-          finish()
         }
   }
 
-  /** Stops the automatic return in progress, if any, and restores the display. */
+  /**
+   * Stops the automatic return in progress, if any (before a new one), and restores the display.
+   */
   private fun cancelAutoReturn() {
     if (autoReturnJob?.isActive == true) {
       autoReturnJob?.cancel()
-      autoReturnAnimator?.cancel()
       autoReturnProgress?.visibility = View.GONE
       onAutoReturnCountdown?.invoke(null)
     }
     autoReturnJob = null
-    autoReturnAnimator = null
     autoReturnProgress = null
     onAutoReturnCountdown = null
   }
@@ -158,7 +165,9 @@ abstract class BaseActivity : AppCompatActivity() {
     const val SUCCESS_RETURN_DELAY_MS = 5000L
     /** Display duration of an error before the automatic return. */
     const val ERROR_RETURN_DELAY_MS = 5000L
-    /** Resolution of the progress bar showing the remaining time (smooth animation). */
+    /** Resolution of the progress bar showing the remaining time. */
     private const val AUTO_RETURN_PROGRESS_MAX = 1000
+    /** Update period of the progress bar showing the remaining time, in milliseconds. */
+    private const val AUTO_RETURN_UPDATE_PERIOD_MS = 40L
   }
 }

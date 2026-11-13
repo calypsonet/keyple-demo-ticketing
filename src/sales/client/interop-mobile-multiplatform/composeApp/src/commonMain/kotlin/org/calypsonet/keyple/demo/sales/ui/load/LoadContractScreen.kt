@@ -17,15 +17,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import org.calypsonet.keyple.demo.sales.AppState
-import org.calypsonet.keyple.demo.sales.ui.components.AutoReturn
-import org.calypsonet.keyple.demo.sales.ui.components.ERROR_RETURN_DELAY_MS
 import org.calypsonet.keyple.demo.sales.ui.components.PresentCardAnimation
-import org.calypsonet.keyple.demo.sales.ui.components.ReadingError
+import org.calypsonet.keyple.demo.sales.ui.components.ResultKind
+import org.calypsonet.keyple.demo.sales.ui.components.ResultScreen
 import org.calypsonet.keyple.demo.sales.ui.components.ScanCardAnimation
 import org.calypsonet.keyple.demo.sales.ui.components.ScanScreen
 import org.calypsonet.keyple.demo.sales.ui.nav.Home
 import org.calypsonet.keyple.demo.sales.ui.nav.Success
-import org.calypsonet.keyple.demo.sales.ui.theme.red
 
 @Composable
 fun LoadContractScreen(
@@ -47,27 +45,36 @@ internal fun LoadContractScreen(
     modifier: Modifier = Modifier,
     appState: AppState
 ) {
+  val backToHome = { navController.navigate(Home) { popUpTo(Home) { inclusive = true } } }
+
+  // As in the Android client, a failure of the loading is a result screen (red)
+  if (state is LoadContractScreenState.DisplayError) {
+    ResultScreen(
+        navController = navController,
+        appState = appState,
+        kind = ResultKind.ERROR,
+        message = state.message,
+        onReturn = backToHome,
+        modifier = modifier)
+    return
+  }
+
   ScanScreen(
       navController = navController,
       modifier = modifier,
       appState = appState,
-      onBack = { navController.navigate(Home) { popUpTo(Home) { inclusive = true } } },
-      autoReturn =
-          if (state is LoadContractScreenState.DisplayError) AutoReturn(ERROR_RETURN_DELAY_MS, red)
-          else null) {
+      onBack = backToHome) {
         when (state) {
           LoadContractScreenState.WaitForCard -> {
-            PresentCardAnimation()
+            PresentCardAnimation("Please present the contactless card to be loaded")
           }
           LoadContractScreenState.WritingToCard -> {
-            ScanCardAnimation()
-          }
-          is LoadContractScreenState.DisplayError -> {
-            ReadingError(state.message)
+            ScanCardAnimation("Loading in progress")
           }
           LoadContractScreenState.DisplaySuccess -> {
             navController.navigate(Success) { popUpTo(Home) }
           }
+          is LoadContractScreenState.DisplayError -> {}
         }
       }
 }

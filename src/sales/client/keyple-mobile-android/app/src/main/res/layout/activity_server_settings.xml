@@ -122,6 +122,49 @@
         android:layout_marginBottom="@dimen/settings_margin"
         app:layout_constraintTop_toBottomOf="@id/protocol_label"/>
 
+    <!-- State of the server entered, right below the settings: status on the left (as the labels), test button on
+         the right (as the values) -->
+    <LinearLayout
+        android:id="@+id/server_readiness_status"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/server_readiness_btn"
+        app:layout_constraintTop_toTopOf="@id/server_readiness_btn"
+        app:layout_constraintBottom_toBottomOf="@id/server_readiness_btn">
+
+        <!-- Status light, replaced by a progress indicator while the server is checked -->
+        <FrameLayout
+            android:layout_width="@dimen/readiness_indicator_size"
+            android:layout_height="@dimen/readiness_indicator_size">
+
+            <ImageView
+                android:id="@+id/server_readiness_light"
+                android:layout_width="@dimen/connection_status_size"
+                android:layout_height="@dimen/connection_status_size"
+                android:layout_gravity="center"
+                android:src="@drawable/status_light"
+                android:importantForAccessibility="no" />
+
+            <ProgressBar
+                android:id="@+id/server_readiness_progress_bar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:indeterminateTint="@color/blue"
+                android:visibility="invisible" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/server_readiness_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/block_space"
+            android:text="@string/server_not_checked"
+            style="@style/smallRegularGrey" />
+    </LinearLayout>
+
     <Button
         android:id="@+id/server_readiness_btn"
         android:layout_width="wrap_content"
@@ -130,32 +173,9 @@
         android:backgroundTint="@color/light_blue"
         android:elevation="4dp"
         style="@style/smallMediumDarkBlue"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/protocol_line"
-        app:layout_constraintBottom_toTopOf="@id/save"
-         />
-
-    <TextView
-        android:id="@+id/server_readiness_text"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        style="@style/smallRegularDarkBlue"
-        android:gravity="center_horizontal"
-        android:layout_marginStart="@dimen/settings_margin"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/server_readiness_btn"
-        app:layout_constraintTop_toBottomOf="@id/protocol_line"
-        app:layout_constraintBottom_toTopOf="@id/save"/>
-
-    <ProgressBar
-        android:id="@+id/server_readiness_progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="invisible"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/server_readiness_btn"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/save"/>
+        android:layout_marginTop="@dimen/block_space"
+        app:layout_constraintTop_toBottomOf="@id/protocol_line" />
 
     <Button
         android:id="@+id/save"

@@ -51,7 +51,8 @@ class PersonalizeCardScreenViewModel(
 
   private fun scan() {
     viewModelScope.launch {
-      keypleInteropService.setScanMessage("Place your card on the reader")
+      keypleInteropService.setScanMessage(
+          "Place the card to personalize on the reader: all its content will be reset")
       try {
         val cardFound =
             keypleInteropService.waitForCard(owner = this@PersonalizeCardScreenViewModel)
@@ -82,7 +83,7 @@ class PersonalizeCardScreenViewModel(
       }
     } catch (e: Exception) {
       Napier.e("Error while personalizing the card", e)
-      _state.value = PersonalizeCardScreenState.DisplayError("Unexpected error")
+      _state.value = PersonalizeCardScreenState.DisplayError("An error occurred")
     }
   }
 }

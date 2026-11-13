@@ -53,7 +53,7 @@ cd keyple-demo-ticketing/src/sales/client/keyple-mobile-android
 ## Configuration
 
 ### Server connection
-1. Open **Settings** → **Server**
+1. Tap the settings icon of the home screen (server settings)
 2. Configure the server connection:
   - **Server IP** (IP address or host name) and **Server port** (for example, `192.168.1.10` and `8080`)
   - **Protocol** (`http` or `https`)
@@ -74,16 +74,15 @@ terminals.
 ### Quick start workflow
 
 1. **Launch application**
-  - Select **Contactless card** from main menu
   - Ensure server is running and accessible
 
 2. **Card personalization** (if needed)
-  - Go to **Settings** → **Personalization**
-  - Present the card to personalize (its data is reset)
+  - From the home screen, tap **Personalize a card**
+  - Present the card to personalize (the screen warns that all the content of the card will be reset)
   - Wait for confirmation message
 
 3. **Read card content**
-  - From main screen, tap **Contactless card**
+  - From the home screen, tap **Load tickets**
   - Present card to NFC reader
   - View existing contracts and validity status
 
@@ -91,11 +90,13 @@ terminals.
   - Select desired contract type from available options
   - Follow payment simulation workflow
   - Present card again to complete loading
+  - After the result, the card reader screen is displayed again, for the next ticket (back arrow: home screen)
 
 ### Screen flow
 
 ```
-Splash screen → Home → Card reader → Card content → Select product → Checkout → Payment confirmed → Load contract → Result
+Splash screen → Home → Card reader → Card content → Select product → Checkout → Payment confirmed → Load contract
+  → Result → Card reader (next ticket)
 ```
 
 ### Detailed screen guide
@@ -104,12 +105,10 @@ Splash screen → Home → Card reader → Card content → Select product → C
 - Displayed at startup, then opens the home screen
 
 **Home screen (`HomeActivity`)**
-- Access to the reading of a contactless card
-- Quick access to settings and personalization
-
-**Settings menu (`SettingsMenuActivity`)**
-- **Server**: Connection configuration
-- **Personalization**: Personalization of a card (reset of its data)
+- **Load tickets**: reading of the card, then loading of a ticket, repeated for the next tickets
+- **Personalize a card**: personalization of a card (reset of its data)
+- Settings icon: server settings (`ServerSettingsActivity`)
+- Version of the application (YY.MM.DD), in the bottom right corner
 
 **Card reader (`CardReaderActivity`)**
 - Initializes selected Keyple plugin
@@ -268,4 +267,5 @@ compatibility with the API level 26, and update the server when a remote service
 
 ## License
 
-This Android application is part of the Keyple Demo project and is licensed under the BSD 3-Clause License.
+This Android application is part of the Keyple Demo project and is licensed under the BSD 3-Clause License. Some of
+its icons are derived from Material Symbols, under the Apache License 2.0 (see [NOTICE](../../../../NOTICE.md)).

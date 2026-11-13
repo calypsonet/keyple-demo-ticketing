@@ -16,5 +16,6 @@
 
     <dimen name="reading_animation_size">250dp</dimen>
 
-    <dimen name="home_card_btn_height">140dp</dimen>
+    <dimen name="home_card_btn_height">168dp</dimen>
+    <dimen name="home_icon_size">56dp</dimen>
 </resources>

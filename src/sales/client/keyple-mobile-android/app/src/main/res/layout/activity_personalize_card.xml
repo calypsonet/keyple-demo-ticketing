@@ -75,6 +75,7 @@
         app:layout_constraintGuide_percent="0.3"/>
 
     <com.airbnb.lottie.LottieAnimationView
+        app:lottie_ignoreDisabledSystemAnimations="true"
         android:id="@+id/cardAnimation"
         android:layout_width="@dimen/reading_animation_size"
         android:layout_height="0dp"
@@ -86,6 +87,7 @@
         app:layout_constraintBottom_toTopOf="@id/presentTxt" />
 
     <com.airbnb.lottie.LottieAnimationView
+        app:lottie_ignoreDisabledSystemAnimations="true"
         android:id="@+id/loadingAnimation"
         android:layout_width="@dimen/reading_animation_size"
         android:layout_height="0dp"
@@ -109,6 +111,32 @@
         app:layout_constraintLeft_toLeftOf="@id/guideline_left"
         app:layout_constraintRight_toRightOf="@id/guideline_right"
         app:layout_constraintBottom_toBottomOf="@id/guideline_bottom"/>
+
+    <!-- Warning on the reset of the card, displayed while waiting for the card: title, then message -->
+    <LinearLayout
+        android:id="@+id/warningLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/warning_top_margin"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/presentTxt"
+        app:layout_constraintLeft_toLeftOf="@id/guideline_left"
+        app:layout_constraintRight_toRightOf="@id/guideline_right">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/personalization_warning_title"
+            android:gravity="center"
+            style="@style/mediumBoldOrange" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/personalization_warning"
+            android:gravity="center"
+            style="@style/mediumRegularOrange" />
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/eclipseLogo"

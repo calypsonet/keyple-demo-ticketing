@@ -30,6 +30,7 @@ class HomeActivity : BaseActivity() {
     toolbarBinding = activityHomeBinding.appBarLayout
     setContentView(activityHomeBinding.root)
     setSupportActionBar(toolbarBinding.toolbar)
+    supportActionBar?.setDisplayShowTitleEnabled(false)
     activityHomeBinding.startBtn.setOnClickListener {
       startActivity(Intent(this, CardReaderActivity::class.java))
     }

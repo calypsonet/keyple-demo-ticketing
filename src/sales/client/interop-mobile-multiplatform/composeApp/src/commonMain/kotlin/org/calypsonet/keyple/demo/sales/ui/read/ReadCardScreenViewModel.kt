@@ -55,7 +55,7 @@ class ReadCardScreenViewModel(
 
   private fun scan() {
     viewModelScope.launch {
-      keypleInteropService.setScanMessage("Place your card on the reader")
+      keypleInteropService.setScanMessage("Place the card to read on the reader")
       try {
         keypleInteropService.waitForCard(owner = this@ReadCardScreenViewModel) {
           keypleInteropService.setScanMessage("Stay still…")
@@ -87,7 +87,7 @@ class ReadCardScreenViewModel(
       }
     } catch (e: Exception) {
       Napier.e("Error while reading the contracts", e)
-      _state.value = ReadCardScreenState.DisplayError("Unexpected error")
+      _state.value = ReadCardScreenState.DisplayError("An error occurred")
     }
   }
 }

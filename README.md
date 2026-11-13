@@ -96,9 +96,9 @@ specified in the annexes [Card data model](docs/functional-documentation/index.a
 
 ### Tested terminals
 
-The terminals supported by each application (Famoco FX205, Bluebird EF501, Arrive Axio 4, any Android device with NFC)
-are listed in the [Functional Documentation](docs/functional-documentation/index.adoc#tested-terminals), and their
-reader plugins in the README of each application ([validation](src/validation/README.md#tested-terminals),
+The terminals supported by each application (Famoco FX205 and FX207, Bluebird EF501, Arrive Axio 4, any Android device
+with NFC) are listed in the [Functional Documentation](docs/functional-documentation/index.adoc#tested-terminals), and
+their reader plugins in the README of each application ([validation](src/validation/README.md#tested-terminals),
 [inspection](src/inspection/README.md#tested-terminals),
 [sales Android client](src/sales/client/keyple-mobile-android/README.md#plugin-integration)). The server and
 the desktop clients use PC/SC readers.
@@ -594,4 +594,5 @@ concerned, and passes the checks of the CI:
 
 ## License
 
-This project is licensed under the BSD 3-Clause License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the BSD 3-Clause License. See the [LICENSE](LICENSE) file for details. Some icons
+of the sales clients are derived from third-party content, under its own license (see [NOTICE](NOTICE.md)).

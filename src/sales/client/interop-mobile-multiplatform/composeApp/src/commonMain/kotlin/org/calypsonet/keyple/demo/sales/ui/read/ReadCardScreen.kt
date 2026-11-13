@@ -63,10 +63,10 @@ internal fun ReadCardScreen(
           else null) {
         when (state) {
           ReadCardScreenState.WaitForCard -> {
-            PresentCardAnimation()
+            PresentCardAnimation("Please present a contactless card")
           }
           ReadCardScreenState.ReadingCard -> {
-            ScanCardAnimation()
+            ScanCardAnimation("Read in progress")
           }
           is ReadCardScreenState.DisplayError -> {
             ReadingError(state.message)

@@ -55,7 +55,7 @@ class LoadContractScreenViewModel(
 
   private fun scan() {
     viewModelScope.launch {
-      keypleInteropService.setScanMessage("Place your card on the reader")
+      keypleInteropService.setScanMessage("Place the card to load on the reader")
       try {
         val cardFound = keypleInteropService.waitForCard(owner = this@LoadContractScreenViewModel)
         buzzer.beepAndVibrate()
@@ -89,7 +89,7 @@ class LoadContractScreenViewModel(
       }
     } catch (e: Exception) {
       Napier.e("Error while loading the contract", e)
-      _state.value = LoadContractScreenState.DisplayError("Unexpected error")
+      _state.value = LoadContractScreenState.DisplayError("An error occurred")
     }
   }
 

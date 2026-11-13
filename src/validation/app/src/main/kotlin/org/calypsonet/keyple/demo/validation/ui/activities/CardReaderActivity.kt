@@ -60,6 +60,9 @@ class CardReaderActivity : BaseActivity() {
 
   private var validationResultBinding: LayoutValidationResultOverlayBinding? = null
   private var validationResultTimer: Timer? = null
+  // True if the screen has been paused while the validation result was displayed: the card
+  // detection being then stopped and restarted, the card processing is not to be ended
+  private var isResultInterruptedByPause = false
   private var cardDetectedAt = 0L
 
   /* application states */
@@ -101,13 +104,12 @@ class CardReaderActivity : BaseActivity() {
   override fun onResume() {
     super.onResume()
 
-    // If the validation result overlay is visible (for example, app returned from background),
-    // dismiss it
-    // first
+    // If the validation result overlay is still visible after the screen has been hidden (for
+    // example, app returned from background, its delay being then stopped), it is dismissed first.
+    // After a pause of the screen while it stays visible (for example, a transparent window of the
+    // system), the result stays displayed until the end of its delay.
     validationResultBinding?.root?.let {
-      if (it.visibility == View.VISIBLE) {
-        validationResultTimer?.cancel()
-        validationResultTimer = null
+      if (it.visibility == View.VISIBLE && validationResultTimer == null) {
         it.visibility = View.GONE
       }
     }
@@ -150,8 +152,9 @@ class CardReaderActivity : BaseActivity() {
     super.onPause()
     activityCardReaderBinding.animation.cancelAnimation()
     autoReturnTimer.cancel()
-    validationResultTimer?.cancel()
-    validationResultTimer = null
+    if (validationResultBinding?.root?.visibility == View.VISIBLE) {
+      isResultInterruptedByPause = true
+    }
     // Stopped outside the main thread: the stop may be long (about 440 ms on the Bluebird
     // terminals, end of the monitoring of the card removal)
     readerScope.launch {
@@ -159,6 +162,13 @@ class CardReaderActivity : BaseActivity() {
         cardReaderSession.stopCardDetection()
       }
     }
+  }
+
+  override fun onStop() {
+    super.onStop()
+    // The delay of the validation result is stopped when the screen is hidden
+    validationResultTimer?.cancel()
+    validationResultTimer = null
   }
 
   override fun onDestroy() {
@@ -419,6 +429,7 @@ class CardReaderActivity : BaseActivity() {
     resultBinding.animation.setAnimation(animationFileName)
     resultBinding.animation.playAnimation()
 
+    isResultInterruptedByPause = false
     validationResultTimer = Timer()
     validationResultTimer!!.schedule(
         object : TimerTask() {
@@ -429,15 +440,22 @@ class CardReaderActivity : BaseActivity() {
         VALIDATION_RESULT_DELAY_MS.toLong())
   }
 
-  private fun hideResultOverlay() {
+  /**
+   * Hides the validation result overlay, then ends the processing of the card, unless the card
+   * detection has been stopped and restarted meanwhile (by a pause of the screen).
+   */
+  private fun hideResultOverlay(endCardProcessing: Boolean = !isResultInterruptedByPause) {
     validationResultTimer?.cancel()
     validationResultTimer = null
+    isResultInterruptedByPause = false
     validationResultBinding?.root?.visibility = View.GONE
     validationResultBinding?.animation?.cancelAnimation()
     activityCardReaderBinding.mainView.setBackgroundResource(R.drawable.ic_img_bg_valideur)
     activityCardReaderBinding.presentCardTv.visibility = View.VISIBLE
     playWaitingAnimation()
-    readerScope.launch { cardReaderSession.endCardProcessing() }
+    if (endCardProcessing) {
+      readerScope.launch { cardReaderSession.endCardProcessing() }
+    }
   }
 
   /** Displays the failure of the initialization of the readers, the application being then quit. */

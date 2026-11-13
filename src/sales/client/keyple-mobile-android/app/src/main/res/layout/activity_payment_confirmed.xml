@@ -51,6 +51,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         app:layout_constraintGuide_percent="0.70" />
 
     <com.airbnb.lottie.LottieAnimationView
+        app:lottie_ignoreDisabledSystemAnimations="true"
         android:id="@+id/animation"
         android:layout_width="0dp"
         android:layout_height="0dp"

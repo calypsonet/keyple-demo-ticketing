@@ -271,7 +271,7 @@ The server must be reachable, with its SAM for a Calypso card.
 
 ==== Process
 
-. The user chooses the personalization in the sales client, then presents the card to the reader of the client.
+. The user chooses the personalization in the sales client, then presents the card to the reader of the client, which warns that all the content of the card will be reset.
 . The server personalizes the card.
 . The result is displayed to the user (see <<sales-results>>).
 
@@ -308,7 +308,7 @@ The server must be reachable, with its SAM for a Calypso card.
 . The user selects the ticket to load.
 . The user presents the card again: it must be the card read before (checked by the Android client, or by the server for the multiplatform and .NET clients).
 . The server checks that a slot is available, then writes the new ticket and, for a multi-trip ticket, updates its counter.
-. The result is displayed to the user (see <<sales-results>>).
+. The result is displayed to the user (see <<sales-results>>); the Android and multiplatform clients then wait for the next card, to load another ticket.
 
 ==== Business rules
 
@@ -455,7 +455,7 @@ The applications have been tested on the following Android terminals:
 |===
 | Terminal | Description | Sales | Validation | Inspection
 
-| Famoco FX205
+| Famoco FX205, FX207
 | Rugged mobile terminal, NFC and SAM reader
 | icon:check[role=green]
 | icon:check[role=green]
@@ -498,7 +498,7 @@ With the storage card libraries of CNA (see <<storage-cards>>), the storage card
 | icon:check[role=green]
 | icon:check[role=green]
 
-| Validation and inspection: Famoco FX205
+| Validation and inspection: Famoco FX205, FX207
 | icon:check[role=green]
 | icon:times[role=red]
 | icon:check[role=green]
@@ -534,7 +534,7 @@ In this chapter, a message displayed on several lines is written "`first line â€
 The sales clients display the messages of the table below, as follows:
 
 * *Android client*: the reason for a rejection is displayed below "`Not valid on this network`" when the card is read, and below "`Ticket not loaded`" or "`Personalization failed`" when the operation fails.
-* *Multiplatform client*: the same reasons, returned by the server, are displayed alone; "`Communication error`" is displayed when the server cannot be reached.
+* *Multiplatform client*: the same reasons, returned by the server, are displayed alone; "`Server error`" is displayed when the server cannot be reached, as by the Android client.
 * *.NET client*: the failures are reported in its console (see the {doc-repo}/blob/main/src/sales/client/pc-dotnet/README.md[README of the client]).
 
 [cols="4,4", options="header"]
@@ -571,7 +571,7 @@ The sales clients display the messages of the table below, as follows:
 | Card not recognized (Android client)
 | Undetermined card type
 
-| Error on the server side, or server not reachable (Android client)
+| Error on the server side, or server not reachable
 | Server error
 
 | Communication with the card interrupted (for example, card removed too early)

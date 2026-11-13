@@ -14,6 +14,10 @@ package org.calypsonet.keyple.demo.inspection.data
 
 import android.app.Activity
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withTimeout
 import org.calypsonet.keyple.demo.inspection.domain.model.CardProtocol
 import org.calypsonet.keyple.demo.inspection.domain.model.TerminalType
 import org.calypsonet.keyple.demo.inspection.domain.spi.TerminalReaders
@@ -32,6 +36,9 @@ import org.eclipse.keyple.plugin.android.nfc.AndroidNfcConfig
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcConstants
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcPluginFactoryProvider
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcSupportedProtocols
+import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiPlugin
+import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiPluginFactory
+import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiPluginFactoryProvider
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ConfigurableCardReader
 import org.eclipse.keypop.reader.ObservableCardReader
@@ -64,6 +71,7 @@ constructor(
     when (terminalType) {
       TerminalType.BLUEBIRD -> initBluebirdReader()
       TerminalType.FAMOCO -> initFamocoReader()
+      TerminalType.FAMOCO_OMAPI -> initFamocoOmapiReader()
       TerminalType.NFC_TERMINAL -> initNfcTerminalReader()
     }
   }
@@ -92,14 +100,7 @@ constructor(
 
   private fun initFamocoReader() {
     terminalType = TerminalType.FAMOCO
-    cardPluginName = AndroidNfcConstants.PLUGIN_NAME
-    cardReaderName = AndroidNfcConstants.READER_NAME
-    cardReaderProtocols[AndroidNfcSupportedProtocols.ISO_14443_4.name] =
-        CardProtocol.ISO_14443_4.name
-    cardReaderProtocols[AndroidNfcSupportedProtocols.MIFARE_ULTRALIGHT.name] =
-        CardProtocol.MIFARE_ULTRALIGHT.name
-    cardReaderProtocols[AndroidNfcSupportedProtocols.MIFARE_CLASSIC_1K.name] =
-        CardProtocol.MIFARE_CLASSIC.name
+    initAndroidNfcCardReader()
     samPluginName = AndroidFamocoPlugin.PLUGIN_NAME
     samReaderNameRegex = ".*FamocoReader"
     samReaderName = AndroidFamocoReader.READER_NAME
@@ -108,8 +109,32 @@ constructor(
     isStorageCardSupported = true
   }
 
+  private fun initFamocoOmapiReader() {
+    terminalType = TerminalType.FAMOCO_OMAPI
+    initAndroidNfcCardReader()
+    samPluginName = AndroidOmapiPlugin.PLUGIN_NAME
+    // OMAPI names of the Famoco SAM readers: "AT90<n>" (AT90 chip) or "SAMTerminal<n>" (TDA8029)
+    samReaderNameRegex = "AT90\\d+|SAMTerminal\\d+"
+    samReaderName = OMAPI_FAMOCO_SAM_READER_NAME
+    // OMAPI readers are not configurable: no protocol to activate
+    samReaderProtocolPhysicalName = null
+    samReaderProtocolLogicalName = null
+    isStorageCardSupported = true
+  }
+
   private fun initNfcTerminalReader() {
     terminalType = TerminalType.NFC_TERMINAL
+    initAndroidNfcCardReader()
+    samPluginName = ""
+    samReaderNameRegex = ""
+    samReaderName = ""
+    samReaderProtocolPhysicalName = ""
+    samReaderProtocolLogicalName = ""
+    isStorageCardSupported = true
+  }
+
+  /** Contactless card reader based on the standard Android NFC API (Famoco and NFC terminals). */
+  private fun initAndroidNfcCardReader() {
     cardPluginName = AndroidNfcConstants.PLUGIN_NAME
     cardReaderName = AndroidNfcConstants.READER_NAME
     cardReaderProtocols[AndroidNfcSupportedProtocols.ISO_14443_4.name] =
@@ -118,12 +143,6 @@ constructor(
         CardProtocol.MIFARE_ULTRALIGHT.name
     cardReaderProtocols[AndroidNfcSupportedProtocols.MIFARE_CLASSIC_1K.name] =
         CardProtocol.MIFARE_CLASSIC.name
-    samPluginName = ""
-    samReaderNameRegex = ""
-    samReaderName = ""
-    samReaderProtocolPhysicalName = ""
-    samReaderProtocolLogicalName = ""
-    isStorageCardSupported = true
   }
 
   @Throws(KeyplePluginException::class)
@@ -138,12 +157,8 @@ constructor(
                   activity,
                   ApduInterpreterFactoryProvider.provideFactory(),
                   DemoMifareClassicKeyProvider())
-          TerminalType.FAMOCO ->
-              AndroidNfcPluginFactoryProvider.provideFactory(
-                  AndroidNfcConfig(
-                      activity = activity,
-                      apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
-                      keyProvider = DemoMifareClassicKeyProvider()))
+          TerminalType.FAMOCO,
+          TerminalType.FAMOCO_OMAPI,
           TerminalType.NFC_TERMINAL ->
               AndroidNfcPluginFactoryProvider.provideFactory(
                   AndroidNfcConfig(
@@ -153,11 +168,32 @@ constructor(
         }
     SmartCardServiceProvider.getService().registerPlugin(pluginFactory)
     // SAM plugin (if different of card plugin)
-    if (terminalType == TerminalType.FAMOCO) {
-      val samPluginFactory = AndroidFamocoPluginFactoryProvider.getFactory()
-      SmartCardServiceProvider.getService().registerPlugin(samPluginFactory)
+    when (terminalType) {
+      TerminalType.FAMOCO ->
+          SmartCardServiceProvider.getService()
+              .registerPlugin(AndroidFamocoPluginFactoryProvider.getFactory())
+      TerminalType.FAMOCO_OMAPI ->
+          SmartCardServiceProvider.getService().registerPlugin(provideOmapiPluginFactory(activity))
+      else -> {}
     }
   }
+
+  /**
+   * Provides the Android OMAPI plugin factory, available once the OMAPI service is connected: waits
+   * for it, the registration being a blocking call made outside of the main thread.
+   */
+  private fun provideOmapiPluginFactory(activity: Activity): AndroidOmapiPluginFactory =
+      runBlocking {
+        withTimeout(OMAPI_CONNECTION_TIMEOUT_MS) {
+          suspendCancellableCoroutine { continuation ->
+            AndroidOmapiPluginFactoryProvider(activity) { factory ->
+              if (continuation.isActive) {
+                continuation.resume(factory)
+              }
+            }
+          }
+        }
+      }
 
   @Throws(KeyplePluginException::class)
   override fun initCardReader(): CardReader? {
@@ -179,20 +215,15 @@ constructor(
 
   @Throws(KeyplePluginException::class)
   override fun initSamReaders(): List<CardReader> {
+    val samPluginReaders = SmartCardServiceProvider.getService().getPlugin(samPluginName)?.readers
     samReaders =
-        if (terminalType == TerminalType.FAMOCO) {
-          SmartCardServiceProvider.getService()
-              .getPlugin(samPluginName)
-              ?.readers
-              ?.filter { it.name == samReaderName }
-              ?.toMutableList() ?: mutableListOf()
-        } else {
-          SmartCardServiceProvider.getService()
-              .getPlugin(samPluginName)
-              ?.readers
-              ?.filter { !it.isContactless }
-              ?.toMutableList() ?: mutableListOf()
-        }
+        when (terminalType) {
+          TerminalType.FAMOCO -> samPluginReaders?.filter { it.name == samReaderName }
+          // The OMAPI plugin also provides the eSE and SIM readers, which are not SAM readers
+          TerminalType.FAMOCO_OMAPI ->
+              samPluginReaders?.filter { it.name.matches(Regex(samReaderNameRegex)) }
+          else -> samPluginReaders?.filter { !it.isContactless }
+        }?.toMutableList() ?: mutableListOf()
     samReaders.forEach {
       if (it is ConfigurableCardReader) {
         it.activateProtocol(samReaderProtocolPhysicalName, samReaderProtocolLogicalName)
@@ -236,5 +267,12 @@ constructor(
     }
     val smartCardService = SmartCardServiceProvider.getService()
     smartCardService.plugins.forEach { smartCardService.unregisterPlugin(it.name) }
+  }
+
+  private companion object {
+    /** OMAPI name of the SAM reader of the Famoco terminals having a single AT90 chip. */
+    const val OMAPI_FAMOCO_SAM_READER_NAME = "AT901"
+    /** Maximum waiting time for the connection to the OMAPI service. */
+    const val OMAPI_CONNECTION_TIMEOUT_MS = 5000L
   }
 }

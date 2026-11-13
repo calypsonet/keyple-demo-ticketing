@@ -63,6 +63,7 @@
         app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
 
     <com.airbnb.lottie.LottieAnimationView
+        app:lottie_ignoreDisabledSystemAnimations="true"
         android:id="@+id/loadingAnimation"
         android:layout_width="@dimen/reading_animation_size"
         android:layout_height="0dp"

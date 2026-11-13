@@ -97,8 +97,8 @@ The build commands of each platform are given in [Building for different platfor
 ### Application configuration
 
 The application configuration is managed through:
-- Server settings UI for configuring the server address (protocol, host, port, endpoint) and the optional basic
-  authentication
+- Server settings UI for configuring the server address (protocol, host, port) and the optional basic
+  authentication; the endpoint of the remote plugin is fixed (`/card/remote-plugin`, as for the Android client)
 - Platform-specific datastore for persisting settings
 - Shared network client for server communication
 
@@ -108,26 +108,27 @@ The application configuration is managed through:
 
 #### Initial setup
 1. **Launch application**
-2. **Configure server**: Tap the settings icon → **Server**, enter the address of the server, check it with
+2. **Configure server**: Tap the settings icon of the home screen, enter the address of the server, check it with
    **Server state**, then **Save**
 3. **Grant permissions**: Allow NFC access when prompted
 
 #### Card personalization
-1. **Settings** → **Personalization**
-2. **Present card** to device NFC reader
+1. **Home screen** → **Personalize a card**
+2. **Present card** to device NFC reader (the screen warns that all the content of the card will be reset)
 3. **Wait for confirmation** of successful personalization
 
 #### Reading card content
-1. **Home screen** → **Contactless card**
+1. **Home screen** → **Load tickets**
 2. **Hold card** against device back (near NFC antenna)
 3. **View existing contracts** and their status
 4. **Select a new ticket** to load if desired
 
 #### Contract loading
 1. **Choose contract type** from available options
-2. **Complete payment simulation**
+2. **Complete payment simulation**, then **Load ticket** on the payment confirmation
 3. **Present card again** when prompted
-4. **Receive confirmation** of successful loading
+4. **Receive confirmation** of successful loading: the card reading is then displayed again, for the next ticket
+   (back arrow: home screen)
 
 ### Desktop platform
 
@@ -150,19 +151,16 @@ The application uses Compose Multiplatform for consistent UI across all platform
 
 ```
 ┌─────────────────────────────────────┐
-│            Home Screen              │
+│ ●              keyple    [settings] │
+│            Sales Interop            │
 │  ┌─────────────────────────────────┐│
-│  │         Settings menu           ││
-│  │  ┌─────────────────────────────┐││
-│  │  │  Server                    │││
-│  │  │  Personalization           │││
-│  │  └─────────────────────────────┘││
+│  │ Load tickets                    ││
+│  │  (read the card, then load)     ││
 │  └─────────────────────────────────┘│
 │  ┌─────────────────────────────────┐│
-│  │      Card Operations            ││
-│  │  • Read Card Content           ││
-│  │  • Load a Contract             ││
+│  │ Personalize a card              ││
 │  └─────────────────────────────────┘│
+│                    version YY.MM.DD │
 └─────────────────────────────────────┘
 ```
 
@@ -188,12 +186,13 @@ composeApp/src/                   # Kotlin Multiplatform library, desktop and iO
 │           ├── nav/              # Navigation routes
 │           ├── personalize/      # Personalization of the card
 │           ├── read/             # Reading of the card
-│           ├── settings/         # Settings menu and server settings
+│           ├── settings/         # Server settings
 │           ├── success/          # Success screen (animation by platform)
 │           └── theme/            # Theme and colors
 ├── androidMain/                  # Android-specific implementations (buzzer, data store, success animation)
 ├── iosMain/                      # iOS-specific code
-└── desktopMain/                  # Desktop-specific code
+└── desktopMain/                  # Desktop-specific code (entry point, window icon)
+composeApp/icons/                 # Icons of the desktop installers (Windows, macOS, Linux)
 androidApp/src/main/              # Android application (activity, manifest, launcher icons)
 ```
 
@@ -210,8 +209,7 @@ Multiplatform and Android application plugins in the same module.
 - `ServerReadinessChecker`: Checks that the server is reachable with its SAM available (as in the Android client), the
   check being repeated by `AppViewModel`
 - `ReadCardCache`: Cache of the last card read (serial number, contracts)
-- `ServerConfigRepository`: Server configuration persisted in the data store (address, endpoint, basic
-  authentication)
+- `ServerConfigRepository`: Server configuration persisted in the data store (address, basic authentication)
 - `SimpleHttpNetworkClient` (`data/network`): HTTP client for server communication
 
 **DTOs** (`data/dto`):
@@ -223,9 +221,9 @@ Multiplatform and Android application plugins in the same module.
 **Screens** (`ui`):
 - `ReadCardScreen`: Screen for reading card content
 - `CardContentScreen`: Contracts of the card and products proposed for sale
+- `PaymentConfirmedScreen`: Confirmation of the payment, before the loading
 - `LoadContractScreen`: Screen for loading contracts
 - `PersonalizeCardScreen`: Screen for card personalization
-- `SettingsMenuScreen`: Settings menu (server, personalization)
 - `ServerSettingsScreen`: Server settings UI
 
 #### Platform-specific implementations
@@ -286,12 +284,13 @@ reader is used.
 
 ### Common issues across platforms
 
-**"Communication error" when reading the card, or "Server not ready" in the server settings**
+**"Server error" when reading the card, or "Server not ready" in the server settings**
 - Verify server URL is accessible from target platform (**Server state** button of the server settings)
 - Check network permissions on mobile platforms
 - Ensure firewall allows connections on desktop
 
-**"Place your card on the reader" stays displayed, or "Card reader error"**
+**"Please present a contactless card" (iOS: "Place the card to read on the reader") stays displayed, or "Card reader
+error"**
 - **Android**: Enable NFC in the system settings
 - **iOS**: The device must support Core NFC (iPhone 7 or later, iOS 15.3 or later), and the AID of the card must be
   declared in the `com.apple.developer.nfc.readersession.iso7816.select-identifiers` list of `iosApp/iosApp/Info.plist`
@@ -325,3 +324,4 @@ same features on Android, iOS, and desktop, the platform-specific code being min
 ## License
 
 This Kotlin Multiplatform client is part of the Keyple Demo project and is licensed under the BSD 3-Clause License.
+Some of its icons are derived from Material Symbols, under the Apache License 2.0 (see [NOTICE](../../../../NOTICE.md)).

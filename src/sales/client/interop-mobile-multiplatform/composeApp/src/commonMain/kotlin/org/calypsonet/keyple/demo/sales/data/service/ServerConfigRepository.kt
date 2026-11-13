@@ -24,7 +24,8 @@ import org.calypsonet.keyple.demo.sales.data.network.KeypleServerConfig
 
 /**
  * Server configuration of the client, persisted in the preferences data store: address of the
- * server (protocol, host, and port), endpoint of the remote plugin and basic authentication.
+ * server (protocol, host, and port) and basic authentication. The endpoint of the remote plugin is
+ * fixed ([org.calypsonet.keyple.demo.sales.data.network.REMOTE_PLUGIN_ENDPOINT]).
  */
 class ServerConfigRepository(private val dataStore: DataStore<Preferences>) {
 
@@ -34,7 +35,6 @@ class ServerConfigRepository(private val dataStore: DataStore<Preferences>) {
     return KeypleServerConfig(
         host = hostUrl(preferences),
         port = preferences[SERVER_PORT_KEY] ?: DEFAULT_SERVER_PORT,
-        endpoint = preferences[SERVER_ENDPOINT_KEY] ?: DEFAULT_SERVER_ENDPOINT,
         basicAuth = preferences[SERVER_BASIC_AUTH_KEY] ?: "")
   }
 
@@ -42,18 +42,17 @@ class ServerConfigRepository(private val dataStore: DataStore<Preferences>) {
   fun observe(): Flow<KeypleServerConfig> =
       dataStore.data.map { preferences ->
         KeypleServerConfig(
-            host = hostUrl(preferences),
-            port = preferences[SERVER_PORT_KEY] ?: DEFAULT_SERVER_PORT,
-            endpoint = preferences[SERVER_ENDPOINT_KEY] ?: DEFAULT_SERVER_ENDPOINT)
+            host = hostUrl(preferences), port = preferences[SERVER_PORT_KEY] ?: DEFAULT_SERVER_PORT)
       }
 
-  /** Saves the address of the server and the endpoint of the remote plugin. */
-  suspend fun update(host: String, port: Int, protocol: String, endpoint: String) {
+  /** Saves the address of the server. */
+  suspend fun update(host: String, port: Int, protocol: String) {
     dataStore.edit { preferences ->
       preferences[SERVER_HOST_KEY] = host
       preferences[SERVER_PORT_KEY] = port
       preferences[SERVER_PROTOCOL_KEY] = protocol
-      preferences[SERVER_ENDPOINT_KEY] = endpoint
+      // Endpoint saved by the previous versions, when it was configurable
+      preferences.remove(LEGACY_SERVER_ENDPOINT_KEY)
     }
   }
 
@@ -68,12 +67,11 @@ class ServerConfigRepository(private val dataStore: DataStore<Preferences>) {
     val SERVER_HOST_KEY = stringPreferencesKey("server_host")
     val SERVER_PORT_KEY = intPreferencesKey("server_port")
     val SERVER_PROTOCOL_KEY = stringPreferencesKey("server_protocol")
-    val SERVER_ENDPOINT_KEY = stringPreferencesKey("server_endpoint")
+    val LEGACY_SERVER_ENDPOINT_KEY = stringPreferencesKey("server_endpoint")
     val SERVER_BASIC_AUTH_KEY = stringPreferencesKey("server_basic_auth")
 
-    const val DEFAULT_SERVER_HOST = "82.96.147.205"
-    const val DEFAULT_SERVER_PORT = 42080
+    const val DEFAULT_SERVER_HOST = "192.168.0.1"
+    const val DEFAULT_SERVER_PORT = 8080
     const val DEFAULT_SERVER_PROTOCOL = "http"
-    const val DEFAULT_SERVER_ENDPOINT = "/card/remote-plugin"
   }
 }

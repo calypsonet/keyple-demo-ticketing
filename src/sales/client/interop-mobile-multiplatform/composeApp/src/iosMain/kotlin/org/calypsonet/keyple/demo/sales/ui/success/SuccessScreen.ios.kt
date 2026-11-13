@@ -16,17 +16,16 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.alexzhirkevich.compottie.Compottie
 import io.github.alexzhirkevich.compottie.LottieComposition
 import io.github.alexzhirkevich.compottie.rememberLottiePainter
+import org.calypsonet.keyple.demo.sales.ui.theme.AppTextStyles
 
 @Composable
 actual fun PlatformAnimation(
@@ -34,20 +33,21 @@ actual fun PlatformAnimation(
     textColor: Color,
     composition: LottieComposition?,
     progress: Float,
-    infinite: Boolean
+    infinite: Boolean,
+    animationModifier: Modifier,
 ) {
   Text(
       text = message,
       modifier = Modifier.padding(36.dp),
       color = textColor,
-      fontWeight = FontWeight.Bold,
+      style = AppTextStyles.bigBold,
       textAlign = TextAlign.Center,
   )
   Spacer(modifier = Modifier.height(130.dp))
   val iterations = if (infinite) Compottie.IterateForever else 1
   Image(
       painter = rememberLottiePainter(composition = composition, iterations = iterations),
-      modifier = Modifier.size(200.dp),
+      modifier = animationModifier,
       contentDescription = "animation",
   )
 }

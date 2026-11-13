@@ -132,6 +132,10 @@ compose.desktop {
       targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
       packageName = rootProject.name
       packageVersion = project.version.toString()
+      // Icons of the installers, from the launcher icon of the mobile applications
+      windows { iconFile.set(project.file("icons/app_icon.ico")) }
+      macOS { iconFile.set(project.file("icons/app_icon.icns")) }
+      linux { iconFile.set(project.file("icons/app_icon.png")) }
     }
   }
 }

@@ -7,13 +7,50 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Functional documentation published online at each release (https://calypsonet.github.io/keyple-demo-ticketing/), by
   the CI from the HTML of the latest release, instead of by hand.
+- Validation and Inspection applications: Famoco FX207 terminal, its SAM being accessed with the Android OMAPI plugin.
+### Changed
+- Sales clients: home screen with two buttons, "Load tickets" and "Personalize a card" (instead of a single
+  "Contactless card" button, the personalization being in the settings menu), and the version of the application; the
+  settings icon opens the server settings directly. Icons of the buttons derived from Material Symbols (see
+  [NOTICE](NOTICE.md)): a transit ticket for the loading, and a contactless card being reset for the personalization
+  (instead of a generic card and a SIM card), with the same dimensions in both clients.
+- Sales clients: server settings with the state of the server right below the settings, on the same row as the
+  "Server state" button, with a colored status light ("Not checked", "Checking…", "Server ready", "Server not ready").
+- Version of the application displayed once, in the bottom right corner of the first screen: terminal selection for
+  the Validation and Inspection applications (no longer on their settings screen), home screen for the Sales clients.
+- Name of the application below the Keyple logo of the top bar, on every screen, in the style of the launcher icon
+  (colored initial): "Validation", "Inspection", "Sales", and "Sales Interop" for the multiplatform client.
+- Sales clients: same back arrow in the top bar (arrow instead of a chevron in the Android client, dark blue in both).
+- Multiplatform sales client: default server `http://192.168.0.1:8080`, as the Android client.
+- Multiplatform sales client: after a loading, return to the card reading for the next ticket (instead of the home
+  screen), as the Android client.
+- Sales clients: warning on the screen waiting for the card to personalize, "Warning" then "All the content of the
+  card will be reset." (and, on iOS, in the NFC dialog).
+- Multiplatform sales client: same messages as the Android client, the instructions and the progress messages being
+  specific to each operation (reading, loading, personalization, also in the NFC dialog of iOS), and the errors being
+  "Server error" and "An error occurred" (instead of "Communication error" and "Unexpected error"); the server
+  returns the names and descriptions of the contracts as displayed by the Android client ("Forbidden", "Unknown",
+  "1 trip left", "From … to …").
 ### Fixed
+- Sales clients: automatic return of the result screens on the terminals pausing the screen while it stays visible
+  (for example, the Bluebird terminals), and bar of the remaining time displayed also when the animations of the
+  system are disabled or shortened.
+- Validation application: result displayed during its whole delay on the terminals pausing the screen while it stays
+  visible (instead of being dismissed when the screen resumes).
+- Android applications: animations played also when the animations of the system are disabled (as on some
+  terminals), instead of being frozen on their last frame.
 - Documentation: the plugins of the Bluebird and Arrive terminals are open source, built with the library of the
   terminal manufacturer; only the storage card libraries are on request, for CNA members.
+- Icons of the Sales applications (Android, multiplatform on Android and iOS): "Sales" instead of "Remote", the former
+  name of the demo. The desktop version of the multiplatform client gets the same icon, for its window and its
+  installers.
 - Icons of the Validation and Inspection applications: actual images instead of Git LFS pointers, Git LFS being no
   longer used by the repository.
 - Same application names everywhere ("Keyple Demo — Sales", "Keyple Demo — Validation", "Keyple Demo — Inspection"):
   titles of the documentation, and name of the Sales dashboard when installed as a web application.
+### Upgraded
+- `keyple-java-bom`: `2026.10.14` -> `2026.11.10` (`keyple-card-calypso-java-lib` `3.3.1` and
+  `keyple-plugin-android-omapi-java-lib` `2.1.2`).
 
 ## [26.10.22]
 ### Breaking changes
