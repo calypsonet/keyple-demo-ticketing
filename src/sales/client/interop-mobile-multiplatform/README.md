@@ -151,7 +151,8 @@ The application uses Compose Multiplatform for consistent UI across all platform
 
 ```
 ┌─────────────────────────────────────┐
-│ Home Screen     [settings → Server] │
+│ ●              keyple    [settings] │
+│            Sales Interop            │
 │  ┌─────────────────────────────────┐│
 │  │ Load tickets                    ││
 │  │  (read the card, then load)     ││
@@ -159,7 +160,6 @@ The application uses Compose Multiplatform for consistent UI across all platform
 │  ┌─────────────────────────────────┐│
 │  │ Personalize a card              ││
 │  └─────────────────────────────────┘│
-│                      Interop client │
 │                    version YY.MM.DD │
 └─────────────────────────────────────┘
 ```

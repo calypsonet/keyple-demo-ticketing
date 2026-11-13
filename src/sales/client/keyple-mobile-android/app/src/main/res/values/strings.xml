@@ -100,4 +100,9 @@
     <string name="contract_forbidden">Forbidden</string>
     <string name="contract_unknown">Unknown</string>
     <string name="validity_period">From %1$s to %2$s</string>
+
+    <!-- Name of the application in the toolbar: initial in the color of the "y" of the logo -->
+    <string name="toolbar_app_name"><font color="#1D87BB">S</font>ales</string>
+    <!-- Same, on a colored background, where the logo is the white one -->
+    <string name="toolbar_app_name_on_color"><font color="#FFFFFF">S</font>ales</string>
 </resources>

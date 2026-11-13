@@ -11,15 +11,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Sales clients: home screen with two buttons, "Load tickets" and "Personalize a card" (instead of a single
   "Contactless card" button, the personalization being in the settings menu), and the version of the application; the
-  settings icon opens the server settings directly. The multiplatform client also displays "Interop client", to
-  distinguish it from the native Android client. Icons of the buttons derived from Material Symbols (see
+  settings icon opens the server settings directly. Icons of the buttons derived from Material Symbols (see
   [NOTICE](NOTICE.md)): a transit ticket for the loading, and a contactless card being reset for the personalization
   (instead of a generic card and a SIM card), with the same dimensions in both clients.
 - Sales clients: server settings with the state of the server right below the settings, on the same row as the
   "Server state" button, with a colored status light ("Not checked", "Checking…", "Server ready", "Server not ready").
 - Version of the application displayed once, in the bottom right corner of the first screen: terminal selection for
-  the Validation and Inspection applications (no longer on their settings screen), home screen for the Sales clients
-  (with "Interop client" above it in the multiplatform client).
+  the Validation and Inspection applications (no longer on their settings screen), home screen for the Sales clients.
+- Name of the application below the Keyple logo of the top bar, on every screen, in the style of the launcher icon
+  (colored initial): "Validation", "Inspection", "Sales", and "Sales Interop" for the multiplatform client.
 - Sales clients: same back arrow in the top bar (arrow instead of a chevron in the Android client, dark blue in both).
 - Multiplatform sales client: default server `http://192.168.0.1:8080`, as the Android client.
 - Multiplatform sales client: after a loading, return to the card reading for the next ticket (instead of the home

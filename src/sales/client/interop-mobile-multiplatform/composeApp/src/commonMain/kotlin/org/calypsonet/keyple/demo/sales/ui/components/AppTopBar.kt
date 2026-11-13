@@ -19,6 +19,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
@@ -32,6 +33,8 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
@@ -42,8 +45,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -53,6 +63,7 @@ import org.calypsonet.keyple.composeapp.generated.resources.ic_logo_keyple
 import org.calypsonet.keyple.composeapp.generated.resources.ic_logo_white
 import org.calypsonet.keyple.demo.sales.AppState
 import org.calypsonet.keyple.demo.sales.ui.theme.LocalAppDimens
+import org.calypsonet.keyple.demo.sales.ui.theme.blue
 import org.calypsonet.keyple.demo.sales.ui.theme.darkBlue
 import org.calypsonet.keyple.demo.sales.ui.theme.green
 import org.calypsonet.keyple.demo.sales.ui.theme.orange
@@ -61,10 +72,11 @@ import org.jetbrains.compose.resources.vectorResource
 /** Size of the icons of the top bar (back arrow, settings), as in the Android client. */
 val TOOLBAR_ICON_SIZE = 25.dp
 
-// Height of the toolbar of the Android client (action bar), and height of its logo once its
-// vertical paddings are removed
+// Height of the toolbar of the Android client (action bar), height of its logo, and text size of
+// the name of the application below the logo
 private val TOOLBAR_HEIGHT = 56.dp
-private val TOOLBAR_LOGO_HEIGHT = 32.dp
+private val TOOLBAR_LOGO_HEIGHT = 30.dp
+private val TOOLBAR_APP_NAME_SIZE = 12.sp
 
 /**
  * Top bar of the application, laid out as the toolbar of the Android client (`toolbar.xml`): back
@@ -117,14 +129,20 @@ fun AppTopBar(
             vectorResource(
                 if (onColoredBackground) Res.drawable.ic_logo_white
                 else Res.drawable.ic_logo_keyple)
-        Image(
-            imageVector = logo,
-            contentDescription = "Keyple logo",
-            modifier =
-                Modifier.align(Alignment.Center)
-                    .height(TOOLBAR_LOGO_HEIGHT)
-                    .aspectRatio(logo.defaultWidth / logo.defaultHeight),
-        )
+        // Keyple logo, with the name of the application below it, as on the launcher icon and in
+        // the toolbar of the Android client
+        Column(
+            modifier = Modifier.align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally) {
+              Image(
+                  imageVector = logo,
+                  contentDescription = "Keyple logo",
+                  modifier =
+                      Modifier.height(TOOLBAR_LOGO_HEIGHT)
+                          .aspectRatio(logo.defaultWidth / logo.defaultHeight),
+              )
+              AppName(onColoredBackground)
+            }
 
         Row(
             modifier = Modifier.align(Alignment.CenterEnd),
@@ -217,4 +235,30 @@ class Wave {
   companion object {
     const val ANIMATION_DURATION_MS = 200L
   }
+}
+
+/**
+ * Name of the application, as in the Android client: initial in the color of the "y" of the logo
+ * (blue, or white on a colored background where the logo is the white one), then the other letters
+ * in black; "Interop" smaller and lighter, as a qualifier of "Sales".
+ */
+@Composable
+private fun AppName(onColoredBackground: Boolean) {
+  Text(
+      text =
+          buildAnnotatedString {
+            withStyle(SpanStyle(color = if (onColoredBackground) Color.White else blue)) {
+              append("S")
+            }
+            append("ales")
+            withStyle(SpanStyle(fontSize = 0.78.em, color = Color.Black.copy(alpha = 0.65f))) {
+              append(" Interop")
+            }
+          },
+      color = Color.Black,
+      fontFamily = MaterialTheme.typography.bodyLarge.fontFamily,
+      fontWeight = FontWeight.SemiBold,
+      fontSize = TOOLBAR_APP_NAME_SIZE,
+      letterSpacing = 0.08.em,
+      maxLines = 1)
 }

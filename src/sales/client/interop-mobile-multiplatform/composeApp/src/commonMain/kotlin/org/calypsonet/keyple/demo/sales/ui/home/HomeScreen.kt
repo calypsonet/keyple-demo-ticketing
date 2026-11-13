@@ -141,14 +141,12 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier, appS
             }
 
             // Version of the application, in the bottom right corner as in the other applications
-            // of the demo, below the hint distinguishing this client from the native Android client
-            Column(
+            // of the demo
+            Text(
+                text = "version $APP_VERSION",
                 modifier = Modifier.align(Alignment.BottomEnd).padding(5.dp),
-                horizontalAlignment = Alignment.End) {
-                  Text(text = "Interop client", fontSize = VERSION_TEXT_SIZE, color = darkBlue)
-                  Text(
-                      text = "version $APP_VERSION", fontSize = VERSION_TEXT_SIZE, color = darkBlue)
-                }
+                fontSize = VERSION_TEXT_SIZE,
+                color = darkBlue)
           }
     }
   }

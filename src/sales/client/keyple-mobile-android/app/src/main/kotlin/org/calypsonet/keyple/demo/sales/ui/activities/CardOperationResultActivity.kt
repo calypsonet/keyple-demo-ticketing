@@ -36,6 +36,7 @@ class CardOperationResultActivity : BaseActivity() {
     toolbarBinding = activityCardOperationResultBinding.appBarLayout
     setContentView(activityCardOperationResultBinding.root)
     toolbarBinding.toolbarLogo.setImageResource(R.drawable.ic_logo_white)
+    toolbarBinding.toolbarAppName.setText(R.string.toolbar_app_name_on_color)
 
     // Result type provided by the calling activity (error by default)
     val resultTypeName = intent.getStringExtra(RESULT_TYPE)

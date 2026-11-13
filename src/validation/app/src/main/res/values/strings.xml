@@ -66,4 +66,7 @@
     <string name="rejection_contract_forbidden_or_expired">Ticket forbidden or expired</string>
     <string name="error_mifare_classic_authentication">Authentication failed. Please ensure the card is correctly positioned.</string>
     <string name="error_mifare_classic_transaction">Transaction failed. Please try again.</string>
+
+    <!-- Name of the application in the toolbar: initial in the color of the "y" of the logo -->
+    <string name="toolbar_app_name"><font color="#FFFFFF">V</font>alidation</string>
 </resources>
