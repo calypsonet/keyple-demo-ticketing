@@ -35,7 +35,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.validation.R
-import org.calypsonet.keyple.demo.validation.data.ReaderObservationErrorHandler
 import org.calypsonet.keyple.demo.validation.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.validation.databinding.LayoutValidationResultOverlayBinding
 import org.calypsonet.keyple.demo.validation.domain.model.CardDescription
@@ -54,7 +53,6 @@ import timber.log.Timber
 class CardReaderActivity : BaseActivity() {
 
   @Inject lateinit var validateCard: ValidateCard
-  @Inject lateinit var readerObservationErrorHandler: ReaderObservationErrorHandler
 
   private lateinit var activityCardReaderBinding: ActivityCardReaderBinding
 
@@ -125,7 +123,7 @@ class CardReaderActivity : BaseActivity() {
     playWaitingAnimation()
 
     isCardDetectionRequested = true
-    readerObservationErrorHandler.listener = ::onReaderObservationError
+    cardReaderSession.setReaderErrorListener(::onReaderObservationError)
     if (!cardReaderSession.isInitialized) {
       lifecycleScope.launch {
         withContext(readerDispatcher) {
@@ -163,7 +161,7 @@ class CardReaderActivity : BaseActivity() {
     activityCardReaderBinding.animation.cancelAnimation()
     autoReturnTimer.cancel()
     isCardDetectionRequested = false
-    readerObservationErrorHandler.listener = null
+    cardReaderSession.setReaderErrorListener(null)
     if (validationResultBinding?.root?.visibility == View.VISIBLE) {
       isResultInterruptedByPause = true
     }

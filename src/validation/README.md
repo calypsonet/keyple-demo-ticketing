@@ -29,8 +29,9 @@ access to transportation networks.
 
 ### Card requirements
 - Cards personalized and loaded using the [Sales Demo](../sales/)
-- Calypso cards, or storage cards (MIFARE Ultralight and MIFARE Classic 1K on the Bluebird and Famoco terminals, ST25
-  SRT512 on the Bluebird terminals only), with the storage card libraries (see
+- Calypso cards, or storage cards (MIFARE Ultralight and MIFARE Classic 1K on the Bluebird terminals and on the Famoco
+  FX205 and FX207 terminals, ST25 SRT512 on the Bluebird terminals only; no storage cards on the Famoco FX925), with
+  the storage card libraries (see
   [Proprietary components](#proprietary-components) and the
   [storage cards supported](../../docs/functional-documentation/index.adoc#storage-card-support))
 - Supported AID (see [Card data model](../../docs/functional-documentation/index.adoc#supported-card-applications))

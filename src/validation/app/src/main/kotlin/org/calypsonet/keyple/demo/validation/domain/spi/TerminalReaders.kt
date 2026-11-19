@@ -58,6 +58,13 @@ interface TerminalReaders {
   fun isStorageCardSupported(): Boolean
 
   /**
+   * Sets the listener of the unexpected errors of the observation of the card reader, or removes it
+   * (null). The listener is called from the monitoring thread of the reader: after such an error,
+   * the reader no longer detects the cards until its detection is restarted.
+   */
+  fun setReaderErrorListener(listener: (() -> Unit)?)
+
+  /**
    * Releases resources and unregisters observers.
    *
    * @param observer Optional observer previously registered on the reader.

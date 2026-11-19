@@ -473,6 +473,12 @@ The applications have been tested on the following Android terminals:
 | icon:adjust[role=olive] Manufacturer library
 | icon:times[role=red]
 
+| Famoco FX925
+| Transit validator, Ingenico Open1500 contactless reader and SAM reader
+| icon:times[role=red]
+| icon:lock[role=olive] Manufacturer plugin
+| icon:times[role=red]
+
 | Other Android devices with NFC
 | Any Android 8.0+ device with NFC (no SAM: inspection by PKI or without authentication)
 | icon:check[role=green]
@@ -482,6 +488,7 @@ The applications have been tested on the following Android terminals:
 
 * icon:check[role=green] Natively supported
 * icon:adjust[role=olive] Open source plugin, to build with the library of the terminal manufacturer
+* icon:lock[role=olive] Proprietary plugin of the terminal manufacturer, available on request from the manufacturer
 * icon:times[role=red] Not supported
 
 [[storage-card-support]]
@@ -509,6 +516,11 @@ With the storage card libraries of CNA (see <<storage-cards>>), the storage card
 | icon:check[role=green]
 
 | Validation: Arrive Axio 4
+| icon:times[role=red]
+| icon:times[role=red]
+| icon:times[role=red]
+
+| Validation: Famoco FX925
 | icon:times[role=red]
 | icon:times[role=red]
 | icon:times[role=red]

@@ -21,7 +21,6 @@ import org.calypsonet.keyple.demo.validation.data.KeypleTerminalReaders
 import org.calypsonet.keyple.demo.validation.data.ReaderObservationErrorHandler
 import org.calypsonet.keyple.demo.validation.domain.spi.Logger
 import org.calypsonet.keyple.demo.validation.domain.spi.TerminalReaders
-import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 
 @Suppress("unused")
 @Module
@@ -31,17 +30,11 @@ class ReaderModule {
   @Provides
   @Singleton
   fun provideTerminalReaders(
-      cardReaderObservationExceptionHandlerSpi: CardReaderObservationExceptionHandlerSpi
-  ): TerminalReaders = KeypleTerminalReaders(cardReaderObservationExceptionHandlerSpi)
+      readerObservationErrorHandler: ReaderObservationErrorHandler
+  ): TerminalReaders = KeypleTerminalReaders(readerObservationErrorHandler)
 
   @Provides
   @Singleton
   fun provideReaderObservationErrorHandler(logger: Logger): ReaderObservationErrorHandler =
       ReaderObservationErrorHandler(logger)
-
-  @Provides
-  @Singleton
-  fun provideCardReaderObservationExceptionHandlerSpi(
-      readerObservationErrorHandler: ReaderObservationErrorHandler
-  ): CardReaderObservationExceptionHandlerSpi = readerObservationErrorHandler
 }

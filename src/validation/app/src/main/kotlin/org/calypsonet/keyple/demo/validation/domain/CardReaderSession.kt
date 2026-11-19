@@ -174,6 +174,14 @@ class CardReaderSession(
   }
 
   /**
+   * Sets the listener of the unexpected errors of the observation of the card reader, or removes it
+   * (null): the listener is in charge of restarting the detection with [restartCardDetection].
+   */
+  fun setReaderErrorListener(listener: (() -> Unit)?) {
+    terminalReaders.setReaderErrorListener(listener)
+  }
+
+  /**
    * Restarts the detection of the cards after an unexpected error of the observation of the reader,
    * Keyple ending then the monitoring without leaving the state of waiting for a card.
    */

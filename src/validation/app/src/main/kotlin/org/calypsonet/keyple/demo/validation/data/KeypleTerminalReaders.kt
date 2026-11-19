@@ -45,15 +45,13 @@ import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiPluginFactoryProvider
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ConfigurableCardReader
 import org.eclipse.keypop.reader.ObservableCardReader
-import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 
 /** [TerminalReaders] adapter based on the Keyple reader plugins of the terminal. */
 class KeypleTerminalReaders
 @Inject
-constructor(
-    private val readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi
-) : TerminalReaders {
+constructor(private val readerObservationExceptionHandler: ReaderObservationErrorHandler) :
+    TerminalReaders {
 
   private lateinit var terminalType: TerminalType
   // Card
@@ -288,6 +286,10 @@ constructor(
         it.deactivateProtocol(samReaderProtocolPhysicalName)
       }
     }
+  }
+
+  override fun setReaderErrorListener(listener: (() -> Unit)?) {
+    readerObservationExceptionHandler.listener = listener
   }
 
   override fun release(observer: CardReaderObserverSpi?) {

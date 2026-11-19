@@ -96,9 +96,9 @@ specified in the annexes [Card data model](docs/functional-documentation/index.a
 
 ### Tested terminals
 
-The terminals supported by each application (Famoco FX205 and FX207, Bluebird EF501, Arrive Axio 4, any Android device
-with NFC) are listed in the [Functional Documentation](docs/functional-documentation/index.adoc#tested-terminals), and
-their reader plugins in the README of each application ([validation](src/validation/README.md#tested-terminals),
+The terminals supported by each application (Famoco FX205, FX207 and FX925, Bluebird EF501, Arrive Axio 4, any
+Android device with NFC) are listed in the
+[Functional Documentation](docs/functional-documentation/index.adoc#tested-terminals), and their reader plugins in the README of each application ([validation](src/validation/README.md#tested-terminals),
 [inspection](src/inspection/README.md#tested-terminals),
 [sales Android client](src/sales/client/keyple-mobile-android/README.md#plugin-integration)). The server and
 the desktop clients use PC/SC readers.
@@ -111,6 +111,8 @@ Some components depend on libraries that are not publicly available:
   ([Bluebird plugin](https://github.com/calypsonet/keyple-plugin-cna-bluebird-specific-nfc-java-lib),
   [Arrive plugin](https://github.com/calypsonet/keyple-plugin-cna-arrive-android-jvm-lib)), but they are built with the
   native library of the terminal manufacturer: an integrator who has this library builds the plugin from its repository
+- **Famoco FX925 terminal** (validation only): its contactless reader, the Ingenico Open1500 module, is accessed with
+  the PCL plugin of Famoco (`keyple-plugin-pcl-lib`), a proprietary plugin available on request from Famoco
 - **Storage cards**: card extension (`keyple-card-cna-storagecard-java-lib`) and, in the Android applications, reader
   plugin (`keyple-plugin-cna-storagecard-java-lib`), reserved for CNA members and available on request from
   [CNA](https://calypsonet.org/contact-us/)
@@ -118,10 +120,13 @@ Some components depend on libraries that are not publicly available:
 By default, they are replaced by mocks (`libs` directory): the corresponding terminals are grayed out, and the storage
 cards are not supported. To use a component:
 
-1. Build the plugin with the library of the manufacturer, or obtain the storage card libraries from CNA
+1. Build the plugin with the library of the manufacturer, or obtain the storage card libraries from CNA, or the PCL
+   plugin from Famoco
 2. Copy the library (`.aar` or `.jar` file) to the `libs` directory at the root of the repository, named as the
    corresponding mock without its `-mock` suffix (for example,
-   `keyple-plugin-cna-bluebird-specific-nfc-java-lib-3.2.0-debug.aar`): the build uses it instead of the mock
+   `keyple-plugin-cna-bluebird-specific-nfc-java-lib-3.2.0-debug.aar`): the build uses it instead of the mock. The PCL
+   plugin of Famoco has no mock in `libs` (it is replaced by the `famoco-pcl-mock` source set of the validation): it is
+   copied as `keyple-plugin-pcl-lib-1.4.0-release.aar`
 3. Rebuild the applications (for example, `./gradlew assembleDebug`)
 
 The README of each application lists the components it uses.
@@ -560,7 +565,8 @@ authentication.
 - Relaunch the application, and accept the access to the SAM of the terminal (and to the storage, up to Android 12)
 
 **Terminal type grayed out on the "Select the terminal" screen**
-- The Bluebird and Arrive terminals require their plugin (see [Proprietary components](#proprietary-components))
+- The Bluebird, Arrive and Famoco FX925 terminals require their plugin (see
+  [Proprietary components](#proprietary-components))
 - A terminal type that does not match the actual hardware can lead to "The readers of the terminal could not be
   initialized."
 
