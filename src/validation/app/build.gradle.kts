@@ -32,9 +32,8 @@ if (hasParkeonSdk) {
 }
 
 // Famoco PCL plugin (Ingenico Open1500 contactless reader of the Famoco FX9xx terminals) —
-// optional,
-// proprietary library provided by Famoco
-val famocoPclPluginFile = file("../../../libs/keyple-plugin-famoco-pcl-lib-1.1.0.aar")
+// optional, proprietary library provided by Famoco
+val famocoPclPluginFile = file("../../../libs/keyple-plugin-pcl-lib-1.4.0-release.aar")
 val hasFamocoPclPlugin = famocoPclPluginFile.exists()
 
 if (hasFamocoPclPlugin) {

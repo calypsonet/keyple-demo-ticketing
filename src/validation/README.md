@@ -188,7 +188,7 @@ The comments of these classes reference the step numbers of the annex.
 
 **Famoco FX925**
 - **Readers**: Ingenico Open1500 contactless reader (internal USB) and SAM reader
-- **Plugins**: PCL plugin of Famoco (`keyple-plugin-famoco-pcl-lib`) for the Calypso cards, and
+- **Plugins**: PCL plugin of Famoco (`keyple-plugin-pcl-lib`) for the Calypso cards, and
   [Famoco Plugin](https://github.com/calypsonet/keyple-famoco) for the SAM; storage cards not supported
 - **Access**: proprietary plugin, available on request from Famoco (see
   [Proprietary components](#proprietary-components))
@@ -203,7 +203,7 @@ then grayed out, and the storage cards not supported). They are built or obtaine
 - **Arrive Axio 4**: plugin built with the library of Arrive; for the LEDs and sounds of the terminal, also copy the
   Parkeon SDK (`AndroidParkeonCommon-release.aar`) to the `libs` directory: the build then uses the `arrive` source
   set instead of `arrive-mock`
-- **Famoco FX925**: PCL plugin of Famoco, to copy to the `libs` directory as `keyple-plugin-famoco-pcl-lib-1.1.0.aar`:
+- **Famoco FX925**: PCL plugin of Famoco, to copy to the `libs` directory as `keyple-plugin-pcl-lib-1.4.0-release.aar`:
   the build then uses the `famoco-pcl` source set instead of `famoco-pcl-mock`
 - **Storage cards**: storage card extension (`keyple-card-cna-storagecard-java-lib`) and reader plugin
   (`keyple-plugin-cna-storagecard-java-lib`), reserved for CNA members and available on request
