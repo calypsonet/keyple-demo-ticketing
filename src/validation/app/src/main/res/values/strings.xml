@@ -31,6 +31,7 @@
     <string name="terminal_bluebird">BLUEBIRD</string>
     <string name="terminal_famoco">FAMOCO (SE COM)</string>
     <string name="terminal_famoco_omapi">FAMOCO (OMAPI)</string>
+    <string name="terminal_famoco_pcl">FAMOCO (FX9XX)</string>
 
     <!-- Home screen -->
     <string name="home_description">Open Source API for Smart Ticketing</string>

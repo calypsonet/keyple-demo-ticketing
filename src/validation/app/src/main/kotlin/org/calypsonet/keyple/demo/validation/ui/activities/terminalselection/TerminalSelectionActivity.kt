@@ -70,6 +70,16 @@ class TerminalSelectionActivity : BaseActivity() {
       startActivity(Intent(this, SettingsActivity::class.java))
       finish()
     }
+    // Famoco FX9xx: contactless reader accessed with the Famoco PCL plugin (optional library)
+    if (!BuildConfig.HAS_FAMOCO_PCL_PLUGIN) {
+      activityTerminalSelectionBinding.famocoPclBtn.setBackgroundColor(Color.GRAY)
+    } else {
+      activityTerminalSelectionBinding.famocoPclBtn.setOnClickListener {
+        appSettings.terminalType = TerminalType.FAMOCO_PCL
+        startActivity(Intent(this, SettingsActivity::class.java))
+        finish()
+      }
+    }
 
     // Arrive
     if (ArriveConstants.PLUGIN_NAME.contains(MOCK_PLUGIN_MARKER) || !BuildConfig.HAS_PARKEON_SDK) {

@@ -31,6 +31,18 @@ if (hasParkeonSdk) {
   println("Parkeon SDK not found - Arrive UI features disabled (mock mode)")
 }
 
+// Famoco PCL plugin (Ingenico Open1500 contactless reader of the Famoco FX9xx terminals) —
+// optional,
+// proprietary library provided by Famoco
+val famocoPclPluginFile = file("../../../libs/keyple-plugin-famoco-pcl-lib-1.1.0.aar")
+val hasFamocoPclPlugin = famocoPclPluginFile.exists()
+
+if (hasFamocoPclPlugin) {
+  println("Famoco PCL plugin found - Famoco FX9xx terminals enabled")
+} else {
+  println("Famoco PCL plugin not found - Famoco FX9xx terminals disabled (mock mode)")
+}
+
 dependencies {
   // Demo common
   implementation(libs.demoCommon)
@@ -85,6 +97,11 @@ dependencies {
   // implementation
   if (hasParkeonSdk) {
     implementation(files(parkeonSdkFile))
+  }
+
+  // Famoco PCL plugin — optional, enables the Famoco FX9xx terminals
+  if (hasFamocoPclPlugin) {
+    implementation(files(famocoPclPluginFile))
   }
 
   // Keyple BOM
@@ -177,6 +194,7 @@ android {
     versionName = project.version.toString()
     versionCode = project.version.toString().replace(".", "").toInt()
     buildConfigField("Boolean", "HAS_PARKEON_SDK", "$hasParkeonSdk")
+    buildConfigField("Boolean", "HAS_FAMOCO_PCL_PLUGIN", "$hasFamocoPclPlugin")
   }
   buildFeatures {
     viewBinding = true
@@ -210,6 +228,9 @@ android {
     // ArriveFeedbackDevice: real impl (Parkeon SDK) or no-op stub, mutually exclusive source sets
     getByName("main").kotlin.directories +=
         if (hasParkeonSdk) "src/arrive/kotlin" else "src/arrive-mock/kotlin"
+    // FamocoPclReaders: real impl (Famoco PCL plugin) or mock, mutually exclusive source sets
+    getByName("main").kotlin.directories +=
+        if (hasFamocoPclPlugin) "src/famoco-pcl/kotlin" else "src/famoco-pcl-mock/kotlin"
   }
   packaging {
     resources {
