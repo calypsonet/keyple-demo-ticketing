@@ -173,6 +173,16 @@ class CardReaderSession(
     }
   }
 
+  /**
+   * Restarts the detection of the cards after an unexpected error of the observation of the reader,
+   * Keyple ending then the monitoring without leaving the state of waiting for a card.
+   */
+  fun restartCardDetection() {
+    logger.i("Restarting the card detection")
+    stopCardDetection()
+    startCardDetection()
+  }
+
   /** Releases the readers and the user feedback, detaching the given [observer] from the reader. */
   fun release(observer: CardReaderObserverSpi?) {
     isInitialized = false

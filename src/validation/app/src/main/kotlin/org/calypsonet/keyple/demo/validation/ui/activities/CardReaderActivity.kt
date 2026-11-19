@@ -13,6 +13,7 @@
 package org.calypsonet.keyple.demo.validation.ui.activities
 
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.OnBackPressedCallback
@@ -30,9 +31,11 @@ import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.validation.R
+import org.calypsonet.keyple.demo.validation.data.ReaderObservationErrorHandler
 import org.calypsonet.keyple.demo.validation.databinding.ActivityCardReaderBinding
 import org.calypsonet.keyple.demo.validation.databinding.LayoutValidationResultOverlayBinding
 import org.calypsonet.keyple.demo.validation.domain.model.CardDescription
@@ -51,6 +54,7 @@ import timber.log.Timber
 class CardReaderActivity : BaseActivity() {
 
   @Inject lateinit var validateCard: ValidateCard
+  @Inject lateinit var readerObservationErrorHandler: ReaderObservationErrorHandler
 
   private lateinit var activityCardReaderBinding: ActivityCardReaderBinding
 
@@ -64,6 +68,10 @@ class CardReaderActivity : BaseActivity() {
   // detection being then stopped and restarted, the card processing is not to be ended
   private var isResultInterruptedByPause = false
   private var cardDetectedAt = 0L
+  // True while the card detection is requested by the screen (between onResume and onPause)
+  @Volatile private var isCardDetectionRequested = false
+  private var detectionRestartDelayMs = 0L
+  private var lastReaderErrorAt = 0L
 
   /* application states */
   enum class AppState {
@@ -116,6 +124,8 @@ class CardReaderActivity : BaseActivity() {
 
     playWaitingAnimation()
 
+    isCardDetectionRequested = true
+    readerObservationErrorHandler.listener = ::onReaderObservationError
     if (!cardReaderSession.isInitialized) {
       lifecycleScope.launch {
         withContext(readerDispatcher) {
@@ -152,6 +162,8 @@ class CardReaderActivity : BaseActivity() {
     super.onPause()
     activityCardReaderBinding.animation.cancelAnimation()
     autoReturnTimer.cancel()
+    isCardDetectionRequested = false
+    readerObservationErrorHandler.listener = null
     if (validationResultBinding?.root?.visibility == View.VISIBLE) {
       isResultInterruptedByPause = true
     }
@@ -177,6 +189,41 @@ class CardReaderActivity : BaseActivity() {
     readerScope.launch { cardReaderSession.release(observer) }
     cardReaderObserver = null
     super.onDestroy()
+  }
+
+  /**
+   * Schedules the restart of the card detection after an unexpected error of the observation of the
+   * reader, which would otherwise no longer detect the cards.
+   *
+   * The delay leaves time to the reader to recover; it is doubled at each new error (up to
+   * [DETECTION_RESTART_MAX_DELAY_MS]), and reset when the previous error is old. The restart is
+   * cancelled if the screen has stopped the detection in the meantime.
+   */
+  @Synchronized
+  private fun onReaderObservationError() {
+    val now = SystemClock.elapsedRealtime()
+    detectionRestartDelayMs =
+        if (lastReaderErrorAt == 0L || now - lastReaderErrorAt > DETECTION_RESTART_RESET_DELAY_MS) {
+          DETECTION_RESTART_INITIAL_DELAY_MS
+        } else {
+          minOf(detectionRestartDelayMs * 2, DETECTION_RESTART_MAX_DELAY_MS)
+        }
+    lastReaderErrorAt = now
+    val restartDelayMs = detectionRestartDelayMs
+    Timber.w("Card detection restart scheduled [delayMs=$restartDelayMs]")
+    readerScope.launch {
+      delay(restartDelayMs)
+      if (!isCardDetectionRequested || !cardReaderSession.isInitialized) {
+        Timber.i("Card detection restart cancelled: detection no longer requested")
+        return@launch
+      }
+      try {
+        cardReaderSession.restartCardDetection()
+      } catch (e: Exception) {
+        Timber.e(e, "Error while restarting the card detection")
+        onReaderObservationError()
+      }
+    }
   }
 
   /**
@@ -486,6 +533,9 @@ class CardReaderActivity : BaseActivity() {
   companion object {
     private const val RETURN_DELAY_MS = 30000
     private const val VALIDATION_RESULT_DELAY_MS = 2500
+    private const val DETECTION_RESTART_INITIAL_DELAY_MS = 1000L
+    private const val DETECTION_RESTART_MAX_DELAY_MS = 30000L
+    private const val DETECTION_RESTART_RESET_DELAY_MS = 60000L
 
     /**
      * Thread of the operations on the readers (initialization, start and stop of the card

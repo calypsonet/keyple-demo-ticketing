@@ -18,6 +18,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import org.calypsonet.keyple.demo.validation.data.KeypleTerminalReaders
+import org.calypsonet.keyple.demo.validation.data.ReaderObservationErrorHandler
 import org.calypsonet.keyple.demo.validation.domain.spi.Logger
 import org.calypsonet.keyple.demo.validation.domain.spi.TerminalReaders
 import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
@@ -35,10 +36,12 @@ class ReaderModule {
 
   @Provides
   @Singleton
+  fun provideReaderObservationErrorHandler(logger: Logger): ReaderObservationErrorHandler =
+      ReaderObservationErrorHandler(logger)
+
+  @Provides
+  @Singleton
   fun provideCardReaderObservationExceptionHandlerSpi(
-      logger: Logger
-  ): CardReaderObservationExceptionHandlerSpi =
-      CardReaderObservationExceptionHandlerSpi { pluginName, readerName, e ->
-        logger.e("Unexpected reader error [plugin=$pluginName, reader=$readerName]", e)
-      }
+      readerObservationErrorHandler: ReaderObservationErrorHandler
+  ): CardReaderObservationExceptionHandlerSpi = readerObservationErrorHandler
 }
