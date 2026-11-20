@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Added
+- Validation application: Famoco FX925 terminal ("Famoco FX925 / PCL + SE COM"), its contactless reader (Ingenico
+  Open1500 module) being accessed with the PCL plugin of Famoco, proprietary and available on request from Famoco
+  (grayed out without it), and its SAM with the Famoco plugin; storage cards not supported on this terminal.
+### Changed
+- Validation and Inspection applications: terminal selection buttons showing the tested model, then, smaller, the
+  configuration of the readers or the library of the manufacturer required ("Famoco FX205 / NFC + SE COM", "Famoco
+  FX207 / NFC + OMAPI", "Famoco FX925 / PCL + SE COM", "Bluebird EF5x1 / Bluebird SDK", "Arrive Axio 4 / Arrive SDK"),
+  instead of the reader configuration only; the terminals announced by the plugins are listed in the READMEs.
+- Validation application: full screen (status and navigation bars hidden, shown by a swipe from the screen edge), the
+  screen staying on.
+### Fixed
+- Validation application: card detection restarted after an unexpected error of the reader (for example, a read
+  timeout of the Open1500 module), which no longer detected the cards; the restart is delayed (from 1 to 30 s, doubled
+  at each new error).
+### Upgraded
+- `keyple-plugin-cna-famoco-se-communication-java-lib`: `2.0.2` -> `2.1.0` (validation and inspection).
 
 ## [26.11.13]
 ### Added

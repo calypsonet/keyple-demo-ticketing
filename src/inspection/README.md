@@ -55,14 +55,18 @@ cd keyple-demo-ticketing/src/inspection
 
 ### Terminal selection
 1. Launch application
-2. Select the terminal type from **Terminal selection** screen:
-  - **Famoco (SE COM)**: Famoco FX205, SAM accessed with the Famoco plugin
-  - **Famoco (OMAPI)**: Famoco FX207, SAM accessed with the Android OMAPI plugin
+2. Select the terminal type from **Terminal selection** screen. Each Famoco or Bluebird button shows the tested model,
+   then, smaller, the configuration of the readers or the library of the manufacturer required (see also the
+   [terminals supported by the plugins](#terminals-supported-by-the-plugins)):
+  - **Famoco FX205 / NFC + SE COM**: contactless cards read with the Android NFC plugin, SAM accessed with the Famoco
+    plugin
+  - **Famoco FX207 / NFC + OMAPI**: contactless cards read with the Android NFC plugin, SAM accessed with the Android
+    OMAPI plugin
   - **NFC terminal**: any Android device with NFC (no SAM: the Calypso cards are authenticated by PKI when they
     support it, otherwise not authenticated); the MIFARE Ultralight and MIFARE Classic storage cards are also
     supported (with the storage card libraries, see [Proprietary components](#proprietary-components))
-  - **Bluebird**: plugin built with the library of Bluebird (grayed out by default, see
-    [Proprietary components](#proprietary-components))
+  - **Bluebird EF5x1 / Bluebird SDK** (EF501, EF551): plugin built with the library of Bluebird (grayed out by
+    default, see [Proprietary components](#proprietary-components))
 
 ### Inspection settings
 The **Settings** screen, displayed after the terminal selection, configures the inspection:
@@ -174,6 +178,14 @@ The comments of these classes reference the step numbers of the annex.
 - **Plugin**: [Bluebird Plugin](https://github.com/calypsonet/keyple-plugin-cna-bluebird-specific-nfc-java-lib)
 - **Access**: open source plugin, to build with the native library of Bluebird (see
   [Proprietary components](#proprietary-components))
+
+#### Terminals supported by the plugins
+
+The demo is tested on the terminals above. The plugins announce other terminals (see the
+[reader extensions](https://keyple-support.calypsonet.org/add-ons/plugin-ext/) of the Keyple support site), on which
+the demo is expected to work but is not tested:
+- **Famoco plugin** (SAM, button "NFC + SE COM"): FX100, FX105, FX200, FX205, FX300, FX915, FX920
+- **Bluebird plugin** (button "Bluebird EF5x1"): EF501, EF551
 
 ### Proprietary components
 

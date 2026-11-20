@@ -29,8 +29,9 @@ access to transportation networks.
 
 ### Card requirements
 - Cards personalized and loaded using the [Sales Demo](../sales/)
-- Calypso cards, or storage cards (MIFARE Ultralight and MIFARE Classic 1K on the Bluebird and Famoco terminals, ST25
-  SRT512 on the Bluebird terminals only), with the storage card libraries (see
+- Calypso cards, or storage cards (MIFARE Ultralight and MIFARE Classic 1K on the Bluebird terminals and on the Famoco
+  FX205 and FX207 terminals, ST25 SRT512 on the Bluebird terminals only; no storage cards on the Famoco FX925), with
+  the storage card libraries (see
   [Proprietary components](#proprietary-components) and the
   [storage cards supported](../../docs/functional-documentation/index.adoc#storage-card-support))
 - Supported AID (see [Card data model](../../docs/functional-documentation/index.adoc#supported-card-applications))
@@ -54,11 +55,18 @@ cd keyple-demo-ticketing/src/validation
 
 ### Terminal selection
 1. Launch application
-2. Select the terminal type from **Terminal selection** screen:
-  - **Famoco (SE COM)**: Famoco FX205, SAM accessed with the Famoco plugin
-  - **Famoco (OMAPI)**: Famoco FX207, SAM accessed with the Android OMAPI plugin
-  - **Arrive**, **Bluebird**: plugins built with the library of the manufacturer (grayed out by default, see
+2. Select the terminal type from **Terminal selection** screen. Each button shows the tested model, then, smaller,
+   the configuration of the readers or the library of the manufacturer required (see also the
+   [terminals supported by the plugins](#terminals-supported-by-the-plugins)):
+  - **Famoco FX205 / NFC + SE COM**: contactless cards read with the Android NFC plugin, SAM accessed with the Famoco
+    plugin
+  - **Famoco FX207 / NFC + OMAPI**: contactless cards read with the Android NFC plugin, SAM accessed with the Android
+    OMAPI plugin
+  - **Famoco FX925 / PCL + SE COM**: contactless cards read by the Ingenico Open1500 reader with the PCL plugin of
+    Famoco, SAM accessed with the Famoco plugin (grayed out by default, see
     [Proprietary components](#proprietary-components))
+  - **Bluebird EF5x1 / Bluebird SDK** (EF501, EF551), **Arrive Axio 4 / Arrive SDK**: plugins built with the library
+    of the manufacturer (grayed out by default, see [Proprietary components](#proprietary-components))
 
 ### Validation settings
 The **Settings** screen, displayed after the terminal selection, configures the validation:
@@ -84,7 +92,8 @@ Terminal selection → Settings → Card reader → Validation result
 
 **Terminal selection (`TerminalSelectionActivity`)**
 - Choose appropriate hardware plugin
-- The Arrive and Bluebird terminals require their plugin (see [Proprietary components](#proprietary-components))
+- The Arrive, Bluebird and Famoco FX925 terminals require their plugin (see
+  [Proprietary components](#proprietary-components))
 - Version of the application (YY.MM.DD), in the bottom right corner
 
 **Settings (`SettingsActivity`)**
@@ -182,6 +191,25 @@ The comments of these classes reference the step numbers of the annex.
 - **Access**: open source plugin, to build with the native library of Arrive (see
   [Proprietary components](#proprietary-components))
 
+**Famoco FX925**
+- **Readers**: Ingenico Open1500 contactless reader (internal USB) and SAM reader
+- **Plugins**: PCL plugin of Famoco (`keyple-plugin-pcl-lib`) for the Calypso cards, and
+  [Famoco Plugin](https://github.com/calypsonet/keyple-famoco) for the SAM; storage cards not supported
+- **Access**: proprietary plugin, available on request from Famoco (see
+  [Proprietary components](#proprietary-components))
+
+#### Terminals supported by the plugins
+
+The demo is tested on the terminals above. The plugins announce other terminals (see the
+[reader extensions](https://keyple-support.calypsonet.org/add-ons/plugin-ext/) of the Keyple support site), on which
+the demo is expected to work but is not tested:
+- **Famoco plugin** (SAM, buttons "NFC + SE COM" and "PCL + SE COM"): FX100, FX105, FX200, FX205, FX300, FX915, FX920,
+  FX925
+- **Bluebird plugin** (button "Bluebird EF5x1"): EF501, EF551
+- **Arrive plugin** (button "Arrive Axio 4"): the terminals with the Arrive SDK (Axio validators, and other terminals
+  such as Coppernic C-One or Zebra TC77), the LEDs and sounds of the validation being specific to the Arrive terminals
+  (Parkeon SDK)
+
 ### Proprietary components
 
 The proprietary components used by this application are replaced by mocks by default (their terminal types being
@@ -192,6 +220,8 @@ then grayed out, and the storage cards not supported). They are built or obtaine
 - **Arrive Axio 4**: plugin built with the library of Arrive; for the LEDs and sounds of the terminal, also copy the
   Parkeon SDK (`AndroidParkeonCommon-release.aar`) to the `libs` directory: the build then uses the `arrive` source
   set instead of `arrive-mock`
+- **Famoco FX925**: PCL plugin of Famoco, to copy to the `libs` directory as `keyple-plugin-pcl-lib-1.4.0-release.aar`:
+  the build then uses the `famoco-pcl` source set instead of `famoco-pcl-mock`
 - **Storage cards**: storage card extension (`keyple-card-cna-storagecard-java-lib`) and reader plugin
   (`keyple-plugin-cna-storagecard-java-lib`), reserved for CNA members and available on request
 

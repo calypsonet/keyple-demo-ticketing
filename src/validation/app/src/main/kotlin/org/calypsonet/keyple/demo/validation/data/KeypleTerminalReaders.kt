@@ -45,15 +45,13 @@ import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiPluginFactoryProvider
 import org.eclipse.keypop.reader.CardReader
 import org.eclipse.keypop.reader.ConfigurableCardReader
 import org.eclipse.keypop.reader.ObservableCardReader
-import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 
 /** [TerminalReaders] adapter based on the Keyple reader plugins of the terminal. */
 class KeypleTerminalReaders
 @Inject
-constructor(
-    private val readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi
-) : TerminalReaders {
+constructor(private val readerObservationExceptionHandler: ReaderObservationErrorHandler) :
+    TerminalReaders {
 
   private lateinit var terminalType: TerminalType
   // Card
@@ -76,6 +74,7 @@ constructor(
       TerminalType.BLUEBIRD -> initBluebirdReader()
       TerminalType.FAMOCO -> initFamocoReader()
       TerminalType.FAMOCO_OMAPI -> initFamocoOmapiReader()
+      TerminalType.FAMOCO_PCL -> initFamocoPclReader()
     }
   }
 
@@ -104,12 +103,29 @@ constructor(
   private fun initFamocoReader() {
     terminalType = TerminalType.FAMOCO
     initAndroidNfcCardReader()
+    initFamocoSamReader()
+    isStorageCardSupported = true
+  }
+
+  private fun initFamocoPclReader() {
+    terminalType = TerminalType.FAMOCO_PCL
+    cardPluginName = FamocoPclReaders.PLUGIN_NAME
+    cardReaderName = FamocoPclReaders.CARD_READER_NAME
+    FamocoPclReaders.CALYPSO_CARD_PROTOCOLS.forEach {
+      cardReaderProtocols[it] = CardProtocol.ISO_14443_4.name
+    }
+    initFamocoSamReader()
+    // The plugin provides no APDU interpreter for the storage cards
+    isStorageCardSupported = false
+  }
+
+  /** SAM reader of the Famoco terminals, based on the Famoco SE Communication plugin. */
+  private fun initFamocoSamReader() {
     samPluginName = AndroidFamocoPlugin.PLUGIN_NAME
     samReaderNameRegex = ".*FamocoReader"
     samReaderName = AndroidFamocoReader.READER_NAME
     samReaderProtocolPhysicalName = ContactCardCommonProtocols.ISO_7816_3.name
     samReaderProtocolLogicalName = CardProtocol.ISO_7816.name
-    isStorageCardSupported = true
   }
 
   private fun initFamocoOmapiReader() {
@@ -173,11 +189,14 @@ constructor(
                       activity = activity,
                       apduInterpreterFactory = ApduInterpreterFactoryProvider.provideFactory(),
                       keyProvider = DemoMifareClassicKeyProvider()))
+          TerminalType.FAMOCO_PCL ->
+              FamocoPclReaders.provideFactory(activity, FAMOCO_PCL_CONNECTION_TIMEOUT_MS)
         }
     SmartCardServiceProvider.getService().registerPlugin(pluginFactory)
     // SAM plugin (if different of card plugin)
     when (terminalType) {
-      TerminalType.FAMOCO ->
+      TerminalType.FAMOCO,
+      TerminalType.FAMOCO_PCL ->
           SmartCardServiceProvider.getService()
               .registerPlugin(AndroidFamocoPluginFactoryProvider.getFactory())
       TerminalType.FAMOCO_OMAPI ->
@@ -226,7 +245,8 @@ constructor(
     val samPluginReaders = SmartCardServiceProvider.getService().getPlugin(samPluginName)?.readers
     samReaders =
         when (terminalType) {
-          TerminalType.FAMOCO -> samPluginReaders?.filter { it.name == samReaderName }
+          TerminalType.FAMOCO,
+          TerminalType.FAMOCO_PCL -> samPluginReaders?.filter { it.name == samReaderName }
           // The OMAPI plugin also provides the eSE and SIM readers, which are not SAM readers
           TerminalType.FAMOCO_OMAPI ->
               samPluginReaders?.filter { it.name.matches(Regex(samReaderNameRegex)) }
@@ -268,6 +288,10 @@ constructor(
     }
   }
 
+  override fun setReaderErrorListener(listener: (() -> Unit)?) {
+    readerObservationExceptionHandler.listener = listener
+  }
+
   override fun release(observer: CardReaderObserverSpi?) {
     clear()
     if (observer != null && cardReader != null) {
@@ -282,5 +306,7 @@ constructor(
     const val OMAPI_FAMOCO_SAM_READER_NAME = "AT901"
     /** Maximum waiting time for the connection to the OMAPI service. */
     const val OMAPI_CONNECTION_TIMEOUT_MS = 5000L
+    /** Maximum waiting time for the connection to the Open1500 module of the Famoco terminals. */
+    const val FAMOCO_PCL_CONNECTION_TIMEOUT_MS = 10000L
   }
 }

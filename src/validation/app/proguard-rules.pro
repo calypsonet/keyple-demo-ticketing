@@ -8,6 +8,15 @@
     public boolean isDebugEnabled() return false;
 }
 
+# Removes the verbose and debug logs written directly with android.util.Log by third-party
+# libraries in release builds (for example, the "Wrote amt=..." logs of usb-serial-for-android or
+# the ALPAR frames of the Famoco SAM library). The application logs go through Timber, which uses
+# Log.println() and is therefore not affected.
+-assumenosideeffects class android.util.Log {
+    public static int v(...);
+    public static int d(...);
+}
+
 # Keep Bluebird NFC library classes
 -keep class com.bluebird.extnfc.** { *; }
 -keep interface com.bluebird.extnfc.** { *; }
@@ -46,3 +55,15 @@
 # Suppress warnings for missing Parkeon SDK classes (system library present only on Arrive devices)
 -dontwarn com.parkeon.**
 -dontwarn javax.annotation.Nullable
+
+# Keep Famoco PCL plugin and Ingenico PCL SDK classes (JNI and reflection)
+-keep class com.famoco.keypleplugin.pcl.** { *; }
+-keep interface com.famoco.keypleplugin.pcl.** { *; }
+-keep class com.ingenico.** { *; }
+-keep interface com.ingenico.** { *; }
+-keep class com.hoho.android.usbserial.** { *; }
+-keep class android_serialport_api.lib.** { *; }
+
+# Suppress warnings for the optional ReLinker library of the Famoco PCL plugin (falls back to
+# System.loadLibrary)
+-dontwarn com.getkeepsafe.relinker.**

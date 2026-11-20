@@ -27,10 +27,13 @@
 
     <!-- Terminal selection screen -->
     <string name="terminal_title">Select the terminal</string>
-    <string name="terminal_arrive">ARRIVE</string>
-    <string name="terminal_bluebird">BLUEBIRD</string>
-    <string name="terminal_famoco">FAMOCO (SE COM)</string>
-    <string name="terminal_famoco_omapi">FAMOCO (OMAPI)</string>
+    <!-- Terminal buttons: tested model (EF5x1: EF501 and EF551), then, smaller, the configuration of the readers or
+         the library of the manufacturer required -->
+    <string name="terminal_arrive">ARRIVE AXIO 4\n<small>Arrive SDK</small></string>
+    <string name="terminal_bluebird">BLUEBIRD EF5x1\n<small>Bluebird SDK</small></string>
+    <string name="terminal_famoco">FAMOCO FX205\n<small>NFC + SE COM</small></string>
+    <string name="terminal_famoco_omapi">FAMOCO FX207\n<small>NFC + OMAPI</small></string>
+    <string name="terminal_famoco_pcl">FAMOCO FX925\n<small>PCL + SE COM</small></string>
 
     <!-- Home screen -->
     <string name="home_description">Open Source API for Smart Ticketing</string>

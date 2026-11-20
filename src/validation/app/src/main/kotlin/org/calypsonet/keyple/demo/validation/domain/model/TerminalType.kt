@@ -18,5 +18,11 @@ enum class TerminalType {
   /** Famoco terminal whose SAM is accessed with the Famoco SE Communication plugin. */
   FAMOCO,
   /** Famoco terminal whose SAM is accessed with the Android OMAPI plugin (e.g. FX207). */
-  FAMOCO_OMAPI
+  FAMOCO_OMAPI,
+  /**
+   * Famoco terminal whose contactless reader is the Ingenico Open1500 module, accessed with the
+   * Famoco PCL plugin, and whose SAM is accessed with the Famoco SE Communication plugin (e.g.
+   * FX925).
+   */
+  FAMOCO_PCL
 }

@@ -10,6 +10,7 @@
 
     <Button
         android:id="@+id/nfcTerminalBtn"
+        android:textAllCaps="false"
         style="@style/whiteBtnText"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
@@ -24,6 +25,7 @@
 
     <Button
         android:id="@+id/famocoOmapiBtn"
+        android:textAllCaps="false"
         style="@style/whiteBtnText"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
@@ -38,6 +40,7 @@
 
     <Button
         android:id="@+id/famocoBtn"
+        android:textAllCaps="false"
         style="@style/whiteBtnText"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
@@ -52,6 +55,7 @@
 
     <Button
         android:id="@+id/bluebirdBtn"
+        android:textAllCaps="false"
         style="@style/whiteBtnText"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
