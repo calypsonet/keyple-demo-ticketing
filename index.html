@@ -735,8 +735,8 @@ table.tableblock th p {
 <div class="details">
 <span id="author" class="author">Calypso Networks Association</span><br>
 <span id="email" class="email"><a href="https://calypsonet.org" class="bare">https://calypsonet.org</a></span><br>
-<span id="revnumber">version 26.11.13,</span>
-<span id="revdate">2026-11-13</span>
+<span id="revnumber">version 26.11.20,</span>
+<span id="revdate">2026-11-20</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -1689,6 +1689,13 @@ Priority 3 of the data model (stored value) is not covered by the demo (see <a h
 <td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Famoco FX925</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Transit validator, Ingenico Open1500 contactless reader and SAM reader</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon olive"><i class="fa fa-lock"></i></span> Manufacturer plugin</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Other Android devices with NFC</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Any Android 8.0+ device with NFC (no SAM: inspection by PKI or without authentication)</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon green"><i class="fa fa-check"></i></span></p></td>
@@ -1706,9 +1713,15 @@ Priority 3 of the data model (stored value) is not covered by the demo (see <a h
 <p><span class="icon olive"><i class="fa fa-adjust"></i></span> Open source plugin, to build with the library of the terminal manufacturer</p>
 </li>
 <li>
+<p><span class="icon olive"><i class="fa fa-lock"></i></span> Proprietary plugin of the terminal manufacturer, available on request from the manufacturer</p>
+</li>
+<li>
 <p><span class="icon red"><i class="fa fa-times"></i></span> Not supported</p>
 </li>
 </ul>
+</div>
+<div class="paragraph">
+<p>The reader plugins also announce other terminals, on which the applications are expected to work but are not tested (see the <a href="https://keyple-support.calypsonet.org/add-ons/plugin-ext/">reader extensions</a> of the Keyple support site): Famoco FX100, FX105, FX200, FX300, FX915 and FX920 (Famoco plugin), Bluebird EF551 (Bluebird plugin), and the terminals with the Arrive SDK (Arrive plugin). On the terminal selection screen of the validation and inspection applications, each button shows the tested model, then the configuration of the readers or the library of the manufacturer required (for example, "Famoco FX205 / NFC + SE COM", "Bluebird EF5x1 / Bluebird SDK").</p>
 </div>
 </div>
 <div class="sect2">
@@ -1752,6 +1765,12 @@ Priority 3 of the data model (stored value) is not covered by the demo (see <a h
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Validation: Arrive Axio 4</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Validation: Famoco FX925</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock"><span class="icon red"><i class="fa fa-times"></i></span></p></td>
@@ -3505,7 +3524,7 @@ The validation and inspection terminals do not select the invalidated applicatio
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 26.11.13<br>
+Version 26.11.20<br>
 </div>
 </div>
 </body>
