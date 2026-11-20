@@ -491,6 +491,8 @@ The applications have been tested on the following Android terminals:
 * icon:lock[role=olive] Proprietary plugin of the terminal manufacturer, available on request from the manufacturer
 * icon:times[role=red] Not supported
 
+The reader plugins also announce other terminals, on which the applications are expected to work but are not tested (see the https://keyple-support.calypsonet.org/add-ons/plugin-ext/[reader extensions] of the Keyple support site): Famoco FX100, FX105, FX200, FX300, FX915 and FX920 (Famoco plugin), Bluebird EF551 (Bluebird plugin), and the terminals with the Arrive SDK (Arrive plugin). On the terminal selection screen of the validation and inspection applications, each button shows the tested model, then the configuration of the readers or the library of the manufacturer required (for example, "Famoco FX205 / NFC + SE COM", "Bluebird EF5x1 / Bluebird SDK").
+
 [[storage-card-support]]
 === Storage card support
 

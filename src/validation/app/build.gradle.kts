@@ -123,11 +123,7 @@ dependencies {
   implementation(libs.keyplePluginAndroidOmapiLib)
 
   // Other Keyple plugins
-  implementation(libs.keyplePluginCnaFamocoSeCommunicationLib) {
-    // Runtime of the obsolete "kotlin-android-extensions" plugin, declared but not used by the
-    // plugin, and duplicating the classes of the Parcelize runtime
-    exclude(group = "org.jetbrains.kotlin", module = "kotlin-android-extensions-runtime")
-  }
+  implementation(libs.keyplePluginCnaFamocoSeCommunicationLib)
 
   // Android components
   implementation(libs.androidxAppcompat)
