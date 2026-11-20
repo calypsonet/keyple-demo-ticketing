@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+
+## [26.11.20]
 ### Added
 - Validation application: Famoco FX925 terminal ("Famoco FX925 / PCL + SE COM"), its contactless reader (Ingenico
   Open1500 module) being accessed with the PCL plugin of Famoco, proprietary and available on request from Famoco
@@ -204,7 +206,8 @@ It brings together previously independent projects into a unified codebase to si
   - [Validation App](https://github.com/calypsonet/keyple-demo-ticketing-validation-app)
   - [Control App](https://github.com/calypsonet/keyple-demo-ticketing-control-app)
 
-[Unreleased]: https://github.com/calypsonet/keyple-demo-ticketing/compare/26.11.13...HEAD
+[Unreleased]: https://github.com/calypsonet/keyple-demo-ticketing/compare/26.11.20...HEAD
+[26.11.20]: https://github.com/calypsonet/keyple-demo-ticketing/compare/26.11.13...26.11.20
 [26.11.13]: https://github.com/calypsonet/keyple-demo-ticketing/compare/26.10.22...26.11.13
 [26.10.22]: https://github.com/calypsonet/keyple-demo-ticketing/compare/26.03.26...26.10.22
 [26.03.26]: https://github.com/calypsonet/keyple-demo-ticketing/compare/25.12.01...26.03.26
